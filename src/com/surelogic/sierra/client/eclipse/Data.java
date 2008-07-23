@@ -11,9 +11,16 @@ import com.surelogic.sierra.schema.SierraSchemaData;
 
 public final class Data extends DerbyConnection {
 
-	public static final String SCHEMA_PACKAGE = "com.surelogic.sierra.schema";
+	private static final Data INSTANCE = new Data();
 
-	private static final String SCHEMA_NAME = "SIERRA";
+	public static Data getInstance() {
+		INSTANCE.loggedBootAndCheckSchema();
+		return INSTANCE;
+	}
+
+	private Data() {
+		// Singleton
+	}
 
 	@Override
 	protected boolean deleteDatabaseOnStartup() {
@@ -34,22 +41,11 @@ public final class Data extends DerbyConnection {
 
 	@Override
 	protected String getSchemaName() {
-		return SCHEMA_NAME;
-	}
-
-	private static final Data data = new Data();
-
-	private Data() {
-		// Singleton
-	}
-
-	public static Data getInstance() {
-		return data;
+		return "SIERRA";
 	}
 
 	@Override
 	protected SchemaData getSchemaLoader() {
 		return new SierraSchemaData();
 	}
-
 }
