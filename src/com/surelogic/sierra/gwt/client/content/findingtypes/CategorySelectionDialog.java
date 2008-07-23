@@ -10,7 +10,6 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.surelogic.sierra.gwt.client.data.Category;
-import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.data.cache.Cache;
 import com.surelogic.sierra.gwt.client.data.cache.CacheListener;
 import com.surelogic.sierra.gwt.client.data.cache.CacheListenerAdapter;
@@ -91,12 +90,6 @@ public class CategorySelectionDialog extends FormDialog {
 			}
 		}
 		return cats;
-	}
-
-	@Override
-	protected void doOkClick() {
-		setStatus(Status.success());
-		hide();
 	}
 
 }

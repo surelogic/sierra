@@ -111,5 +111,8 @@ public abstract class FormDialog extends DialogBox {
 
 	protected abstract HasFocus getInitialFocus();
 
-	protected abstract void doOkClick();
+	protected void doOkClick() {
+		setStatus(Status.success());
+		hide();
+	}
 }

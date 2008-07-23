@@ -19,7 +19,6 @@ import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.data.Category;
 import com.surelogic.sierra.gwt.client.data.FindingTypeFilter;
 import com.surelogic.sierra.gwt.client.data.FindingTypeFilterComparator;
-import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.data.cache.CategoryCache;
 import com.surelogic.sierra.gwt.client.ui.FormDialog;
 import com.surelogic.sierra.gwt.client.ui.ItemCheckBox;
@@ -67,12 +66,6 @@ public class FindingSelectionDialog extends FormDialog {
 	@Override
 	protected HasFocus getInitialFocus() {
 		return categoryTree;
-	}
-
-	@Override
-	protected void doOkClick() {
-		setStatus(Status.success());
-		hide();
 	}
 
 	public void setCategories(CategoryCache categories, Category currentCategory) {
