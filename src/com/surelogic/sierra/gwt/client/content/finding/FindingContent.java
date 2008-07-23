@@ -1,6 +1,5 @@
 package com.surelogic.sierra.gwt.client.content.finding;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -15,7 +14,6 @@ import com.surelogic.sierra.gwt.client.data.ArtifactOverview;
 import com.surelogic.sierra.gwt.client.data.AuditOverview;
 import com.surelogic.sierra.gwt.client.data.FindingOverview;
 import com.surelogic.sierra.gwt.client.data.ImportanceView;
-import com.surelogic.sierra.gwt.client.data.Result;
 import com.surelogic.sierra.gwt.client.service.ResultCallback;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.ui.HtmlHelper;
@@ -149,15 +147,16 @@ public final class FindingContent extends ContentComposite {
 		location.setHTML(f.getPackageName() + "." + f.getClassName());
 		description.setHTML(f.getSummary());
 		final ImportanceChoice importanceChoice = new ImportanceChoice();
-		final AsyncCallback<Result<FindingOverview>> callback = new AsyncCallback<Result<FindingOverview>>() {
-			public void onFailure(final Throwable caught) {
-				// TODO
+		final ResultCallback<FindingOverview> callback = new ResultCallback<FindingOverview>() {
+
+			@Override
+			protected void doFailure(String message, FindingOverview result) {
+				// TODO Auto-generated method stub
 			}
 
-			public void onSuccess(final Result<FindingOverview> result) {
-				if (result.isSuccess()) {
-					setFinding(result.getResult());
-				}
+			@Override
+			protected void doSuccess(String message, FindingOverview result) {
+				setFinding(result);
 			}
 		};
 		importanceChoice.addChangeListener(new ChangeListener() {
