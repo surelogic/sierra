@@ -15,7 +15,7 @@ import com.surelogic.common.jdbc.Row;
 import com.surelogic.common.jdbc.RowHandler;
 import com.surelogic.common.jdbc.SingleRowHandler;
 import com.surelogic.common.jdbc.StringRowHandler;
-import com.surelogic.sierra.jdbc.server.RevisionException;
+import com.surelogic.sierra.jdbc.RevisionException;
 import com.surelogic.sierra.tool.message.CategoryFilter;
 import com.surelogic.sierra.tool.message.Importance;
 import com.surelogic.sierra.tool.message.ScanFilter;
