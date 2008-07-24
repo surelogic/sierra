@@ -63,7 +63,7 @@ public class ProjectView extends BlockPanel {
 		final Label changeScanFilter = LabelHelper.clickable(new Label(
 				"Change Scan Filter"), new ClickListener() {
 
-			public void onClick(Widget sender) {
+			public void onClick(final Widget sender) {
 				promptForScanFilter();
 			}
 		});
@@ -110,9 +110,10 @@ public class ProjectView extends BlockPanel {
 			final ScanFilterDialog dialog = new ScanFilterDialog();
 			dialog.addPopupListener(new PopupListener() {
 
-				public void onPopupClosed(PopupPanel sender, boolean autoClosed) {
+				public void onPopupClosed(final PopupPanel sender,
+						final boolean autoClosed) {
 					final Status s = dialog.getStatus();
-					if (s != null && s.isSuccess()) {
+					if ((s != null) && s.isSuccess()) {
 						selection.setScanFilter(dialog.getSelectedFilter());
 						ProjectCache.getInstance().save(selection);
 						ProjectCache.getInstance().refresh();
@@ -148,19 +149,27 @@ public class ProjectView extends BlockPanel {
 						}
 					});
 					if (toCompare.size() >= 2) {
-						final List<String> scans = new ArrayList<String>(
+						final ArrayList<String> fixed = new ArrayList<String>(
+								toCompare.size());
+						final ArrayList<String> newF = new ArrayList<String>(
 								toCompare.size());
 						for (final Scan s : toCompare) {
-							scans.add(s.getUuid());
+							fixed.add(0, s.getUuid());
+							newF.add(s.getUuid());
 						}
-						final Report r = new Report();
-						r.setName("CompareProjectScans");
-						r.setTitle("Scan comparison");
-						r.getParameters().add(new Parameter("scans", scans));
+						final Report r1 = new Report();
+						r1.setName("ScanFindingsComparison");
+						r1.setTitle("New Findings");
+						r1.getParameters().add(new Parameter("scans", newF));
+						final Report r2 = new Report();
+						r2.setName("ScanFindingsComparison");
+						r2.setTitle("Fixed Findings");
+						r2.getParameters().add(new Parameter("scans", fixed));
 						diff.clear();
+						diff.add(new ReportTableSection(r1));
+						diff.add(new ReportTableSection(r2));
 						diff.add(ChartBuilder.name("CompareProjectScans").prop(
-								"scans", scans).build());
-						diff.add(new ReportTableSection(r));
+								"scans", fixed).build());
 					} else {
 						box.setStatus(Status.failure("You have selected "
 								+ toCompare.size()
