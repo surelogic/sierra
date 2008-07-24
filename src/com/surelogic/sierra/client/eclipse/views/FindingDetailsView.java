@@ -28,9 +28,9 @@ import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.IWorkbenchPage;
 
-import com.surelogic.adhoc.views.TableUtility;
 import com.surelogic.common.eclipse.AuditTrail;
 import com.surelogic.common.eclipse.SLImages;
+import com.surelogic.common.eclipse.TableUtility;
 import com.surelogic.common.eclipse.ViewUtility;
 import com.surelogic.common.eclipse.dialogs.ErrorDialogUtility;
 import com.surelogic.common.eclipse.logging.SLEclipseStatusUtility;
@@ -38,14 +38,16 @@ import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.images.CommonImages;
 import com.surelogic.sierra.tool.message.Importance;
 
-public class FindingDetailsView extends AbstractSierraView<FindingDetailsMediator> {
+public class FindingDetailsView extends
+		AbstractSierraView<FindingDetailsMediator> {
 
 	public static final String ID = "com.surelogic.sierra.client.eclipse.views.FindingDetailsView";
 
 	private static final String STAMP_TOOLTIP_MESSAGE = "Mark this finding as being examined by me.";
 
 	@Override
-	protected FindingDetailsMediator createMorePartControls(Composite findingPage) {
+	protected FindingDetailsMediator createMorePartControls(
+			Composite findingPage) {
 		GridLayout layout = new GridLayout();
 		findingPage.setLayout(layout);
 		GridData layoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
@@ -149,7 +151,8 @@ public class FindingDetailsView extends AbstractSierraView<FindingDetailsMediato
 		} catch (SWTError e) {
 			final int errNo = 26;
 			final String msg = I18N.err(errNo);
-			final IStatus reason = SLEclipseStatusUtility.createErrorStatus(errNo, msg, e);
+			final IStatus reason = SLEclipseStatusUtility.createErrorStatus(
+					errNo, msg, e);
 			ErrorDialogUtility.open(null, "Browser Failure", reason);
 		}
 		synopsisSash.setWeights(new int[] { 50, 50 });
@@ -184,7 +187,8 @@ public class FindingDetailsView extends AbstractSierraView<FindingDetailsMediato
 				final Point size = auditPane.getSize();
 				final Image image;
 				if (size.y < 250) {
-					image = SLImages.getImage(CommonImages.IMG_SIERRA_STAMP_SMALL);
+					image = SLImages
+							.getImage(CommonImages.IMG_SIERRA_STAMP_SMALL);
 				} else {
 					image = SLImages.getImage(CommonImages.IMG_SIERRA_STAMP);
 				}
@@ -209,7 +213,8 @@ public class FindingDetailsView extends AbstractSierraView<FindingDetailsMediato
 
 		final Button highButton = new Button(importanceGroup, SWT.RADIO);
 		highButton.setText("High");
-		highButton.setImage(SLImages.getImage(CommonImages.IMG_ASTERISK_ORANGE_75));
+		highButton.setImage(SLImages
+				.getImage(CommonImages.IMG_ASTERISK_ORANGE_75));
 		highButton.setToolTipText("A serious issue\u2014need to handle soon");
 		highButton.setData(Importance.HIGH);
 
@@ -222,7 +227,8 @@ public class FindingDetailsView extends AbstractSierraView<FindingDetailsMediato
 
 		final Button lowButton = new Button(importanceGroup, SWT.RADIO);
 		lowButton.setText("Low");
-		lowButton.setImage(SLImages.getImage(CommonImages.IMG_ASTERISK_ORANGE_25));
+		lowButton.setImage(SLImages
+				.getImage(CommonImages.IMG_ASTERISK_ORANGE_25));
 		lowButton.setToolTipText("A minor issue\u2014handle later if at all");
 		lowButton.setData(Importance.LOW);
 
@@ -310,12 +316,12 @@ public class FindingDetailsView extends AbstractSierraView<FindingDetailsMediato
 
 		artifactTab.setControl(artifactsPane);
 
-		return new FindingDetailsMediator(this, findingPage, 
-				summaryIcon, summaryText, folder, synopsisTab,
-				synopsisSash, synopsisAudit, findingSynopsis, locationTree,
-				detailsText, auditTab, quickAudit, criticalButton, highButton,
-				mediumButton, lowButton, irrelevantButton, commentText,
-				commentButton, scrollingLabelComposite, artifactTab, artifacts);
+		return new FindingDetailsMediator(this, findingPage, summaryIcon,
+				summaryText, folder, synopsisTab, synopsisSash, synopsisAudit,
+				findingSynopsis, locationTree, detailsText, auditTab,
+				quickAudit, criticalButton, highButton, mediumButton,
+				lowButton, irrelevantButton, commentText, commentButton,
+				scrollingLabelComposite, artifactTab, artifacts);
 	}
 
 	public static void findingSelected(long findingID, boolean moveFocus) {
@@ -323,10 +329,11 @@ public class FindingDetailsView extends AbstractSierraView<FindingDetailsMediato
 		if (moveFocus) {
 			view = (FindingDetailsView) ViewUtility.showView(ID);
 		} else {
-			view = (FindingDetailsView) ViewUtility.showView(ID, null, IWorkbenchPage.VIEW_VISIBLE);
+			view = (FindingDetailsView) ViewUtility.showView(ID, null,
+					IWorkbenchPage.VIEW_VISIBLE);
 		}
 		if (view != null) {
-		  view.f_mediator.asyncQueryAndShow(findingID, moveFocus);
+			view.f_mediator.asyncQueryAndShow(findingID, moveFocus);
 		}
 	}
 }

@@ -7,7 +7,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 
-import com.surelogic.adhoc.views.TableUtility;
+import com.surelogic.common.eclipse.TableUtility;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
 
 public final class SynchronizeView extends
