@@ -14,7 +14,7 @@ import org.apache.commons.lang.SystemUtils;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.types.*;
 
-import com.surelogic.common.jobs.SLProgressMonitor;
+import com.surelogic.common.jobs.*;
 import com.surelogic.sierra.tool.message.*;
 import com.surelogic.sierra.tool.targets.*;
 
@@ -58,29 +58,27 @@ public class LocalTool extends AbstractTool {
   public Set<String> getArtifactTypes() {
     return Collections.emptySet();
   }
-  
-  public IToolInstance create(final Config config, final SLProgressMonitor monitor) {
-    return new LocalInstance(debug, config, monitor);
+  @Override
+  public IToolInstance create(final Config config) {
+    return new LocalInstance(debug, config);
   }
   
-  public IToolInstance create(ArtifactGenerator generator, SLProgressMonitor monitor) {
+  public IToolInstance create(ArtifactGenerator generator) {
     throw new UnsupportedOperationException("Generators can't be sent remotely");
   }
   
-  protected IToolInstance create(final ArtifactGenerator generator, 
-      final SLProgressMonitor monitor, boolean close) {
+  protected IToolInstance create(final ArtifactGenerator generator, boolean close) {
     throw new UnsupportedOperationException("Generators can't be sent remotely");   
   }
   
   private static class LocalInstance extends LocalTool implements IToolInstance {
     final Config config;    
-    final SLProgressMonitor monitor;
     final TestCode testCode;
+    final SLStatus.Builder status = new SLStatus.Builder();
     
-    LocalInstance(boolean debug, Config c, SLProgressMonitor mon) {
-    	super(debug);
+    LocalInstance(boolean debug, Config c) {
+      super(debug);
       config = c;
-      monitor = mon;
       testCode = getTestCode(c.getTestCode());
     }
 
@@ -96,12 +94,7 @@ public class LocalTool extends AbstractTool {
       // TODO Auto-generated method stub
       return null;
     }
-
-    public SLProgressMonitor getProgressMonitor() {
-      // TODO Auto-generated method stub
-      return null;
-    }
-
+    
     public void reportError(String msg, Throwable t) {
       // TODO Auto-generated method stub
       
@@ -332,7 +325,7 @@ public class LocalTool extends AbstractTool {
     
     private String currentTask = "(unknown)";
     
-    public void run() {
+    public SLStatus run(SLProgressMonitor monitor) {
       final boolean debug = LOG.isLoggable(Level.FINE);
       CommandlineJava cmdj   = new CommandlineJava();
       setupJVM(debug, cmdj);
@@ -450,6 +443,8 @@ public class LocalTool extends AbstractTool {
       } catch (Exception e) {
         throw new RuntimeException(e);
       }
+      // FIX status not built if exception thrown
+      return status.build();
     }
 
     private void cancel(Process p, final PrintStream pout) {
@@ -516,7 +511,7 @@ public class LocalTool extends AbstractTool {
         System.out.println(line);
       }
       final String errMsg = sb.toString();
-      monitor.error(errMsg);
+      status.add(SLStatus.createErrorStatus(-1, errMsg));
       return errMsg;
     }
     

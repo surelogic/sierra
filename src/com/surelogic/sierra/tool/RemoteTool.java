@@ -15,6 +15,7 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 
 import com.surelogic.common.jobs.SLProgressMonitor;
+import com.surelogic.common.jobs.SLStatus;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.tool.message.*;
 import com.surelogic.sierra.tool.targets.*;
@@ -28,16 +29,15 @@ public class RemoteTool extends AbstractTool {
     return Collections.emptySet();
   }
   
-  public IToolInstance create(final Config config, final SLProgressMonitor monitor) {
+  public IToolInstance create(final Config config) {
     throw new UnsupportedOperationException("Generators can't be sent remotely");
   }
   
-  public IToolInstance create(ArtifactGenerator generator, SLProgressMonitor monitor) {
+  public IToolInstance create(ArtifactGenerator generator) {
     throw new UnsupportedOperationException("Generators can't be sent remotely");
   }
 
-  protected IToolInstance create(final ArtifactGenerator generator, 
-      final SLProgressMonitor monitor, boolean close) {
+  protected IToolInstance create(final ArtifactGenerator generator, boolean close) {
     throw new UnsupportedOperationException("Generators can't be sent remotely");   
   }
   
@@ -133,7 +133,7 @@ public class RemoteTool extends AbstractTool {
       final Monitor mon = new Monitor(System.out);
       checkInput(br, mon, "Created monitor");
       
-      IToolInstance ti = t.create(config, mon); 
+      IToolInstance ti = t.create(config); 
       checkInput(br, mon, "Created tool instance");
 
       switch (testCode) {
@@ -144,14 +144,28 @@ public class RemoteTool extends AbstractTool {
         case EXCEPTION:        
           throw new Exception("Testing scan exception");
       }
-      ti.run();
+      final SLStatus status = ti.run(mon);      
       long end = System.currentTimeMillis();
+      processStatus(mon, status);
       checkInput(br, mon, "Done scanning: "+(end-start)+" ms");      
     } catch (Throwable e) {
       outputFailure(System.out, null, e);
       System.exit(- SierraToolConstants.ERROR_SCAN_FAILED);
     }
   }
+
+  private static void processStatus(Monitor mon, SLStatus status) {
+	  // Only look at the leaves
+	  if (status.getChildren().isEmpty()) {
+		  if (status.getException() == null) {
+			  mon.error(status.getMessage());
+		  } else {
+			  mon.error(status.getMessage(), status.getException());
+		  }		  
+	  } else for(SLStatus c : status.getChildren()) {
+		  processStatus(mon, c);
+	  }
+  }	
 
   private static void outputFailure(PrintStream out, String msg, Throwable e) {
     StackTraceElement[] trace = e.getStackTrace();

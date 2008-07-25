@@ -3,7 +3,7 @@ package com.surelogic.sierra.tool;
 import java.net.*;
 import java.util.*;
 
-import com.surelogic.common.jobs.SLProgressMonitor;
+import com.surelogic.common.jobs.*;
 import com.surelogic.sierra.tool.message.ArtifactGenerator;
 import com.surelogic.sierra.tool.message.Config;
 import com.surelogic.sierra.tool.targets.IToolTarget;
@@ -11,7 +11,6 @@ import com.surelogic.sierra.tool.targets.IToolTarget;
 public abstract class AbstractToolInstance implements IToolInstance {
   private final ITool tool;
   protected final ArtifactGenerator generator;  
-  protected final SLProgressMonitor monitor;
   private final List<IToolTarget> srcTargets = new ArrayList<IToolTarget>();
   private final List<IToolTarget> binTargets = new ArrayList<IToolTarget>();
   private final List<IToolTarget> auxTargets = new ArrayList<IToolTarget>();
@@ -20,22 +19,17 @@ public abstract class AbstractToolInstance implements IToolInstance {
   private final boolean closeWhenDone;
   private final Map<String,String> options = new HashMap<String,String>();
   protected final boolean debug;
+  protected final SLStatus.Builder status = new SLStatus.Builder();
   
-  protected AbstractToolInstance(boolean debug, ITool t, ArtifactGenerator gen, SLProgressMonitor m,
-          boolean close) {
+  protected AbstractToolInstance(boolean debug, ITool t, ArtifactGenerator gen, boolean close) {
     tool = t;
     generator = gen;
-    monitor = m;
     closeWhenDone = close;
     this.debug = debug;
   }
   
   public final ArtifactGenerator getGenerator() {
     return generator;
-  }
-  
-  public final SLProgressMonitor getProgressMonitor() {
-    return monitor;
   }
   
   private void checkArgs(Object arg) {
@@ -85,7 +79,7 @@ public abstract class AbstractToolInstance implements IToolInstance {
     return paths;
   }
   
-  public final void run() {
+  public final SLStatus run(SLProgressMonitor monitor) {
     if (done) {
       throw new IllegalArgumentException("Tool instance cannot be reused");
     }
@@ -102,7 +96,7 @@ public abstract class AbstractToolInstance implements IToolInstance {
     	}
     }
     try {
-      execute();
+      status.add(execute(monitor));
     }
     catch(Exception e) {
       reportError("Exception during run()", e);
@@ -114,11 +108,12 @@ public abstract class AbstractToolInstance implements IToolInstance {
       generator.finished(monitor);
       monitor.done();
     }
+    return status.build();
   }
 
   public final void reportError(String msg) {
     generator.error().message(msg).tool(getName());
-    monitor.error(msg);  
+    status.add(SLStatus.createErrorStatus(-1, msg));  
   }
   
   public final void reportError(String msg, Throwable e) {
@@ -129,10 +124,10 @@ public abstract class AbstractToolInstance implements IToolInstance {
       sb.append("\tat ").append(ste).append('\n');
     }
     generator.error().message(sb.toString()).tool(getName());
-    monitor.error(msg, e);
+    status.add(SLStatus.createErrorStatus(-1, msg, e));
   }
   
-  protected abstract void execute() throws Exception;    
+  protected abstract SLStatus execute(SLProgressMonitor mon) throws Exception;    
   
   /**************** ITool **********************/
   public final String getHtmlDescription() {
@@ -155,11 +150,11 @@ public abstract class AbstractToolInstance implements IToolInstance {
     return tool.getArtifactTypes();
   }
   
-  public final IToolInstance create(final Config config, SLProgressMonitor m) {
+  public final IToolInstance create(final Config config) {
     throw new UnsupportedOperationException("Instances can't create other instances");
   }
   
-  public final IToolInstance create(final ArtifactGenerator generator, SLProgressMonitor m) {
+  public final IToolInstance create(final ArtifactGenerator generator) {
     throw new UnsupportedOperationException("Instances can't create other instances");
   }
   

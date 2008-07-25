@@ -16,6 +16,7 @@ import net.sourceforge.pmd.renderers.Renderer;
 
 import com.surelogic.common.*;
 import com.surelogic.common.jobs.SLProgressMonitor;
+import com.surelogic.common.jobs.SLStatus;
 import com.surelogic.sierra.tool.*;
 import com.surelogic.sierra.tool.message.*;
 import com.surelogic.sierra.tool.message.ArtifactGenerator.*;
@@ -26,11 +27,10 @@ public abstract class AbstractPMDTool extends AbstractTool {
 		super("PMD", version, "PMD", "", debug);
 	}
 
-	protected final IToolInstance create(final ArtifactGenerator generator,
-			final SLProgressMonitor monitor, boolean close) {
-		return new AbstractToolInstance(debug, this, generator, monitor, close) {
+	protected final IToolInstance create(final ArtifactGenerator generator, boolean close) {
+		return new AbstractToolInstance(debug, this, generator, close) {
 			@Override
-			protected void execute() throws Exception {
+			protected SLStatus execute(SLProgressMonitor monitor) throws Exception {
 				int cpus = Runtime.getRuntime().availableProcessors();
 				String encoding = new InputStreamReader(System.in)
 						.getEncoding();
@@ -93,6 +93,7 @@ public abstract class AbstractPMDTool extends AbstractTool {
 						renderers, rulesets, false, "", encoding,
 						excludeMarker, cl);
 				auxPathFile.delete();
+				return SLStatus.OK_STATUS;
 			}
 		};
 	}

@@ -3,7 +3,7 @@ package com.surelogic.sierra.tool;
 import java.net.URI;
 import java.util.*;
 
-import com.surelogic.common.jobs.SLProgressMonitor;
+import com.surelogic.common.jobs.*;
 import com.surelogic.sierra.tool.message.ArtifactGenerator;
 import com.surelogic.sierra.tool.targets.IToolTarget;
 
@@ -18,9 +18,8 @@ public class MultiTool extends AbstractTool {
     return Collections.emptySet();
   }
   
-  protected IToolInstance create(final ArtifactGenerator generator, 
-      final SLProgressMonitor monitor, boolean close) {
-    return new Instance(debug, this, generator, monitor, close);
+  protected IToolInstance create(final ArtifactGenerator generator, boolean close) {
+    return new Instance(debug, this, generator, close);
   }
   
   public void addTool(ITool t) {
@@ -34,37 +33,41 @@ public class MultiTool extends AbstractTool {
     private IToolInstance first = null;
 
     private final ArtifactGenerator generator;
-    private final SLProgressMonitor monitor;
     private final boolean closeWhenDone;
     
-    Instance(boolean debug, MultiTool mt, ArtifactGenerator gen, SLProgressMonitor mon, boolean close) {
-    	super(debug);
+    Instance(boolean debug, MultiTool mt, ArtifactGenerator gen, boolean close) {
+      super(debug);
       for(ITool tool : mt.tools) {
         this.tools.add(tool);
         
-        IToolInstance i = tool.create(gen, mon);
+        IToolInstance i = tool.create(gen);
         instances.add(i);
         if (first == null) {
           first = i;
         }
       }
       generator = gen;
-      monitor = mon;
       closeWhenDone = close;
-      
+    }
+
+    private void init(SLProgressMonitor mon) {
       mon.beginTask("Multiple tools", 100);
       mon.subTask("Setting up scans");
     }
-
-    public void run() {                 
+    
+    public SLStatus run(SLProgressMonitor mon) {     
+      SLStatus.Builder status = new SLStatus.Builder();
+      init(mon);
+      
       for(IToolInstance i : instances) {
         System.out.println("run() on "+i.getName());        
-        i.run();
+        status.add(i.run(mon));
       }
       if (closeWhenDone) {
-        generator.finished(monitor);
-        monitor.done();
+        generator.finished(mon);
+        mon.done();
       }
+      return status.build();
     }
 
     public void addTarget(IToolTarget target) {
@@ -81,10 +84,6 @@ public class MultiTool extends AbstractTool {
 
     public ArtifactGenerator getGenerator() {
       return first != null ? first.getGenerator() : null;
-    }
-
-    public SLProgressMonitor getProgressMonitor() {
-      return first != null ? first.getProgressMonitor() : null;
     }
 
     public void reportError(String msg, Throwable t) {

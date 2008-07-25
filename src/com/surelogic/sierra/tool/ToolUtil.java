@@ -6,7 +6,7 @@ import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.surelogic.common.jobs.SLProgressMonitor;
+import com.surelogic.common.jobs.*;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.tool.findbugs.*;
 import com.surelogic.sierra.tool.message.Config;
@@ -36,7 +36,7 @@ public class ToolUtil {
     return t;
   }
   
-  public static void scan(Config config, SLProgressMonitor mon, boolean runRemotely) {    
+  public static SLStatus scan(Config config, SLProgressMonitor mon, boolean runRemotely) {    
     final boolean fineIsLoggable = LOG.isLoggable(Level.FINE);
     final ITool t = ToolUtil.create(config, runRemotely);                           
     
@@ -45,11 +45,11 @@ public class ToolUtil {
       LOG.fine("Java version: "+config.getJavaVersion());
       LOG.fine("Rules file: "+config.getPmdRulesFile());
     }
-    IToolInstance ti = t.create(config, mon);     
+    IToolInstance ti = t.create(config);     
     if (fineIsLoggable) {
       LOG.fine("Created "+ti.getClass().getSimpleName());
     }
-    ti.run();
+    return ti.run(mon);
   }
   
   public static String getTimeStamp() {

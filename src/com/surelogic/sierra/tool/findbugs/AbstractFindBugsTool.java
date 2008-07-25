@@ -6,7 +6,7 @@ import java.util.*;
 import java.util.logging.Level;
 
 import com.surelogic.common.*;
-import com.surelogic.common.jobs.SLProgressMonitor;
+import com.surelogic.common.jobs.*;
 import com.surelogic.sierra.tool.*;
 import com.surelogic.sierra.tool.message.*;
 import com.surelogic.sierra.tool.message.ArtifactGenerator.*;
@@ -24,16 +24,15 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
     this.fbDir = fbDir;
   }
   
-  protected IToolInstance create(final ArtifactGenerator generator, 
-                                 final SLProgressMonitor monitor, boolean close) {
+  protected IToolInstance create(final ArtifactGenerator generator, boolean close) {
     System.setProperty("findbugs.home", fbDir);
-    monitor.subTask("Set FB home to "+fbDir);
+    //monitor.subTask("Set FB home to "+fbDir);
     
-    return new AbstractToolInstance(debug, this, generator, monitor, close) {     
+    return new AbstractToolInstance(debug, this, generator, close) {     
       final IFindBugsEngine engine = createEngine();
       
       @Override
-      protected void execute() throws Exception { 
+      protected SLStatus execute(SLProgressMonitor monitor) throws Exception { 
         final Project p = createProject();
         engine.setProject(p);
         engine.setUserPreferences(UserPreferences.getUserPreferences()); 
@@ -41,7 +40,7 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
         engine.setDetectorFactoryCollection(DetectorFactoryCollection.instance());
         //engine.setClassScreener(new Screener());
         
-        Monitor mon = new Monitor(this); 
+        Monitor mon = new Monitor(this, monitor); 
         //engine.addClassObserver(mon);
         engine.setBugReporter(mon);
         engine.setProgressCallback(mon);        
@@ -56,6 +55,7 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
             // Ignored
           }
         }
+        return SLStatus.OK_STATUS;
       }
             
       protected Project createProject() {
@@ -158,10 +158,10 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
     	return true;
     }
     
-    public Monitor(AbstractToolInstance ti) {
+    public Monitor(AbstractToolInstance ti, SLProgressMonitor mon) {
       tool = ti;
       generator = ti.getGenerator();
-      monitor = ti.getProgressMonitor();
+      monitor = mon;
     }
 
     /* ******************** For FindBugsProgress ********************* */

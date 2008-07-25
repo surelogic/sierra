@@ -11,7 +11,7 @@ import java.util.logging.Level;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 
-import com.surelogic.common.jobs.SLProgressMonitor;
+import com.surelogic.common.jobs.*;
 import com.surelogic.sierra.metrics.Reckoner;
 import com.surelogic.sierra.metrics.model.Metrics;
 import com.surelogic.sierra.tool.AbstractTool;
@@ -30,11 +30,10 @@ public class Reckoner1_0Tool extends AbstractTool {
     return Collections.emptySet();
   }
   
-  protected IToolInstance create(final ArtifactGenerator generator, 
-      final SLProgressMonitor monitor, boolean close) {
-    return new AbstractToolInstance(debug, this, generator, monitor, close) {
+  protected IToolInstance create(final ArtifactGenerator generator, boolean close) {
+    return new AbstractToolInstance(debug, this, generator, close) {
       @Override
-      protected void execute() throws Exception {     
+      protected SLStatus execute(SLProgressMonitor monitor) throws Exception {     
     	final boolean debug = LOG.isLoggable(Level.FINE);
         final Reckoner r = new Reckoner();
 
@@ -57,7 +56,7 @@ public class Reckoner1_0Tool extends AbstractTool {
             try {
             	Metrics m = r.countLOC(f);
             	if (m == null) {
-            		monitor.error("Problem reading "+path);
+            		status.add(SLStatus.createWarningStatus(-1, "Problem reading "+path));
             		continue;
             	}
             	if (debug) {
@@ -65,15 +64,16 @@ public class Reckoner1_0Tool extends AbstractTool {
             	}
         		final String key = m.getPackageName()+','+m.getClassName();
         		if (processed.contains(key)) {
-        		  monitor.error("Duplicate metric found for "+key);
+        			status.add(SLStatus.createWarningStatus(-1, "Duplicate metric found for "+key));
         		}
             	
             	buildMetrics(m);
             	monitor.worked(1);
             } catch (Exception e) {
-            	monitor.error("Unexpected problem with "+path, e);
+            	status.add(SLStatus.createWarningStatus(-1, "Unexpected problem with "+path, e));
             }
         }
+        return status.build();
       }
 
       private void buildMetrics(Metrics m) {

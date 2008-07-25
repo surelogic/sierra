@@ -42,10 +42,10 @@ public interface ITool {
   /**
    * Creates an instance of the tool to do one scan
    */
-  IToolInstance create(Config config, SLProgressMonitor monitor);
+  IToolInstance create(Config config);
   
   /**
    * Creates an instance of the tool to do one scan
    */
-  IToolInstance create(ArtifactGenerator generator, SLProgressMonitor monitor);
+  IToolInstance create(ArtifactGenerator generator);
 }

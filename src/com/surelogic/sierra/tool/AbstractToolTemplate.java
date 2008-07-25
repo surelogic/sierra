@@ -1,6 +1,6 @@
 package com.surelogic.sierra.tool;
 
-import com.surelogic.common.jobs.SLProgressMonitor;
+import com.surelogic.common.jobs.*;
 import com.surelogic.sierra.tool.message.ArtifactGenerator;
 
 /**
@@ -14,12 +14,11 @@ public abstract class AbstractToolTemplate extends AbstractTool {
   }
 
   @Override
-  protected IToolInstance create(ArtifactGenerator generator,
-                                 SLProgressMonitor monitor, boolean close) {
-    return new AbstractToolInstance(debug, this, generator, monitor, close) {
+  protected IToolInstance create(ArtifactGenerator generator, boolean close) {
+    return new AbstractToolInstance(debug, this, generator, close) {
       @Override
-      protected void execute() throws Exception {      
-        // Nothing to do yet
+      protected SLStatus execute(SLProgressMonitor mon) throws Exception {      
+    	  throw new UnsupportedOperationException("Nothing to do yet");
       }
     };
   }
