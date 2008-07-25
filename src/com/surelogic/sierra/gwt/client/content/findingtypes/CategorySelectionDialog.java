@@ -22,11 +22,12 @@ import com.surelogic.sierra.gwt.client.ui.dialog.FormDialog;
 public class CategorySelectionDialog extends FormDialog {
 	private final VerticalPanel categoryPanel = new VerticalPanel();
 
+	public CategorySelectionDialog() {
+		super("Select Categories", "500px");
+	}
+
 	@Override
 	protected void doInitialize(FlexTable contentTable) {
-		setText("Select Categories");
-		setWidth("500px");
-
 		categoryPanel.setWidth("100%");
 
 		final ScrollPanel categoryScroller = new ScrollPanel(categoryPanel);

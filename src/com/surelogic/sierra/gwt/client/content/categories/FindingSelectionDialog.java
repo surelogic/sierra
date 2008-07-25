@@ -28,11 +28,12 @@ public class FindingSelectionDialog extends FormDialog {
 	private final Tree categoryTree = new Tree();
 	private final TextBox searchBox = new TextBox();
 
+	public FindingSelectionDialog() {
+		super("Select Categories and/or Findings", "600px");
+	}
+
 	@Override
 	protected void doInitialize(FlexTable contentTable) {
-		setText("Select Categories and/or Findings");
-		setWidth("600px");
-
 		final FlexTable searchTable = new FlexTable();
 		searchTable.setWidth("50%");
 		searchTable.setText(0, 0, "Search");

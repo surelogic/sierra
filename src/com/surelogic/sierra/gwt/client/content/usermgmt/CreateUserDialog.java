@@ -17,9 +17,12 @@ public class CreateUserDialog extends FormDialog {
 	private final PasswordTextBox passwordAgain = new PasswordTextBox();
 	private final CheckBox isAdmin = new CheckBox();
 
+	public CreateUserDialog() {
+		super("Create a user", null);
+	}
+
 	@Override
 	protected void doInitialize(FlexTable contentTable) {
-		setText("Create a user");
 		addField("User Name:", userName);
 		addField("Password:", password);
 		addField("Confirm Password:", passwordAgain);

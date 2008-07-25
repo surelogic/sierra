@@ -20,11 +20,12 @@ public class ScanFilterDialog extends FormDialog {
 	private final VerticalPanel scanFilterPanel = new VerticalPanel();
 	private final SelectionTracker<ItemLabel<ScanFilter>> selectionTracker = new SelectionTracker<ItemLabel<ScanFilter>>();
 
+	public ScanFilterDialog() {
+		super("Select Scan Filter", "500px");
+	}
+
 	@Override
 	protected void doInitialize(FlexTable contentTable) {
-		setText("Select Scan Filter");
-		setWidth("500px");
-
 		scanFilterPanel.setWidth("100%");
 
 		final ScrollPanel scanFilterScroller = new ScrollPanel(scanFilterPanel);

@@ -9,10 +9,12 @@ public class CreateServerDialog extends FormDialog {
 
 	TextBox label = new TextBox();
 
+	public CreateServerDialog() {
+		super("Choose A Label For The Server Location", "600px");
+	}
+
 	@Override
 	protected void doInitialize(final FlexTable contentTable) {
-		setText("Choose A Label For The Server Location");
-		setWidth("600px");
 		addField("Label", label);
 	}
 

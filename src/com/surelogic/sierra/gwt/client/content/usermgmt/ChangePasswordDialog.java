@@ -17,6 +17,10 @@ public class ChangePasswordDialog extends FormDialog {
 	private final PasswordTextBox passwordAgain = new PasswordTextBox();
 	private UserAccount user;
 
+	public ChangePasswordDialog() {
+		super("Change Password", null);
+	}
+
 	public void setUserAccount(UserAccount user) {
 		this.user = user;
 
@@ -30,7 +34,6 @@ public class ChangePasswordDialog extends FormDialog {
 
 	@Override
 	protected void doInitialize(FlexTable contentTable) {
-		setText("Change Password");
 		addField("Your Password:", userPassword);
 		addField(userPasswordTitle, password);
 		addField("Confirm Password:", passwordAgain);

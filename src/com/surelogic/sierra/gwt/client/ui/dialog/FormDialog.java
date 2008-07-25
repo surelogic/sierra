@@ -20,8 +20,13 @@ public abstract class FormDialog extends DialogBox {
 	private boolean initialized;
 	private Status status;
 
-	public FormDialog() {
+	public FormDialog(String title, String width) {
 		super();
+		setText(title);
+		if (width != null) {
+			setWidth(width);
+		}
+
 		rootPanel.setWidth("100%");
 
 		errorMessage.setWidth("100%");
