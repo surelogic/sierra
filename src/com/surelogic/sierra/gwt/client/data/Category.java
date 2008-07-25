@@ -9,7 +9,7 @@ import java.util.Set;
 import com.surelogic.sierra.gwt.client.data.cache.Cacheable;
 import com.surelogic.sierra.gwt.client.util.LangUtil;
 
-public class Category implements Serializable, Cacheable {
+public class Category implements Serializable, Cacheable, Comparable<Category> {
 	private static final long serialVersionUID = 7604533742268537846L;
 
 	private Set<Category> parents;
@@ -192,6 +192,10 @@ public class Category implements Serializable, Cacheable {
 			return LangUtil.equals(uuid, ((Category) obj).uuid);
 		}
 		return false;
+	}
+
+	public int compareTo(Category o) {
+		return getName().compareTo(o.getName());
 	}
 
 	public static class ScanFilterInfo implements Serializable {

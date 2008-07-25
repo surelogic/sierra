@@ -18,7 +18,6 @@ import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.data.Category;
 import com.surelogic.sierra.gwt.client.data.FindingTypeFilter;
-import com.surelogic.sierra.gwt.client.data.FindingTypeFilterComparator;
 import com.surelogic.sierra.gwt.client.data.cache.CategoryCache;
 import com.surelogic.sierra.gwt.client.ui.ItemCheckBox;
 import com.surelogic.sierra.gwt.client.ui.dialog.FormDialog;
@@ -79,8 +78,7 @@ public class FindingSelectionDialog extends FormDialog {
 				catCheck.addClickListener(new CategoryCheckListener(catItem));
 				final List<FindingTypeFilter> sortedFindings = new ArrayList<FindingTypeFilter>(
 						cat.getEntries());
-				Collections.sort(sortedFindings,
-						new FindingTypeFilterComparator());
+				Collections.sort(sortedFindings);
 				for (final FindingTypeFilter finding : sortedFindings) {
 					final ItemCheckBox<FindingTypeFilter> findingCheck = new ItemCheckBox<FindingTypeFilter>(
 							finding.getName(), finding);

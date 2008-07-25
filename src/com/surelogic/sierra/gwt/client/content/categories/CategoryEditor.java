@@ -13,9 +13,7 @@ import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.surelogic.sierra.gwt.client.data.Category;
-import com.surelogic.sierra.gwt.client.data.CategoryComparator;
 import com.surelogic.sierra.gwt.client.data.FindingTypeFilter;
-import com.surelogic.sierra.gwt.client.data.FindingTypeFilterComparator;
 import com.surelogic.sierra.gwt.client.ui.BlockPanel;
 import com.surelogic.sierra.gwt.client.ui.ItemCheckBox;
 
@@ -120,8 +118,7 @@ public class CategoryEditor extends BlockPanel {
 			// add the findings that belong to the selected category
 			final List<FindingTypeFilter> catFindings = new ArrayList<FindingTypeFilter>(
 					category.getEntries());
-			final FindingTypeFilterComparator filterComparator = new FindingTypeFilterComparator();
-			Collections.sort(catFindings, filterComparator);
+			Collections.sort(catFindings);
 
 			for (final FindingTypeFilter finding : catFindings) {
 				if (!category.parentContains(finding)) {
@@ -136,7 +133,7 @@ public class CategoryEditor extends BlockPanel {
 					.getExcludedEntries();
 			final List<Category> sortedParents = new ArrayList<Category>(
 					category.getParents());
-			Collections.sort(sortedParents, new CategoryComparator());
+			Collections.sort(sortedParents);
 			for (final Category parent : sortedParents) {
 				parentCategories.add(parent);
 
@@ -149,7 +146,7 @@ public class CategoryEditor extends BlockPanel {
 
 				final List<FindingTypeFilter> parentFindings = new ArrayList<FindingTypeFilter>(
 						parent.getIncludedEntries());
-				Collections.sort(parentFindings, filterComparator);
+				Collections.sort(parentFindings);
 				for (final FindingTypeFilter finding : parentFindings) {
 					findingsPanel.add(createFindingUI(finding, excluded
 							.contains(finding)));

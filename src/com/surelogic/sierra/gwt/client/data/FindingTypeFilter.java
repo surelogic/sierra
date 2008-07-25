@@ -4,7 +4,8 @@ import java.io.Serializable;
 
 import com.surelogic.sierra.gwt.client.data.cache.Cacheable;
 
-public class FindingTypeFilter implements Serializable, Cacheable {
+public class FindingTypeFilter implements Serializable, Cacheable,
+		Comparable<FindingTypeFilter> {
 	private static final long serialVersionUID = 47046359782973349L;
 
 	private String name;
@@ -46,7 +47,7 @@ public class FindingTypeFilter implements Serializable, Cacheable {
 	}
 
 	public FindingTypeFilter copy() {
-		FindingTypeFilter copy = new FindingTypeFilter();
+		final FindingTypeFilter copy = new FindingTypeFilter();
 		copy.name = name;
 		copy.filtered = filtered;
 		copy.uuid = uuid;
@@ -81,4 +82,7 @@ public class FindingTypeFilter implements Serializable, Cacheable {
 		return true;
 	}
 
+	public int compareTo(FindingTypeFilter o) {
+		return getName().compareTo(o.getName());
+	}
 }
