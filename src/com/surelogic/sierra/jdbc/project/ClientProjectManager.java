@@ -7,8 +7,8 @@ import java.sql.SQLException;
 import java.util.Collections;
 import java.util.List;
 
-import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.common.jdbc.JDBCUtils;
+import com.surelogic.common.jobs.SLProgressMonitor;
 import com.surelogic.sierra.jdbc.finding.ClientFindingManager;
 import com.surelogic.sierra.jdbc.record.ProjectRecord;
 import com.surelogic.sierra.tool.message.ServerInfoRequest;

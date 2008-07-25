@@ -14,9 +14,9 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.Map.Entry;
 
-import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.common.jdbc.DBType;
 import com.surelogic.common.jdbc.JDBCUtils;
+import com.surelogic.common.jobs.SLProgressMonitor;
 import com.surelogic.sierra.jdbc.record.CompilationUnitRecord;
 import com.surelogic.sierra.jdbc.record.ScanRecord;
 import com.surelogic.sierra.jdbc.tool.FindingFilter;
