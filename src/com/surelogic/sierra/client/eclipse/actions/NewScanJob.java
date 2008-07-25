@@ -11,7 +11,7 @@ import com.surelogic.common.eclipse.SLProgressMonitorWrapper;
 import com.surelogic.common.eclipse.jobs.DatabaseJob;
 import com.surelogic.common.eclipse.logging.SLEclipseStatusUtility;
 import com.surelogic.common.i18n.I18N;
-import com.surelogic.common.jobs.SLProgressMonitor;
+import com.surelogic.common.jobs.*;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.tool.ToolException;
 import com.surelogic.sierra.tool.ToolUtil;
@@ -37,8 +37,9 @@ public class NewScanJob extends WorkspaceJob {
 	public IStatus runInWorkspace(IProgressMonitor monitor) {
 		SLLogger.getLogger().fine(this.getName());
 		final SLProgressMonitor wrapper = new SLProgressMonitorWrapper(monitor);
+		SLStatus status = null;
 		try {
-			ToolUtil.scan(config, wrapper, true);
+			status = ToolUtil.scan(config, wrapper, true);
 
 			if (afterJob != null) {
 				afterJob.schedule();
@@ -48,8 +49,11 @@ public class NewScanJob extends WorkspaceJob {
 				return dealWithException(ex);
 			}
 		}
-		if (wrapper.getFailureTrace() != null && !monitor.isCanceled()) {
-			return dealWithException(wrapper.getFailureTrace());
+		if (status.getException() != null && !monitor.isCanceled()) {
+			return dealWithException(status.getException());
+		}
+		if (status != SLStatus.OK_STATUS) {
+			return SLEclipseStatusUtility.convert(status);
 		}
 		return Status.OK_STATUS;
 	}
