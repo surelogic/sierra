@@ -6,6 +6,7 @@ import java.util.*;
 import java.util.logging.Level;
 
 import com.surelogic.common.*;
+import com.surelogic.common.jobs.SLProgressMonitor;
 import com.surelogic.sierra.tool.*;
 import com.surelogic.sierra.tool.message.*;
 import com.surelogic.sierra.tool.message.ArtifactGenerator.*;

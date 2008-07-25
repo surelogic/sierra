@@ -14,7 +14,7 @@ import org.apache.commons.lang.SystemUtils;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.types.*;
 
-import com.surelogic.common.SLProgressMonitor;
+import com.surelogic.common.jobs.SLProgressMonitor;
 import com.surelogic.sierra.tool.message.*;
 import com.surelogic.sierra.tool.targets.*;
 

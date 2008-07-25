@@ -3,7 +3,7 @@ package com.surelogic.sierra.tool;
 import java.net.URI;
 import java.util.logging.Logger;
 
-import com.surelogic.common.SLProgressMonitor;
+import com.surelogic.common.jobs.SLProgressMonitor;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.tool.analyzer.MessageArtifactFileGenerator;
 import com.surelogic.sierra.tool.message.ArtifactGenerator;

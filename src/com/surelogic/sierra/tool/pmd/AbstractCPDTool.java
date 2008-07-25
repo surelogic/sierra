@@ -7,6 +7,7 @@ import java.util.*;
 import net.sourceforge.pmd.cpd.*;
 
 import com.surelogic.common.*;
+import com.surelogic.common.jobs.SLProgressMonitor;
 import com.surelogic.sierra.tool.AbstractTool;
 import com.surelogic.sierra.tool.AbstractToolInstance;
 import com.surelogic.sierra.tool.IToolInstance;

@@ -11,7 +11,7 @@ import java.util.logging.Level;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 
-import com.surelogic.common.SLProgressMonitor;
+import com.surelogic.common.jobs.SLProgressMonitor;
 import com.surelogic.sierra.metrics.Reckoner;
 import com.surelogic.sierra.metrics.model.Metrics;
 import com.surelogic.sierra.tool.AbstractTool;

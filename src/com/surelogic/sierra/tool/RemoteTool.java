@@ -14,7 +14,7 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 
-import com.surelogic.common.SLProgressMonitor;
+import com.surelogic.common.jobs.SLProgressMonitor;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.tool.message.*;
 import com.surelogic.sierra.tool.targets.*;

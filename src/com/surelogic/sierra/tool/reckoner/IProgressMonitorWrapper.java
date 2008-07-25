@@ -2,7 +2,7 @@ package com.surelogic.sierra.tool.reckoner;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 
-import com.surelogic.common.SLProgressMonitor;
+import com.surelogic.common.jobs.SLProgressMonitor;
 
 /**
  * Copied here from common-eclipse, due to jar versioning differences

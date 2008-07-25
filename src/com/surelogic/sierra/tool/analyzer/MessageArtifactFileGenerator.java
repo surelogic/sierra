@@ -16,8 +16,8 @@ import java.util.logging.Logger;
 import java.util.zip.GZIPOutputStream;
 
 import com.surelogic.common.JavaConstants;
-import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.common.i18n.I18N;
+import com.surelogic.common.jobs.SLProgressMonitor;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.tool.message.Artifact;
 import com.surelogic.sierra.tool.message.AssuranceType;

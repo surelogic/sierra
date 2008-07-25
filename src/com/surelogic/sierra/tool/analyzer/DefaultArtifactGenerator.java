@@ -2,7 +2,7 @@ package com.surelogic.sierra.tool.analyzer;
 
 import java.io.File;
 
-import com.surelogic.common.SLProgressMonitor;
+import com.surelogic.common.jobs.SLProgressMonitor;
 import com.surelogic.sierra.tool.message.ArtifactGenerator;
 import com.surelogic.sierra.tool.message.AssuranceType;
 import com.surelogic.sierra.tool.message.IdentifierType;
