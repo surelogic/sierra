@@ -20,7 +20,6 @@ import com.surelogic.common.jdbc.RowHandler;
 import com.surelogic.common.jdbc.StringResultHandler;
 import com.surelogic.sierra.gwt.SierraServiceServlet;
 import com.surelogic.sierra.gwt.client.data.Category;
-import com.surelogic.sierra.gwt.client.data.CategoryComparator;
 import com.surelogic.sierra.gwt.client.data.FindingType;
 import com.surelogic.sierra.gwt.client.data.FindingTypeFilter;
 import com.surelogic.sierra.gwt.client.data.ImportanceView;
@@ -233,7 +232,7 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 						}
 						final List<Category> values = new ArrayList<Category>(
 								sets.values());
-						Collections.sort(values, new CategoryComparator());
+						Collections.sort(values);
 						return values;
 					}
 				});
