@@ -1,6 +1,6 @@
 package com.surelogic.sierra.tool.message;
 
-import com.surelogic.common.SLProgressMonitor;
+import com.surelogic.common.jobs.SLProgressMonitor;
 
 /**
  * 
