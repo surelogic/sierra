@@ -9,10 +9,10 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.ICompilationUnit;
 
-import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.common.eclipse.SLProgressMonitorWrapper;
 import com.surelogic.common.eclipse.jdt.JavaUtil;
 import com.surelogic.common.eclipse.jobs.DatabaseJob;
+import com.surelogic.common.jobs.SLProgressMonitor;
 import com.surelogic.sierra.client.eclipse.jobs.ScanDocumentUtility;
 import com.surelogic.sierra.client.eclipse.model.ConfigCompilationUnit;
 import com.surelogic.sierra.client.eclipse.model.ConfigGenerator;

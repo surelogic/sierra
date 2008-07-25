@@ -58,7 +58,6 @@ import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.progress.UIJob;
 
-import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.common.eclipse.ImageImageDescriptor;
 import com.surelogic.common.eclipse.JDTUtility;
 import com.surelogic.common.eclipse.SLImages;
@@ -71,6 +70,7 @@ import com.surelogic.common.images.CommonImages;
 import com.surelogic.common.jdbc.ConnectionQuery;
 import com.surelogic.common.jdbc.EmptyProgressMonitor;
 import com.surelogic.common.jdbc.Query;
+import com.surelogic.common.jobs.SLProgressMonitor;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Activator;
 import com.surelogic.sierra.client.eclipse.Data;

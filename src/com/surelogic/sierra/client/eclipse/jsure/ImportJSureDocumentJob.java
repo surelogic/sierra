@@ -8,9 +8,9 @@ import java.util.logging.Logger;
 
 import org.eclipse.core.runtime.*;
 
-import com.surelogic.common.SLProgressMonitor;
 import com.surelogic.common.eclipse.SLProgressMonitorWrapper;
 import com.surelogic.common.eclipse.jobs.DatabaseJob;
+import com.surelogic.common.jobs.SLProgressMonitor;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.jsure.xml.JSureXMLReader;
 import com.surelogic.sierra.client.eclipse.jobs.ScanDocumentUtility;
