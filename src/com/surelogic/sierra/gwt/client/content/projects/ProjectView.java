@@ -28,6 +28,7 @@ import com.surelogic.sierra.gwt.client.data.ColumnData;
 import com.surelogic.sierra.gwt.client.data.Project;
 import com.surelogic.sierra.gwt.client.data.Report;
 import com.surelogic.sierra.gwt.client.data.Scan;
+import com.surelogic.sierra.gwt.client.data.ScanDetail;
 import com.surelogic.sierra.gwt.client.data.ScanFilter;
 import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.data.Report.Parameter;
@@ -43,6 +44,7 @@ import com.surelogic.sierra.gwt.client.ui.StatusBox;
 
 public class ProjectView extends BlockPanel {
 	private final StatusBox box = new StatusBox();
+	private final ScanDetailView latestScan = new ScanDetailView();
 	private final VerticalPanel chart = new VerticalPanel();
 	private final VerticalPanel diff = new VerticalPanel();
 	private final ProjectTableSection scans = new ProjectTableSection();
@@ -52,6 +54,7 @@ public class ProjectView extends BlockPanel {
 
 	@Override
 	protected void onInitialize(final VerticalPanel contentPanel) {
+		contentPanel.add(latestScan);
 		contentPanel.add(chart);
 		contentPanel.add(scans);
 		contentPanel.add(diff);
@@ -101,6 +104,14 @@ public class ProjectView extends BlockPanel {
 				scanFilterField.remove(1);
 			}
 			scanFilterField.add(sfLink);
+			ServiceHelper.getFindingService().getLatestScanDetail(
+					project.getUuid(), new StandardCallback<ScanDetail>() {
+
+						@Override
+						protected void doSuccess(final ScanDetail result) {
+							latestScan.setScan(result);
+						}
+					});
 		}
 		scans.update(ContextManager.getContext());
 	}
