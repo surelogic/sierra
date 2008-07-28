@@ -6,13 +6,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasFocus;
-import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
 import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.Widget;
@@ -20,12 +17,14 @@ import com.surelogic.sierra.gwt.client.data.Category;
 import com.surelogic.sierra.gwt.client.data.FindingTypeFilter;
 import com.surelogic.sierra.gwt.client.data.cache.CategoryCache;
 import com.surelogic.sierra.gwt.client.ui.ItemCheckBox;
+import com.surelogic.sierra.gwt.client.ui.SearchPanel;
+import com.surelogic.sierra.gwt.client.ui.SearchPanel.SearchListener;
 import com.surelogic.sierra.gwt.client.ui.dialog.FormDialog;
 import com.surelogic.sierra.gwt.client.util.LangUtil;
 
 public class FindingSelectionDialog extends FormDialog {
 	private final Tree categoryTree = new Tree();
-	private final TextBox searchBox = new TextBox();
+	private final SearchPanel searchPanel = new SearchPanel();
 
 	public FindingSelectionDialog() {
 		super("Select Categories and/or Findings", "600px");
@@ -33,14 +32,8 @@ public class FindingSelectionDialog extends FormDialog {
 
 	@Override
 	protected void doInitialize(FlexTable contentTable) {
-		final FlexTable searchTable = new FlexTable();
-		searchTable.setWidth("50%");
-		searchTable.setText(0, 0, "Search");
-		searchBox.setWidth("100%");
-		searchTable.setWidget(0, 1, searchBox);
-		searchTable.getColumnFormatter().setWidth(0, "25%");
-		searchTable.getColumnFormatter().setWidth(1, "75%");
-		contentTable.setWidget(0, 0, searchTable);
+		searchPanel.setWidth("50%");
+		contentTable.setWidget(0, 0, searchPanel);
 
 		categoryTree.setWidth("100%");
 		categoryTree.setHeight("425px");
@@ -49,18 +42,12 @@ public class FindingSelectionDialog extends FormDialog {
 		categoryScroller.setSize("100%", "auto");
 		contentTable.setWidget(1, 0, categoryScroller);
 
-		searchBox.addKeyboardListener(new KeyboardListenerAdapter() {
-			@Override
-			public void onKeyUp(Widget sender, char keyCode, int modifiers) {
-				search(searchBox.getText());
-			}
-		});
-		searchBox.addChangeListener(new ChangeListener() {
-			public void onChange(Widget sender) {
-				search(searchBox.getText());
-			}
-		});
+		searchPanel.addListener(new SearchListener() {
 
+			public void onSearch(SearchPanel sender, String text) {
+				search(text);
+			}
+		});
 	}
 
 	@Override

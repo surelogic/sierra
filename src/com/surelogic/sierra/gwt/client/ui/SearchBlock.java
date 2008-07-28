@@ -3,26 +3,21 @@ package com.surelogic.sierra.gwt.client.ui;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DockPanel;
-import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.data.cache.Cache;
 import com.surelogic.sierra.gwt.client.data.cache.Cacheable;
 import com.surelogic.sierra.gwt.client.ui.PagingPanel.PageListener;
+import com.surelogic.sierra.gwt.client.ui.SearchPanel.SearchListener;
 
 public abstract class SearchBlock<E extends Cacheable, T extends Cache<E>>
 		extends BlockPanel {
 	private static final int ITEMS_PER_PAGE = 25;
 	private final T cache;
-	private final FlexTable searchGrid = new FlexTable();
-	private final TextBox searchText = new TextBox();
+	private final SearchPanel searchPanel = new SearchPanel();
 	private final SearchResultsBlock results = new SearchResultsBlock();
 	private E selection;
 
@@ -33,33 +28,18 @@ public abstract class SearchBlock<E extends Cacheable, T extends Cache<E>>
 
 	@Override
 	protected void onInitialize(VerticalPanel contentPanel) {
-		contentPanel.add(searchGrid);
-
-		searchGrid.setWidth("100%");
-		searchGrid.getColumnFormatter().setWidth(0, "25%");
-		searchGrid.getColumnFormatter().setWidth(1, "75%");
-
-		final Label searchLabel = new Label("Search");
-		searchGrid.setWidget(0, 0, searchLabel);
-		searchGrid.setWidget(0, 1, searchText);
-		searchText.setWidth("100%");
+		contentPanel.add(searchPanel);
 
 		results.initialize();
 		results.setSubsectionStyle(true);
 		contentPanel.add(results);
 
-		searchText.addKeyboardListener(new KeyboardListenerAdapter() {
-			@Override
-			public void onKeyUp(Widget sender, char keyCode, int modifiers) {
-				results.search(searchText.getText());
-			}
-		});
-		searchText.addChangeListener(new ChangeListener() {
-			public void onChange(Widget sender) {
-				results.search(searchText.getText());
-			}
-		});
+		searchPanel.addListener(new SearchListener() {
 
+			public void onSearch(SearchPanel sender, String text) {
+				results.search(text);
+			}
+		});
 	}
 
 	public void clear() {
@@ -67,7 +47,7 @@ public abstract class SearchBlock<E extends Cacheable, T extends Cache<E>>
 	}
 
 	public void refresh() {
-		results.search(searchText.getText());
+		results.search(searchPanel.getSearchText());
 		results.setSelection(selection);
 	}
 
