@@ -42,14 +42,14 @@ public class FindingServiceImpl extends SierraServiceServlet implements
 	 */
 	private static final long serialVersionUID = -5522046767503450943L;
 
-	public Result<FindingOverview> getFinding(final String key) {
+	public FindingOverview getFinding(final String key) {
 		if ((key == null) || "".equals(key)) {
-			return Result.failure("No key specified", null);
+			return null;
 		}
 		return ConnectionFactory
-				.withUserReadOnly(new UserQuery<Result<FindingOverview>>() {
+				.withUserReadOnly(new UserQuery<FindingOverview>() {
 
-					public Result<FindingOverview> perform(final Query query,
+					public FindingOverview perform(final Query query,
 							final Server server, final User user) {
 						try {
 							// Is it a long
@@ -73,14 +73,14 @@ public class FindingServiceImpl extends SierraServiceServlet implements
 	}
 
 	private static class FindingOverviewHandler implements
-			RowHandler<Result<FindingOverview>> {
+			RowHandler<FindingOverview> {
 		private final Query query;
 
 		FindingOverviewHandler(final Query q) {
 			query = q;
 		}
 
-		public Result<FindingOverview> handle(final Row r) {
+		public FindingOverview handle(final Row r) {
 			final FindingOverview f = new FindingOverview();
 			final long id = r.nextLong();
 			f.setFindingId(id);
@@ -132,7 +132,7 @@ public class FindingServiceImpl extends SierraServiceServlet implements
 							return ao;
 						}
 					}).call(id));
-			return Result.success(f);
+			return f;
 		}
 
 	}
@@ -160,74 +160,7 @@ public class FindingServiceImpl extends SierraServiceServlet implements
 	}
 
 	public ScanDetail getScanDetail(final String uuid) {
-		return ConnectionFactory.withUserReadOnly(new UserQuery<ScanDetail>() {
-			public ScanDetail perform(final Query query, final Server server,
-					final User user) {
-				if ((uuid != null) && !(uuid.length() == 0)) {
-					final ScanDetail d = new ScanDetail();
-					final Map<String, List<String>> compilations = d
-							.getCompilations();
-					final NullRowHandler detailHandler = new NullRowHandler() {
-						@Override
-						protected void doHandle(final Row r) {
-							final Date time = r.nextDate();
-							final String project = r.nextString();
-							final int findingCount = r.nextInt();
-							query.prepared("Scans.scanMetricDetails",
-									SingleRowHandler.from(new NullRowHandler() {
-										@Override
-										protected void doHandle(final Row r) {
-											final int packageCount = r
-													.nextInt();
-											final int classCount = r.nextInt();
-											final int lineCount = r.nextInt();
-											d.setClasses(Integer
-													.toString(classCount)
-													+ " classes");
-											d.setDate(Dates.format(time));
-											final double density = 1000
-													* (double) findingCount
-													/ lineCount;
-											d.setDensity(NumberFormat
-													.getInstance().format(
-															density)
-													+ " findings/kLoC");
-											d.setFindings(Integer
-													.toString(findingCount)
-													+ " findings");
-											d.setLinesOfCode(Integer
-													.toString(lineCount)
-													+ " lines of code");
-											d.setPackages(Integer
-													.toString(packageCount)
-													+ " packages");
-											d.setProject(project);
-										}
-									})).call(uuid);
-						}
-					};
-					query.prepared("Scans.scanFindingDetails",
-							SingleRowHandler.from(detailHandler)).call(uuid);
-					query.prepared("Scans.scanCompilations",
-							new NullRowHandler() {
-								@Override
-								protected void doHandle(final Row r) {
-									final String pakkage = r.nextString();
-									final String clazz = r.nextString();
-									List<String> clazzes = compilations
-											.get(pakkage);
-									if (clazzes == null) {
-										clazzes = new ArrayList<String>();
-										compilations.put(pakkage, clazzes);
-									}
-									clazzes.add(clazz);
-								}
-							}).call(uuid);
-					return d;
-				}
-				return null;
-			}
-		});
+		return ConnectionFactory.withUserReadOnly(new ScanDetailQuery(uuid));
 	}
 
 	public Result<FindingOverview> changeImportance(final long findingId,
@@ -241,7 +174,7 @@ public class FindingServiceImpl extends SierraServiceServlet implements
 						Importance.values()[view.ordinal()]);
 			}
 		});
-		return getFinding(Long.toString(findingId));
+		return Result.success(getFinding(Long.toString(findingId)));
 	}
 
 	public Result<FindingOverview> comment(final long findingId,
@@ -254,6 +187,95 @@ public class FindingServiceImpl extends SierraServiceServlet implements
 						server.nextRevision(), comment);
 			}
 		});
-		return getFinding(Long.toString(findingId));
+		return Result.success(getFinding(Long.toString(findingId)));
 	}
+
+	public ScanDetail getLatestScanDetail(final String project) {
+		return ConnectionFactory.withUserReadOnly(new UserQuery<ScanDetail>() {
+
+			public ScanDetail perform(final Query query, final Server server,
+					final User user) {
+				final ScanInfo info = new Scans(query)
+						.getLatestScanInfo(project);
+				if (info != null) {
+					return new ScanDetailQuery(info.getUid()).perform(query,
+							server, user);
+				}
+				return null;
+			}
+		});
+	}
+
+	private static class ScanDetailQuery implements UserQuery<ScanDetail> {
+
+		private final String uuid;
+
+		ScanDetailQuery(final String uuid) {
+			this.uuid = uuid;
+		}
+
+		public ScanDetail perform(final Query query, final Server server,
+				final User user) {
+			if ((uuid != null) && !(uuid.length() == 0)) {
+				final ScanDetail d = new ScanDetail();
+				final Map<String, List<String>> compilations = d
+						.getCompilations();
+				final NullRowHandler detailHandler = new NullRowHandler() {
+					@Override
+					protected void doHandle(final Row r) {
+						final Date time = r.nextDate();
+						final String project = r.nextString();
+						final int findingCount = r.nextInt();
+						query.prepared("Scans.scanMetricDetails",
+								SingleRowHandler.from(new NullRowHandler() {
+									@Override
+									protected void doHandle(final Row r) {
+										final int packageCount = r.nextInt();
+										final int classCount = r.nextInt();
+										final int lineCount = r.nextInt();
+										d.setClasses(Integer
+												.toString(classCount)
+												+ " classes");
+										d.setDate(Dates.format(time));
+										final double density = 1000
+												* (double) findingCount
+												/ lineCount;
+										d.setDensity(NumberFormat.getInstance()
+												.format(density)
+												+ " findings/kLoC");
+										d.setFindings(Integer
+												.toString(findingCount)
+												+ " findings");
+										d.setLinesOfCode(Integer
+												.toString(lineCount)
+												+ " lines of code");
+										d.setPackages(Integer
+												.toString(packageCount)
+												+ " packages");
+										d.setProject(project);
+									}
+								})).call(uuid);
+					}
+				};
+				query.prepared("Scans.scanFindingDetails",
+						SingleRowHandler.from(detailHandler)).call(uuid);
+				query.prepared("Scans.scanCompilations", new NullRowHandler() {
+					@Override
+					protected void doHandle(final Row r) {
+						final String pakkage = r.nextString();
+						final String clazz = r.nextString();
+						List<String> clazzes = compilations.get(pakkage);
+						if (clazzes == null) {
+							clazzes = new ArrayList<String>();
+							compilations.put(pakkage, clazzes);
+						}
+						clazzes.add(clazz);
+					}
+				}).call(uuid);
+				return d;
+			}
+			return null;
+		}
+	}
+
 }
