@@ -1,4 +1,4 @@
-package com.surelogic.sierra.gwt.client.content.findingtypes;
+package com.surelogic.sierra.gwt.client.content.common;
 
 import java.util.HashSet;
 import java.util.List;
@@ -43,7 +43,8 @@ public class CategorySelectionDialog extends FormDialog {
 		return null;
 	}
 
-	public void setCategories(final List<String> excludeCategoryIds) {
+	public void setCategories(final List<String> excludeCategoryIds,
+			final boolean showLocal) {
 		final CategoryCache categories = CategoryCache.getInstance();
 
 		final CacheListener<Category> cacheListener = new CacheListenerAdapter<Category>() {
@@ -58,7 +59,7 @@ public class CategorySelectionDialog extends FormDialog {
 
 				categoryPanel.clear();
 				for (final Category cat : categories) {
-					if (cat.isLocal()
+					if ((cat.isLocal() || showLocal)
 							&& !excludeCategoryIds.contains(cat.getUuid())) {
 						final ItemCheckBox<Category> catCheck = new ItemCheckBox<Category>(
 								cat.getName(), cat);

@@ -11,9 +11,13 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.PopupListener;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.HTMLTable.CellFormatter;
+import com.surelogic.sierra.gwt.client.content.common.CategorySelectionDialog;
+import com.surelogic.sierra.gwt.client.data.Category;
 import com.surelogic.sierra.gwt.client.data.ScanFilter;
 import com.surelogic.sierra.gwt.client.data.ScanFilterEntry;
 import com.surelogic.sierra.gwt.client.data.Status;
@@ -37,8 +41,7 @@ public class ScanFilterEditor extends BlockPanel {
 		categoryFilters.addAction("Add Category", new ClickListener() {
 
 			public void onClick(Widget sender) {
-				// TODO Auto-generated method stub
-
+				promptForCategories();
 			}
 		});
 		panel.add(categoryFilters);
@@ -75,12 +78,37 @@ public class ScanFilterEditor extends BlockPanel {
 	}
 
 	public ScanFilter getUpdatedScanFilter() {
-		// TODO Auto-generated method stub
-		return null;
+		return selection;
 	}
 
 	public void setStatus(Status s) {
 		this.status.setStatus(s);
+	}
+
+	private void promptForCategories() {
+		final CategorySelectionDialog dialog = new CategorySelectionDialog();
+		dialog.addPopupListener(new PopupListener() {
+
+			public void onPopupClosed(PopupPanel sender, boolean autoClosed) {
+				final Status s = dialog.getStatus();
+				if (s != null && s.isSuccess()) {
+					for (final Category selectedCat : dialog
+							.getSelectedCategories()) {
+						final ScanFilterEntry catEntry = new ScanFilterEntry(
+								selectedCat);
+						selection.getCategories().add(catEntry);
+					}
+					setSelection(selection);
+				}
+			}
+
+		});
+		dialog.center();
+		final List<String> excludeIds = new ArrayList<String>();
+		for (final ScanFilterEntry cat : selection.getCategories()) {
+			excludeIds.add(cat.getUuid());
+		}
+		dialog.setCategories(excludeIds, true);
 	}
 
 	private static class ScanFilterBlock extends BlockPanel {

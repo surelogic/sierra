@@ -15,6 +15,18 @@ public class ScanFilterEntry implements Serializable, Cacheable,
 	private ImportanceView importance;
 	private boolean category;
 
+	public ScanFilterEntry() {
+		super();
+	}
+
+	public ScanFilterEntry(Category cat) {
+		super();
+		this.uuid = cat.getUuid();
+		this.name = cat.getName();
+		this.shortMessage = cat.getInfo();
+		this.category = true;
+	}
+
 	public String getUuid() {
 		return uuid;
 	}

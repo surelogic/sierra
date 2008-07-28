@@ -9,6 +9,7 @@ import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.content.ListContentComposite;
+import com.surelogic.sierra.gwt.client.content.common.CategorySelectionDialog;
 import com.surelogic.sierra.gwt.client.data.Category;
 import com.surelogic.sierra.gwt.client.data.FindingType;
 import com.surelogic.sierra.gwt.client.data.FindingTypeFilter;
@@ -91,6 +92,6 @@ public final class FindingTypesContent extends
 
 		});
 		dialog.center();
-		dialog.setCategories(findingView.getCategoriesIncludingIds());
+		dialog.setCategories(findingView.getCategoriesIncludingIds(), false);
 	}
 }
