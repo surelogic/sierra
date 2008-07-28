@@ -10,7 +10,7 @@ import com.surelogic.sierra.gwt.client.data.Scan;
 import com.surelogic.sierra.gwt.client.data.ScanDetail;
 
 public interface FindingServiceAsync {
-	void getFinding(String id, AsyncCallback<Result<FindingOverview>> callback);
+	void getFinding(String id, AsyncCallback<FindingOverview> callback);
 
 	void getScans(String project, AsyncCallback<List<Scan>> callback);
 
@@ -21,4 +21,6 @@ public interface FindingServiceAsync {
 
 	void changeImportance(long id, ImportanceView view,
 			AsyncCallback<Result<FindingOverview>> callback);
+
+	void getLatestScanDetail(String project, AsyncCallback<ScanDetail> callback);
 }

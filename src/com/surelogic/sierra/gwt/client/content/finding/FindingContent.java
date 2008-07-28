@@ -16,6 +16,7 @@ import com.surelogic.sierra.gwt.client.data.FindingOverview;
 import com.surelogic.sierra.gwt.client.data.ImportanceView;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.service.callback.ResultCallback;
+import com.surelogic.sierra.gwt.client.service.callback.StandardCallback;
 import com.surelogic.sierra.gwt.client.ui.HtmlHelper;
 import com.surelogic.sierra.gwt.client.ui.ImportanceChoice;
 
@@ -68,18 +69,15 @@ public final class FindingContent extends ContentComposite {
 			setEmpty();
 		} else {
 			ServiceHelper.getFindingService().getFinding(findingType,
-					new ResultCallback<FindingOverview>() {
+					new StandardCallback<FindingOverview>() {
 
 						@Override
-						protected void doFailure(final String message,
-								final FindingOverview result) {
-							setEmpty();
-						}
-
-						@Override
-						protected void doSuccess(final String message,
-								final FindingOverview result) {
-							setFinding(result);
+						protected void doSuccess(final FindingOverview result) {
+							if (result == null) {
+								setEmpty();
+							} else {
+								setFinding(result);
+							}
 						}
 
 					});
@@ -150,12 +148,14 @@ public final class FindingContent extends ContentComposite {
 		final ResultCallback<FindingOverview> callback = new ResultCallback<FindingOverview>() {
 
 			@Override
-			protected void doFailure(String message, FindingOverview result) {
+			protected void doFailure(final String message,
+					final FindingOverview result) {
 				// TODO Auto-generated method stub
 			}
 
 			@Override
-			protected void doSuccess(String message, FindingOverview result) {
+			protected void doSuccess(final String message,
+					final FindingOverview result) {
 				setFinding(result);
 			}
 		};
