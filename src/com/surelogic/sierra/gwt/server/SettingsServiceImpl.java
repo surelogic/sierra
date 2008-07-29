@@ -408,12 +408,20 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 
 					public List<ScanFilter> perform(final Query q,
 							final Server s) {
+						final String serverUID = s.getUid();
+						final Queryable<String> definitionServer = q.prepared(
+								"Definitions.getDefinitionServer",
+								new StringResultHandler());
+
 						final FindingTypes ft = new FindingTypes(q);
 						final Categories fs = new Categories(q);
 						final List<ScanFilter> list = new ArrayList<ScanFilter>();
 						for (final ScanFilterDO fDO : new ScanFilters(q)
 								.listScanFilters()) {
-							list.add(getFilter(fDO, ft, fs));
+							final ScanFilter filter = getFilter(fDO, ft, fs);
+							filter.setLocal(serverUID.equals(definitionServer
+									.call(filter.getUuid())));
+							list.add(filter);
 						}
 						return list;
 					}
@@ -460,6 +468,7 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 						final ScanFilter f = getFilter(filters
 								.createScanFilter(name, s.nextRevision()),
 								new FindingTypes(q), new Categories(q));
+						f.setLocal(true);
 						q.prepared("Definitions.insertDefinition").call(
 								f.getUuid(), s.getUid());
 						return f;
