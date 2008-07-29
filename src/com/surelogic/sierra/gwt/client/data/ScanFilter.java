@@ -20,6 +20,8 @@ public class ScanFilter implements Serializable, Cacheable {
 
 	private long revision;
 
+	private boolean local;
+
 	private Set<ScanFilterEntry> categories;
 
 	private Set<ScanFilterEntry> types;
@@ -46,6 +48,14 @@ public class ScanFilter implements Serializable, Cacheable {
 
 	public void setRevision(final long revision) {
 		this.revision = revision;
+	}
+
+	public boolean isLocal() {
+		return local;
+	}
+
+	public void setLocal(boolean local) {
+		this.local = local;
 	}
 
 	/**
@@ -77,6 +87,7 @@ public class ScanFilter implements Serializable, Cacheable {
 		copy.uuid = uuid;
 		copy.name = name;
 		copy.revision = revision;
+		copy.local = local;
 		copy.categories = new HashSet<ScanFilterEntry>(getCategories().size());
 		for (final ScanFilterEntry entry : getCategories()) {
 			copy.categories.add(entry.copy());

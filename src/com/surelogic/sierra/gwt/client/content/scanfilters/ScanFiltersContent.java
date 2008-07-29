@@ -87,7 +87,7 @@ public class ScanFiltersContent extends
 			}
 		} else {
 			viewer.setSelection(filter);
-			viewer.setActionsVisible(filter != null);
+			viewer.setActionsVisible(filter != null && filter.isLocal());
 			if (selectionPanel.getWidgetIndex(viewer) == -1) {
 				selectionPanel.clear();
 				selectionPanel.add(viewer);
@@ -131,6 +131,7 @@ public class ScanFiltersContent extends
 				ServiceHelper.getSettingsService().createScanFilter(name,
 						new StandardCallback<ScanFilter>() {
 
+							@Override
 							protected void doSuccess(ScanFilter result) {
 								clearWaitStatus();
 								setOpen(false);
