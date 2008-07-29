@@ -55,7 +55,8 @@ public class ScanFiltersContent extends
 		editor.addAction("Cancel", new ClickListener() {
 
 			public void onClick(Widget sender) {
-				setScanFilter(editor.getSelection(), false);
+				setScanFilter(cache.getItem(editor.getSelection().getUuid()),
+						false);
 			}
 		});
 
