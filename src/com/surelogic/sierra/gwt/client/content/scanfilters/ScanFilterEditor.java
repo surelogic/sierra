@@ -176,21 +176,33 @@ public class ScanFilterEditor extends BlockPanel {
 							.getSelectedImportance());
 				}
 			});
-			final int rowIndex = filterGrid.getRowCount();
-			final Label remove = LabelHelper.clickable(new Label("remove"),
-					new ClickListener() {
-						public void onClick(Widget sender) {
-							filters.remove(filter);
-							filterGrid.removeRow(rowIndex);
-						}
-					});
-			remove.setHorizontalAlignment(Label.ALIGN_CENTER);
 
+			final Label removeLabel = LabelHelper
+					.clickable(new Label("Remove"));
+			removeLabel.addClickListener(new ClickListener() {
+				public void onClick(Widget sender) {
+					filters.remove(filter);
+					final int rowIndex = findRemoveRow(removeLabel);
+					filterGrid.removeRow(rowIndex);
+				}
+			});
+			removeLabel.setHorizontalAlignment(Label.ALIGN_CENTER);
+
+			final int rowIndex = filterGrid.getRowCount();
 			filterGrid.setWidget(rowIndex, 0, h);
 			filterGrid.setWidget(rowIndex, 1, box);
 			filterGrid.getCellFormatter().setHorizontalAlignment(rowIndex, 1,
 					HasHorizontalAlignment.ALIGN_CENTER);
-			filterGrid.setWidget(rowIndex, 2, remove);
+			filterGrid.setWidget(rowIndex, 2, removeLabel);
+		}
+
+		private int findRemoveRow(Label removeLabel) {
+			for (int i = 1; i < filterGrid.getRowCount(); i++) {
+				if (filterGrid.getWidget(i, 2) == removeLabel) {
+					return i;
+				}
+			}
+			return -1;
 		}
 	}
 

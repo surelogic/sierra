@@ -14,6 +14,11 @@ public final class LabelHelper {
 		return label;
 	}
 
+	public static Label clickable(Label label) {
+		label.addStyleName("clickable");
+		return label;
+	}
+
 	public static Label clickable(Label label, ClickListener listener) {
 		label.addStyleName("clickable");
 		label.addClickListener(listener);
