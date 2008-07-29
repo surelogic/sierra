@@ -69,7 +69,8 @@ public class CategoriesContent extends
 		categoryEditor.addAction("Cancel", new ClickListener() {
 
 			public void onClick(Widget sender) {
-				setCategory(categoryEditor.getCategory(), false);
+				setCategory(cache.getItem(categoryEditor.getCategory()
+						.getUuid()), false);
 			}
 		});
 
@@ -129,7 +130,7 @@ public class CategoriesContent extends
 	}
 
 	private void promptForFindings(final Category cat) {
-		final FindingSelectionDialog dialog = new FindingSelectionDialog();
+		final AddCategoriesDialog dialog = new AddCategoriesDialog();
 		dialog.addPopupListener(new PopupListener() {
 
 			public void onPopupClosed(PopupPanel sender, boolean autoClosed) {

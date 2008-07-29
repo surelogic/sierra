@@ -50,8 +50,7 @@ public class ScanFilterEditor extends BlockPanel {
 		findingFilters.addAction("Add Finding", new ClickListener() {
 
 			public void onClick(Widget sender) {
-				// TODO Auto-generated method stub
-
+				promptForFindings();
 			}
 		});
 		panel.add(findingFilters);
@@ -109,6 +108,10 @@ public class ScanFilterEditor extends BlockPanel {
 			excludeIds.add(cat.getUuid());
 		}
 		dialog.setCategories(excludeIds, true);
+	}
+
+	private void promptForFindings() {
+		// TODO finish
 	}
 
 	private static class ScanFilterBlock extends BlockPanel {
