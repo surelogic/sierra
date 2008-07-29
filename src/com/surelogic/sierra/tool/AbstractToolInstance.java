@@ -96,7 +96,7 @@ public abstract class AbstractToolInstance implements IToolInstance {
     	}
     }
     try {
-      status.add(execute(monitor));
+      status.addChild(execute(monitor));
     }
     catch(Exception e) {
       reportError("Exception during run()", e);
@@ -113,7 +113,7 @@ public abstract class AbstractToolInstance implements IToolInstance {
 
   public final void reportError(String msg) {
     generator.error().message(msg).tool(getName());
-    status.add(SLStatus.createErrorStatus(-1, msg));  
+    status.addChild(SLStatus.createErrorStatus(-1, msg));  
   }
   
   public final void reportError(String msg, Throwable e) {
@@ -124,7 +124,7 @@ public abstract class AbstractToolInstance implements IToolInstance {
       sb.append("\tat ").append(ste).append('\n');
     }
     generator.error().message(sb.toString()).tool(getName());
-    status.add(SLStatus.createErrorStatus(-1, msg, e));
+    status.addChild(SLStatus.createErrorStatus(-1, msg, e));
   }
   
   protected abstract SLStatus execute(SLProgressMonitor mon) throws Exception;    

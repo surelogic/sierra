@@ -56,7 +56,7 @@ public class Reckoner1_0Tool extends AbstractTool {
             try {
             	Metrics m = r.countLOC(f);
             	if (m == null) {
-            		status.add(SLStatus.createWarningStatus(-1, "Problem reading "+path));
+            		status.addChild(SLStatus.createWarningStatus(-1, "Problem reading "+path));
             		continue;
             	}
             	if (debug) {
@@ -64,13 +64,13 @@ public class Reckoner1_0Tool extends AbstractTool {
             	}
         		final String key = m.getPackageName()+','+m.getClassName();
         		if (processed.contains(key)) {
-        			status.add(SLStatus.createWarningStatus(-1, "Duplicate metric found for "+key));
+        			status.addChild(SLStatus.createWarningStatus(-1, "Duplicate metric found for "+key));
         		}
             	
             	buildMetrics(m);
             	monitor.worked(1);
             } catch (Exception e) {
-            	status.add(SLStatus.createWarningStatus(-1, "Unexpected problem with "+path, e));
+            	status.addChild(SLStatus.createWarningStatus(-1, "Unexpected problem with "+path, e));
             }
         }
         return status.build();

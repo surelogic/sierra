@@ -511,7 +511,7 @@ public class LocalTool extends AbstractTool {
         System.out.println(line);
       }
       final String errMsg = sb.toString();
-      status.add(SLStatus.createErrorStatus(-1, errMsg));
+      status.addChild(SLStatus.createErrorStatus(-1, errMsg));
       return errMsg;
     }
     
