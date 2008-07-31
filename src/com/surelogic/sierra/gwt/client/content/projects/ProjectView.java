@@ -2,7 +2,6 @@ package com.surelogic.sierra.gwt.client.content.projects;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -154,11 +153,7 @@ public class ProjectView extends BlockPanel {
 							}
 						}
 					}
-					Collections.sort(toCompare, new Comparator<Scan>() {
-						public int compare(final Scan o1, final Scan o2) {
-							return o1.getScanTime().compareTo(o2.getScanTime());
-						}
-					});
+					Collections.sort(toCompare);
 					if (toCompare.size() >= 2) {
 						final ArrayList<String> fixed = new ArrayList<String>(
 								toCompare.size());

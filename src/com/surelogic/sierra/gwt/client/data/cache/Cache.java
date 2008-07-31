@@ -25,30 +25,31 @@ public abstract class Cache<E extends Cacheable> implements Iterable<E> {
 
 	public final void refresh(boolean force) {
 		final long currentTime = new Date().getTime();
-		if (!force && (lastRefresh + REFRESH_DELAY > currentTime)) {
-			return;
-		}
-
+		final boolean timeToRefresh = force
+				|| (lastRefresh + REFRESH_DELAY < currentTime);
 		lastRefresh = currentTime;
 
 		for (final CacheListener<E> listener : listeners) {
 			listener.onStartRefresh(this);
 		}
-		doRefreshCall(new CacheCallback<List<E>>() {
 
-			@Override
-			protected void processResult(List<E> result) {
-				items.clear();
-				items.addAll(result);
-			}
+		if (timeToRefresh) {
+			doRefreshCall(new CacheCallback<List<E>>() {
 
-			@Override
-			protected void callListener(CacheListener<E> listener,
-					List<E> result, Throwable failure) {
-				listener.onRefresh(Cache.this, failure);
-			}
+				@Override
+				protected void processResult(List<E> result) {
+					items.clear();
+					items.addAll(result);
+				}
 
-		});
+				@Override
+				protected void callListener(CacheListener<E> listener,
+						List<E> result, Throwable failure) {
+					listener.onRefresh(Cache.this, failure);
+				}
+
+			});
+		}
 	}
 
 	public final void save(final E item) {

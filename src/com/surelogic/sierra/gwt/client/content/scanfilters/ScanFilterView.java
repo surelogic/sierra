@@ -2,10 +2,11 @@ package com.surelogic.sierra.gwt.client.content.scanfilters;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.Label;
@@ -13,9 +14,14 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.surelogic.sierra.gwt.client.content.ContentComposite;
 import com.surelogic.sierra.gwt.client.content.categories.CategoriesContent;
 import com.surelogic.sierra.gwt.client.content.findingtypes.FindingTypesContent;
+import com.surelogic.sierra.gwt.client.data.Category;
+import com.surelogic.sierra.gwt.client.data.FindingTypeFilter;
 import com.surelogic.sierra.gwt.client.data.ImportanceView;
 import com.surelogic.sierra.gwt.client.data.ScanFilter;
 import com.surelogic.sierra.gwt.client.data.ScanFilterEntry;
+import com.surelogic.sierra.gwt.client.data.cache.Cache;
+import com.surelogic.sierra.gwt.client.data.cache.CacheListenerAdapter;
+import com.surelogic.sierra.gwt.client.data.cache.CategoryCache;
 import com.surelogic.sierra.gwt.client.ui.BlockPanel;
 import com.surelogic.sierra.gwt.client.ui.ContentLink;
 import com.surelogic.sierra.gwt.client.ui.HtmlHelper;
@@ -24,6 +30,8 @@ import com.surelogic.sierra.gwt.client.ui.LabelHelper;
 public class ScanFilterView extends BlockPanel {
 	private final VerticalPanel importanceBlocks = new VerticalPanel();
 	private ScanFilter selection;
+	private boolean showCategories = true;
+	private boolean refreshedCategories;
 
 	@Override
 	protected void onInitialize(VerticalPanel contentPanel) {
@@ -36,40 +44,56 @@ public class ScanFilterView extends BlockPanel {
 	}
 
 	public void setSelection(ScanFilter filter) {
+		if (showCategories && !refreshedCategories) {
+			refreshedCategories = true;
+			refreshCategories(filter);
+			return;
+		}
+
 		selection = filter;
 		importanceBlocks.clear();
 
 		if (selection != null) {
 			setSummary(selection.getName());
 
-			final Comparator<ScanFilterEntry> filterCompare = new Comparator<ScanFilterEntry>() {
-
-				public int compare(ScanFilterEntry o1, ScanFilterEntry o2) {
-					return o1.getName().toLowerCase().compareTo(
-							o2.getName().toLowerCase());
-				}
-			};
-
 			final Map<ImportanceView, FilterBlock> categoryImportanceBlocks = new HashMap<ImportanceView, FilterBlock>();
-			final List<ScanFilterEntry> sortedCategories = new ArrayList<ScanFilterEntry>(
-					filter.getCategories());
-			Collections.sort(sortedCategories, filterCompare);
-			for (final ScanFilterEntry category : sortedCategories) {
-				final FilterBlock filterList = getFilterBlock(
-						categoryImportanceBlocks, category.getImportance(),
-						true);
-				filterList.addFilterEntry(category);
+			final Set<ScanFilterEntry> categoryFindings = new HashSet<ScanFilterEntry>();
+			if (showCategories) {
+				final List<ScanFilterEntry> sortedCategories = new ArrayList<ScanFilterEntry>(
+						filter.getCategories());
+				Collections.sort(sortedCategories);
+				for (final ScanFilterEntry category : sortedCategories) {
+					final FilterBlock filterList = getFilterBlock(
+							categoryImportanceBlocks, category.getImportance(),
+							true);
+					filterList.addFilterEntry(category);
+				}
+			} else {
+				final List<ScanFilterEntry> filterCategories = new ArrayList<ScanFilterEntry>(
+						filter.getCategories());
+				final CategoryCache categories = CategoryCache.getInstance();
+				for (final ScanFilterEntry filterCategory : filterCategories) {
+					final Category cat = categories.getItem(filterCategory
+							.getUuid());
+					for (final FindingTypeFilter finding : cat
+							.getIncludedEntries()) {
+						categoryFindings.add(new ScanFilterEntry(finding,
+								filterCategory.getImportance()));
+					}
+				}
 			}
 
 			final Map<ImportanceView, FilterBlock> findingImportanceBlocks = new HashMap<ImportanceView, FilterBlock>();
 			final List<ScanFilterEntry> sortedFindings = new ArrayList<ScanFilterEntry>(
 					filter.getTypes());
-			Collections.sort(sortedFindings, filterCompare);
-			for (final ScanFilterEntry category : sortedFindings) {
+			if (!categoryFindings.isEmpty()) {
+				sortedFindings.addAll(categoryFindings);
+			}
+			Collections.sort(sortedFindings);
+			for (final ScanFilterEntry finding : sortedFindings) {
 				final FilterBlock filterList = getFilterBlock(
-						findingImportanceBlocks, category.getImportance(),
-						false);
-				filterList.addFilterEntry(category);
+						findingImportanceBlocks, finding.getImportance(), false);
+				filterList.addFilterEntry(finding);
 			}
 
 			final ImportanceView[] importances = ImportanceView.values();
@@ -88,6 +112,24 @@ public class ScanFilterView extends BlockPanel {
 		} else {
 			setSummary("Select a Scan Filter");
 		}
+	}
+
+	public void toggleCategories() {
+		showCategories = !showCategories;
+		setSelection(selection);
+	}
+
+	private void refreshCategories(final ScanFilter filter) {
+		CategoryCache.getInstance().addListener(
+				new CacheListenerAdapter<Category>() {
+
+					@Override
+					public void onRefresh(Cache<Category> cache,
+							Throwable failure) {
+						setSelection(filter);
+					}
+				});
+		CategoryCache.getInstance().refresh(false);
 	}
 
 	private void addBlocks(ImportanceView importance,

@@ -95,7 +95,7 @@ public class ScanFilterEditor extends BlockPanel {
 					for (final Category selectedCat : dialog
 							.getSelectedCategories()) {
 						final ScanFilterEntry catEntry = new ScanFilterEntry(
-								selectedCat);
+								selectedCat, null);
 						selection.getCategories().add(catEntry);
 					}
 					setSelection(selection);
@@ -121,7 +121,7 @@ public class ScanFilterEditor extends BlockPanel {
 					for (final FindingTypeFilter selectedFinding : dialog
 							.getSelectedFindings()) {
 						final ScanFilterEntry findingEntry = new ScanFilterEntry(
-								selectedFinding);
+								selectedFinding, null);
 						selection.getTypes().add(findingEntry);
 					}
 					setSelection(selection);

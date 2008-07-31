@@ -29,6 +29,12 @@ public class ScanFiltersContent extends
 		addAction(new CreateScanFilterForm());
 
 		viewer.initialize();
+		viewer.addAction("Toggle Categories", new ClickListener() {
+
+			public void onClick(Widget sender) {
+				viewer.toggleCategories();
+			}
+		});
 		viewer.addAction("Edit", new ClickListener() {
 
 			public void onClick(Widget sender) {

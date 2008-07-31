@@ -3,7 +3,7 @@ package com.surelogic.sierra.gwt.client.data;
 import java.io.Serializable;
 import java.util.Date;
 
-public class Scan implements Serializable {
+public class Scan implements Serializable, Comparable<Scan> {
 
 	/**
 	 * 
@@ -72,6 +72,10 @@ public class Scan implements Serializable {
 
 	public void setScanTime(final Date scanTime) {
 		this.scanTime = scanTime;
+	}
+
+	public int compareTo(Scan o) {
+		return scanTime.compareTo(o.getScanTime());
 	}
 
 }

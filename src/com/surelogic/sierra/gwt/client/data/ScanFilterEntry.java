@@ -19,19 +19,21 @@ public class ScanFilterEntry implements Serializable, Cacheable,
 		super();
 	}
 
-	public ScanFilterEntry(Category cat) {
+	public ScanFilterEntry(Category cat, ImportanceView importance) {
 		super();
 		this.uuid = cat.getUuid();
 		this.name = cat.getName();
 		this.shortMessage = cat.getInfo();
+		this.importance = importance;
 		this.category = true;
 	}
 
-	public ScanFilterEntry(FindingTypeFilter finding) {
+	public ScanFilterEntry(FindingTypeFilter finding, ImportanceView importance) {
 		super();
 		this.uuid = finding.getUuid();
 		this.name = finding.getName();
 		this.shortMessage = finding.getShortMessage();
+		this.importance = importance;
 		this.category = false;
 	}
 
@@ -105,13 +107,7 @@ public class ScanFilterEntry implements Serializable, Cacheable,
 	}
 
 	public int compareTo(ScanFilterEntry that) {
-		if (this == that) {
-			return 0;
-		}
-		if (that == null) {
-			return 1;
-		}
-		return name.compareTo(that.name);
+		return name.toLowerCase().compareTo(that.getName().toLowerCase());
 	}
 
 }
