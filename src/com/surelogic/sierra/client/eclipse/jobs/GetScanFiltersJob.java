@@ -36,18 +36,19 @@ public class GetScanFiltersJob extends DatabaseJob {
 
 	@Override
 	protected IStatus run(IProgressMonitor monitor) {
-		final SLProgressMonitor slMonitor = new SLProgressMonitorWrapper(
-				monitor);
 		final String msg = "Getting scan filter settings from the Sierra team server '"
 				+ f_server + "'";
-		slMonitor.beginTask(msg, 5);
+		final SLProgressMonitor slMonitor = new SLProgressMonitorWrapper(
+				monitor, msg);
+		slMonitor.begin(5);
 		IStatus status = null;
 		try {
 			status = getResultFilters(slMonitor);
 		} catch (final Throwable e) {
 			final int errNo = 48;
 			final String errMsg = I18N.err(errNo, f_server);
-			status = SLEclipseStatusUtility.createWarningStatus(errNo, errMsg, e);
+			status = SLEclipseStatusUtility.createWarningStatus(errNo, errMsg,
+					e);
 		}
 		return status;
 	}
@@ -56,8 +57,8 @@ public class GetScanFiltersJob extends DatabaseJob {
 			throws SQLException {
 		try {
 			final DBQuery<?> query = SettingQueries.retrieveScanFilters(
-					f_server.getServer(), Data.getInstance().withReadOnly(SettingQueries
-							.scanFilterRequest()));
+					f_server.getServer(), Data.getInstance().withReadOnly(
+							SettingQueries.scanFilterRequest()));
 			f_server.markAsConnected();
 			Data.getInstance().withTransaction(query);
 		} catch (final SierraServiceClientException e) {

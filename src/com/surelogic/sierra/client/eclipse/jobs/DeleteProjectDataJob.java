@@ -102,9 +102,9 @@ public final class DeleteProjectDataJob implements IRunnableWithProgress {
 
 	public void run(IProgressMonitor monitor) throws InvocationTargetException,
 			InterruptedException {
-		SLProgressMonitor slMonitor = new SLProgressMonitorWrapper(monitor);
-		slMonitor.beginTask("Deleting selected projects",
-				f_projectNames.size() * 4);
+		SLProgressMonitor slMonitor = new SLProgressMonitorWrapper(monitor,
+				"Deleting selected projects");
+		slMonitor.begin(f_projectNames.size() * 4);
 
 		boolean jobFailed = false;
 		try {
@@ -162,8 +162,9 @@ public final class DeleteProjectDataJob implements IRunnableWithProgress {
 			final UIJob job = new SLUIJob() {
 				@Override
 				public IStatus runInUIThread(IProgressMonitor monitor) {
-					final IStatus reason = SLEclipseStatusUtility.createErrorStatus(
-							f_jobFailureCode, f_jobFailureMsg);
+					final IStatus reason = SLEclipseStatusUtility
+							.createErrorStatus(f_jobFailureCode,
+									f_jobFailureMsg);
 					ErrorDialogUtility.open(null, null, reason);
 					return Status.OK_STATUS;
 				}

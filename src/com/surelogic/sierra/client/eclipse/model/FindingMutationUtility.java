@@ -141,7 +141,8 @@ public final class FindingMutationUtility {
 			protected void updateFindings(IProgressMonitor monitor,
 					ClientFindingManager manager) throws Exception {
 				manager.setImportance(finding_ids, to,
-						new SLProgressMonitorWrapper(monitor));
+						new SLProgressMonitorWrapper(monitor,
+								"Updating finding data"));
 			}
 		};
 		job.setUser(true);
@@ -156,7 +157,8 @@ public final class FindingMutationUtility {
 			protected void updateFindings(IProgressMonitor monitor,
 					ClientFindingManager manager) throws Exception {
 				manager.filterFindingTypeFromScans(finding_id,
-						new SLProgressMonitorWrapper(monitor));
+						new SLProgressMonitorWrapper(monitor,
+								"Filter finding type from scans"));
 			}
 		};
 		job.setUser(true);
@@ -170,7 +172,8 @@ public final class FindingMutationUtility {
 			@Override
 			protected void updateFindings(IProgressMonitor monitor,
 					ClientFindingManager manager) throws Exception {
-				SLProgressMonitor mon = new SLProgressMonitorWrapper(monitor);
+				SLProgressMonitor mon = new SLProgressMonitorWrapper(monitor,
+						getName());
 				for (Long finding_id : finding_ids) {
 					if (finding_id != null) {
 						manager.filterFindingTypeFromScans(finding_id, mon);

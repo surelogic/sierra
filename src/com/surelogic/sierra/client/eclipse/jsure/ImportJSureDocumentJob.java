@@ -37,7 +37,8 @@ public class ImportJSureDocumentJob extends DatabaseJob {
 	protected IStatus run(IProgressMonitor monitor) {
 		monitor.beginTask("Importing " + location + "...",
 				IProgressMonitor.UNKNOWN);
-		final SLProgressMonitor wrapper = new SLProgressMonitorWrapper(monitor);
+		final SLProgressMonitor wrapper = new SLProgressMonitorWrapper(monitor,
+				getName());
 		try {
 			loadScanDocument(wrapper);
 		} catch (IllegalStateException e) {

@@ -29,17 +29,18 @@ public final class ScanDocumentUtility {
 
 	public interface Parser {
 		String parse(File scanDocument, ScanManager sMan, FindingFilter filter,
-				     Set<Long> findingIds, SLProgressMonitor monitor)
-		throws ScanPersistenceException;
-		
-		void updateOverview(ClientFindingManager fm, String uid, FindingFilter filter, 
-				            Set<Long> findingIds, SLProgressMonitor monitor);
+				Set<Long> findingIds, SLProgressMonitor monitor)
+				throws ScanPersistenceException;
+
+		void updateOverview(ClientFindingManager fm, String uid,
+				FindingFilter filter, Set<Long> findingIds,
+				SLProgressMonitor monitor);
 	}
-	
+
 	private ScanDocumentUtility() {
 		// no instances
 	}
-	
+
 	/**
 	 * Parses a partial scan document into the database and generates findings.
 	 * When this method is completed the scan document has been fully loaded
@@ -66,26 +67,28 @@ public final class ScanDocumentUtility {
 			final Map<String, List<String>> compilations)
 			throws ScanPersistenceException {
 		final Parser p = new Parser() {
-			public String parse(File scanDocument, ScanManager sMan, FindingFilter filter,
-					            Set<Long> findingIds, SLProgressMonitor monitor)
-					throws ScanPersistenceException {
+			public String parse(File scanDocument, ScanManager sMan,
+					FindingFilter filter, Set<Long> findingIds,
+					SLProgressMonitor monitor) throws ScanPersistenceException {
 				final ScanGenerator gen = sMan.getPartialScanGenerator(
 						projectName, filter, compilations, findingIds);
-				return MessageWarehouse.getInstance()
-			       .parseScanDocument(scanDocument, gen, monitor);
+				return MessageWarehouse.getInstance().parseScanDocument(
+						scanDocument, gen, monitor);
 			}
-			public void updateOverview(ClientFindingManager fm, String uid, FindingFilter filter,
-					Set<Long> findingIds, SLProgressMonitor monitor) {
-				fm.updateScanFindings(projectName, uid, compilations,
-						filter, findingIds, monitor);
-			}			
+
+			public void updateOverview(ClientFindingManager fm, String uid,
+					FindingFilter filter, Set<Long> findingIds,
+					SLProgressMonitor monitor) {
+				fm.updateScanFindings(projectName, uid, compilations, filter,
+						findingIds, monitor);
+			}
 		};
 		loadPartialScanDocument(scanDocument, monitor, projectName, p);
 	}
-	
+
 	public static void loadPartialScanDocument(final File scanDocument,
-			final SLProgressMonitor monitor, final String projectName, final Parser parser)
-			throws ScanPersistenceException {	
+			final SLProgressMonitor monitor, final String projectName,
+			final Parser parser) throws ScanPersistenceException {
 		final boolean debug = log.isLoggable(Level.FINE);
 		if (debug) {
 			log.info("Loading partial scan document " + scanDocument);
@@ -99,7 +102,8 @@ public final class ScanDocumentUtility {
 				final FindingFilter filter = SettingQueries
 						.scanFilterForProject(projectName).perform(
 								new ConnectionQuery(conn));
-				final String uid = parser.parse(scanDocument, sMan, filter, findingIds, monitor);
+				final String uid = parser.parse(scanDocument, sMan, filter,
+						findingIds, monitor);
 				conn.commit();
 				try {
 
@@ -159,7 +163,7 @@ public final class ScanDocumentUtility {
 		if (debug) {
 			log.info("Loading scan document " + scanDocument);
 		}
-		monitor.beginTask("Load scan document", 100);
+		monitor.begin(100);
 		Throwable exc = null;
 		try {
 			final Connection conn = Data.getInstance().transactionConnection();

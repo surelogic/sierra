@@ -27,8 +27,7 @@ public final class SendScanFiltersJob extends DatabaseJob {
 	private final ServerFailureReport f_method;
 	private final SierraServer f_server;
 
-	public SendScanFiltersJob(ServerFailureReport method,
-			SierraServer server) {
+	public SendScanFiltersJob(ServerFailureReport method, SierraServer server) {
 		super("Sending scan filter settings to " + server.getLabel());
 		f_server = server;
 		f_method = method;
@@ -36,11 +35,11 @@ public final class SendScanFiltersJob extends DatabaseJob {
 
 	@Override
 	protected IStatus run(IProgressMonitor monitor) {
-		final SLProgressMonitor slMonitor = new SLProgressMonitorWrapper(
-				monitor);
 		final String msg = "Sending scan filter settings to the Sierra team server '"
 				+ f_server + "'";
-		slMonitor.beginTask(msg, 5);
+		final SLProgressMonitor slMonitor = new SLProgressMonitorWrapper(
+				monitor, msg);
+		slMonitor.begin(5);
 		IStatus status = null;
 		try {
 			final Connection conn = Data.getInstance().readOnlyConnection();
@@ -49,7 +48,8 @@ public final class SendScanFiltersJob extends DatabaseJob {
 			} catch (final Throwable e) {
 				final int errNo = 49;
 				final String errMsg = I18N.err(errNo, f_server);
-				status = SLEclipseStatusUtility.createWarningStatus(errNo, errMsg, e);
+				status = SLEclipseStatusUtility.createWarningStatus(errNo,
+						errMsg, e);
 				conn.rollback();
 			} finally {
 				conn.close();
@@ -58,7 +58,8 @@ public final class SendScanFiltersJob extends DatabaseJob {
 			if (status == null) {
 				final int errNo = 49;
 				final String errMsg = I18N.err(errNo, f_server);
-				status = SLEclipseStatusUtility.createWarningStatus(errNo, errMsg, e1);
+				status = SLEclipseStatusUtility.createWarningStatus(errNo,
+						errMsg, e1);
 			}
 		}
 		if (status == null) {

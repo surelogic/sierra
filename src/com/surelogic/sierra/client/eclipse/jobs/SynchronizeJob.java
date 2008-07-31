@@ -57,8 +57,8 @@ public class SynchronizeJob extends AbstractServerProjectJob {
 			return Status.CANCEL_STATUS;
 		}
 		final SLProgressMonitor slMonitor = new SLProgressMonitorWrapper(
-				monitor);
-		slMonitor.beginTask(getName(), 6);
+				monitor, getName());
+		slMonitor.begin(6);
 		IStatus status = null;
 		try {
 			final Connection conn = Data.getInstance().transactionConnection();

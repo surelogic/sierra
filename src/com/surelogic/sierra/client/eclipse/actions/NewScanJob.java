@@ -36,7 +36,8 @@ public class NewScanJob extends WorkspaceJob {
 	@Override
 	public IStatus runInWorkspace(IProgressMonitor monitor) {
 		SLLogger.getLogger().fine(this.getName());
-		final SLProgressMonitor wrapper = new SLProgressMonitorWrapper(monitor);
+		final SLProgressMonitor wrapper = new SLProgressMonitorWrapper(monitor,
+				this.getName());
 		SLStatus status = null;
 		try {
 			status = ToolUtil.scan(config, wrapper, true);

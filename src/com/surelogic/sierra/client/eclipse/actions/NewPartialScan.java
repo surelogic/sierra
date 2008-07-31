@@ -61,7 +61,7 @@ public class NewPartialScan extends AbstractScan<ICompilationUnit> {
 		@Override
 		protected IStatus run(IProgressMonitor monitor) {
 			final SLProgressMonitor wrapper = new SLProgressMonitorWrapper(
-					monitor);
+					monitor, "Load scan document");
 			try {
 				loadScanDocument(wrapper);
 			} catch (IllegalStateException e) {

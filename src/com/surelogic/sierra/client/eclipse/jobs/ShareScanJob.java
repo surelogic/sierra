@@ -40,10 +40,10 @@ public class ShareScanJob extends AbstractServerProjectJob {
 
 	@Override
 	protected IStatus run(IProgressMonitor monitor) {
-
-		SLProgressMonitor slMonitor = new SLProgressMonitorWrapper(monitor);
-		slMonitor.beginTask("Sharing scan of project " + f_projectName + " to "
-				+ f_server.getLabel() + ".", 5);
+		final String msg = "Sharing scan of project " + f_projectName + " to "
+				+ f_server.getLabel() + ".";
+		SLProgressMonitor slMonitor = new SLProgressMonitorWrapper(monitor, msg);
+		slMonitor.begin(5);
 		try {
 			Scan scan = MessageWarehouse.getInstance().fetchScan(f_scanFile,
 					true);
