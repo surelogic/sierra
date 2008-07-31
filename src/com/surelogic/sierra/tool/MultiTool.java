@@ -8,100 +8,103 @@ import com.surelogic.sierra.tool.message.ArtifactGenerator;
 import com.surelogic.sierra.tool.targets.IToolTarget;
 
 public class MultiTool extends AbstractTool {
-  protected List<ITool> tools = new ArrayList<ITool>();
-  
-  public MultiTool(boolean debug) {
-    super("MultiTool", "1.0", "MultiTool", "A container for other tools", debug);
-  }
+	protected List<ITool> tools = new ArrayList<ITool>();
 
-  public Set<String> getArtifactTypes() {
-    return Collections.emptySet();
-  }
-  
-  protected IToolInstance create(final ArtifactGenerator generator, boolean close) {
-    return new Instance(debug, this, generator, close);
-  }
-  
-  public void addTool(ITool t) {
-    if (t != null && !tools.contains(t)) {
-      tools.add(t);
-    }
-  }
-  
-  private static class Instance extends MultiTool implements IToolInstance {
-    private final List<IToolInstance> instances = new ArrayList<IToolInstance>();
-    private IToolInstance first = null;
+	public MultiTool(boolean debug) {
+		super("MultiTool", "1.0", "MultiTool", "A container for other tools",
+				debug);
+	}
 
-    private final ArtifactGenerator generator;
-    private final boolean closeWhenDone;
-    
-    Instance(boolean debug, MultiTool mt, ArtifactGenerator gen, boolean close) {
-      super(debug);
-      for(ITool tool : mt.tools) {
-        this.tools.add(tool);
-        
-        IToolInstance i = tool.create(gen);
-        instances.add(i);
-        if (first == null) {
-          first = i;
-        }
-      }
-      generator = gen;
-      closeWhenDone = close;
-    }
+	public Set<String> getArtifactTypes() {
+		return Collections.emptySet();
+	}
 
-    private void init(SLProgressMonitor mon) {
-      mon.beginTask("Multiple tools", 100);
-      mon.subTask("Setting up scans");
-    }
-    
-    public SLStatus run(SLProgressMonitor mon) {     
-      SLStatus.Builder status = new SLStatus.Builder();
-      init(mon);
-      
-      for(IToolInstance i : instances) {
-        System.out.println("run() on "+i.getName());        
-        status.addChild(i.run(mon));
-      }
-      if (closeWhenDone) {
-        generator.finished(mon);
-        mon.done();
-      }
-      return status.build();
-    }
+	protected IToolInstance create(final ArtifactGenerator generator,
+			boolean close) {
+		return new Instance(debug, this, generator, close);
+	}
 
-    public void addTarget(IToolTarget target) {
-      for(IToolInstance i : instances) {
-        i.addTarget(target);
-      }
-    }
+	public void addTool(ITool t) {
+		if (t != null && !tools.contains(t)) {
+			tools.add(t);
+		}
+	}
 
-    public void addToClassPath(URI loc) {
-      for(IToolInstance i : instances) {
-        i.addToClassPath(loc);
-      }
-    }
+	private static class Instance extends MultiTool implements IToolInstance {
+		private final List<IToolInstance> instances = new ArrayList<IToolInstance>();
+		private IToolInstance first = null;
 
-    public ArtifactGenerator getGenerator() {
-      return first != null ? first.getGenerator() : null;
-    }
+		private final ArtifactGenerator generator;
+		private final boolean closeWhenDone;
 
-    public void reportError(String msg, Throwable t) {
-      if (first != null) {
-        first.reportError(msg, t);
-      }
-    }
+		Instance(boolean debug, MultiTool mt, ArtifactGenerator gen,
+				boolean close) {
+			super(debug);
+			for (ITool tool : mt.tools) {
+				this.tools.add(tool);
 
-    public void reportError(String msg) {
-      if (first != null) {
-        first.reportError(msg);
-      }
-    }
+				IToolInstance i = tool.create(gen);
+				instances.add(i);
+				if (first == null) {
+					first = i;
+				}
+			}
+			generator = gen;
+			closeWhenDone = close;
+		}
 
-	public void setOption(String key, String value) {
-	  for(IToolInstance i : instances) {
-		i.setOption(key, value);
-	  }
-	}    
-  }
+		private void init(SLProgressMonitor mon) {
+			mon.begin(100);
+			mon.subTask("Setting up scans");
+		}
+
+		public SLStatus run(SLProgressMonitor mon) {
+			SLStatus.Builder status = new SLStatus.Builder();
+			init(mon);
+
+			for (IToolInstance i : instances) {
+				System.out.println("run() on " + i.getName());
+				status.addChild(i.run(mon));
+			}
+			if (closeWhenDone) {
+				generator.finished(mon);
+				mon.done();
+			}
+			return status.build();
+		}
+
+		public void addTarget(IToolTarget target) {
+			for (IToolInstance i : instances) {
+				i.addTarget(target);
+			}
+		}
+
+		public void addToClassPath(URI loc) {
+			for (IToolInstance i : instances) {
+				i.addToClassPath(loc);
+			}
+		}
+
+		public ArtifactGenerator getGenerator() {
+			return first != null ? first.getGenerator() : null;
+		}
+
+		public void reportError(String msg, Throwable t) {
+			if (first != null) {
+				first.reportError(msg, t);
+			}
+		}
+
+		public void reportError(String msg) {
+			if (first != null) {
+				first.reportError(msg);
+			}
+		}
+
+		public void setOption(String key, String value) {
+			for (IToolInstance i : instances) {
+				i.setOption(key, value);
+			}
+		}
+	}
 }

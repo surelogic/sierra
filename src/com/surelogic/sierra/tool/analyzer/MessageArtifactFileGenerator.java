@@ -112,7 +112,7 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator {
 
 	@Override
 	public void finished(SLProgressMonitor monitor) {
-		monitor.beginTask("Scan Document", 20);
+		monitor.begin(20);
 		try {
 			artOut.close();
 			errOut.close();
@@ -224,8 +224,8 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator {
 	/*
 	 * private static void copyContents(File file, FileChannel dstChannel)
 	 * throws FileNotFoundException, IOException { // Create channel on the
-	 * source FileChannel srcChannel = new FileInputStream(file).getChannel(); //
-	 * Copy file contents from source to destination
+	 * source FileChannel srcChannel = new FileInputStream(file).getChannel();
+	 * // Copy file contents from source to destination
 	 * dstChannel.transferFrom(srcChannel, 0, srcChannel.size()); // Close the
 	 * channel srcChannel.close(); }
 	 */

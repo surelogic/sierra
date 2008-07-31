@@ -27,10 +27,12 @@ public abstract class AbstractPMDTool extends AbstractTool {
 		super("PMD", version, "PMD", "", debug);
 	}
 
-	protected final IToolInstance create(final ArtifactGenerator generator, boolean close) {
+	protected final IToolInstance create(final ArtifactGenerator generator,
+			boolean close) {
 		return new AbstractToolInstance(debug, this, generator, close) {
 			@Override
-			protected SLStatus execute(SLProgressMonitor monitor) throws Exception {
+			protected SLStatus execute(SLProgressMonitor monitor)
+					throws Exception {
 				int cpus = Runtime.getRuntime().availableProcessors();
 				String encoding = new InputStreamReader(System.in)
 						.getEncoding();
@@ -55,11 +57,11 @@ public abstract class AbstractPMDTool extends AbstractTool {
 				}
 				String rulesets = "all.xml"; // location of the XML rule file
 				RuleContext ctx = new RuleContext(); // info about what's
-														// getting scanned
+				// getting scanned
 				RuleSetFactory ruleSetFactory = new RuleSetFactory(); // only
-																		// the
-																		// default
-																		// rules
+				// the
+				// default
+				// rules
 
 				String excludeMarker = PMD.EXCLUDE_MARKER;
 
@@ -88,7 +90,7 @@ public abstract class AbstractPMDTool extends AbstractTool {
 				final List<Renderer> renderers = new ArrayList<Renderer>(); // output
 				renderers.add(new Output(generator, monitor));
 
-				monitor.beginTask("PMD", files.size() + 25);
+				monitor.begin(files.size() + 25);
 				PMD.processFiles(cpus, ruleSetFactory, sourceType, files, ctx,
 						renderers, rulesets, false, "", encoding,
 						excludeMarker, cl);
@@ -236,8 +238,8 @@ public abstract class AbstractPMDTool extends AbstractTool {
 			 * lastSeparator).replace(File.separatorChar, '.'));
 			 * mb.compilation(fileName.substring(lastSeparator+1)); } else {
 			 * mb.packageName(""); mb.compilation(fileName); }
-			 * mb.linesOfCode((int) m.getTotal()); System.out.println(fileName+" :
-			 * "+m.getTotal()+" LOC"); // mb.build(); } }
+			 * mb.linesOfCode((int) m.getTotal()); System.out.println(fileName+"
+			 * : "+m.getTotal()+" LOC"); // mb.build(); } }
 			 */
 			// System.out.println("Done with report");
 		}
