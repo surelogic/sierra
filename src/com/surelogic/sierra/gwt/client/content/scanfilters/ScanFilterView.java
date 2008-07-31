@@ -9,8 +9,10 @@ import java.util.Map;
 import java.util.Set;
 
 import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.HTMLTable.CellFormatter;
 import com.surelogic.sierra.gwt.client.content.ContentComposite;
 import com.surelogic.sierra.gwt.client.content.categories.CategoriesContent;
 import com.surelogic.sierra.gwt.client.content.findingtypes.FindingTypesContent;
@@ -181,10 +183,15 @@ public class ScanFilterView extends BlockPanel {
 			cfDivider.setWidth("100%");
 			cfDivider.getColumnFormatter().setWidth(0, "50%");
 			cfDivider.getColumnFormatter().setWidth(1, "50%");
+			final CellFormatter cellF = cfDivider.getCellFormatter();
 			cfDivider.setWidget(0, 0, categoriesLeft);
+			cellF.setVerticalAlignment(0, 0, HasVerticalAlignment.ALIGN_TOP);
 			cfDivider.setWidget(0, 1, categoriesRight);
+			cellF.setVerticalAlignment(0, 1, HasVerticalAlignment.ALIGN_TOP);
 			cfDivider.setWidget(1, 0, findingsLeft);
+			cellF.setVerticalAlignment(1, 0, HasVerticalAlignment.ALIGN_TOP);
 			cfDivider.setWidget(1, 1, findingsRight);
+			cellF.setVerticalAlignment(1, 1, HasVerticalAlignment.ALIGN_TOP);
 			contentPanel.add(cfDivider);
 		}
 
