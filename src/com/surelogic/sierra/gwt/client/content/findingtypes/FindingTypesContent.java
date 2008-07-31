@@ -92,6 +92,6 @@ public final class FindingTypesContent extends
 
 		});
 		dialog.center();
-		dialog.setCategories(findingView.getCategoriesIncludingIds(), false);
+		dialog.update(findingView.getCategoriesIncludingIds(), false);
 	}
 }

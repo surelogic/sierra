@@ -27,6 +27,14 @@ public class ScanFilterEntry implements Serializable, Cacheable,
 		this.category = true;
 	}
 
+	public ScanFilterEntry(FindingTypeFilter finding) {
+		super();
+		this.uuid = finding.getUuid();
+		this.name = finding.getName();
+		this.shortMessage = finding.getShortMessage();
+		this.category = false;
+	}
+
 	public String getUuid() {
 		return uuid;
 	}

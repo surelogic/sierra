@@ -41,7 +41,7 @@ public class ScanFilterDialog extends FormDialog {
 		return null;
 	}
 
-	public void setScanFilter(final ScanFilter selectedFilter) {
+	public void update(final ScanFilter selectedFilter) {
 		final ScanFilterCache scanFilters = ScanFilterCache.getInstance();
 
 		final CacheListener<ScanFilter> cacheListener = new CacheListenerAdapter<ScanFilter>() {

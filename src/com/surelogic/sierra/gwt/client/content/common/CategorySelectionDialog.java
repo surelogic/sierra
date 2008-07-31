@@ -43,7 +43,7 @@ public class CategorySelectionDialog extends FormDialog {
 		return null;
 	}
 
-	public void setCategories(final List<String> excludeCategoryIds,
+	public void update(final List<String> excludeCategoryIds,
 			final boolean showLocal) {
 		final CategoryCache categories = CategoryCache.getInstance();
 

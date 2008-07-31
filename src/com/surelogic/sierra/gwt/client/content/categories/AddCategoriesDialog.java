@@ -13,11 +13,11 @@ public class AddCategoriesDialog extends FindingSelectionDialog {
 		super("Select Categories and/or Findings");
 	}
 
-	public void setCategories(CategoryCache categories, Category currentCategory) {
+	public void update(CategoryCache categories, Category currentCategory) {
 		clearFindings();
 		for (final Category cat : categories) {
 			if (!hasCategory(currentCategory, cat, new ArrayList<Category>())) {
-				addCategory(cat);
+				addCategory(cat, null);
 			}
 		}
 	}

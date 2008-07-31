@@ -21,7 +21,7 @@ public class ChangePasswordDialog extends FormDialog {
 		super("Change Password", null);
 	}
 
-	public void setUserAccount(UserAccount user) {
+	public void update(UserAccount user) {
 		this.user = user;
 
 		final StringBuffer pwdTitle = new StringBuffer("New Password");

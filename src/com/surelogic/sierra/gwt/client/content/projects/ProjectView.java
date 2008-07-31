@@ -133,7 +133,7 @@ public class ProjectView extends BlockPanel {
 
 			});
 			dialog.center();
-			dialog.setScanFilter(selection.getScanFilter());
+			dialog.update(selection.getScanFilter());
 		}
 	}
 

@@ -172,7 +172,7 @@ public final class UserManagementContent extends ContentComposite {
 			public void onClick(Widget sender) {
 				usersGrid.clearStatus();
 				final ChangePasswordDialog dialog = new ChangePasswordDialog();
-				dialog.setUserAccount(user);
+				dialog.update(user);
 				dialog.center();
 			}
 		});

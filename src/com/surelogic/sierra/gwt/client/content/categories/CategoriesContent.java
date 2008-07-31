@@ -143,7 +143,7 @@ public class CategoriesContent extends
 
 		});
 		dialog.center();
-		dialog.setCategories(getCache(), cat);
+		dialog.update(getCache(), cat);
 	}
 
 	private class CreateCategoryForm extends FormButton {

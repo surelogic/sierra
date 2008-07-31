@@ -15,6 +15,8 @@ import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.data.Category;
 import com.surelogic.sierra.gwt.client.data.FindingTypeFilter;
+import com.surelogic.sierra.gwt.client.data.ScanFilterEntry;
+import com.surelogic.sierra.gwt.client.ui.ImageHelper;
 import com.surelogic.sierra.gwt.client.ui.ItemCheckBox;
 import com.surelogic.sierra.gwt.client.ui.SearchPanel;
 import com.surelogic.sierra.gwt.client.ui.SearchPanel.SearchListener;
@@ -58,7 +60,12 @@ public class FindingSelectionDialog extends FormDialog {
 		categoryTree.clear();
 	}
 
-	public final void addCategory(final Category cat) {
+	public final void addWaitStatus() {
+		categoryTree.addItem(ImageHelper.getWaitImage(16));
+	}
+
+	public final void addCategory(final Category cat,
+			final Set<ScanFilterEntry> excludeFindings) {
 		final ItemCheckBox<Category> catCheck = new ItemCheckBox<Category>(cat
 				.getName(), cat);
 		final TreeItem catItem = categoryTree.addItem(catCheck);
@@ -67,9 +74,12 @@ public class FindingSelectionDialog extends FormDialog {
 				cat.getEntries());
 		Collections.sort(sortedFindings);
 		for (final FindingTypeFilter finding : sortedFindings) {
-			final ItemCheckBox<FindingTypeFilter> findingCheck = new ItemCheckBox<FindingTypeFilter>(
-					finding.getName(), finding);
-			catItem.addItem(findingCheck);
+			if (excludeFindings == null
+					|| !isExcluded(finding.getUuid(), excludeFindings)) {
+				final ItemCheckBox<FindingTypeFilter> findingCheck = new ItemCheckBox<FindingTypeFilter>(
+						finding.getName(), finding);
+				catItem.addItem(findingCheck);
+			}
 		}
 	}
 
@@ -96,6 +106,23 @@ public class FindingSelectionDialog extends FormDialog {
 		return cats;
 	}
 
+	public final Set<FindingTypeFilter> getSelectedFindings() {
+		final Set<FindingTypeFilter> selected = new HashSet<FindingTypeFilter>();
+		for (int catIndex = 0; catIndex < categoryTree.getItemCount(); catIndex++) {
+			final TreeItem catItem = categoryTree.getItem(catIndex);
+
+			for (int findingIndex = 0; findingIndex < catItem.getChildCount(); findingIndex++) {
+				final TreeItem findingItem = catItem.getChild(findingIndex);
+				final ItemCheckBox<?> findingCheck = (ItemCheckBox<?>) findingItem
+						.getWidget();
+				if (findingCheck.isChecked()) {
+					selected.add((FindingTypeFilter) findingCheck.getItem());
+				}
+			}
+		}
+		return selected;
+	}
+
 	public final Set<FindingTypeFilter> getExcludedFindings() {
 		final Set<FindingTypeFilter> excluded = new HashSet<FindingTypeFilter>();
 		for (int catIndex = 0; catIndex < categoryTree.getItemCount(); catIndex++) {
@@ -117,6 +144,17 @@ public class FindingSelectionDialog extends FormDialog {
 			}
 		}
 		return excluded;
+	}
+
+	protected final boolean isExcluded(String uuid,
+			Set<ScanFilterEntry> excludedSet) {
+		for (final ScanFilterEntry entry : excludedSet) {
+			if (entry.getUuid().equals(uuid)) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	private void search(String query) {

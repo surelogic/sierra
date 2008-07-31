@@ -18,6 +18,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.HTMLTable.CellFormatter;
 import com.surelogic.sierra.gwt.client.content.common.CategorySelectionDialog;
 import com.surelogic.sierra.gwt.client.data.Category;
+import com.surelogic.sierra.gwt.client.data.FindingTypeFilter;
 import com.surelogic.sierra.gwt.client.data.ScanFilter;
 import com.surelogic.sierra.gwt.client.data.ScanFilterEntry;
 import com.surelogic.sierra.gwt.client.data.Status;
@@ -107,11 +108,33 @@ public class ScanFilterEditor extends BlockPanel {
 		for (final ScanFilterEntry cat : selection.getCategories()) {
 			excludeIds.add(cat.getUuid());
 		}
-		dialog.setCategories(excludeIds, true);
+		dialog.update(excludeIds, true);
 	}
 
 	private void promptForFindings() {
-		// TODO finish
+		final AddFindingsDialog dialog = new AddFindingsDialog();
+		dialog.addPopupListener(new PopupListener() {
+
+			public void onPopupClosed(PopupPanel sender, boolean autoClosed) {
+				final Status s = dialog.getStatus();
+				if (s != null && s.isSuccess()) {
+					for (final FindingTypeFilter selectedFinding : dialog
+							.getSelectedFindings()) {
+						final ScanFilterEntry findingEntry = new ScanFilterEntry(
+								selectedFinding);
+						selection.getTypes().add(findingEntry);
+					}
+					setSelection(selection);
+				}
+			}
+
+		});
+		dialog.center();
+		final List<String> excludeIds = new ArrayList<String>();
+		for (final ScanFilterEntry cat : selection.getCategories()) {
+			excludeIds.add(cat.getUuid());
+		}
+		dialog.update(selection.getCategories(), selection.getTypes());
 	}
 
 	private static class ScanFilterBlock extends BlockPanel {
