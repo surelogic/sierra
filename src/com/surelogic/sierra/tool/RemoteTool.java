@@ -14,6 +14,7 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 
+import com.sun.org.apache.xml.internal.utils.UnImplNode;
 import com.surelogic.common.jobs.SLProgressMonitor;
 import com.surelogic.common.jobs.SLStatus;
 import com.surelogic.common.logging.SLLogger;
@@ -212,11 +213,12 @@ public class RemoteTool extends AbstractTool {
 		}
 
 		public void begin() {
-			out.println("##" + Remote.TASK + ", begin()");
+			throw new IllegalStateException(
+					"begin() can't be used in this context");
 		}
 
 		public void begin(int totalWork) {
-			out.println("##" + Remote.TASK + ", " + totalWork);
+			out.println("##" + Remote.TASK + ", Scan, " + totalWork);
 		}
 
 		public void done() {
