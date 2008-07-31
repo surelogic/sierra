@@ -98,7 +98,7 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 	 * actually persisted.
 	 */
 	public void finished(SLProgressMonitor monitor) {
-		monitor.beginTask("Scan DB", 100);
+		monitor.begin(100);
 		persist(monitor);
 	}
 

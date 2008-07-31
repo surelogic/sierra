@@ -364,7 +364,7 @@ public final class ClientFindingManager extends FindingManager {
 	public void setImportance(final Collection<Long> findingIds,
 			final Importance importance, final SLProgressMonitor monitor)
 			throws SQLException {
-		monitor.beginTask("Updating finding data", findingIds.size());
+		monitor.begin(findingIds.size());
 		final Timestamp now = JDBCUtils.now();
 		for (final Long findingId : findingIds) {
 			checkFinding(findingId);
