@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.surelogic.common.jdbc.ConnectionQuery;
-import com.surelogic.common.jdbc.EmptyProgressMonitor;
+import com.surelogic.common.jobs.NullSLProgressMonitor;
 import com.surelogic.sierra.jdbc.finding.ServerFindingManager;
 import com.surelogic.sierra.jdbc.project.ProjectRecordFactory;
 import com.surelogic.sierra.jdbc.record.ProjectRecord;
@@ -114,7 +114,7 @@ public class SierraServiceImpl extends SecureServiceServlet implements
 		try {
 			conn.rollback();
 			ScanManager.getInstance(conn).deleteScan(uid,
-					EmptyProgressMonitor.instance());
+					new NullSLProgressMonitor());
 		} catch (final Exception e1) {
 			log
 					.log(
