@@ -68,8 +68,8 @@ import com.surelogic.common.eclipse.logging.SLEclipseStatusUtility;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.images.CommonImages;
 import com.surelogic.common.jdbc.ConnectionQuery;
-import com.surelogic.common.jdbc.EmptyProgressMonitor;
 import com.surelogic.common.jdbc.Query;
+import com.surelogic.common.jobs.NullSLProgressMonitor;
 import com.surelogic.common.jobs.SLProgressMonitor;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Activator;
@@ -1154,8 +1154,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 							continue;
 						}
 
-						final SLProgressMonitor monitor = EmptyProgressMonitor
-								.instance();
+						final SLProgressMonitor monitor = new NullSLProgressMonitor();
 						// Try to distinguish server failure/disconnection and
 						// RPC failure
 						final ServerFailureReport method = PreferenceConstants
