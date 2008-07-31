@@ -14,7 +14,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.surelogic.common.jdbc.EmptyProgressMonitor;
+import com.surelogic.common.jobs.NullSLProgressMonitor;
 import com.surelogic.common.jobs.SLProgressMonitor;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.jdbc.record.ArtifactRecord;
@@ -206,7 +206,7 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 			rec.setLinesOfCode(linesOfCode);
 			classMetrics.add(rec);
 			if (classMetrics.size() == COMMIT_SIZE) {
-				persist(EmptyProgressMonitor.instance());
+				persist(new NullSLProgressMonitor());
 			}
 			clear();
 		}
@@ -290,7 +290,7 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 				}
 				artifacts.add(artifact);
 				if (artifacts.size() == COMMIT_SIZE) {
-					persist(EmptyProgressMonitor.instance());
+					persist(new NullSLProgressMonitor());
 				}
 			}
 			clear();

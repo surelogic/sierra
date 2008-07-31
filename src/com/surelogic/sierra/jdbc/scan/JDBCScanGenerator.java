@@ -8,8 +8,8 @@ import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.surelogic.common.jdbc.EmptyProgressMonitor;
 import com.surelogic.common.jdbc.JDBCUtils;
+import com.surelogic.common.jobs.NullSLProgressMonitor;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.jdbc.project.ProjectRecordFactory;
 import com.surelogic.sierra.jdbc.record.ProjectRecord;
@@ -155,7 +155,7 @@ class JDBCScanGenerator implements ScanGenerator {
 	}
 
 	public String finished() {
-		generator.finished(EmptyProgressMonitor.instance());
+		generator.finished(new NullSLProgressMonitor());
 		scan.setStatus(ScanStatus.GENERATED);
 		try {
 			scan.update();

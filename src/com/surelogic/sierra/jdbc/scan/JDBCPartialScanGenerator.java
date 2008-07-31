@@ -6,8 +6,8 @@ import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.surelogic.common.jdbc.EmptyProgressMonitor;
 import com.surelogic.common.jdbc.JDBCUtils;
+import com.surelogic.common.jobs.NullSLProgressMonitor;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.jdbc.record.ScanRecord;
 import com.surelogic.sierra.jdbc.tool.FindingFilter;
@@ -94,7 +94,7 @@ class JDBCPartialScanGenerator implements ScanGenerator {
 	}
 
 	public String finished() {
-		generator.finished(EmptyProgressMonitor.instance());
+		generator.finished(new NullSLProgressMonitor());
 		scan.setStatus(ScanStatus.FINISHED);
 		try {
 			scan.update();
