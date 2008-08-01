@@ -91,9 +91,11 @@ public class ProjectView extends BlockPanel {
 			diff.clear();
 			chart.clear();
 			chart.add(ChartBuilder.name("ProjectFindingsChart").width(800)
-					.prop("projectName", project.getName()).build());
+					.prop("projectName", project.getName())
+					.prop("kLoC", "true").build());
 			chart.add(ChartBuilder.name("ProjectCompilationsChart").width(800)
-					.prop("projectName", project.getName()).build());
+					.prop("projectName", project.getName())
+					.prop("kLoC", "true").build());
 
 			final ScanFilter sf = project.getScanFilter();
 			final ContentLink sfLink = new ContentLink(sf.getName(),
@@ -105,7 +107,6 @@ public class ProjectView extends BlockPanel {
 			scanFilterField.add(sfLink);
 			ServiceHelper.getFindingService().getLatestScanDetail(
 					project.getUuid(), new StandardCallback<ScanDetail>() {
-
 						@Override
 						protected void doSuccess(final ScanDetail result) {
 							latestScan.setScan(result);
