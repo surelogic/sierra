@@ -22,6 +22,8 @@ import org.jfree.ui.HorizontalAlignment;
 import org.jfree.ui.RectangleEdge;
 
 import com.surelogic.common.jdbc.ConnectionQuery;
+import com.surelogic.common.jdbc.IntegerResultHandler;
+import com.surelogic.common.jdbc.Query;
 import com.surelogic.common.jdbc.Row;
 import com.surelogic.common.jdbc.RowHandler;
 import com.surelogic.sierra.gwt.client.data.Report;
@@ -29,24 +31,38 @@ import com.surelogic.sierra.gwt.client.data.Report.Parameter;
 
 public class ProjectFindingsChart implements IDatabasePlot {
 
-	public JFreeChart plot(PlotSize mutableSize, Report report, Connection c)
-			throws SQLException, IOException {
+	public JFreeChart plot(final PlotSize mutableSize, final Report report,
+			final Connection c) throws SQLException, IOException {
 		c.setTransactionIsolation(Connection.TRANSACTION_READ_UNCOMMITTED);
+		final Query query = new ConnectionQuery(c);
 		final DefaultCategoryDataset importanceData = new DefaultCategoryDataset();
 		final DefaultCategoryDataset totalData = new DefaultCategoryDataset();
+		final Parameter kLoCParam = report.getParameter("kLoC");
+		final boolean bykLoC = (kLoCParam != null)
+				&& "true".equals(kLoCParam.getValue());
 		final Parameter projectParam = report.getParameter("projectName");
 		if (projectParam != null) {
 			final String projectName = projectParam.getValue();
 			if (projectName != null) {
 				final Map<String, Integer> totals = new TreeMap<String, Integer>();
-				new ConnectionQuery(c).prepared("Plots.Project.scanFindings",
+				final Integer linesOfCode = bykLoC ? query
+						.prepared("Plots.Project.linesOfCode",
+								new IntegerResultHandler()).call(projectName)
+						: 0;
+				query.prepared("Plots.Project.scanFindings",
 						new RowHandler<Void>() {
-							public Void handle(Row r) {
+							public Void handle(final Row r) {
 								final int count = r.nextInt();
 								final String importance = r.nextString();
 								final String time = r.nextString();
-								importanceData
-										.setValue(count, importance, time);
+								if (bykLoC) {
+									importanceData.setValue((double) count
+											/ linesOfCode * 1000, importance,
+											time);
+								} else {
+									importanceData.setValue(count, importance,
+											time);
+								}
 								final Integer total = totals.get(time);
 								totals.put(time, (total == null ? 0 : total)
 										+ count);
@@ -54,15 +70,21 @@ public class ProjectFindingsChart implements IDatabasePlot {
 							}
 						}).call(projectName);
 				for (final Entry<String, Integer> entry : totals.entrySet()) {
-					totalData.setValue(entry.getValue(), "Total", entry
-							.getKey());
+					if (bykLoC) {
+						totalData.setValue((double) entry.getValue()
+								/ linesOfCode * 1000, "Total", entry.getKey());
+					} else {
+						totalData.setValue(entry.getValue(), "Total", entry
+								.getKey());
+					}
 				}
 			}
 		}
 		mutableSize.setHeight(25 * importanceData.getColumnCount() + 100);
 		final JFreeChart chart = ChartFactory.createBarChart(
-				"Findings Breakdown Per Scan", null, "# of Findings",
-				importanceData, PlotOrientation.HORIZONTAL, true, false, false);
+				"Findings Breakdown Per Scan", null, "# of Findings"
+						+ (bykLoC ? "/ kLoC" : ""), importanceData,
+				PlotOrientation.HORIZONTAL, true, false, false);
 
 		final BarRenderer bar = (BarRenderer) chart.getCategoryPlot()
 				.getRenderer();
@@ -97,5 +119,4 @@ public class ProjectFindingsChart implements IDatabasePlot {
 				NumberAxis.createIntegerTickUnits());
 		return chart;
 	}
-
 }

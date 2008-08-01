@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.Map.Entry;
@@ -22,43 +23,80 @@ import org.jfree.ui.HorizontalAlignment;
 import org.jfree.ui.RectangleEdge;
 
 import com.surelogic.common.jdbc.ConnectionQuery;
+import com.surelogic.common.jdbc.Query;
+import com.surelogic.common.jdbc.Result;
+import com.surelogic.common.jdbc.ResultHandler;
 import com.surelogic.common.jdbc.Row;
 import com.surelogic.common.jdbc.RowHandler;
 import com.surelogic.sierra.gwt.client.data.Report;
+import com.surelogic.sierra.gwt.client.data.Report.Parameter;
 
 public class ProjectCompilationsChart implements IDatabasePlot {
 
-	public JFreeChart plot(PlotSize mutableSize, Report report, Connection c)
-			throws SQLException, IOException {
+	public JFreeChart plot(final PlotSize mutableSize, final Report report,
+			final Connection c) throws SQLException, IOException {
 		c.setTransactionIsolation(Connection.TRANSACTION_READ_UNCOMMITTED);
 		final DefaultCategoryDataset importanceData = new DefaultCategoryDataset();
 		final DefaultCategoryDataset totalData = new DefaultCategoryDataset();
 		final String projectName = report.getParameter("projectName")
 				.getValue();
+		final Query q = new ConnectionQuery(c);
+		final Parameter kLoCParam = report.getParameter("kLoC");
+		final boolean bykLoC = (kLoCParam != null)
+				&& "true".equals(kLoCParam.getValue());
+		final Map<String, Integer> kLoCMap = bykLoC ? q.prepared(
+				"Plots.Project.linesOfCodeByPackage",
+				new ResultHandler<Map<String, Integer>>() {
+					public Map<String, Integer> handle(final Result result) {
+						final Map<String, Integer> map = new HashMap<String, Integer>();
+						for (final Row r : result) {
+							map.put(r.nextString(), r.nextInt());
+						}
+						return map;
+					}
+				}).call(projectName)
+				: null;
 		if (projectName != null) {
 			final Map<String, Integer> totals = new TreeMap<String, Integer>();
-			new ConnectionQuery(c).prepared("Plots.Project.compilations",
-					new RowHandler<Void>() {
-						public Void handle(Row r) {
-							final int count = r.nextInt();
-							final String importance = r.nextString();
-							final String pakkage = r.nextString();
-							importanceData.setValue(count, importance, pakkage);
-							final Integer total = totals.get(pakkage);
-							totals.put(pakkage, (total == null ? 0 : total)
-									+ count);
-							return null;
-						}
-					}).call(projectName);
+			q.prepared("Plots.Project.compilations", new RowHandler<Void>() {
+				public Void handle(final Row r) {
+					final int count = r.nextInt();
+					final String importance = r.nextString();
+					final String pakkage = r.nextString();
+					if (bykLoC) {
+						importanceData.setValue((double) count
+								/ kLoCMap.get(pakkage) * 1000, importance,
+								pakkage);
+					} else {
+						importanceData.setValue(count, importance, pakkage);
+					}
+					final Integer total = totals.get(pakkage);
+					totals.put(pakkage, (total == null ? 0 : total) + count);
+					return null;
+				}
+			}).call(projectName);
+			int totalLoC = 0;
+			if (bykLoC) {
+				for (final Integer val : kLoCMap.values()) {
+					totalLoC += val;
+				}
+			}
 			for (final Entry<String, Integer> entry : totals.entrySet()) {
-				totalData.setValue(entry.getValue(), "Total", entry.getKey());
+				if (bykLoC) {
+					totalData.setValue((double) entry.getValue() / totalLoC
+							* 1000, "Total", entry.getKey());
+				} else {
+					totalData.setValue(entry.getValue(), "Total", entry
+							.getKey());
+				}
 			}
 		}
 		mutableSize.setHeight(25 * importanceData.getColumnCount() + 100);
 
 		final JFreeChart chart = ChartFactory.createBarChart(
-				"Latest Scan Findings By Compilation", null, "# of Findings",
-				importanceData, PlotOrientation.HORIZONTAL, true, false, false);
+				"Latest Scan Findings By Package" + (bykLoC ? " / kLoC" : ""),
+				null, "# of Findings", importanceData,
+				PlotOrientation.HORIZONTAL, true, false, false);
 
 		final BarRenderer bar = (BarRenderer) chart.getCategoryPlot()
 				.getRenderer();
