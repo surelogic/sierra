@@ -20,7 +20,7 @@ import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.service.callback.ResultCallback;
 import com.surelogic.sierra.gwt.client.service.callback.StatusCallback;
 import com.surelogic.sierra.gwt.client.ui.FormButton;
-import com.surelogic.sierra.gwt.client.ui.RemoteServerLink;
+import com.surelogic.sierra.gwt.client.ui.link.RemoteServerLink;
 import com.surelogic.sierra.gwt.client.util.LangUtil;
 
 public class CategoriesContent extends

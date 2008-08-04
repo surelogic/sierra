@@ -1,4 +1,4 @@
-package com.surelogic.sierra.gwt.client.ui;
+package com.surelogic.sierra.gwt.client.ui.link;
 
 import com.google.gwt.user.client.ui.Hyperlink;
 import com.surelogic.sierra.gwt.client.Context;
