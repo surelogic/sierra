@@ -20,6 +20,7 @@ import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.service.callback.ResultCallback;
 import com.surelogic.sierra.gwt.client.service.callback.StatusCallback;
 import com.surelogic.sierra.gwt.client.ui.FormButton;
+import com.surelogic.sierra.gwt.client.ui.RemoteServerLink;
 import com.surelogic.sierra.gwt.client.util.LangUtil;
 
 public class CategoriesContent extends
@@ -87,6 +88,16 @@ public class CategoriesContent extends
 	@Override
 	protected String getItemText(Category item) {
 		return item.getName();
+	}
+
+	@Override
+	protected Widget getItemDecorator(Category item) {
+		if (!item.isLocal()) {
+			// TODO add methods to access the owning server of this category
+			return new RemoteServerLink(item.getName()
+					+ " is from <Remote Server>", "http://no-url-yet/");
+		}
+		return null;
 	}
 
 	@Override

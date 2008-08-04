@@ -130,6 +130,10 @@ public abstract class ListContentComposite<E extends Cacheable, C extends Cache<
 
 	protected abstract String getItemText(E item);
 
+	protected Widget getItemDecorator(E item) {
+		return null;
+	}
+
 	protected abstract boolean isMatch(E item, String query);
 
 	private class ActionBlock extends BlockPanel {
@@ -161,9 +165,15 @@ public abstract class ListContentComposite<E extends Cacheable, C extends Cache<
 		}
 
 		@Override
+		protected Widget getItemDecorator(E item) {
+			return ListContentComposite.this.getItemDecorator(item);
+		};
+
+		@Override
 		protected void doItemClick(E item) {
 			Context.createWithUuid(item).submit();
 		}
 
 	}
+
 }

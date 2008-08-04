@@ -60,6 +60,8 @@ public abstract class SearchBlock<E extends Cacheable, T extends Cache<E>>
 
 	protected abstract String getItemText(E item);
 
+	protected abstract Widget getItemDecorator(E item);
+
 	protected abstract void doItemClick(E item);
 
 	private class SearchResultsBlock extends BlockPanel {
@@ -113,6 +115,7 @@ public abstract class SearchBlock<E extends Cacheable, T extends Cache<E>>
 							getItemText(item), item, new SearchResultListener(
 									item));
 					itemUI.setSelectionTracker(selectionTracker);
+					itemUI.setDecorator(getItemDecorator(item), true);
 					searchResultsData.add(itemUI);
 				}
 			}

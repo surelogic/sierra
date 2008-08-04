@@ -461,22 +461,24 @@ img {
 
 /* SL Item Label */
 .sl-ItemLabel {
-	font-size: small;
-	padding: 2px;
+	border-collapse: collapse;
+	border: 1px solid #FFFFFF;
 	cursor: pointer;
 	cursor: hand;
+}
+
+.sl-ItemLabel-text {
+	font-size: small;
 }
 
 .sl-ItemLabel-over {
 	border: 1px solid #AAAAFF;
 	background-color: #EEEEFF;
-	padding: 1px;
 }
 
 .sl-ItemLabel-selected {
 	border: 1px solid #666699;
 	background-color: #DDDDFF;
-	padding: 1px;
 }
 
 /* SL Content Link */
