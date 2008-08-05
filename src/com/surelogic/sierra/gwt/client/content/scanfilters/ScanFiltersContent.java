@@ -74,7 +74,7 @@ public class ScanFiltersContent extends
 	}
 
 	@Override
-	protected boolean isMatch(ScanFilter item, String query) {
+	protected boolean isItemVisible(ScanFilter item, String query) {
 		return LangUtil.containsIgnoreCase(item.getName(), query);
 	}
 

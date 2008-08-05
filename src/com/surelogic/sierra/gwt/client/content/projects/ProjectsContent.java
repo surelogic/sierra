@@ -37,7 +37,7 @@ public class ProjectsContent extends
 	}
 
 	@Override
-	protected boolean isMatch(Project item, String query) {
+	protected boolean isItemVisible(Project item, String query) {
 		return LangUtil.containsIgnoreCase(item.getName(), query);
 	}
 

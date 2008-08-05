@@ -101,7 +101,7 @@ public class CategoriesContent extends
 	}
 
 	@Override
-	protected boolean isMatch(Category item, String query) {
+	protected boolean isItemVisible(Category item, String query) {
 		return LangUtil.containsIgnoreCase(item.getName(), query);
 	}
 

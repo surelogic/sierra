@@ -121,8 +121,13 @@ public abstract class ListContentComposite<E extends Cacheable, C extends Cache<
 				listView.setSelection(selection);
 			}
 			onSelectionChanged(selection);
-		} else if (cache.getItemCount() > 0) {
-			Context.createWithUuid(cache.getItem(0)).submit();
+		} else {
+			for (final E item : cache) {
+				if (isItemVisible(item, "")) {
+					Context.createWithUuid(item).submit();
+					return;
+				}
+			}
 		}
 	}
 
@@ -134,7 +139,7 @@ public abstract class ListContentComposite<E extends Cacheable, C extends Cache<
 		return null;
 	}
 
-	protected abstract boolean isMatch(E item, String query);
+	protected abstract boolean isItemVisible(E item, String searchText);
 
 	private class ActionBlock extends BlockPanel {
 
@@ -155,8 +160,8 @@ public abstract class ListContentComposite<E extends Cacheable, C extends Cache<
 		}
 
 		@Override
-		protected boolean isMatch(E item, String query) {
-			return ListContentComposite.this.isMatch(item, query);
+		protected boolean isItemVisible(E item, String searchText) {
+			return ListContentComposite.this.isItemVisible(item, searchText);
 		}
 
 		@Override

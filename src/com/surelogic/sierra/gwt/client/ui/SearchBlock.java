@@ -56,7 +56,7 @@ public abstract class SearchBlock<E extends Cacheable, T extends Cache<E>>
 		results.setSelection(item);
 	}
 
-	protected abstract boolean isMatch(E item, String query);
+	protected abstract boolean isItemVisible(E item, String searchText);
 
 	protected abstract String getItemText(E item);
 
@@ -110,7 +110,7 @@ public abstract class SearchBlock<E extends Cacheable, T extends Cache<E>>
 			}
 			final String query = queryBuf.toString();
 			for (final E item : cache) {
-				if (isMatch(item, query)) {
+				if (isItemVisible(item, query)) {
 					final ItemLabel<E> itemUI = new ItemLabel<E>(
 							getItemText(item), item, new SearchResultListener(
 									item));

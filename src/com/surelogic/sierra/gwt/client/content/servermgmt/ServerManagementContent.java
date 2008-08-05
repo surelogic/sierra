@@ -135,7 +135,7 @@ public class ServerManagementContent extends
 	}
 
 	@Override
-	protected boolean isMatch(final ServerLocation item, final String query) {
+	protected boolean isItemVisible(final ServerLocation item, final String query) {
 		return LangUtil.containsIgnoreCase(item.getLabel(), query);
 	}
 

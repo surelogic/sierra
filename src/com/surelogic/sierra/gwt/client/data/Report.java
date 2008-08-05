@@ -9,12 +9,17 @@ import com.surelogic.sierra.gwt.client.data.cache.Cacheable;
 import com.surelogic.sierra.gwt.client.util.LangUtil;
 
 public class Report implements Serializable, Cacheable {
+	public enum DataSource {
+		BUGLINK, TEAMSERVER
+	}
+
 	private static final long serialVersionUID = -5559871759716632180L;
 	private String uuid;
 	private String name;
 	private String title;
 	private long revision;
 	private String description;
+	private DataSource dataSource;
 	private List<Parameter> parameters;
 
 	public String getUuid() {
@@ -55,6 +60,14 @@ public class Report implements Serializable, Cacheable {
 
 	public void setDescription(final String description) {
 		this.description = description;
+	}
+
+	public DataSource getDataSource() {
+		return dataSource;
+	}
+
+	public void setDataSource(DataSource dataSource) {
+		this.dataSource = dataSource;
 	}
 
 	public List<Parameter> getParameters() {

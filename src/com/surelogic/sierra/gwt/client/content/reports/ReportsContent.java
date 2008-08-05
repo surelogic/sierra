@@ -10,18 +10,13 @@ import com.surelogic.sierra.gwt.client.data.Report;
 import com.surelogic.sierra.gwt.client.data.cache.ReportCache;
 import com.surelogic.sierra.gwt.client.util.LangUtil;
 
-public class ReportsContent extends ListContentComposite<Report, ReportCache> {
-	private static final ReportsContent instance = new ReportsContent();
+public abstract class ReportsContent extends
+		ListContentComposite<Report, ReportCache> {
 	private final ReportParametersView reportParamsView = new ReportParametersView();
 	private final ReportView reportView = new ReportView();
 
-	public static ReportsContent getInstance() {
-		return instance;
-	}
-
-	private ReportsContent() {
-		super(new ReportCache());
-		// singleton
+	public ReportsContent() {
+		super(ReportCache.getInstance());
 	}
 
 	@Override
@@ -81,8 +76,13 @@ public class ReportsContent extends ListContentComposite<Report, ReportCache> {
 	}
 
 	@Override
-	protected boolean isMatch(Report item, String query) {
-		return LangUtil.containsIgnoreCase(item.getTitle(), query);
+	protected boolean isItemVisible(Report item, String query) {
+		if (getDataSource() == item.getDataSource()) {
+			return LangUtil.containsIgnoreCase(item.getTitle(), query);
+		}
+		return false;
 	}
+
+	protected abstract Report.DataSource getDataSource();
 
 }

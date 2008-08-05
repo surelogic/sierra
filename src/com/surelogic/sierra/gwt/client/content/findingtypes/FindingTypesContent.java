@@ -55,7 +55,7 @@ public final class FindingTypesContent extends
 	}
 
 	@Override
-	protected boolean isMatch(FindingType item, String query) {
+	protected boolean isItemVisible(FindingType item, String query) {
 		return LangUtil.containsIgnoreCase(item.getName(), query);
 	}
 
