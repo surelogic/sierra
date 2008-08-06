@@ -14,6 +14,7 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.data.Report;
+import com.surelogic.sierra.gwt.client.data.Report.OutputType;
 import com.surelogic.sierra.gwt.client.data.Report.Parameter;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.service.callback.StandardCallback;
@@ -26,6 +27,7 @@ public class ReportParametersView extends BlockPanel {
 	private final FlexTable parametersTable = new FlexTable();
 	private final ActionPanel reportActions = new ActionPanel();
 	private final Map<Report.Parameter, Widget> paramUIMap = new HashMap<Report.Parameter, Widget>();
+	private final Map<OutputType, Label> actionOutputMap = new HashMap<OutputType, Label>();
 	private Report selection;
 
 	@Override
@@ -76,6 +78,12 @@ public class ReportParametersView extends BlockPanel {
 		}
 		parametersTable.getColumnFormatter().setWidth(0, "10%");
 		parametersTable.getColumnFormatter().setWidth(1, "90%");
+
+		for (final Map.Entry<OutputType, Label> actionEntry : actionOutputMap
+				.entrySet()) {
+			actionEntry.getValue().setVisible(
+					report.hasOutputType(actionEntry.getKey()));
+		}
 	}
 
 	public Report getSelection() {
@@ -106,8 +114,12 @@ public class ReportParametersView extends BlockPanel {
 		return report;
 	}
 
-	public void addReportAction(String text, ClickListener clickListener) {
-		reportActions.addAction(text, clickListener);
+	public void addReportAction(String text, OutputType outputType,
+			ClickListener clickListener) {
+		final Label action = reportActions.addAction(text, clickListener);
+		if (outputType != null) {
+			actionOutputMap.put(outputType, action);
+		}
 	}
 
 	private Widget getParameterUI(Parameter param) {

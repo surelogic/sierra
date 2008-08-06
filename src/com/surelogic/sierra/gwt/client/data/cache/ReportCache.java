@@ -7,6 +7,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.surelogic.sierra.gwt.client.data.Report;
 import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.data.Report.DataSource;
+import com.surelogic.sierra.gwt.client.data.Report.OutputType;
 import com.surelogic.sierra.gwt.client.data.Report.Parameter;
 import com.surelogic.sierra.gwt.client.data.Report.Parameter.Type;
 
@@ -37,6 +38,7 @@ public class ReportCache extends Cache<Report> {
 		report.setTitle("Findings By Project");
 		report.setDescription("Displays the number of findings per project.");
 		report.setDataSource(DataSource.TEAMSERVER);
+		report.setOutputTypes(OutputType.TABLE, OutputType.CHART);
 		final List<Parameter> params = report.getParameters();
 		params.add(new Parameter("Projects", Type.PROJECTS));
 		params.add(new Parameter("Importance", Type.IMPORTANCE));
@@ -50,6 +52,8 @@ public class ReportCache extends Cache<Report> {
 		report.setTitle("Findings By Priority");
 		report.setDescription("Just a placeholder report. Not implemented.");
 		report.setDataSource(DataSource.BUGLINK);
+		report.setOutputTypes(OutputType.TABLE, OutputType.CHART,
+				OutputType.PDF);
 		final List<Parameter> params = report.getParameters();
 		params.add(new Parameter("Importance", Type.IMPORTANCE));
 		return report;

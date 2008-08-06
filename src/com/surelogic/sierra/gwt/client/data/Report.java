@@ -13,6 +13,10 @@ public class Report implements Serializable, Cacheable {
 		BUGLINK, TEAMSERVER
 	}
 
+	public enum OutputType {
+		TABLE, CHART, PDF
+	}
+
 	private static final long serialVersionUID = -5559871759716632180L;
 	private String uuid;
 	private String name;
@@ -20,6 +24,7 @@ public class Report implements Serializable, Cacheable {
 	private long revision;
 	private String description;
 	private DataSource dataSource;
+	private OutputType[] outputTypes;
 	private List<Parameter> parameters;
 
 	public String getUuid() {
@@ -70,6 +75,29 @@ public class Report implements Serializable, Cacheable {
 		this.dataSource = dataSource;
 	}
 
+	public OutputType[] getOutputTypes() {
+		if (outputTypes == null) {
+			return new OutputType[0];
+		}
+		return outputTypes;
+	}
+
+	public boolean hasOutputType(OutputType outputType) {
+		if (outputTypes == null) {
+			return false;
+		}
+		for (final OutputType supportedType : outputTypes) {
+			if (supportedType == outputType) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public void setOutputTypes(OutputType... outputTypes) {
+		this.outputTypes = outputTypes;
+	}
+
 	public List<Parameter> getParameters() {
 		if (parameters == null) {
 			parameters = new ArrayList<Parameter>();
@@ -93,6 +121,8 @@ public class Report implements Serializable, Cacheable {
 		copy.name = name;
 		copy.title = title;
 		copy.description = description;
+		copy.dataSource = dataSource;
+		copy.outputTypes = outputTypes;
 		for (final Parameter param : getParameters()) {
 			copy.getParameters().add(param.copy());
 		}
@@ -184,9 +214,7 @@ public class Report implements Serializable, Cacheable {
 		}
 
 		public Parameter copy() {
-			final Parameter copy = new Parameter(name, type);
-			copy.getValues().addAll(getValues());
-			return copy;
+			return new Parameter(name, getValues(), type);
 		}
 
 		@Override

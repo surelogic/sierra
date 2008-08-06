@@ -21,11 +21,16 @@ public class ActionPanel extends Composite {
 		rootPanel.add(actionPanel);
 	}
 
-	public void addAction(String text, ClickListener actionListener) {
+	public Label addAction(String text, ClickListener actionListener) {
 		final Label action = new Label(text);
 		action.addStyleName(STYLE + "-item");
 		action.addClickListener(actionListener);
 		actionPanel.add(action);
+		return action;
+	}
+
+	public void removeAction(Label action) {
+		actionPanel.remove(action);
 	}
 
 	public void setWaitStatus() {

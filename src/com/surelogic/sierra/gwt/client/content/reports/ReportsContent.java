@@ -7,6 +7,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.content.ListContentComposite;
 import com.surelogic.sierra.gwt.client.data.Report;
+import com.surelogic.sierra.gwt.client.data.Report.OutputType;
 import com.surelogic.sierra.gwt.client.data.cache.ReportCache;
 import com.surelogic.sierra.gwt.client.util.LangUtil;
 
@@ -25,27 +26,31 @@ public abstract class ReportsContent extends
 		setCaption("Reports");
 		reportView.initialize();
 		reportParamsView.initialize();
-		reportParamsView.addReportAction("Show Table", new ClickListener() {
+		reportParamsView.addReportAction("Show Table", OutputType.TABLE,
+				new ClickListener() {
 
-			public void onClick(Widget sender) {
-				final VerticalPanel selectionPanel = getSelectionPanel();
-				if (selectionPanel.getWidgetIndex(reportView) == -1) {
-					selectionPanel.add(reportView);
-				}
-				reportView.retrieveReport(reportParamsView.getUpdatedReport());
-			}
-		});
-		reportParamsView.addReportAction("Show Chart", new ClickListener() {
+					public void onClick(Widget sender) {
+						final VerticalPanel selectionPanel = getSelectionPanel();
+						if (selectionPanel.getWidgetIndex(reportView) == -1) {
+							selectionPanel.add(reportView);
+						}
+						reportView.retrieveReport(reportParamsView
+								.getUpdatedReport());
+					}
+				});
+		reportParamsView.addReportAction("Show Chart", OutputType.CHART,
+				new ClickListener() {
 
-			public void onClick(Widget sender) {
-				final VerticalPanel selectionPanel = getSelectionPanel();
-				if (selectionPanel.getWidgetIndex(reportView) == -1) {
-					selectionPanel.add(reportView);
-				}
-				reportView.retrieveReport(reportParamsView.getUpdatedReport());
-			}
-		});
-		reportParamsView.addReportAction("Show on Dashboard",
+					public void onClick(Widget sender) {
+						final VerticalPanel selectionPanel = getSelectionPanel();
+						if (selectionPanel.getWidgetIndex(reportView) == -1) {
+							selectionPanel.add(reportView);
+						}
+						reportView.retrieveReport(reportParamsView
+								.getUpdatedReport());
+					}
+				});
+		reportParamsView.addReportAction("Show on Dashboard", null,
 				new ClickListener() {
 
 					public void onClick(Widget sender) {
@@ -53,13 +58,14 @@ public abstract class ReportsContent extends
 					}
 
 				});
-		reportParamsView.addReportAction("Export to PDF", new ClickListener() {
+		reportParamsView.addReportAction("Export to PDF", OutputType.PDF,
+				new ClickListener() {
 
-			public void onClick(Widget sender) {
-				// TODO Auto-generated method stub
-				Window.alert("TODO: Export to PDF");
-			}
-		});
+					public void onClick(Widget sender) {
+						// TODO Auto-generated method stub
+						Window.alert("TODO: Export to PDF");
+					}
+				});
 
 		selectionPanel.add(reportParamsView);
 		selectionPanel.add(reportView);
