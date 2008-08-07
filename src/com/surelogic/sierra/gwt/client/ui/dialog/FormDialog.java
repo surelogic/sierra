@@ -94,6 +94,7 @@ public abstract class FormDialog extends DialogBox {
 	protected final void addField(Widget inputTitle, Widget inputUI) {
 		final int nextRowIndex = contentTable.getRowCount();
 		contentTable.setWidget(nextRowIndex, 0, inputTitle);
+		inputUI.setWidth("100%");
 		contentTable.setWidget(nextRowIndex, 1, inputUI);
 	}
 
