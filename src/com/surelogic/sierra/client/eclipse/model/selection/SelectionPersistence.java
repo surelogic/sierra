@@ -16,9 +16,9 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import com.surelogic.adhoc.eclipse.Activator;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.common.xml.Entities;
+import com.surelogic.common.xml.XMLConstants;
 
 public final class SelectionPersistence {
 
@@ -74,7 +74,7 @@ public final class SelectionPersistence {
 	}
 
 	private static void outputXMLHeader(PrintWriter pw, StringBuilder b) {
-		pw.println("<?xml version='1.0' encoding='" + Activator.XML_ENCODING
+		pw.println("<?xml version='1.0' encoding='" + XMLConstants.ENCODING
 				+ "' standalone='yes'?>");
 		// No need to clear, since just created
 		// b.setLength(0);

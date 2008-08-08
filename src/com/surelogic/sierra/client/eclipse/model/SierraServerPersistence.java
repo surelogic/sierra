@@ -19,11 +19,11 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import com.surelogic.adhoc.eclipse.Activator;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.jdbc.TransactionException;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.common.xml.Entities;
+import com.surelogic.common.xml.XMLConstants;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.jdbc.settings.ServerLocations;
 import com.surelogic.sierra.tool.message.Services;
@@ -112,7 +112,7 @@ public final class SierraServerPersistence {
 	}
 
 	private static void outputXMLHeader(final PrintWriter pw) {
-		pw.println("<?xml version='1.0' encoding='" + Activator.XML_ENCODING
+		pw.println("<?xml version='1.0' encoding='" + XMLConstants.ENCODING
 				+ "' standalone='yes'?>");
 		final StringBuilder b = new StringBuilder();
 		b.append("<").append(TEAM_SERVERS);

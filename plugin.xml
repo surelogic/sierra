@@ -544,15 +544,6 @@
 			label="sierraFinding" quickFixIcon="lib/icons/asterisk_orange_0.gif" />
 	</extension>
 
-	<!-- Enable the ad hoc query view on Sierra -->
-
-	<extension point="com.surelogic.adhoc.eclipse.query">
-		<instance
-			adHocQueryViewId="com.surelogic.sierra.client.eclipse.AdHocQueryView"
-			class="com.surelogic.sierra.client.eclipse.AdHocGlue">
-		</instance>
-	</extension>
-
 	<!-- Definition for the Sierra builder -->
 
 	<extension id="sierraBuilder" name="Sierra Builder"
