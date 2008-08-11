@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.Writer;
-import java.net.URI;
 import java.nio.charset.Charset;
 import java.util.*;
 import java.util.logging.Level;
@@ -79,14 +78,11 @@ public abstract class AbstractPMDTool extends AbstractTool {
 								.toString());
 
 				final List<DataSource> files = new ArrayList<DataSource>();
-				for (IToolTarget t : getSrcTargets()) {
-					for (URI loc : t.getFiles()) {
-						File f = new File(loc);
-						if (f.exists() && f.getName().endsWith(".java")) {
-							files.add(new FileDataSource(f));
-						}
-					}
-				}
+				prepJavaFiles(new SourcePrep() {
+					public void prep(File f) {
+						files.add(new FileDataSource(f));
+					}					
+				});
 				final List<Renderer> renderers = new ArrayList<Renderer>(); // output
 				renderers.add(new Output(generator, monitor));
 

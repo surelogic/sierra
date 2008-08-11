@@ -1,5 +1,6 @@
 package com.surelogic.sierra.tool;
 
+import java.io.File;
 import java.net.*;
 import java.util.*;
 
@@ -166,5 +167,19 @@ public abstract class AbstractToolInstance implements IToolInstance {
   }
   protected String getOption(String key) {
 	return options.get(key);
+  }
+  
+  public interface SourcePrep {
+	void prep(File f);	  
+  }  
+  protected void prepJavaFiles(SourcePrep p) {
+	  for (IToolTarget t : getSrcTargets()) {
+		  for (URI loc : t.getFiles()) {
+			  File f = new File(loc);
+			  if (f.exists() && f.getName().endsWith(".java")) {
+				  p.prep(f);
+			  }
+		  }
+	  }  
   }
 }
