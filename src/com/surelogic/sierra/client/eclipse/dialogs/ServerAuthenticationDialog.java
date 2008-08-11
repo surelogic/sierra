@@ -13,7 +13,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.ISharedImages;
 
 import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.common.images.CommonImages;
@@ -127,8 +126,7 @@ public final class ServerAuthenticationDialog extends Dialog {
 		gridLayout.numColumns = 2;
 		warning.setLayout(gridLayout);
 		final Label saveWarningImg = new Label(warning, SWT.NONE);
-		saveWarningImg.setImage(SLImages
-				.getWorkbenchImage(ISharedImages.IMG_OBJS_WARN_TSK));
+		saveWarningImg.setImage(SLImages.getImage(CommonImages.IMG_WARNING));
 		saveWarningImg.setLayoutData(new GridData(SWT.RIGHT, SWT.TOP, false,
 				false));
 		final Label saveWarning = new Label(warning, SWT.WRAP);
@@ -154,8 +152,8 @@ public final class ServerAuthenticationDialog extends Dialog {
 
 	/**
 	 * The <tt>run</tt> method is called from
-	 * {@link #promptPasswordIfNecessary(String, SierraServer, Shell, ServerActionOnAProject)}.
-	 * Should be implemented by clients of that method.
+	 * {@link #promptPasswordIfNecessary(String, SierraServer, Shell, ServerActionOnAProject)}
+	 * . Should be implemented by clients of that method.
 	 */
 	public interface ServerActionOnAProject {
 		void run(final String projectName, final SierraServer server,

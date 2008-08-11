@@ -24,12 +24,12 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.progress.UIJob;
 
 import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.common.eclipse.jobs.SLUIJob;
 import com.surelogic.common.i18n.I18N;
+import com.surelogic.common.images.CommonImages;
 import com.surelogic.sierra.client.eclipse.jobs.DeleteProjectDataJob;
 import com.surelogic.sierra.client.eclipse.model.IProjectsObserver;
 import com.surelogic.sierra.client.eclipse.model.Projects;
@@ -179,9 +179,7 @@ public class ScanDataPreferencePage extends PreferencePage implements
 					 * TODO: Fix to use ILabelDecorator to look like a Java
 					 * project.
 					 */
-					item
-							.setImage(SLImages
-									.getWorkbenchImage(IDE.SharedImages.IMG_OBJ_PROJECT));
+					item.setImage(SLImages.getImage(CommonImages.IMG_PROJECT));
 				}
 			}
 		}

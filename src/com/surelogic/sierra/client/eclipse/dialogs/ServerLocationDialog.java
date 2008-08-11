@@ -18,17 +18,16 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.ISharedImages;
 
 import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.images.CommonImages;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
 import com.surelogic.sierra.client.eclipse.model.SierraServerManager;
-import com.surelogic.sierra.tool.message.ServerInfoServiceClient;
 import com.surelogic.sierra.tool.message.ServerInfoReply;
 import com.surelogic.sierra.tool.message.ServerInfoRequest;
 import com.surelogic.sierra.tool.message.ServerInfoService;
+import com.surelogic.sierra.tool.message.ServerInfoServiceClient;
 import com.surelogic.sierra.tool.message.SierraServerLocation;
 
 /**
@@ -232,9 +231,9 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 		final Text passwordText = new Text(authGroup, SWT.SINGLE | SWT.BORDER);
 		passwordText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		if (f_server.getPass() == null) {
-		  passwordText.setText("");
+			passwordText.setText("");
 		} else {
-		  passwordText.setText(f_server.getPass());
+			passwordText.setText(f_server.getPass());
 		}
 		passwordText.setEchoChar('\u25CF');
 
@@ -262,8 +261,7 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 		gridLayout.numColumns = 2;
 		warning.setLayout(gridLayout);
 		final Label saveWarningImg = new Label(warning, SWT.NONE);
-		saveWarningImg.setImage(SLImages
-				.getWorkbenchImage(ISharedImages.IMG_OBJS_WARN_TSK));
+		saveWarningImg.setImage(SLImages.getImage(CommonImages.IMG_WARNING));
 		saveWarningImg.setLayoutData(new GridData(SWT.RIGHT, SWT.TOP, false,
 				false));
 
@@ -415,7 +413,7 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 
 	private int validateServer() {
 		f_serverReply = null;
-		
+
 		if (!f_validateServer) {
 			f_serverValidated = true;
 			return Window.OK;
@@ -472,11 +470,11 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 	private static void updateServer(ServerLocationDialog dialog,
 			final SierraServer server) {
 		if (dialog != null) {
-			boolean changed = server.setServer(dialog.f_server, 					
-					                           dialog.f_serverReply);
+			boolean changed = server.setServer(dialog.f_server,
+					dialog.f_serverReply);
 			changed = changed
 					|| (server.savePassword() != dialog.f_savePassword);
-			
+
 			server.setSavePassword(dialog.f_savePassword);
 
 			if (changed) {

@@ -1,11 +1,10 @@
 package com.surelogic.sierra.client.eclipse.views;
 
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
-import org.eclipse.ui.ISharedImages;
 
 import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.common.images.CommonImages;
@@ -24,16 +23,15 @@ public final class SierraServersView extends
 		final Menu contextMenu = new Menu(parent.getShell(), SWT.POP_UP);
 
 		final MenuItem newServerItem = createMenuItem(contextMenu, "New...",
-				SLImages.getWorkbenchImage(ISharedImages.IMG_TOOL_NEW_WIZARD));
+				SLImages.getImage(CommonImages.IMG_EDIT_NEW));
 		final MenuItem browseServerItem = createMenuItem(contextMenu, "Browse",
 				SLImages.getImage(CommonImages.IMG_SIERRA_SERVER));
 
 		final MenuItem duplicateServerItem = createMenuItem(contextMenu,
-				"Duplicate", SLImages
-						.getWorkbenchImage(ISharedImages.IMG_TOOL_COPY));
+				"Duplicate", SLImages.getImage(CommonImages.IMG_EDIT_COPY));
 
 		final MenuItem deleteServerItem = createMenuItem(contextMenu, "Delete",
-				SLImages.getWorkbenchImage(ISharedImages.IMG_TOOL_DELETE));
+				SLImages.getImage(CommonImages.IMG_EDIT_DELETE));
 
 		new MenuItem(contextMenu, SWT.SEPARATOR);
 

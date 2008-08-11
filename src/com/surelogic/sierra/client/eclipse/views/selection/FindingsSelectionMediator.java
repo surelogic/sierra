@@ -25,6 +25,7 @@ import org.eclipse.ui.progress.UIJob;
 import com.surelogic.common.eclipse.CascadingList;
 import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.common.eclipse.jobs.SLUIJob;
+import com.surelogic.common.images.CommonImages;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.actions.NewScanDialogAction;
 import com.surelogic.sierra.client.eclipse.actions.PreferencesAction;
@@ -45,7 +46,7 @@ import com.surelogic.sierra.client.eclipse.views.IViewMediator;
 public final class FindingsSelectionMediator implements IProjectsObserver,
 		CascadingList.ICascadingListObserver, ISelectionManagerObserver,
 		IFindingsObserver, IViewMediator {
-	
+
 	private final IViewCallback f_view;
 	private final Composite f_findingsPage;
 	private final CascadingList f_cascadingList;
@@ -66,7 +67,7 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 
 	private MColumn f_first = null;
 
-	FindingsSelectionMediator(FindingsSelectionView view, 
+	FindingsSelectionMediator(FindingsSelectionView view,
 			Composite findingsPage, CascadingList cascadingList,
 			ToolItem clearSelectionItem, Link breadcrumbs, Label findingsIcon,
 			Link findingsStatus, ToolItem columnSelectionItem,
@@ -101,7 +102,7 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 			}
 		};
 	}
-	
+
 	public void init() {
 		f_clearSelectionItem.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
@@ -439,8 +440,7 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 					.getFindingsListLimit();
 			final int shouldBeShowing = f_workingSelection
 					.getFindingCountPorous();
-			final Image warning = SLImages
-					.getWorkbenchImage(org.eclipse.ui.ISharedImages.IMG_OBJS_WARN_TSK);
+			final Image warning = SLImages.getImage(CommonImages.IMG_WARNING);
 			f_findingsIcon.setImage(warning);
 			f_findingsStatus.setText("<a href=\"preferences\">"
 					+ findingsListLimit + " of " + shouldBeShowing

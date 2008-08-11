@@ -15,7 +15,6 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Listener;
-import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
@@ -25,6 +24,7 @@ import org.eclipse.ui.dialogs.PreferencesUtil;
 
 import com.surelogic.common.XUtil;
 import com.surelogic.common.eclipse.SLImages;
+import com.surelogic.common.images.CommonImages;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Activator;
 import com.surelogic.sierra.client.eclipse.actions.PreferencesAction;
@@ -137,8 +137,7 @@ public class ToolsPreferencePage extends PreferencePage implements
 		gridLayout.numColumns = 2;
 		warning.setLayout(gridLayout);
 		final Label warningImg = new Label(warning, SWT.NONE);
-		warningImg.setImage(SLImages
-				.getWorkbenchImage(ISharedImages.IMG_OBJS_WARN_TSK));
+		warningImg.setImage(SLImages.getImage(CommonImages.IMG_WARNING));
 		warningImg
 				.setLayoutData(new GridData(SWT.RIGHT, SWT.TOP, false, false));
 

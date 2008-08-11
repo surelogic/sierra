@@ -14,7 +14,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jdt.ui.ISharedImages;
 import org.eclipse.jface.action.Action;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
@@ -43,7 +42,6 @@ import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.actions.ActionFactory;
-import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.progress.UIJob;
 
 import com.surelogic.common.eclipse.AuditTrail;
@@ -73,7 +71,7 @@ import com.surelogic.sierra.jdbc.finding.SourceDetail;
 import com.surelogic.sierra.tool.message.Importance;
 
 public class FindingDetailsMediator extends AbstractSierraViewMediator
-implements IViewUpdater {
+		implements IViewUpdater {
 
 	public static final String STAMP_COMMENT = "I examined this finding.";
 
@@ -157,13 +155,12 @@ implements IViewUpdater {
 	}
 
 	public FindingDetailsMediator(FindingDetailsView view, Composite parent,
-			ToolItem summaryIcon,
-			Text summaryText, TabFolder folder, TabItem synopsisTab,
-			SashForm synopsisSash, Button synopsisAudit, Link findingSynopsis,
-			Tree locationTree, Browser detailsText, TabItem auditTab,
-			Button quickAudit, Button criticalButton, Button highButton,
-			Button mediumButton, Button lowButton, Button irrelevantButton,
-			Text commentText, Button commentButton,
+			ToolItem summaryIcon, Text summaryText, TabFolder folder,
+			TabItem synopsisTab, SashForm synopsisSash, Button synopsisAudit,
+			Link findingSynopsis, Tree locationTree, Browser detailsText,
+			TabItem auditTab, Button quickAudit, Button criticalButton,
+			Button highButton, Button mediumButton, Button lowButton,
+			Button irrelevantButton, Text commentText, Button commentButton,
 			AuditTrail scrollingLabelComposite, TabItem artifactTab,
 			Table artifacts) {
 		super(view);
@@ -228,6 +225,7 @@ implements IViewUpdater {
 	public String getNoDataI18N() {
 		return "sierra.eclipse.noDataFindingDetails";
 	}
+
 	@Override
 	public Listener getNoDataListener() {
 		return new Listener() {
@@ -236,16 +234,14 @@ implements IViewUpdater {
 			}
 		};
 	}
-	
-	//private AtomicLong findingQueryInProgress = new AtomicLong();
-	
+
+	// private AtomicLong findingQueryInProgress = new AtomicLong();
+
 	void asyncQueryAndShow(final long findingId, final boolean moveFocus) {
 		/*
-		long lastId = findingQueryInProgress.getAndSet(findingId);
-		if (lastId == findingId) {
-			return;
-		}
-		*/
+		 * long lastId = findingQueryInProgress.getAndSet(findingId); if (lastId
+		 * == findingId) { return; }
+		 */
 		final Job job = new DatabaseJob("Querying details of finding "
 				+ findingId) {
 			@Override
@@ -255,7 +251,8 @@ implements IViewUpdater {
 				try {
 					Connection c = Data.getInstance().readOnlyConnection();
 					try {
-					  FindingDetail detail = FindingDetail.getDetailOrNull(c, findingId);
+						FindingDetail detail = FindingDetail.getDetailOrNull(c,
+								findingId);
 						f_finding = detail;
 
 						// got details, update the view in the UI thread
@@ -271,7 +268,8 @@ implements IViewUpdater {
 				} catch (SQLException e) {
 					final int errNo = 57;
 					final String msg = I18N.err(errNo, findingId);
-					return SLEclipseStatusUtility.createErrorStatus(errNo, msg, e);
+					return SLEclipseStatusUtility.createErrorStatus(errNo, msg,
+							e);
 				}
 			}
 		};
@@ -371,7 +369,7 @@ implements IViewUpdater {
 					return;
 				FindingMutationUtility.asyncComment(f_finding.getFindingId(),
 						commentText);
-			}			
+			}
 		};
 		f_commentText.addListener(SWT.KeyDown, new Listener() {
 			public void handleEvent(Event e) {
@@ -385,7 +383,7 @@ implements IViewUpdater {
 					commentListener.handleEvent(e);
 				}
 			}
-		});		
+		});
 		f_commentButton.addListener(SWT.Selection, commentListener);
 
 		final SelectionAdapter stampAction = new SelectionAdapter() {
@@ -411,21 +409,25 @@ implements IViewUpdater {
 		final MenuItem highItem = new MenuItem(f_importanceRadioPopupMenu,
 				SWT.RADIO);
 		highItem.setText("High");
-		highItem.setImage(SLImages.getImage(CommonImages.IMG_ASTERISK_ORANGE_75));
+		highItem.setImage(SLImages
+				.getImage(CommonImages.IMG_ASTERISK_ORANGE_75));
 		highItem.setData(Importance.HIGH);
 		highItem.addListener(SWT.Selection, f_radioListener);
 
 		final MenuItem mediumItem = new MenuItem(f_importanceRadioPopupMenu,
 				SWT.RADIO);
 		mediumItem.setText("Medium");
-		mediumItem.setImage(SLImages.getImage(CommonImages.IMG_ASTERISK_ORANGE_50));
+		mediumItem.setImage(SLImages
+				.getImage(CommonImages.IMG_ASTERISK_ORANGE_50));
 		mediumItem.setData(Importance.MEDIUM);
 		mediumItem.addListener(SWT.Selection, f_radioListener);
 
 		final MenuItem lowItem = new MenuItem(f_importanceRadioPopupMenu,
 				SWT.RADIO);
 		lowItem.setText("Low");
-		lowItem.setImage(SLImages.getImage(CommonImages.IMG_ASTERISK_ORANGE_25));
+		lowItem
+				.setImage(SLImages
+						.getImage(CommonImages.IMG_ASTERISK_ORANGE_25));
 		lowItem.setData(Importance.LOW);
 		lowItem.addListener(SWT.Selection, f_radioListener);
 
@@ -505,13 +507,15 @@ implements IViewUpdater {
 		f_view.setGlobalActionHandler(ActionFactory.CUT.getId(), f_viewCut);
 		f_view.setGlobalActionHandler(ActionFactory.COPY.getId(), f_viewCopy);
 		f_view.setGlobalActionHandler(ActionFactory.PASTE.getId(), f_viewPaste);
-		f_view.setGlobalActionHandler(ActionFactory.SELECT_ALL.getId(), f_viewSelectAll);
+		f_view.setGlobalActionHandler(ActionFactory.SELECT_ALL.getId(),
+				f_viewSelectAll);
 
 		super.init();
 
 		updateContentsForUI();
 		FindingDetailsPersistence.load(this);
 	}
+
 	@Override
 	public void dispose() {
 		if (f_finding == null)
@@ -539,7 +543,7 @@ implements IViewUpdater {
 	/**
 	 * Must be invoked from the SWT thread.
 	 */
-	public void updateContentsForUI() {		
+	public void updateContentsForUI() {
 		final boolean showFinding = f_finding != null;
 
 		// Page doesn't match our state
@@ -633,12 +637,11 @@ implements IViewUpdater {
 		}
 
 		f_artifacts.removeAll();
-		final Image findbugs = SLImages.getImage(CommonImages.IMG_FINDBUGS_FINDING);
+		final Image findbugs = SLImages
+				.getImage(CommonImages.IMG_FINDBUGS_FINDING);
 		final Image pmd = SLImages.getImage(CommonImages.IMG_PMD_FINDING);
-		final Image pkgImage = SLImages
-				.getJDTImage(ISharedImages.IMG_OBJS_PACKAGE);
-		final Image classImage = SLImages
-				.getJDTImage(ISharedImages.IMG_OBJS_CLASS);
+		final Image pkgImage = SLImages.getImage(CommonImages.IMG_PACKAGE);
+		final Image classImage = SLImages.getImage(CommonImages.IMG_CLASS);
 
 		for (ArtifactDetail artifactDetail : f_finding.getArtifacts()) {
 			final TableItem item = new TableItem(f_artifacts, SWT.NONE);
@@ -666,10 +669,10 @@ implements IViewUpdater {
 
 		updateTabTitles();
 		f_parent.layout(true, true);
-				
-	    //if (XUtil.useExperimental()) {
-	      JSureFindingDetailsView.findingSelected(f_finding, false);
-	    //}
+
+		// if (XUtil.useExperimental()) {
+		JSureFindingDetailsView.findingSelected(f_finding, false);
+		// }
 	}
 
 	private String getFindingSynopsis() {
@@ -737,8 +740,7 @@ implements IViewUpdater {
 		// TODO reuse old TreeItems?
 		final TreeItem proj = new TreeItem(tree, SWT.NULL);
 		proj.setText(finding.getProjectName());
-		proj.setImage(SLImages
-				.getWorkbenchImage(IDE.SharedImages.IMG_OBJ_PROJECT));
+		proj.setImage(SLImages.getImage(CommonImages.IMG_PROJECT));
 
 		int numArtifacts = finding.getNumberOfArtifacts();
 		if (numArtifacts < 1) {
@@ -747,7 +749,7 @@ implements IViewUpdater {
 		}
 		if (numArtifacts != finding.getArtifacts().size()) {
 			LOG.severe("Number of artifacts don't match");
-			return;	
+			return;
 		}
 		final ArtifactDetail firstArtifact = finding.getArtifacts().get(0);
 		if (finding.getNumberOfArtifacts() == 1
@@ -755,12 +757,12 @@ implements IViewUpdater {
 			// Just one source location to show
 			TreeItem pkg = new TreeItem(proj, SWT.NULL);
 			pkg.setText(firstArtifact.getPackageName());
-			pkg.setImage(SLImages.getJDTImage(ISharedImages.IMG_OBJS_PACKAGE));
+			pkg.setImage(SLImages.getImage(CommonImages.IMG_PACKAGE));
 
 			TreeItem clazz = new TreeItem(pkg, SWT.NULL);
 			clazz.setText(firstArtifact.getClassName() + " at line "
 					+ firstArtifact.getLineOfCode());
-			clazz.setImage(SLImages.getJDTImage(ISharedImages.IMG_OBJS_CLASS));
+			clazz.setImage(SLImages.getImage(CommonImages.IMG_CLASS));
 			clazz.setData(firstArtifact.getPrimarySource());
 			showAsLink(clazz);
 			// clazz.addListener(SWT.Selection, f_locationListener);
@@ -817,7 +819,7 @@ implements IViewUpdater {
 		if (pkg == null) {
 			pkg = new TreeItem(proj, SWT.NULL);
 			pkg.setText(loc.getPackageName());
-			pkg.setImage(SLImages.getJDTImage(ISharedImages.IMG_OBJS_PACKAGE));
+			pkg.setImage(SLImages.getImage(CommonImages.IMG_PACKAGE));
 			packages.put(loc.getPackageName(), pkg);
 			clazz = null; // This can't exist if the package didn't
 		} else {
@@ -828,7 +830,7 @@ implements IViewUpdater {
 		if (clazz == null) {
 			clazz = new TreeItem(pkg, SWT.NULL);
 			clazz.setText(loc.getClassName());
-			clazz.setImage(SLImages.getJDTImage(ISharedImages.IMG_OBJS_CLASS));
+			clazz.setImage(SLImages.getImage(CommonImages.IMG_CLASS));
 			if (qualifiedClassName == null) {
 				qualifiedClassName = loc.getPackageName() + '.'
 						+ loc.getClassName();

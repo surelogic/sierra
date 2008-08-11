@@ -19,7 +19,6 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
-import org.eclipse.ui.ide.IDE;
 
 import com.surelogic.common.eclipse.JDTUtility;
 import com.surelogic.common.eclipse.SLImages;
@@ -74,8 +73,7 @@ public final class ConnectProjectsDialog extends Dialog {
 		for (String projectName : f_unconnectedProjects) {
 			TableItem item = new TableItem(projectList, SWT.NONE);
 			item.setText(projectName);
-			item.setImage(SLImages
-					.getWorkbenchImage(IDE.SharedImages.IMG_OBJ_PROJECT));
+			item.setImage(SLImages.getImage(CommonImages.IMG_PROJECT));
 		}
 
 		final Button exportAllToggle = new Button(panel, SWT.CHECK);

@@ -50,12 +50,10 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
-import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.browser.IWebBrowser;
 import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
 import org.eclipse.ui.dialogs.PreferencesUtil;
-import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.progress.UIJob;
 
 import com.surelogic.common.eclipse.ImageImageDescriptor;
@@ -300,7 +298,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 		 * Separator());
 		 */
 		f_newServerAction = new ActionListener(SLImages
-				.getWorkbenchImage(ISharedImages.IMG_TOOL_NEW_WIZARD),
+				.getImage(CommonImages.IMG_EDIT_NEW),
 				"New team server location") {
 			@Override
 			public void run() {
@@ -321,7 +319,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 		f_openInBrowserAction.setEnabled(false);
 
 		f_duplicateServerAction = new ServerActionListener(SLImages
-				.getWorkbenchImage(ISharedImages.IMG_TOOL_COPY),
+				.getImage(CommonImages.IMG_EDIT_COPY),
 				"Duplicates the selected team server location",
 				"No server to duplicate") {
 			@Override
@@ -332,7 +330,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 		f_duplicateServerAction.setEnabled(false);
 
 		f_deleteServerAction = new IJavaProjectsActionListener(SLImages
-				.getWorkbenchImage(ISharedImages.IMG_TOOL_DELETE),
+				.getImage(CommonImages.IMG_EDIT_DELETE),
 				"Deletes the selected team server location",
 				"No server to delete") {
 			@Override
@@ -1534,9 +1532,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 		}
 		if (!f_manager.getProjectsConnectedTo(server).isEmpty()) {
 			final ServersViewContent projects = new ServersViewContent(
-					serverNode,
-					SLImages
-							.getWorkbenchImage(IDE.SharedImages.IMG_OBJ_PROJECT));
+					serverNode, SLImages.getImage(CommonImages.IMG_PROJECT));
 			serverContent.add(projects);
 
 			createProjectItems(projects, server);
@@ -1606,9 +1602,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 					children = new ArrayList<ServersViewContent>();
 				}
 				final ServersViewContent project = new ServersViewContent(
-						parent,
-						SLImages
-								.getWorkbenchImage(IDE.SharedImages.IMG_OBJ_PROJECT));
+						parent, SLImages.getImage(CommonImages.IMG_PROJECT));
 				children.add(project);
 				initProjectItem(project, server, ps);
 			}
@@ -1668,10 +1662,8 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 							+ projectName);
 				}
 			}
-			final ServersViewContent root = new ServersViewContent(
-					parent,
-					SLImages
-							.getWorkbenchImage(IDE.SharedImages.IMG_OBJ_PROJECT));
+			final ServersViewContent root = new ServersViewContent(parent,
+					SLImages.getImage(CommonImages.IMG_PROJECT));
 			initProjectItem(root, server, s);
 			content.add(root);
 		}
@@ -1706,7 +1698,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 			final ServersViewContent parent, final SierraServer server,
 			final String projectName) {
 		final ServersViewContent root = new ServersViewContent(parent, SLImages
-				.getWorkbenchImage(IDE.SharedImages.IMG_OBJ_PROJECT));
+				.getImage(CommonImages.IMG_PROJECT));
 		root.setText(projectName + " [" + server.getLabel() + ']');
 		return root;
 	}
@@ -1763,7 +1755,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 		}
 		if (ps.numServerProblems > 0) {
 			final ServersViewContent problems = new ServersViewContent(root,
-					SLImages.getWorkbenchImage(ISharedImages.IMG_OBJS_WARN_TSK));
+					SLImages.getImage(CommonImages.IMG_WARNING));
 			contents.add(problems);
 			problems.setText(ps.numServerProblems + " consecutive failure"
 					+ s(ps.numServerProblems) + " connecting to "
@@ -1772,7 +1764,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 		}
 		if (ps.numProjectProblems > 0) {
 			final ServersViewContent problems = new ServersViewContent(root,
-					SLImages.getWorkbenchImage(ISharedImages.IMG_OBJS_WARN_TSK));
+					SLImages.getImage(CommonImages.IMG_WARNING));
 			contents.add(problems);
 			problems.setText(ps.numProjectProblems + " consecutive failure"
 					+ s(ps.numProjectProblems) + " getting server info from "
@@ -1901,7 +1893,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 		for (final ProjectStatus ps : projects) {
 			final SierraServer server = f_manager.getServer(ps.name);
 			content[i] = new ServersViewContent(null, SLImages
-					.getWorkbenchImage(IDE.SharedImages.IMG_OBJ_PROJECT));
+					.getImage(CommonImages.IMG_PROJECT));
 			initProjectItem(content[i], server, ps);
 			i++;
 		}

@@ -7,10 +7,12 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.ISharedImages;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
 
 import com.surelogic.common.eclipse.SLImages;
+import com.surelogic.common.images.CommonImages;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.model.selection.SelectionManager;
 
@@ -53,8 +55,7 @@ public class FindingSearchImportPage extends AbstractImportWizardPage {
 		gridLayout.numColumns = 2;
 		warning.setLayout(gridLayout);
 		final Label warningImg = new Label(warning, SWT.NONE);
-		warningImg.setImage(SLImages
-				.getWorkbenchImage(ISharedImages.IMG_OBJS_WARN_TSK));
+		warningImg.setImage(SLImages.getImage(CommonImages.IMG_WARNING));
 		warningImg
 				.setLayoutData(new GridData(SWT.RIGHT, SWT.TOP, false, false));
 
@@ -64,9 +65,9 @@ public class FindingSearchImportPage extends AbstractImportWizardPage {
 		deselectWarning.setLayoutData(data);
 		deselectWarning.setText(IMPORT_SEARCH_WARNING);
 	}
-  
-  @Override
-  protected void layoutImportFileGroup(Composite importFileSelectionGroup) {
+
+	@Override
+	protected void layoutImportFileGroup(Composite importFileSelectionGroup) {
 		GridLayout layout = new GridLayout(3, false);
 		importFileSelectionGroup.setLayout(layout);
 		importFileSelectionGroup.setLayoutData(new GridData(SWT.FILL, SWT.NONE,

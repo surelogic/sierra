@@ -1,9 +1,9 @@
 package com.surelogic.sierra.client.eclipse.model.selection;
 
-import org.eclipse.jdt.ui.ISharedImages;
 import org.eclipse.swt.graphics.Image;
 
 import com.surelogic.common.eclipse.SLImages;
+import com.surelogic.common.images.CommonImages;
 
 public final class FilterJavaPackage extends Filter {
 
@@ -33,6 +33,6 @@ public final class FilterJavaPackage extends Filter {
 
 	@Override
 	public Image getImageFor(String value) {
-		return SLImages.getJDTImage(ISharedImages.IMG_OBJS_PACKAGE);
+		return SLImages.getImage(CommonImages.IMG_PROJECT);
 	}
 }
