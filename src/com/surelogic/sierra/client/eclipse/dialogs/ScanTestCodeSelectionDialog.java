@@ -9,9 +9,9 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
+import com.surelogic.common.jobs.*;
 import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.common.images.CommonImages;
-import com.surelogic.sierra.tool.TestCode;
 import com.surelogic.sierra.tool.message.Config;
 
 public class ScanTestCodeSelectionDialog extends Dialog {
