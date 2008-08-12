@@ -60,8 +60,8 @@ public class CategoryView extends BlockPanel {
 
 		chart.clear();
 		if (category != null) {
-			chart.add(ChartBuilder.name("CategoryCounts").prop("uuid",
-					category.getUuid()).build());
+			chart.add(ChartBuilder.report("CategoryCounts", "???", "???").prop(
+					"uuid", category.getUuid()).build());
 		}
 	}
 

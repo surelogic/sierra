@@ -3,7 +3,7 @@ package com.surelogic.sierra.gwt.client.content.reports;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.surelogic.sierra.gwt.client.chart.Chart;
-import com.surelogic.sierra.gwt.client.data.Report;
+import com.surelogic.sierra.gwt.client.data.ReportSettings;
 import com.surelogic.sierra.gwt.client.data.Ticket;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.service.callback.ResultCallback;
@@ -18,7 +18,7 @@ public class ReportView extends BlockPanel {
 		contentPanel.add(report);
 	}
 
-	public void retrieveReport(Report selection) {
+	public void retrieveReport(ReportSettings selection) {
 		report.clear();
 		// retrieve and display the report
 		ServiceHelper.getTicketService().getTicket(selection,

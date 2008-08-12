@@ -1,5 +1,6 @@
 package com.surelogic.sierra.gwt.client.content.reports;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +15,7 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.data.Report;
+import com.surelogic.sierra.gwt.client.data.ReportSettings;
 import com.surelogic.sierra.gwt.client.data.Report.OutputType;
 import com.surelogic.sierra.gwt.client.data.Report.Parameter;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
@@ -90,28 +92,27 @@ public class ReportParametersView extends BlockPanel {
 		return selection;
 	}
 
-	public Report getUpdatedReport() {
-		final Report report = selection.copy();
+	public ReportSettings getReportSettings() {
+		final ReportSettings settings = new ReportSettings(selection);
 
 		for (final Map.Entry<Report.Parameter, Widget> paramEntry : paramUIMap
 				.entrySet()) {
-			final Parameter reportParam = report.getParameter(paramEntry
-					.getKey().getName());
-			final List<String> reportParamValues = reportParam.getValues();
-			reportParamValues.clear();
+			final String paramName = paramEntry.getKey().getName();
 			final Widget paramUI = paramEntry.getValue();
 			if (paramUI instanceof TextBox) {
-				reportParamValues.add(((TextBox) paramUI).getText());
+				settings.setSettingValue(paramName, ((TextBox) paramUI).getText());
 			} else if (paramUI instanceof ListBox) {
+				final List<String> values = new ArrayList<String>();
 				final ListBox lb = (ListBox) paramUI;
 				for (int i = 0; i < lb.getItemCount(); i++) {
 					if (lb.isItemSelected(i)) {
-						reportParamValues.add(lb.getItemText(i));
+						values.add(lb.getItemText(i));
 					}
 				}
+				settings.setSettingValue(paramName, values);
 			}
 		}
-		return report;
+		return settings;
 	}
 
 	public void addReportAction(String text, OutputType outputType,

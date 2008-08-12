@@ -24,6 +24,10 @@ public abstract class Cache<E extends Cacheable> implements Iterable<E> {
 	}
 
 	public final void refresh(boolean force) {
+		refresh(force, null);
+	}
+
+	public final void refresh(boolean force, CacheListener<E> oneTimeListener) {
 		final long currentTime = new Date().getTime();
 		final boolean timeToRefresh = force
 				|| (lastRefresh + REFRESH_DELAY < currentTime);
@@ -32,9 +36,12 @@ public abstract class Cache<E extends Cacheable> implements Iterable<E> {
 		for (final CacheListener<E> listener : listeners) {
 			listener.onStartRefresh(this);
 		}
+		if (oneTimeListener != null) {
+			oneTimeListener.onStartRefresh(this);
+		}
 
 		if (timeToRefresh) {
-			doRefreshCall(new CacheCallback<List<E>>() {
+			doRefreshCall(new CacheCallback<List<E>>(oneTimeListener) {
 
 				@Override
 				protected void processResult(List<E> result) {
@@ -49,11 +56,22 @@ public abstract class Cache<E extends Cacheable> implements Iterable<E> {
 				}
 
 			});
+		} else {
+			for (final CacheListener<E> listener : listeners) {
+				listener.onRefresh(this, null);
+			}
+			if (oneTimeListener != null) {
+				oneTimeListener.onRefresh(this, null);
+			}
 		}
 	}
 
-	public final void save(final E item) {
-		doSaveCall(item, new CacheCallback<Status>() {
+	public final void save(E item) {
+		save(item, null);
+	}
+
+	public final void save(final E item, CacheListener<E> oneTimeListener) {
+		doSaveCall(item, new CacheCallback<Status>(oneTimeListener) {
 
 			@Override
 			protected void processResult(Status result) {
@@ -136,11 +154,20 @@ public abstract class Cache<E extends Cacheable> implements Iterable<E> {
 	protected abstract void doSaveCall(E item, AsyncCallback<Status> callback);
 
 	private abstract class CacheCallback<T> implements AsyncCallback<T> {
+		private final CacheListener<E> oneTimeListener;
+
+		public CacheCallback(CacheListener<E> oneTimeListener) {
+			super();
+			this.oneTimeListener = oneTimeListener;
+		}
 
 		public void onFailure(Throwable caught) {
 			ExceptionUtil.log(caught);
 			for (final CacheListener<E> listener : listeners) {
 				callListener(listener, null, caught);
+			}
+			if (oneTimeListener != null) {
+				callListener(oneTimeListener, null, caught);
 			}
 		}
 
@@ -148,6 +175,9 @@ public abstract class Cache<E extends Cacheable> implements Iterable<E> {
 			processResult(result);
 			for (final CacheListener<E> listener : listeners) {
 				callListener(listener, result, null);
+			}
+			if (oneTimeListener != null) {
+				callListener(oneTimeListener, result, null);
 			}
 		}
 

@@ -11,7 +11,7 @@ import com.surelogic.sierra.gwt.client.Context;
 import com.surelogic.sierra.gwt.client.chart.AuditContributionsChart;
 import com.surelogic.sierra.gwt.client.chart.LatestScansChart;
 import com.surelogic.sierra.gwt.client.content.ContentComposite;
-import com.surelogic.sierra.gwt.client.data.Report;
+import com.surelogic.sierra.gwt.client.data.ReportSettings;
 import com.surelogic.sierra.gwt.client.table.ReportTableSection;
 import com.surelogic.sierra.gwt.client.ui.SectionPanel;
 
@@ -48,18 +48,18 @@ public final class OverviewContent extends ContentComposite {
 	}
 
 	private void addPublishedProjectsTable() {
-		final Report r = new Report();
+		final ReportSettings r = new ReportSettings();
+		r.setReportUuid("PublishedProjects");
 		r.setTitle("All Published Projects");
 		r.setDescription("All Published Projects");
-		r.setName("PublishedProjects");
 		addDashboardSection(2, 0, 1, 2, new ReportTableSection(r));
 	}
 
 	private void addAuditsTable() {
-		final Report r = new Report();
+		final ReportSettings r = new ReportSettings();
+		r.setReportUuid("UserAudits");
 		r.setTitle("Users");
 		r.setDescription("Latest user audits");
-		r.setName("UserAudits");
 		addDashboardSection(1, 0, 1, 1, new ReportTableSection(r));
 	}
 

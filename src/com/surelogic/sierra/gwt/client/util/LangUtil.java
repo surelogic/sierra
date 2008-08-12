@@ -1,5 +1,7 @@
 package com.surelogic.sierra.gwt.client.util;
 
+import java.util.Collection;
+
 public final class LangUtil {
 
 	/**
@@ -42,5 +44,13 @@ public final class LangUtil {
 
 	public static String emptyZeroString(int i) {
 		return i == 0 ? "" : Integer.toString(i);
+	}
+
+	public static <T, U extends Collection<T>> U copy(U source, U destination) {
+		if (source == null) {
+			return null;
+		}
+		destination.addAll(source);
+		return destination;
 	}
 }

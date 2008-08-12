@@ -16,13 +16,13 @@ public class ReportTable implements Serializable {
 	private List<List<String>> data;
 	private List<String> links;
 
-	private Report report;
+	private ReportSettings report;
 
 	public ReportTable() {
 		// Do nothing
 	}
 
-	public ReportTable(final Report report) {
+	public ReportTable(final ReportSettings report) {
 		this.report = report;
 	}
 
@@ -77,11 +77,11 @@ public class ReportTable implements Serializable {
 	}
 
 	/**
-	 * The report used to generate this report table
+	 * The report settings used to generate this report table
 	 * 
 	 * @return
 	 */
-	public Report getReport() {
+	public ReportSettings getReport() {
 		return report;
 	}
 

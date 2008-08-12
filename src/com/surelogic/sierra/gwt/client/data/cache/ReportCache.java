@@ -28,13 +28,13 @@ public class ReportCache extends Cache<Report> {
 		final List<Report> tempReports = new ArrayList<Report>();
 		tempReports.add(findingsByProject());
 		tempReports.add(findingsByPriority());
+		tempReports.add(scanFindings());
 		callback.onSuccess(tempReports);
 	}
 
 	private Report findingsByProject() {
 		final Report report = new Report();
-		report.setUuid("TS-findingsByProject");
-		report.setName("FindingsByProject");
+		report.setUuid("FindingsByProject");
 		report.setTitle("Findings By Project");
 		report.setDescription("Displays the number of findings per project.");
 		report.setDataSource(DataSource.TEAMSERVER);
@@ -47,8 +47,7 @@ public class ReportCache extends Cache<Report> {
 
 	private Report findingsByPriority() {
 		final Report report = new Report();
-		report.setUuid("BS-findingsByPriority");
-		report.setName("FindingsByPriority");
+		report.setUuid("FindingsByPriority");
 		report.setTitle("Findings By Priority");
 		report.setDescription("Just a placeholder report. Not implemented.");
 		report.setDataSource(DataSource.BUGLINK);
@@ -56,6 +55,20 @@ public class ReportCache extends Cache<Report> {
 				OutputType.PDF);
 		final List<Parameter> params = report.getParameters();
 		params.add(new Parameter("Importance", Type.IMPORTANCE));
+		return report;
+	}
+
+	private Report scanFindings() {
+		final Report report = new Report();
+		report.setUuid("ScanFindings");
+		report.setTitle("Scan Findings");
+		report.setDescription("Finding counts for a scan.");
+		report.setDataSource(DataSource.TEAMSERVER);
+		report.setOutputTypes(OutputType.TABLE);
+		final List<Parameter> params = report.getParameters();
+		params.add(new Parameter("scan", Type.SCANS));
+		params.add(new Parameter("importance", Type.IMPORTANCE));
+		params.add(new Parameter("package", Type.TEXT));
 		return report;
 	}
 

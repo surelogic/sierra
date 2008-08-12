@@ -25,12 +25,11 @@ import com.surelogic.sierra.gwt.client.content.scanfilters.ScanFiltersContent;
 import com.surelogic.sierra.gwt.client.content.scans.ScanContent;
 import com.surelogic.sierra.gwt.client.data.ColumnData;
 import com.surelogic.sierra.gwt.client.data.Project;
-import com.surelogic.sierra.gwt.client.data.Report;
+import com.surelogic.sierra.gwt.client.data.ReportSettings;
 import com.surelogic.sierra.gwt.client.data.Scan;
 import com.surelogic.sierra.gwt.client.data.ScanDetail;
 import com.surelogic.sierra.gwt.client.data.ScanFilter;
 import com.surelogic.sierra.gwt.client.data.Status;
-import com.surelogic.sierra.gwt.client.data.Report.Parameter;
 import com.surelogic.sierra.gwt.client.data.cache.ProjectCache;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.service.callback.StandardCallback;
@@ -90,11 +89,11 @@ public class ProjectView extends BlockPanel {
 
 			diff.clear();
 			chart.clear();
-			chart.add(ChartBuilder.name("ProjectFindingsChart").width(800)
-					.prop("projectName", project.getName())
-					.prop("kLoC", "true").build());
-			chart.add(ChartBuilder.name("ProjectCompilationsChart").width(800)
-					.prop("projectName", project.getName())
+			chart.add(ChartBuilder.report("ProjectFindingsChart", "???", "???")
+					.width(800).prop("projectName", project.getName()).prop(
+							"kLoC", "true").build());
+			chart.add(ChartBuilder.report("ProjectCompilationsChart", "???",
+					"???").width(800).prop("projectName", project.getName())
 					.prop("kLoC", "true").build());
 
 			final ScanFilter sf = project.getScanFilter();
@@ -164,19 +163,19 @@ public class ProjectView extends BlockPanel {
 							fixed.add(0, s.getUuid());
 							newF.add(s.getUuid());
 						}
-						final Report r1 = new Report();
-						r1.setName("ScanFindingsComparison");
+						final ReportSettings r1 = new ReportSettings();
+						r1.setReportUuid("ScanFindingsComparison");
 						r1.setTitle("New Findings");
-						r1.getParameters().add(new Parameter("scans", newF));
-						final Report r2 = new Report();
-						r2.setName("ScanFindingsComparison");
+						r1.setSettingValue("scans", newF);
+						final ReportSettings r2 = new ReportSettings();
+						r2.setReportUuid("ScanFindingsComparison");
 						r2.setTitle("Fixed Findings");
-						r2.getParameters().add(new Parameter("scans", fixed));
+						r2.setSettingValue("scans", fixed);
 						diff.clear();
 						diff.add(new ReportTableSection(r1));
 						diff.add(new ReportTableSection(r2));
-						diff.add(ChartBuilder.name("CompareProjectScans").prop(
-								"scans", fixed).build());
+						diff.add(ChartBuilder.report("CompareProjectScans",
+								"???", "???").prop("scans", fixed).build());
 					} else {
 						box.setStatus(Status.failure("You have selected "
 								+ toCompare.size()

@@ -7,7 +7,7 @@ import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.surelogic.sierra.gwt.client.Context;
 import com.surelogic.sierra.gwt.client.data.ColumnData;
-import com.surelogic.sierra.gwt.client.data.Report;
+import com.surelogic.sierra.gwt.client.data.ReportSettings;
 import com.surelogic.sierra.gwt.client.data.ReportTable;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.service.callback.ResultCallback;
@@ -15,10 +15,10 @@ import com.surelogic.sierra.gwt.client.ui.SectionPanel;
 
 public class ReportTableSection extends SectionPanel {
 
-	private Report report;
+	private ReportSettings report;
 	private ReportTable table;
 
-	public ReportTableSection(final Report r) {
+	public ReportTableSection(final ReportSettings r) {
 		super();
 		setReport(r);
 	}
@@ -93,7 +93,7 @@ public class ReportTableSection extends SectionPanel {
 		currentColumn++;
 	}
 
-	public void setReport(final Report r) {
+	public void setReport(final ReportSettings r) {
 		report = r;
 		if (r != null) {
 			setTitle(report.getTitle());

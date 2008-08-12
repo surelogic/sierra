@@ -2,14 +2,14 @@ package com.surelogic.sierra.gwt.client.service;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.surelogic.sierra.gwt.client.data.ImageMapData;
-import com.surelogic.sierra.gwt.client.data.Report;
+import com.surelogic.sierra.gwt.client.data.ReportSettings;
 import com.surelogic.sierra.gwt.client.data.ReportTable;
 import com.surelogic.sierra.gwt.client.data.Result;
 import com.surelogic.sierra.gwt.client.data.Ticket;
 
 public interface TicketService extends RemoteService {
 
-	Result<Ticket> getTicket(Report report);
+	Result<Ticket> getTicket(ReportSettings report);
 
 	/*
 	 * Data requests
@@ -26,6 +26,6 @@ public interface TicketService extends RemoteService {
 	 * @param r
 	 * @return
 	 */
-	Result<ReportTable> getReportTable(Report r);
+	Result<ReportTable> getReportTable(ReportSettings r);
 
 }

@@ -2,7 +2,7 @@ package com.surelogic.sierra.gwt.client.data;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Arrays;
 import java.util.List;
 
 import com.surelogic.sierra.gwt.client.data.cache.Cacheable;
@@ -19,13 +19,13 @@ public class Report implements Serializable, Cacheable {
 
 	private static final long serialVersionUID = -5559871759716632180L;
 	private String uuid;
-	private String name;
 	private String title;
 	private long revision;
 	private String description;
 	private DataSource dataSource;
 	private OutputType[] outputTypes;
 	private List<Parameter> parameters;
+	private List<ReportSettings> savedReports;
 
 	public String getUuid() {
 		return uuid;
@@ -33,14 +33,6 @@ public class Report implements Serializable, Cacheable {
 
 	public void setUuid(final String uuid) {
 		this.uuid = uuid;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(final String name) {
-		this.name = name;
 	}
 
 	public String getTitle() {
@@ -114,11 +106,14 @@ public class Report implements Serializable, Cacheable {
 		return null;
 	}
 
+	public List<ReportSettings> getSavedReports() {
+		return savedReports;
+	}
+
 	public Report copy() {
 		final Report copy = new Report();
 		copy.uuid = uuid;
 		copy.revision = revision;
-		copy.name = name;
 		copy.title = title;
 		copy.description = description;
 		copy.dataSource = dataSource;
@@ -126,55 +121,87 @@ public class Report implements Serializable, Cacheable {
 		for (final Parameter param : getParameters()) {
 			copy.getParameters().add(param.copy());
 		}
-
+		for (final ReportSettings saved : getSavedReports()) {
+			copy.getSavedReports().add(saved.copy());
+		}
 		return copy;
+	}
+
+	@Override
+	public String toString() {
+		return "{" + title + " " + revision + ": " + title + "}";
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((uuid == null) ? 0 : uuid.hashCode());
+		result = prime * result + (int) (revision ^ (revision >>> 32));
+		result = prime * result
+				+ ((description == null) ? 0 : description.hashCode());
+		result = prime * result + ((title == null) ? 0 : title.hashCode());
+
+		result = prime * result
+				+ ((dataSource == null) ? 0 : dataSource.ordinal());
+		result = prime * result
+				+ ((outputTypes == null) ? 0 : Arrays.hashCode(outputTypes));
+		result = prime * result
+				+ ((parameters == null) ? 0 : parameters.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(final Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!(obj instanceof Report)) {
+			return false;
+		}
+		final Report other = (Report) obj;
+		if (!LangUtil.equals(uuid, other.uuid)) {
+			return false;
+		}
+		if (revision != other.revision) {
+			return false;
+		}
+		if (!LangUtil.equals(description, other.description)) {
+			return false;
+		}
+		if (!LangUtil.equals(title, other.title)) {
+			return false;
+		}
+		if (dataSource != other.dataSource) {
+			return false;
+		}
+		if (outputTypes == null && other.outputTypes != null) {
+			return false;
+		}
+		if (outputTypes != null && other.outputTypes == null) {
+			return false;
+		}
+		if (!Arrays.equals(outputTypes, other.outputTypes)) {
+			return false;
+		}
+		if (!LangUtil.equals(parameters, other.parameters)) {
+			return false;
+		}
+		return true;
 	}
 
 	public static class Parameter implements Serializable {
 		private static final long serialVersionUID = 3854024638284271950L;
 
 		public enum Type {
-			TEXT, IMPORTANCE, PROJECTS
+			TEXT, IMPORTANCE, PROJECTS, SCANS
 		}
 
 		private String name;
 		private Type type;
-		private List<String> values;
 
 		public Parameter() {
 			super();
-		}
-
-		public Parameter(final String name) {
-			super();
-			this.name = name;
-		}
-
-		public Parameter(final String name, final String value) {
-			super();
-			this.name = name;
-			getValues().add(value);
-		}
-
-		public Parameter(final String name, final String value, final Type type) {
-			super();
-			this.name = name;
-			getValues().add(value);
-			this.type = type;
-		}
-
-		public Parameter(final String name, final Collection<String> values) {
-			super();
-			this.name = name;
-			getValues().addAll(values);
-		}
-
-		public Parameter(final String name, final Collection<String> values,
-				final Type type) {
-			super();
-			this.name = name;
-			getValues().addAll(values);
-			this.type = type;
 		}
 
 		public Parameter(final String name, final Type type) {
@@ -199,28 +226,13 @@ public class Report implements Serializable, Cacheable {
 			this.type = type;
 		}
 
-		public String getValue() {
-			if ((values == null) || values.isEmpty()) {
-				return null;
-			}
-			return values.get(0);
-		}
-
-		public List<String> getValues() {
-			if (values == null) {
-				values = new ArrayList<String>();
-			}
-			return values;
-		}
-
 		public Parameter copy() {
-			return new Parameter(name, getValues(), type);
+			return new Parameter(name, type);
 		}
 
 		@Override
 		public String toString() {
-			return "{" + name + ": " + type + " = " + getValues().toString()
-					+ "}";
+			return "{" + name + ": " + type + "}";
 		}
 
 		@Override
@@ -229,8 +241,6 @@ public class Report implements Serializable, Cacheable {
 			int result = 1;
 			result = prime * result + ((name == null) ? 0 : name.hashCode());
 			result = prime * result + ((type == null) ? 0 : type.hashCode());
-			result = prime * result
-					+ ((values == null) ? 0 : values.hashCode());
 			return result;
 		}
 
@@ -239,111 +249,19 @@ public class Report implements Serializable, Cacheable {
 			if (this == obj) {
 				return true;
 			}
-			if (obj == null) {
+			if (!(obj instanceof Report)) {
 				return false;
 			}
-			if (getClass() != obj.getClass()) {
-				return false;
-			}
+
 			final Parameter other = (Parameter) obj;
-			if (name == null) {
-				if (other.name != null) {
-					return false;
-				}
-			} else if (!name.equals(other.name)) {
+			if (!LangUtil.equals(name, other.name)) {
 				return false;
 			}
-			if (type == null) {
-				if (other.type != null) {
-					return false;
-				}
-			} else if (!type.equals(other.type)) {
-				return false;
-			}
-			if (values == null) {
-				if (other.values != null) {
-					return false;
-				}
-			} else if (!values.equals(other.values)) {
+			if (type != other.type) {
 				return false;
 			}
 			return true;
 		}
-
-	}
-
-	@Override
-	public String toString() {
-		return "Name: " + name + "\nTitle: " + title + "\nParameters: "
-				+ parameters;
-	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result
-				+ ((description == null) ? 0 : description.hashCode());
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		result = prime * result
-				+ ((parameters == null) ? 0 : parameters.hashCode());
-		result = prime * result + (int) (revision ^ (revision >>> 32));
-		result = prime * result + ((title == null) ? 0 : title.hashCode());
-		result = prime * result + ((uuid == null) ? 0 : uuid.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(final Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null) {
-			return false;
-		}
-		if (getClass() != obj.getClass()) {
-			return false;
-		}
-		final Report other = (Report) obj;
-		if (description == null) {
-			if (other.description != null) {
-				return false;
-			}
-		} else if (!description.equals(other.description)) {
-			return false;
-		}
-		if (name == null) {
-			if (other.name != null) {
-				return false;
-			}
-		} else if (!name.equals(other.name)) {
-			return false;
-		}
-		if (parameters == null) {
-			if (other.parameters != null) {
-				return false;
-			}
-		} else if (!parameters.equals(other.parameters)) {
-			return false;
-		}
-		if (revision != other.revision) {
-			return false;
-		}
-		if (title == null) {
-			if (other.title != null) {
-				return false;
-			}
-		} else if (!title.equals(other.title)) {
-			return false;
-		}
-		if (uuid == null) {
-			if (other.uuid != null) {
-				return false;
-			}
-		} else if (!uuid.equals(other.uuid)) {
-			return false;
-		}
-		return true;
 	}
 
 }

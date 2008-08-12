@@ -9,6 +9,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.content.ListContentComposite;
 import com.surelogic.sierra.gwt.client.data.Report;
+import com.surelogic.sierra.gwt.client.data.ReportSettings;
 import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.data.Report.OutputType;
 import com.surelogic.sierra.gwt.client.data.cache.ReportCache;
@@ -38,7 +39,7 @@ public abstract class ReportsContent extends
 							selectionPanel.add(reportView);
 						}
 						reportView.retrieveReport(reportParamsView
-								.getUpdatedReport());
+								.getReportSettings());
 					}
 				});
 
@@ -51,7 +52,7 @@ public abstract class ReportsContent extends
 							selectionPanel.add(reportView);
 						}
 						reportView.retrieveReport(reportParamsView
-								.getUpdatedReport());
+								.getReportSettings());
 					}
 				});
 
@@ -68,7 +69,7 @@ public abstract class ReportsContent extends
 				new ClickListener() {
 
 					public void onClick(Widget sender) {
-						saveReportConfig(reportParamsView.getUpdatedReport());
+						saveReportConfig(reportParamsView.getReportSettings());
 					}
 
 				});
@@ -77,7 +78,7 @@ public abstract class ReportsContent extends
 		selectionPanel.add(reportView);
 	}
 
-	private void saveReportConfig(Report updatedReport) {
+	private void saveReportConfig(ReportSettings settings) {
 		final SaveReportDialog dialog = new SaveReportDialog();
 		dialog.addPopupListener(new PopupListener() {
 

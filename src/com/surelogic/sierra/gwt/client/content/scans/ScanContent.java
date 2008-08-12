@@ -14,9 +14,8 @@ import com.surelogic.sierra.gwt.client.Context;
 import com.surelogic.sierra.gwt.client.chart.ChartBuilder;
 import com.surelogic.sierra.gwt.client.content.ContentComposite;
 import com.surelogic.sierra.gwt.client.data.ImportanceView;
-import com.surelogic.sierra.gwt.client.data.Report;
+import com.surelogic.sierra.gwt.client.data.ReportSettings;
 import com.surelogic.sierra.gwt.client.data.ScanDetail;
-import com.surelogic.sierra.gwt.client.data.Report.Parameter;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.service.callback.StandardCallback;
 import com.surelogic.sierra.gwt.client.table.ReportTableSection;
@@ -91,6 +90,7 @@ public class ScanContent extends ContentComposite {
 			ServiceHelper.getFindingService().getScanDetail(uuid,
 					new StandardCallback<ScanDetail>() {
 
+						@Override
 						protected void doSuccess(final ScanDetail result) {
 							setTitle(result.getProject() + " - "
 									+ result.getDate());
@@ -123,16 +123,16 @@ public class ScanContent extends ContentComposite {
 				importances.add(i.getName());
 			}
 			final Set<String> packages = pak.getSelectedPackages();
-			chartPanel.add(ChartBuilder.name("ScanImportances").width(800)
-					.prop("scan", uuid).prop("importance", importances).prop(
-							"package", packages).build());
-			final Report report = new Report();
-			report.setName("ScanFindings");
-			report.getParameters().add(new Parameter("scan", uuid));
-			report.getParameters()
-					.add(new Parameter("importance", importances));
-			report.getParameters().add(new Parameter("package", packages));
-			chartPanel.add(new ReportTableSection(report));
+			chartPanel.add(ChartBuilder.report("ScanImportances", "???", "???")
+					.width(800).prop("scan", uuid).prop("importance",
+							importances).prop("package", packages).build());
+
+			final ReportSettings settings = new ReportSettings(
+					"TS-ScanFindings");
+			settings.setSettingValue("scan", uuid);
+			settings.setSettingValue("importance", importances);
+			settings.setSettingValue("package", packages);
+			chartPanel.add(new ReportTableSection(settings));
 		}
 	}
 
