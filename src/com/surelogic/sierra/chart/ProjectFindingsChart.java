@@ -76,7 +76,7 @@ public class ProjectFindingsChart implements IDatabasePlot {
 		mutableSize.setHeight(25 * importanceData.getColumnCount() + 100);
 		final JFreeChart chart = ChartFactory.createBarChart(
 				"Findings Breakdown Per Scan", null, "# of Findings"
-						+ (bykLoC ? "/ kLoC" : ""), importanceData,
+						+ (bykLoC ? " / kLoC" : ""), importanceData,
 				PlotOrientation.HORIZONTAL, true, false, false);
 
 		final BarRenderer bar = (BarRenderer) chart.getCategoryPlot()
