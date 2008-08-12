@@ -1,7 +1,6 @@
 package com.surelogic.sierra.tool.reckoner;
 
 import java.io.File;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -18,7 +17,6 @@ import com.surelogic.sierra.tool.AbstractToolInstance;
 import com.surelogic.sierra.tool.IToolInstance;
 import com.surelogic.sierra.tool.message.ArtifactGenerator;
 import com.surelogic.sierra.tool.message.MetricBuilder;
-import com.surelogic.sierra.tool.targets.IToolTarget;
 
 public class Reckoner1_0Tool extends AbstractTool {
   public Reckoner1_0Tool(boolean debug) {

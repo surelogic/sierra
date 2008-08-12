@@ -3,14 +3,14 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Sierra Analysis Tool Integration
 Bundle-SymbolicName: com.surelogic.sierra.tool;singleton:=true
 Bundle-Version: 2.3.0.qualifier
-Require-Bundle: org.apache.ant,
- com.surelogic.common,
+Require-Bundle: com.surelogic.common,
  com.surelogic.sierra.message,
  com.surelogic.sierra.pmd,
  com.surelogic.sierra.fb,
  com.surelogic.sierra.java5.compatibility;resolution:=optional,
  org.eclipse.jdt.core,
- org.eclipse.core.runtime
+ org.eclipse.core.runtime,
+ com.surelogic.common.ant
 Export-Package: com.surelogic.sierra.tool,
  com.surelogic.sierra.tool.analyzer,
  com.surelogic.sierra.tool.findbugs,

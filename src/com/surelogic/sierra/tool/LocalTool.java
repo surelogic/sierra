@@ -15,6 +15,7 @@ import org.apache.tools.ant.Project;
 import org.apache.tools.ant.types.*;
 
 import com.surelogic.common.jobs.*;
+import com.surelogic.sierra.tool.jobs.AbstractLocalSLJob;
 import com.surelogic.sierra.tool.message.*;
 import com.surelogic.sierra.tool.targets.*;
 
@@ -74,18 +75,23 @@ public class LocalTool extends AbstractTool {
 				"Generators can't be sent remotely");
 	}
 
-	private static class LocalInstance extends LocalTool implements
+	private class LocalInstance extends AbstractLocalSLJob implements
 			IToolInstance {
+		final boolean debug;
 		final Config config;
-		final TestCode testCode;
-		final SLStatus.Builder status = new SLStatus.Builder();
 
 		LocalInstance(boolean debug, Config c) {
-			super(debug);
+			super("Local", ToolUtil.getNumTools(c), 
+					       TestCode.getTestCode(c.getTestCode()), 
+					       c.getMemorySize());
+			this.debug = debug;
 			config = c;
-			testCode = getTestCode(c.getTestCode());
 		}
 
+		protected JobException newException(int number, Object... args) {
+			throw new ToolException(number, args);
+		}
+		
 		public void addTarget(IToolTarget target) {
 			config.addTarget((ToolTarget) target);
 		}
@@ -128,29 +134,6 @@ public class LocalTool extends AbstractTool {
 			}
 			usedPlugins.add(pluginId);
 			return pluginDir;
-		}
-
-		private void addToPath(Project proj, Path path, String name) {
-			addToPath(proj, path, name, true);
-		}
-
-		private boolean addToPath(Project proj, Path path, String name,
-				boolean required) {
-			final File f = new File(name);
-			final boolean exists = f.exists();
-			if (!exists) {
-				if (required) {
-					throw new ToolException(
-							SierraToolConstants.ERROR_CODE_MISSING_FOR_TOOL,
-							name);
-				}
-			} else if (TestCode.MISSING_CODE.equals(testCode)) {
-				throw new ToolException(
-						SierraToolConstants.ERROR_CODE_MISSING_FOR_TOOL, name);
-			} else {
-				path.add(new Path(proj, name));
-			}
-			return exists;
 		}
 
 		private void addPluginToPath(final boolean debug, Project proj,
@@ -249,11 +232,6 @@ public class LocalTool extends AbstractTool {
 		}
 
 		private File setupConfigFile(CommandlineJava cmdj) {
-			if (config.getTestCode() != null) {
-				cmdj.createVmArgument().setValue(
-						"-D" + SierraToolConstants.TEST_CODE_PROPERTY + "="
-								+ config.getTestCode());
-			}
 			try {
 				if (TestCode.BAD_CONFIG.equals(testCode)) {
 					throw new JAXBException("Testing error with config file");
@@ -277,29 +255,21 @@ public class LocalTool extends AbstractTool {
 						SierraToolConstants.ERROR_CREATING_CONFIG, e);
 			}
 		}
-
-		private void setupJVM(final boolean debug, final CommandlineJava cmdj) {
-			final Project proj = new Project();
+		
+		@Override
+		protected Class<?> getRemoteClass() {
+			return RemoteTool.class;
+		}
+		
+		@Override
+		protected void finishSetupJVM(final boolean debug, final CommandlineJava cmdj) {
 			setupConfigFile(cmdj);
-			if (TestCode.LOW_MEMORY.equals(testCode)) {
-				cmdj.setMaxmemory("2m");
-			} else if (TestCode.HIGH_MEMORY.equals(testCode)) {
-				cmdj.setMaxmemory("2048m");
-			} else if (TestCode.MAD_MEMORY.equals(testCode)) {
-				cmdj.setMaxmemory("9999m");
-			} else if (config.getMemorySize() > 0) {
-				cmdj.setMaxmemory(config.getMemorySize() + "m");
-			} else {
-				cmdj.setMaxmemory("1024m");
-			}
-			cmdj.createVmArgument().setValue("-XX:MaxPermSize=128m");
 			// setupCustomClassLoader(debug, cmdj);
-			if (false) {
-				cmdj.createVmArgument().setValue("-verbose");
-			}
-			cmdj.setClassname(RemoteTool.class.getCanonicalName());
 			// cmdj.createBootclasspath(proj);
-			Path path = cmdj.createClasspath(proj);
+		}
+		
+		@Override 
+		protected void setupClassPath(boolean debug, Project proj, Path path) {					
 			addPluginToPath(debug, proj, path,
 					SierraToolConstants.COMMON_PLUGIN_ID);
 			// sierra-tool needs special handling since it is unpacked, due to
@@ -342,238 +312,30 @@ public class LocalTool extends AbstractTool {
 				}
 				addPluginToPath(debug, proj, path, id);
 			}
-
-			// TODO convert into error if things are really missing
-			if (debug) {
-				for (String p : path.list()) {
-					if (!new File(p).exists()) {
-						System.out.println("Does not exist: " + p);
-					} else if (debug) {
-						System.out.println("Path: " + p);
-					}
-				}
-			}
 		}
 
-		private static final int FIRST_LINES = 3;
-
-		private String currentTask = "(unknown)";
-
-		public SLStatus run(SLProgressMonitor monitor) {
-			final boolean debug = LOG.isLoggable(Level.FINE);
-			CommandlineJava cmdj = new CommandlineJava();
-			setupJVM(debug, cmdj);
-
-			if (debug) {
-				System.out.println("Starting process:");
-				for (String arg : cmdj.getCommandline()) {
-					System.out.println("\t" + arg);
-				}
-			}
-			ProcessBuilder pb = new ProcessBuilder(cmdj.getCommandline());
-			pb.redirectErrorStream(true);
-			try {
-				Process p = pb.start();
-				BufferedReader br = new BufferedReader(new InputStreamReader(p
-						.getInputStream()));
-				String firstLine = br.readLine();
-				if (debug) {
-					while (firstLine != null) {
-						// Copy verbose output until we get to the first line
-						// from RemoteTool
-						if (firstLine.startsWith("[")) {
-							// if (!firstLine.endsWith("rt.jar]")) {
-							System.out.println(firstLine);
-							// }
-							firstLine = br.readLine();
-						} else {
-							break;
-						}
-					}
-				}
-				System.out.println("First line = " + firstLine);
-
-				if (firstLine == null) {
-					throw new ToolException(
-							SierraToolConstants.ERROR_NO_OUTPUT_FROM_TOOLS);
-				}
-				final String[] firstLines = new String[FIRST_LINES];
-				int numLines = 1;
-				firstLines[0] = firstLine;
-
-				// Copy any output
-				final PrintStream pout = new PrintStream(p.getOutputStream());
-				if (TestCode.SCAN_CANCELLED.equals(testCode)) {
-					cancel(p, pout);
-				}
-
-				String line = br.readLine();
-				loop: while (line != null) {
-					if (numLines < FIRST_LINES) {
-						firstLines[numLines] = line;
-						numLines++;
-					}
-					if (monitor.isCanceled()) {
-						cancel(p, pout);
-					}
-
-					if (line.startsWith("##")) {
-						StringTokenizer st = new StringTokenizer(line, "#,");
-						if (st.hasMoreTokens()) {
-							String first = st.nextToken();
-							switch (Remote.valueOf(first)) {
-							case TASK:
-								System.out.println(line);
-								// TODO FIX THIS!!!!
-								final String task = currentTask = st
-										.nextToken();
-								final String work = st.nextToken();
-								// LOG.info(task+": "+work);
-								monitor.begin(Integer.valueOf(work.trim()));
-								break;
-							case SUBTASK:
-								monitor.subTask(st.nextToken());
-								break;
-							case WORK:
-								monitor.worked(Integer.valueOf(st.nextToken()
-										.trim()));
-								break;
-							case WARNING:
-								System.out.println(line);
-								copyException(first, st.nextToken(), br);
-								break;
-							case FAILED:
-								System.out.println(line);
-								String msg = copyException(first, st
-										.nextToken(), br);
-								System.out.println("Terminating run");
-								p.destroy();
-								if (msg
-										.contains("FAILED:  java.lang.OutOfMemoryError")) {
-									throw new ToolException(
-											SierraToolConstants.ERROR_MEMORY_SIZE_TOO_SMALL,
-											config.getMemorySize());
-								}
-								throw new RuntimeException(msg);
-							case DONE:
-								System.out.println(line);
-								monitor.done();
-								break loop;
-							default:
-								System.out.println(line);
-							}
-						} else {
-							System.out.println(line);
-						}
-					} else {
-						System.out.println(line);
-					}
-					line = br.readLine();
-				}
-				line = br.readLine();
-				if (line != null) {
-					System.out.println(line);
-				}
-				// See if the process already died?
-				int value = handleExitValue(p);
-				br.close();
-				pout.close();
-				if (value != 0) {
-					examineFirstLines(firstLines);
-					throw new ToolException(
-							SierraToolConstants.ERROR_PROCESS_FAILED, value);
-				}
-			} catch (Exception e) {
-				throw new RuntimeException(e);
-			}
-			// FIX status not built if exception thrown
-			return status.build();
+		public IToolInstance create(Config config) {
+			throw new UnsupportedOperationException();
 		}
 
-		private void cancel(Process p, final PrintStream pout) {
-			pout.println("##" + Local.CANCEL);
-			p.destroy();
-			throw new ToolException(SierraToolConstants.ERROR_SCAN_CANCELLED);
+		public IToolInstance create(ArtifactGenerator generator) {
+			throw new UnsupportedOperationException();
 		}
 
-		private void examineFirstLines(String[] firstLines) {
-			for (String line : firstLines) {
-				if (line.startsWith("Could not reserve enough space")
-						|| line.startsWith("Invalid maximum heap size")) {
-					throw new ToolException(
-							SierraToolConstants.ERROR_MEMORY_SIZE_TOO_BIG,
-							config.getMemorySize());
-				}
-			}
+		public Set<String> getArtifactTypes() {
+			return Collections.emptySet();
 		}
 
-		private int handleExitValue(Process p) {
-			int value;
-			try {
-				value = p.exitValue();
-				System.out.println("Process result after waiting = " + value);
-			} catch (IllegalThreadStateException e) {
-				// Not done yet
-				final Thread currentThread = Thread.currentThread();
-				Thread t = new Thread() {
-					public void run() {
-						// Set to timeout in 1 minute
-						try {
-							Thread.sleep(60000);
-							currentThread.interrupt();
-						} catch (InterruptedException e) {
-							// Just end
-						}
-					}
-				};
-
-				final long start = System.currentTimeMillis();
-				t.start();
-				try {
-					value = p.waitFor();
-					t.interrupt();
-				} catch (InterruptedException ie) {
-					long time = System.currentTimeMillis() - start;
-					throw new RuntimeException(
-							"Timeout waiting for process to exit: " + time
-									+ " ms");
-				}
-				System.out.println("Process result after waiting = " + value);
-			}
-			return value;
+		public String getHtmlDescription() {
+			return LocalTool.this.getHtmlDescription();
 		}
 
-		private String copyException(String type, String msg, BufferedReader br)
-				throws IOException {
-			StringBuilder sb = new StringBuilder(currentTask + ' ' + type);
-			System.out.println(msg);
-			sb.append(": ").append(msg).append('\n');
-
-			String line = br.readLine();
-			while (line != null && line.startsWith("\t")) {
-				System.out.println(line);
-				sb.append(' ').append(line).append('\n');
-				line = br.readLine();
-			}
-			if (line != null) {
-				System.out.println(line);
-			}
-			final String errMsg = sb.toString();
-			status.addChild(SLStatus.createErrorStatus(-1, errMsg));
-			return errMsg;
+		public String getTitle() {
+			return LocalTool.this.getTitle();
 		}
 
-		private void findJars(Project proj, Path path, String folder) {
-			findJars(proj, path, new File(folder));
-		}
-
-		private void findJars(Project proj, Path path, File folder) {
-			for (File f : folder.listFiles()) {
-				String name = f.getAbsolutePath();
-				if (name.endsWith(".jar")) {
-					path.add(new Path(proj, name));
-				}
-			}
+		public String getVersion() {
+			return LocalTool.this.getVersion();
 		}
 	}
 

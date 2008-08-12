@@ -58,13 +58,18 @@ public class MultiTool extends AbstractTool {
 			mon.subTask("Setting up scans");
 		}
 
-		public SLStatus run(SLProgressMonitor mon) {
+		public SLStatus run(final SLProgressMonitor mon) {
 			SLStatus.Builder status = new SLStatus.Builder();
 			init(mon);
 
 			for (IToolInstance i : instances) {
+				if (mon.isCanceled()) {
+					status.addChild(SLStatus.CANCEL_STATUS);
+					break;
+				}
 				System.out.println("run() on " + i.getName());
-				status.addChild(i.run(mon));
+				SLStatus s = AbstractSLJob.invoke(i, mon, 1);
+				status.addChild(s);
 			}
 			if (closeWhenDone) {
 				generator.finished(mon);

@@ -9,7 +9,7 @@ import com.surelogic.sierra.tool.message.ArtifactGenerator;
 import com.surelogic.sierra.tool.message.Config;
 import com.surelogic.sierra.tool.targets.IToolTarget;
 
-public abstract class AbstractToolInstance implements IToolInstance {
+public abstract class AbstractToolInstance extends AbstractSLJob implements IToolInstance {
   private final ITool tool;
   protected final ArtifactGenerator generator;  
   private final List<IToolTarget> srcTargets = new ArrayList<IToolTarget>();
@@ -23,6 +23,7 @@ public abstract class AbstractToolInstance implements IToolInstance {
   protected final SLStatus.Builder status = new SLStatus.Builder();
   
   protected AbstractToolInstance(boolean debug, ITool t, ArtifactGenerator gen, boolean close) {
+	super(t.getName()); // FIX is this the right name?
     tool = t;
     generator = gen;
     closeWhenDone = close;
@@ -105,6 +106,8 @@ public abstract class AbstractToolInstance implements IToolInstance {
     finally {
       done = true;
     }
+    monitor.done();
+
     if (closeWhenDone) {
       generator.finished(monitor);
       monitor.done();

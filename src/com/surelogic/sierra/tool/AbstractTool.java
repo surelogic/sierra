@@ -3,7 +3,6 @@ package com.surelogic.sierra.tool;
 import java.net.URI;
 import java.util.logging.Logger;
 
-import com.surelogic.common.jobs.SLProgressMonitor;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.tool.analyzer.MessageArtifactFileGenerator;
 import com.surelogic.sierra.tool.message.ArtifactGenerator;
@@ -72,11 +71,4 @@ public abstract class AbstractTool implements ITool {
   }
   
   protected abstract IToolInstance create(final ArtifactGenerator generator, boolean close);
-  
-  protected static TestCode getTestCode(String code) {
-    if (code == null) {
-      return TestCode.NONE;
-    }
-    return TestCode.valueOf(code);
-  }
 }

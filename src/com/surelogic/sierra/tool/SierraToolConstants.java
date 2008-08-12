@@ -30,11 +30,6 @@ public final class SierraToolConstants {
 	 */
 	public static final String CONFIG_PROPERTY = "surelogic.config";
 
-	/**
-	 * Java property for the test code (if any)
-	 */
-	public static final String TEST_CODE_PROPERTY = "surelogic.test.code";
-
 	/** The location of tools folder */
 	public static final String TOOLS_FOLDER = "Tools";
 
@@ -81,13 +76,6 @@ public final class SierraToolConstants {
 	/**
 	 * Possible tool messages
 	 */
-	public static final int ERROR_MEMORY_SIZE_TOO_BIG = 72;
-	public static final int ERROR_CODE_MISSING_FOR_TOOL = 73;
 	public static final int ERROR_CREATING_AUX_PATH = 66;
 	public static final int ERROR_CREATING_CONFIG = 67;
-	public static final int ERROR_NO_OUTPUT_FROM_TOOLS = 68;
-	public static final int ERROR_SCAN_CANCELLED = 69;
-	public static final int ERROR_SCAN_FAILED = 70;
-	public static final int ERROR_PROCESS_FAILED = 71;
-	public static final int ERROR_MEMORY_SIZE_TOO_SMALL = 75;
 }

@@ -36,6 +36,20 @@ public class ToolUtil {
     return t;
   }
   
+  public static int getNumTools(Config config) {
+	  int count = 0;
+	  if (!config.getExcludedToolsList().contains("findbugs")) {
+		  count++;
+	  }
+	  if (!config.getExcludedToolsList().contains("pmd")) {
+		  count += 2;
+	  }
+	  if (!config.getExcludedToolsList().contains("reckoner")) {
+	      count++;
+	  }
+	  return count;
+  }
+  
   public static SLStatus scan(Config config, SLProgressMonitor mon, boolean runRemotely) {    
     final boolean fineIsLoggable = LOG.isLoggable(Level.FINE);
     final ITool t = ToolUtil.create(config, runRemotely);                           
