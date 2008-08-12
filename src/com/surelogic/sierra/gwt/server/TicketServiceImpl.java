@@ -73,4 +73,8 @@ public class TicketServiceImpl extends RemoteServiceServlet implements
 		return getReportTable(ticket);
 	}
 
+	public String[] policyHack(final String[] str) {
+		return new String[] {};
+	}
+
 }
