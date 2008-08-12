@@ -2,6 +2,7 @@ package com.surelogic.sierra.gwt.client.data;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -106,7 +107,7 @@ public class Category implements Serializable, Cacheable, Comparable<Category> {
 				set.add(entry);
 			}
 		}
-		return set;
+		return Collections.unmodifiableSet(set);
 	}
 
 	/**
@@ -131,7 +132,7 @@ public class Category implements Serializable, Cacheable, Comparable<Category> {
 				}
 			}
 		}
-		return set;
+		return Collections.unmodifiableSet(set);
 	}
 
 	public boolean parentContains(FindingTypeFilter finding) {
