@@ -25,20 +25,20 @@ public abstract class ReportsContent extends
 	}
 
 	@Override
-	protected void onInitialize(DockPanel rootPanel,
-			VerticalPanel selectionPanel) {
+	protected void onInitialize(final DockPanel rootPanel,
+			final VerticalPanel selectionPanel) {
 		setCaption("Reports");
 		reportView.initialize();
 		reportParamsView.initialize();
 		reportParamsView.addReportAction("Show Table", OutputType.TABLE,
 				new ClickListener() {
 
-					public void onClick(Widget sender) {
+					public void onClick(final Widget sender) {
 						final VerticalPanel selectionPanel = getSelectionPanel();
 						if (selectionPanel.getWidgetIndex(reportView) == -1) {
 							selectionPanel.add(reportView);
 						}
-						reportView.retrieveReport(reportParamsView
+						reportView.retrieveTable(reportParamsView
 								.getReportSettings());
 					}
 				});
@@ -46,12 +46,12 @@ public abstract class ReportsContent extends
 		reportParamsView.addReportAction("Show Chart", OutputType.CHART,
 				new ClickListener() {
 
-					public void onClick(Widget sender) {
+					public void onClick(final Widget sender) {
 						final VerticalPanel selectionPanel = getSelectionPanel();
 						if (selectionPanel.getWidgetIndex(reportView) == -1) {
 							selectionPanel.add(reportView);
 						}
-						reportView.retrieveReport(reportParamsView
+						reportView.retrieveChart(reportParamsView
 								.getReportSettings());
 					}
 				});
@@ -59,7 +59,7 @@ public abstract class ReportsContent extends
 		reportParamsView.addReportAction("Export to PDF", OutputType.PDF,
 				new ClickListener() {
 
-					public void onClick(Widget sender) {
+					public void onClick(final Widget sender) {
 						// TODO Auto-generated method stub
 						Window.alert("TODO: Export to PDF");
 					}
@@ -68,7 +68,7 @@ public abstract class ReportsContent extends
 		reportParamsView.addReportAction("Save Report", null,
 				new ClickListener() {
 
-					public void onClick(Widget sender) {
+					public void onClick(final Widget sender) {
 						saveReportConfig(reportParamsView.getReportSettings());
 					}
 
@@ -78,14 +78,14 @@ public abstract class ReportsContent extends
 		selectionPanel.add(reportView);
 	}
 
-	private void saveReportConfig(ReportSettings settings) {
+	private void saveReportConfig(final ReportSettings settings) {
 		final SaveReportDialog dialog = new SaveReportDialog();
 		dialog.addPopupListener(new PopupListener() {
 
 			public void onPopupClosed(final PopupPanel sender,
 					final boolean autoClosed) {
 				final Status dialogStatus = dialog.getStatus();
-				if (dialogStatus != null && dialogStatus.isSuccess()) {
+				if ((dialogStatus != null) && dialogStatus.isSuccess()) {
 					final String reportName = dialog.getName();
 					if (reportName.length() > 0) {
 						// TODO save the report
@@ -99,17 +99,17 @@ public abstract class ReportsContent extends
 	}
 
 	@Override
-	protected void onSelectionChanged(Report item) {
+	protected void onSelectionChanged(final Report item) {
 		reportParamsView.setSelection(item);
 	}
 
 	@Override
-	protected String getItemText(Report item) {
+	protected String getItemText(final Report item) {
 		return item.getTitle();
 	}
 
 	@Override
-	protected boolean isItemVisible(Report item, String query) {
+	protected boolean isItemVisible(final Report item, final String query) {
 		if (getDataSource() == item.getDataSource()) {
 			return LangUtil.containsIgnoreCase(item.getTitle(), query);
 		}
