@@ -28,4 +28,14 @@ public interface TicketService extends RemoteService {
 	 */
 	Result<ReportTable> getReportTable(ReportSettings r);
 
+	/**
+	 * This is a hack to make sure String[] is included in the serialization
+	 * policy file
+	 * 
+	 * @param str
+	 *            ignored
+	 * @return an empty string array
+	 */
+	String[] policyHack(String[] str);
+
 }
