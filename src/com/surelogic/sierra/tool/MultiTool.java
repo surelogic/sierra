@@ -54,7 +54,7 @@ public class MultiTool extends AbstractTool {
 		}
 
 		private void init(SLProgressMonitor mon) {
-			mon.begin(100);
+			mon.begin(100*(instances.size()+1));
 			mon.subTask("Setting up scans");
 		}
 
@@ -68,13 +68,25 @@ public class MultiTool extends AbstractTool {
 					break;
 				}
 				System.out.println("run() on " + i.getName());
-				SLStatus s = AbstractSLJob.invoke(i, mon, 1);
+				SLStatus s = AbstractSLJob.invoke(i, mon, 100);
 				status.addChild(s);
 			}
 			if (closeWhenDone) {
-				generator.finished(mon);
-				mon.done();
+				if (mon.isCanceled()) {
+					status.addChild(SLStatus.CANCEL_STATUS);
+				} else {
+					SLJob j = new AbstractSLJob("Closing results file") {
+						public SLStatus run(SLProgressMonitor monitor) {
+							generator.finished(monitor);
+							return SLStatus.OK_STATUS;
+						}
+
+					};
+					SLStatus s = AbstractSLJob.invoke(j, mon, 100);
+					status.addChild(s);
+				}
 			}
+			mon.done();
 			return status.build();
 		}
 

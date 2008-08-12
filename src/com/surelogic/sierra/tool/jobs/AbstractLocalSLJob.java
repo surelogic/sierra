@@ -205,6 +205,7 @@ public abstract class AbstractLocalSLJob extends AbstractSLJob {
 								break loop;
 							}
 							*/
+							break;
 						default:
 							System.out.println(line);
 						}

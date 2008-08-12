@@ -110,7 +110,6 @@ public abstract class AbstractToolInstance extends AbstractSLJob implements IToo
 
     if (closeWhenDone) {
       generator.finished(monitor);
-      monitor.done();
     }
     return status.build();
   }
