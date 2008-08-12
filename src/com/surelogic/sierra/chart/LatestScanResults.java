@@ -19,13 +19,13 @@ import org.jfree.chart.renderer.category.LineAndShapeRenderer;
 import org.jfree.data.category.DefaultCategoryDataset;
 
 import com.surelogic.sierra.gwt.client.data.ProjectOverview;
-import com.surelogic.sierra.gwt.client.data.Report;
+import com.surelogic.sierra.gwt.client.data.ReportSettings;
 import com.surelogic.sierra.portal.PortalOverview;
 
 public final class LatestScanResults implements IDatabasePlot {
 
-	public JFreeChart plot(PlotSize mutableSize, Report report, Connection c)
-			throws SQLException, IOException {
+	public JFreeChart plot(PlotSize mutableSize, ReportSettings report,
+			Connection c) throws SQLException, IOException {
 		c.setTransactionIsolation(Connection.TRANSACTION_READ_UNCOMMITTED);
 		final DefaultCategoryDataset importanceData = new DefaultCategoryDataset();
 		final List<ProjectOverview> overview = PortalOverview.getInstance(c)

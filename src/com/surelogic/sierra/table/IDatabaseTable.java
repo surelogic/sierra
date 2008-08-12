@@ -3,7 +3,7 @@ package com.surelogic.sierra.table;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import com.surelogic.sierra.gwt.client.data.Report;
+import com.surelogic.sierra.gwt.client.data.ReportSettings;
 import com.surelogic.sierra.gwt.client.data.ReportTable;
 
 /**
@@ -25,6 +25,7 @@ public interface IDatabaseTable {
 	 * @return the resulting table
 	 * @throws SQLException
 	 */
-	ReportTable generate(Report report, Connection conn) throws SQLException;
+	ReportTable generate(ReportSettings report, Connection conn)
+			throws SQLException;
 
 }

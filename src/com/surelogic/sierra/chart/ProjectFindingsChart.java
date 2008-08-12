@@ -26,57 +26,50 @@ import com.surelogic.common.jdbc.IntegerResultHandler;
 import com.surelogic.common.jdbc.Query;
 import com.surelogic.common.jdbc.Row;
 import com.surelogic.common.jdbc.RowHandler;
-import com.surelogic.sierra.gwt.client.data.Report;
-import com.surelogic.sierra.gwt.client.data.Report.Parameter;
+import com.surelogic.sierra.gwt.client.data.ReportSettings;
 
 public class ProjectFindingsChart implements IDatabasePlot {
 
-	public JFreeChart plot(final PlotSize mutableSize, final Report report,
-			final Connection c) throws SQLException, IOException {
+	public JFreeChart plot(final PlotSize mutableSize,
+			final ReportSettings report, final Connection c)
+			throws SQLException, IOException {
 		c.setTransactionIsolation(Connection.TRANSACTION_READ_UNCOMMITTED);
 		final Query query = new ConnectionQuery(c);
 		final DefaultCategoryDataset importanceData = new DefaultCategoryDataset();
 		final DefaultCategoryDataset totalData = new DefaultCategoryDataset();
-		final Parameter kLoCParam = report.getParameter("kLoC");
-		final boolean bykLoC = (kLoCParam != null)
-				&& "true".equals(kLoCParam.getValue());
-		final Parameter projectParam = report.getParameter("projectName");
-		if (projectParam != null) {
-			final String projectName = projectParam.getValue();
-			if (projectName != null) {
-				final Map<String, Integer> totals = new TreeMap<String, Integer>();
-				final Integer linesOfCode = bykLoC ? query
-						.prepared("Plots.Project.linesOfCode",
-								new IntegerResultHandler()).call(projectName)
-						: 0;
-				query.prepared("Plots.Project.scanFindings",
-						new RowHandler<Void>() {
-							public Void handle(final Row r) {
-								final int count = r.nextInt();
-								final String importance = r.nextString();
-								final String time = r.nextString();
-								if (bykLoC) {
-									importanceData.setValue((double) count
-											/ linesOfCode * 1000, importance,
-											time);
-								} else {
-									importanceData.setValue(count, importance,
-											time);
-								}
-								final Integer total = totals.get(time);
-								totals.put(time, (total == null ? 0 : total)
-										+ count);
-								return null;
+		final boolean bykLoC = "true".equals(report.getSettingValue("kLoC", 0));
+		final String projectName = report.getSettingValue("projectName", 0);
+		if (projectName != null) {
+			final Map<String, Integer> totals = new TreeMap<String, Integer>();
+			final Integer linesOfCode = bykLoC ? query.prepared(
+					"Plots.Project.linesOfCode", new IntegerResultHandler())
+					.call(projectName) : 0;
+			query.prepared("Plots.Project.scanFindings",
+					new RowHandler<Void>() {
+						public Void handle(final Row r) {
+							final int count = r.nextInt();
+							final String importance = r.nextString();
+							final String time = r.nextString();
+							if (bykLoC) {
+								importanceData.setValue((double) count
+										/ linesOfCode * 1000, importance, time);
+							} else {
+								importanceData
+										.setValue(count, importance, time);
 							}
-						}).call(projectName);
-				for (final Entry<String, Integer> entry : totals.entrySet()) {
-					if (bykLoC) {
-						totalData.setValue((double) entry.getValue()
-								/ linesOfCode * 1000, "Total", entry.getKey());
-					} else {
-						totalData.setValue(entry.getValue(), "Total", entry
-								.getKey());
-					}
+							final Integer total = totals.get(time);
+							totals.put(time, (total == null ? 0 : total)
+									+ count);
+							return null;
+						}
+					}).call(projectName);
+			for (final Entry<String, Integer> entry : totals.entrySet()) {
+				if (bykLoC) {
+					totalData.setValue((double) entry.getValue() / linesOfCode
+							* 1000, "Total", entry.getKey());
+				} else {
+					totalData.setValue(entry.getValue(), "Total", entry
+							.getKey());
 				}
 			}
 		}

@@ -6,7 +6,7 @@ import java.sql.SQLException;
 
 import org.jfree.chart.JFreeChart;
 
-import com.surelogic.sierra.gwt.client.data.Report;
+import com.surelogic.sierra.gwt.client.data.ReportSettings;
 
 /**
  * The interface for plotting all Sierra charts and graphs.
@@ -34,6 +34,6 @@ public interface IDatabasePlot {
 	 *            will be closed by the caller of this method.
 	 * @return the resulting chart.
 	 */
-	JFreeChart plot(PlotSize mutableSize, Report report, Connection c)
+	JFreeChart plot(PlotSize mutableSize, ReportSettings report, Connection c)
 			throws SQLException, IOException;
 }

@@ -28,22 +28,19 @@ import com.surelogic.common.jdbc.Result;
 import com.surelogic.common.jdbc.ResultHandler;
 import com.surelogic.common.jdbc.Row;
 import com.surelogic.common.jdbc.RowHandler;
-import com.surelogic.sierra.gwt.client.data.Report;
-import com.surelogic.sierra.gwt.client.data.Report.Parameter;
+import com.surelogic.sierra.gwt.client.data.ReportSettings;
 
 public class ProjectCompilationsChart implements IDatabasePlot {
 
-	public JFreeChart plot(final PlotSize mutableSize, final Report report,
-			final Connection c) throws SQLException, IOException {
+	public JFreeChart plot(final PlotSize mutableSize,
+			final ReportSettings report, final Connection c)
+			throws SQLException, IOException {
 		c.setTransactionIsolation(Connection.TRANSACTION_READ_UNCOMMITTED);
 		final DefaultCategoryDataset importanceData = new DefaultCategoryDataset();
 		final DefaultCategoryDataset totalData = new DefaultCategoryDataset();
-		final String projectName = report.getParameter("projectName")
-				.getValue();
+		final String projectName = report.getSettingValue("projectName", 0);
 		final Query q = new ConnectionQuery(c);
-		final Parameter kLoCParam = report.getParameter("kLoC");
-		final boolean bykLoC = (kLoCParam != null)
-				&& "true".equals(kLoCParam.getValue());
+		final boolean bykLoC = "true".equals(report.getSettingValue("kLoC", 0));
 		final Map<String, Integer> kLoCMap = bykLoC ? q.prepared(
 				"Plots.Project.linesOfCodeByPackage",
 				new ResultHandler<Map<String, Integer>>() {

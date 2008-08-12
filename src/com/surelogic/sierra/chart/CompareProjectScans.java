@@ -26,36 +26,35 @@ import com.surelogic.common.jdbc.ConnectionQuery;
 import com.surelogic.common.jdbc.JDBCUtils;
 import com.surelogic.common.jdbc.Row;
 import com.surelogic.common.jdbc.RowHandler;
-import com.surelogic.sierra.gwt.client.data.Report;
-import com.surelogic.sierra.gwt.client.data.Report.Parameter;
+import com.surelogic.sierra.gwt.client.data.ReportSettings;
 import com.surelogic.sierra.tool.message.Importance;
 
 public class CompareProjectScans implements IDatabasePlot {
 
-	public JFreeChart plot(final PlotSize mutableSize, final Report report,
-			final Connection c) throws SQLException, IOException {
-		final Parameter scanParam = report.getParameter("scans");
-		final Parameter impParam = report.getParameter("importance");
+	public JFreeChart plot(final PlotSize mutableSize,
+			final ReportSettings report, final Connection c)
+			throws SQLException, IOException {
+		final List<String> scans = report.getSettingValue("scans");
+		final List<String> importancesNames = report.getSettingValue("importance");
 		final DefaultCategoryDataset importanceData = new DefaultCategoryDataset();
 		final DefaultCategoryDataset totalData = new DefaultCategoryDataset();
-		if (scanParam != null) {
-			final List<String> projects = scanParam.getValues();
-			if (!projects.isEmpty()) {
+		if (scans != null) {
+			if (!scans.isEmpty()) {
 				final StringBuilder scanStr = new StringBuilder();
-				for (final String p : projects) {
+				for (final String scan : scans) {
 					scanStr.append("'");
-					scanStr.append(JDBCUtils.escapeString(p));
+					scanStr.append(JDBCUtils.escapeString(scan));
 					scanStr.append("',");
 				}
 				scanStr.setLength(scanStr.length() - 1);
 				// Extract the importances we want, or return all of them if
 				// they are not specified
 				List<Importance> importances;
-				if ((impParam == null) || impParam.getValues().isEmpty()) {
+				if ((importancesNames == null) || importancesNames.isEmpty()) {
 					importances = Importance.standardValues();
 				} else {
 					importances = new ArrayList<Importance>();
-					for (final String imp : impParam.getValues()) {
+					for (final String imp : importancesNames) {
 						importances.add(Importance.fromValue(imp));
 					}
 				}

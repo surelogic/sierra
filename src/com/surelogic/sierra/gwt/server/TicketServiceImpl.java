@@ -14,7 +14,7 @@ import com.surelogic.sierra.cache.Attendant;
 import com.surelogic.sierra.cache.ChartCache;
 import com.surelogic.sierra.cache.TableCache;
 import com.surelogic.sierra.gwt.client.data.ImageMapData;
-import com.surelogic.sierra.gwt.client.data.Report;
+import com.surelogic.sierra.gwt.client.data.ReportSettings;
 import com.surelogic.sierra.gwt.client.data.ReportTable;
 import com.surelogic.sierra.gwt.client.data.Result;
 import com.surelogic.sierra.gwt.client.data.Ticket;
@@ -27,7 +27,7 @@ public class TicketServiceImpl extends RemoteServiceServlet implements
 	private static final Logger log = SLLogger
 			.getLoggerFor(TicketServiceImpl.class);
 
-	public Result<Ticket> getTicket(Report report) {
+	public Result<Ticket> getTicket(ReportSettings report) {
 		final Ticket ticket = new Ticket(Attendant.getInstance().getTicket(
 				report, getThreadLocalRequest().getSession()).getUUID()
 				.toString());
@@ -67,9 +67,10 @@ public class TicketServiceImpl extends RemoteServiceServlet implements
 				"Error retrieving image map for ticket " + ticket, null);
 	}
 
-	public Result<ReportTable> getReportTable(Report r) {
+	public Result<ReportTable> getReportTable(ReportSettings r) {
 		final Ticket ticket = new Ticket(Attendant.getInstance().getTicket(r,
 				getThreadLocalRequest().getSession()).getUUID().toString());
 		return getReportTable(ticket);
 	}
+
 }

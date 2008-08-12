@@ -13,22 +13,22 @@ import com.surelogic.common.jdbc.ConnectionQuery;
 import com.surelogic.common.jdbc.Result;
 import com.surelogic.common.jdbc.ResultHandler;
 import com.surelogic.common.jdbc.Row;
-import com.surelogic.sierra.gwt.client.data.Report;
+import com.surelogic.sierra.gwt.client.data.ReportSettings;
 
 public class FindingTypeCounts implements IDatabasePlot {
 
-	public JFreeChart plot(PlotSize mutableSize, Report report, Connection c)
-			throws SQLException, IOException {
+	public JFreeChart plot(PlotSize mutableSize, ReportSettings report,
+			Connection c) throws SQLException, IOException {
 		c.setTransactionIsolation(Connection.TRANSACTION_READ_UNCOMMITTED);
-		final String uid = report.getParameter("uuid").getValue();
+		final String uid = report.getSettingValue("uuid", 0);
 		if (uid != null) {
 			final DefaultCategoryDataset set = new ConnectionQuery(c).prepared(
 					"Plots.FindingType.count",
 					new ResultHandler<DefaultCategoryDataset>() {
 
 						public DefaultCategoryDataset handle(Result r) {
-							DefaultCategoryDataset set = new DefaultCategoryDataset();
-							for (Row row : r) {
+							final DefaultCategoryDataset set = new DefaultCategoryDataset();
+							for (final Row row : r) {
 								set.setValue(row.nextInt(), "Findings", row
 										.nextString());
 							}

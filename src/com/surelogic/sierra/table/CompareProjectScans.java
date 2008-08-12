@@ -12,18 +12,17 @@ import com.surelogic.common.jdbc.Result;
 import com.surelogic.common.jdbc.ResultHandler;
 import com.surelogic.common.jdbc.Row;
 import com.surelogic.sierra.gwt.client.data.ColumnData;
-import com.surelogic.sierra.gwt.client.data.Report;
+import com.surelogic.sierra.gwt.client.data.ReportSettings;
 import com.surelogic.sierra.gwt.client.data.ReportTable;
-import com.surelogic.sierra.gwt.client.data.Report.Parameter;
 import com.surelogic.sierra.gwt.client.util.LangUtil;
 
 public class CompareProjectScans implements IDatabaseTable {
 
 	private static final int MAX_RESULTS = 250;
 
-	public ReportTable generate(final Report report, final Connection conn)
-			throws SQLException {
-		final Parameter scans = report.getParameter("scans");
+	public ReportTable generate(final ReportSettings report,
+			final Connection conn) throws SQLException {
+		final List<String> scans = report.getSettingValue("scans");
 		final ReportTable table = new ReportTable();
 		table.getHeaders().addAll(
 				Arrays.asList(new String[] { "Id", "Package", "Compilation",
@@ -37,12 +36,11 @@ public class CompareProjectScans implements IDatabaseTable {
 						ColumnData.DATE, ColumnData.TEXT, ColumnData.TEXT,
 						ColumnData.NUMBER, ColumnData.NUMBER, ColumnData.TEXT,
 						ColumnData.TEXT }));
-		if ((scans != null) && (scans.getValues().size() >= 2)) {
+		if ((scans != null) && (scans.size() >= 2)) {
 			final Query q = new ConnectionQuery(conn);
-			final List<String> values = scans.getValues();
-			final String firstStr = values.get(0);
-			final String secondStr = values.get(1);
-			if (LangUtil.notEmpty(firstStr) && LangUtil.notEmpty(secondStr)) {
+			final String firstScan = scans.get(0);
+			final String secondScan = scans.get(1);
+			if (LangUtil.notEmpty(firstScan) && LangUtil.notEmpty(secondScan)) {
 				q.prepared("Plots.Project.compareScans",
 						new ResultHandler<Void>() {
 
@@ -61,7 +59,7 @@ public class CompareProjectScans implements IDatabaseTable {
 								}
 								return null;
 							}
-						}).call(firstStr, secondStr);
+						}).call(firstScan, secondScan);
 			}
 		}
 		return table;

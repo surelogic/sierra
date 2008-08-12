@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.UUID;
 
 import com.surelogic.common.i18n.I18N;
-import com.surelogic.sierra.gwt.client.data.Report;
+import com.surelogic.sierra.gwt.client.data.ReportSettings;
 
 /**
  * A ticket associates an {@link UUID} with a set of parameters. This class is
@@ -18,13 +18,13 @@ public final class Ticket implements Serializable {
 		return f_id;
 	}
 
-	private final Report f_report;
+	private final ReportSettings f_report;
 
-	public Report getReport() {
+	public ReportSettings getReport() {
 		return f_report;
 	}
 
-	public Ticket(Report report) {
+	public Ticket(ReportSettings report) {
 		if (report == null) {
 			throw new IllegalArgumentException(I18N.err(44, "parameters"));
 		}

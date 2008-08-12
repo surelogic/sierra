@@ -13,16 +13,16 @@ import com.surelogic.common.jdbc.ConnectionQuery;
 import com.surelogic.common.jdbc.Result;
 import com.surelogic.common.jdbc.ResultHandler;
 import com.surelogic.common.jdbc.Row;
-import com.surelogic.sierra.gwt.client.data.Report;
+import com.surelogic.sierra.gwt.client.data.ReportSettings;
 import com.surelogic.sierra.jdbc.settings.Categories;
 import com.surelogic.sierra.jdbc.settings.CategoryGraph;
 
 public class CategoryCounts implements IDatabasePlot {
 
-	public JFreeChart plot(PlotSize mutableSize, Report report, Connection c)
-			throws SQLException, IOException {
+	public JFreeChart plot(PlotSize mutableSize, ReportSettings report,
+			Connection c) throws SQLException, IOException {
 		c.setTransactionIsolation(Connection.TRANSACTION_READ_UNCOMMITTED);
-		final String uid = report.getParameter("uuid").getValue();
+		final String uid = report.getSettingValue("uuid", 0);
 		if (uid != null) {
 			final ConnectionQuery q = new ConnectionQuery(c);
 			final CategoryGraph g = new Categories(q).getCategoryGraph(uid);

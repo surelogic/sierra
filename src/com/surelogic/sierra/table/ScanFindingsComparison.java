@@ -12,9 +12,8 @@ import com.surelogic.common.jdbc.Query;
 import com.surelogic.common.jdbc.Result;
 import com.surelogic.common.jdbc.Row;
 import com.surelogic.sierra.gwt.client.data.ColumnData;
-import com.surelogic.sierra.gwt.client.data.Report;
+import com.surelogic.sierra.gwt.client.data.ReportSettings;
 import com.surelogic.sierra.gwt.client.data.ReportTable;
-import com.surelogic.sierra.gwt.client.data.Report.Parameter;
 import com.surelogic.sierra.gwt.client.util.LangUtil;
 import com.surelogic.sierra.util.Dates;
 
@@ -22,9 +21,9 @@ public class ScanFindingsComparison implements IDatabaseTable {
 
 	private static final int MAX_RESULTS = 250;
 
-	public final ReportTable generate(final Report report, final Connection conn)
-			throws SQLException {
-		final Parameter scans = report.getParameter("scans");
+	public final ReportTable generate(final ReportSettings report,
+			final Connection conn) throws SQLException {
+		final List<String> scans = report.getSettingValue("scans");
 		final ReportTable table = new ReportTable();
 		table.getHeaders().addAll(
 				Arrays.asList(new String[] { "Id", "Package", "Compilation",
@@ -37,11 +36,10 @@ public class ScanFindingsComparison implements IDatabaseTable {
 						ColumnData.TEXT, ColumnData.TEXT, ColumnData.TEXT,
 						ColumnData.DATE, ColumnData.TEXT, ColumnData.NUMBER,
 						ColumnData.NUMBER, ColumnData.TEXT, ColumnData.TEXT }));
-		if ((scans != null) && (scans.getValues().size() >= 2)) {
+		if ((scans != null) && (scans.size() >= 2)) {
 			final Query q = new ConnectionQuery(conn);
-			final List<String> values = scans.getValues();
-			final String firstStr = values.get(0);
-			final String secondStr = values.get(1);
+			final String firstStr = scans.get(0);
+			final String secondStr = scans.get(1);
 			if (LangUtil.notEmpty(firstStr) && LangUtil.notEmpty(secondStr)) {
 				q.prepared("Plots.project.scanFindingsDiff",
 						new NullResultHandler() {

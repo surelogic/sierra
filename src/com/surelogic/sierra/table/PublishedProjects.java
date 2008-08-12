@@ -8,7 +8,7 @@ import java.util.List;
 
 import com.surelogic.sierra.gwt.client.data.ColumnData;
 import com.surelogic.sierra.gwt.client.data.ProjectOverview;
-import com.surelogic.sierra.gwt.client.data.Report;
+import com.surelogic.sierra.gwt.client.data.ReportSettings;
 import com.surelogic.sierra.gwt.client.data.ReportTable;
 import com.surelogic.sierra.portal.PortalOverview;
 
@@ -24,7 +24,7 @@ public class PublishedProjects implements IDatabaseTable {
 					ColumnData.NUMBER, ColumnData.NUMBER, ColumnData.NUMBER,
 					ColumnData.DATE, ColumnData.TEXT }));
 
-	public ReportTable generate(Report report, Connection conn)
+	public ReportTable generate(ReportSettings report, Connection conn)
 			throws SQLException {
 		conn.setTransactionIsolation(Connection.TRANSACTION_READ_UNCOMMITTED);
 		final ReportTable t = new ReportTable(report);

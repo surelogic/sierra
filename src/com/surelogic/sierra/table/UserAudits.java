@@ -7,10 +7,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.surelogic.sierra.gwt.client.data.ColumnData;
-import com.surelogic.sierra.gwt.client.data.Report;
+import com.surelogic.sierra.gwt.client.data.ReportSettings;
 import com.surelogic.sierra.gwt.client.data.ReportTable;
 import com.surelogic.sierra.gwt.client.data.UserOverview;
-import com.surelogic.sierra.gwt.client.data.Report.Parameter;
 import com.surelogic.sierra.portal.PortalOverview;
 
 public class UserAudits implements IDatabaseTable {
@@ -21,13 +20,12 @@ public class UserAudits implements IDatabaseTable {
 			Arrays.asList(new ColumnData[] { ColumnData.TEXT,
 					ColumnData.NUMBER, ColumnData.DATE }));
 
-	public ReportTable generate(Report report, Connection conn)
+	public ReportTable generate(ReportSettings report, Connection conn)
 			throws SQLException {
 		conn.setTransactionIsolation(Connection.TRANSACTION_READ_UNCOMMITTED);
 		final ReportTable table = new ReportTable(report);
-		final Parameter disabled = report.getParameter("show-disabled");
-		final boolean showDisabled = (disabled != null)
-				&& "true".equalsIgnoreCase(disabled.getValue());
+		final String disabled = report.getSettingValue("show-disabled", 0);
+		final boolean showDisabled = "true".equalsIgnoreCase(disabled);
 		final PortalOverview po = PortalOverview.getInstance(conn);
 		final List<UserOverview> overviews = showDisabled ? po
 				.getUserOverviews() : po.getEnabledUserOverviews();

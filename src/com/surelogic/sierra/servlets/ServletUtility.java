@@ -25,8 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.logging.SLLogger;
-import com.surelogic.sierra.gwt.client.data.Report;
-import com.surelogic.sierra.gwt.client.data.Report.Parameter;
+import com.surelogic.sierra.gwt.client.data.ReportSettings;
 
 public final class ServletUtility {
 
@@ -75,23 +74,22 @@ public final class ServletUtility {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public static Report launderRequestParametersAsReport(
+	public static ReportSettings launderRequestParametersAsReport(
 			HttpServletRequest request) {
 		if (request == null) {
 			throw new IllegalArgumentException(I18N.err(44, "request"));
 		}
-		final Report report = new Report();
+		final ReportSettings report = new ReportSettings();
 		for (final Object entry : request.getParameterMap().entrySet()) {
 			final Entry<String, String[]> param = (Entry<String, String[]>) entry;
 			final String key = param.getKey();
 			final String[] value = param.getValue();
 			if ("type".equals(key)) {
-				report.setName(value[0]);
+				report.setReportUuid(value[0]);
 			} else if ("name".equals(key)) {
-				report.setName(value[0]);
+				report.setReportUuid(value[0]);
 			} else {
-				report.getParameters().add(
-						new Parameter(key, Arrays.asList(value)));
+				report.setSettingValue(key, Arrays.asList(value));
 			}
 		}
 		return report;

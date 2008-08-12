@@ -11,7 +11,7 @@ import javax.servlet.http.HttpSession;
 import com.surelogic.common.Sweepable;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.logging.SLLogger;
-import com.surelogic.sierra.gwt.client.data.Report;
+import com.surelogic.sierra.gwt.client.data.ReportSettings;
 
 /**
  * This singleton class manages tickets used for chart caching within and across
@@ -54,7 +54,7 @@ public final class Attendant implements Sweepable {
 	 *            the session the {@link Ticket} object is associated with.
 	 * @return the {@link Ticket} object.
 	 */
-	public Ticket getTicket(Report report, HttpSession session) {
+	public Ticket getTicket(ReportSettings report, HttpSession session) {
 		if (report == null) {
 			throw new IllegalArgumentException(I18N.err(44, "report"));
 		}

@@ -10,7 +10,7 @@ import java.util.List;
 
 import com.surelogic.sierra.gwt.client.data.ColumnData;
 import com.surelogic.sierra.gwt.client.data.ProjectOverview;
-import com.surelogic.sierra.gwt.client.data.Report;
+import com.surelogic.sierra.gwt.client.data.ReportSettings;
 import com.surelogic.sierra.gwt.client.data.ReportTable;
 import com.surelogic.sierra.portal.PortalOverview;
 
@@ -24,7 +24,7 @@ public class LatestScanResults implements IDatabaseTable {
 					ColumnData.NUMBER, ColumnData.NUMBER, ColumnData.NUMBER,
 					ColumnData.NUMBER, ColumnData.NUMBER });
 
-	public ReportTable generate(Report report, Connection c)
+	public ReportTable generate(ReportSettings report, Connection c)
 			throws SQLException {
 		c.setTransactionIsolation(Connection.TRANSACTION_READ_UNCOMMITTED);
 		final List<ProjectOverview> overview = PortalOverview.getInstance(c)

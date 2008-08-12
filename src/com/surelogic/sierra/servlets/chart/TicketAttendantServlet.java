@@ -12,7 +12,7 @@ import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.cache.Attendant;
 import com.surelogic.sierra.cache.ChartCache;
 import com.surelogic.sierra.cache.Ticket;
-import com.surelogic.sierra.gwt.client.data.Report;
+import com.surelogic.sierra.gwt.client.data.ReportSettings;
 import com.surelogic.sierra.servlets.ServletUtility;
 
 public final class TicketAttendantServlet extends AbstractChartServlet {
@@ -21,7 +21,7 @@ public final class TicketAttendantServlet extends AbstractChartServlet {
 	protected void doGet(HttpServletRequest request,
 			final HttpServletResponse response) throws ServletException,
 			IOException {
-		final Report report = ServletUtility
+		final ReportSettings report = ServletUtility
 				.launderRequestParametersAsReport(request);
 		final Ticket ticket = Attendant.getInstance().getTicket(report,
 				request.getSession());

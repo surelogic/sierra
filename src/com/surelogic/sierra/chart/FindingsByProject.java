@@ -26,20 +26,19 @@ import com.surelogic.common.jdbc.ConnectionQuery;
 import com.surelogic.common.jdbc.JDBCUtils;
 import com.surelogic.common.jdbc.Row;
 import com.surelogic.common.jdbc.RowHandler;
-import com.surelogic.sierra.gwt.client.data.Report;
-import com.surelogic.sierra.gwt.client.data.Report.Parameter;
+import com.surelogic.sierra.gwt.client.data.ReportSettings;
 import com.surelogic.sierra.tool.message.Importance;
 
 public class FindingsByProject implements IDatabasePlot {
 
-	public JFreeChart plot(final PlotSize mutableSize, final Report report,
-			final Connection c) throws SQLException, IOException {
-		final Parameter projectParam = report.getParameter("Projects");
-		final Parameter impParam = report.getParameter("Importance");
+	public JFreeChart plot(final PlotSize mutableSize,
+			final ReportSettings report, final Connection c)
+			throws SQLException, IOException {
+		final List<String> projects = report.getSettingValue("Projects");
+		final List<String> importancesNames = report.getSettingValue("Importance");
 		final DefaultCategoryDataset importanceData = new DefaultCategoryDataset();
 		final DefaultCategoryDataset totalData = new DefaultCategoryDataset();
-		if (projectParam != null) {
-			final List<String> projects = projectParam.getValues();
+		if (projects != null) {
 			if (!projects.isEmpty()) {
 				final StringBuilder projectStr = new StringBuilder();
 				for (final String p : projects) {
@@ -51,11 +50,11 @@ public class FindingsByProject implements IDatabasePlot {
 				// Extract the importances we want, or return all of them if
 				// they are not specified
 				List<Importance> importances;
-				if ((impParam == null) || impParam.getValues().isEmpty()) {
+				if (importancesNames == null || importancesNames.isEmpty()) {
 					importances = Importance.standardValues();
 				} else {
 					importances = new ArrayList<Importance>();
-					for (final String imp : impParam.getValues()) {
+					for (final String imp : importancesNames) {
 						importances.add(Importance.fromValue(imp));
 					}
 				}

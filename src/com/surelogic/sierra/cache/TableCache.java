@@ -26,7 +26,7 @@ import com.surelogic.common.jdbc.Result;
 import com.surelogic.common.jdbc.ResultHandler;
 import com.surelogic.common.jdbc.Row;
 import com.surelogic.common.logging.SLLogger;
-import com.surelogic.sierra.gwt.client.data.Report;
+import com.surelogic.sierra.gwt.client.data.ReportSettings;
 import com.surelogic.sierra.gwt.client.data.ReportTable;
 import com.surelogic.sierra.jdbc.server.ConnectionFactory;
 import com.surelogic.sierra.jdbc.server.Server;
@@ -110,9 +110,10 @@ public class TableCache implements Sweepable {
 	}
 
 	private void createCacheFiles(final Ticket ticket) throws ServletException {
-		SLLogger.getLogger().log(Level.FINE, "Creating table files for ticket " + ticket);
-		final Report report = ticket.getReport();
-		final String type = report.getName();
+		SLLogger.getLogger().log(Level.FINE,
+				"Creating table files for ticket " + ticket);
+		final ReportSettings report = ticket.getReport();
+		final String type = report.getReportUuid();
 		if (type == null) {
 			throw new ServletException(I18N.err(96, ticket.toString()));
 		}

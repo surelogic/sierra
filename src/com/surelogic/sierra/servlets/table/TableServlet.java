@@ -13,7 +13,7 @@ import com.surelogic.sierra.cache.Attendant;
 import com.surelogic.sierra.cache.TableCache;
 import com.surelogic.sierra.cache.Ticket;
 import com.surelogic.sierra.gwt.client.data.ColumnData;
-import com.surelogic.sierra.gwt.client.data.Report;
+import com.surelogic.sierra.gwt.client.data.ReportSettings;
 import com.surelogic.sierra.gwt.client.data.ReportTable;
 import com.surelogic.sierra.servlets.ServletUtility;
 
@@ -37,7 +37,7 @@ public class TableServlet extends HttpServlet {
 		final StringBuffer buffer = new StringBuffer(256);
 
 		try {
-			final Report report = ServletUtility
+			final ReportSettings report = ServletUtility
 					.launderRequestParametersAsReport(req);
 			final Ticket ticket = Attendant.getInstance().getTicket(report,
 					req.getSession());

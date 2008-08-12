@@ -37,8 +37,7 @@ import com.surelogic.common.jdbc.Row;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.chart.IDatabasePlot;
 import com.surelogic.sierra.chart.PlotSize;
-import com.surelogic.sierra.gwt.client.data.Report;
-import com.surelogic.sierra.gwt.client.data.Report.Parameter;
+import com.surelogic.sierra.gwt.client.data.ReportSettings;
 import com.surelogic.sierra.jdbc.server.ConnectionFactory;
 import com.surelogic.sierra.jdbc.server.Server;
 import com.surelogic.sierra.jdbc.server.ServerQuery;
@@ -122,9 +121,10 @@ public final class ChartCache implements Sweepable {
 	}
 
 	private void createCacheFiles(final Ticket ticket) throws ServletException {
-		SLLogger.getLogger().log(Level.FINE, "Creating chart files for ticket " + ticket);
-		final Report report = ticket.getReport();
-		final String type = report.getName();
+		SLLogger.getLogger().log(Level.FINE,
+				"Creating chart files for ticket " + ticket);
+		final ReportSettings report = ticket.getReport();
+		final String type = report.getReportUuid();
 		if (type == null) {
 			throw new ServletException(I18N.err(96, ticket.toString()));
 		}
@@ -242,12 +242,12 @@ public final class ChartCache implements Sweepable {
 	 *            the servlet parameters.
 	 * @return the value of the {@code width} parameter or 400 if it is not set.
 	 */
-	private int getWidthHint(Report report) {
+	private int getWidthHint(ReportSettings report) {
 		int widthHint = 400;
-		final Parameter param = report.getParameter("width");
+		final String param = report.getSettingValue("width", 0);
 		if (param != null) {
 			try {
-				final int width = Integer.parseInt(param.getValue());
+				final int width = Integer.parseInt(param);
 				widthHint = width;
 			} catch (final NumberFormatException ignore) {
 				// ignore, just use the default width
@@ -265,12 +265,12 @@ public final class ChartCache implements Sweepable {
 	 * @return the value of the {@code height} parameter or 400 if it is not
 	 *         set.
 	 */
-	private int getHeightHint(Report report) {
+	private int getHeightHint(ReportSettings report) {
 		int heightHint = 400;
-		final Parameter param = report.getParameter("height");
+		final String param = report.getSettingValue("height", 0);
 		if (param != null) {
 			try {
-				final int height = Integer.parseInt(param.getValue());
+				final int height = Integer.parseInt(param);
 				heightHint = height;
 			} catch (final NumberFormatException ignore) {
 				// ignore, just use the default height

@@ -12,9 +12,8 @@ import com.surelogic.common.jdbc.Result;
 import com.surelogic.common.jdbc.ResultHandler;
 import com.surelogic.common.jdbc.Row;
 import com.surelogic.sierra.gwt.client.data.ColumnData;
-import com.surelogic.sierra.gwt.client.data.Report;
+import com.surelogic.sierra.gwt.client.data.ReportSettings;
 import com.surelogic.sierra.gwt.client.data.ReportTable;
-import com.surelogic.sierra.gwt.client.data.Report.Parameter;
 import com.surelogic.sierra.tool.message.Importance;
 import com.surelogic.sierra.util.Dates;
 
@@ -22,8 +21,8 @@ public class ScanFindings implements IDatabaseTable {
 
 	private static final int MAX_RESULTS = 250;
 
-	public ReportTable generate(final Report report, final Connection conn)
-			throws SQLException {
+	public ReportTable generate(final ReportSettings report,
+			final Connection conn) throws SQLException {
 		final ReportTable table = new ReportTable();
 		table.getHeaders().addAll(
 				Arrays.asList(new String[] { "Id", "Package", "Compilation",
@@ -36,18 +35,17 @@ public class ScanFindings implements IDatabaseTable {
 						ColumnData.TEXT, ColumnData.TEXT, ColumnData.TEXT,
 						ColumnData.DATE, ColumnData.TEXT, ColumnData.NUMBER,
 						ColumnData.NUMBER, ColumnData.TEXT }));
-		final Parameter scanParam = report.getParameter("scan");
-		final Parameter impParam = report.getParameter("importance");
-		final Parameter packageParam = report.getParameter("package");
-		if (scanParam != null) {
-			final String scan = scanParam.getValue();
+		final String scan = report.getSettingValue("scan", 0);
+		final List<String> importanceList = report.getSettingValue("importance");
+		final List<String> packages = report.getSettingValue("package");
+		if (scan != null) {
 			if ((scan != null) && !(scan.length() == 0)) {
 				final List<Importance> importances;
-				if ((impParam == null) || impParam.getValues().isEmpty()) {
+				if (importanceList == null || importanceList.isEmpty()) {
 					importances = Importance.standardValues();
 				} else {
 					importances = new ArrayList<Importance>();
-					for (final String imp : impParam.getValues()) {
+					for (final String imp : importanceList) {
 						importances.add(Importance.fromValue(imp));
 					}
 				}
@@ -57,10 +55,9 @@ public class ScanFindings implements IDatabaseTable {
 					impStr.append(",");
 				}
 				impStr.setLength(impStr.length() - 1);
-				if ((packageParam != null)
-						&& !packageParam.getValues().isEmpty()) {
+				if (packages != null && !packages.isEmpty()) {
 					final StringBuilder packageStr = new StringBuilder();
-					for (final String pakkage : packageParam.getValues()) {
+					for (final String pakkage : packages) {
 						packageStr.append("'");
 						packageStr.append(JDBCUtils.escapeString(pakkage));
 						packageStr.append("'");
