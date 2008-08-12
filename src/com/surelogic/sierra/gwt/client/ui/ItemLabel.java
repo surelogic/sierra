@@ -18,7 +18,8 @@ public class ItemLabel<T> extends FocusPanel implements HasItem<T> {
 	private boolean mouseOver;
 	private boolean selected;
 
-	public ItemLabel(String text, T item, final ClickListener listener) {
+	public ItemLabel(final String text, final T item,
+			final ClickListener listener) {
 		super();
 		this.item = item;
 
@@ -33,33 +34,35 @@ public class ItemLabel<T> extends FocusPanel implements HasItem<T> {
 
 		label.addClickListener(new ClickListener() {
 
-			public void onClick(Widget sender) {
+			public void onClick(final Widget sender) {
 				setSelected(true);
 				if (listener != null) {
-					listener.onClick(sender);
+					listener.onClick(ItemLabel.this);
 				}
 			}
 		});
 
 		addMouseListener(new MouseListener() {
 
-			public void onMouseDown(Widget sender, int x, int y) {
+			public void onMouseDown(final Widget sender, final int x,
+					final int y) {
 				// nothing to do
 			}
 
-			public void onMouseEnter(Widget sender) {
+			public void onMouseEnter(final Widget sender) {
 				mouseOver();
 			}
 
-			public void onMouseLeave(Widget sender) {
+			public void onMouseLeave(final Widget sender) {
 				mouseNotOver();
 			}
 
-			public void onMouseMove(Widget sender, int x, int y) {
+			public void onMouseMove(final Widget sender, final int x,
+					final int y) {
 				mouseOver();
 			}
 
-			public void onMouseUp(Widget sender, int x, int y) {
+			public void onMouseUp(final Widget sender, final int x, final int y) {
 				// nothing to do
 			}
 		});
@@ -69,11 +72,11 @@ public class ItemLabel<T> extends FocusPanel implements HasItem<T> {
 		return item;
 	}
 
-	public void setItem(T item) {
+	public void setItem(final T item) {
 		this.item = item;
 	}
 
-	public void setDecorator(Widget decorator, boolean alignRight) {
+	public void setDecorator(final Widget decorator, final boolean alignRight) {
 		final int panelCount = rootPanel.getWidgetCount();
 		final int labelIndex = rootPanel.getWidgetIndex(label);
 		if (alignRight) {
@@ -99,7 +102,7 @@ public class ItemLabel<T> extends FocusPanel implements HasItem<T> {
 		return selected;
 	}
 
-	public void setSelected(boolean selected) {
+	public void setSelected(final boolean selected) {
 		if (!this.selected && selected) {
 			addStyleName(PRIMARY_STYLE + "-selected");
 		} else if (this.selected && !selected) {
@@ -129,7 +132,7 @@ public class ItemLabel<T> extends FocusPanel implements HasItem<T> {
 	}
 
 	public void setSelectionTracker(
-			SelectionTracker<ItemLabel<T>> selectionTracker) {
+			final SelectionTracker<ItemLabel<T>> selectionTracker) {
 		this.selectionTracker = selectionTracker;
 	}
 
