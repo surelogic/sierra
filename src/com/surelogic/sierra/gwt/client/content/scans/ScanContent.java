@@ -127,8 +127,7 @@ public class ScanContent extends ContentComposite {
 					.width(800).prop("scan", uuid).prop("importance",
 							importances).prop("package", packages).build());
 
-			final ReportSettings settings = new ReportSettings(
-					"TS-ScanFindings");
+			final ReportSettings settings = new ReportSettings("ScanFindings");
 			settings.setSettingValue("scan", uuid);
 			settings.setSettingValue("importance", importances);
 			settings.setSettingValue("package", packages);
