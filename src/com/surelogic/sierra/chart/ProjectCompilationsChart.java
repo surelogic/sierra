@@ -91,8 +91,8 @@ public class ProjectCompilationsChart implements IDatabasePlot {
 		mutableSize.setHeight(25 * importanceData.getColumnCount() + 100);
 
 		final JFreeChart chart = ChartFactory.createBarChart(
-				"Latest Scan Findings By Package" + (bykLoC ? " / kLoC" : ""),
-				null, "# of Findings", importanceData,
+				"Latest Scan Findings By Package", null, "# of Findings"
+						+ (bykLoC ? " / kLoC" : ""), importanceData,
 				PlotOrientation.HORIZONTAL, true, false, false);
 
 		final BarRenderer bar = (BarRenderer) chart.getCategoryPlot()
