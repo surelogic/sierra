@@ -77,7 +77,7 @@ public class FindingTypes {
 			RowHandler<ArtifactTypeDO> {
 		public ArtifactTypeDO handle(final Row r) {
 			return new ArtifactTypeDO(r.nextLong(), r.nextString(), r
-					.nextString());
+					.nextString(), r.nextString(), r.nextString());
 		}
 
 	}

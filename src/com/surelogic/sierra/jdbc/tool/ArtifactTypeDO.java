@@ -1,14 +1,19 @@
 package com.surelogic.sierra.jdbc.tool;
 
 public class ArtifactTypeDO {
-	long id;
-	String mnemonic;
-	String tool;
+	private long id;
+	private String mnemonic;
+	private String display;
+	private String tool;
+	private String version;
 
-	ArtifactTypeDO(final long id, final String tool, final String mnemonic) {
+	ArtifactTypeDO(final long id, final String tool, final String mnemonic,
+			final String display, final String version) {
 		this.id = id;
 		this.mnemonic = mnemonic;
 		this.tool = tool;
+		this.version = version;
+		this.display = display;
 	}
 
 	public long getId() {
@@ -33,6 +38,22 @@ public class ArtifactTypeDO {
 
 	public void setTool(final String tool) {
 		this.tool = tool;
+	}
+
+	public String getVersion() {
+		return version;
+	}
+
+	public void setVersion(final String version) {
+		this.version = version;
+	}
+
+	public String getDisplay() {
+		return display;
+	}
+
+	public void setDisplay(final String display) {
+		this.display = display;
 	}
 
 	@Override
