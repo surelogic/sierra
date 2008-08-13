@@ -272,6 +272,8 @@ public abstract class AbstractLocalSLJob extends AbstractSLJob {
 				}
 			}
 		}		
+		//cmdj.createArgument().setValue("This is a argument.");
+		
 		finishSetupJVM(debug, cmdj);
 	}
 	
