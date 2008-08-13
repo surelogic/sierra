@@ -17,12 +17,13 @@ public class FindingType implements Cacheable, Serializable {
 	private List<CategoryInfo> categoriesIncluding;
 	private List<CategoryInfo> categoriesExcluding;
 	private List<ScanFilterInfo> scanFiltersIncluding;
+	private List<ArtifactTypeInfo> artifactTypes;
 
 	public String getUuid() {
 		return uuid;
 	}
 
-	public void setUuid(String uid) {
+	public void setUuid(final String uid) {
 		uuid = uid;
 	}
 
@@ -30,7 +31,7 @@ public class FindingType implements Cacheable, Serializable {
 		return name;
 	}
 
-	public void setName(String name) {
+	public void setName(final String name) {
 		this.name = name;
 	}
 
@@ -38,7 +39,7 @@ public class FindingType implements Cacheable, Serializable {
 		return shortMessage;
 	}
 
-	public void setShortMessage(String shortMessage) {
+	public void setShortMessage(final String shortMessage) {
 		this.shortMessage = shortMessage;
 	}
 
@@ -46,7 +47,7 @@ public class FindingType implements Cacheable, Serializable {
 		return info;
 	}
 
-	public void setInfo(String info) {
+	public void setInfo(final String info) {
 		this.info = info;
 	}
 
@@ -78,6 +79,13 @@ public class FindingType implements Cacheable, Serializable {
 		return scanFiltersIncluding;
 	}
 
+	public List<ArtifactTypeInfo> getArtifactTypes() {
+		if (artifactTypes == null) {
+			artifactTypes = new ArrayList<ArtifactTypeInfo>();
+		}
+		return artifactTypes;
+	}
+
 	public static class ScanFilterInfo implements Serializable, Cacheable {
 		/**
 		 * 
@@ -86,20 +94,20 @@ public class FindingType implements Cacheable, Serializable {
 		private String uuid;
 		private String name;
 
-		public ScanFilterInfo(String uuid, String name) {
+		public ScanFilterInfo(final String uuid, final String name) {
 			this.uuid = uuid;
 			this.name = name;
 		}
 
 		public ScanFilterInfo() {
-
+			// Do nothing
 		}
 
 		public String getUuid() {
 			return uuid;
 		}
 
-		public void setUuid(String uuid) {
+		public void setUuid(final String uuid) {
 			this.uuid = uuid;
 		}
 
@@ -107,8 +115,40 @@ public class FindingType implements Cacheable, Serializable {
 			return name;
 		}
 
-		public void setName(String name) {
+		public void setName(final String name) {
 			this.name = name;
+		}
+
+	}
+
+	public static class ArtifactTypeInfo implements Serializable {
+
+		private String tool;
+		private String artifactType;
+
+		public ArtifactTypeInfo() {
+			// Do nothing
+		}
+
+		public ArtifactTypeInfo(final String tool, final String artifactType) {
+			this.tool = tool;
+			this.artifactType = artifactType;
+		}
+
+		public String getTool() {
+			return tool;
+		}
+
+		public void setTool(final String tool) {
+			this.tool = tool;
+		}
+
+		public String getArtifactType() {
+			return artifactType;
+		}
+
+		public void setArtifactType(final String artifactType) {
+			this.artifactType = artifactType;
 		}
 
 	}
@@ -124,10 +164,11 @@ public class FindingType implements Cacheable, Serializable {
 		private String description;
 
 		public CategoryInfo() {
-
+			// Do nothing
 		}
 
-		public CategoryInfo(String uuid, String name, String description) {
+		public CategoryInfo(final String uuid, final String name,
+				final String description) {
 			this.uuid = uuid;
 			this.name = name;
 			this.description = description;
@@ -137,7 +178,7 @@ public class FindingType implements Cacheable, Serializable {
 			return uuid;
 		}
 
-		public void setUuid(String uuid) {
+		public void setUuid(final String uuid) {
 			this.uuid = uuid;
 		}
 
@@ -145,7 +186,7 @@ public class FindingType implements Cacheable, Serializable {
 			return name;
 		}
 
-		public void setName(String name) {
+		public void setName(final String name) {
 			this.name = name;
 		}
 
@@ -153,7 +194,7 @@ public class FindingType implements Cacheable, Serializable {
 			return description;
 		}
 
-		public void setDescription(String description) {
+		public void setDescription(final String description) {
 			this.description = description;
 		}
 

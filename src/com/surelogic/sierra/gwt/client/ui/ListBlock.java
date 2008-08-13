@@ -1,6 +1,7 @@
 package com.surelogic.sierra.gwt.client.ui;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import com.google.gwt.user.client.ui.ClickListener;
@@ -18,19 +19,19 @@ public abstract class ListBlock<E extends Cacheable> extends BlockPanel {
 	private final Label none = LabelHelper.italics(new Label("None", false));
 	private ClickListener clickListener;
 
-	public ListBlock(String title) {
+	public ListBlock(final String title) {
 		super();
 		this.title = title;
 	}
 
 	@Override
-	protected final void onInitialize(VerticalPanel contentPanel) {
+	protected final void onInitialize(final VerticalPanel contentPanel) {
 		setTitle(title);
 		setSubsectionStyle(true);
 
 		clickListener = new ClickListener() {
 
-			public void onClick(Widget sender) {
+			public void onClick(final Widget sender) {
 				final ItemLabel<?> itemUI = (ItemLabel<?>) sender;
 				final Cacheable item = (Cacheable) itemUI.getItem();
 				Context.createWithUuid(getItemContent(), item.getUuid())
@@ -46,7 +47,7 @@ public abstract class ListBlock<E extends Cacheable> extends BlockPanel {
 		return items.size();
 	}
 
-	public E getItem(int index) {
+	public E getItem(final int index) {
 		return items.get(index);
 	}
 
@@ -57,7 +58,7 @@ public abstract class ListBlock<E extends Cacheable> extends BlockPanel {
 		items.clear();
 	}
 
-	public void addItem(E item) {
+	public void addItem(final E item) {
 		final ItemLabel<E> itemUI = new ItemLabel<E>(getItemText(item), item,
 				clickListener);
 		itemUI.setSelectionTracker(selectionTracker);
@@ -66,6 +67,12 @@ public abstract class ListBlock<E extends Cacheable> extends BlockPanel {
 		content.remove(none);
 		content.add(itemUI);
 		items.add(item);
+	}
+
+	public void addItems(final Collection<E> items) {
+		for (final E item : items) {
+			addItem(item);
+		}
 	}
 
 	protected abstract String getItemText(E item);

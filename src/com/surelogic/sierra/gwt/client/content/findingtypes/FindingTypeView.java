@@ -11,6 +11,7 @@ import com.surelogic.sierra.gwt.client.content.ContentComposite;
 import com.surelogic.sierra.gwt.client.content.categories.CategoriesContent;
 import com.surelogic.sierra.gwt.client.content.scanfilters.ScanFiltersContent;
 import com.surelogic.sierra.gwt.client.data.FindingType;
+import com.surelogic.sierra.gwt.client.data.FindingType.ArtifactTypeInfo;
 import com.surelogic.sierra.gwt.client.data.FindingType.CategoryInfo;
 import com.surelogic.sierra.gwt.client.data.FindingType.ScanFilterInfo;
 import com.surelogic.sierra.gwt.client.ui.BlockPanel;
@@ -24,11 +25,12 @@ public class FindingTypeView extends BlockPanel {
 	private final CategoryList categoriesExcluding = new CategoryList(
 			"Categories excluding this finding");
 	private final ScanFilterList scanFilters = new ScanFilterList();
+	private final ArtifactTypeList artifactTypes = new ArtifactTypeList();
 	private final VerticalPanel chart = new VerticalPanel();
 	private FindingType selection;
 
 	@Override
-	protected void onInitialize(VerticalPanel contentPanel) {
+	protected void onInitialize(final VerticalPanel contentPanel) {
 		description.addStyleName("padded");
 		contentPanel.add(description);
 
@@ -40,6 +42,10 @@ public class FindingTypeView extends BlockPanel {
 
 		scanFilters.initialize();
 		contentPanel.add(scanFilters);
+
+		artifactTypes.initialize();
+		contentPanel.add(artifactTypes);
+
 		contentPanel.add(chart);
 	}
 
@@ -47,7 +53,7 @@ public class FindingTypeView extends BlockPanel {
 		return selection;
 	}
 
-	public void setSelection(FindingType findingType) {
+	public void setSelection(final FindingType findingType) {
 		selection = findingType;
 
 		if (findingType != null) {
@@ -68,27 +74,20 @@ public class FindingTypeView extends BlockPanel {
 		categoriesIncluding.clear();
 		categoriesExcluding.clear();
 		scanFilters.clear();
+		artifactTypes.clear();
+		chart.clear();
 		if (findingType != null) {
-			for (final CategoryInfo catIncluding : findingType
-					.getCategoriesIncluding()) {
-				categoriesIncluding.addItem(catIncluding);
-			}
-			for (final CategoryInfo catExcluding : findingType
-					.getCategoriesExcluding()) {
-				categoriesExcluding.addItem(catExcluding);
-			}
-			for (final ScanFilterInfo scanIncluding : findingType
-					.getScanFiltersIncluding()) {
-				scanFilters.addItem(scanIncluding);
-			}
-			chart.clear();
+			categoriesIncluding.addItems(findingType.getCategoriesIncluding());
+			categoriesExcluding.addItems(findingType.getCategoriesExcluding());
+			scanFilters.addItems(findingType.getScanFiltersIncluding());
+			artifactTypes.addItems(findingType.getArtifactTypes());
 			chart.add(ChartBuilder.report("FindingTypeCounts", "???", "???")
 					.prop("uuid", findingType.getUuid()).build());
 		}
 	}
 
-	public void addCategoriesIncludingAction(String text,
-			ClickListener clickListener) {
+	public void addCategoriesIncludingAction(final String text,
+			final ClickListener clickListener) {
 		categoriesIncluding.addAction(text, clickListener);
 	}
 
@@ -102,7 +101,7 @@ public class FindingTypeView extends BlockPanel {
 
 	private class CategoryList extends ListBlock<CategoryInfo> {
 
-		public CategoryList(String title) {
+		public CategoryList(final String title) {
 			super(title);
 		}
 
@@ -112,12 +111,12 @@ public class FindingTypeView extends BlockPanel {
 		}
 
 		@Override
-		protected String getItemText(CategoryInfo item) {
+		protected String getItemText(final CategoryInfo item) {
 			return item.getName();
 		}
 
 		@Override
-		protected String getItemTooltip(CategoryInfo item) {
+		protected String getItemTooltip(final CategoryInfo item) {
 			return item.getDescription();
 		}
 	}
@@ -134,15 +133,34 @@ public class FindingTypeView extends BlockPanel {
 		}
 
 		@Override
-		protected String getItemText(ScanFilterInfo item) {
+		protected String getItemText(final ScanFilterInfo item) {
 			return item.getName();
 		}
 
 		@Override
-		protected String getItemTooltip(ScanFilterInfo item) {
+		protected String getItemTooltip(final ScanFilterInfo item) {
 			return item.getName();
 		}
 
+	}
+
+	private class ArtifactTypeList extends BlockPanel {
+
+		@Override
+		protected void onInitialize(final VerticalPanel contentPanel) {
+			setTitle("Tools reporting this Finding Type");
+		}
+
+		public void clear() {
+			getContentPanel().clear();
+		}
+
+		public void addItems(final List<ArtifactTypeInfo> info) {
+			for (final ArtifactTypeInfo art : info) {
+				getContentPanel().add(
+						new HTML(art.getTool() + ": " + art.getArtifactType()));
+			}
+		}
 	}
 
 }
