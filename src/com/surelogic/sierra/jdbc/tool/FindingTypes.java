@@ -15,7 +15,7 @@ public class FindingTypes {
 
 	private final Query q;
 
-	public FindingTypes(Query q) {
+	public FindingTypes(final Query q) {
 		this.q = q;
 	}
 
@@ -24,7 +24,7 @@ public class FindingTypes {
 				new StringRowHandler()).call());
 	}
 
-	public List<FindingTypeDO> getFindingTypes(Collection<String> uids) {
+	public List<FindingTypeDO> getFindingTypes(final Collection<String> uids) {
 		final List<FindingTypeDO> list = new ArrayList<FindingTypeDO>();
 		final Queryable<FindingTypeDO> getType = q.prepared(
 				"FindingTypes.findByUid", new FindingTypeDOHandler());
@@ -42,7 +42,7 @@ public class FindingTypes {
 		return list;
 	}
 
-	public FindingTypeDO getFindingType(String uid) {
+	public FindingTypeDO getFindingType(final String uid) {
 		if (uid == null) {
 			throw new IllegalArgumentException("May not be null");
 		}
@@ -54,14 +54,15 @@ public class FindingTypes {
 		return t;
 	}
 
-	public FindingTypeDO getFindingType(long id) {
+	public FindingTypeDO getFindingType(final long id) {
 		return q.prepared("FindingTypes.findById", new FindingTypeDOHandler())
 				.call(id);
 	}
 
 	private static class FindingTypeDOHandler extends
 			SingleRowHandler<FindingTypeDO> {
-		public FindingTypeDO handleRow(Row r) {
+		@Override
+		public FindingTypeDO handleRow(final Row r) {
 			final FindingTypeDO ft = new FindingTypeDO();
 			ft.setId(r.nextLong());
 			ft.setUid(r.nextString());
@@ -74,8 +75,9 @@ public class FindingTypes {
 
 	private static class ArtifactTypeDOHandler implements
 			RowHandler<ArtifactTypeDO> {
-		public ArtifactTypeDO handle(Row r) {
-			return new ArtifactTypeDO(r.nextLong(), r.nextString());
+		public ArtifactTypeDO handle(final Row r) {
+			return new ArtifactTypeDO(r.nextLong(), r.nextString(), r
+					.nextString());
 		}
 
 	}

@@ -3,8 +3,9 @@ package com.surelogic.sierra.jdbc.tool;
 public class ArtifactTypeDO {
 	long id;
 	String mnemonic;
+	String tool;
 
-	ArtifactTypeDO(long id, String mnemonic) {
+	ArtifactTypeDO(final long id, final String tool, final String mnemonic) {
 		this.id = id;
 		this.mnemonic = mnemonic;
 	}
@@ -13,7 +14,7 @@ public class ArtifactTypeDO {
 		return id;
 	}
 
-	public void setId(long id) {
+	public void setId(final long id) {
 		this.id = id;
 	}
 
@@ -21,8 +22,16 @@ public class ArtifactTypeDO {
 		return mnemonic;
 	}
 
-	public void setMnemonic(String mnemonic) {
+	public void setMnemonic(final String mnemonic) {
 		this.mnemonic = mnemonic;
+	}
+
+	public String getTool() {
+		return tool;
+	}
+
+	public void setTool(final String tool) {
+		this.tool = tool;
 	}
 
 	@Override
@@ -34,7 +43,7 @@ public class ArtifactTypeDO {
 	}
 
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(final Object obj) {
 		if (this == obj) {
 			return true;
 		}
