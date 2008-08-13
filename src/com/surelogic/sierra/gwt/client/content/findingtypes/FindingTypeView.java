@@ -149,6 +149,7 @@ public class FindingTypeView extends BlockPanel {
 		@Override
 		protected void onInitialize(final VerticalPanel contentPanel) {
 			setTitle("Tools reporting this Finding Type");
+			setSubsectionStyle(true);
 		}
 
 		public void clear() {
