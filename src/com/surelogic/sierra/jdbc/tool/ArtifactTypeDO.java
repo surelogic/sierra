@@ -8,6 +8,7 @@ public class ArtifactTypeDO {
 	ArtifactTypeDO(final long id, final String tool, final String mnemonic) {
 		this.id = id;
 		this.mnemonic = mnemonic;
+		this.tool = tool;
 	}
 
 	public long getId() {
