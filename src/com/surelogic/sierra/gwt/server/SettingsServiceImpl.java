@@ -380,10 +380,19 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 		info.setName(type.getName());
 		info.setShortMessage(type.getShortMessage());
 		info.setUuid(type.getUid());
+		final Map<ArtifactTypeInfo, ArtifactTypeInfo> set = new HashMap<ArtifactTypeInfo, ArtifactTypeInfo>();
 		for (final ArtifactTypeDO artDO : type.getArtifactTypes()) {
-			info.getArtifactTypes().add(
-					new ArtifactTypeInfo(artDO.getTool(), artDO.getMnemonic()));
+			final ArtifactTypeInfo newInfo = new ArtifactTypeInfo(artDO
+					.getTool(), artDO.getMnemonic());
+			final ArtifactTypeInfo oldInfo = set.get(newInfo);
+			if (oldInfo == null) {
+				set.put(newInfo, newInfo);
+				newInfo.getVersions().add(artDO.getVersion());
+			} else {
+				oldInfo.getVersions().add(artDO.getVersion());
+			}
 		}
+		info.getArtifactTypes().addAll(set.keySet());
 		q.prepared("FindingTypes.categoriesReferencing",
 				new RowHandler<Void>() {
 					public Void handle(final Row r) {
