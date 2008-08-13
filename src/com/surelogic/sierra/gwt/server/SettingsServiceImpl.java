@@ -29,6 +29,7 @@ import com.surelogic.sierra.gwt.client.data.ScanFilter;
 import com.surelogic.sierra.gwt.client.data.ScanFilterEntry;
 import com.surelogic.sierra.gwt.client.data.ServerLocation;
 import com.surelogic.sierra.gwt.client.data.Status;
+import com.surelogic.sierra.gwt.client.data.FindingType.ArtifactTypeInfo;
 import com.surelogic.sierra.gwt.client.data.ServerLocation.Protocol;
 import com.surelogic.sierra.gwt.client.service.SettingsService;
 import com.surelogic.sierra.jdbc.RevisionException;
@@ -47,6 +48,7 @@ import com.surelogic.sierra.jdbc.settings.ScanFilters;
 import com.surelogic.sierra.jdbc.settings.ServerLocations;
 import com.surelogic.sierra.jdbc.settings.SettingQueries;
 import com.surelogic.sierra.jdbc.settings.TypeFilterDO;
+import com.surelogic.sierra.jdbc.tool.ArtifactTypeDO;
 import com.surelogic.sierra.jdbc.tool.FindingTypeDO;
 import com.surelogic.sierra.jdbc.tool.FindingTypes;
 import com.surelogic.sierra.jdbc.user.User;
@@ -378,6 +380,10 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 		info.setName(type.getName());
 		info.setShortMessage(type.getShortMessage());
 		info.setUuid(type.getUid());
+		for (final ArtifactTypeDO artDO : type.getArtifactTypes()) {
+			info.getArtifactTypes().add(
+					new ArtifactTypeInfo(artDO.getTool(), artDO.getMnemonic()));
+		}
 		q.prepared("FindingTypes.categoriesReferencing",
 				new RowHandler<Void>() {
 					public Void handle(final Row r) {
