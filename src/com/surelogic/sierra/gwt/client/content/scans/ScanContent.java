@@ -51,6 +51,7 @@ public class ScanContent extends ContentComposite {
 
 		private ImportanceChoice imp;
 		private PackageChoice pak;
+		private CategoryChoice cat;
 		private String uuid;
 
 		@Override
@@ -103,8 +104,10 @@ public class ScanContent extends ContentComposite {
 							pak = new PackageChoice(result.getCompilations()
 									.keySet(), true);
 							imp = new ImportanceChoice(true);
+							cat = new CategoryChoice();
 							optionsPanel.add(pak);
 							optionsPanel.add(imp);
+							optionsPanel.add(cat);
 							optionsPanel.add(new Button("Show",
 									new ClickListener() {
 										public void onClick(final Widget sender) {
@@ -123,15 +126,31 @@ public class ScanContent extends ContentComposite {
 				importances.add(i.getName());
 			}
 			final Set<String> packages = pak.getSelectedPackages();
-			chartPanel.add(ChartBuilder.report("ScanImportances", "???", "???")
-					.width(800).prop("scan", uuid).prop("importance",
-							importances).prop("package", packages).build());
+			final Set<String> categories = cat.getSelectedCategories();
+			if (categories.isEmpty()) {
+				chartPanel.add(ChartBuilder.report("ScanImportances", "???",
+						"???").width(800).prop("scan", uuid).prop("importance",
+						importances).prop("package", packages).build());
+				final ReportSettings settings = new ReportSettings(
+						"ScanFindings");
+				settings.setSettingValue("scan", uuid);
+				settings.setSettingValue("importance", importances);
+				settings.setSettingValue("package", packages);
+				chartPanel.add(new ReportTableSection(settings));
+			} else {
+				chartPanel.add(ChartBuilder.report("ScanImportancesByCategory",
+						"???", "???").width(800).prop("scan", uuid).prop(
+						"importance", importances).prop("package", packages)
+						.prop("category", categories).build());
+				final ReportSettings settings = new ReportSettings(
+						"ScanFindingsByCategory");
+				settings.setSettingValue("scan", uuid);
+				settings.setSettingValue("importance", importances);
+				settings.setSettingValue("package", packages);
+				settings.setSettingValue("category", categories);
+				chartPanel.add(new ReportTableSection(settings));
+			}
 
-			final ReportSettings settings = new ReportSettings("ScanFindings");
-			settings.setSettingValue("scan", uuid);
-			settings.setSettingValue("importance", importances);
-			settings.setSettingValue("package", packages);
-			chartPanel.add(new ReportTableSection(settings));
 		}
 	}
 
