@@ -8,8 +8,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import com.surelogic.common.jdbc.DBQuery;
-import com.surelogic.common.jdbc.NullDBQuery;
 import com.surelogic.common.jdbc.LongIdHandler;
+import com.surelogic.common.jdbc.NullDBQuery;
 import com.surelogic.common.jdbc.Nulls;
 import com.surelogic.common.jdbc.Query;
 import com.surelogic.common.jdbc.Queryable;
@@ -56,6 +56,28 @@ public final class ServerLocations {
 						insertServerProject.call(id, project);
 					}
 				}
+			}
+		};
+	}
+
+	/**
+	 * Update the information
+	 * 
+	 * @param locations
+	 * @return
+	 */
+	public static DBQuery<Void> updateServerLocationInfo(
+			final Map<SierraServerLocation, String> locations) {
+		return new DBQuery<Void>() {
+			public Void perform(final Query q) {
+				final Queryable<Void> updateUuid = q
+						.prepared("ServerLocations.updateUuid");
+				for (final Entry<SierraServerLocation, String> entry : locations
+						.entrySet()) {
+					updateUuid
+							.call(entry.getKey().getLabel(), entry.getValue());
+				}
+				return null;
 			}
 		};
 	}
