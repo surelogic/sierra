@@ -80,12 +80,16 @@ public class ScanFindingsByCategory implements IDatabaseTable {
 			for (final CategoryGraph cg : graphs) {
 				findingTypes.addAll(cg.getFindingTypes());
 			}
-			for (final String findingType : findingTypes) {
-				ftStr.append("'");
-				ftStr.append(JDBCUtils.escapeString(findingType));
-				ftStr.append("',");
+			if (findingTypes.isEmpty()) {
+				ftStr.append("''");
+			} else {
+				for (final String findingType : findingTypes) {
+					ftStr.append("'");
+					ftStr.append(JDBCUtils.escapeString(findingType));
+					ftStr.append("',");
+				}
+				ftStr.setLength(ftStr.length() - 1);
 			}
-			ftStr.setLength(ftStr.length() - 1);
 			q.statement("Plots.Scan.scanFindingsByCategory",
 					new ResultHandler<Void>() {
 						public Void handle(final Result result) {
