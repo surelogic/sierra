@@ -97,7 +97,7 @@ public class CategoriesContent extends
 			return new RemoteServerLink(item.getName()
 					+ " is from "
 					+ (item.getOwnerLabel() == null ? "unknown" : item
-							.getOwnerLabel()), "http://no-url-yet/");
+							.getOwnerLabel()), item.getOwnerURL());
 		}
 		return null;
 	}

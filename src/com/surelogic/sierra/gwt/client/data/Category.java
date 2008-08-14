@@ -31,6 +31,8 @@ public class Category implements Serializable, Cacheable, Comparable<Category> {
 
 	private String ownerLabel;
 
+	private String ownerURL;
+
 	public String getName() {
 		return name;
 	}
@@ -93,6 +95,14 @@ public class Category implements Serializable, Cacheable, Comparable<Category> {
 
 	public void setOwnerLabel(final String ownerLabel) {
 		this.ownerLabel = ownerLabel;
+	}
+
+	public String getOwnerURL() {
+		return ownerURL;
+	}
+
+	public void setOwnerURL(final String ownerURL) {
+		this.ownerURL = ownerURL;
 	}
 
 	public List<ScanFilterInfo> getScanFiltersUsing() {
