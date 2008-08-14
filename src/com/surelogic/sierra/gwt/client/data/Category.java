@@ -29,11 +29,13 @@ public class Category implements Serializable, Cacheable, Comparable<Category> {
 
 	private boolean local;
 
+	private String ownerLabel;
+
 	public String getName() {
 		return name;
 	}
 
-	public void setName(String name) {
+	public void setName(final String name) {
 		this.name = name;
 	}
 
@@ -41,7 +43,7 @@ public class Category implements Serializable, Cacheable, Comparable<Category> {
 		return parents;
 	}
 
-	public void setParents(Set<Category> parents) {
+	public void setParents(final Set<Category> parents) {
 		this.parents = parents;
 	}
 
@@ -49,7 +51,7 @@ public class Category implements Serializable, Cacheable, Comparable<Category> {
 		return entries;
 	}
 
-	public void setEntries(Set<FindingTypeFilter> entries) {
+	public void setEntries(final Set<FindingTypeFilter> entries) {
 		this.entries = entries;
 	}
 
@@ -57,7 +59,7 @@ public class Category implements Serializable, Cacheable, Comparable<Category> {
 		return uuid;
 	}
 
-	public void setUuid(String uuid) {
+	public void setUuid(final String uuid) {
 		this.uuid = uuid;
 	}
 
@@ -65,7 +67,7 @@ public class Category implements Serializable, Cacheable, Comparable<Category> {
 		return revision;
 	}
 
-	public void setRevision(long revision) {
+	public void setRevision(final long revision) {
 		this.revision = revision;
 	}
 
@@ -73,7 +75,7 @@ public class Category implements Serializable, Cacheable, Comparable<Category> {
 		return info;
 	}
 
-	public void setInfo(String info) {
+	public void setInfo(final String info) {
 		this.info = info;
 	}
 
@@ -81,8 +83,16 @@ public class Category implements Serializable, Cacheable, Comparable<Category> {
 		return local;
 	}
 
-	public void setLocal(boolean local) {
+	public void setLocal(final boolean local) {
 		this.local = local;
+	}
+
+	public String getOwnerLabel() {
+		return ownerLabel;
+	}
+
+	public void setOwnerLabel(final String ownerLabel) {
+		this.ownerLabel = ownerLabel;
 	}
 
 	public List<ScanFilterInfo> getScanFiltersUsing() {
@@ -135,7 +145,7 @@ public class Category implements Serializable, Cacheable, Comparable<Category> {
 		return Collections.unmodifiableSet(set);
 	}
 
-	public boolean parentContains(FindingTypeFilter finding) {
+	public boolean parentContains(final FindingTypeFilter finding) {
 		for (final Category parent : getParents()) {
 			final boolean contains = parent.getEntries().contains(finding);
 			if (contains) {
@@ -185,7 +195,7 @@ public class Category implements Serializable, Cacheable, Comparable<Category> {
 	}
 
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(final Object obj) {
 		if (this == obj) {
 			return true;
 		}
@@ -195,7 +205,7 @@ public class Category implements Serializable, Cacheable, Comparable<Category> {
 		return false;
 	}
 
-	public int compareTo(Category o) {
+	public int compareTo(final Category o) {
 		return getName().compareTo(o.getName());
 	}
 
@@ -208,10 +218,10 @@ public class Category implements Serializable, Cacheable, Comparable<Category> {
 		private String name;
 
 		public ScanFilterInfo() {
-
+			// Do nothing
 		}
 
-		public ScanFilterInfo(String uuid, String name) {
+		public ScanFilterInfo(final String uuid, final String name) {
 			this.uuid = uuid;
 			this.name = name;
 		}
@@ -220,7 +230,7 @@ public class Category implements Serializable, Cacheable, Comparable<Category> {
 			return uuid;
 		}
 
-		public void setUuid(String uuid) {
+		public void setUuid(final String uuid) {
 			this.uuid = uuid;
 		}
 
@@ -228,7 +238,7 @@ public class Category implements Serializable, Cacheable, Comparable<Category> {
 			return name;
 		}
 
-		public void setName(String name) {
+		public void setName(final String name) {
 			this.name = name;
 		}
 

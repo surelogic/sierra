@@ -39,8 +39,8 @@ public class CategoriesContent extends
 	}
 
 	@Override
-	protected void onInitialize(DockPanel rootPanel,
-			VerticalPanel selectionPanel) {
+	protected void onInitialize(final DockPanel rootPanel,
+			final VerticalPanel selectionPanel) {
 		setCaption("Categories");
 
 		addAction(new CreateCategoryForm());
@@ -48,13 +48,13 @@ public class CategoriesContent extends
 		categoryView.initialize();
 		categoryView.addAction("Edit", new ClickListener() {
 
-			public void onClick(Widget sender) {
+			public void onClick(final Widget sender) {
 				setCategory(categoryView.getCategory(), true);
 			}
 		});
 		categoryView.addAction("Delete", new ClickListener() {
 
-			public void onClick(Widget sender) {
+			public void onClick(final Widget sender) {
 				deleteCategory(categoryView.getCategory());
 			}
 		});
@@ -63,13 +63,13 @@ public class CategoriesContent extends
 		categoryEditor.initialize();
 		categoryEditor.addAction("Save", new ClickListener() {
 
-			public void onClick(Widget sender) {
+			public void onClick(final Widget sender) {
 				cache.save(categoryEditor.getUpdatedCategory());
 			}
 		});
 		categoryEditor.addAction("Cancel", new ClickListener() {
 
-			public void onClick(Widget sender) {
+			public void onClick(final Widget sender) {
 				setCategory(cache.getItem(categoryEditor.getCategory()
 						.getUuid()), false);
 			}
@@ -79,40 +79,40 @@ public class CategoriesContent extends
 				.getFindingsEditor();
 		findingsEditor.addAction("Add Finding", new ClickListener() {
 
-			public void onClick(Widget sender) {
+			public void onClick(final Widget sender) {
 				promptForFindings(categoryEditor.getCategory());
 			}
 		});
 	}
 
 	@Override
-	protected String getItemText(Category item) {
+	protected String getItemText(final Category item) {
 		return item.getName();
 	}
 
 	@Override
-	protected Widget getItemDecorator(Category item) {
+	protected Widget getItemDecorator(final Category item) {
 		if (!item.isLocal()) {
 			// TODO add methods to access the owning server of this category
-			return new RemoteServerLink(item.getName()
-					+ " is from <Remote Server>", "http://no-url-yet/");
+			return new RemoteServerLink(item.getName() + " is from "
+					+ item.getOwnerLabel(), "http://no-url-yet/");
 		}
 		return null;
 	}
 
 	@Override
-	protected boolean isItemVisible(Category item, String query) {
+	protected boolean isItemVisible(final Category item, final String query) {
 		return LangUtil.containsIgnoreCase(item.getName(), query);
 	}
 
 	@Override
-	protected void onSelectionChanged(Category item) {
+	protected void onSelectionChanged(final Category item) {
 		setCategory(item, false);
 	}
 
-	private void setCategory(Category cat, boolean edit) {
+	private void setCategory(final Category cat, final boolean edit) {
 		final VerticalPanel selectionPanel = getSelectionPanel();
-		if (edit && cat != null) {
+		if (edit && (cat != null)) {
 			categoryEditor.setCategory(cat);
 			categoryEditor.setActionsVisible(true);
 			if (selectionPanel.getWidgetIndex(categoryEditor) == -1) {
@@ -121,7 +121,7 @@ public class CategoriesContent extends
 			}
 		} else {
 			categoryView.setCategory(cat);
-			categoryView.setActionsVisible(cat != null && cat.isLocal());
+			categoryView.setActionsVisible((cat != null) && cat.isLocal());
 			if (selectionPanel.getWidgetIndex(categoryView) == -1) {
 				selectionPanel.clear();
 				selectionPanel.add(categoryView);
@@ -129,12 +129,12 @@ public class CategoriesContent extends
 		}
 	}
 
-	private void deleteCategory(Category cat) {
+	private void deleteCategory(final Category cat) {
 		ServiceHelper.getSettingsService().deleteCategory(cat.getUuid(),
 				new StatusCallback() {
 
 					@Override
-					protected void doStatus(Status result) {
+					protected void doStatus(final Status result) {
 						getCache().refresh();
 					}
 				});
@@ -144,9 +144,10 @@ public class CategoriesContent extends
 		final AddCategoriesDialog dialog = new AddCategoriesDialog();
 		dialog.addPopupListener(new PopupListener() {
 
-			public void onPopupClosed(PopupPanel sender, boolean autoClosed) {
+			public void onPopupClosed(final PopupPanel sender,
+					final boolean autoClosed) {
 				final Status s = dialog.getStatus();
-				if (s != null && s.isSuccess()) {
+				if ((s != null) && s.isSuccess()) {
 					categoryEditor.addFindings(dialog.getSelectedCategories(),
 							dialog.getExcludedFindings());
 				}
@@ -182,16 +183,16 @@ public class CategoriesContent extends
 						new ResultCallback<String>() {
 
 							@Override
-							protected void doFailure(String message,
-									String result) {
+							protected void doFailure(final String message,
+									final String result) {
 								clearWaitStatus();
 								Window.alert("Category creation failed: "
 										+ message);
 							}
 
 							@Override
-							protected void doSuccess(String message,
-									String result) {
+							protected void doSuccess(final String message,
+									final String result) {
 								clearWaitStatus();
 								setOpen(false);
 
