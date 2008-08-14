@@ -25,7 +25,7 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
 		this.fbDir = fbDir;
 	}
 
-	protected IToolInstance create(final ArtifactGenerator generator,
+	protected IToolInstance create(String name, final ArtifactGenerator generator,
 			boolean close) {
 		System.setProperty("findbugs.home", fbDir);
 		// monitor.subTask("Set FB home to "+fbDir);

@@ -64,12 +64,12 @@ public class LocalTool extends AbstractTool {
 		return new LocalInstance(debug, config);
 	}
 
-	public IToolInstance create(ArtifactGenerator generator) {
+	public IToolInstance create(String name, ArtifactGenerator generator) {
 		throw new UnsupportedOperationException(
 				"Generators can't be sent remotely");
 	}
 
-	protected IToolInstance create(final ArtifactGenerator generator,
+	protected IToolInstance create(String name, ArtifactGenerator generator,
 			boolean close) {
 		throw new UnsupportedOperationException(
 				"Generators can't be sent remotely");
@@ -318,7 +318,7 @@ public class LocalTool extends AbstractTool {
 			throw new UnsupportedOperationException();
 		}
 
-		public IToolInstance create(ArtifactGenerator generator) {
+		public IToolInstance create(String name, ArtifactGenerator generator) {
 			throw new UnsupportedOperationException();
 		}
 

@@ -19,9 +19,9 @@ public class MultiTool extends AbstractTool {
 		return Collections.emptySet();
 	}
 
-	protected IToolInstance create(final ArtifactGenerator generator,
+	protected IToolInstance create(String name, ArtifactGenerator generator,
 			boolean close) {
-		return new Instance(debug, this, generator, close);
+		return new Instance(debug, this, name, generator, close);
 	}
 
 	public void addTool(ITool t) {
@@ -37,13 +37,13 @@ public class MultiTool extends AbstractTool {
 		private final ArtifactGenerator generator;
 		private final boolean closeWhenDone;
 
-		Instance(boolean debug, MultiTool mt, ArtifactGenerator gen,
-				boolean close) {
+		Instance(boolean debug, MultiTool mt, String name,
+				 ArtifactGenerator gen, boolean close) {
 			super(debug);
 			for (ITool tool : mt.tools) {
 				this.tools.add(tool);
 
-				IToolInstance i = tool.create(gen);
+				IToolInstance i = tool.create(name, gen);
 				instances.add(i);
 				if (first == null) {
 					first = i;

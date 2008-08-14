@@ -157,7 +157,7 @@ public abstract class AbstractToolInstance extends AbstractSLJob implements IToo
     throw new UnsupportedOperationException("Instances can't create other instances");
   }
   
-  public final IToolInstance create(final ArtifactGenerator generator) {
+  public final IToolInstance create(String name, ArtifactGenerator generator) {
     throw new UnsupportedOperationException("Instances can't create other instances");
   }
   

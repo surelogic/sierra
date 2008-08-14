@@ -26,7 +26,7 @@ public abstract class AbstractCPDTool extends AbstractTool {
 	}
 
 	@Override
-	protected IToolInstance create(ArtifactGenerator generator, boolean close) {
+	protected IToolInstance create(String name, ArtifactGenerator generator, boolean close) {
 		return new AbstractToolInstance(debug, this, generator, close) {
 			@Override
 			protected SLStatus execute(SLProgressMonitor monitor)

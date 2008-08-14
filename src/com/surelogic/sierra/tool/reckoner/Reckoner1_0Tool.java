@@ -27,7 +27,7 @@ public class Reckoner1_0Tool extends AbstractTool {
     return Collections.emptySet();
   }
   
-	protected IToolInstance create(final ArtifactGenerator generator,
+	protected IToolInstance create(String name, final ArtifactGenerator generator,
 			boolean close) {
     return new AbstractToolInstance(debug, this, generator, close) {
       @Override

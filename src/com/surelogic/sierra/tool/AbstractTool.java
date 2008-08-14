@@ -61,14 +61,14 @@ public abstract class AbstractTool implements ITool {
   public IToolInstance create(Config config) {
     ArtifactGenerator generator = 
       new MessageArtifactFileGenerator(config.getScanDocument(), config);
-    IToolInstance ti =  create(generator, true);
+    IToolInstance ti =  create(config.getProject(), generator, true);
     setupToolForProject(ti, config);
     return ti;
   }
   
-  public IToolInstance create(final ArtifactGenerator generator) {
-    return create(generator, false);
+  public IToolInstance create(String name, ArtifactGenerator generator) {
+    return create(name, generator, false);
   }
   
-  protected abstract IToolInstance create(final ArtifactGenerator generator, boolean close);
+  protected abstract IToolInstance create(String name, ArtifactGenerator generator, boolean close);
 }

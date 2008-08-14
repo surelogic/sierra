@@ -47,5 +47,5 @@ public interface ITool {
   /**
    * Creates an instance of the tool to do one scan
    */
-  IToolInstance create(ArtifactGenerator generator);
+  IToolInstance create(String name, ArtifactGenerator generator);
 }

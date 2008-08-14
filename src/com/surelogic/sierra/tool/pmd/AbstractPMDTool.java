@@ -26,7 +26,7 @@ public abstract class AbstractPMDTool extends AbstractTool {
 		super("PMD", version, "PMD", "", debug);
 	}
 
-	protected final IToolInstance create(final ArtifactGenerator generator,
+	protected final IToolInstance create(String name, final ArtifactGenerator generator,
 			boolean close) {
 		return new AbstractToolInstance(debug, this, generator, close) {
 			@Override
