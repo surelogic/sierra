@@ -94,8 +94,10 @@ public class CategoriesContent extends
 	protected Widget getItemDecorator(final Category item) {
 		if (!item.isLocal()) {
 			// TODO add methods to access the owning server of this category
-			return new RemoteServerLink(item.getName() + " is from "
-					+ item.getOwnerLabel(), "http://no-url-yet/");
+			return new RemoteServerLink(item.getName()
+					+ " is from "
+					+ (item.getOwnerLabel() == null ? "unknown" : item
+							.getOwnerLabel()), "http://no-url-yet/");
 		}
 		return null;
 	}
