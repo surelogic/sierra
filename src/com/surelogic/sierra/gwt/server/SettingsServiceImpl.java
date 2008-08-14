@@ -185,6 +185,18 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 						final Map<String, Category> sets = new HashMap<String, Category>();
 						final FindingTypes types = new FindingTypes(q);
 						final Categories fs = new Categories(q);
+						/*
+						 * Get the server locations that we know about, keyed by
+						 * label
+						 */
+						final Map<String, SierraServerLocation> locations = new HashMap<String, SierraServerLocation>();
+						for (final SierraServerLocation location : ServerLocations
+								.fetchQuery(null).perform(q).keySet()) {
+							locations.put(location.getLabel(), location);
+						}
+						/*
+						 * Retrieves the server uuid and label for the category
+						 */
 						final Queryable<String[]> categoryServer = q.prepared(
 								"Definitions.getDefinitionServer",
 								SingleRowHandler
@@ -206,6 +218,12 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 									&& serverUID.equals(owningServer[0]));
 							if (owningServer != null) {
 								set.setOwnerLabel(owningServer[1]);
+								final SierraServerLocation owner = locations
+										.get(owningServer[1]);
+								if (owner != null) {
+									set.setOwnerURL(owner.createHomeURL()
+											.toString());
+								}
 							}
 							String info = StringUtils.remove(detail.getInfo(),
 									'\t');
