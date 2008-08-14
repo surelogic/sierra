@@ -17,6 +17,7 @@ import com.surelogic.common.jdbc.Queryable;
 import com.surelogic.common.jdbc.ResultHandler;
 import com.surelogic.common.jdbc.Row;
 import com.surelogic.common.jdbc.RowHandler;
+import com.surelogic.common.jdbc.SingleRowHandler;
 import com.surelogic.common.jdbc.StringResultHandler;
 import com.surelogic.sierra.gwt.SierraServiceServlet;
 import com.surelogic.sierra.gwt.client.data.Category;
@@ -184,15 +185,28 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 						final Map<String, Category> sets = new HashMap<String, Category>();
 						final FindingTypes types = new FindingTypes(q);
 						final Categories fs = new Categories(q);
-						final Queryable<String> categoryServer = q.prepared(
+						final Queryable<String[]> categoryServer = q.prepared(
 								"Definitions.getDefinitionServer",
-								new StringResultHandler());
+								SingleRowHandler
+										.from(new RowHandler<String[]>() {
+											public String[] handle(
+													final com.surelogic.common.jdbc.Row row) {
+												return new String[] {
+														row.nextString(),
+														row.nextString() };
+											}
+										}));
 						for (final CategoryDO detail : fs.listCategories()) {
 							final Category set = getOrCreateSet(
 									detail.getUid(), sets);
 							set.setName(detail.getName());
-							set.setLocal(serverUID.equals(categoryServer
-									.call(detail.getUid())));
+							final String[] owningServer = categoryServer
+									.call(detail.getUid());
+							set.setLocal((owningServer != null)
+									&& serverUID.equals(owningServer[0]));
+							if (owningServer != null) {
+								set.setOwnerLabel(owningServer[1]);
+							}
 							String info = StringUtils.remove(detail.getInfo(),
 									'\t');
 							info = StringUtils.replaceChars(info, '\n', ' ');
