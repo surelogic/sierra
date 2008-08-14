@@ -72,16 +72,12 @@ public class ProjectCompilationsChart implements IDatabasePlot {
 					return null;
 				}
 			}).call(projectName);
-			int totalLoC = 0;
-			if (bykLoC) {
-				for (final Integer val : kLoCMap.values()) {
-					totalLoC += val;
-				}
-			}
 			for (final Entry<String, Integer> entry : totals.entrySet()) {
+				final String pakkage = entry.getKey();
+				final double count = entry.getValue();
 				if (bykLoC) {
-					totalData.setValue((double) entry.getValue() / totalLoC
-							* 1000, "Total", entry.getKey());
+					totalData.setValue(count / kLoCMap.get(pakkage) * 1000,
+							"Total", entry.getKey());
 				} else {
 					totalData.setValue(entry.getValue(), "Total", entry
 							.getKey());
