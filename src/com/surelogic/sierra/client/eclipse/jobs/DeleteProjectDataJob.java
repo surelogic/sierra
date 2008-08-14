@@ -17,6 +17,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.UIJob;
 
 import com.surelogic.common.FileUtility;
+import com.surelogic.common.eclipse.SWTUtility;
 import com.surelogic.common.eclipse.dialogs.ErrorDialogUtility;
 import com.surelogic.common.eclipse.jobs.DatabaseAccessRule;
 import com.surelogic.common.eclipse.jobs.SLProgressMonitorWrapper;
@@ -56,8 +57,7 @@ public final class DeleteProjectDataJob implements IRunnableWithProgress {
 	public static void utility(List<String> projectNames, Shell shell,
 			boolean disconnect) {
 		if (shell == null) {
-			shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-					.getShell();
+			shell = SWTUtility.getShell();
 		}
 		final boolean multiDelete = projectNames.size() > 1;
 

@@ -14,8 +14,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
-import java.util.concurrent.atomic.*;
-import java.util.concurrent.locks.*;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.logging.Level;
 
 import org.apache.commons.lang.SystemUtils;
@@ -40,13 +42,13 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.UIJob;
 
 import com.surelogic.common.StringComparators;
 import com.surelogic.common.eclipse.CascadingList;
 import com.surelogic.common.eclipse.JDTUtility;
 import com.surelogic.common.eclipse.SLImages;
+import com.surelogic.common.eclipse.SWTUtility;
 import com.surelogic.common.eclipse.CascadingList.IColumn;
 import com.surelogic.common.eclipse.jobs.DatabaseJob;
 import com.surelogic.common.eclipse.jobs.SLUIJob;
@@ -58,7 +60,7 @@ import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.Utility;
 import com.surelogic.sierra.client.eclipse.dialogs.ExportFindingSetDialog;
-import com.surelogic.sierra.client.eclipse.jsure.*;
+import com.surelogic.sierra.client.eclipse.jsure.JSureUtil;
 import com.surelogic.sierra.client.eclipse.model.FindingMutationUtility;
 import com.surelogic.sierra.client.eclipse.model.selection.Column;
 import com.surelogic.sierra.client.eclipse.model.selection.ColumnSort;
@@ -73,7 +75,9 @@ import com.surelogic.sierra.tool.message.Importance;
 public final class MListOfFindingsColumn extends MColumn implements
 		ISelectionObserver {
 	/**
-	 * @see http://publicobject.com/glazedlists/documentation/swt_virtual_tables.html
+	 * @see http
+	 *      ://publicobject.com/glazedlists/documentation/swt_virtual_tables.
+	 *      html
 	 */
 	private static final boolean USE_VIRTUAL = true;
 
@@ -287,7 +291,8 @@ public final class MListOfFindingsColumn extends MColumn implements
 			@Override
 			Image getImage(FindingData data) {
 				if (data.f_assuranceType != null) {
-					return JSureUtil.getImageFor(data.f_findingTypeId, data.f_assuranceType);
+					return JSureUtil.getImageFor(data.f_findingTypeId,
+							data.f_assuranceType);
 				}
 				return Utility.getImageFor(data.f_importance);
 			}
@@ -414,9 +419,10 @@ public final class MListOfFindingsColumn extends MColumn implements
 								data.f_findingTypeId = rs.getString(8);
 								data.f_categoryName = rs.getString(9);
 								data.f_toolName = rs.getString(10);
-								
+
 								String aType = rs.getString(11);
-								data.f_assuranceType = AssuranceType.fromFlag(aType);
+								data.f_assuranceType = AssuranceType
+										.fromFlag(aType);
 								data.index = i;
 								f_rows.add(data);
 							} else {
@@ -450,8 +456,8 @@ public final class MListOfFindingsColumn extends MColumn implements
 	public String getQuery() {
 		final StringBuilder b = new StringBuilder();
 		final Selection s = getSelection();
-		final String query = s.usesJoin() ? "FindingsSelectionView.showJoin" : 
-			                                "FindingsSelectionView.show";
+		final String query = s.usesJoin() ? "FindingsSelectionView.showJoin"
+				: "FindingsSelectionView.show";
 		b.append(QB.get(query, getSelection().getWhereClause()));
 		return b.toString();
 	}
@@ -918,7 +924,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 		Rectangle bounds = f_table.getClientArea();
 		Composite p = f_table.getParent();
 		while (p != null) {
-			//System.out.println(p+" : "+p.getClientArea().width);
+			// System.out.println(p+" : "+p.getClientArea().width);
 			if (p instanceof CascadingList) {
 				bounds = p.getClientArea();
 				break;
@@ -961,7 +967,8 @@ public final class MListOfFindingsColumn extends MColumn implements
 	private void setupMenu(final Menu menu) {
 		final MenuItem set = new MenuItem(menu, SWT.CASCADE);
 		set.setText("Set Importance");
-		set.setImage(SLImages.getImage(CommonImages.IMG_ASTERISK_DIAMOND_ORANGE));
+		set.setImage(SLImages
+				.getImage(CommonImages.IMG_ASTERISK_DIAMOND_ORANGE));
 
 		/*
 		 * Quick audit
@@ -969,7 +976,8 @@ public final class MListOfFindingsColumn extends MColumn implements
 
 		final MenuItem quickAudit = new MenuItem(menu, SWT.PUSH);
 		quickAudit.setText("Mark As Examined by Me");
-		quickAudit.setImage(SLImages.getImage(CommonImages.IMG_SIERRA_STAMP_SMALL));
+		quickAudit.setImage(SLImages
+				.getImage(CommonImages.IMG_SIERRA_STAMP_SMALL));
 
 		new MenuItem(menu, SWT.SEPARATOR);
 
@@ -987,10 +995,13 @@ public final class MListOfFindingsColumn extends MColumn implements
 				.getImage(CommonImages.IMG_ASTERISK_ORANGE_100));
 		final MenuItem setHigh = new MenuItem(importanceMenu, SWT.PUSH);
 		setHigh.setText(Importance.HIGH.toStringSentenceCase());
-		setHigh.setImage(SLImages.getImage(CommonImages.IMG_ASTERISK_ORANGE_75));
+		setHigh
+				.setImage(SLImages
+						.getImage(CommonImages.IMG_ASTERISK_ORANGE_75));
 		final MenuItem setMedium = new MenuItem(importanceMenu, SWT.PUSH);
 		setMedium.setText(Importance.MEDIUM.toStringSentenceCase());
-		setMedium.setImage(SLImages.getImage(CommonImages.IMG_ASTERISK_ORANGE_50));
+		setMedium.setImage(SLImages
+				.getImage(CommonImages.IMG_ASTERISK_ORANGE_50));
 		final MenuItem setLow = new MenuItem(importanceMenu, SWT.PUSH);
 		setLow.setText(Importance.LOW.toStringSentenceCase());
 		setLow.setImage(SLImages.getImage(CommonImages.IMG_ASTERISK_ORANGE_25));
@@ -1139,8 +1150,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 		export.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
 				final ExportFindingSetDialog dialog = new ExportFindingSetDialog(
-						PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-								.getShell(), getQuery());
+						SWTUtility.getShell(), getQuery());
 				dialog.open();
 			}
 		});
