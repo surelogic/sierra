@@ -12,9 +12,9 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.PlatformUI;
 
 import com.surelogic.common.eclipse.SLImages;
+import com.surelogic.common.eclipse.SWTUtility;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.images.CommonImages;
 import com.surelogic.sierra.eclipse.teamserver.preferences.PreferenceConstants;
@@ -24,7 +24,7 @@ public final class ServerStaysRunningWarning extends Dialog {
 	private static final int f_widthHint = 350;
 
 	public ServerStaysRunningWarning() {
-		super(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell());
+		super(SWTUtility.getShell());
 	}
 
 	@Override
