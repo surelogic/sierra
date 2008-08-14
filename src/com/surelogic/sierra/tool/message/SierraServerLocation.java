@@ -117,7 +117,7 @@ public class SierraServerLocation {
 	 * @param serviceName
 	 * @return
 	 */
-	public URL createServiceUrl(final String serviceName) {
+	public URL createServiceURL(final String serviceName) {
 		final String host = getHost() + ":" + getPort();
 
 		try {
@@ -171,5 +171,15 @@ public class SierraServerLocation {
 				.append("\"");
 
 		return b.toString();
+	}
+
+	public URL createHomeURL() {
+		final String host = getHost() + ":" + getPort();
+		try {
+			return new URL((f_secure ? "https://" : "http://") + host
+					+ f_contextPath);
+		} catch (final MalformedURLException e) {
+			throw new IllegalStateException(e);
+		}
 	}
 }

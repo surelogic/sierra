@@ -53,7 +53,7 @@ public final class SRPCClient implements InvocationHandler {
 		}
 		this.methods = new HashSet<Method>(Arrays.asList(methods));
 		this.codec = codec;
-		this.url = location.createServiceUrl(service);
+		this.url = location.createServiceURL(service);
 	}
 
 	public Object invoke(Object proxy, Method method, Object[] args)
