@@ -75,7 +75,7 @@ public final class ServerLocations {
 				for (final Entry<SierraServerLocation, String> entry : locations
 						.entrySet()) {
 					updateUuid
-							.call(entry.getKey().getLabel(), entry.getValue());
+							.call(entry.getValue(), entry.getKey().getLabel());
 				}
 				return null;
 			}
