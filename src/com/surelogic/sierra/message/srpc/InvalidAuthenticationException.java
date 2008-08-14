@@ -8,18 +8,20 @@ public class InvalidAuthenticationException extends RuntimeException {
 	private static final long serialVersionUID = -7626624568360683640L;
 
 	public InvalidAuthenticationException() {
+		// Do nothing
 	}
 
-	public InvalidAuthenticationException(String message) {
+	public InvalidAuthenticationException(final String message) {
 		super(message);
 	}
 
-	public InvalidAuthenticationException(Throwable cause) {
+	public InvalidAuthenticationException(final Throwable cause) {
 		super(cause);
 	}
 
-	public InvalidAuthenticationException(String message, Throwable cause) {
+	public InvalidAuthenticationException(final String message,
+			final Throwable cause) {
 		super(message, cause);
 	}
-	
+
 }

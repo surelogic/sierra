@@ -4,7 +4,7 @@ import com.surelogic.sierra.message.srpc.SRPCClient;
 
 /**
  * Utility class for generating proxies that call the Sierra client web service.
- * The objects returned by this class will implement the {@link SierraService}
+ * The objects returned by this class will implement the {@link BuglinkService}
  * interface. In addition, two unchecked exceptions may be thrown:
  * {@link SierraServiceClientException} and {@link InvalidLoginException}.
  * 
@@ -18,7 +18,7 @@ public class BugLinkServiceClient {
 				BugLinkService.class, true);
 	}
 
-	public static BugLinkService create(SierraServerLocation location) {
+	public static BugLinkService create(final SierraServerLocation location) {
 		return SRPCClient.createClient(location, BugLinkService.class, true);
 	}
 }
