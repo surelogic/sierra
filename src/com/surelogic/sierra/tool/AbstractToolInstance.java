@@ -114,6 +114,11 @@ public abstract class AbstractToolInstance extends AbstractSLJob implements IToo
     return status.build();
   }
 
+  public final void reportWarning(String msg) {
+	  generator.error().message(msg).tool(getName());
+	  status.addChild(SLStatus.createWarningStatus(-1, msg));  
+  }
+  
   public final void reportError(String msg) {
     generator.error().message(msg).tool(getName());
     status.addChild(SLStatus.createErrorStatus(-1, msg));  

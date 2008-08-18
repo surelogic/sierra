@@ -318,8 +318,7 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
 					return null; // Ignore these
 				}
 				if (handleWarning(line.getClassName())) {
-					logError("Couldn't find source file for "
-							+ line.getClassName());
+					logWarning("Couldn't find source file for "+line.getClassName());
 				}
 				return null;
 			}
@@ -348,6 +347,11 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
 
 		/* For IErrorLogger */
 
+		public void logWarning(String message) {
+			LOG.warning(message);
+			tool.reportWarning(message);
+		}
+		
 		public void logError(String message) {
 			LOG.warning(message);
 			tool.reportError(message);
