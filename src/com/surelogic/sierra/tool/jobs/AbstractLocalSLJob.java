@@ -78,8 +78,14 @@ public abstract class AbstractLocalSLJob extends AbstractSLJob {
 	
 	private String copyException(String type, String msg, BufferedReader br)
 	throws IOException {
-		SubSLProgressMonitor mon = tasks.peek();
-		StringBuilder sb = new StringBuilder(mon.getName() + ' ' + type);
+		String label;
+		if (tasks.isEmpty()) {
+			label = getName();
+		} else {
+			SubSLProgressMonitor mon = tasks.peek();
+			label = mon.getName();
+		}
+		StringBuilder sb = new StringBuilder(label + ' ' + type);
 		System.out.println(msg);
 		sb.append(": ").append(msg).append('\n');
 
