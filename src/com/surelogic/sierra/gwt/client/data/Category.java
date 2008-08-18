@@ -170,6 +170,27 @@ public class Category implements Serializable, Cacheable, Comparable<Category> {
 		return false;
 	}
 
+	public void updateFilter(final FindingTypeFilter finding) {
+		// remove any previous copies of the finding and re-add it to reflect
+		// the current filter flag
+		getEntries().remove(finding);
+		getEntries().add(finding);
+
+		cleanCategories();
+	}
+
+	public void cleanCategories() {
+		final List<Category> unusedCategories = new ArrayList<Category>();
+		for (final Category parent : getParents()) {
+			if (parent.getIncludedEntries().isEmpty()) {
+				unusedCategories.add(parent);
+			}
+		}
+		for (final Category unusedCat : unusedCategories) {
+			getParents().remove(unusedCat);
+		}
+	}
+
 	public Category copy() {
 		final Category copy = new Category();
 		copy.uuid = uuid;

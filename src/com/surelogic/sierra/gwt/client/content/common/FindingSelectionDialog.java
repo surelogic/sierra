@@ -15,7 +15,6 @@ import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.data.Category;
 import com.surelogic.sierra.gwt.client.data.FindingTypeFilter;
-import com.surelogic.sierra.gwt.client.data.ScanFilterEntry;
 import com.surelogic.sierra.gwt.client.ui.ImageHelper;
 import com.surelogic.sierra.gwt.client.ui.ItemCheckBox;
 import com.surelogic.sierra.gwt.client.ui.SearchPanel;
@@ -27,12 +26,12 @@ public class FindingSelectionDialog extends FormDialog {
 	private final Tree categoryTree = new Tree();
 	private final SearchPanel searchPanel = new SearchPanel();
 
-	public FindingSelectionDialog(String title) {
+	public FindingSelectionDialog(final String title) {
 		super(title, "600px");
 	}
 
 	@Override
-	protected final void doInitialize(FlexTable contentTable) {
+	protected final void doInitialize(final FlexTable contentTable) {
 		searchPanel.setWidth("50%");
 		contentTable.setWidget(0, 0, searchPanel);
 
@@ -45,7 +44,7 @@ public class FindingSelectionDialog extends FormDialog {
 
 		searchPanel.addListener(new SearchListener() {
 
-			public void onSearch(SearchPanel sender, String text) {
+			public void onSearch(final SearchPanel sender, final String text) {
 				search(text);
 			}
 		});
@@ -65,14 +64,16 @@ public class FindingSelectionDialog extends FormDialog {
 	}
 
 	public final void addCategory(final Category cat,
-			final Set<ScanFilterEntry> excludeFindings) {
+			final Set<String> excludeFindings) {
 		final ItemCheckBox<Category> catCheck = new ItemCheckBox<Category>(cat
 				.getName(), cat);
 		final TreeItem catItem = categoryTree.addItem(catCheck);
 		catCheck.addClickListener(new CategoryCheckListener(catItem));
+
 		final List<FindingTypeFilter> sortedFindings = new ArrayList<FindingTypeFilter>(
 				cat.getEntries());
 		Collections.sort(sortedFindings);
+
 		for (final FindingTypeFilter finding : sortedFindings) {
 			if (excludeFindings == null
 					|| !isExcluded(finding.getUuid(), excludeFindings)) {
@@ -80,6 +81,11 @@ public class FindingSelectionDialog extends FormDialog {
 						finding.getName(), finding);
 				catItem.addItem(findingCheck);
 			}
+		}
+
+		// don't show empty categories
+		if (catItem.getChildCount() == 0) {
+			catItem.remove();
 		}
 	}
 
@@ -146,24 +152,18 @@ public class FindingSelectionDialog extends FormDialog {
 		return excluded;
 	}
 
-	protected final boolean isExcluded(String uuid,
-			Set<ScanFilterEntry> excludedSet) {
-		for (final ScanFilterEntry entry : excludedSet) {
-			if (entry.getUuid().equals(uuid)) {
-				return true;
-			}
-		}
-
-		return false;
+	protected final boolean isExcluded(final String uuid,
+			final Set<String> excludedSet) {
+		return excludedSet.contains(uuid);
 	}
 
-	private void search(String query) {
+	private void search(final String query) {
 		for (int i = 0; i < categoryTree.getItemCount(); i++) {
 			updateSearchState(categoryTree.getItem(i), query);
 		}
 	}
 
-	private boolean updateSearchState(TreeItem item, String query) {
+	private boolean updateSearchState(final TreeItem item, final String query) {
 		final boolean itemMatch = "".equals(query)
 				|| LangUtil.containsIgnoreCase(item.getText(), query);
 
@@ -187,12 +187,12 @@ public class FindingSelectionDialog extends FormDialog {
 	private class CategoryCheckListener implements ClickListener {
 		private final TreeItem categoryItem;
 
-		public CategoryCheckListener(TreeItem categoryItem) {
+		public CategoryCheckListener(final TreeItem categoryItem) {
 			super();
 			this.categoryItem = categoryItem;
 		}
 
-		public void onClick(Widget sender) {
+		public void onClick(final Widget sender) {
 			if (sender instanceof ItemCheckBox<?>) {
 				final ItemCheckBox<?> catCheckBox = (ItemCheckBox<?>) sender;
 				final boolean checked = catCheckBox.isChecked();

@@ -165,6 +165,7 @@ public class FindingType implements Cacheable, Serializable {
 	 * 
 	 */
 	public static class ArtifactTypeInfo implements Serializable {
+		private static final long serialVersionUID = 7350444382784203965L;
 
 		private String tool;
 		private String artifactType;

@@ -1,10 +1,11 @@
 package com.surelogic.sierra.gwt.client.content.categories;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.surelogic.sierra.gwt.client.content.common.FindingSelectionDialog;
 import com.surelogic.sierra.gwt.client.data.Category;
+import com.surelogic.sierra.gwt.client.data.FindingTypeFilter;
 import com.surelogic.sierra.gwt.client.data.cache.CategoryCache;
 
 public class AddCategoriesDialog extends FindingSelectionDialog {
@@ -13,34 +14,21 @@ public class AddCategoriesDialog extends FindingSelectionDialog {
 		super("Select Categories and/or Findings");
 	}
 
-	public void update(CategoryCache categories, Category currentCategory) {
+	public void update(final CategoryCache categories,
+			final Category currentCategory) {
 		clearFindings();
+
+		final Set<FindingTypeFilter> excludeFindings = currentCategory
+				.getIncludedEntries();
+		final Set<String> excludedFindingUuids = new HashSet<String>(
+				excludeFindings.size());
+		for (final FindingTypeFilter excludedFinding : excludeFindings) {
+			excludedFindingUuids.add(excludedFinding.getUuid());
+		}
+
 		for (final Category cat : categories) {
-			if (!hasCategory(currentCategory, cat, new ArrayList<Category>())) {
-				addCategory(cat, null);
-			}
+			addCategory(cat, excludedFindingUuids);
 		}
-	}
-
-	private boolean hasCategory(Category selectedCategory,
-			Category testCategory, List<Category> checked) {
-		// prevent infinite recursion
-		if (checked.contains(selectedCategory)) {
-			return false;
-		} else {
-			checked.add(selectedCategory);
-		}
-
-		if (selectedCategory.equals(testCategory)) {
-			return true;
-		}
-
-		for (final Category child : selectedCategory.getParents()) {
-			if (hasCategory(child, testCategory, checked)) {
-				return true;
-			}
-		}
-		return false;
 	}
 
 }

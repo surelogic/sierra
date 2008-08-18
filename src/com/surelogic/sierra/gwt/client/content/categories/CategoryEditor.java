@@ -2,20 +2,29 @@ package com.surelogic.sierra.gwt.client.content.categories;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
+import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.PopupListener;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
+import com.surelogic.sierra.gwt.client.content.findingtypes.FindingTypesContent;
 import com.surelogic.sierra.gwt.client.data.Category;
 import com.surelogic.sierra.gwt.client.data.FindingTypeFilter;
+import com.surelogic.sierra.gwt.client.data.Status;
+import com.surelogic.sierra.gwt.client.data.cache.CategoryCache;
 import com.surelogic.sierra.gwt.client.ui.BlockPanel;
-import com.surelogic.sierra.gwt.client.ui.ItemCheckBox;
+import com.surelogic.sierra.gwt.client.ui.LabelHelper;
+import com.surelogic.sierra.gwt.client.ui.link.ContentLink;
 
 public class CategoryEditor extends BlockPanel {
 	public static final String PRIMARY_STYLE = "categories-category";
@@ -27,7 +36,7 @@ public class CategoryEditor extends BlockPanel {
 	private Category category;
 
 	@Override
-	protected void onInitialize(VerticalPanel contentPanel) {
+	protected void onInitialize(final VerticalPanel contentPanel) {
 		categoryInfo.setWidth("100%");
 
 		categoryInfo.setText(0, 0, "Name:");
@@ -47,6 +56,12 @@ public class CategoryEditor extends BlockPanel {
 
 		findingsEditor.setSubsectionStyle(true);
 		findingsEditor.initialize();
+		findingsEditor.addAction("Add Finding", new ClickListener() {
+
+			public void onClick(final Widget sender) {
+				promptForFindings(getCategory());
+			}
+		});
 		contentPanel.add(findingsEditor);
 
 	}
@@ -55,8 +70,8 @@ public class CategoryEditor extends BlockPanel {
 		return category;
 	}
 
-	public void setCategory(Category cat) {
-		category = cat;
+	public void setCategory(final Category cat) {
+		category = cat.copy();
 		setSummary(category.getName());
 		nameEditText.setText(category.getName());
 		String catInfo = category.getInfo();
@@ -64,56 +79,74 @@ public class CategoryEditor extends BlockPanel {
 			catInfo = "";
 		}
 		description.setText(catInfo);
-		findingsEditor.setCategory(category);
+
+		findingsEditor.update();
 	}
 
 	public Category getUpdatedCategory() {
-		final Category cat = category.copy();
+		category.setName(nameEditText.getText());
+		category.setInfo(description.getText());
 
-		cat.setName(nameEditText.getText());
-		cat.setInfo(description.getText());
-
-		findingsEditor.saveTo(cat);
-
-		return cat;
+		return category;
 	}
 
-	public void addFindings(Set<Category> selectedCategories,
-			Set<FindingTypeFilter> excludedFindings) {
-		final Category updatedCat = getUpdatedCategory();
+	private void promptForFindings(final Category cat) {
+		final AddCategoriesDialog dialog = new AddCategoriesDialog();
+		dialog.addPopupListener(new PopupListener() {
 
+			public void onPopupClosed(final PopupPanel sender,
+					final boolean autoClosed) {
+				final Status s = dialog.getStatus();
+				if (s != null && s.isSuccess()) {
+					addFindings(dialog.getSelectedCategories(), dialog
+							.getSelectedFindings(), dialog
+							.getExcludedFindings());
+				}
+			}
+
+		});
+		dialog.center();
+		dialog.update(CategoryCache.getInstance(), cat);
+	}
+
+	private void addFindings(final Set<Category> selectedCategories,
+			final Set<FindingTypeFilter> selectedFindings,
+			final Set<FindingTypeFilter> excludedFindings) {
+		final Set<Category> catParents = category.getParents();
 		for (final Category newCat : selectedCategories) {
-			updatedCat.getParents().add(newCat.copy());
+			if (!catParents.contains(newCat)) {
+				catParents.add(newCat.copy());
+			}
 		}
+		final Set<FindingTypeFilter> catEntries = category.getEntries();
+
 		for (final FindingTypeFilter excludedFinding : excludedFindings) {
+			catEntries.remove(excludedFinding);
 			final FindingTypeFilter newEntry = excludedFinding.copy();
 			newEntry.setFiltered(true);
-			updatedCat.getEntries().add(newEntry);
+			catEntries.add(newEntry);
 		}
-		setCategory(updatedCat);
+
+		for (final FindingTypeFilter selectedFinding : selectedFindings) {
+			catEntries.remove(selectedFinding);
+		}
+		refresh();
 	}
 
-	public FindingsEditor getFindingsEditor() {
-		return findingsEditor;
+	private void refresh() {
+		setCategory(category);
 	}
 
-	public static class FindingsEditor extends BlockPanel {
-		private final Map<FindingTypeFilter, ItemCheckBox<FindingTypeFilter>> findings = new HashMap<FindingTypeFilter, ItemCheckBox<FindingTypeFilter>>();
-		private final List<Category> parentCategories = new ArrayList<Category>();
-		private Category category;
+	public class FindingsEditor extends BlockPanel {
 
 		@Override
-		protected void onInitialize(VerticalPanel contentPanel) {
+		protected void onInitialize(final VerticalPanel contentPanel) {
 			setTitle("Finding Types");
 		}
 
-		public void setCategory(Category cat) {
-			this.category = cat;
-
+		public void update() {
 			final VerticalPanel contentPanel = getContentPanel();
 			contentPanel.clear();
-			findings.clear();
-			parentCategories.clear();
 
 			// add the findings that belong to the selected category
 			final List<FindingTypeFilter> catFindings = new ArrayList<FindingTypeFilter>(
@@ -121,9 +154,8 @@ public class CategoryEditor extends BlockPanel {
 			Collections.sort(catFindings);
 
 			for (final FindingTypeFilter finding : catFindings) {
-				if (!category.parentContains(finding)) {
-					contentPanel.add(createFindingUI(finding, finding
-							.isFiltered()));
+				if (!category.parentContains(finding) && !finding.isFiltered()) {
+					contentPanel.add(createFindingUI(category, finding));
 				}
 			}
 
@@ -135,11 +167,8 @@ public class CategoryEditor extends BlockPanel {
 					category.getParents());
 			Collections.sort(sortedParents);
 			for (final Category parent : sortedParents) {
-				parentCategories.add(parent);
-
 				final DisclosurePanel parentPanel = new DisclosurePanel(
 						"From: " + parent.getName());
-				contentPanel.add(parentPanel);
 				final VerticalPanel findingsPanel = new VerticalPanel();
 				parentPanel.setContent(findingsPanel);
 				parentPanel.setOpen(true);
@@ -147,64 +176,53 @@ public class CategoryEditor extends BlockPanel {
 				final List<FindingTypeFilter> parentFindings = new ArrayList<FindingTypeFilter>(
 						parent.getIncludedEntries());
 				Collections.sort(parentFindings);
+				boolean showingFindings = false;
 				for (final FindingTypeFilter finding : parentFindings) {
-					findingsPanel.add(createFindingUI(finding, excluded
-							.contains(finding)));
-				}
-			}
-		}
-
-		private ItemCheckBox<FindingTypeFilter> createFindingUI(
-				FindingTypeFilter finding, boolean filtered) {
-			final ItemCheckBox<FindingTypeFilter> findingUI = new ItemCheckBox<FindingTypeFilter>(
-					finding.getName(), finding);
-			findingUI.setTitle(finding.getShortMessage());
-			findingUI.setChecked(!filtered);
-			findingUI.addStyleName(PRIMARY_STYLE + "-finding");
-			findings.put(finding, findingUI);
-			return findingUI;
-		}
-
-		public void saveTo(Category target) {
-			// clone the parent categories from the UI into the target
-			final Set<Category> targetParents = target.getParents();
-			targetParents.clear();
-			for (final Category parentCat : parentCategories) {
-				targetParents.add(parentCat.copy());
-			}
-
-			// clone the selected category's entries
-			final Set<FindingTypeFilter> targetFindings = target.getEntries();
-			targetFindings.clear();
-			for (final FindingTypeFilter catFinding : category.getEntries()) {
-				targetFindings.add(catFinding.copy());
-			}
-
-			// copy settings or clone the filter entries to the target
-			final Set<FindingTypeFilter> targetEntries = target.getEntries();
-			for (final Map.Entry<FindingTypeFilter, ItemCheckBox<FindingTypeFilter>> findingEntry : findings
-					.entrySet()) {
-				if (!findingEntry.getValue().isChecked()) {
-					final FindingTypeFilter uiFinding = findingEntry.getKey();
-					FindingTypeFilter targetFinding = findEntry(targetEntries,
-							uiFinding.getUuid());
-					if (targetFinding == null) {
-						targetFinding = uiFinding.copy();
-						targetEntries.add(targetFinding);
+					if (!excluded.contains(finding)) {
+						findingsPanel.add(createFindingUI(category, finding));
+						showingFindings = true;
 					}
-					targetFinding.setFiltered(true);
+				}
+
+				if (showingFindings) {
+					contentPanel.add(parentPanel);
 				}
 			}
 		}
 
-		private FindingTypeFilter findEntry(
-				Set<FindingTypeFilter> targetEntries, String uuid) {
-			for (final FindingTypeFilter finding : targetEntries) {
-				if (finding.getUuid().equals(uuid)) {
-					return finding;
-				}
-			}
-			return null;
+		private Widget createFindingUI(final Category category,
+				final FindingTypeFilter finding) {
+			final ContentLink findingLink = new ContentLink(finding.getName(),
+					FindingTypesContent.getInstance(), finding.getUuid());
+
+			final Label removeLabel = LabelHelper
+					.clickable(new Label("Remove"));
+			removeLabel.addClickListener(new RemoveFindingListener(finding));
+
+			final HorizontalPanel findingPanel = new HorizontalPanel();
+			findingPanel.setWidth("100%");
+			findingPanel.add(findingLink);
+			findingPanel.add(removeLabel);
+			findingPanel.setCellHorizontalAlignment(removeLabel,
+					HasHorizontalAlignment.ALIGN_RIGHT);
+			return findingPanel;
+		}
+
+	}
+
+	private class RemoveFindingListener implements ClickListener {
+		private final FindingTypeFilter finding;
+
+		public RemoveFindingListener(final FindingTypeFilter finding) {
+			super();
+			this.finding = finding;
+		}
+
+		public void onClick(final Widget sender) {
+			finding.setFiltered(true);
+			category.updateFilter(finding);
+
+			refresh();
 		}
 	}
 
