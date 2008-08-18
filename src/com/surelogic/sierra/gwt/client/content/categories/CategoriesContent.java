@@ -5,14 +5,11 @@ import java.util.ArrayList;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DockPanel;
-import com.google.gwt.user.client.ui.PopupListener;
-import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.Context;
 import com.surelogic.sierra.gwt.client.content.ListContentComposite;
-import com.surelogic.sierra.gwt.client.content.categories.CategoryEditor.FindingsEditor;
 import com.surelogic.sierra.gwt.client.data.Category;
 import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.data.cache.CategoryCache;
@@ -74,15 +71,6 @@ public class CategoriesContent extends
 						.getUuid()), false);
 			}
 		});
-
-		final FindingsEditor findingsEditor = categoryEditor
-				.getFindingsEditor();
-		findingsEditor.addAction("Add Finding", new ClickListener() {
-
-			public void onClick(final Widget sender) {
-				promptForFindings(categoryEditor.getCategory());
-			}
-		});
 	}
 
 	@Override
@@ -140,24 +128,6 @@ public class CategoriesContent extends
 						getCache().refresh();
 					}
 				});
-	}
-
-	private void promptForFindings(final Category cat) {
-		final AddCategoriesDialog dialog = new AddCategoriesDialog();
-		dialog.addPopupListener(new PopupListener() {
-
-			public void onPopupClosed(final PopupPanel sender,
-					final boolean autoClosed) {
-				final Status s = dialog.getStatus();
-				if ((s != null) && s.isSuccess()) {
-					categoryEditor.addFindings(dialog.getSelectedCategories(),
-							dialog.getExcludedFindings());
-				}
-			}
-
-		});
-		dialog.center();
-		dialog.update(getCache(), cat);
 	}
 
 	private class CreateCategoryForm extends FormButton {
