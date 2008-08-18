@@ -365,7 +365,7 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
 		public void reportMissingClass(ClassNotFoundException ex) {
 			if (handleWarning(ex.getMessage())) {
 				// LOG.log(Level.WARNING, "Missing class", ex);
-				tool.reportError("Missing class", ex);
+				tool.reportWarning(ex.getMessage());
 			}
 		}
 
@@ -378,7 +378,7 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
 			LOG.warning(msg);
 
 			if (handleWarning(msg)) {
-				tool.reportError(msg);
+				tool.reportWarning(msg);
 			}
 		}
 
