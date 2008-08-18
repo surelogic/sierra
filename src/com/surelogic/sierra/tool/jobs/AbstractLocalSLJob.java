@@ -76,7 +76,7 @@ public abstract class AbstractLocalSLJob extends AbstractSLJob {
 		}
 	}
 	
-	private String copyException(String type, String msg, BufferedReader br)
+	private String copyException(Remote type, String msg, BufferedReader br)
 	throws IOException {
 		String label;
 		if (tasks.isEmpty()) {
@@ -99,7 +99,16 @@ public abstract class AbstractLocalSLJob extends AbstractSLJob {
 			System.out.println(line);
 		}
 		final String errMsg = sb.toString();
-		status.addChild(SLStatus.createErrorStatus(-1, errMsg));
+		final SLStatus child;
+		switch (type) {
+		case FAILED:
+			child = SLStatus.createErrorStatus(-1, errMsg);
+			break;
+		default:
+			child = SLStatus.createWarningStatus(-1, errMsg);
+		    break;
+		}
+		status.addChild(child);
 		return errMsg;
 	}
 	
@@ -168,7 +177,8 @@ public abstract class AbstractLocalSLJob extends AbstractSLJob {
 					StringTokenizer st = new StringTokenizer(line, "#,");
 					if (st.hasMoreTokens()) {
 						String first = st.nextToken();
-						switch (Remote.valueOf(first)) {
+						Remote cmd   = Remote.valueOf(first);
+						switch (cmd) {
 						case TASK:
 							System.out.println(line);
 							final String task = st.nextToken();
@@ -187,12 +197,11 @@ public abstract class AbstractLocalSLJob extends AbstractSLJob {
 							break;
 						case WARNING:
 							System.out.println(line);
-							copyException(first, st.nextToken(), br);
+							copyException(cmd, st.nextToken(), br);
 							break;
 						case FAILED:
 							System.out.println(line);
-							String msg = copyException(first, st
-									.nextToken(), br);
+							String msg = copyException(cmd, st.nextToken(), br);
 							System.out.println("Terminating run");
 							p.destroy();
 							if (msg
