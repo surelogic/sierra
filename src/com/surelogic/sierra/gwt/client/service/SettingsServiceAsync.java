@@ -7,6 +7,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.surelogic.sierra.gwt.client.data.Category;
 import com.surelogic.sierra.gwt.client.data.FindingType;
 import com.surelogic.sierra.gwt.client.data.Project;
+import com.surelogic.sierra.gwt.client.data.ReportSettings;
 import com.surelogic.sierra.gwt.client.data.Result;
 import com.surelogic.sierra.gwt.client.data.ScanFilter;
 import com.surelogic.sierra.gwt.client.data.ServerLocation;
@@ -51,8 +52,12 @@ public interface SettingsServiceAsync {
 
 	void listServerLocations(AsyncCallback<List<ServerLocation>> callback);
 
-	void deleteServerLocation(String uuid, AsyncCallback<Status> asyncCallback);
+	void deleteServerLocation(String uuid, AsyncCallback<Status> callback);
 
 	void saveServerLocation(ServerLocation loc, AsyncCallback<Status> callback);
 
+	void listReportSettings(AsyncCallback<List<ReportSettings>> callback);
+
+	void saveReportSettings(ReportSettings settings,
+			AsyncCallback<Status> callback);
 }

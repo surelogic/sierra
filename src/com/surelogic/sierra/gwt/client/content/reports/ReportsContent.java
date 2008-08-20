@@ -13,6 +13,8 @@ import com.surelogic.sierra.gwt.client.data.ReportSettings;
 import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.data.Report.OutputType;
 import com.surelogic.sierra.gwt.client.data.cache.ReportCache;
+import com.surelogic.sierra.gwt.client.service.ServiceHelper;
+import com.surelogic.sierra.gwt.client.service.callback.StatusCallback;
 import com.surelogic.sierra.gwt.client.util.LangUtil;
 
 public abstract class ReportsContent extends
@@ -45,7 +47,6 @@ public abstract class ReportsContent extends
 
 		reportParamsView.addReportAction("Show Chart", OutputType.CHART,
 				new ClickListener() {
-
 					public void onClick(final Widget sender) {
 						final VerticalPanel selectionPanel = getSelectionPanel();
 						if (selectionPanel.getWidgetIndex(reportView) == -1) {
@@ -88,9 +89,13 @@ public abstract class ReportsContent extends
 				if ((dialogStatus != null) && dialogStatus.isSuccess()) {
 					final String reportName = dialog.getName();
 					if (reportName.length() > 0) {
-						// TODO save the report
-
-						Window.alert("TODO: Save the report");
+						ServiceHelper.getSettingsService().saveReportSettings(
+								settings, new StatusCallback() {
+									@Override
+									protected void doStatus(final Status status) {
+										getCache().refresh();
+									}
+								});
 					}
 				}
 			}

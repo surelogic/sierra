@@ -63,7 +63,7 @@ public class Report implements Serializable, Cacheable {
 		return dataSource;
 	}
 
-	public void setDataSource(DataSource dataSource) {
+	public void setDataSource(final DataSource dataSource) {
 		this.dataSource = dataSource;
 	}
 
@@ -74,7 +74,7 @@ public class Report implements Serializable, Cacheable {
 		return outputTypes;
 	}
 
-	public boolean hasOutputType(OutputType outputType) {
+	public boolean hasOutputType(final OutputType outputType) {
 		if (outputTypes == null) {
 			return false;
 		}
@@ -86,7 +86,7 @@ public class Report implements Serializable, Cacheable {
 		return false;
 	}
 
-	public void setOutputTypes(OutputType... outputTypes) {
+	public void setOutputTypes(final OutputType... outputTypes) {
 		this.outputTypes = outputTypes;
 	}
 
@@ -107,6 +107,9 @@ public class Report implements Serializable, Cacheable {
 	}
 
 	public List<ReportSettings> getSavedReports() {
+		if (savedReports == null) {
+			savedReports = new ArrayList<ReportSettings>();
+		}
 		return savedReports;
 	}
 

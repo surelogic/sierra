@@ -5,11 +5,14 @@ import java.util.List;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.surelogic.sierra.gwt.client.data.Report;
+import com.surelogic.sierra.gwt.client.data.ReportSettings;
 import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.data.Report.DataSource;
 import com.surelogic.sierra.gwt.client.data.Report.OutputType;
 import com.surelogic.sierra.gwt.client.data.Report.Parameter;
 import com.surelogic.sierra.gwt.client.data.Report.Parameter.Type;
+import com.surelogic.sierra.gwt.client.service.ServiceHelper;
+import com.surelogic.sierra.gwt.client.service.callback.StandardCallback;
 
 public class ReportCache extends Cache<Report> {
 	private static final ReportCache instance = new ReportCache();
@@ -29,7 +32,20 @@ public class ReportCache extends Cache<Report> {
 		tempReports.add(findingsByProject());
 		tempReports.add(findingsByPriority());
 		tempReports.add(scanFindings());
-		callback.onSuccess(tempReports);
+		ServiceHelper.getSettingsService().listReportSettings(
+				new StandardCallback<List<ReportSettings>>() {
+					@Override
+					protected void doSuccess(final List<ReportSettings> result) {
+						for (final ReportSettings s : result) {
+							for (final Report r : tempReports) {
+								if (r.getUuid().equals(s.getReportUuid())) {
+									r.getSavedReports().add(s);
+								}
+							}
+						}
+						callback.onSuccess(tempReports);
+					}
+				});
 	}
 
 	private Report findingsByProject() {

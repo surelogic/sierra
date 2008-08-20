@@ -7,6 +7,7 @@ import com.google.gwt.user.client.rpc.RemoteService;
 import com.surelogic.sierra.gwt.client.data.Category;
 import com.surelogic.sierra.gwt.client.data.FindingType;
 import com.surelogic.sierra.gwt.client.data.Project;
+import com.surelogic.sierra.gwt.client.data.ReportSettings;
 import com.surelogic.sierra.gwt.client.data.Result;
 import com.surelogic.sierra.gwt.client.data.ScanFilter;
 import com.surelogic.sierra.gwt.client.data.ServerLocation;
@@ -157,4 +158,20 @@ public interface SettingsService extends RemoteService {
 	 * @return
 	 */
 	Status saveServerLocation(ServerLocation loc);
+
+	/**
+	 * Return a list of the report settings available to the user.
+	 * 
+	 * @return
+	 */
+	List<ReportSettings> listReportSettings();
+
+	/**
+	 * Save the given report settings.
+	 * 
+	 * @param settings
+	 * @return
+	 */
+	Status saveReportSettings(ReportSettings settings);
+
 }
