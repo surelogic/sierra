@@ -1,6 +1,7 @@
 package com.surelogic.sierra.client.eclipse;
 
 import java.io.File;
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.logging.Level;
@@ -31,5 +32,9 @@ public final class AdHocGlue implements IAdHocDataSource {
 	public void badQuerySaveFileNotification(Exception e) {
 		SLLogger.getLogger().log(Level.SEVERE,
 				I18N.err(4, getQuerySaveFile().getAbsolutePath()), e);
+	}
+
+	public URL getDefaultQueryUrl() {
+		return null;
 	}
 }
