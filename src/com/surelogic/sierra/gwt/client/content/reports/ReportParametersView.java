@@ -9,11 +9,14 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.surelogic.sierra.gwt.client.Context;
 import com.surelogic.sierra.gwt.client.data.Report;
 import com.surelogic.sierra.gwt.client.data.ReportSettings;
 import com.surelogic.sierra.gwt.client.data.Report.OutputType;
@@ -28,24 +31,32 @@ public class ReportParametersView extends BlockPanel {
 	private final Label description = new Label("", true);
 	private final FlexTable parametersTable = new FlexTable();
 	private final ActionPanel reportActions = new ActionPanel();
+	private final VerticalPanel settingsPanel = new VerticalPanel();
 	private final Map<Report.Parameter, Widget> paramUIMap = new HashMap<Report.Parameter, Widget>();
 	private final Map<OutputType, Label> actionOutputMap = new HashMap<OutputType, Label>();
 	private Report selection;
 
 	@Override
-	protected void onInitialize(VerticalPanel contentPanel) {
+	protected void onInitialize(final VerticalPanel contentPanel) {
+		final VerticalPanel paramPanel = new VerticalPanel();
+		paramPanel.setWidth("100%");
 		description.addStyleName("padded");
-		contentPanel.add(description);
+		paramPanel.add(description);
 
 		parametersTable.setWidth("50%");
-		contentPanel.add(parametersTable);
+		paramPanel.add(parametersTable);
 
-		contentPanel.add(reportActions);
-		contentPanel.setCellHorizontalAlignment(reportActions,
+		paramPanel.add(reportActions);
+		paramPanel.setCellHorizontalAlignment(reportActions,
 				HasHorizontalAlignment.ALIGN_CENTER);
+		final HorizontalPanel h = new HorizontalPanel();
+		h.add(paramPanel);
+		h.add(settingsPanel);
+		h.setWidth("100%");
+		contentPanel.add(h);
 	}
 
-	public void setSelection(Report report) {
+	public void setSelection(final Report report) {
 		selection = report;
 
 		if (report != null) {
@@ -86,6 +97,13 @@ public class ReportParametersView extends BlockPanel {
 			actionEntry.getValue().setVisible(
 					report.hasOutputType(actionEntry.getKey()));
 		}
+
+		settingsPanel.clear();
+		for (final ReportSettings rs : report.getSavedReports()) {
+			final Context reportContext = Context.createWithUuid(report);
+			settingsPanel.add(new Hyperlink(rs.getTitle(), reportContext
+					.withParam("reportSettingsUuid", rs.getUuid()).toString()));
+		}
 	}
 
 	public Report getSelection() {
@@ -100,7 +118,8 @@ public class ReportParametersView extends BlockPanel {
 			final String paramName = paramEntry.getKey().getName();
 			final Widget paramUI = paramEntry.getValue();
 			if (paramUI instanceof TextBox) {
-				settings.setSettingValue(paramName, ((TextBox) paramUI).getText());
+				settings.setSettingValue(paramName, ((TextBox) paramUI)
+						.getText());
 			} else if (paramUI instanceof ListBox) {
 				final List<String> values = new ArrayList<String>();
 				final ListBox lb = (ListBox) paramUI;
@@ -115,22 +134,22 @@ public class ReportParametersView extends BlockPanel {
 		return settings;
 	}
 
-	public void addReportAction(String text, OutputType outputType,
-			ClickListener clickListener) {
+	public void addReportAction(final String text, final OutputType outputType,
+			final ClickListener clickListener) {
 		final Label action = reportActions.addAction(text, clickListener);
 		if (outputType != null) {
 			actionOutputMap.put(outputType, action);
 		}
 	}
 
-	private Widget getParameterUI(Parameter param) {
+	private Widget getParameterUI(final Parameter param) {
 		if (param.getType() == Parameter.Type.PROJECTS) {
 			final ListBox lb = createListBox(4, "100%");
 			ServiceHelper.getSettingsService().searchProjects("*", -1,
 					new StandardCallback<List<String>>() {
 
 						@Override
-						protected void doSuccess(List<String> result) {
+						protected void doSuccess(final List<String> result) {
 							if (result.isEmpty()) {
 								lb.setEnabled(false);
 								lb.addItem("No Projects");
@@ -153,8 +172,8 @@ public class ReportParametersView extends BlockPanel {
 		return tb;
 	}
 
-	private ListBox createListBox(int visibleItemCount, String width,
-			String... items) {
+	private ListBox createListBox(final int visibleItemCount,
+			final String width, final String... items) {
 		final ListBox lb = new ListBox(true);
 		lb.setWidth(width);
 		lb.setVisibleItemCount(visibleItemCount);

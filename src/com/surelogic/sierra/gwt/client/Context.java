@@ -82,6 +82,21 @@ public final class Context {
 		return parameters.get(name);
 	}
 
+	/**
+	 * Return a new context identical to the existing one, but with the added
+	 * parameter.
+	 * 
+	 * @param param
+	 * @param value
+	 * @return
+	 */
+	public Context withParam(final String param, final String value) {
+		final Map<String, String> params = new HashMap<String, String>();
+		params.putAll(parameters);
+		params.put(param, value);
+		return Context.create(content, params);
+	}
+
 	@Override
 	public String toString() {
 		final StringBuffer buf = new StringBuffer();
@@ -150,8 +165,8 @@ public final class Context {
 
 			if ((argString != null) && (argString.length() != 0)) {
 				final String[] argArray = argString.split("/");
-				for (int i = 0; i < argArray.length; i++) {
-					final String[] argPair = argArray[i].split("\\=");
+				for (final String element : argArray) {
+					final String[] argPair = element.split("\\=");
 					if (argPair.length < 2) {
 						parameters.put(argPair[0], null);
 					} else {

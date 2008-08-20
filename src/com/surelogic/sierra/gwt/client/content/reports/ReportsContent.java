@@ -89,6 +89,7 @@ public abstract class ReportsContent extends
 				if ((dialogStatus != null) && dialogStatus.isSuccess()) {
 					final String reportName = dialog.getName();
 					if (reportName.length() > 0) {
+						settings.setTitle(reportName);
 						ServiceHelper.getSettingsService().saveReportSettings(
 								settings, new StatusCallback() {
 									@Override
