@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -25,6 +26,7 @@ import com.surelogic.sierra.gwt.client.data.FindingType;
 import com.surelogic.sierra.gwt.client.data.FindingTypeFilter;
 import com.surelogic.sierra.gwt.client.data.ImportanceView;
 import com.surelogic.sierra.gwt.client.data.Project;
+import com.surelogic.sierra.gwt.client.data.ReportSettings;
 import com.surelogic.sierra.gwt.client.data.Result;
 import com.surelogic.sierra.gwt.client.data.ScanFilter;
 import com.surelogic.sierra.gwt.client.data.ScanFilterEntry;
@@ -36,6 +38,7 @@ import com.surelogic.sierra.gwt.client.service.SettingsService;
 import com.surelogic.sierra.jdbc.RevisionException;
 import com.surelogic.sierra.jdbc.project.ProjectDO;
 import com.surelogic.sierra.jdbc.project.Projects;
+import com.surelogic.sierra.jdbc.reports.ReportSettingQueries;
 import com.surelogic.sierra.jdbc.server.ConnectionFactory;
 import com.surelogic.sierra.jdbc.server.Server;
 import com.surelogic.sierra.jdbc.server.ServerQuery;
@@ -707,6 +710,20 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 			}
 		});
 
+	}
+
+	public List<ReportSettings> listReportSettings() {
+		return ConnectionFactory.withUserReadOnly(ReportSettingQueries
+				.listUserQueries());
+	}
+
+	public Status saveReportSettings(final ReportSettings settings) {
+		if (settings.getUuid() == null) {
+			settings.setUuid(UUID.randomUUID().toString());
+		}
+		ConnectionFactory.withUserTransaction(ReportSettingQueries
+				.save(settings));
+		return Status.success("Settings saved.");
 	}
 
 }
