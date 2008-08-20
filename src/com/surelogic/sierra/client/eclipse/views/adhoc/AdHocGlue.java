@@ -1,4 +1,4 @@
-package com.surelogic.sierra.client.eclipse;
+package com.surelogic.sierra.client.eclipse.views.adhoc;
 
 import java.io.File;
 import java.net.URL;
@@ -11,6 +11,8 @@ import org.eclipse.core.runtime.IPath;
 import com.surelogic.common.adhoc.IAdHocDataSource;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.logging.SLLogger;
+import com.surelogic.sierra.client.eclipse.Activator;
+import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
 
 public final class AdHocGlue implements IAdHocDataSource {
