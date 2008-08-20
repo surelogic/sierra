@@ -15,7 +15,7 @@ import com.surelogic.sierra.client.eclipse.Activator;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
 
-public final class AdHocGlue implements IAdHocDataSource {
+public final class AdHocDataSource implements IAdHocDataSource {
 
 	public Connection getConnection() throws SQLException {
 		return Data.getInstance().getConnection();
