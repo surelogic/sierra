@@ -726,4 +726,9 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 		return Status.success("Settings saved.");
 	}
 
+	public Status deleteReportSettings(final String uuid) {
+		ConnectionFactory
+				.withUserTransaction(ReportSettingQueries.delete(uuid));
+		return Status.success("Settings deleted");
+	}
 }
