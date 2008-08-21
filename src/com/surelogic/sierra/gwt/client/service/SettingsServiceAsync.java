@@ -60,4 +60,6 @@ public interface SettingsServiceAsync {
 
 	void saveReportSettings(ReportSettings settings,
 			AsyncCallback<Status> callback);
+
+	void deleteReportSettings(String settings, AsyncCallback<Status> callback);
 }

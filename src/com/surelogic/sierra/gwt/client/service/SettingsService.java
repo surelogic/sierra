@@ -174,4 +174,12 @@ public interface SettingsService extends RemoteService {
 	 */
 	Status saveReportSettings(ReportSettings settings);
 
+	/**
+	 * Delete the given report settings.
+	 * 
+	 * @param settings
+	 * @return
+	 */
+	Status deleteReportSettings(String settings);
+
 }
