@@ -20,7 +20,7 @@ import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.service.callback.StandardCallback;
 import com.surelogic.sierra.gwt.client.table.ReportTableSection;
 import com.surelogic.sierra.gwt.client.ui.HtmlHelper;
-import com.surelogic.sierra.gwt.client.ui.ImportanceChoice;
+import com.surelogic.sierra.gwt.client.ui.MultipleImportanceChoice;
 import com.surelogic.sierra.gwt.client.ui.SectionPanel;
 
 public class ScanContent extends ContentComposite {
@@ -49,7 +49,7 @@ public class ScanContent extends ContentComposite {
 		private VerticalPanel chartPanel;
 		private VerticalPanel detailPanel;
 
-		private ImportanceChoice imp;
+		private MultipleImportanceChoice imp;
 		private PackageChoice pak;
 		private CategoryChoice cat;
 		private String uuid;
@@ -103,7 +103,7 @@ public class ScanContent extends ContentComposite {
 							detailPanel.add(HtmlHelper.p(result.getDensity()));
 							pak = new PackageChoice(result.getCompilations()
 									.keySet(), true);
-							imp = new ImportanceChoice(true);
+							imp = new MultipleImportanceChoice();
 							cat = new CategoryChoice();
 							optionsPanel.add(pak);
 							optionsPanel.add(imp);

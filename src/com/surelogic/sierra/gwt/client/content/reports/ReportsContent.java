@@ -7,6 +7,7 @@ import com.google.gwt.user.client.ui.PopupListener;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.surelogic.sierra.gwt.client.ContextManager;
 import com.surelogic.sierra.gwt.client.content.ListContentComposite;
 import com.surelogic.sierra.gwt.client.data.Report;
 import com.surelogic.sierra.gwt.client.data.ReportSettings;
@@ -106,7 +107,17 @@ public abstract class ReportsContent extends
 
 	@Override
 	protected void onSelectionChanged(final Report item) {
-		reportParamsView.setSelection(item);
+		final String settingsUuid = ContextManager.getContext().getParameter(
+				"reportSettingsUuid");
+		if (settingsUuid != null) {
+			for (final ReportSettings settings : item.getSavedReports()) {
+				if (settings.getUuid().equals(settingsUuid)) {
+					reportParamsView.setSelection(item, settings);
+					return;
+				}
+			}
+		}
+		reportParamsView.setSelection(item, null);
 	}
 
 	@Override

@@ -18,7 +18,7 @@ import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.service.callback.ResultCallback;
 import com.surelogic.sierra.gwt.client.service.callback.StandardCallback;
 import com.surelogic.sierra.gwt.client.ui.HtmlHelper;
-import com.surelogic.sierra.gwt.client.ui.ImportanceChoice;
+import com.surelogic.sierra.gwt.client.ui.SingleImportanceChoice;
 
 public final class FindingContent extends ContentComposite {
 	public static final String PARAM_FINDING = "finding";
@@ -144,7 +144,7 @@ public final class FindingContent extends ContentComposite {
 		synopsis.setHTML(s);
 		location.setHTML(f.getPackageName() + "." + f.getClassName());
 		description.setHTML(f.getSummary());
-		final ImportanceChoice importanceChoice = new ImportanceChoice();
+		final SingleImportanceChoice importanceChoice = new SingleImportanceChoice();
 		final ResultCallback<FindingOverview> callback = new ResultCallback<FindingOverview>() {
 
 			@Override

@@ -1,6 +1,7 @@
 package com.surelogic.sierra.gwt.client.content.reports;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +18,7 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.Context;
+import com.surelogic.sierra.gwt.client.data.ImportanceView;
 import com.surelogic.sierra.gwt.client.data.Report;
 import com.surelogic.sierra.gwt.client.data.ReportSettings;
 import com.surelogic.sierra.gwt.client.data.Report.OutputType;
@@ -25,6 +27,7 @@ import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.service.callback.StandardCallback;
 import com.surelogic.sierra.gwt.client.ui.ActionPanel;
 import com.surelogic.sierra.gwt.client.ui.BlockPanel;
+import com.surelogic.sierra.gwt.client.ui.MultipleImportanceChoice;
 import com.surelogic.sierra.gwt.client.util.LangUtil;
 
 public class ReportParametersView extends BlockPanel {
@@ -56,9 +59,8 @@ public class ReportParametersView extends BlockPanel {
 		contentPanel.add(h);
 	}
 
-	public void setSelection(final Report report) {
+	public void setSelection(final Report report, final ReportSettings settings) {
 		selection = report;
-
 		if (report != null) {
 			setSummary(report.getTitle());
 		} else {
@@ -84,7 +86,9 @@ public class ReportParametersView extends BlockPanel {
 			parametersTable.setText(rowIndex, 0, param.getName() + ":");
 			parametersTable.getCellFormatter().setVerticalAlignment(rowIndex,
 					0, HasVerticalAlignment.ALIGN_TOP);
-			final Widget paramUI = getParameterUI(param);
+			final Widget paramUI = getParameterUI(param,
+					settings == null ? null : settings.getSettingValue(param
+							.getName()));
 			parametersTable.setWidget(rowIndex, 1, paramUI);
 			paramUIMap.put(param, paramUI);
 			rowIndex++;
@@ -142,7 +146,13 @@ public class ReportParametersView extends BlockPanel {
 		}
 	}
 
-	private Widget getParameterUI(final Parameter param) {
+	private Widget getParameterUI(final Parameter param, List<String> values) {
+		if (values == null) {
+			values = Collections.emptyList();
+		}
+		// List declaration for the callback
+		final List<String> lbValues = values;
+
 		if (param.getType() == Parameter.Type.PROJECTS) {
 			final ListBox lb = createListBox(4, "100%");
 			ServiceHelper.getSettingsService().searchProjects("*", -1,
@@ -157,18 +167,32 @@ public class ReportParametersView extends BlockPanel {
 								lb.setEnabled(true);
 								for (final String project : result) {
 									lb.addItem(project);
+									if (lbValues.contains(project)) {
+										lb.setItemSelected(
+												lb.getItemCount() - 1, true);
+									}
 								}
 							}
 						}
 					});
 			return lb;
 		} else if (param.getType() == Parameter.Type.IMPORTANCE) {
-			return createListBox(5, "50%", "Critical", "High", "Medium", "Low",
-					"Irrelevant");
+			final MultipleImportanceChoice choice = new MultipleImportanceChoice();
+			final List<ImportanceView> imps = new ArrayList<ImportanceView>(
+					values.size());
+			for (final String imp : values) {
+				imps.add(ImportanceView.fromString(imp));
+			}
+			choice.setSelectedImportances(imps);
+			choice.setWidth("50%");
+			return choice;
 		}
 
 		final TextBox tb = new TextBox();
 		tb.setWidth("100%");
+		if (!values.isEmpty()) {
+			tb.setText(values.get(0));
+		}
 		return tb;
 	}
 

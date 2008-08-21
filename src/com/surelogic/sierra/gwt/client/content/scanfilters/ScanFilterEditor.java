@@ -23,8 +23,8 @@ import com.surelogic.sierra.gwt.client.data.ScanFilter;
 import com.surelogic.sierra.gwt.client.data.ScanFilterEntry;
 import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.ui.BlockPanel;
-import com.surelogic.sierra.gwt.client.ui.ImportanceChoice;
 import com.surelogic.sierra.gwt.client.ui.LabelHelper;
+import com.surelogic.sierra.gwt.client.ui.SingleImportanceChoice;
 import com.surelogic.sierra.gwt.client.ui.StatusBox;
 
 public class ScanFilterEditor extends BlockPanel {
@@ -37,11 +37,11 @@ public class ScanFilterEditor extends BlockPanel {
 	private StatusBox status;
 
 	@Override
-	protected void onInitialize(VerticalPanel panel) {
+	protected void onInitialize(final VerticalPanel panel) {
 		categoryFilters.initialize();
 		categoryFilters.addAction("Add Category", new ClickListener() {
 
-			public void onClick(Widget sender) {
+			public void onClick(final Widget sender) {
 				promptForCategories();
 			}
 		});
@@ -50,7 +50,7 @@ public class ScanFilterEditor extends BlockPanel {
 		findingFilters.initialize();
 		findingFilters.addAction("Add Finding", new ClickListener() {
 
-			public void onClick(Widget sender) {
+			public void onClick(final Widget sender) {
 				promptForFindings();
 			}
 		});
@@ -64,7 +64,7 @@ public class ScanFilterEditor extends BlockPanel {
 		return selection;
 	}
 
-	public void setSelection(ScanFilter filter) {
+	public void setSelection(final ScanFilter filter) {
 		selection = filter == null ? null : filter.copy();
 		if (selection != null) {
 			setSummary(selection.getName());
@@ -81,7 +81,7 @@ public class ScanFilterEditor extends BlockPanel {
 		return selection;
 	}
 
-	public void setStatus(Status s) {
+	public void setStatus(final Status s) {
 		this.status.setStatus(s);
 	}
 
@@ -89,7 +89,8 @@ public class ScanFilterEditor extends BlockPanel {
 		final CategorySelectionDialog dialog = new CategorySelectionDialog();
 		dialog.addPopupListener(new PopupListener() {
 
-			public void onPopupClosed(PopupPanel sender, boolean autoClosed) {
+			public void onPopupClosed(final PopupPanel sender,
+					final boolean autoClosed) {
 				final Status s = dialog.getStatus();
 				if (s != null && s.isSuccess()) {
 					for (final Category selectedCat : dialog
@@ -115,7 +116,8 @@ public class ScanFilterEditor extends BlockPanel {
 		final AddFindingsDialog dialog = new AddFindingsDialog();
 		dialog.addPopupListener(new PopupListener() {
 
-			public void onPopupClosed(PopupPanel sender, boolean autoClosed) {
+			public void onPopupClosed(final PopupPanel sender,
+					final boolean autoClosed) {
 				final Status s = dialog.getStatus();
 				if (s != null && s.isSuccess()) {
 					for (final FindingTypeFilter selectedFinding : dialog
@@ -140,14 +142,14 @@ public class ScanFilterEditor extends BlockPanel {
 	private static class ScanFilterBlock extends BlockPanel {
 		private final FlexTable filterGrid = new FlexTable();
 
-		public ScanFilterBlock(String title) {
+		public ScanFilterBlock(final String title) {
 			super();
 			setSubsectionStyle(true);
 			setTitle(title);
 		}
 
 		@Override
-		protected void onInitialize(VerticalPanel contentPanel) {
+		protected void onInitialize(final VerticalPanel contentPanel) {
 			final CellFormatter cf = filterGrid.getCellFormatter();
 			filterGrid.setWidth("100%");
 			filterGrid.setText(0, 0, "Name");
@@ -170,7 +172,7 @@ public class ScanFilterEditor extends BlockPanel {
 			contentPanel.add(filterGrid);
 		}
 
-		public void setFilters(Set<ScanFilterEntry> filters) {
+		public void setFilters(final Set<ScanFilterEntry> filters) {
 			while (filterGrid.getRowCount() > 1) {
 				filterGrid.removeRow(1);
 			}
@@ -194,11 +196,11 @@ public class ScanFilterEditor extends BlockPanel {
 				final ScanFilterEntry filter) {
 			final HTML h = new HTML(filter.getName());
 			h.setTitle(filter.getShortMessage());
-			final ImportanceChoice box = new ImportanceChoice();
+			final SingleImportanceChoice box = new SingleImportanceChoice();
 			box.setSelectedImportance(filter.getImportance());
 			box.addChangeListener(new ChangeListener() {
-				public void onChange(Widget sender) {
-					filter.setImportance(((ImportanceChoice) sender)
+				public void onChange(final Widget sender) {
+					filter.setImportance(((SingleImportanceChoice) sender)
 							.getSelectedImportance());
 				}
 			});
@@ -206,7 +208,7 @@ public class ScanFilterEditor extends BlockPanel {
 			final Label removeLabel = LabelHelper
 					.clickable(new Label("Remove"));
 			removeLabel.addClickListener(new ClickListener() {
-				public void onClick(Widget sender) {
+				public void onClick(final Widget sender) {
 					filters.remove(filter);
 					final int rowIndex = findRemoveRow(removeLabel);
 					filterGrid.removeRow(rowIndex);
@@ -222,7 +224,7 @@ public class ScanFilterEditor extends BlockPanel {
 			filterGrid.setWidget(rowIndex, 2, removeLabel);
 		}
 
-		private int findRemoveRow(Label removeLabel) {
+		private int findRemoveRow(final Label removeLabel) {
 			for (int i = 1; i < filterGrid.getRowCount(); i++) {
 				if (filterGrid.getWidget(i, 2) == removeLabel) {
 					return i;
