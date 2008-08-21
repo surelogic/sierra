@@ -102,4 +102,15 @@ public class ReportSettingQueries {
 
 	}
 
+	public static UserQuery<Void> delete(final String uuid) {
+		return new NullUserQuery() {
+			@Override
+			public void doPerform(final Query query, final Server server,
+					final User user) {
+				query.prepared("ReportSettings.deleteSettingParams").call(
+						user.getId(), uuid);
+			}
+		};
+	}
+
 }
