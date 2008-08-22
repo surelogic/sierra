@@ -36,7 +36,7 @@ public class ScanFilterView extends BlockPanel {
 	private boolean refreshedCategories;
 
 	@Override
-	protected void onInitialize(VerticalPanel contentPanel) {
+	protected void onInitialize(final VerticalPanel contentPanel) {
 		importanceBlocks.setWidth("100%");
 		contentPanel.add(importanceBlocks);
 	}
@@ -45,7 +45,7 @@ public class ScanFilterView extends BlockPanel {
 		return selection;
 	}
 
-	public void setSelection(ScanFilter filter) {
+	public void setSelection(final ScanFilter filter) {
 		if (showCategories && !refreshedCategories) {
 			refreshedCategories = true;
 			refreshCategories(filter);
@@ -121,22 +121,26 @@ public class ScanFilterView extends BlockPanel {
 		setSelection(selection);
 	}
 
+	public boolean isShowingCategories() {
+		return showCategories;
+	}
+
 	private void refreshCategories(final ScanFilter filter) {
 		CategoryCache.getInstance().addListener(
 				new CacheListenerAdapter<Category>() {
 
 					@Override
-					public void onRefresh(Cache<Category> cache,
-							Throwable failure) {
+					public void onRefresh(final Cache<Category> cache,
+							final Throwable failure) {
 						setSelection(filter);
 					}
 				});
 		CategoryCache.getInstance().refresh(false);
 	}
 
-	private void addBlocks(ImportanceView importance,
-			Map<ImportanceView, FilterBlock> categoryBlocks,
-			Map<ImportanceView, FilterBlock> findingBlocks) {
+	private void addBlocks(final ImportanceView importance,
+			final Map<ImportanceView, FilterBlock> categoryBlocks,
+			final Map<ImportanceView, FilterBlock> findingBlocks) {
 		final FilterBlock categoryBlock = categoryBlocks.get(importance);
 		final FilterBlock findingBlock = findingBlocks.get(importance);
 		if (categoryBlock != null || findingBlock != null) {
@@ -154,8 +158,8 @@ public class ScanFilterView extends BlockPanel {
 	}
 
 	private FilterBlock getFilterBlock(
-			Map<ImportanceView, FilterBlock> blocksByImportance,
-			ImportanceView importance, boolean isCategory) {
+			final Map<ImportanceView, FilterBlock> blocksByImportance,
+			final ImportanceView importance, final boolean isCategory) {
 		FilterBlock block = blocksByImportance.get(importance);
 		if (block == null) {
 			block = new FilterBlock(isCategory);
@@ -171,14 +175,14 @@ public class ScanFilterView extends BlockPanel {
 		private final VerticalPanel findingsLeft = new VerticalPanel();
 		private final VerticalPanel findingsRight = new VerticalPanel();
 
-		public FilterBlock(boolean categories) {
+		public FilterBlock(final boolean categories) {
 			super();
 			setTitle(categories ? "Categories" : "Findings");
 			setSubsectionStyle(true);
 		}
 
 		@Override
-		protected void onInitialize(VerticalPanel contentPanel) {
+		protected void onInitialize(final VerticalPanel contentPanel) {
 			final Grid cfDivider = new Grid(2, 2);
 			cfDivider.setWidth("100%");
 			cfDivider.getColumnFormatter().setWidth(0, "50%");
@@ -195,7 +199,7 @@ public class ScanFilterView extends BlockPanel {
 			contentPanel.add(cfDivider);
 		}
 
-		public void addFilterEntry(ScanFilterEntry entry) {
+		public void addFilterEntry(final ScanFilterEntry entry) {
 			ContentComposite content;
 			if (entry.isCategory()) {
 				content = CategoriesContent.getInstance();
@@ -213,8 +217,8 @@ public class ScanFilterView extends BlockPanel {
 
 		}
 
-		private void addEntry(VerticalPanel leftPanel,
-				VerticalPanel rightPanel, ContentLink entryLink) {
+		private void addEntry(final VerticalPanel leftPanel,
+				final VerticalPanel rightPanel, final ContentLink entryLink) {
 			if (leftPanel.getWidgetCount() <= rightPanel.getWidgetCount()) {
 				leftPanel.add(entryLink);
 			} else {

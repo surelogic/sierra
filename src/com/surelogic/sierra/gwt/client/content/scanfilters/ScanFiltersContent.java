@@ -2,6 +2,7 @@ package com.surelogic.sierra.gwt.client.content.scanfilters;
 
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DockPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -14,53 +15,74 @@ import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.service.callback.StandardCallback;
 import com.surelogic.sierra.gwt.client.service.callback.StatusCallback;
 import com.surelogic.sierra.gwt.client.ui.FormButton;
+import com.surelogic.sierra.gwt.client.ui.LabelHelper;
 import com.surelogic.sierra.gwt.client.util.LangUtil;
 
 public class ScanFiltersContent extends
 		ListContentComposite<ScanFilter, ScanFilterCache> {
 	private final ScanFilterView viewer = new ScanFilterView();
 	private final ScanFilterEditor editor = new ScanFilterEditor();
+	private Label editAction;
+	private Label deleteAction;
 
 	@Override
-	protected void onInitialize(DockPanel rootPanel,
-			VerticalPanel selectionPanel) {
+	protected void onInitialize(final DockPanel rootPanel,
+			final VerticalPanel selectionPanel) {
 		setCaption("Scan Filters");
 
 		addAction(new CreateScanFilterForm());
 
 		viewer.initialize();
-		viewer.addAction("Toggle Categories", new ClickListener() {
 
-			public void onClick(Widget sender) {
+		final Label expandCategoriesAction = LabelHelper.clickable(new Label(
+				"Expand Categories", false));
+		expandCategoriesAction.addClickListener(new ClickListener() {
+
+			public void onClick(final Widget sender) {
 				viewer.toggleCategories();
+				if (viewer.isShowingCategories()) {
+					expandCategoriesAction.setText("Expand Categories");
+				} else {
+					expandCategoriesAction.setText("View Categories");
+				}
 			}
 		});
-		viewer.addAction("Edit", new ClickListener() {
+		viewer.addAction(expandCategoriesAction);
 
-			public void onClick(Widget sender) {
-				setScanFilter(viewer.getSelection(), true);
-			}
-		});
-		viewer.addAction("Delete", new ClickListener() {
+		editAction = LabelHelper.clickable(new Label("Edit", false),
+				new ClickListener() {
 
-			public void onClick(Widget sender) {
-				deleteScanFilter(viewer.getSelection());
-			}
-		});
+					public void onClick(final Widget sender) {
+						setScanFilter(viewer.getSelection(), true);
+					}
+				});
+		viewer.addAction(editAction);
+		viewer.setActionVisible(editAction, false);
+
+		deleteAction = LabelHelper.clickable(new Label("Delete", false),
+				new ClickListener() {
+
+					public void onClick(final Widget sender) {
+						deleteScanFilter(viewer.getSelection());
+					}
+				});
+		viewer.addAction(deleteAction);
+		viewer.setActionVisible(deleteAction, false);
+
 		selectionPanel.add(viewer);
 
 		editor.initialize();
 		final ScanFilterCache cache = getCache();
 		editor.addAction("Save", new ClickListener() {
 
-			public void onClick(Widget sender) {
+			public void onClick(final Widget sender) {
 				cache.save(editor.getUpdatedScanFilter());
 			}
 
 		});
 		editor.addAction("Cancel", new ClickListener() {
 
-			public void onClick(Widget sender) {
+			public void onClick(final Widget sender) {
 				setScanFilter(cache.getItem(editor.getSelection().getUuid()),
 						false);
 			}
@@ -69,21 +91,21 @@ public class ScanFiltersContent extends
 	}
 
 	@Override
-	protected String getItemText(ScanFilter item) {
+	protected String getItemText(final ScanFilter item) {
 		return item.getName();
 	}
 
 	@Override
-	protected boolean isItemVisible(ScanFilter item, String query) {
+	protected boolean isItemVisible(final ScanFilter item, final String query) {
 		return LangUtil.containsIgnoreCase(item.getName(), query);
 	}
 
 	@Override
-	protected void onSelectionChanged(ScanFilter item) {
+	protected void onSelectionChanged(final ScanFilter item) {
 		setScanFilter(item, false);
 	}
 
-	private void setScanFilter(ScanFilter filter, boolean edit) {
+	private void setScanFilter(final ScanFilter filter, final boolean edit) {
 		final VerticalPanel selectionPanel = getSelectionPanel();
 		if (edit && filter != null) {
 			editor.setSelection(filter);
@@ -94,7 +116,9 @@ public class ScanFiltersContent extends
 			}
 		} else {
 			viewer.setSelection(filter);
-			viewer.setActionsVisible(filter != null && filter.isLocal());
+			final boolean localFilter = filter != null && filter.isLocal();
+			viewer.setActionVisible(editAction, localFilter);
+			viewer.setActionVisible(deleteAction, localFilter);
 			if (selectionPanel.getWidgetIndex(viewer) == -1) {
 				selectionPanel.clear();
 				selectionPanel.add(viewer);
@@ -102,13 +126,13 @@ public class ScanFiltersContent extends
 		}
 	}
 
-	private void deleteScanFilter(ScanFilter filter) {
+	private void deleteScanFilter(final ScanFilter filter) {
 		if (filter != null) {
 			ServiceHelper.getSettingsService().deleteScanFilter(
 					filter.getUuid(), new StatusCallback() {
 
 						@Override
-						protected void doStatus(Status result) {
+						protected void doStatus(final Status result) {
 							getCache().refresh();
 						}
 					});
@@ -139,7 +163,7 @@ public class ScanFiltersContent extends
 						new StandardCallback<ScanFilter>() {
 
 							@Override
-							protected void doSuccess(ScanFilter result) {
+							protected void doSuccess(final ScanFilter result) {
 								clearWaitStatus();
 								setOpen(false);
 

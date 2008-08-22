@@ -63,7 +63,7 @@ public class BasicPanel extends Composite {
 	}
 
 	@Override
-	public final void setTitle(String text) {
+	public final void setTitle(final String text) {
 		sectionTitle.setText(text);
 		updateHeader();
 	}
@@ -72,12 +72,12 @@ public class BasicPanel extends Composite {
 		return sectionSummary.getText();
 	}
 
-	public final void setSummary(String text) {
+	public final void setSummary(final String text) {
 		sectionSummary.setText(text);
 		updateHeader();
 	}
 
-	public final void setSubsectionStyle(boolean enable) {
+	public final void setSubsectionStyle(final boolean enable) {
 		if (enable) {
 			getTitlePanel().addStyleName(SUBSECTION_STYLE + "-titlepanel");
 			getContentPanel().addStyleName(SUBSECTION_STYLE + "-contentpanel");
@@ -88,21 +88,30 @@ public class BasicPanel extends Composite {
 		}
 	}
 
-	public final void setActionsVisible(boolean visible) {
+	public final void setActionVisible(final Widget action,
+			final boolean visible) {
+		if (actionPanel.getWidgetIndex(action) == -1) {
+			return;
+		}
+		action.setVisible(visible);
+	}
+
+	public final void setActionsVisible(final boolean visible) {
 		actionPanel.setVisible(visible);
 	}
 
-	public final void addAction(Widget w) {
+	public final void addAction(final Widget w) {
 		actionPanel.add(w);
 		w.addStyleName("sl-Section-actionpanel-item");
 		updateHeader();
 	}
 
-	public final void addAction(String text, ClickListener clickListener) {
+	public final void addAction(final String text,
+			final ClickListener clickListener) {
 		addAction(LabelHelper.clickable(new Label(text, false), clickListener));
 	}
 
-	public final void removeAction(Widget w) {
+	public final void removeAction(final Widget w) {
 		actionPanel.remove(w);
 		updateHeader();
 	}
@@ -119,19 +128,20 @@ public class BasicPanel extends Composite {
 				HasHorizontalAlignment.ALIGN_CENTER);
 	}
 
-	public void setErrorStatus(String text) {
+	public void setErrorStatus(final String text) {
 		final Label textLbl = new Label(text);
 		textLbl.addStyleName("error");
 		setStatus(textLbl, HasHorizontalAlignment.ALIGN_LEFT);
 	}
 
-	public void setSuccessStatus(String text) {
+	public void setSuccessStatus(final String text) {
 		final Label textLbl = new Label(text);
 		textLbl.addStyleName("success");
 		setStatus(textLbl, HasHorizontalAlignment.ALIGN_LEFT);
 	}
 
-	public void setStatus(Widget w, HorizontalAlignmentConstant align) {
+	public void setStatus(final Widget w,
+			final HorizontalAlignmentConstant align) {
 		clearStatus();
 		status = w;
 		contentPanel.add(status);
