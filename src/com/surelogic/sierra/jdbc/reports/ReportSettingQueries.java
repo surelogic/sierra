@@ -29,8 +29,8 @@ public class ReportSettingQueries {
 			@Override
 			public void doPerform(final Query query, final Server server,
 					final User user) {
-				query.prepared("ReportSettings.delete")
-						.call(settings.getUuid());
+				query.prepared("ReportSettings.delete").call(user.getId(),
+						settings.getUuid());
 				query.prepared("ReportSettings.insert").call(user.getId(),
 						settings.getUuid(), settings.getReportUuid(),
 						settings.getTitle(), settings.getDescription());
@@ -107,8 +107,8 @@ public class ReportSettingQueries {
 			@Override
 			public void doPerform(final Query query, final Server server,
 					final User user) {
-				query.prepared("ReportSettings.deleteSettingParams").call(
-						user.getId(), uuid);
+				query.prepared("ReportSettings.delete")
+						.call(user.getId(), uuid);
 			}
 		};
 	}
