@@ -38,6 +38,7 @@ public class ReportParametersView extends BlockPanel {
 	private final Map<Report.Parameter, Widget> paramUIMap = new HashMap<Report.Parameter, Widget>();
 	private final Map<OutputType, Label> actionOutputMap = new HashMap<OutputType, Label>();
 	private Report selection;
+	private ReportSettings selectionSettings;
 
 	@Override
 	protected void onInitialize(final VerticalPanel contentPanel) {
@@ -61,6 +62,7 @@ public class ReportParametersView extends BlockPanel {
 
 	public void setSelection(final Report report, final ReportSettings settings) {
 		selection = report;
+		selectionSettings = settings;
 		if (report != null) {
 			setSummary(report.getTitle());
 		} else {
@@ -116,7 +118,9 @@ public class ReportParametersView extends BlockPanel {
 
 	public ReportSettings getReportSettings() {
 		final ReportSettings settings = new ReportSettings(selection);
-
+		if (selectionSettings != null) {
+			settings.setUuid(selectionSettings.getUuid());
+		}
 		for (final Map.Entry<Report.Parameter, Widget> paramEntry : paramUIMap
 				.entrySet()) {
 			final String paramName = paramEntry.getKey().getName();
