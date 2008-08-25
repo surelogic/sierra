@@ -22,6 +22,7 @@ import com.surelogic.common.jdbc.SingleRowHandler;
 import com.surelogic.common.jdbc.StringResultHandler;
 import com.surelogic.sierra.gwt.SierraServiceServlet;
 import com.surelogic.sierra.gwt.client.data.Category;
+import com.surelogic.sierra.gwt.client.data.DashboardSettings;
 import com.surelogic.sierra.gwt.client.data.FindingType;
 import com.surelogic.sierra.gwt.client.data.FindingTypeFilter;
 import com.surelogic.sierra.gwt.client.data.ImportanceView;
@@ -733,5 +734,9 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 		ConnectionFactory
 				.withUserTransaction(ReportSettingQueries.delete(uuid));
 		return Status.success("Settings deleted");
+	}
+
+	public DashboardSettings getDashboardSettings() {
+		return new DashboardSettings();
 	}
 }
