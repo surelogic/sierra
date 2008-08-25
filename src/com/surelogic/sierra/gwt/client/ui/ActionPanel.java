@@ -6,6 +6,7 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 
 public class ActionPanel extends Composite {
 	private static final String STYLE = "sl-ActionPanel";
@@ -21,7 +22,7 @@ public class ActionPanel extends Composite {
 		rootPanel.add(actionPanel);
 	}
 
-	public Label addAction(String text, ClickListener actionListener) {
+	public Label addAction(final String text, final ClickListener actionListener) {
 		final Label action = new Label(text);
 		action.addStyleName(STYLE + "-item");
 		action.addClickListener(actionListener);
@@ -29,8 +30,19 @@ public class ActionPanel extends Composite {
 		return action;
 	}
 
-	public void removeAction(Label action) {
+	public void removeAction(final Label action) {
 		actionPanel.remove(action);
+	}
+
+	public void setActionVisible(final String actionText, final boolean visible) {
+		for (int i = 0; i < actionPanel.getWidgetCount(); i++) {
+			final Widget w = actionPanel.getWidget(i);
+			if (w instanceof Label) {
+				if (((Label) w).getText().equalsIgnoreCase(actionText)) {
+					w.setVisible(visible);
+				}
+			}
+		}
 	}
 
 	public void setWaitStatus() {
@@ -46,4 +58,5 @@ public class ActionPanel extends Composite {
 			rootPanel.add(actionPanel);
 		}
 	}
+
 }
