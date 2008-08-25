@@ -128,6 +128,13 @@ public class ReportParametersView extends BlockPanel {
 			if (paramUI instanceof TextBox) {
 				settings.setSettingValue(paramName, ((TextBox) paramUI)
 						.getText());
+			} else if (paramUI instanceof MultipleImportanceChoice) {
+				final List<String> values = new ArrayList<String>();
+				for (final ImportanceView imp : ((MultipleImportanceChoice) paramUI)
+						.getSelectedImportances()) {
+					values.add(imp.getName());
+				}
+				settings.setSettingValue(paramName, values);
 			} else if (paramUI instanceof ListBox) {
 				final List<String> values = new ArrayList<String>();
 				final ListBox lb = (ListBox) paramUI;
