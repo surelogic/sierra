@@ -224,8 +224,11 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 								final SierraServerLocation owner = locations
 										.get(owningServer[1]);
 								if (owner != null) {
-									set.setOwnerURL(owner.createHomeURL()
-											.toString());
+									final StringBuilder urlBuf = new StringBuilder(
+											owner.createHomeURL().toString());
+									urlBuf.append("#categories/uuid=");
+									urlBuf.append(detail.getUid());
+									set.setOwnerURL(urlBuf.toString());
 								}
 							}
 							String info = StringUtils.remove(detail.getInfo(),
