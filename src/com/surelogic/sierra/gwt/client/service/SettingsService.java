@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.surelogic.sierra.gwt.client.data.Category;
+import com.surelogic.sierra.gwt.client.data.DashboardSettings;
 import com.surelogic.sierra.gwt.client.data.FindingType;
 import com.surelogic.sierra.gwt.client.data.Project;
 import com.surelogic.sierra.gwt.client.data.ReportSettings;
@@ -165,6 +166,13 @@ public interface SettingsService extends RemoteService {
 	 * @return
 	 */
 	List<ReportSettings> listReportSettings();
+
+	/**
+	 * Return the user's dashboard preferences.
+	 * 
+	 * @return
+	 */
+	DashboardSettings getDashboardSettings();
 
 	/**
 	 * Save the given report settings.

@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.surelogic.sierra.gwt.client.data.Category;
+import com.surelogic.sierra.gwt.client.data.DashboardSettings;
 import com.surelogic.sierra.gwt.client.data.FindingType;
 import com.surelogic.sierra.gwt.client.data.Project;
 import com.surelogic.sierra.gwt.client.data.ReportSettings;
@@ -62,4 +63,6 @@ public interface SettingsServiceAsync {
 			AsyncCallback<Status> callback);
 
 	void deleteReportSettings(String settings, AsyncCallback<Status> callback);
+
+	void getDashboardSettings(AsyncCallback<DashboardSettings> callback);
 }
