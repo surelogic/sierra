@@ -9,6 +9,7 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.Context;
@@ -18,11 +19,16 @@ import com.surelogic.sierra.gwt.client.content.ContentComposite;
 import com.surelogic.sierra.gwt.client.data.ReportSettings;
 import com.surelogic.sierra.gwt.client.table.ReportTableSection;
 import com.surelogic.sierra.gwt.client.ui.ActionPanel;
+import com.surelogic.sierra.gwt.client.ui.Direction;
+import com.surelogic.sierra.gwt.client.ui.ImageHelper;
 import com.surelogic.sierra.gwt.client.ui.SectionPanel;
 import com.surelogic.sierra.gwt.client.ui.SplitPanel;
 
 public final class OverviewContent extends ContentComposite {
 	private static final OverviewContent instance = new OverviewContent();
+	private static final String ACTION_CUSTOMIZE = "Customize";
+	private static final String ACTION_SAVE = "Save";
+	private static final String ACTION_CANCEL = "Cancel";
 	private final VerticalPanel dashboard = new VerticalPanel();
 	private final List<SectionPanel> sections = new ArrayList<SectionPanel>();
 	private final ActionPanel actionPanel = new ActionPanel();
@@ -44,26 +50,25 @@ public final class OverviewContent extends ContentComposite {
 		titlePanel.setWidth("100%");
 		titlePanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		titlePanel.add(new HTML("<p>Welcome to Sierra Team Server!</p>"));
-		actionPanel.addAction("Edit", new ClickListener() {
+		actionPanel.addAction(ACTION_CUSTOMIZE, new ClickListener() {
 
 			public void onClick(final Widget sender) {
 				toggleDashboardEdit(true);
 			}
 		});
-		actionPanel.addAction("Save", new ClickListener() {
+		actionPanel.addAction(ACTION_SAVE, new ClickListener() {
 
 			public void onClick(final Widget sender) {
 				saveDashboard();
 			}
 		});
-		actionPanel.setActionVisible("Save", false);
-		actionPanel.addAction("Cancel", new ClickListener() {
+		actionPanel.addAction(ACTION_CANCEL, new ClickListener() {
 
 			public void onClick(final Widget sender) {
 				toggleDashboardEdit(false);
 			}
 		});
-		actionPanel.setActionVisible("Cancel", false);
+		toggleDashboardEdit(false);
 
 		titlePanel.add(actionPanel);
 		titlePanel.setCellHorizontalAlignment(actionPanel,
@@ -124,15 +129,69 @@ public final class OverviewContent extends ContentComposite {
 	}
 
 	private void toggleDashboardEdit(final boolean editMode) {
-		actionPanel.setActionVisible("Edit", !editMode);
-		actionPanel.setActionVisible("Save", editMode);
-		actionPanel.setActionVisible("Cancel", editMode);
+		actionPanel.setActionVisible(ACTION_CUSTOMIZE, !editMode);
+		actionPanel.setActionVisible(ACTION_SAVE, editMode);
+		actionPanel.setActionVisible(ACTION_CANCEL, editMode);
 
-		// TODO switch to edit mode
+		for (final SectionPanel dashPanel : sections) {
+			dashPanel.removeActions();
+			if (editMode) {
+				final HorizontalPanel movementActions = new HorizontalPanel();
+				movementActions.add(createArrowImage(dashPanel, Direction.UP));
+				movementActions
+						.add(createArrowImage(dashPanel, Direction.DOWN));
+				movementActions
+						.add(createArrowImage(dashPanel, Direction.LEFT));
+				movementActions
+						.add(createArrowImage(dashPanel, Direction.RIGHT));
+				dashPanel.addAction(movementActions);
+				dashPanel.addAction("Remove", new ClickListener() {
+
+					public void onClick(final Widget sender) {
+						removeSection(dashPanel);
+					}
+				});
+			} else {
+				dashPanel.addAction("View Report", new ClickListener() {
+
+					public void onClick(final Widget sender) {
+						viewReport(dashPanel);
+					}
+				});
+			}
+		}
+	}
+
+	private Image createArrowImage(final SectionPanel dashPanel,
+			final Direction direction) {
+		return ImageHelper.getArrowImage(direction, new ClickListener() {
+
+			public void onClick(final Widget sender) {
+				moveSection(dashPanel, direction);
+			}
+		});
+	}
+
+	private void moveSection(final SectionPanel dashPanel,
+			final Direction direction) {
+		// TODO Auto-generated method stub
+
+	}
+
+	private void removeSection(final SectionPanel dashPanel) {
+		// TODO Auto-generated method stub
+
 	}
 
 	private void saveDashboard() {
 		// TODO save the dashboard and leave edit mode
+
+		toggleDashboardEdit(false);
 	}
 
+	private void viewReport(final SectionPanel dashPanel) {
+		// TODO navigate to the proper Reports content based on report uuid and
+		// isTeamServer etc
+
+	}
 }
