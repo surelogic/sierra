@@ -1,7 +1,10 @@
 package com.surelogic.sierra.message.srpc;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -10,13 +13,10 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.lang.reflect.Method;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.GZIPOutputStream;
+import java.util.zip.*;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -37,7 +37,8 @@ import com.surelogic.sierra.tool.targets.JarTarget;
  * @author nathan
  * 
  */
-final class Encoding {
+class Encoding {
+	private static final boolean allowMultipleArgs = false;
 	private static final String RECORD_MESSAGES_PROP = "com.surelogic.recordMessages";
 	private static final Logger log = SLLogger.getLoggerFor(Encoding.class);
 	private static final Class<?>[] NO_CLASSES = new Class[0];
@@ -113,8 +114,8 @@ final class Encoding {
 		}
 	}
 
-	private void encodeMethodInvocationHelper(OutputStream out,
-			MethodInvocation invocation) {
+	void encodeMethodInvocationHelper(OutputStream out,
+			MethodInvocation invocation) throws SRPCException {
 		final PrintWriter writer = wrap(out);
 		final Method method = invocation.getMethod();
 		final Object[] args = invocation.getArgs();
@@ -156,7 +157,7 @@ final class Encoding {
 				throw new SRPCException("No method found to match " + methodStr
 						+ " for service clazzStr");
 			} else {
-				throw new SRPCException("Invalid service class specified.");
+				throw new SRPCException("Invalid service class specified: "+clazzStr);
 			}
 		} catch (IOException e) {
 			throw new SRPCException(e);
@@ -250,11 +251,14 @@ final class Encoding {
 
 	static Encoding getEncoding(Class<?> service, boolean compressed)
 			throws SRPCException {
-		return new Encoding(service, compressed ? GZIP : PLAINTEXT);
+		return getEncoding(service, compressed ? GZIP : PLAINTEXT);
 	}
 
 	static Encoding getEncoding(Class<?> service, String contentType)
 			throws SRPCException {
+		if (allowMultipleArgs) {
+			return new ZipEncoding(service, contentType);
+		}
 		return new Encoding(service, contentType);
 	}
 
@@ -266,25 +270,35 @@ final class Encoding {
 		return compressed ? GZIP : PLAINTEXT;
 	}
 
-	private BufferedReader wrap(InputStream in) {
+	private InputStream wrapStream(InputStream in) {
 		if (compressed) {
 			try {
-				in = new GZIPInputStream(in);
+				return new GZIPInputStream(in);
 			} catch (IOException e) {
 				throw new SRPCException(e);
 			}
 		}
+		return in;
+	}
+	
+	private BufferedReader wrap(InputStream in) {
+		in = wrapStream(in);
 		return new BufferedReader(new InputStreamReader(in));
 	}
 
-	private PrintWriter wrap(OutputStream out) {
+	private OutputStream wrapStream(OutputStream out) {
 		if (compressed) {
 			try {
-				out = new GZIPOutputStream(out);
+				return new GZIPOutputStream(out);
 			} catch (IOException e) {
 				throw new SRPCException(e);
 			}
 		}
+		return out;
+	}
+	
+	private PrintWriter wrap(OutputStream out) {
+		out = wrapStream(out);
 		return new PrintWriter(out);
 	}
 
@@ -308,4 +322,120 @@ final class Encoding {
 		return Long.toString(start.getTime() / 1000);
 	}
 
+	static void encodeFile(OutputStream out, File f) throws IOException {
+		FileInputStream fin    = new FileInputStream(f);
+		BufferedInputStream in = new BufferedInputStream(fin);
+		copyFileContents(in, out);
+	}
+	
+	static void copyFileContents(InputStream in, OutputStream out) throws IOException {
+		byte[] buf = new byte[4096];
+		int read   = 0;
+		while ((read = in.read(buf, 0, 4096)) > 0) {
+			out.write(buf, 0, read);
+		}
+		out.flush();
+	}
+		
+	static File decodeFile(String method, String suffix, InputStream in) throws IOException {
+		// FIX name doesn't match original???
+		File temp                = File.createTempFile(method, ".tmp"); 
+		FileOutputStream fout    = new FileOutputStream(temp);
+		BufferedOutputStream out = new BufferedOutputStream(fout);
+		copyFileContents(in, out);
+		return temp;
+	}
+	
+	private static class ZipEncoding extends Encoding {
+		ZipEncoding(Class<?> service, String contentType) throws SRPCException {
+			super(service, contentType);
+		}
+		
+		@Override
+		void encodeMethodInvocationHelper(OutputStream out,
+				MethodInvocation invocation) {			
+			final ZipOutputStream zout = new ZipOutputStream(super.wrapStream(out));
+			final Method method = invocation.getMethod();
+			final Object[] args = invocation.getArgs();
+			try {
+				// Using separate entries, since comments don't seem to be transmitted
+				ZipEntry ze = new ZipEntry(method.getDeclaringClass().getName());				
+				zout.putNextEntry(ze);
+				
+				ze = new ZipEntry(method.getName());				
+				zout.putNextEntry(ze);
+				
+				int i = 0;
+				for(Object arg : args) {			
+					ze = new ZipEntry(arg.getClass().getName()+"."+i);
+					zout.putNextEntry(ze);					
+					if (arg instanceof File) {						
+						encodeFile(zout, (File) arg);
+					} else {
+						super.newMarshaller().marshal(arg, zout);
+					}
+					zout.closeEntry();
+					i++;
+				}
+				zout.close();
+			} catch (JAXBException e) {
+				throw new SRPCException(e);
+			} catch (IOException e) {
+				throw new SRPCException(e);
+			}
+		}
+		
+		@Override
+		MethodInvocation decodeMethodInvocation(InputStream in)
+		throws SRPCException {
+			File temp = null;
+			try {
+				// Uncompressed, b/c the servlet handles decoding the compression
+				in   = super.wrapStream(in);			
+				temp = decodeFile("Encoding", ".zip", in);		
+				// Saved to a file, so I can get separate streams for each arg
+				// to workaround an apparent close() by unmarshalling
+				final ZipFile zip                   = new ZipFile(temp);				
+				Enumeration<? extends ZipEntry> zen = zip.entries();
+				
+				ZipEntry ze            = zen.nextElement();
+				final String clazzStr  = ze.getName();
+				final String methodStr = zen.nextElement().getName();
+				if (super.service.getName().equals(clazzStr)) {					
+					for (Method m : super.service.getDeclaredMethods()) {						
+						if (m.getName().equals(methodStr)) {					
+							Object[] args     = null;
+							final int numArgs = m.getParameterTypes().length;
+							
+							if (numArgs > 0) {
+								args = new Object[numArgs];
+								for(int i=0; i<numArgs; i++) {
+									ze = zen.nextElement();
+									if (ze.getName().startsWith(File.class.getName())) {
+										args[i] = decodeFile(m.getName(), ".tmp", zip.getInputStream(ze));
+									} else {									
+										args[i] = super.newUnmarshaller().unmarshal(zip.getInputStream(ze));
+									}
+								}
+							}
+							zip.close();
+							return new MethodInvocation(m, args);
+						}
+					}
+					throw new SRPCException("No method found to match " + methodStr
+							+ " for service clazzStr");
+				} else {
+					throw new SRPCException("Invalid service class specified: "+clazzStr+"."+methodStr);
+				}
+			} catch (IOException e) {
+				throw new SRPCException(e);
+			} catch (JAXBException e) {
+				throw new SRPCException(e);
+			} finally {
+				if (temp != null && temp.exists()) {
+					temp.delete();
+				}
+			}
+		}
+	}
 }
