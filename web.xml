@@ -218,6 +218,18 @@
 		<url-pattern>/services/BugLinkService</url-pattern>
 	</servlet-mapping>
 	
+	<servlet>
+		<servlet-name>Support Service</servlet-name>
+		<servlet-class>
+			com.surelogic.sierra.tool.message.SupportServiceImpl
+		</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>Support Service</servlet-name>
+		<url-pattern>/services/SupportService</url-pattern>
+	</servlet-mapping>
+	
 	<!-- Configure the server -->
 	<context-param>
 		<description>
