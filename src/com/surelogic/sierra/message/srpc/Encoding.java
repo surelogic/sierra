@@ -346,9 +346,38 @@ class Encoding {
 		return temp;
 	}
 	
+	private interface FileHandler {
+		void handleFile(int i) throws Exception;
+		void handleVarargsFile(int i) throws Exception;
+		void handleOther(int i) throws Exception;
+	}
+	
+	private static final File[] noFiles = new File[0];
+	
 	private static class ZipEncoding extends Encoding {
 		ZipEncoding(Class<?> service, String contentType) throws SRPCException {
 			super(service, contentType);
+		}
+		
+		private void createEntry(ZipOutputStream zout, String name) throws IOException {
+			ZipEntry ze = new ZipEntry(name);				
+			zout.putNextEntry(ze);
+		}
+		
+		private void handleParameters(Method method, FileHandler h) throws Exception {
+			final Class<?>[] args = method.getParameterTypes();		
+			for(int i=0; i<args.length; i++) {
+				final boolean last = (i == args.length-1);
+				if (args[i] == File.class) {
+					h.handleFile(i);
+				}
+				else if (last && args[i].isArray() && args[i].getComponentType() == File.class) {
+					h.handleVarargsFile(i);
+				}
+				else {
+					h.handleOther(i);
+				}
+			}
 		}
 		
 		@Override
@@ -359,28 +388,43 @@ class Encoding {
 			final Object[] args = invocation.getArgs();
 			try {
 				// Using separate entries, since comments don't seem to be transmitted
-				ZipEntry ze = new ZipEntry(method.getDeclaringClass().getName());				
-				zout.putNextEntry(ze);
+				createEntry(zout, method.getDeclaringClass().getName());				
+				createEntry(zout, method.getName());				
 				
-				ze = new ZipEntry(method.getName());				
-				zout.putNextEntry(ze);
-				
-				int i = 0;
-				for(Object arg : args) {			
-					ze = new ZipEntry(arg.getClass().getName()+"."+i);
-					zout.putNextEntry(ze);					
-					if (arg instanceof File) {						
-						encodeFile(zout, (File) arg);
-					} else {
-						super.newMarshaller().marshal(arg, zout);
+				handleParameters(method, new FileHandler() {
+					private void setup(int i, int j) throws IOException {
+						final String name;
+						if (j < 0) {
+							name = args[i].getClass().getName()+"."+i;
+						} else {
+							name = args[i].getClass().getName()+"."+i+"_"+j;
+						}
+						createEntry(zout, name);
+					}					
+					public void handleFile(int i) throws Exception {
+						setup(i, -1);
+						encodeFile(zout, (File) args[i]);
+						zout.closeEntry();
 					}
-					zout.closeEntry();
-					i++;
-				}
+					public void handleOther(int i) throws Exception {
+						setup(i, -1);
+						ZipEncoding.super.newMarshaller().marshal(args[i], zout);
+						zout.closeEntry();
+					}
+					public void handleVarargsFile(int i) throws Exception {
+						File[] files = (File[]) args[i];						
+						if (files == null) {
+							return;
+						}
+						for(int j=0; j<files.length; j++) {
+							setup(i, j);
+							encodeFile(zout, files[j]);							
+							zout.closeEntry();
+						}
+					}					
+				});
 				zout.close();
-			} catch (JAXBException e) {
-				throw new SRPCException(e);
-			} catch (IOException e) {
+			} catch (Exception e) {
 				throw new SRPCException(e);
 			}
 		}
@@ -395,28 +439,44 @@ class Encoding {
 				temp = decodeFile("Encoding", ".zip", in);		
 				// Saved to a file, so I can get separate streams for each arg
 				// to workaround an apparent close() by unmarshalling
-				final ZipFile zip                   = new ZipFile(temp);				
-				Enumeration<? extends ZipEntry> zen = zip.entries();
+				final ZipFile zip                         = new ZipFile(temp);				
+				final Enumeration<? extends ZipEntry> zen = zip.entries();
 				
 				ZipEntry ze            = zen.nextElement();
 				final String clazzStr  = ze.getName();
 				final String methodStr = zen.nextElement().getName();
 				if (super.service.getName().equals(clazzStr)) {					
-					for (Method m : super.service.getDeclaredMethods()) {						
+					for (final Method m : super.service.getDeclaredMethods()) {						
 						if (m.getName().equals(methodStr)) {					
-							Object[] args     = null;
+							final Object[] args;
 							final int numArgs = m.getParameterTypes().length;
 							
 							if (numArgs > 0) {
 								args = new Object[numArgs];
-								for(int i=0; i<numArgs; i++) {
-									ze = zen.nextElement();
-									if (ze.getName().startsWith(File.class.getName())) {
+								handleParameters(m, new FileHandler() {
+									public void handleFile(int i) throws Exception {
+										ZipEntry ze = zen.nextElement();
 										args[i] = decodeFile(m.getName(), ".tmp", zip.getInputStream(ze));
-									} else {									
-										args[i] = super.newUnmarshaller().unmarshal(zip.getInputStream(ze));
 									}
-								}
+									public void handleVarargsFile(int i) throws Exception {
+										if (zen.hasMoreElements()) {
+											List<File> files = new ArrayList<File>();
+											while (zen.hasMoreElements()) {
+												ZipEntry ze = zen.nextElement();
+												files.add(decodeFile(m.getName(), ".tmp", zip.getInputStream(ze)));	
+											}
+											args[i] = files.toArray(noFiles);
+										} else {
+											args[i] = noFiles;
+										} 									
+									}
+									public void handleOther(int i) throws Exception {
+										ZipEntry ze = zen.nextElement();
+										args[i] = ZipEncoding.super.newUnmarshaller().unmarshal(zip.getInputStream(ze));
+									}									
+								});								
+							} else {
+								args = null;
 							}
 							zip.close();
 							return new MethodInvocation(m, args);
@@ -427,9 +487,7 @@ class Encoding {
 				} else {
 					throw new SRPCException("Invalid service class specified: "+clazzStr+"."+methodStr);
 				}
-			} catch (IOException e) {
-				throw new SRPCException(e);
-			} catch (JAXBException e) {
+			} catch (Exception e) {
 				throw new SRPCException(e);
 			} finally {
 				if (temp != null && temp.exists()) {
