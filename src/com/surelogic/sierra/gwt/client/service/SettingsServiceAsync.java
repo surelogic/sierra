@@ -59,6 +59,4 @@ public interface SettingsServiceAsync {
 
 	void getDashboardSettings(AsyncCallback<DashboardSettings> callback);
 
-	// void policyHack(String[] str, AsyncCallback<String[]> callback);
-
 }

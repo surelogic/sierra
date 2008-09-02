@@ -19,6 +19,4 @@ public interface TicketServiceAsync {
 	void getReportTable(ReportSettings r,
 			AsyncCallback<Result<ReportTable>> asyncCallback);
 
-	void policyHack(String[] str, AsyncCallback<String[]> callback);
-
 }

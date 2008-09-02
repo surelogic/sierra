@@ -166,13 +166,4 @@ public interface SettingsService extends RemoteService {
 	 */
 	Status deleteReportSettings(String settings);
 
-	/**
-	 * This is a hack to make sure String[] is included in the serialization
-	 * policy file
-	 * 
-	 * @param str
-	 *            ignored
-	 * @return an empty string array
-	 */
-	// String[] policyHack(String[] str);
 }
