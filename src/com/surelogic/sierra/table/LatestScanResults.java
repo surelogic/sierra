@@ -8,7 +8,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import com.surelogic.sierra.gwt.client.data.ColumnData;
+import com.surelogic.sierra.gwt.client.data.ColumnDataType;
 import com.surelogic.sierra.gwt.client.data.ProjectOverview;
 import com.surelogic.sierra.gwt.client.data.ReportSettings;
 import com.surelogic.sierra.gwt.client.data.ReportTable;
@@ -19,10 +19,10 @@ public class LatestScanResults implements IDatabaseTable {
 	private static final List<String> HEADERS = Arrays
 			.asList(new String[] { "Project", "Critical", "High", "Medium",
 					"Low", "Total", "Audited" });
-	private static final List<ColumnData> COLUMNS = Arrays
-			.asList(new ColumnData[] { ColumnData.TEXT, ColumnData.NUMBER,
-					ColumnData.NUMBER, ColumnData.NUMBER, ColumnData.NUMBER,
-					ColumnData.NUMBER, ColumnData.NUMBER });
+	private static final List<ColumnDataType> COLUMNS = Arrays
+			.asList(new ColumnDataType[] { ColumnDataType.TEXT, ColumnDataType.NUMBER,
+					ColumnDataType.NUMBER, ColumnDataType.NUMBER, ColumnDataType.NUMBER,
+					ColumnDataType.NUMBER, ColumnDataType.NUMBER });
 
 	public ReportTable generate(ReportSettings report, Connection c)
 			throws SQLException {

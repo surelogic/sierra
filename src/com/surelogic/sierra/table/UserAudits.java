@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import com.surelogic.sierra.gwt.client.data.ColumnData;
+import com.surelogic.sierra.gwt.client.data.ColumnDataType;
 import com.surelogic.sierra.gwt.client.data.ReportSettings;
 import com.surelogic.sierra.gwt.client.data.ReportTable;
 import com.surelogic.sierra.gwt.client.data.UserOverview;
@@ -16,9 +16,9 @@ public class UserAudits implements IDatabaseTable {
 
 	public static final List<String> HEADERS = new ArrayList<String>(Arrays
 			.asList(new String[] { "User", "Audits", "Last Contribution" }));
-	public static final List<ColumnData> COLUMNS = new ArrayList<ColumnData>(
-			Arrays.asList(new ColumnData[] { ColumnData.TEXT,
-					ColumnData.NUMBER, ColumnData.DATE }));
+	public static final List<ColumnDataType> COLUMNS = new ArrayList<ColumnDataType>(
+			Arrays.asList(new ColumnDataType[] { ColumnDataType.TEXT,
+					ColumnDataType.NUMBER, ColumnDataType.DATE }));
 
 	public ReportTable generate(ReportSettings report, Connection conn)
 			throws SQLException {

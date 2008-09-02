@@ -22,7 +22,6 @@ import com.surelogic.common.jdbc.SingleRowHandler;
 import com.surelogic.common.jdbc.StringResultHandler;
 import com.surelogic.sierra.gwt.SierraServiceServlet;
 import com.surelogic.sierra.gwt.client.data.Category;
-import com.surelogic.sierra.gwt.client.data.DashboardSettings;
 import com.surelogic.sierra.gwt.client.data.FindingType;
 import com.surelogic.sierra.gwt.client.data.FindingTypeFilter;
 import com.surelogic.sierra.gwt.client.data.ImportanceView;
@@ -34,7 +33,10 @@ import com.surelogic.sierra.gwt.client.data.ScanFilterEntry;
 import com.surelogic.sierra.gwt.client.data.ServerLocation;
 import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.data.FindingType.ArtifactTypeInfo;
+import com.surelogic.sierra.gwt.client.data.Report.OutputType;
 import com.surelogic.sierra.gwt.client.data.ServerLocation.Protocol;
+import com.surelogic.sierra.gwt.client.data.dashboard.DashboardSettings;
+import com.surelogic.sierra.gwt.client.data.dashboard.ReportWidget;
 import com.surelogic.sierra.gwt.client.service.SettingsService;
 import com.surelogic.sierra.jdbc.RevisionException;
 import com.surelogic.sierra.jdbc.project.ProjectDO;
@@ -62,37 +64,7 @@ import com.surelogic.sierra.tool.message.SierraServerLocation;
 
 public class SettingsServiceImpl extends SierraServiceServlet implements
 		SettingsService {
-
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 6781260512153199775L;
-
-	public Map<String, String> searchCategories(final String query,
-			final int limit) {
-		return ConnectionFactory
-				.withUserReadOnly(new UserQuery<Map<String, String>>() {
-					public Map<String, String> perform(final Query q,
-							final Server s, final User u) {
-						return q.prepared("FilterSets.query",
-								new QueryHandler(limit)).call(
-								query.replace("*", "%").concat("%"));
-					}
-				});
-	}
-
-	public Map<String, String> searchFindingTypes(final String query,
-			final int limit) {
-		return ConnectionFactory
-				.withUserReadOnly(new UserQuery<Map<String, String>>() {
-					public Map<String, String> perform(final Query q,
-							final Server s, final User u) {
-						return q.prepared("FindingTypes.query",
-								new QueryHandler(limit)).call(
-								query.replace('*', '%').concat("%"));
-					}
-				});
-	}
 
 	public List<String> searchProjects(final String query, final int limit) {
 		return ConnectionFactory
@@ -119,36 +91,6 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 								}).call(query.replace('*', '%').concat("%"));
 					}
 				});
-	}
-
-	/**
-	 * Handles a result set with two columns. The first is the key, and the
-	 * second is the value.
-	 * 
-	 * @author nathan
-	 * 
-	 */
-	private static class QueryHandler implements
-			ResultHandler<Map<String, String>> {
-		private final int limit;
-
-		QueryHandler(final int limit) {
-			this.limit = limit;
-		}
-
-		public Map<String, String> handle(
-				final com.surelogic.common.jdbc.Result r) {
-			final Map<String, String> results = new HashMap<String, String>();
-			int count = 0;
-			for (final Row row : r) {
-				if ((limit == -1) || (count++ < limit)) {
-					results.put(row.nextString(), row.nextString());
-				} else {
-					return results;
-				}
-			}
-			return results;
-		}
 	}
 
 	public List<Project> getProjects() {
@@ -737,6 +679,30 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 	}
 
 	public DashboardSettings getDashboardSettings() {
-		return new DashboardSettings();
+		final DashboardSettings settings = new DashboardSettings();
+
+		final ReportSettings latestScans = new ReportSettings(
+				"LatestScanResults", "Published Scans", "Latest Scan Results");
+		latestScans.setWidth("450");
+		settings.addColumn(new ReportWidget(latestScans, OutputType.CHART));
+
+		final ReportSettings auditContribs = new ReportSettings(
+				"AuditContributions", "Contributions", "In the Last 30 Days");
+		latestScans.setWidth("320");
+		settings.addColumn(new ReportWidget(auditContribs, OutputType.CHART));
+
+		settings.addRow();
+		final ReportSettings userAudits = new ReportSettings("UserAudits",
+				"Users", "Latest user audits");
+		settings.setColumn(1, new ReportWidget(userAudits, OutputType.TABLE));
+
+		settings.addRow();
+		final ReportSettings publishedProjects = new ReportSettings(
+				"PublishedProjects", "All Published Projects",
+				"All Published Projects");
+		settings
+				.addColumn(new ReportWidget(publishedProjects, OutputType.TABLE));
+
+		return settings;
 	}
 }

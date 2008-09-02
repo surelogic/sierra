@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.surelogic.sierra.cache.Attendant;
 import com.surelogic.sierra.cache.TableCache;
 import com.surelogic.sierra.cache.Ticket;
-import com.surelogic.sierra.gwt.client.data.ColumnData;
+import com.surelogic.sierra.gwt.client.data.ColumnDataType;
 import com.surelogic.sierra.gwt.client.data.ReportSettings;
 import com.surelogic.sierra.gwt.client.data.ReportTable;
 import com.surelogic.sierra.servlets.ServletUtility;
@@ -104,10 +104,10 @@ public class TableServlet extends HttpServlet {
 			throws Exception {
 		buffer.append("<table>");
 		buffer.append("<tr>");
-		final List<ColumnData> cols = r.getColumns();
+		final List<ColumnDataType> cols = r.getColumns();
 		if (!cols.isEmpty()) {
 			buffer.append("<colgroup>");
-			for (final ColumnData col : cols) {
+			for (final ColumnDataType col : cols) {
 				buffer.append("<col class=\"" + col.getCSS() + "\" />");
 			}
 			buffer.append("</colgroup>");

@@ -13,7 +13,7 @@ import com.surelogic.common.jdbc.Query;
 import com.surelogic.common.jdbc.Result;
 import com.surelogic.common.jdbc.ResultHandler;
 import com.surelogic.common.jdbc.Row;
-import com.surelogic.sierra.gwt.client.data.ColumnData;
+import com.surelogic.sierra.gwt.client.data.ColumnDataType;
 import com.surelogic.sierra.gwt.client.data.ReportSettings;
 import com.surelogic.sierra.gwt.client.data.ReportTable;
 import com.surelogic.sierra.jdbc.settings.Categories;
@@ -34,11 +34,11 @@ public class ScanFindingsByCategory implements IDatabaseTable {
 						"Last Changed", "Importance", "Artifacts", "Comments",
 						"Summary" }));
 		table.getColumns().addAll(
-				Arrays.asList(new ColumnData[] { ColumnData.LINK,
-						ColumnData.TEXT, ColumnData.TEXT, ColumnData.NUMBER,
-						ColumnData.TEXT, ColumnData.TEXT, ColumnData.TEXT,
-						ColumnData.DATE, ColumnData.TEXT, ColumnData.NUMBER,
-						ColumnData.NUMBER, ColumnData.TEXT }));
+				Arrays.asList(new ColumnDataType[] { ColumnDataType.LINK,
+						ColumnDataType.TEXT, ColumnDataType.TEXT, ColumnDataType.NUMBER,
+						ColumnDataType.TEXT, ColumnDataType.TEXT, ColumnDataType.TEXT,
+						ColumnDataType.DATE, ColumnDataType.TEXT, ColumnDataType.NUMBER,
+						ColumnDataType.NUMBER, ColumnDataType.TEXT }));
 		final String scan = report.getSettingValue("scan", 0);
 		final List<String> importanceList = report
 				.getSettingValue("importance");

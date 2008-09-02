@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import com.surelogic.sierra.gwt.client.data.ColumnData;
+import com.surelogic.sierra.gwt.client.data.ColumnDataType;
 import com.surelogic.sierra.gwt.client.data.ProjectOverview;
 import com.surelogic.sierra.gwt.client.data.ReportSettings;
 import com.surelogic.sierra.gwt.client.data.ReportTable;
@@ -18,11 +18,11 @@ public class PublishedProjects implements IDatabaseTable {
 			.asList(new String[] { "Project", "Last Scan", "Audits",
 					"Critical", "High", "Medium", "Low", "Irrelevant",
 					"Last Audit", "By" }));
-	private static final List<ColumnData> COLUMNS = new ArrayList<ColumnData>(
-			Arrays.asList(new ColumnData[] { ColumnData.TEXT, ColumnData.DATE,
-					ColumnData.NUMBER, ColumnData.NUMBER, ColumnData.NUMBER,
-					ColumnData.NUMBER, ColumnData.NUMBER, ColumnData.NUMBER,
-					ColumnData.DATE, ColumnData.TEXT }));
+	private static final List<ColumnDataType> COLUMNS = new ArrayList<ColumnDataType>(
+			Arrays.asList(new ColumnDataType[] { ColumnDataType.TEXT, ColumnDataType.DATE,
+					ColumnDataType.NUMBER, ColumnDataType.NUMBER, ColumnDataType.NUMBER,
+					ColumnDataType.NUMBER, ColumnDataType.NUMBER, ColumnDataType.NUMBER,
+					ColumnDataType.DATE, ColumnDataType.TEXT }));
 
 	public ReportTable generate(ReportSettings report, Connection conn)
 			throws SQLException {
