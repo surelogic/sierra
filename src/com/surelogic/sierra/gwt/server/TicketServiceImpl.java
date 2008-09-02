@@ -27,7 +27,7 @@ public class TicketServiceImpl extends RemoteServiceServlet implements
 	private static final Logger log = SLLogger
 			.getLoggerFor(TicketServiceImpl.class);
 
-	public Result<Ticket> getTicket(ReportSettings report) {
+	public Result<Ticket> getTicket(final ReportSettings report) {
 		final Ticket ticket = new Ticket(Attendant.getInstance().getTicket(
 				report, getThreadLocalRequest().getSession()).getUUID()
 				.toString());
@@ -35,7 +35,7 @@ public class TicketServiceImpl extends RemoteServiceServlet implements
 		return Result.success(ticket);
 	}
 
-	public Result<ImageMapData> getImageMap(Ticket ticket) {
+	public Result<ImageMapData> getImageMap(final Ticket ticket) {
 		final StringWriter out = new StringWriter();
 		try {
 			ChartCache.getInstance().sendMapTo(
@@ -52,7 +52,7 @@ public class TicketServiceImpl extends RemoteServiceServlet implements
 				"Error retrieving image map for ticket " + ticket, null);
 	}
 
-	public Result<ReportTable> getReportTable(Ticket ticket) {
+	public Result<ReportTable> getReportTable(final Ticket ticket) {
 		try {
 			return Result.success(TableCache.getInstance().getReportTable(
 					Attendant.getInstance().getTicket(
@@ -67,14 +67,10 @@ public class TicketServiceImpl extends RemoteServiceServlet implements
 				"Error retrieving image map for ticket " + ticket, null);
 	}
 
-	public Result<ReportTable> getReportTable(ReportSettings r) {
+	public Result<ReportTable> getReportTable(final ReportSettings r) {
 		final Ticket ticket = new Ticket(Attendant.getInstance().getTicket(r,
 				getThreadLocalRequest().getSession()).getUUID().toString());
 		return getReportTable(ticket);
-	}
-
-	public String[] policyHack(final String[] str) {
-		return new String[] {};
 	}
 
 }
