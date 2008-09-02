@@ -8,6 +8,10 @@ import javax.xml.bind.annotation.*;
 public class SupportReply {
 	String message;
 	
+	public SupportReply() {
+		this(null);
+	}
+	
 	public SupportReply(String msg) {
 		message = msg;
 	}
