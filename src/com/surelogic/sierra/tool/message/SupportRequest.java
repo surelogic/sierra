@@ -8,17 +8,25 @@ import javax.xml.bind.annotation.*;
 @XmlType
 @XmlRootElement
 public class SupportRequest {
-	public enum Type {
+	public enum RequestType {
 		REGISTER, UPDATE, USAGE, ERROR
 	}
-	private Type type;
+	private RequestType type = RequestType.ERROR;
 	private Map<String,String> pairs;
 		
-	public Type getType() {
+	public SupportRequest() {
+		this(RequestType.ERROR);
+	}
+	
+	public SupportRequest(RequestType t) {
+		type = t;
+	}
+
+	public RequestType getType() {
 		return type;
 	}
 	
-	public void setType(Type t) {
+	public void setType(RequestType t) {
 		type = t;
 	}
 	
