@@ -19,9 +19,9 @@ import com.surelogic.sierra.gwt.client.data.ScanDetail;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.service.callback.StandardCallback;
 import com.surelogic.sierra.gwt.client.table.ReportTableSection;
+import com.surelogic.sierra.gwt.client.ui.BlockPanel;
 import com.surelogic.sierra.gwt.client.ui.HtmlHelper;
 import com.surelogic.sierra.gwt.client.ui.MultipleImportanceChoice;
-import com.surelogic.sierra.gwt.client.ui.SectionPanel;
 
 public class ScanContent extends ContentComposite {
 
@@ -30,7 +30,6 @@ public class ScanContent extends ContentComposite {
 	@Override
 	protected void onDeactivate() {
 		// Do nothing
-		view.onDeactivate();
 	}
 
 	@Override
@@ -40,10 +39,10 @@ public class ScanContent extends ContentComposite {
 
 	@Override
 	protected void onUpdate(final Context context) {
-		view.update(context);
+		view.setScan(context.getUuid());
 	}
 
-	private static class ScanView extends SectionPanel {
+	private static class ScanView extends BlockPanel {
 
 		private VerticalPanel optionsPanel;
 		private VerticalPanel chartPanel;
@@ -53,12 +52,6 @@ public class ScanContent extends ContentComposite {
 		private PackageChoice pak;
 		private CategoryChoice cat;
 		private String uuid;
-
-		@Override
-		protected void onDeactivate() {
-			setTitle("No Scan Selected");
-			optionsPanel.clear();
-		}
 
 		@Override
 		protected void onInitialize(final VerticalPanel contentPanel) {
@@ -75,15 +68,7 @@ public class ScanContent extends ContentComposite {
 			contentPanel.add(panel);
 		}
 
-		@Override
-		protected void onUpdate(final Context context) {
-			final String uuid = context.getUuid();
-			if ((uuid != null) && !(uuid.length() == 0)) {
-				setScan(uuid);
-			}
-		}
-
-		private void setScan(final String uuid) {
+		public void setScan(final String uuid) {
 			this.uuid = uuid;
 			optionsPanel.clear();
 			chartPanel.clear();

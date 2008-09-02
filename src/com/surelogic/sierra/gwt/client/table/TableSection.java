@@ -1,16 +1,19 @@
 package com.surelogic.sierra.gwt.client.table;
 
+import java.util.List;
+
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.surelogic.sierra.gwt.client.Context;
-import com.surelogic.sierra.gwt.client.data.ColumnData;
-import com.surelogic.sierra.gwt.client.ui.SectionPanel;
+import com.surelogic.sierra.gwt.client.data.ColumnDataType;
+import com.surelogic.sierra.gwt.client.ui.BlockPanel;
 import com.surelogic.sierra.gwt.client.util.LangUtil;
 
-public abstract class TableSection extends SectionPanel {
+public abstract class TableSection extends BlockPanel {
 	private static final String PRIMARY_STYLE = "sl-TableSection";
 	private final FlexTable grid = new FlexTable();
+	private ColumnDataType[] columnTypes;
 	private int currentRow = 0;
 	private int currentColumn = 0;
 
@@ -19,25 +22,38 @@ public abstract class TableSection extends SectionPanel {
 		grid.setWidth("100%");
 		grid.addStyleName(PRIMARY_STYLE);
 
-		final String[] headerTitles = getHeaderTitles();
-		for (int i = 0; i < headerTitles.length; i++) {
-			grid.setText(0, i, headerTitles[i]);
+		doInitialize(grid);
+	}
+
+	protected abstract void doInitialize(FlexTable grid);
+
+	protected final void setHeaderTitles(final List<String> titles) {
+		setHeaderTitles(titles.toArray(new String[titles.size()]));
+	}
+
+	protected final void setHeaderTitles(final String[] titles) {
+		for (int i = 0; i < titles.length; i++) {
+			grid.setText(0, i, titles[i]);
 		}
 
 		grid.getRowFormatter().setStyleName(0, PRIMARY_STYLE + "-header");
 	}
 
-	@Override
-	protected final void onUpdate(final Context context) {
-		updateTable(context);
+	protected final void setColumnTypes(final List<ColumnDataType> headerTypes) {
+		setColumnTypes(headerTypes.toArray(new ColumnDataType[headerTypes
+				.size()]));
 	}
 
-	@Override
-	protected final void onDeactivate() {
-		clearRows();
+	protected final void setColumnTypes(final ColumnDataType[] headerTypes) {
+		this.columnTypes = headerTypes;
 	}
 
-	protected void clearRows() {
+	protected final ColumnDataType getColumnType(final int column) {
+		return columnTypes != null && column < columnTypes.length ? columnTypes[column]
+				: null;
+	}
+
+	protected final void clearRows() {
 		getContentPanel().remove(grid);
 		while (grid.getRowCount() > 1) {
 			grid.removeRow(1);
@@ -47,7 +63,7 @@ public abstract class TableSection extends SectionPanel {
 		currentColumn = 0;
 	}
 
-	protected void addRow() {
+	protected final void addRow() {
 		final VerticalPanel contentPanel = getContentPanel();
 		if (contentPanel.getWidgetIndex(grid) == -1) {
 			contentPanel.add(grid);
@@ -60,46 +76,48 @@ public abstract class TableSection extends SectionPanel {
 				.addStyleName(currentRow, PRIMARY_STYLE + "-data");
 	}
 
-	protected void addColumn(final Widget widget) {
+	protected final void addColumn(final Widget widget) {
 		if (currentRow == 0) {
 			addRow();
 		}
 
 		grid.setWidget(currentRow, currentColumn, widget);
 
-		final ColumnData[] headerTypes = getHeaderDataTypes();
-		if (currentColumn < headerTypes.length) {
+		final ColumnDataType columnType = getColumnType(currentColumn);
+		if (columnType != null) {
 			grid.getCellFormatter().addStyleName(currentRow, currentColumn,
-					headerTypes[currentColumn].getCSS());
+					columnType.getCSS());
 		}
 
 		currentColumn++;
 	}
 
-	protected void addColumn(final String text) {
+	protected final void addColumn(final String text) {
 		if (currentRow == 0) {
 			addRow();
 		}
 
 		grid.setText(currentRow, currentColumn, text);
 
-		final ColumnData[] headerTypes = getHeaderDataTypes();
-		if (currentColumn < headerTypes.length) {
+		final ColumnDataType columnType = getColumnType(currentColumn);
+		if (columnType != null) {
 			grid.getCellFormatter().addStyleName(currentRow, currentColumn,
-					headerTypes[currentColumn].getCSS());
+					columnType.getCSS());
 		}
 
 		currentColumn++;
 	}
 
-	protected void addColumn(final int value) {
-		addColumn(LangUtil.emptyZeroString(value));
+	protected final void addColumn(final String text, final String linkUrl) {
+		if (getColumnType(currentColumn) == ColumnDataType.LINK) {
+			addColumn(new Hyperlink(text, linkUrl));
+		} else {
+			addColumn(text);
+		}
 	}
 
-	protected abstract String[] getHeaderTitles();
-
-	protected abstract ColumnData[] getHeaderDataTypes();
-
-	protected abstract void updateTable(Context context);
+	protected final void addColumn(final int value) {
+		addColumn(LangUtil.emptyZeroString(value));
+	}
 
 }

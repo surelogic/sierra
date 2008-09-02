@@ -1,11 +1,9 @@
 package com.surelogic.sierra.gwt.client.service;
 
 import java.util.List;
-import java.util.Map;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.surelogic.sierra.gwt.client.data.Category;
-import com.surelogic.sierra.gwt.client.data.DashboardSettings;
 import com.surelogic.sierra.gwt.client.data.FindingType;
 import com.surelogic.sierra.gwt.client.data.Project;
 import com.surelogic.sierra.gwt.client.data.ReportSettings;
@@ -13,31 +11,9 @@ import com.surelogic.sierra.gwt.client.data.Result;
 import com.surelogic.sierra.gwt.client.data.ScanFilter;
 import com.surelogic.sierra.gwt.client.data.ServerLocation;
 import com.surelogic.sierra.gwt.client.data.Status;
+import com.surelogic.sierra.gwt.client.data.dashboard.DashboardSettings;
 
 public interface SettingsService extends RemoteService {
-	/**
-	 * Search for a list of finding types that match the query string
-	 * 
-	 * 
-	 * 
-	 * @param query
-	 * @param limit
-	 *            the number of results to return, or -1 for an unbounded number
-	 * @return a map of key/name pairs
-	 */
-	Map<String, String> searchFindingTypes(String query, int limit);
-
-	/**
-	 * Search for a list of categories that match the query string
-	 * 
-	 * 
-	 * 
-	 * @param query
-	 * @param limit
-	 *            the number of results to return, or -1 for an unbounded number
-	 * @return a map of key/name pairs
-	 */
-	Map<String, String> searchCategories(String query, int limit);
 
 	/**
 	 * Search for a list of projects that match the query string
@@ -190,4 +166,13 @@ public interface SettingsService extends RemoteService {
 	 */
 	Status deleteReportSettings(String settings);
 
+	/**
+	 * This is a hack to make sure String[] is included in the serialization
+	 * policy file
+	 * 
+	 * @param str
+	 *            ignored
+	 * @return an empty string array
+	 */
+	// String[] policyHack(String[] str);
 }

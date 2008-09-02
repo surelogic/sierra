@@ -5,10 +5,9 @@ import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.surelogic.sierra.gwt.client.Context;
-import com.surelogic.sierra.gwt.client.Lifecycle;
 import com.surelogic.sierra.gwt.client.ui.HtmlHelper;
 
-public abstract class ContentComposite extends Composite implements Lifecycle {
+public abstract class ContentComposite extends Composite {
 	private final DockPanel rootPanel = new DockPanel();
 	private final HorizontalPanel titlePanel = new HorizontalPanel();
 	private boolean initialized;
@@ -26,7 +25,7 @@ public abstract class ContentComposite extends Composite implements Lifecycle {
 		Context.create(this, null).submit();
 	}
 
-	public final void update(Context context) {
+	public final void update(final Context context) {
 		if (!initialized) {
 			initialized = true;
 			onInitialize();
@@ -57,7 +56,7 @@ public abstract class ContentComposite extends Composite implements Lifecycle {
 		return rootPanel;
 	}
 
-	protected final void setCaption(String text) {
+	protected final void setCaption(final String text) {
 		final HTML title = HtmlHelper.h2(text);
 		titlePanel.add(title);
 		titlePanel

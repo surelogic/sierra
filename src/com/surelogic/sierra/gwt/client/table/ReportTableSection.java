@@ -3,94 +3,28 @@ package com.surelogic.sierra.gwt.client.table;
 import java.util.List;
 
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.Hyperlink;
-import com.google.gwt.user.client.ui.VerticalPanel;
-import com.surelogic.sierra.gwt.client.Context;
-import com.surelogic.sierra.gwt.client.data.ColumnData;
+import com.surelogic.sierra.gwt.client.data.ColumnDataType;
 import com.surelogic.sierra.gwt.client.data.ReportSettings;
 import com.surelogic.sierra.gwt.client.data.ReportTable;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.service.callback.ResultCallback;
-import com.surelogic.sierra.gwt.client.ui.SectionPanel;
 
-public class ReportTableSection extends SectionPanel {
-
+public class ReportTableSection extends TableSection {
 	private ReportSettings report;
 	private ReportTable table;
+
+	public ReportTableSection() {
+		super();
+	}
 
 	public ReportTableSection(final ReportSettings r) {
 		super();
 		setReport(r);
 	}
 
-	public ReportTableSection() {
-		super();
-	}
-
-	private static final String PRIMARY_STYLE = "sl-TableSection";
-	private final FlexTable grid = new FlexTable();
-	private int currentRow = 0;
-	private int currentColumn = 0;
-
 	@Override
-	protected final void onInitialize(final VerticalPanel contentPanel) {
-		grid.setWidth("100%");
-		grid.addStyleName(PRIMARY_STYLE);
-
-	}
-
-	@Override
-	protected final void onUpdate(final Context context) {
-		if (report != null) {
-			getReportData();
-		}
-	}
-
-	@Override
-	protected final void onDeactivate() {
-		clearRows();
-	}
-
-	protected void clearRows() {
-		getContentPanel().remove(grid);
-		while (grid.getRowCount() > 1) {
-			grid.removeRow(1);
-		}
-
-		currentRow = 0;
-		currentColumn = 0;
-	}
-
-	protected void addRow() {
-		final VerticalPanel contentPanel = getContentPanel();
-		if (contentPanel.getWidgetIndex(grid) == -1) {
-			contentPanel.add(grid);
-		}
-
-		currentRow++;
-		currentColumn = 0;
-
-		grid.getRowFormatter()
-				.addStyleName(currentRow, PRIMARY_STYLE + "-data");
-	}
-
-	protected void addColumn(final String text, final ColumnData type) {
-		if (currentRow == 0) {
-			addRow();
-		}
-
-		if (type == ColumnData.LINK) {
-			grid.setWidget(currentRow, currentColumn, new Hyperlink(text, table
-					.getLinks().get(currentRow)));
-		} else {
-			grid.setText(currentRow, currentColumn, text);
-		}
-		if (type != null) {
-			grid.getCellFormatter().addStyleName(currentRow, currentColumn,
-					type.getCSS());
-		}
-
-		currentColumn++;
+	protected void doInitialize(final FlexTable grid) {
+		// nothing to do
 	}
 
 	public void setReport(final ReportSettings r) {
@@ -107,33 +41,36 @@ public class ReportTableSection extends SectionPanel {
 				new ResultCallback<ReportTable>() {
 
 					@Override
-					protected void doFailure(String message, ReportTable result) {
+					protected void doFailure(final String message,
+							final ReportTable result) {
 						setErrorStatus(message);
 					}
 
 					@Override
-					protected void doSuccess(String message,
+					protected void doSuccess(final String message,
 							final ReportTable result) {
-
 						table = result;
-						final List<String> headerTitles = table.getHeaders();
-						final List<ColumnData> columnType = table.getColumns();
-						for (int i = 0; i < headerTitles.size(); i++) {
-							grid.setText(0, i, headerTitles.get(i));
-						}
-
-						grid.getRowFormatter().setStyleName(0,
-								PRIMARY_STYLE + "-header");
+						setHeaderTitles(table.getHeaders());
+						setColumnTypes(table.getColumns());
 						final List<List<String>> rows = table.getData();
 						if (rows.isEmpty()) {
 							setSuccessStatus("No information to display");
 						} else {
 							clearRows();
-							for (final List<String> row : rows) {
+							for (int rowIndex = 0; rowIndex < rows.size(); rowIndex++) {
 								addRow();
-								int i = 0;
-								for (final String col : row) {
-									addColumn(col, columnType.get(i++));
+								final List<String> columns = rows.get(rowIndex);
+								for (int colIndex = 0; colIndex < columns
+										.size(); colIndex++) {
+									final String columnText = columns
+											.get(colIndex);
+									if (getColumnType(colIndex) == ColumnDataType.LINK) {
+										// table.getLinks().get(currentRow)
+										addColumn(columnText, table.getLinks()
+												.get(rowIndex));
+									} else {
+										addColumn(columnText);
+									}
 								}
 							}
 						}
@@ -141,4 +78,5 @@ public class ReportTableSection extends SectionPanel {
 					}
 				});
 	}
+
 }

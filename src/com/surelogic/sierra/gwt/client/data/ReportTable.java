@@ -12,7 +12,7 @@ public class ReportTable implements Serializable {
 	private static final long serialVersionUID = 9035444817120365740L;
 
 	private List<String> headers;
-	private List<ColumnData> columns;
+	private List<ColumnDataType> columns;
 	private List<List<String>> data;
 	private List<String> links;
 
@@ -31,9 +31,9 @@ public class ReportTable implements Serializable {
 	 * 
 	 * @return
 	 */
-	public List<ColumnData> getColumns() {
+	public List<ColumnDataType> getColumns() {
 		if (columns == null) {
-			columns = new ArrayList<ColumnData>();
+			columns = new ArrayList<ColumnDataType>();
 		}
 		return columns;
 	}
@@ -65,7 +65,7 @@ public class ReportTable implements Serializable {
 
 	/**
 	 * A list of links, one for each row. This list may be empty if no column
-	 * has a data type of {@link ColumnData.LINK}
+	 * has a data type of {@link ColumnDataType.LINK}
 	 * 
 	 * @return
 	 */

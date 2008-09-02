@@ -1,11 +1,10 @@
 package com.surelogic.sierra.gwt.client.chart;
 
-import com.surelogic.sierra.gwt.client.Context;
 
 public class LatestScansChart extends ChartSection {
 
 	@Override
-	protected Chart buildChart(Context context) {
+	protected Chart buildChart() {
 		setTitle("Published Scans");
 		setSummary("Latest Scan Results");
 

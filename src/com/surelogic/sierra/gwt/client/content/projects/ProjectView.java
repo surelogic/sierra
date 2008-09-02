@@ -19,11 +19,10 @@ import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.Context;
-import com.surelogic.sierra.gwt.client.ContextManager;
 import com.surelogic.sierra.gwt.client.chart.ChartBuilder;
 import com.surelogic.sierra.gwt.client.content.scanfilters.ScanFiltersContent;
 import com.surelogic.sierra.gwt.client.content.scans.ScanContent;
-import com.surelogic.sierra.gwt.client.data.ColumnData;
+import com.surelogic.sierra.gwt.client.data.ColumnDataType;
 import com.surelogic.sierra.gwt.client.data.Project;
 import com.surelogic.sierra.gwt.client.data.ReportSettings;
 import com.surelogic.sierra.gwt.client.data.Scan;
@@ -112,7 +111,7 @@ public class ProjectView extends BlockPanel {
 						}
 					});
 		}
-		scans.update(ContextManager.getContext());
+		scans.setSelection(project);
 	}
 
 	private void promptForScanFilter() {
@@ -140,8 +139,14 @@ public class ProjectView extends BlockPanel {
 
 		private Map<Scan, CheckBox> scans;
 
-		ProjectTableSection() {
+		@Override
+		protected void doInitialize(final FlexTable grid) {
 			setTitle("Scans");
+			setHeaderTitles(new String[] { "Time", "User", "Vendor", "Version",
+					"" });
+			setColumnTypes(new ColumnDataType[] { ColumnDataType.DATE,
+					ColumnDataType.TEXT, ColumnDataType.TEXT,
+					ColumnDataType.TEXT, ColumnDataType.WIDGET });
 			addAction("Compare", new ClickListener() {
 				public void onClick(final Widget sender) {
 					final List<Scan> toCompare = new ArrayList<Scan>();
@@ -185,23 +190,11 @@ public class ProjectView extends BlockPanel {
 			});
 		}
 
-		@Override
-		protected ColumnData[] getHeaderDataTypes() {
-			return new ColumnData[] { ColumnData.DATE, ColumnData.TEXT,
-					ColumnData.TEXT, ColumnData.TEXT, ColumnData.WIDGET };
-		}
-
-		@Override
-		protected String[] getHeaderTitles() {
-			return new String[] { "Time", "User", "Vendor", "Version", "" };
-		}
-
-		@Override
-		protected void updateTable(final Context context) {
+		public void setSelection(final Project project) {
 			clearRows();
 			setWaitStatus();
-			if (context.getUuid() != null) {
-				ServiceHelper.getFindingService().getScans(context.getUuid(),
+			if (project != null) {
+				ServiceHelper.getFindingService().getScans(project.getUuid(),
 						new StandardCallback<List<Scan>>() {
 
 							@Override

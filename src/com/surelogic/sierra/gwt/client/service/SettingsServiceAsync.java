@@ -1,11 +1,9 @@
 package com.surelogic.sierra.gwt.client.service;
 
 import java.util.List;
-import java.util.Map;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.surelogic.sierra.gwt.client.data.Category;
-import com.surelogic.sierra.gwt.client.data.DashboardSettings;
 import com.surelogic.sierra.gwt.client.data.FindingType;
 import com.surelogic.sierra.gwt.client.data.Project;
 import com.surelogic.sierra.gwt.client.data.ReportSettings;
@@ -13,14 +11,9 @@ import com.surelogic.sierra.gwt.client.data.Result;
 import com.surelogic.sierra.gwt.client.data.ScanFilter;
 import com.surelogic.sierra.gwt.client.data.ServerLocation;
 import com.surelogic.sierra.gwt.client.data.Status;
+import com.surelogic.sierra.gwt.client.data.dashboard.DashboardSettings;
 
 public interface SettingsServiceAsync {
-
-	void searchFindingTypes(String query, int limit,
-			AsyncCallback<Map<String, String>> callback);
-
-	void searchCategories(String query, int limit,
-			AsyncCallback<Map<String, String>> callback);
 
 	void searchProjects(String query, int limit,
 			AsyncCallback<List<String>> asyncCallback);
@@ -65,4 +58,7 @@ public interface SettingsServiceAsync {
 	void deleteReportSettings(String settings, AsyncCallback<Status> callback);
 
 	void getDashboardSettings(AsyncCallback<DashboardSettings> callback);
+
+	// void policyHack(String[] str, AsyncCallback<String[]> callback);
+
 }
