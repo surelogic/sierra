@@ -12,25 +12,25 @@ import com.surelogic.sierra.gwt.client.data.cache.Cache;
 import com.surelogic.sierra.gwt.client.data.cache.Cacheable;
 import com.surelogic.sierra.gwt.client.ui.panel.BlockPanel;
 import com.surelogic.sierra.gwt.client.ui.panel.PagingPanel;
-import com.surelogic.sierra.gwt.client.ui.panel.SearchPanel;
+import com.surelogic.sierra.gwt.client.ui.panel.SearchInputPanel;
 import com.surelogic.sierra.gwt.client.ui.panel.PagingPanel.PageListener;
-import com.surelogic.sierra.gwt.client.ui.panel.SearchPanel.SearchListener;
+import com.surelogic.sierra.gwt.client.ui.panel.SearchInputPanel.SearchListener;
 
-public abstract class SearchBlock<E extends Cacheable, T extends Cache<E>>
+public abstract class SearchPanel<E extends Cacheable, T extends Cache<E>>
 		extends BlockPanel {
 	private static final int ITEMS_PER_PAGE = 25;
 	private final T cache;
-	private final SearchPanel searchPanel = new SearchPanel();
-	private final SearchResultsBlock results = new SearchResultsBlock();
+	private final SearchInputPanel searchPanel = new SearchInputPanel();
+	private final SearchResultsPanel results = new SearchResultsPanel();
 	private E selection;
 
-	public SearchBlock(T cache) {
+	public SearchPanel(final T cache) {
 		super();
 		this.cache = cache;
 	}
 
 	@Override
-	protected void onInitialize(VerticalPanel contentPanel) {
+	protected void onInitialize(final VerticalPanel contentPanel) {
 		contentPanel.add(searchPanel);
 
 		results.initialize();
@@ -39,7 +39,8 @@ public abstract class SearchBlock<E extends Cacheable, T extends Cache<E>>
 
 		searchPanel.addListener(new SearchListener() {
 
-			public void onSearch(SearchPanel sender, String text) {
+			public void onSearch(final SearchInputPanel sender,
+					final String text) {
 				results.search(text);
 			}
 		});
@@ -54,7 +55,7 @@ public abstract class SearchBlock<E extends Cacheable, T extends Cache<E>>
 		results.setSelection(selection);
 	}
 
-	public void setSelection(E item) {
+	public void setSelection(final E item) {
 		selection = item;
 		results.setSelection(item);
 	}
@@ -67,20 +68,20 @@ public abstract class SearchBlock<E extends Cacheable, T extends Cache<E>>
 
 	protected abstract void doItemClick(E item);
 
-	private class SearchResultsBlock extends BlockPanel {
+	private class SearchResultsPanel extends BlockPanel {
 		private final SelectionTracker<ItemLabel<E>> selectionTracker = new SelectionTracker<ItemLabel<E>>();
 		private final List<ItemLabel<E>> searchResultsData = new ArrayList<ItemLabel<E>>();
 		private PagingPanel pagingPanel;
 		private String searchText;
 
 		@Override
-		protected void onInitialize(VerticalPanel contentPanel) {
+		protected void onInitialize(final VerticalPanel contentPanel) {
 			setTitle(" ");
 
 			pagingPanel = new PagingPanel(new PageListener() {
 
-				public void onPageChange(PagingPanel sender, int pageIndex,
-						int pageCount) {
+				public void onPageChange(final PagingPanel sender,
+						final int pageIndex, final int pageCount) {
 					getContentPanel().clear();
 
 					final int firstItemIndex = pagingPanel.getPageIndex()
@@ -99,7 +100,7 @@ public abstract class SearchBlock<E extends Cacheable, T extends Cache<E>>
 			pagingPanel.setVisible(false);
 		}
 
-		public void search(String text) {
+		public void search(final String text) {
 			searchText = text;
 
 			clearResults();
@@ -140,7 +141,7 @@ public abstract class SearchBlock<E extends Cacheable, T extends Cache<E>>
 			search(searchText);
 		}
 
-		public void setSelection(E item) {
+		public void setSelection(final E item) {
 			final ItemLabel<E> itemUI = getItemUI(item);
 
 			// update the page index and count
@@ -161,7 +162,7 @@ public abstract class SearchBlock<E extends Cacheable, T extends Cache<E>>
 			}
 		}
 
-		private ItemLabel<E> getItemUI(E item) {
+		private ItemLabel<E> getItemUI(final E item) {
 			for (final ItemLabel<E> nextItem : searchResultsData) {
 				if (nextItem.getItem().equals(item)) {
 					return nextItem;
@@ -173,12 +174,12 @@ public abstract class SearchBlock<E extends Cacheable, T extends Cache<E>>
 		private class SearchResultListener implements ClickListener {
 			private final E item;
 
-			public SearchResultListener(E item) {
+			public SearchResultListener(final E item) {
 				super();
 				this.item = item;
 			}
 
-			public void onClick(Widget sender) {
+			public void onClick(final Widget sender) {
 				doItemClick(item);
 			}
 

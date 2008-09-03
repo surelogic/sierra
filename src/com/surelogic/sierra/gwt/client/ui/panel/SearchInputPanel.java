@@ -10,12 +10,12 @@ import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
-public class SearchPanel extends Composite {
+public class SearchInputPanel extends Composite {
 	private final FlexTable rootTable = new FlexTable();
 	private final TextBox searchBox = new TextBox();
 	private final List<SearchListener> listeners = new ArrayList<SearchListener>();
 
-	public SearchPanel() {
+	public SearchInputPanel() {
 		super();
 		initWidget(rootTable);
 
@@ -65,7 +65,7 @@ public class SearchPanel extends Composite {
 
 	public static interface SearchListener {
 
-		void onSearch(SearchPanel sender, String text);
+		void onSearch(SearchInputPanel sender, String text);
 
 	}
 

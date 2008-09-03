@@ -18,13 +18,13 @@ import com.surelogic.sierra.gwt.client.data.FindingTypeFilter;
 import com.surelogic.sierra.gwt.client.ui.ImageHelper;
 import com.surelogic.sierra.gwt.client.ui.ItemCheckBox;
 import com.surelogic.sierra.gwt.client.ui.dialog.FormDialog;
-import com.surelogic.sierra.gwt.client.ui.panel.SearchPanel;
-import com.surelogic.sierra.gwt.client.ui.panel.SearchPanel.SearchListener;
+import com.surelogic.sierra.gwt.client.ui.panel.SearchInputPanel;
+import com.surelogic.sierra.gwt.client.ui.panel.SearchInputPanel.SearchListener;
 import com.surelogic.sierra.gwt.client.util.LangUtil;
 
 public class FindingSelectionDialog extends FormDialog {
 	private final Tree categoryTree = new Tree();
-	private final SearchPanel searchPanel = new SearchPanel();
+	private final SearchInputPanel searchPanel = new SearchInputPanel();
 
 	public FindingSelectionDialog(final String title) {
 		super(title, "600px");
@@ -44,7 +44,7 @@ public class FindingSelectionDialog extends FormDialog {
 
 		searchPanel.addListener(new SearchListener() {
 
-			public void onSearch(final SearchPanel sender, final String text) {
+			public void onSearch(final SearchInputPanel sender, final String text) {
 				search(text);
 			}
 		});
