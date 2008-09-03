@@ -7,5 +7,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/sierra-message"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/common"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/sierra-jdbc-server"/>
+	<classpathentry kind="lib" path="/sierra-jdbc-server/lib/mail.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
