@@ -22,9 +22,9 @@ import com.surelogic.sierra.gwt.client.data.Category;
 import com.surelogic.sierra.gwt.client.data.FindingTypeFilter;
 import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.data.cache.CategoryCache;
-import com.surelogic.sierra.gwt.client.ui.BlockPanel;
 import com.surelogic.sierra.gwt.client.ui.LabelHelper;
 import com.surelogic.sierra.gwt.client.ui.link.ContentLink;
+import com.surelogic.sierra.gwt.client.ui.panel.BlockPanel;
 
 public class CategoryEditor extends BlockPanel {
 	public static final String PRIMARY_STYLE = "categories-category";

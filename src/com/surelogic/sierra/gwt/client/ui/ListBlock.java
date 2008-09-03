@@ -11,6 +11,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.Context;
 import com.surelogic.sierra.gwt.client.content.ContentComposite;
 import com.surelogic.sierra.gwt.client.data.cache.Cacheable;
+import com.surelogic.sierra.gwt.client.ui.panel.BlockPanel;
 
 public abstract class ListBlock<E extends Cacheable> extends BlockPanel {
 	private final String title;

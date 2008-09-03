@@ -7,6 +7,7 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.surelogic.sierra.gwt.client.ui.panel.ActionPanel;
 
 public class FormTable extends Composite {
 	private final VerticalPanel rootPanel = new VerticalPanel();

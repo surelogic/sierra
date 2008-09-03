@@ -14,8 +14,8 @@ import com.surelogic.sierra.gwt.client.data.FindingType;
 import com.surelogic.sierra.gwt.client.data.FindingType.ArtifactTypeInfo;
 import com.surelogic.sierra.gwt.client.data.FindingType.CategoryInfo;
 import com.surelogic.sierra.gwt.client.data.FindingType.ScanFilterInfo;
-import com.surelogic.sierra.gwt.client.ui.BlockPanel;
 import com.surelogic.sierra.gwt.client.ui.ListBlock;
+import com.surelogic.sierra.gwt.client.ui.panel.BlockPanel;
 import com.surelogic.sierra.gwt.client.util.LangUtil;
 
 public class FindingTypeView extends BlockPanel {

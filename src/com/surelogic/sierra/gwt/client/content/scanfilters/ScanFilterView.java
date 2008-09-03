@@ -24,10 +24,10 @@ import com.surelogic.sierra.gwt.client.data.ScanFilterEntry;
 import com.surelogic.sierra.gwt.client.data.cache.Cache;
 import com.surelogic.sierra.gwt.client.data.cache.CacheListenerAdapter;
 import com.surelogic.sierra.gwt.client.data.cache.CategoryCache;
-import com.surelogic.sierra.gwt.client.ui.BlockPanel;
 import com.surelogic.sierra.gwt.client.ui.HtmlHelper;
 import com.surelogic.sierra.gwt.client.ui.LabelHelper;
 import com.surelogic.sierra.gwt.client.ui.link.ContentLink;
+import com.surelogic.sierra.gwt.client.ui.panel.BlockPanel;
 
 public class ScanFilterView extends BlockPanel {
 	private final VerticalPanel importanceBlocks = new VerticalPanel();

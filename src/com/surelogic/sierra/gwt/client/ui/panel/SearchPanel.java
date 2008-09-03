@@ -1,4 +1,4 @@
-package com.surelogic.sierra.gwt.client.ui;
+package com.surelogic.sierra.gwt.client.ui.panel;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -22,10 +22,10 @@ import com.surelogic.sierra.gwt.client.data.FindingTypeFilter;
 import com.surelogic.sierra.gwt.client.data.ScanFilter;
 import com.surelogic.sierra.gwt.client.data.ScanFilterEntry;
 import com.surelogic.sierra.gwt.client.data.Status;
-import com.surelogic.sierra.gwt.client.ui.BlockPanel;
 import com.surelogic.sierra.gwt.client.ui.LabelHelper;
 import com.surelogic.sierra.gwt.client.ui.SingleImportanceChoice;
 import com.surelogic.sierra.gwt.client.ui.StatusBox;
+import com.surelogic.sierra.gwt.client.ui.panel.BlockPanel;
 
 public class ScanFilterEditor extends BlockPanel {
 

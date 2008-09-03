@@ -25,9 +25,9 @@ import com.surelogic.sierra.gwt.client.data.Report.OutputType;
 import com.surelogic.sierra.gwt.client.data.Report.Parameter;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.service.callback.StandardCallback;
-import com.surelogic.sierra.gwt.client.ui.ActionPanel;
-import com.surelogic.sierra.gwt.client.ui.BlockPanel;
 import com.surelogic.sierra.gwt.client.ui.MultipleImportanceChoice;
+import com.surelogic.sierra.gwt.client.ui.panel.ActionPanel;
+import com.surelogic.sierra.gwt.client.ui.panel.BlockPanel;
 import com.surelogic.sierra.gwt.client.util.LangUtil;
 
 public class ReportParametersView extends BlockPanel {

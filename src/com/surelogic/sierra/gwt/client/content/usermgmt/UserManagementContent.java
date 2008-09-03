@@ -19,12 +19,12 @@ import com.surelogic.sierra.gwt.client.data.UserAccount;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.service.callback.ResultCallback;
 import com.surelogic.sierra.gwt.client.service.callback.StandardCallback;
-import com.surelogic.sierra.gwt.client.ui.ActionPanel;
-import com.surelogic.sierra.gwt.client.ui.GridPanel;
 import com.surelogic.sierra.gwt.client.ui.StatusBox;
 import com.surelogic.sierra.gwt.client.ui.grid.SelectableGrid;
 import com.surelogic.sierra.gwt.client.ui.grid.SelectableGridListener;
 import com.surelogic.sierra.gwt.client.ui.grid.TextBoxEditor;
+import com.surelogic.sierra.gwt.client.ui.panel.ActionPanel;
+import com.surelogic.sierra.gwt.client.ui.panel.GridPanel;
 
 public final class UserManagementContent extends ContentComposite {
 

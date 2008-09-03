@@ -1,4 +1,4 @@
-package com.surelogic.sierra.gwt.client.ui;
+package com.surelogic.sierra.gwt.client.ui.panel;
 
 import java.util.EventListener;
 
@@ -8,6 +8,7 @@ import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
+import com.surelogic.sierra.gwt.client.ui.StyledButton;
 
 public class PagingPanel extends Composite {
 	private final PageListener pageListener;
