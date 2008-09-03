@@ -1,4 +1,4 @@
-package com.surelogic.sierra.gwt.client.table;
+package com.surelogic.sierra.gwt.client.ui.panel;
 
 import java.util.List;
 
@@ -7,7 +7,6 @@ import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.data.ColumnDataType;
-import com.surelogic.sierra.gwt.client.ui.panel.BlockPanel;
 import com.surelogic.sierra.gwt.client.util.LangUtil;
 
 public abstract class TablePanel extends BlockPanel {

@@ -1,7 +1,7 @@
-package com.surelogic.sierra.gwt.client.chart;
+package com.surelogic.sierra.gwt.client.ui.panel;
 
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.surelogic.sierra.gwt.client.ui.panel.BlockPanel;
+import com.surelogic.sierra.gwt.client.chart.Chart;
 
 public abstract class ChartPanel extends BlockPanel {
 	private Chart chart;

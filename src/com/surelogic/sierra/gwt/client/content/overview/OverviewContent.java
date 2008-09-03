@@ -20,7 +20,7 @@ import com.surelogic.sierra.gwt.client.data.dashboard.ReportWidget;
 import com.surelogic.sierra.gwt.client.data.dashboard.DashboardSettings.DashboardRow;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.service.callback.StandardCallback;
-import com.surelogic.sierra.gwt.client.table.ReportPanel;
+import com.surelogic.sierra.gwt.client.table.ReportTablePanel;
 import com.surelogic.sierra.gwt.client.ui.Direction;
 import com.surelogic.sierra.gwt.client.ui.ImageHelper;
 import com.surelogic.sierra.gwt.client.ui.panel.ActionPanel;
@@ -123,7 +123,7 @@ public final class OverviewContent extends ContentComposite {
 
 	private BlockPanel createUI(final DashboardWidget dw) {
 		if (dw instanceof ReportWidget) {
-			return new ReportPanel(((ReportWidget) dw).getSettings());
+			return new ReportTablePanel(((ReportWidget) dw).getSettings());
 		}
 		throw new IllegalArgumentException("Unsupported dashboard widget: "
 				+ dw.getClass().getName());
