@@ -1,4 +1,4 @@
-package com.surelogic.sierra.gwt.client.ui;
+package com.surelogic.sierra.gwt.client.ui.panel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,9 +10,8 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.data.cache.Cache;
 import com.surelogic.sierra.gwt.client.data.cache.Cacheable;
-import com.surelogic.sierra.gwt.client.ui.panel.BlockPanel;
-import com.surelogic.sierra.gwt.client.ui.panel.PagingPanel;
-import com.surelogic.sierra.gwt.client.ui.panel.SearchInputPanel;
+import com.surelogic.sierra.gwt.client.ui.ItemLabel;
+import com.surelogic.sierra.gwt.client.ui.SelectionTracker;
 import com.surelogic.sierra.gwt.client.ui.panel.PagingPanel.PageListener;
 import com.surelogic.sierra.gwt.client.ui.panel.SearchInputPanel.SearchListener;
 

@@ -1,4 +1,4 @@
-package com.surelogic.sierra.gwt.client.ui;
+package com.surelogic.sierra.gwt.client.ui.panel;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -11,7 +11,9 @@ import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.Context;
 import com.surelogic.sierra.gwt.client.content.ContentComposite;
 import com.surelogic.sierra.gwt.client.data.cache.Cacheable;
-import com.surelogic.sierra.gwt.client.ui.panel.BlockPanel;
+import com.surelogic.sierra.gwt.client.ui.ItemLabel;
+import com.surelogic.sierra.gwt.client.ui.LabelHelper;
+import com.surelogic.sierra.gwt.client.ui.SelectionTracker;
 
 public abstract class ListBlock<E extends Cacheable> extends BlockPanel {
 	private final String title;
