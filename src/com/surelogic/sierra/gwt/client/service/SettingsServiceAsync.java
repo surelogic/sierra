@@ -59,4 +59,6 @@ public interface SettingsServiceAsync {
 
 	void getDashboardSettings(AsyncCallback<DashboardSettings> callback);
 
+	void saveDashboardSettings(DashboardSettings settings,
+			AsyncCallback<Status> callback);
 }

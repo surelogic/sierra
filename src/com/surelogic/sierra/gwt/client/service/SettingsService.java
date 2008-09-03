@@ -144,6 +144,14 @@ public interface SettingsService extends RemoteService {
 	List<ReportSettings> listReportSettings();
 
 	/**
+	 * Save a user's dashboard preferences.
+	 * 
+	 * @param settings
+	 * @return
+	 */
+	Status saveDashboardSettings(DashboardSettings settings);
+
+	/**
 	 * Return the user's dashboard preferences.
 	 * 
 	 * @return
