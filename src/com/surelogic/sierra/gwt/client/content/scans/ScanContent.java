@@ -18,7 +18,7 @@ import com.surelogic.sierra.gwt.client.data.ReportSettings;
 import com.surelogic.sierra.gwt.client.data.ScanDetail;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.service.callback.StandardCallback;
-import com.surelogic.sierra.gwt.client.table.ReportTableSection;
+import com.surelogic.sierra.gwt.client.table.ReportPanel;
 import com.surelogic.sierra.gwt.client.ui.BlockPanel;
 import com.surelogic.sierra.gwt.client.ui.HtmlHelper;
 import com.surelogic.sierra.gwt.client.ui.MultipleImportanceChoice;
@@ -121,7 +121,7 @@ public class ScanContent extends ContentComposite {
 				settings.setSettingValue("scan", uuid);
 				settings.setSettingValue("importance", importances);
 				settings.setSettingValue("package", packages);
-				chartPanel.add(new ReportTableSection(settings));
+				chartPanel.add(new ReportPanel(settings));
 			} else {
 				chartPanel.add(ChartBuilder.report("ScanImportancesByCategory",
 						"???", "???").width(800).prop("scan", uuid).prop(
@@ -133,7 +133,7 @@ public class ScanContent extends ContentComposite {
 				settings.setSettingValue("importance", importances);
 				settings.setSettingValue("package", packages);
 				settings.setSettingValue("category", categories);
-				chartPanel.add(new ReportTableSection(settings));
+				chartPanel.add(new ReportPanel(settings));
 			}
 
 		}

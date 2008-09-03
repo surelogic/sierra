@@ -1,7 +1,7 @@
 package com.surelogic.sierra.gwt.client.chart;
 
 
-public class LatestScansChart extends ChartSection {
+public class LatestScansChart extends ChartPanel {
 
 	@Override
 	protected Chart buildChart() {

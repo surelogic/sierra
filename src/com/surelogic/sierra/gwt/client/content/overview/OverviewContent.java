@@ -1,5 +1,8 @@
 package com.surelogic.sierra.gwt.client.content.overview;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.HTML;
@@ -13,11 +16,15 @@ import com.surelogic.sierra.gwt.client.Context;
 import com.surelogic.sierra.gwt.client.content.ContentComposite;
 import com.surelogic.sierra.gwt.client.data.dashboard.DashboardSettings;
 import com.surelogic.sierra.gwt.client.data.dashboard.DashboardWidget;
+import com.surelogic.sierra.gwt.client.data.dashboard.ReportWidget;
 import com.surelogic.sierra.gwt.client.data.dashboard.DashboardSettings.DashboardRow;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.service.callback.StandardCallback;
+import com.surelogic.sierra.gwt.client.table.ReportPanel;
 import com.surelogic.sierra.gwt.client.ui.ActionPanel;
+import com.surelogic.sierra.gwt.client.ui.BlockPanel;
 import com.surelogic.sierra.gwt.client.ui.ColumnPanel;
+import com.surelogic.sierra.gwt.client.ui.Direction;
 import com.surelogic.sierra.gwt.client.ui.ImageHelper;
 
 public final class OverviewContent extends ContentComposite {
@@ -27,7 +34,7 @@ public final class OverviewContent extends ContentComposite {
 	private static final String ACTION_CANCEL = "Cancel";
 	private final ActionPanel actionPanel = new ActionPanel();
 	private final VerticalPanel dashboard = new VerticalPanel();
-	private DashboardSettings currentSettings;
+	private final List<BlockPanel> dashboardWidgetUIs = new ArrayList<BlockPanel>();
 
 	public static OverviewContent getInstance() {
 		return instance;
@@ -94,8 +101,8 @@ public final class OverviewContent extends ContentComposite {
 	}
 
 	private void updateDashboardUI(final DashboardSettings result) {
-		currentSettings = result;
 		dashboard.clear();
+		dashboardWidgetUIs.clear();
 
 		int lastColumnCount = 0;
 		ColumnPanel currentColPanel = null;
@@ -106,19 +113,20 @@ public final class OverviewContent extends ContentComposite {
 				dashboard.add(currentColPanel);
 			}
 			for (final DashboardWidget dw : row.getColumns()) {
-				currentColPanel.addWidget(createUI(dw));
+				final BlockPanel widgetUI = createUI(dw);
+				dashboardWidgetUIs.add(widgetUI);
+				currentColPanel.addWidget(widgetUI);
 			}
 			lastColumnCount = row.getColumns().size();
 		}
 	}
 
-	private Widget createUI(final DashboardWidget dw) {
-
-		// TODO Auto-generated method stub
-
-		// also add the widget to a list so toggleDashboardEdit can easily
-		// iterate through them
-		return null;
+	private BlockPanel createUI(final DashboardWidget dw) {
+		if (dw instanceof ReportWidget) {
+			return new ReportPanel(((ReportWidget) dw).getSettings());
+		}
+		throw new IllegalArgumentException("Unsupported dashboard widget: "
+				+ dw.getClass().getName());
 	}
 
 	@Override
@@ -138,56 +146,55 @@ public final class OverviewContent extends ContentComposite {
 
 		// the actual supported actions should be inside a SectionPanel subclass
 		// for instance, View Report must only show on report-sourced widgets
+		for (final BlockPanel dashPanel : dashboardWidgetUIs) {
+			dashPanel.removeActions();
+			if (editMode) {
+				final HorizontalPanel movementActions = new HorizontalPanel();
+				movementActions.add(createArrowImage(dashPanel, Direction.UP));
+				movementActions
+						.add(createArrowImage(dashPanel, Direction.DOWN));
+				movementActions
+						.add(createArrowImage(dashPanel, Direction.LEFT));
+				movementActions
+						.add(createArrowImage(dashPanel, Direction.RIGHT));
+				dashPanel.addAction(movementActions);
+				dashPanel.addAction("Remove", new ClickListener() {
 
-		// for (final SectionPanel dashPanel : sections) {
-		// dashPanel.removeActions();
-		// if (editMode) {
-		// final HorizontalPanel movementActions = new HorizontalPanel();
-		// movementActions.add(createArrowImage(dashPanel, Direction.UP));
-		// movementActions
-		// .add(createArrowImage(dashPanel, Direction.DOWN));
-		// movementActions
-		// .add(createArrowImage(dashPanel, Direction.LEFT));
-		// movementActions
-		// .add(createArrowImage(dashPanel, Direction.RIGHT));
-		// dashPanel.addAction(movementActions);
-		// dashPanel.addAction("Remove", new ClickListener() {
-		//
-		// public void onClick(final Widget sender) {
-		// removeSection(dashPanel);
-		// }
-		// });
-		// } else {
-		// dashPanel.addAction("View Report", new ClickListener() {
-		//
-		// public void onClick(final Widget sender) {
-		// viewReport(dashPanel);
-		// }
-		// });
-		// }
-		// }
+					public void onClick(final Widget sender) {
+						removeSection(dashPanel);
+					}
+				});
+			} else {
+				dashPanel.addAction("View Report", new ClickListener() {
+
+					public void onClick(final Widget sender) {
+						viewReport(dashPanel);
+					}
+				});
+			}
+		}
 	}
 
-	// private Image createArrowImage(final SectionPanel dashPanel,
-	// final Direction direction) {
-	// return ImageHelper.getArrowImage(direction, new ClickListener() {
-	//
-	// public void onClick(final Widget sender) {
-	// moveSection(dashPanel, direction);
-	// }
-	// });
-	// }
-	//
-	// private void moveSection(final SectionPanel dashPanel,
-	// final Direction direction) {
-	// // TODO Auto-generated method stub
-	//
-	// }
-	//
-	// private void removeSection(final SectionPanel dashPanel) {
-	// // TODO Auto-generated method stub
-	//
-	// }
+	private Image createArrowImage(final BlockPanel dashPanel,
+			final Direction direction) {
+		return ImageHelper.getArrowImage(direction, new ClickListener() {
+
+			public void onClick(final Widget sender) {
+				moveSection(dashPanel, direction);
+			}
+		});
+	}
+
+	private void moveSection(final BlockPanel dashPanel,
+			final Direction direction) {
+		// TODO Auto-generated method stub
+
+	}
+
+	private void removeSection(final BlockPanel dashPanel) {
+		// TODO Auto-generated method stub
+
+	}
 
 	private void saveDashboard() {
 		// TODO save the dashboard and leave edit mode
@@ -195,9 +202,9 @@ public final class OverviewContent extends ContentComposite {
 		toggleDashboardEdit(false);
 	}
 
-	// private void viewReport(final SectionPanel dashPanel) {
-	// // TODO navigate to the proper Reports content based on report uuid and
-	// // isTeamServer etc
-	//
-	// }
+	private void viewReport(final BlockPanel dashPanel) {
+		// TODO navigate to the proper Reports content based on report uuid and
+		// isTeamServer etc
+
+	}
 }

@@ -9,15 +9,15 @@ import com.surelogic.sierra.gwt.client.data.ReportTable;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.service.callback.ResultCallback;
 
-public class ReportTableSection extends TableSection {
+public class ReportPanel extends TablePanel {
 	private ReportSettings report;
 	private ReportTable table;
 
-	public ReportTableSection() {
+	public ReportPanel() {
 		super();
 	}
 
-	public ReportTableSection(final ReportSettings r) {
+	public ReportPanel(final ReportSettings r) {
 		super();
 		setReport(r);
 	}

@@ -7,7 +7,7 @@ import com.surelogic.sierra.gwt.client.data.ReportSettings;
 import com.surelogic.sierra.gwt.client.data.Ticket;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.service.callback.ResultCallback;
-import com.surelogic.sierra.gwt.client.table.ReportTableSection;
+import com.surelogic.sierra.gwt.client.table.ReportPanel;
 import com.surelogic.sierra.gwt.client.ui.BlockPanel;
 
 public class ReportView extends BlockPanel {
@@ -44,6 +44,6 @@ public class ReportView extends BlockPanel {
 	public void retrieveTable(final ReportSettings selection) {
 		report.clear();
 		// retrieve and display the report
-		report.add(new ReportTableSection(selection));
+		report.add(new ReportPanel(selection));
 	}
 }

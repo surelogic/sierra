@@ -34,4 +34,5 @@ public class ReportWidget implements DashboardWidget {
 	public void setOutputType(final OutputType outputType) {
 		this.outputType = outputType;
 	}
+
 }

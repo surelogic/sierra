@@ -10,7 +10,7 @@ import com.surelogic.sierra.gwt.client.data.ColumnDataType;
 import com.surelogic.sierra.gwt.client.ui.BlockPanel;
 import com.surelogic.sierra.gwt.client.util.LangUtil;
 
-public abstract class TableSection extends BlockPanel {
+public abstract class TablePanel extends BlockPanel {
 	private static final String PRIMARY_STYLE = "sl-TableSection";
 	private final FlexTable grid = new FlexTable();
 	private ColumnDataType[] columnTypes;

@@ -1,7 +1,7 @@
 package com.surelogic.sierra.gwt.client.chart;
 
 
-public class AuditContributionsChart extends ChartSection {
+public class AuditContributionsChart extends ChartPanel {
 
 	@Override
 	protected Chart buildChart() {

@@ -32,8 +32,8 @@ import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.data.cache.ProjectCache;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.service.callback.StandardCallback;
-import com.surelogic.sierra.gwt.client.table.ReportTableSection;
-import com.surelogic.sierra.gwt.client.table.TableSection;
+import com.surelogic.sierra.gwt.client.table.ReportPanel;
+import com.surelogic.sierra.gwt.client.table.TablePanel;
 import com.surelogic.sierra.gwt.client.ui.BlockPanel;
 import com.surelogic.sierra.gwt.client.ui.LabelHelper;
 import com.surelogic.sierra.gwt.client.ui.StatusBox;
@@ -135,7 +135,7 @@ public class ProjectView extends BlockPanel {
 		}
 	}
 
-	private class ProjectTableSection extends TableSection {
+	private class ProjectTableSection extends TablePanel {
 
 		private Map<Scan, CheckBox> scans;
 
@@ -177,8 +177,8 @@ public class ProjectView extends BlockPanel {
 						r2.setTitle("Fixed Findings");
 						r2.setSettingValue("scans", fixed);
 						diff.clear();
-						diff.add(new ReportTableSection(r1));
-						diff.add(new ReportTableSection(r2));
+						diff.add(new ReportPanel(r1));
+						diff.add(new ReportPanel(r2));
 						diff.add(ChartBuilder.report("CompareProjectScans",
 								"???", "???").prop("scans", fixed).build());
 					} else {
