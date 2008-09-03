@@ -32,11 +32,11 @@ import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.data.cache.ProjectCache;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.service.callback.StandardCallback;
-import com.surelogic.sierra.gwt.client.table.ReportTablePanel;
 import com.surelogic.sierra.gwt.client.ui.LabelHelper;
 import com.surelogic.sierra.gwt.client.ui.StatusBox;
 import com.surelogic.sierra.gwt.client.ui.link.ContentLink;
 import com.surelogic.sierra.gwt.client.ui.panel.BlockPanel;
+import com.surelogic.sierra.gwt.client.ui.panel.ReportTablePanel;
 import com.surelogic.sierra.gwt.client.ui.panel.TablePanel;
 
 public class ProjectView extends BlockPanel {

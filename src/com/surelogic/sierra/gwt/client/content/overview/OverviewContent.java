@@ -20,12 +20,12 @@ import com.surelogic.sierra.gwt.client.data.dashboard.ReportWidget;
 import com.surelogic.sierra.gwt.client.data.dashboard.DashboardSettings.DashboardRow;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.service.callback.StandardCallback;
-import com.surelogic.sierra.gwt.client.table.ReportTablePanel;
 import com.surelogic.sierra.gwt.client.ui.Direction;
 import com.surelogic.sierra.gwt.client.ui.ImageHelper;
 import com.surelogic.sierra.gwt.client.ui.panel.ActionPanel;
 import com.surelogic.sierra.gwt.client.ui.panel.BlockPanel;
 import com.surelogic.sierra.gwt.client.ui.panel.ColumnPanel;
+import com.surelogic.sierra.gwt.client.ui.panel.ReportTablePanel;
 
 public final class OverviewContent extends ContentComposite {
 	private static final OverviewContent instance = new OverviewContent();

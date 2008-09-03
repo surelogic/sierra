@@ -7,8 +7,8 @@ import com.surelogic.sierra.gwt.client.data.ReportSettings;
 import com.surelogic.sierra.gwt.client.data.Ticket;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.service.callback.ResultCallback;
-import com.surelogic.sierra.gwt.client.table.ReportTablePanel;
 import com.surelogic.sierra.gwt.client.ui.panel.BlockPanel;
+import com.surelogic.sierra.gwt.client.ui.panel.ReportTablePanel;
 
 public class ReportView extends BlockPanel {
 
