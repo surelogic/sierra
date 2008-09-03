@@ -39,6 +39,7 @@ import com.surelogic.sierra.gwt.client.data.dashboard.DashboardSettings;
 import com.surelogic.sierra.gwt.client.data.dashboard.ReportWidget;
 import com.surelogic.sierra.gwt.client.service.SettingsService;
 import com.surelogic.sierra.jdbc.RevisionException;
+import com.surelogic.sierra.jdbc.dashboard.DashboardQueries;
 import com.surelogic.sierra.jdbc.project.ProjectDO;
 import com.surelogic.sierra.jdbc.project.Projects;
 import com.surelogic.sierra.jdbc.reports.ReportSettingQueries;
@@ -704,5 +705,11 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 				.addColumn(new ReportWidget(publishedProjects, OutputType.TABLE));
 
 		return settings;
+	}
+
+	public Status saveDashboardSettings(final DashboardSettings settings) {
+		ConnectionFactory.withUserTransaction(DashboardQueries
+				.updateDashboard(settings));
+		return Status.success();
 	}
 }
