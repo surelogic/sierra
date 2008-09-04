@@ -109,19 +109,20 @@ public final class OverviewContent extends ContentComposite {
 		int lastColumnCount = 0;
 		ColumnPanel currentColPanel = null;
 		for (final DashboardRow row : result.getRows()) {
-			if (currentColPanel == null
-					|| lastColumnCount != row.getColumns().size()) {
+			final List<DashboardWidget> cols = row.getColumns();
+			if (currentColPanel == null || lastColumnCount != cols.size()) {
 				currentColPanel = new ColumnPanel();
 				dashboard.add(currentColPanel);
 			}
-			for (final DashboardWidget dw : row.getColumns()) {
+			for (int i = 0; i < cols.size(); i++) {
+				final DashboardWidget dw = cols.get(i);
 				if (dw != null) {
 					final BlockPanel widgetUI = createUI(dw);
 					dashboardWidgetUIs.add(widgetUI);
-					currentColPanel.addWidget(widgetUI);
+					currentColPanel.addWidget(i, widgetUI);
 				}
 			}
-			lastColumnCount = row.getColumns().size();
+			lastColumnCount = cols.size();
 		}
 	}
 

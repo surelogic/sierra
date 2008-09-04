@@ -22,6 +22,7 @@ public class ColumnPanel extends Composite {
 	public void addWidget(final int column, final Widget w) {
 		while (rootPanel.getWidgetCount() <= column) {
 			final VerticalPanel colPanel = new VerticalPanel();
+			colPanel.setWidth("100%");
 			rootPanel.add(colPanel);
 			rootPanel.setCellVerticalAlignment(colPanel,
 					HasVerticalAlignment.ALIGN_TOP);
