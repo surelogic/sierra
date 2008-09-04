@@ -130,9 +130,13 @@ public final class OverviewContent extends ContentComposite {
 			final ReportWidget rw = (ReportWidget) dw;
 			final OutputType outputType = rw.getOutputType();
 			if (outputType == OutputType.CHART) {
-				return new ChartPanel(rw.getSettings());
+				final BlockPanel bp = new ChartPanel(rw.getSettings());
+				bp.initialize();
+				return bp;
 			} else if (outputType == OutputType.TABLE) {
-				return new ReportTablePanel(rw.getSettings());
+				final BlockPanel bp = new ReportTablePanel(rw.getSettings());
+				bp.initialize();
+				return bp;
 			}
 			throw new IllegalArgumentException("Unsupported output type: "
 					+ rw.getOutputType());
