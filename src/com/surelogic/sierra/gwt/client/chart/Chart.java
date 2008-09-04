@@ -7,6 +7,7 @@ import com.google.gwt.user.client.ui.LoadListener;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.data.ImageMapData;
+import com.surelogic.sierra.gwt.client.data.ReportSettings;
 import com.surelogic.sierra.gwt.client.data.Ticket;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.service.callback.ResultCallback;
@@ -21,6 +22,37 @@ public class Chart extends Composite {
 		rootPanel.add(waitImage);
 	}
 
+	public Chart(final ReportSettings settings) {
+		initWidget(rootPanel);
+		rootPanel.add(waitImage);
+		setReportSettings(settings);
+	}
+
+	public Chart(final Ticket ticket) {
+		initWidget(rootPanel);
+		rootPanel.add(waitImage);
+		setChartTicket(ticket);
+	}
+
+	public void setReportSettings(final ReportSettings settings) {
+		ServiceHelper.getTicketService().getTicket(settings,
+				new ResultCallback<Ticket>() {
+
+					@Override
+					protected void doFailure(final String message,
+							final Ticket result) {
+						rootPanel.clear();
+						rootPanel.add(new Label(message));
+					}
+
+					@Override
+					protected void doSuccess(final String message,
+							final Ticket result) {
+						setChartTicket(result);
+					}
+				});
+	}
+
 	public void setChartTicket(final Ticket ticket) {
 		if (ticket == null) {
 			rootPanel.clear();
@@ -30,14 +62,14 @@ public class Chart extends Composite {
 					new ResultCallback<ImageMapData>() {
 
 						@Override
-						protected void doFailure(String message,
-								ImageMapData result) {
+						protected void doFailure(final String message,
+								final ImageMapData result) {
 							loadFailed(message);
 						}
 
 						@Override
-						protected void doSuccess(String message,
-								ImageMapData result) {
+						protected void doSuccess(final String message,
+								final ImageMapData result) {
 							loadChart(ticket, result);
 						}
 
@@ -45,7 +77,7 @@ public class Chart extends Composite {
 		}
 	}
 
-	private void loadChart(final Ticket ticket, ImageMapData mapData) {
+	private void loadChart(final Ticket ticket, final ImageMapData mapData) {
 		final String chartId = ticket.getUUID();
 		final String url = "chart/png?ticket=" + chartId;
 		final String map = "#map" + chartId;
@@ -53,11 +85,11 @@ public class Chart extends Composite {
 		final MappedImage chartImg = new MappedImage(url, map);
 		chartImg.addLoadListener(new LoadListener() {
 
-			public void onError(Widget sender) {
+			public void onError(final Widget sender) {
 				loadFailed(null);
 			}
 
-			public void onLoad(Widget sender) {
+			public void onLoad(final Widget sender) {
 				rootPanel.remove(waitImage);
 			}
 		});
@@ -65,7 +97,7 @@ public class Chart extends Composite {
 		rootPanel.insert(chartImg, 0);
 	}
 
-	private void loadFailed(String message) {
+	private void loadFailed(final String message) {
 		rootPanel.clear();
 		rootPanel.add(new Label("Unable To Load Chart"));
 		if (message != null && !"".equals(message)) {
