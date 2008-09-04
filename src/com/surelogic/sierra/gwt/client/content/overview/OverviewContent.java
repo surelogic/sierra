@@ -70,8 +70,6 @@ public final class OverviewContent extends ContentComposite {
 				toggleDashboardEdit(false);
 			}
 		});
-		toggleDashboardEdit(false);
-
 		titlePanel.add(actionPanel);
 		titlePanel.setCellHorizontalAlignment(actionPanel,
 				HasHorizontalAlignment.ALIGN_RIGHT);
@@ -97,6 +95,7 @@ public final class OverviewContent extends ContentComposite {
 					@Override
 					protected void doSuccess(final DashboardSettings result) {
 						updateDashboardUI(result);
+						toggleDashboardEdit(false);
 					}
 
 				});
