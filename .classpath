@@ -8,5 +8,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/common"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/sierra-jdbc-server"/>
 	<classpathentry kind="lib" path="/sierra-jdbc-server/lib/mail.jar"/>
+	<classpathentry kind="lib" path="lib/web-dependencies/activation-1.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
