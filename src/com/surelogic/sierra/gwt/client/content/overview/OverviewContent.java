@@ -14,6 +14,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.Context;
 import com.surelogic.sierra.gwt.client.content.ContentComposite;
+import com.surelogic.sierra.gwt.client.data.Report.OutputType;
 import com.surelogic.sierra.gwt.client.data.dashboard.DashboardSettings;
 import com.surelogic.sierra.gwt.client.data.dashboard.DashboardWidget;
 import com.surelogic.sierra.gwt.client.data.dashboard.ReportWidget;
@@ -24,6 +25,7 @@ import com.surelogic.sierra.gwt.client.ui.Direction;
 import com.surelogic.sierra.gwt.client.ui.ImageHelper;
 import com.surelogic.sierra.gwt.client.ui.panel.ActionPanel;
 import com.surelogic.sierra.gwt.client.ui.panel.BlockPanel;
+import com.surelogic.sierra.gwt.client.ui.panel.ChartPanel;
 import com.surelogic.sierra.gwt.client.ui.panel.ColumnPanel;
 import com.surelogic.sierra.gwt.client.ui.panel.ReportTablePanel;
 
@@ -113,9 +115,11 @@ public final class OverviewContent extends ContentComposite {
 				dashboard.add(currentColPanel);
 			}
 			for (final DashboardWidget dw : row.getColumns()) {
-				final BlockPanel widgetUI = createUI(dw);
-				dashboardWidgetUIs.add(widgetUI);
-				currentColPanel.addWidget(widgetUI);
+				if (dw != null) {
+					final BlockPanel widgetUI = createUI(dw);
+					dashboardWidgetUIs.add(widgetUI);
+					currentColPanel.addWidget(widgetUI);
+				}
 			}
 			lastColumnCount = row.getColumns().size();
 		}
@@ -123,7 +127,15 @@ public final class OverviewContent extends ContentComposite {
 
 	private BlockPanel createUI(final DashboardWidget dw) {
 		if (dw instanceof ReportWidget) {
-			return new ReportTablePanel(((ReportWidget) dw).getSettings());
+			final ReportWidget rw = (ReportWidget) dw;
+			final OutputType outputType = rw.getOutputType();
+			if (outputType == OutputType.CHART) {
+				return new ChartPanel(rw.getSettings());
+			} else if (outputType == OutputType.TABLE) {
+				return new ReportTablePanel(rw.getSettings());
+			}
+			throw new IllegalArgumentException("Unsupported output type: "
+					+ rw.getOutputType());
 		}
 		throw new IllegalArgumentException("Unsupported dashboard widget: "
 				+ dw.getClass().getName());
