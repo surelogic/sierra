@@ -8,6 +8,7 @@ import com.surelogic.common.jdbc.Query;
 import com.surelogic.common.jdbc.Result;
 import com.surelogic.common.jdbc.Row;
 import com.surelogic.common.jdbc.RowHandler;
+import com.surelogic.common.jdbc.SingleRowHandler;
 import com.surelogic.sierra.gwt.client.data.ReportSetting;
 import com.surelogic.sierra.gwt.client.data.ReportSettings;
 import com.surelogic.sierra.jdbc.server.NullUserQuery;
@@ -42,6 +43,21 @@ public class ReportSettingQueries {
 								values.get(i), i);
 					}
 				}
+			}
+		};
+	}
+
+	public static UserQuery<ReportSettings> getUserReportSettings(
+			final String uuid) {
+		return new UserQuery<ReportSettings>() {
+			public ReportSettings perform(final Query query,
+					final Server server, final User user) {
+				return query
+						.prepared(
+								"ReportSettings.selectUserSetting",
+								SingleRowHandler
+										.from(new ReportSettingsHandler(query)))
+						.call(user.getId(), uuid);
 			}
 		};
 	}
