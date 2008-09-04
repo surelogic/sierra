@@ -104,4 +104,5 @@ public class Chart extends Composite {
 			rootPanel.add(new Label(message));
 		}
 	}
+
 }
