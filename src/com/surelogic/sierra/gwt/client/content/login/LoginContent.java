@@ -19,6 +19,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.Context;
 import com.surelogic.sierra.gwt.client.ContextManager;
+import com.surelogic.sierra.gwt.client.SessionManager;
 import com.surelogic.sierra.gwt.client.UserListener;
 import com.surelogic.sierra.gwt.client.content.ContentComposite;
 import com.surelogic.sierra.gwt.client.content.overview.OverviewContent;
@@ -59,9 +60,9 @@ public final class LoginContent extends ContentComposite {
 		final String usernameText = username.getText().trim();
 		final String passwordText = password.getText().trim();
 
-		ContextManager.addUserListener(new UserListener() {
+		SessionManager.addUserListener(new UserListener() {
 
-			public void onLogin(UserAccount user) {
+			public void onLogin(final UserAccount user) {
 				resetLoginAttempt();
 				errorMessage.setText("");
 				if (ContextManager.isContent(LoginContent.getInstance())) {
@@ -69,26 +70,27 @@ public final class LoginContent extends ContentComposite {
 				}
 			}
 
-			public void onLoginFailure(String message) {
+			public void onLoginFailure(final String message) {
 				resetLoginAttempt();
 				errorMessage.setText(message);
 			}
 
-			public void onUpdate(UserAccount user) {
+			public void onUpdate(final UserAccount user) {
 				// do nothing
 			}
 
-			public void onLogout(UserAccount user, String errorMessageText) {
+			public void onLogout(final UserAccount user,
+					final String errorMessageText) {
 				resetLoginAttempt();
 				errorMessage.setText(errorMessageText);
 			}
 		});
 
-		ContextManager.login(usernameText, passwordText);
+		SessionManager.login(usernameText, passwordText);
 	}
 
 	@Override
-	protected void onInitialize(DockPanel rootPanel) {
+	protected void onInitialize(final DockPanel rootPanel) {
 		// TODO redo style bindings to standard naming scheme
 		loginPanel.addStyleName("login-panel");
 		loginPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
@@ -171,7 +173,7 @@ public final class LoginContent extends ContentComposite {
 	}
 
 	@Override
-	protected void onUpdate(Context context) {
+	protected void onUpdate(final Context context) {
 		// TODO accept an error message param in the context?
 		resetLoginAttempt();
 		if (username.getText().trim().length() > 0) {

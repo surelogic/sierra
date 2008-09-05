@@ -1,8 +1,8 @@
 package com.surelogic.sierra.gwt.client.util;
 
 import com.google.gwt.core.client.GWT;
-import com.surelogic.sierra.gwt.client.ContextManager;
 import com.surelogic.sierra.gwt.client.LogPanel;
+import com.surelogic.sierra.gwt.client.SessionManager;
 
 public final class ExceptionUtil {
 
@@ -10,7 +10,7 @@ public final class ExceptionUtil {
 		// no instance
 	}
 
-	public static void log(Throwable caught) {
+	public static void log(final Throwable caught) {
 		GWT.log("ExceptionTracker", caught);
 		LogPanel.getInstance().log(caught);
 	}
@@ -21,9 +21,9 @@ public final class ExceptionUtil {
 	 * 
 	 * @param caught
 	 */
-	public static void handle(Throwable caught) {
+	public static void handle(final Throwable caught) {
 		log(caught);
-		ContextManager
+		SessionManager
 				.logout("Unable to communicate with server. (Server may be down)");
 	}
 }

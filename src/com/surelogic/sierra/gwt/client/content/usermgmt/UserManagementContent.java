@@ -12,7 +12,7 @@ import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.Context;
-import com.surelogic.sierra.gwt.client.ContextManager;
+import com.surelogic.sierra.gwt.client.SessionManager;
 import com.surelogic.sierra.gwt.client.content.ContentComposite;
 import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.data.UserAccount;
@@ -52,13 +52,13 @@ public final class UserManagementContent extends ContentComposite {
 	}
 
 	@Override
-	protected void onInitialize(DockPanel rootPanel) {
+	protected void onInitialize(final DockPanel rootPanel) {
 		usersPanel.setWidth("100%");
-		final boolean isAdmin = ContextManager.getUser().isAdministrator();
+		final boolean isAdmin = SessionManager.getUser().isAdministrator();
 		if (isAdmin) {
 			userActionsPanel.addAction("Create a new user",
 					new ClickListener() {
-						public void onClick(Widget sender) {
+						public void onClick(final Widget sender) {
 							usersGrid.clearStatus();
 							createUser();
 						}
@@ -68,7 +68,7 @@ public final class UserManagementContent extends ContentComposite {
 		usersPanel.add(userActionsPanel);
 		usersGridPanel.addGridOption("Show disabled users",
 				new ClickListener() {
-					public void onClick(Widget sender) {
+					public void onClick(final Widget sender) {
 						showDisabled = !showDisabled;
 						refreshUsers();
 					}
@@ -84,8 +84,9 @@ public final class UserManagementContent extends ContentComposite {
 		}
 		usersGrid.addListener(new SelectableGridListener() {
 
-			public Object onChange(Widget source, int row, int column,
-					Object oldValue, Object newValue) {
+			public Object onChange(final Widget source, final int row,
+					final int column, final Object oldValue,
+					final Object newValue) {
 				if (column == 0) {
 					return changeUserName(row, (String) oldValue,
 							(String) newValue);
@@ -93,14 +94,14 @@ public final class UserManagementContent extends ContentComposite {
 				return newValue;
 			}
 
-			public void onClick(Widget source, int row, int column,
-					Object rowData) {
+			public void onClick(final Widget source, final int row,
+					final int column, final Object rowData) {
 			}
 
-			public void onHeaderClick(Widget source, int column) {
+			public void onHeaderClick(final Widget source, final int column) {
 			}
 
-			public void onSelect(int row, Object rowData) {
+			public void onSelect(final int row, final Object rowData) {
 			}
 
 		});
@@ -108,7 +109,7 @@ public final class UserManagementContent extends ContentComposite {
 	}
 
 	@Override
-	protected void onUpdate(Context context) {
+	protected void onUpdate(final Context context) {
 		// load the users into the grid
 		usersGrid.setWaitStatus();
 		refreshUsers();
@@ -124,8 +125,9 @@ public final class UserManagementContent extends ContentComposite {
 		ServiceHelper.getManageUserService().getUsers(
 				new StandardCallback<List<UserAccount>>() {
 
-					protected void doSuccess(List<UserAccount> result) {
-						final UserAccount currentUser = ContextManager
+					@Override
+					protected void doSuccess(final List<UserAccount> result) {
+						final UserAccount currentUser = SessionManager
 								.getUser();
 
 						usersGrid.removeRows();
@@ -147,7 +149,8 @@ public final class UserManagementContent extends ContentComposite {
 				});
 	}
 
-	private void updateRow(int row, UserAccount user, UserAccount currentUser) {
+	private void updateRow(final int row, final UserAccount user,
+			final UserAccount currentUser) {
 		usersGrid.setText(row, 0, user.getUserName());
 		if (currentUser.isAdministrator()) {
 			usersGrid.setWidget(row, 1, createUserRoleChoice(row, user));
@@ -169,7 +172,7 @@ public final class UserManagementContent extends ContentComposite {
 		final HTML html = new HTML("Change");
 		html.setStyleName("clickable");
 		html.addClickListener(new ClickListener() {
-			public void onClick(Widget sender) {
+			public void onClick(final Widget sender) {
 				usersGrid.clearStatus();
 				final ChangePasswordDialog dialog = new ChangePasswordDialog();
 				dialog.update(user);
@@ -186,15 +189,15 @@ public final class UserManagementContent extends ContentComposite {
 		box.setSelectedIndex(user.isActive() ? 1 : 0);
 		box.addChangeListener(new ChangeListener() {
 
-			public void onChange(Widget sender) {
+			public void onChange(final Widget sender) {
 				user.setActive(ENABLED.equals(box.getItemText(box
 						.getSelectedIndex())));
 				ServiceHelper.getManageUserService().updateUser(user,
 						new ResultCallback<UserAccount>() {
 
 							@Override
-							protected void doFailure(String message,
-									UserAccount result) {
+							protected void doFailure(final String message,
+									final UserAccount result) {
 								usersGrid.setStatus("error",
 										"Error updating the role of "
 												+ user.getUserName() + ": "
@@ -202,9 +205,9 @@ public final class UserManagementContent extends ContentComposite {
 							}
 
 							@Override
-							protected void doSuccess(String message,
-									UserAccount result) {
-								updateRow(row, result, ContextManager.getUser());
+							protected void doSuccess(final String message,
+									final UserAccount result) {
+								updateRow(row, result, SessionManager.getUser());
 								status.setStatus(Status.success(message));
 							}
 						});
@@ -220,15 +223,15 @@ public final class UserManagementContent extends ContentComposite {
 		box.setSelectedIndex(user.isAdministrator() ? 1 : 0);
 		box.addChangeListener(new ChangeListener() {
 
-			public void onChange(Widget sender) {
+			public void onChange(final Widget sender) {
 				user.setAdministrator(ADMIN.equals(box.getItemText(box
 						.getSelectedIndex())));
 				ServiceHelper.getManageUserService().updateUser(user,
 						new ResultCallback<UserAccount>() {
 
 							@Override
-							protected void doFailure(String message,
-									UserAccount result) {
+							protected void doFailure(final String message,
+									final UserAccount result) {
 								usersGrid.setStatus("error",
 										"Error updating the role of "
 												+ user.getUserName() + ": "
@@ -236,9 +239,9 @@ public final class UserManagementContent extends ContentComposite {
 							}
 
 							@Override
-							protected void doSuccess(String message,
-									UserAccount result) {
-								updateRow(row, result, ContextManager.getUser());
+							protected void doSuccess(final String message,
+									final UserAccount result) {
+								updateRow(row, result, SessionManager.getUser());
 								status.setStatus(Status.success(message));
 							}
 						});
@@ -253,7 +256,8 @@ public final class UserManagementContent extends ContentComposite {
 		final CreateUserDialog dialog = new CreateUserDialog();
 		dialog.addPopupListener(new PopupListener() {
 
-			public void onPopupClosed(PopupPanel sender, boolean autoClosed) {
+			public void onPopupClosed(final PopupPanel sender,
+					final boolean autoClosed) {
 				status.setStatus(dialog.getStatus());
 				refreshUsers();
 			}
@@ -261,8 +265,8 @@ public final class UserManagementContent extends ContentComposite {
 		dialog.center();
 	}
 
-	private String changeUserName(final int row, String oldValue,
-			String newValue) {
+	private String changeUserName(final int row, final String oldValue,
+			final String newValue) {
 		usersGrid.clearStatus();
 		final UserAccount account = (UserAccount) usersGrid.getRowData(row);
 		if (account != null) {
@@ -271,23 +275,23 @@ public final class UserManagementContent extends ContentComposite {
 					new ResultCallback<UserAccount>() {
 
 						@Override
-						protected void doFailure(String message,
-								UserAccount result) {
+						protected void doFailure(final String message,
+								final UserAccount result) {
 							usersGrid.setStatus("error",
 									"Unable to change user name: " + message);
-							updateRow(row, result, ContextManager.getUser());
+							updateRow(row, result, SessionManager.getUser());
 							status.setStatus(Status.failure(message));
 						}
 
 						@Override
-						protected void doSuccess(String message,
-								UserAccount result) {
-							final UserAccount current = ContextManager
+						protected void doSuccess(final String message,
+								final UserAccount result) {
+							final UserAccount current = SessionManager
 									.getUser();
 							if (result.getId() == current.getId()) {
-								ContextManager.updateUser(result);
+								SessionManager.updateUser(result);
 							}
-							updateRow(row, result, ContextManager.getUser());
+							updateRow(row, result, SessionManager.getUser());
 							status.setStatus(Status.success(message));
 
 						}

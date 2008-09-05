@@ -37,12 +37,16 @@ public class SierraPortal implements EntryPoint {
 				.getSessionService();
 		sessionService.getUserAccount(new ResultCallback<UserAccount>() {
 
-			protected void doFailure(String message, UserAccount result) {
+			@Override
+			protected void doFailure(final String message,
+					final UserAccount result) {
 				ContextManager.refreshContext();
 			}
 
-			protected void doSuccess(String message, UserAccount result) {
-				ContextManager.updateUser(result);
+			@Override
+			protected void doSuccess(final String message,
+					final UserAccount result) {
+				SessionManager.updateUser(result);
 			}
 		});
 

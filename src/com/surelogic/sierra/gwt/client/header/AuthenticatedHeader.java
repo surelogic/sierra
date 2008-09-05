@@ -5,15 +5,16 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.surelogic.sierra.gwt.client.ContextManager;
 import com.surelogic.sierra.gwt.client.Context;
+import com.surelogic.sierra.gwt.client.SessionManager;
 import com.surelogic.sierra.gwt.client.data.UserAccount;
 
 public abstract class AuthenticatedHeader extends HeaderComposite {
 	private Label userName;
 
-	protected void onInitialize(VerticalPanel rootPanel) {
-		StringBuffer location = new StringBuffer();
+	@Override
+	protected void onInitialize(final VerticalPanel rootPanel) {
+		final StringBuffer location = new StringBuffer();
 		location.append("Logged in to ");
 		location.append(GWT.getHostPageBaseURL().replaceFirst(".*//", "")
 				.replaceFirst("/sl.*", ""));
@@ -28,8 +29,8 @@ public abstract class AuthenticatedHeader extends HeaderComposite {
 
 		addUtilityItem("Log out", new ClickListener() {
 
-			public void onClick(Widget sender) {
-				ContextManager.logout(null);
+			public void onClick(final Widget sender) {
+				SessionManager.logout(null);
 			}
 		});
 
@@ -40,19 +41,23 @@ public abstract class AuthenticatedHeader extends HeaderComposite {
 
 	protected abstract void addTabs();
 
-	protected void onActivate(Context context, UserAccount user) {
+	@Override
+	protected void onActivate(final Context context, final UserAccount user) {
 		// nothing to do
 	}
 
+	@Override
 	protected void onDeactivate() {
 		// nothing to do
 	}
 
-	protected void onUpdateContext(Context context) {
+	@Override
+	protected void onUpdateContext(final Context context) {
 		// nothing to do
 	}
 
-	protected void onUpdateUser(UserAccount user) {
+	@Override
+	protected void onUpdateUser(final UserAccount user) {
 		if (user != null) {
 			userName.setText(user.getUserName());
 		}

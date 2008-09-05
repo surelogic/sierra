@@ -6,16 +6,8 @@ import java.util.List;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.HistoryListener;
 import com.surelogic.sierra.gwt.client.content.ContentComposite;
-import com.surelogic.sierra.gwt.client.content.login.LoginContent;
-import com.surelogic.sierra.gwt.client.data.UserAccount;
-import com.surelogic.sierra.gwt.client.service.ServiceHelper;
-import com.surelogic.sierra.gwt.client.service.SessionServiceAsync;
-import com.surelogic.sierra.gwt.client.service.callback.ResultCallback;
 
 public final class ContextManager {
-
-	private static UserAccount userAccount;
-	private static List<UserListener> userListeners = new ArrayList<UserListener>();
 	private static List<ContextListener> contextListeners = new ArrayList<ContextListener>();
 
 	private ContextManager() {
@@ -26,101 +18,12 @@ public final class ContextManager {
 		History.addHistoryListener(new ContextHistoryListener());
 	}
 
-	public static UserAccount getUser() {
-		return userAccount;
-	}
-
-	public static boolean isLoggedIn() {
-		return userAccount != null;
-	}
-
-	public static void login(String username, String password) {
-		final SessionServiceAsync sessionService = ServiceHelper
-				.getSessionService();
-		sessionService.login(username, password,
-				new ResultCallback<UserAccount>() {
-
-					@Override
-					public void doFailure(String message, UserAccount result) {
-						userAccount = null;
-						for (final UserListener listener : userListeners) {
-							listener.onLoginFailure(message);
-						}
-						refreshContext();
-					}
-
-					@Override
-					public void doSuccess(String message, UserAccount result) {
-						userAccount = result;
-						for (final UserListener listener : userListeners) {
-							listener.onLogin(userAccount);
-						}
-						refreshContext();
-					}
-				});
-	}
-
-	public static void updateUser(UserAccount user) {
-		userAccount = user;
-		for (final UserListener listener : userListeners) {
-			listener.onUpdate(userAccount);
-		}
-		refreshContext();
-	}
-
-	public static void logout(final String errorMessage) {
-		final SessionServiceAsync svc = ServiceHelper.getSessionService();
-		svc.logout(new ResultCallback<String>() {
-
-			@Override
-			protected void doException(Throwable caught) {
-				final UserAccount oldUser = userAccount;
-				userAccount = null;
-				for (final UserListener listener : userListeners) {
-					listener.onLogout(oldUser, errorMessage);
-				}
-				// TODO should be heading to login page from parent code, test
-				// Context.create(LoginContent.getInstance(), null).submit();
-			}
-
-			@Override
-			protected void doFailure(String message, String result) {
-				if (errorMessage != null && !errorMessage.equals("")) {
-					message += " (" + errorMessage + ")";
-				}
-				for (final UserListener listener : userListeners) {
-					listener.onLogout(userAccount, message);
-				}
-				Context.create(LoginContent.getInstance(), null).submit();
-			}
-
-			@Override
-			protected void doSuccess(String message, String result) {
-				final UserAccount oldUser = userAccount;
-				userAccount = null;
-				for (final UserListener listener : userListeners) {
-					listener.onLogout(oldUser, errorMessage);
-				}
-				Context.create(LoginContent.getInstance(), null).submit();
-			}
-
-		});
-	}
-
-	public static void addUserListener(UserListener listener) {
-		userListeners.add(listener);
-	}
-
-	public static void removeUserListener(UserListener listener) {
-		userListeners.remove(listener);
-	}
-
-	public static boolean isContext(String context) {
+	public static boolean isContext(final String context) {
 		final Context ctx = Context.create(context);
 		return ctx.equals(getContext());
 	}
 
-	public static boolean isContent(ContentComposite content) {
+	public static boolean isContent(final ContentComposite content) {
 		return content == getContext().getContent();
 	}
 
@@ -128,7 +31,7 @@ public final class ContextManager {
 		return Context.create(History.getToken());
 	}
 
-	public static void setContext(Context context) {
+	public static void setContext(final Context context) {
 		final String token = context.toString();
 		// Note: newItem calls onHistoryChanged, which calls
 		// notifyContextListeners only if the token changes
@@ -143,11 +46,11 @@ public final class ContextManager {
 		notifyContextListeners();
 	}
 
-	public static void addContextListener(ContextListener listener) {
+	public static void addContextListener(final ContextListener listener) {
 		contextListeners.add(listener);
 	}
 
-	public static void removeContextListener(ContextListener listener) {
+	public static void removeContextListener(final ContextListener listener) {
 		contextListeners.remove(listener);
 	}
 
@@ -160,7 +63,7 @@ public final class ContextManager {
 
 	private static class ContextHistoryListener implements HistoryListener {
 
-		public void onHistoryChanged(String historyToken) {
+		public void onHistoryChanged(final String historyToken) {
 			notifyContextListeners();
 		}
 

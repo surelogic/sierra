@@ -6,6 +6,7 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.surelogic.sierra.gwt.client.Context;
 import com.surelogic.sierra.gwt.client.ContextListener;
 import com.surelogic.sierra.gwt.client.ContextManager;
+import com.surelogic.sierra.gwt.client.SessionManager;
 import com.surelogic.sierra.gwt.client.content.login.LoginContent;
 import com.surelogic.sierra.gwt.client.content.overview.OverviewContent;
 
@@ -25,9 +26,9 @@ public class ContentPanel extends Composite implements ContextListener {
 		ContextManager.addContextListener(this);
 	}
 
-	public void onChange(Context context) {
+	public void onChange(final Context context) {
 		ContentComposite content;
-		if (!ContextManager.isLoggedIn()) {
+		if (!SessionManager.isLoggedIn()) {
 			content = LoginContent.getInstance();
 		} else {
 			content = context.getContent();

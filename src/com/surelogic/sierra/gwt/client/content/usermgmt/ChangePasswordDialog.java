@@ -4,7 +4,7 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasFocus;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PasswordTextBox;
-import com.surelogic.sierra.gwt.client.ContextManager;
+import com.surelogic.sierra.gwt.client.SessionManager;
 import com.surelogic.sierra.gwt.client.data.UserAccount;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.service.callback.ResultCallback;
@@ -21,11 +21,11 @@ public class ChangePasswordDialog extends FormDialog {
 		super("Change Password", null);
 	}
 
-	public void update(UserAccount user) {
+	public void update(final UserAccount user) {
 		this.user = user;
 
 		final StringBuffer pwdTitle = new StringBuffer("New Password");
-		if (!ContextManager.getUser().getUserName().equals(user.getUserName())) {
+		if (!SessionManager.getUser().getUserName().equals(user.getUserName())) {
 			pwdTitle.append(" for ").append(user.getUserName());
 		}
 		pwdTitle.append(":");
@@ -33,7 +33,7 @@ public class ChangePasswordDialog extends FormDialog {
 	}
 
 	@Override
-	protected void doInitialize(FlexTable contentTable) {
+	protected void doInitialize(final FlexTable contentTable) {
 		addField("Your Password:", userPassword);
 		addField(userPasswordTitle, password);
 		addField("Confirm Password:", passwordAgain);
@@ -62,13 +62,15 @@ public class ChangePasswordDialog extends FormDialog {
 					new ResultCallback<String>() {
 
 						@Override
-						protected void doFailure(String message, String result) {
+						protected void doFailure(final String message,
+								final String result) {
 							setErrorMessage("Unable to change password: "
 									+ message);
 						}
 
 						@Override
-						protected void doSuccess(String message, String result) {
+						protected void doSuccess(final String message,
+								final String result) {
 							hide();
 						}
 					});
