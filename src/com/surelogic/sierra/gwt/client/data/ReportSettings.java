@@ -13,31 +13,26 @@ public class ReportSettings implements Serializable {
 	private String uuid;
 	private String title;
 	private String description;
-	private String reportUuid;
+	private Report report;
 	private List<ReportSetting> settings;
 
 	public ReportSettings() {
 		super();
 	}
 
-	public ReportSettings(final String reportUuid) {
-		super();
-		this.reportUuid = reportUuid;
-	}
-
-	public ReportSettings(final String reportUuid, final String title,
-			final String description) {
-		super();
-		this.reportUuid = reportUuid;
-		this.title = title;
-		this.description = description;
-	}
-
 	public ReportSettings(final Report report) {
 		super();
-		this.reportUuid = report.getUuid();
+		this.report = report;
 		this.title = report.getTitle();
 		this.description = report.getDescription();
+	}
+
+	public ReportSettings(final Report report, final String title,
+			final String description) {
+		super();
+		this.report = report;
+		this.title = title;
+		this.description = description;
 	}
 
 	public String getUuid() {
@@ -74,11 +69,15 @@ public class ReportSettings implements Serializable {
 	}
 
 	public String getReportUuid() {
-		return reportUuid;
+		return report.getUuid();
 	}
 
-	public void setReportUuid(final String reportUuid) {
-		this.reportUuid = reportUuid;
+	public Report getReport() {
+		return report;
+	}
+
+	public void setReport(final Report report) {
+		this.report = report;
 	}
 
 	public String getWidth() {
@@ -141,7 +140,7 @@ public class ReportSettings implements Serializable {
 		final ReportSettings copy = new ReportSettings();
 		copy.title = title;
 		copy.description = description;
-		copy.reportUuid = reportUuid;
+		copy.report = report;
 		if (settings != null) {
 			for (final ReportSetting setting : settings) {
 				final List<String> value = setting.getValues();

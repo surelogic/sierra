@@ -10,7 +10,7 @@ public class ChartPanel extends BlockPanel {
 
 	public ChartPanel(final ReportSettings reportSettings) {
 		super();
-		setReport(reportSettings);
+		setReportSettings(reportSettings);
 	}
 
 	@Override
@@ -18,7 +18,7 @@ public class ChartPanel extends BlockPanel {
 		// nothing to do
 	}
 
-	public void setReport(final ReportSettings r) {
+	public void setReportSettings(final ReportSettings r) {
 		report = r;
 		if (report != null) {
 			setTitle(report.getTitle());
@@ -33,6 +33,10 @@ public class ChartPanel extends BlockPanel {
 			content.setCellHorizontalAlignment(chart,
 					VerticalPanel.ALIGN_CENTER);
 		}
+	}
+
+	public ReportSettings getReportSettings() {
+		return report;
 	}
 
 }

@@ -14,6 +14,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.Context;
 import com.surelogic.sierra.gwt.client.content.ContentComposite;
+import com.surelogic.sierra.gwt.client.data.ReportSettings;
 import com.surelogic.sierra.gwt.client.data.Report.OutputType;
 import com.surelogic.sierra.gwt.client.data.dashboard.DashboardSettings;
 import com.surelogic.sierra.gwt.client.data.dashboard.DashboardWidget;
@@ -219,8 +220,14 @@ public final class OverviewContent extends ContentComposite {
 	}
 
 	private void viewReport(final BlockPanel dashPanel) {
-		// TODO navigate to the proper Reports content based on report uuid and
-		// isTeamServer etc
+		ReportSettings settings;
+		if (dashPanel instanceof ReportTablePanel) {
+			settings = ((ReportTablePanel) dashPanel).getReportSettings();
+		} else if (dashPanel instanceof ChartPanel) {
+			settings = ((ChartPanel) dashPanel).getReportSettings();
+		} else {
+			return;
+		}
 
 	}
 }

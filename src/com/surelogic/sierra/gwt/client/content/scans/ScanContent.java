@@ -16,6 +16,7 @@ import com.surelogic.sierra.gwt.client.content.ContentComposite;
 import com.surelogic.sierra.gwt.client.data.ImportanceView;
 import com.surelogic.sierra.gwt.client.data.ReportSettings;
 import com.surelogic.sierra.gwt.client.data.ScanDetail;
+import com.surelogic.sierra.gwt.client.data.cache.ReportCache;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.service.callback.StandardCallback;
 import com.surelogic.sierra.gwt.client.ui.HtmlHelper;
@@ -113,22 +114,24 @@ public class ScanContent extends ContentComposite {
 			final Set<String> packages = pak.getSelectedPackages();
 			final Set<String> categories = cat.getSelectedCategories();
 			if (categories.isEmpty()) {
-				chartPanel.add(ChartBuilder.report("ScanImportances", "???",
-						"???").width(800).prop("scan", uuid).prop("importance",
-						importances).prop("package", packages).build());
-				final ReportSettings settings = new ReportSettings(
-						"ScanFindings");
+				chartPanel.add(ChartBuilder.report(
+						ReportCache.scanImportances()).width(800).prop("scan",
+						uuid).prop("importance", importances).prop("package",
+						packages).build());
+				final ReportSettings settings = new ReportSettings(ReportCache
+						.scanFindings());
 				settings.setSettingValue("scan", uuid);
 				settings.setSettingValue("importance", importances);
 				settings.setSettingValue("package", packages);
 				chartPanel.add(new ReportTablePanel(settings));
 			} else {
-				chartPanel.add(ChartBuilder.report("ScanImportancesByCategory",
-						"???", "???").width(800).prop("scan", uuid).prop(
-						"importance", importances).prop("package", packages)
-						.prop("category", categories).build());
-				final ReportSettings settings = new ReportSettings(
-						"ScanFindingsByCategory");
+				chartPanel.add(ChartBuilder.report(
+						ReportCache.scanImportancesByCategory()).width(800)
+						.prop("scan", uuid).prop("importance", importances)
+						.prop("package", packages).prop("category", categories)
+						.build());
+				final ReportSettings settings = new ReportSettings(ReportCache
+						.scanFindingsByCategory());
 				settings.setSettingValue("scan", uuid);
 				settings.setSettingValue("importance", importances);
 				settings.setSettingValue("package", packages);

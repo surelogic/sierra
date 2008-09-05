@@ -14,6 +14,7 @@ import com.surelogic.sierra.gwt.client.data.FindingType;
 import com.surelogic.sierra.gwt.client.data.FindingType.ArtifactTypeInfo;
 import com.surelogic.sierra.gwt.client.data.FindingType.CategoryInfo;
 import com.surelogic.sierra.gwt.client.data.FindingType.ScanFilterInfo;
+import com.surelogic.sierra.gwt.client.data.cache.ReportCache;
 import com.surelogic.sierra.gwt.client.ui.panel.BlockPanel;
 import com.surelogic.sierra.gwt.client.ui.panel.ListBlock;
 import com.surelogic.sierra.gwt.client.util.LangUtil;
@@ -81,7 +82,7 @@ public class FindingTypeView extends BlockPanel {
 			categoriesExcluding.addItems(findingType.getCategoriesExcluding());
 			scanFilters.addItems(findingType.getScanFiltersIncluding());
 			artifactTypes.addItems(findingType.getArtifactTypes());
-			chart.add(ChartBuilder.report("FindingTypeCounts", "???", "???")
+			chart.add(ChartBuilder.report(ReportCache.findingTypeCounts())
 					.prop("uuid", findingType.getUuid()).build());
 		}
 	}

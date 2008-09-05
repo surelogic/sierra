@@ -11,6 +11,7 @@ import com.surelogic.sierra.gwt.client.content.ContentComposite;
 import com.surelogic.sierra.gwt.client.content.findingtypes.FindingTypesContent;
 import com.surelogic.sierra.gwt.client.data.Category;
 import com.surelogic.sierra.gwt.client.data.FindingTypeFilter;
+import com.surelogic.sierra.gwt.client.data.cache.ReportCache;
 import com.surelogic.sierra.gwt.client.ui.panel.BlockPanel;
 import com.surelogic.sierra.gwt.client.ui.panel.ListBlock;
 import com.surelogic.sierra.gwt.client.util.LangUtil;
@@ -23,7 +24,7 @@ public class CategoryView extends BlockPanel {
 	private Category category;
 
 	@Override
-	protected void onInitialize(VerticalPanel contentPanel) {
+	protected void onInitialize(final VerticalPanel contentPanel) {
 		categoryInfo.setWidth("100%");
 		categoryInfo.addStyleName("padded");
 		categoryInfo.add(description);
@@ -39,7 +40,7 @@ public class CategoryView extends BlockPanel {
 		return category;
 	}
 
-	public void setCategory(Category cat) {
+	public void setCategory(final Category cat) {
 		category = cat;
 
 		if (cat != null) {
@@ -60,7 +61,7 @@ public class CategoryView extends BlockPanel {
 
 		chart.clear();
 		if (category != null) {
-			chart.add(ChartBuilder.report("CategoryCounts", "???", "???").prop(
+			chart.add(ChartBuilder.report(ReportCache.categoryCounts()).prop(
 					"uuid", category.getUuid()).build());
 		}
 	}
@@ -71,7 +72,7 @@ public class CategoryView extends BlockPanel {
 			super("Finding Types");
 		}
 
-		public void setCategory(Category cat) {
+		public void setCategory(final Category cat) {
 			clear();
 
 			if (cat != null) {
@@ -96,12 +97,12 @@ public class CategoryView extends BlockPanel {
 		}
 
 		@Override
-		protected String getItemText(FindingTypeFilter item) {
+		protected String getItemText(final FindingTypeFilter item) {
 			return item.getName();
 		}
 
 		@Override
-		protected String getItemTooltip(FindingTypeFilter item) {
+		protected String getItemTooltip(final FindingTypeFilter item) {
 			return item.getShortMessage();
 		}
 

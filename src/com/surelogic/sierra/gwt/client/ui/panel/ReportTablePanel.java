@@ -19,7 +19,7 @@ public class ReportTablePanel extends TablePanel {
 
 	public ReportTablePanel(final ReportSettings r) {
 		super();
-		setReport(r);
+		setReportSettings(r);
 	}
 
 	@Override
@@ -27,13 +27,17 @@ public class ReportTablePanel extends TablePanel {
 		// nothing to do
 	}
 
-	public void setReport(final ReportSettings r) {
+	public void setReportSettings(final ReportSettings r) {
 		report = r;
 		if (r != null) {
 			setTitle(report.getTitle());
 			setSummary(report.getDescription());
 			getReportData();
 		}
+	}
+
+	public ReportSettings getReportSettings() {
+		return report;
 	}
 
 	private void getReportData() {
