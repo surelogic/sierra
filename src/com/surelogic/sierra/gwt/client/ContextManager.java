@@ -19,7 +19,7 @@ public final class ContextManager {
 	}
 
 	public static boolean isContext(final String context) {
-		final Context ctx = Context.create(context);
+		final Context ctx = Context.fromString(context);
 		return ctx.equals(getContext());
 	}
 
@@ -28,7 +28,7 @@ public final class ContextManager {
 	}
 
 	public static Context getContext() {
-		return Context.create(History.getToken());
+		return Context.fromString(History.getToken());
 	}
 
 	public static void setContext(final Context context) {

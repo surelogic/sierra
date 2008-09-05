@@ -14,13 +14,13 @@ public final class Context {
 	private ContentComposite content;
 	private final Map<String, String> parameters = new HashMap<String, String>();
 
-	public static Context create(final String context) {
+	public static Context fromString(final String context) {
 		final Context ctx = new Context();
 		ctx.initContext(context);
 		return ctx;
 	}
 
-	public static Context create(final Context baseContext,
+	private static Context create(final Context baseContext,
 			final Map<String, String> parameters) {
 		final Context newContext = new Context();
 		if (baseContext == null) {

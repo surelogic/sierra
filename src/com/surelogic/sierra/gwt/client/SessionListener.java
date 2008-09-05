@@ -2,7 +2,7 @@ package com.surelogic.sierra.gwt.client;
 
 import com.surelogic.sierra.gwt.client.data.UserAccount;
 
-public interface UserListener {
+public interface SessionListener {
 
 	void onLogin(UserAccount user);
 

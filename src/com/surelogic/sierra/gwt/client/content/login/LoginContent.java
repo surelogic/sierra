@@ -20,7 +20,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.Context;
 import com.surelogic.sierra.gwt.client.ContextManager;
 import com.surelogic.sierra.gwt.client.SessionManager;
-import com.surelogic.sierra.gwt.client.UserListener;
+import com.surelogic.sierra.gwt.client.SessionListener;
 import com.surelogic.sierra.gwt.client.content.ContentComposite;
 import com.surelogic.sierra.gwt.client.content.overview.OverviewContent;
 import com.surelogic.sierra.gwt.client.data.UserAccount;
@@ -60,7 +60,7 @@ public final class LoginContent extends ContentComposite {
 		final String usernameText = username.getText().trim();
 		final String passwordText = password.getText().trim();
 
-		SessionManager.addUserListener(new UserListener() {
+		SessionManager.addSessionListener(new SessionListener() {
 
 			public void onLogin(final UserAccount user) {
 				resetLoginAttempt();

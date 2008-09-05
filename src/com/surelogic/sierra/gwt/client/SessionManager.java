@@ -11,7 +11,7 @@ import com.surelogic.sierra.gwt.client.service.callback.ResultCallback;
 
 public class SessionManager {
 	private static UserAccount userAccount;
-	private static final List<UserListener> userListeners = new ArrayList<UserListener>();
+	private static final List<SessionListener> sessionListeners = new ArrayList<SessionListener>();
 
 	public static UserAccount getUser() {
 		return userAccount;
@@ -31,7 +31,7 @@ public class SessionManager {
 					public void doFailure(final String message,
 							final UserAccount result) {
 						userAccount = null;
-						for (final UserListener listener : userListeners) {
+						for (final SessionListener listener : sessionListeners) {
 							listener.onLoginFailure(message);
 						}
 						ContextManager.refreshContext();
@@ -41,7 +41,7 @@ public class SessionManager {
 					public void doSuccess(final String message,
 							final UserAccount result) {
 						userAccount = result;
-						for (final UserListener listener : userListeners) {
+						for (final SessionListener listener : sessionListeners) {
 							listener.onLogin(userAccount);
 						}
 						ContextManager.refreshContext();
@@ -51,7 +51,7 @@ public class SessionManager {
 
 	public static void updateUser(final UserAccount user) {
 		userAccount = user;
-		for (final UserListener listener : userListeners) {
+		for (final SessionListener listener : sessionListeners) {
 			listener.onUpdate(userAccount);
 		}
 		ContextManager.refreshContext();
@@ -65,7 +65,7 @@ public class SessionManager {
 			protected void doException(final Throwable caught) {
 				final UserAccount oldUser = userAccount;
 				userAccount = null;
-				for (final UserListener listener : userListeners) {
+				for (final SessionListener listener : sessionListeners) {
 					listener.onLogout(oldUser, errorMessage);
 				}
 				// TODO should be heading to login page from parent code, test
@@ -77,7 +77,7 @@ public class SessionManager {
 				if (errorMessage != null && !errorMessage.equals("")) {
 					message += " (" + errorMessage + ")";
 				}
-				for (final UserListener listener : userListeners) {
+				for (final SessionListener listener : sessionListeners) {
 					listener.onLogout(userAccount, message);
 				}
 				Context.create(LoginContent.getInstance(), null).submit();
@@ -87,7 +87,7 @@ public class SessionManager {
 			protected void doSuccess(final String message, final String result) {
 				final UserAccount oldUser = userAccount;
 				userAccount = null;
-				for (final UserListener listener : userListeners) {
+				for (final SessionListener listener : sessionListeners) {
 					listener.onLogout(oldUser, errorMessage);
 				}
 				Context.create(LoginContent.getInstance(), null).submit();
@@ -96,12 +96,12 @@ public class SessionManager {
 		});
 	}
 
-	public static void addUserListener(final UserListener listener) {
-		userListeners.add(listener);
+	public static void addSessionListener(final SessionListener listener) {
+		sessionListeners.add(listener);
 	}
 
-	public static void removeUserListener(final UserListener listener) {
-		userListeners.remove(listener);
+	public static void removeSessionListener(final SessionListener listener) {
+		sessionListeners.remove(listener);
 	}
 
 	private SessionManager() {

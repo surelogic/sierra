@@ -8,7 +8,7 @@ import com.surelogic.sierra.gwt.client.Context;
 import com.surelogic.sierra.gwt.client.ContextListener;
 import com.surelogic.sierra.gwt.client.ContextManager;
 import com.surelogic.sierra.gwt.client.SessionManager;
-import com.surelogic.sierra.gwt.client.UserListener;
+import com.surelogic.sierra.gwt.client.SessionListener;
 import com.surelogic.sierra.gwt.client.content.ContentRegistry;
 import com.surelogic.sierra.gwt.client.data.UserAccount;
 
@@ -29,7 +29,7 @@ public final class HeaderPanel extends Composite {
 		rootPanel.setWidth("100%");
 
 		// Listen for user session changes
-		SessionManager.addUserListener(new UserListener() {
+		SessionManager.addSessionListener(new SessionListener() {
 
 			public void onLogin(final UserAccount user) {
 				updateUser(user);
