@@ -9,6 +9,7 @@ import com.surelogic.common.jdbc.Result;
 import com.surelogic.common.jdbc.Row;
 import com.surelogic.common.jdbc.RowHandler;
 import com.surelogic.common.jdbc.SingleRowHandler;
+import com.surelogic.sierra.gwt.client.data.Report;
 import com.surelogic.sierra.gwt.client.data.ReportSetting;
 import com.surelogic.sierra.gwt.client.data.ReportSettings;
 import com.surelogic.sierra.jdbc.server.NullUserQuery;
@@ -84,7 +85,10 @@ public class ReportSettingQueries {
 		public ReportSettings handle(final Row r) {
 			final ReportSettings rs = new ReportSettings();
 			rs.setUuid(r.nextString());
-			rs.setReportUuid(r.nextString());
+			// TODO actually return the entire report.
+			final Report report = new Report();
+			report.setUuid(r.nextString());
+			rs.setReport(report);
 			rs.setTitle(r.nextString());
 			rs.setDescription(r.nextString());
 			query.prepared("ReportSettings.listSettingParams",
