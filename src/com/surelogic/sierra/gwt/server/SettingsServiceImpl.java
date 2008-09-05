@@ -35,6 +35,7 @@ import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.data.FindingType.ArtifactTypeInfo;
 import com.surelogic.sierra.gwt.client.data.Report.OutputType;
 import com.surelogic.sierra.gwt.client.data.ServerLocation.Protocol;
+import com.surelogic.sierra.gwt.client.data.cache.ReportCache;
 import com.surelogic.sierra.gwt.client.data.dashboard.DashboardSettings;
 import com.surelogic.sierra.gwt.client.data.dashboard.ReportWidget;
 import com.surelogic.sierra.gwt.client.service.SettingsService;
@@ -682,25 +683,24 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 	public DashboardSettings getDashboardSettings() {
 		final DashboardSettings settings = new DashboardSettings();
 
-		final ReportSettings latestScans = new ReportSettings(
-				"LatestScanResults", "Published Scans", "Latest Scan Results");
+		final ReportSettings latestScans = new ReportSettings(ReportCache
+				.latestScans());
 		latestScans.setWidth("450");
 		settings.addColumn(new ReportWidget(latestScans, OutputType.CHART));
 
-		final ReportSettings auditContribs = new ReportSettings(
-				"AuditContributions", "Contributions", "In the Last 30 Days");
+		final ReportSettings auditContribs = new ReportSettings(ReportCache
+				.auditContributions());
 		latestScans.setWidth("320");
 		settings.addColumn(new ReportWidget(auditContribs, OutputType.CHART));
 
 		settings.addRow();
-		final ReportSettings userAudits = new ReportSettings("UserAudits",
-				"Users", "Latest user audits");
+		final ReportSettings userAudits = new ReportSettings(ReportCache
+				.userAudits());
 		settings.setColumn(1, new ReportWidget(userAudits, OutputType.TABLE));
 
 		settings.addRow();
-		final ReportSettings publishedProjects = new ReportSettings(
-				"PublishedProjects", "All Published Projects",
-				"All Published Projects");
+		final ReportSettings publishedProjects = new ReportSettings(ReportCache
+				.publishedProjects());
 		settings
 				.addColumn(new ReportWidget(publishedProjects, OutputType.TABLE));
 

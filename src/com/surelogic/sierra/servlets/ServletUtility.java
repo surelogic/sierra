@@ -25,7 +25,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.logging.SLLogger;
+import com.surelogic.sierra.gwt.client.data.Report;
 import com.surelogic.sierra.gwt.client.data.ReportSettings;
+import com.surelogic.sierra.gwt.client.data.cache.ReportCache;
 
 public final class ServletUtility {
 
@@ -42,7 +44,7 @@ public final class ServletUtility {
 	 */
 	@SuppressWarnings("unchecked")
 	public static Map<String, String> launderRequestParameters(
-			HttpServletRequest request) {
+			final HttpServletRequest request) {
 		if (request == null) {
 			throw new IllegalArgumentException(I18N.err(44, "request"));
 		}
@@ -75,7 +77,7 @@ public final class ServletUtility {
 	 */
 	@SuppressWarnings("unchecked")
 	public static ReportSettings launderRequestParametersAsReport(
-			HttpServletRequest request) {
+			final HttpServletRequest request) {
 		if (request == null) {
 			throw new IllegalArgumentException(I18N.err(44, "request"));
 		}
@@ -84,10 +86,12 @@ public final class ServletUtility {
 			final Entry<String, String[]> param = (Entry<String, String[]>) entry;
 			final String key = param.getKey();
 			final String[] value = param.getValue();
-			if ("type".equals(key)) {
-				report.setReportUuid(value[0]);
-			} else if ("name".equals(key)) {
-				report.setReportUuid(value[0]);
+			if ("type".equals(key) || "name".equals(key)) {
+				for (final Report r : ReportCache.allReports()) {
+					if (r.getUuid().equals(value[0])) {
+						report.setReport(r);
+					}
+				}
 			} else {
 				report.setSettingValue(key, Arrays.asList(value));
 			}
@@ -112,8 +116,9 @@ public final class ServletUtility {
 	 * @throws IOException
 	 *             if there is any sort of I/O problem.
 	 */
-	public static void sendFileToHttpServletResponse(File file,
-			HttpServletResponse response, String mimeType) throws IOException {
+	public static void sendFileToHttpServletResponse(final File file,
+			final HttpServletResponse response, final String mimeType)
+			throws IOException {
 		if (file == null) {
 			throw new IllegalArgumentException(I18N.err(44, "file"));
 		}

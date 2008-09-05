@@ -22,16 +22,25 @@ import com.surelogic.sierra.gwt.client.data.ProjectOverview;
 import com.surelogic.sierra.gwt.client.data.ReportSettings;
 import com.surelogic.sierra.portal.PortalOverview;
 
+/**
+ * Generates a chart showing an overview of findings for the latest scans of
+ * each project.
+ * 
+ * @author nathan
+ * 
+ */
 public final class LatestScanResults implements IDatabasePlot {
 
-	public JFreeChart plot(PlotSize mutableSize, ReportSettings report,
-			Connection c) throws SQLException, IOException {
+	public JFreeChart plot(final PlotSize mutableSize,
+			final ReportSettings report, final Connection c)
+			throws SQLException, IOException {
 		c.setTransactionIsolation(Connection.TRANSACTION_READ_UNCOMMITTED);
 		final DefaultCategoryDataset importanceData = new DefaultCategoryDataset();
 		final List<ProjectOverview> overview = PortalOverview.getInstance(c)
 				.getProjectOverviews();
 		Collections.sort(overview, new Comparator<ProjectOverview>() {
-			public int compare(ProjectOverview o1, ProjectOverview o2) {
+			public int compare(final ProjectOverview o1,
+					final ProjectOverview o2) {
 				return o2.getTotalFindings() - o1.getTotalFindings();
 			}
 		});

@@ -20,16 +20,23 @@ import com.surelogic.sierra.gwt.client.data.ReportSettings;
 import com.surelogic.sierra.gwt.client.data.UserOverview;
 import com.surelogic.sierra.portal.PortalOverview;
 
+/**
+ * Generates a chart of the number of audits made in the past 30 days per user.
+ * 
+ * @author nathan
+ * 
+ */
 public final class AuditContributions implements IDatabasePlot {
 
-	public JFreeChart plot(PlotSize mutableSize, ReportSettings report,
-			Connection c) throws SQLException, IOException {
+	public JFreeChart plot(final PlotSize mutableSize,
+			final ReportSettings report, final Connection c)
+			throws SQLException, IOException {
 		c.setTransactionIsolation(Connection.TRANSACTION_READ_UNCOMMITTED);
 		final PortalOverview po = PortalOverview.getInstance(c);
 		final List<UserOverview> userOverviewList = po
 				.getEnabledUserOverviews();
 		Collections.sort(userOverviewList, new Comparator<UserOverview>() {
-			public int compare(UserOverview o1, UserOverview o2) {
+			public int compare(final UserOverview o1, final UserOverview o2) {
 				return o2.getAudits() - o1.getAudits();
 			}
 		});
