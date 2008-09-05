@@ -112,6 +112,8 @@ public class ReportCache extends Cache<Report> {
 				.setDescription("Number of findings in each project for this category.");
 		report.setDataSource(DataSource.TEAMSERVER);
 		report.setOutputTypes(OutputType.CHART);
+		final List<Parameter> params = report.getParameters();
+		params.add(new Parameter("uuid", Type.CATEGORY));
 		return report;
 	}
 
