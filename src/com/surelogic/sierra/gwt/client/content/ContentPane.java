@@ -10,15 +10,15 @@ import com.surelogic.sierra.gwt.client.SessionManager;
 import com.surelogic.sierra.gwt.client.content.login.LoginContent;
 import com.surelogic.sierra.gwt.client.content.overview.OverviewContent;
 
-public class ContentPanel extends Composite implements ContextListener {
+public class ContentPane extends Composite implements ContextListener {
 	private final DockPanel rootPanel = new DockPanel();
 	private ContentComposite currentContent;
 
-	public static ContentPanel getInstance() {
-		return (ContentPanel) RootPanel.get("content-pane").getWidget(0);
+	public static ContentPane getInstance() {
+		return (ContentPane) RootPanel.get("content-pane").getWidget(0);
 	}
 
-	public ContentPanel() {
+	public ContentPane() {
 		super();
 		initWidget(rootPanel);
 		rootPanel.setWidth("100%");

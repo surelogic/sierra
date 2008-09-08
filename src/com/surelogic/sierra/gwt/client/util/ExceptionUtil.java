@@ -1,7 +1,7 @@
 package com.surelogic.sierra.gwt.client.util;
 
 import com.google.gwt.core.client.GWT;
-import com.surelogic.sierra.gwt.client.LogPanel;
+import com.surelogic.sierra.gwt.client.LogPane;
 import com.surelogic.sierra.gwt.client.SessionManager;
 
 public final class ExceptionUtil {
@@ -12,7 +12,7 @@ public final class ExceptionUtil {
 
 	public static void log(final Throwable caught) {
 		GWT.log("ExceptionTracker", caught);
-		LogPanel.getInstance().log(caught);
+		LogPane.getInstance().log(caught);
 	}
 
 	/**

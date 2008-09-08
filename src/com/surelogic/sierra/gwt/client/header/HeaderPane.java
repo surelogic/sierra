@@ -12,17 +12,17 @@ import com.surelogic.sierra.gwt.client.SessionListener;
 import com.surelogic.sierra.gwt.client.content.ContentRegistry;
 import com.surelogic.sierra.gwt.client.data.UserAccount;
 
-public final class HeaderPanel extends Composite {
+public final class HeaderPane extends Composite {
 	private static final String PRIMARY_STYLE = "header";
 
 	private final DockPanel rootPanel = new DockPanel();
 	private HeaderComposite currentHeader;
 
-	public static HeaderPanel getInstance() {
-		return (HeaderPanel) RootPanel.get("header-pane").getWidget(0);
+	public static HeaderPane getInstance() {
+		return (HeaderPane) RootPanel.get("header-pane").getWidget(0);
 	}
 
-	public HeaderPanel() {
+	public HeaderPane() {
 		super();
 		initWidget(rootPanel);
 		rootPanel.addStyleName(PRIMARY_STYLE);

@@ -2,10 +2,10 @@ package com.surelogic.sierra.gwt.client;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.user.client.ui.RootPanel;
-import com.surelogic.sierra.gwt.client.content.ContentPanel;
+import com.surelogic.sierra.gwt.client.content.ContentPane;
 import com.surelogic.sierra.gwt.client.content.ContentRegistry;
 import com.surelogic.sierra.gwt.client.data.UserAccount;
-import com.surelogic.sierra.gwt.client.header.HeaderPanel;
+import com.surelogic.sierra.gwt.client.header.HeaderPane;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.service.SessionServiceAsync;
 import com.surelogic.sierra.gwt.client.service.callback.ResultCallback;
@@ -25,9 +25,9 @@ public class SierraPortal implements EntryPoint {
 		ContentRegistry.initialize();
 
 		// create and display the main panels
-		final HeaderPanel header = new HeaderPanel();
-		final ContentPanel content = new ContentPanel();
-		final LogPanel log = new LogPanel();
+		final HeaderPane header = new HeaderPane();
+		final ContentPane content = new ContentPane();
+		final LogPane log = new LogPane();
 		RootPanel.get("header-pane").add(header);
 		RootPanel.get("content-pane").add(content);
 		RootPanel.get("log-pane").add(log);

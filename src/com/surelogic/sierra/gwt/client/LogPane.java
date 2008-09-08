@@ -11,7 +11,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.ui.ImageHelper;
 
-public class LogPanel extends Composite {
+public class LogPane extends Composite {
 	private static final String PRIMARY_STYLE = "log-panel";
 	private static final String ITEM_STYLE = "log-item";
 	private static final String ITEM_TEXT_STYLE = "log-item-text";
@@ -19,11 +19,11 @@ public class LogPanel extends Composite {
 	private final Image logIcon = ImageHelper.getImage("log-icon.png");
 	private final Tree log = new Tree();
 
-	public static LogPanel getInstance() {
-		return (LogPanel) RootPanel.get("log-pane").getWidget(0);
+	public static LogPane getInstance() {
+		return (LogPane) RootPanel.get("log-pane").getWidget(0);
 	}
 
-	public LogPanel() {
+	public LogPane() {
 		super();
 		initWidget(rootPanel);
 		rootPanel.setWidth("100%");
