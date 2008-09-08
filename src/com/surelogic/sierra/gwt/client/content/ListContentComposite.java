@@ -24,14 +24,14 @@ public abstract class ListContentComposite<E extends Cacheable, C extends Cache<
 	private CacheListener<E> cacheListener;
 	private E selection;
 
-	protected ListContentComposite(C cache) {
+	protected ListContentComposite(final C cache) {
 		super();
 		this.cache = cache;
 		this.listView = new ListView(cache);
 	}
 
 	@Override
-	protected final void onInitialize(DockPanel rootPanel) {
+	protected final void onInitialize(final DockPanel rootPanel) {
 		westPanel.setWidth("100%");
 
 		listView.initialize();
@@ -48,23 +48,23 @@ public abstract class ListContentComposite<E extends Cacheable, C extends Cache<
 
 		cacheListener = new CacheListener<E>() {
 
-			public void onStartRefresh(Cache<E> cache) {
+			public void onStartRefresh(final Cache<E> cache) {
 				listView.clear();
 				listView.setWaitStatus();
 			}
 
-			public void onRefresh(Cache<E> cache, Throwable failure) {
+			public void onRefresh(final Cache<E> cache, final Throwable failure) {
 				listView.clearStatus();
 				listView.refresh();
 				refreshContext(ContextManager.getContext());
 			}
 
-			public void onItemUpdate(Cache<E> cache, E item, Status status,
-					Throwable failure) {
+			public void onItemUpdate(final Cache<E> cache, final E item,
+					final Status status, final Throwable failure) {
 				cache.refresh();
 
 				if ((failure == null) && status.isSuccess()) {
-					Context.createWithUuid(item).submit();
+					Context.current().setUuid(item).submit();
 				} else if (!status.isSuccess()) {
 					Window.alert("Save rejected: " + status.getMessage());
 				} else if (failure != null) {
@@ -85,7 +85,7 @@ public abstract class ListContentComposite<E extends Cacheable, C extends Cache<
 	}
 
 	@Override
-	protected void onUpdate(Context context) {
+	protected void onUpdate(final Context context) {
 		if (!isActive()) {
 			cache.addListener(cacheListener);
 			cache.refresh();
@@ -106,14 +106,14 @@ public abstract class ListContentComposite<E extends Cacheable, C extends Cache<
 		return selectionPanel;
 	}
 
-	protected final void addAction(Widget actionUI) {
+	protected final void addAction(final Widget actionUI) {
 		if (westPanel.getWidgetIndex(actionBlock) == -1) {
 			westPanel.insert(actionBlock, 0);
 		}
 		actionBlock.addItem(actionUI);
 	}
 
-	private void refreshContext(Context context) {
+	private void refreshContext(final Context context) {
 		final String uuid = context.getUuid();
 		if (LangUtil.notEmpty(uuid)) {
 			selection = cache.getItem(uuid);
@@ -124,7 +124,7 @@ public abstract class ListContentComposite<E extends Cacheable, C extends Cache<
 		} else {
 			for (final E item : cache) {
 				if (isItemVisible(item, "")) {
-					Context.createWithUuid(item).submit();
+					Context.current().setUuid(item).submit();
 					return;
 				}
 			}
@@ -135,7 +135,7 @@ public abstract class ListContentComposite<E extends Cacheable, C extends Cache<
 
 	protected abstract String getItemText(E item);
 
-	protected Widget getItemDecorator(E item) {
+	protected Widget getItemDecorator(final E item) {
 		return null;
 	}
 
@@ -144,39 +144,39 @@ public abstract class ListContentComposite<E extends Cacheable, C extends Cache<
 	private class ActionBlock extends BlockPanel {
 
 		@Override
-		protected void onInitialize(VerticalPanel contentPanel) {
+		protected void onInitialize(final VerticalPanel contentPanel) {
 			// nothing to do
 		}
 
-		public void addItem(Widget w) {
+		public void addItem(final Widget w) {
 			w.setWidth("100%");
 			getContentPanel().add(w);
 		}
 	}
 
 	private class ListView extends SearchPanel<E, C> {
-		public ListView(C cache) {
+		public ListView(final C cache) {
 			super(cache);
 		}
 
 		@Override
-		protected boolean isItemVisible(E item, String searchText) {
+		protected boolean isItemVisible(final E item, final String searchText) {
 			return ListContentComposite.this.isItemVisible(item, searchText);
 		}
 
 		@Override
-		protected String getItemText(E item) {
+		protected String getItemText(final E item) {
 			return ListContentComposite.this.getItemText(item);
 		}
 
 		@Override
-		protected Widget getItemDecorator(E item) {
+		protected Widget getItemDecorator(final E item) {
 			return ListContentComposite.this.getItemDecorator(item);
 		};
 
 		@Override
-		protected void doItemClick(E item) {
-			Context.createWithUuid(item).submit();
+		protected void doItemClick(final E item) {
+			Context.current().setUuid(item).submit();
 		}
 
 	}

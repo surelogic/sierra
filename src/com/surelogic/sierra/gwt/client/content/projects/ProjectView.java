@@ -206,9 +206,8 @@ public class ProjectView extends BlockPanel {
 								clearRows();
 								for (final Scan s : result) {
 									addRow();
-									final Context scanCtx = Context
-											.createWithUuid(ScanContent
-													.getInstance(), s.getUuid());
+									final Context scanCtx = new Context(
+											ScanContent.getInstance(), s);
 									final Hyperlink h = new Hyperlink(s
 											.getScanTimeDisplay(), scanCtx
 											.toString());

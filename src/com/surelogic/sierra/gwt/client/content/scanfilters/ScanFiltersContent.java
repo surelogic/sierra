@@ -168,7 +168,7 @@ public class ScanFiltersContent extends
 								setOpen(false);
 
 								getCache().refresh();
-								Context.createWithUuid(result).submit();
+								Context.current().setUuid(result).submit();
 							}
 						});
 			}

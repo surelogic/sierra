@@ -6,11 +6,11 @@ import com.surelogic.sierra.gwt.client.content.ContentComposite;
 
 public class ContentLink extends Hyperlink {
 
-	public ContentLink(String title, ContentComposite content, String uuid) {
+	public ContentLink(final String title, final ContentComposite content,
+			final String uuid) {
 		super();
 		setText(title);
-		final String contextLink = Context.createWithUuid(content, uuid)
-				.toString();
+		final String contextLink = new Context(content, uuid).toString();
 		setTargetHistoryToken(contextLink);
 		addStyleName("sl-ContentLink");
 	}

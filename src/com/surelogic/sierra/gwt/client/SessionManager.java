@@ -80,7 +80,7 @@ public class SessionManager {
 				for (final SessionListener listener : sessionListeners) {
 					listener.onLogout(userAccount, message);
 				}
-				Context.create(LoginContent.getInstance(), null).submit();
+				new Context(LoginContent.getInstance()).submit();
 			}
 
 			@Override
@@ -90,7 +90,7 @@ public class SessionManager {
 				for (final SessionListener listener : sessionListeners) {
 					listener.onLogout(oldUser, errorMessage);
 				}
-				Context.create(LoginContent.getInstance(), null).submit();
+				new Context(LoginContent.getInstance()).submit();
 			}
 
 		});

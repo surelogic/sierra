@@ -14,87 +14,113 @@ public final class Context {
 	private ContentComposite content;
 	private final Map<String, String> parameters = new HashMap<String, String>();
 
-	public static Context fromString(final String context) {
-		final Context ctx = new Context();
-		ctx.initContext(context);
-		return ctx;
+	public static final Context current() {
+		return ContextManager.getContext();
 	}
 
-	private static Context create(final Context baseContext,
-			final Map<String, String> parameters) {
-		final Context newContext = new Context();
-		if (baseContext == null) {
-			newContext.initContext(ContextManager.getContext());
-		} else {
-			newContext.initContext(baseContext);
-		}
-		newContext.initContext(parameters);
-		return newContext;
+	public Context() {
+		super();
 	}
 
-	public static Context create(final ContentComposite content,
-			final Map<String, String> parameters) {
-		final Context newContext = new Context();
-		newContext.initContext(content);
-		newContext.initContext(parameters);
-		return newContext;
+	public Context(final String initialContext) {
+		super();
+		set(initialContext);
 	}
 
-	public static Context createWithUuid(final String uuid) {
-		final Map<String, String> params = new HashMap<String, String>();
-		params.put(PARAM_UUID, uuid);
-		return Context.create(ContextManager.getContext(), params);
+	public Context(final ContentComposite content) {
+		super();
+		this.content = content;
 	}
 
-	public static Context createWithUuid(final Cacheable item) {
-		return createWithUuid(item.getUuid());
+	public Context(final ContentComposite content, final String uuid) {
+		super();
+		this.content = content;
+		setUuid(uuid);
 	}
 
-	public static Context createWithUuid(final ContentComposite content,
-			final String uuid) {
-		final Map<String, String> params = new HashMap<String, String>();
-		params.put(PARAM_UUID, uuid);
-		return Context.create(content, params);
-	}
-
-	public static Context createWithUuid(final ContentComposite content,
-			final Cacheable item) {
-		return createWithUuid(content, item.getUuid());
-	}
-
-	private Context() {
-		// use static create methods
-	}
-
-	public void submit() {
-		ContextManager.setContext(this);
+	public Context(final ContentComposite content, final Cacheable item) {
+		super();
+		this.content = content;
+		setUuid(item.getUuid());
 	}
 
 	public ContentComposite getContent() {
 		return content;
 	}
 
-	public String getUuid() {
-		return getParameter(PARAM_UUID);
+	public Context setContent(final ContentComposite content) {
+		this.content = content;
+		return this;
 	}
 
 	public String getParameter(final String name) {
 		return parameters.get(name);
 	}
 
-	/**
-	 * Return a new context identical to the existing one, but with the added
-	 * parameter.
-	 * 
-	 * @param param
-	 * @param value
-	 * @return
-	 */
-	public Context withParam(final String param, final String value) {
-		final Map<String, String> params = new HashMap<String, String>();
-		params.putAll(parameters);
-		params.put(param, value);
-		return Context.create(content, params);
+	public Context setParameter(final String name, final String value) {
+		parameters.put(name, value);
+		return this;
+	}
+
+	public Context setParameters(final Map<String, String> parameters) {
+		if (parameters != null) {
+			parameters.putAll(parameters);
+		}
+		return this;
+	}
+
+	public String getUuid() {
+		return getParameter(PARAM_UUID);
+	}
+
+	public Context setUuid(final String uuid) {
+		setParameter(PARAM_UUID, uuid);
+		return this;
+	}
+
+	public Context setUuid(final Cacheable item) {
+		setUuid(item.getUuid());
+		return this;
+	}
+
+	public void submit() {
+		ContextManager.setContext(this);
+	}
+
+	public Context set(final String context) {
+		content = null;
+		parameters.clear();
+
+		String contentName;
+		if ((context != null) && (context.length() != 0)) {
+			final int split = context.indexOf('/');
+			String argString;
+			if (split != -1) {
+				contentName = context.substring(0, split).toLowerCase();
+				argString = context.substring(split + 1);
+			} else {
+				contentName = context.toLowerCase();
+				argString = null;
+			}
+
+			if ((argString != null) && (argString.length() != 0)) {
+				final String[] argArray = argString.split("/");
+				for (final String element : argArray) {
+					final String[] argPair = element.split("\\=");
+					if (argPair.length < 2) {
+						parameters.put(argPair[0], null);
+					} else {
+						parameters.put(argPair[0], argPair[1]);
+					}
+				}
+			}
+		} else {
+			contentName = null;
+		}
+		if (contentName != null) {
+			content = ContentRegistry.getContent(contentName);
+		}
+		return this;
 	}
 
 	@Override
@@ -145,56 +171,6 @@ public final class Context {
 		}
 
 		return hash;
-	}
-
-	private void initContext(final String context) {
-		content = null;
-		parameters.clear();
-
-		String contentName;
-		if ((context != null) && (context.length() != 0)) {
-			final int split = context.indexOf('/');
-			String argString;
-			if (split != -1) {
-				contentName = context.substring(0, split).toLowerCase();
-				argString = context.substring(split + 1);
-			} else {
-				contentName = context.toLowerCase();
-				argString = null;
-			}
-
-			if ((argString != null) && (argString.length() != 0)) {
-				final String[] argArray = argString.split("/");
-				for (final String element : argArray) {
-					final String[] argPair = element.split("\\=");
-					if (argPair.length < 2) {
-						parameters.put(argPair[0], null);
-					} else {
-						parameters.put(argPair[0], argPair[1]);
-					}
-				}
-			}
-		} else {
-			contentName = null;
-		}
-		if (contentName != null) {
-			content = ContentRegistry.getContent(contentName);
-		}
-	}
-
-	private void initContext(final Context context) {
-		content = context.content;
-		parameters.putAll(context.parameters);
-	}
-
-	private void initContext(final ContentComposite content) {
-		this.content = content;
-	}
-
-	private void initContext(final Map<String, String> parameters) {
-		if (parameters != null) {
-			this.parameters.putAll(parameters);
-		}
 	}
 
 }

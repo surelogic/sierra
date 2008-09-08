@@ -71,7 +71,7 @@ public abstract class HeaderComposite extends Composite {
 		utilityRow.addStyleName(PRIMARY_STYLE);
 	}
 
-	public final void activate(Context context, UserAccount user) {
+	public final void activate(final Context context, final UserAccount user) {
 		if (!uiCreated) {
 			uiCreated = true;
 			onInitialize(rootPanel);
@@ -80,11 +80,11 @@ public abstract class HeaderComposite extends Composite {
 		onActivate(context, user);
 	}
 
-	public final void updateUser(UserAccount user) {
+	public final void updateUser(final UserAccount user) {
 		onUpdateUser(user);
 	}
 
-	public final void updateContext(Context context) {
+	public final void updateContext(final Context context) {
 		if (rootPanel.getWidgetIndex(tabStylingPanel) != -1) {
 			Hyperlink newLink;
 			if (context != null) {
@@ -100,7 +100,7 @@ public abstract class HeaderComposite extends Composite {
 		onUpdateContext(context);
 	}
 
-	private void selectTab(Hyperlink newLink) {
+	private void selectTab(final Hyperlink newLink) {
 		if (currentTab == newLink) {
 			return;
 		}
@@ -119,8 +119,8 @@ public abstract class HeaderComposite extends Composite {
 		return rootPanel;
 	}
 
-	protected final Label addUtilityItem(String text,
-			ClickListener clickListener) {
+	protected final Label addUtilityItem(final String text,
+			final ClickListener clickListener) {
 		showUtilities();
 		final Label lbl = new Label(text);
 		lbl.addStyleName(UTILITY_STYLE);
@@ -146,10 +146,11 @@ public abstract class HeaderComposite extends Composite {
 		}
 	}
 
-	protected final void addTab(ContentComposite content, String tabStyleName) {
+	protected final void addTab(final ContentComposite content,
+			final String tabStyleName) {
 		showTabs();
 		if (tabContent.get(content) == null) {
-			final String contentUrl = Context.create(content, null).toString();
+			final String contentUrl = new Context(content).toString();
 			final Hyperlink contentLink = new Hyperlink(ContentRegistry
 					.getContentTitle(content), contentUrl);
 			contentLink.addStyleName("header-tab");
@@ -166,7 +167,7 @@ public abstract class HeaderComposite extends Composite {
 		tabPanel.add(spacer);
 	}
 
-	protected final void removeTab(ContentComposite content) {
+	protected final void removeTab(final ContentComposite content) {
 		final Hyperlink contentLink = tabContent.get(content);
 		if (contentLink != null) {
 			tabContent.remove(content);

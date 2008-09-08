@@ -106,9 +106,10 @@ public class ReportParametersView extends BlockPanel {
 
 		settingsPanel.clear();
 		for (final ReportSettings rs : report.getSavedReports()) {
-			final Context reportContext = Context.createWithUuid(report);
+			final Context reportContext = Context.current().setUuid(report);
 			settingsPanel.add(new Hyperlink(rs.getTitle(), reportContext
-					.withParam("reportSettingsUuid", rs.getUuid()).toString()));
+					.setParameter("reportSettingsUuid", rs.getUuid())
+					.toString()));
 		}
 	}
 

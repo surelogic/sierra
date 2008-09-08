@@ -69,8 +69,9 @@ public class ServerManagementContent extends
 													public void doStatus(
 															final Status result) {
 														getCache().refresh();
-														Context.createWithUuid(
-																text).submit();
+														Context.current()
+																.setUuid(text)
+																.submit();
 													}
 												});
 							}
@@ -119,8 +120,8 @@ public class ServerManagementContent extends
 							public void doStatus(final Status result) {
 								statusBox.setStatus(result);
 								getCache().refresh();
-								Context.create(ServerManagementContent.this,
-										null).submit();
+								new Context(ServerManagementContent.this)
+										.submit();
 							}
 						});
 			}
@@ -135,7 +136,8 @@ public class ServerManagementContent extends
 	}
 
 	@Override
-	protected boolean isItemVisible(final ServerLocation item, final String query) {
+	protected boolean isItemVisible(final ServerLocation item,
+			final String query) {
 		return LangUtil.containsIgnoreCase(item.getLabel(), query);
 	}
 

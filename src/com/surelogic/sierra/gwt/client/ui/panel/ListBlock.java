@@ -37,8 +37,7 @@ public abstract class ListBlock<E extends Cacheable> extends BlockPanel {
 			public void onClick(final Widget sender) {
 				final ItemLabel<?> itemUI = (ItemLabel<?>) sender;
 				final Cacheable item = (Cacheable) itemUI.getItem();
-				Context.createWithUuid(getItemContent(), item.getUuid())
-						.submit();
+				new Context(getItemContent(), item.getUuid()).submit();
 			}
 
 		};

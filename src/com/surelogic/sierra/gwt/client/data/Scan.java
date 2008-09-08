@@ -3,11 +3,9 @@ package com.surelogic.sierra.gwt.client.data;
 import java.io.Serializable;
 import java.util.Date;
 
-public class Scan implements Serializable, Comparable<Scan> {
+import com.surelogic.sierra.gwt.client.data.cache.Cacheable;
 
-	/**
-	 * 
-	 */
+public class Scan implements Serializable, Cacheable, Comparable<Scan> {
 	private static final long serialVersionUID = -6122774750507037724L;
 
 	private String uuid;
@@ -74,7 +72,7 @@ public class Scan implements Serializable, Comparable<Scan> {
 		this.scanTime = scanTime;
 	}
 
-	public int compareTo(Scan o) {
+	public int compareTo(final Scan o) {
 		return scanTime.compareTo(o.getScanTime());
 	}
 

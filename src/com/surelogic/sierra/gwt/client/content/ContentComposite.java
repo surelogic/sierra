@@ -22,7 +22,7 @@ public abstract class ContentComposite extends Composite {
 	}
 
 	public final void show() {
-		Context.create(this, null).submit();
+		new Context(this).submit();
 	}
 
 	public final void update(final Context context) {
