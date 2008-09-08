@@ -163,8 +163,8 @@ public class ReportParametersView extends BlockPanel {
 		}
 		// List declaration for the callback
 		final List<String> lbValues = values;
-
-		if (param.getType() == Parameter.Type.PROJECTS) {
+		switch (param.getType()) {
+		case PROJECTS:
 			final ListBox lb = createListBox(4, "100%");
 			ServiceHelper.getSettingsService().searchProjects("*", -1,
 					new StandardCallback<List<String>>() {
@@ -187,7 +187,7 @@ public class ReportParametersView extends BlockPanel {
 						}
 					});
 			return lb;
-		} else if (param.getType() == Parameter.Type.IMPORTANCE) {
+		case IMPORTANCE:
 			final MultipleImportanceChoice choice = new MultipleImportanceChoice();
 			final List<ImportanceView> imps = new ArrayList<ImportanceView>(
 					values.size());
@@ -197,14 +197,14 @@ public class ReportParametersView extends BlockPanel {
 			choice.setSelectedImportances(imps);
 			choice.setWidth("50%");
 			return choice;
+		default:
+			final TextBox tb = new TextBox();
+			tb.setWidth("100%");
+			if (!values.isEmpty()) {
+				tb.setText(values.get(0));
+			}
+			return tb;
 		}
-
-		final TextBox tb = new TextBox();
-		tb.setWidth("100%");
-		if (!values.isEmpty()) {
-			tb.setText(values.get(0));
-		}
-		return tb;
 	}
 
 	private ListBox createListBox(final int visibleItemCount,
