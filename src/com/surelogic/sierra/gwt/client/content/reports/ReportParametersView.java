@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
@@ -145,6 +146,11 @@ public class ReportParametersView extends BlockPanel {
 					}
 				}
 				settings.setSettingValue(paramName, values);
+			} else if (paramUI instanceof CheckBox) {
+				final CheckBox cb = (CheckBox) paramUI;
+				if (cb.isChecked()) {
+					settings.setSettingValue(paramName, "true");
+				}
 			}
 		}
 		return settings;
@@ -198,6 +204,8 @@ public class ReportParametersView extends BlockPanel {
 			choice.setSelectedImportances(imps);
 			choice.setWidth("50%");
 			return choice;
+		case BOOLEAN:
+			return new CheckBox();
 		default:
 			final TextBox tb = new TextBox();
 			tb.setWidth("100%");
