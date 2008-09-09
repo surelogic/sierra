@@ -36,6 +36,7 @@ public class ScanContent extends ContentComposite {
 	@Override
 	protected void onInitialize(final DockPanel rootPanel) {
 		rootPanel.add(view, DockPanel.CENTER);
+		view.initialize();
 	}
 
 	@Override

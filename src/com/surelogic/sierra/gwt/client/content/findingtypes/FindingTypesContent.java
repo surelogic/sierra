@@ -30,19 +30,19 @@ public final class FindingTypesContent extends
 
 	private FindingTypesContent() {
 		// singleton
-		super(new FindingTypeCache());
+		super(FindingTypeCache.getInstance());
 	}
 
 	@Override
-	protected void onInitialize(DockPanel rootPanel,
-			VerticalPanel selectionPanel) {
+	protected void onInitialize(final DockPanel rootPanel,
+			final VerticalPanel selectionPanel) {
 		setCaption("Finding Types");
 
 		findingView.initialize();
 		findingView.addCategoriesIncludingAction("Add Category",
 				new ClickListener() {
 
-					public void onClick(Widget sender) {
+					public void onClick(final Widget sender) {
 						promptForCategories();
 					}
 				});
@@ -50,17 +50,17 @@ public final class FindingTypesContent extends
 	}
 
 	@Override
-	protected String getItemText(FindingType item) {
+	protected String getItemText(final FindingType item) {
 		return item.getName();
 	}
 
 	@Override
-	protected boolean isItemVisible(FindingType item, String query) {
+	protected boolean isItemVisible(final FindingType item, final String query) {
 		return LangUtil.containsIgnoreCase(item.getName(), query);
 	}
 
 	@Override
-	protected void onSelectionChanged(FindingType item) {
+	protected void onSelectionChanged(final FindingType item) {
 		findingView.setSelection(item);
 	}
 
@@ -68,7 +68,8 @@ public final class FindingTypesContent extends
 		final CategorySelectionDialog dialog = new CategorySelectionDialog();
 		dialog.addPopupListener(new PopupListener() {
 
-			public void onPopupClosed(PopupPanel sender, boolean autoClosed) {
+			public void onPopupClosed(final PopupPanel sender,
+					final boolean autoClosed) {
 				final Status s = dialog.getStatus();
 				if (s != null && s.isSuccess()) {
 					final FindingType finding = findingView.getSelection();

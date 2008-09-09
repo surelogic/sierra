@@ -19,11 +19,17 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.Context;
+import com.surelogic.sierra.gwt.client.data.Category;
+import com.surelogic.sierra.gwt.client.data.FindingType;
 import com.surelogic.sierra.gwt.client.data.ImportanceView;
 import com.surelogic.sierra.gwt.client.data.Report;
 import com.surelogic.sierra.gwt.client.data.ReportSettings;
 import com.surelogic.sierra.gwt.client.data.Report.OutputType;
 import com.surelogic.sierra.gwt.client.data.Report.Parameter;
+import com.surelogic.sierra.gwt.client.data.cache.Cache;
+import com.surelogic.sierra.gwt.client.data.cache.CacheListenerAdapter;
+import com.surelogic.sierra.gwt.client.data.cache.CategoryCache;
+import com.surelogic.sierra.gwt.client.data.cache.FindingTypeCache;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.service.callback.StandardCallback;
 import com.surelogic.sierra.gwt.client.ui.MultipleImportanceChoice;
@@ -142,7 +148,7 @@ public class ReportParametersView extends BlockPanel {
 				final ListBox lb = (ListBox) paramUI;
 				for (int i = 0; i < lb.getItemCount(); i++) {
 					if (lb.isItemSelected(i)) {
-						values.add(lb.getItemText(i));
+						values.add(lb.getValue(i));
 					}
 				}
 				settings.setSettingValue(paramName, values);
@@ -206,6 +212,32 @@ public class ReportParametersView extends BlockPanel {
 			return choice;
 		case BOOLEAN:
 			return new CheckBox();
+		case CATEGORY:
+			final ListBox catB = new ListBox(true);
+			CategoryCache.getInstance().refresh(false,
+					new CacheListenerAdapter<Category>() {
+						@Override
+						public void onRefresh(final Cache<Category> cache,
+								final Throwable failure) {
+							for (final Category cat : cache) {
+								catB.addItem(cat.getName(), cat.getUuid());
+							}
+						}
+					});
+			return catB;
+		case FINDING_TYPE:
+			final ListBox ftB = new ListBox(true);
+			FindingTypeCache.getInstance().refresh(false,
+					new CacheListenerAdapter<FindingType>() {
+						@Override
+						public void onRefresh(final Cache<FindingType> cache,
+								final Throwable failure) {
+							for (final FindingType type : cache) {
+								ftB.addItem(type.getName(), type.getUuid());
+							}
+						}
+					});
+			return ftB;
 		default:
 			final TextBox tb = new TextBox();
 			tb.setWidth("100%");

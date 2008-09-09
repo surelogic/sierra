@@ -145,9 +145,9 @@ public class ReportCache extends Cache<Report> {
 
 	public static Report projectFindings() {
 		final Report report = new Report();
-		report.setUuid("ScanFindings");
-		report.setTitle("Scan Findings");
-		report.setDescription("Finding counts for a scan.");
+		report.setUuid("ProjectFindingsChart");
+		report.setTitle("Project Findings");
+		report.setDescription("TODO");
 		report.setDataSource(DataSource.TEAMSERVER);
 		report.setOutputTypes(OutputType.CHART);
 		final List<Parameter> params = report.getParameters();
@@ -158,9 +158,9 @@ public class ReportCache extends Cache<Report> {
 
 	public static Report projectCompilations() {
 		final Report report = new Report();
-		report.setUuid("ScanFindings");
-		report.setTitle("Scan Findings");
-		report.setDescription("Finding counts for a scan.");
+		report.setUuid("ProjectCompilationsChart");
+		report.setTitle("Project Compilations");
+		report.setDescription("TODO");
 		report.setDataSource(DataSource.TEAMSERVER);
 		report.setOutputTypes(OutputType.CHART);
 		final List<Parameter> params = report.getParameters();
@@ -187,7 +187,7 @@ public class ReportCache extends Cache<Report> {
 	public static Report scanImportancesByCategory() {
 		final Report report = new Report();
 		report.setUuid("ScanImportancesByCategory");
-		report.setTitle("Scan Importances");
+		report.setTitle("Scan Importances By Category");
 		report
 				.setDescription("Show a breakdown of findings by importance for packages in a given scan of a project.");
 		report.setDataSource(DataSource.TEAMSERVER);

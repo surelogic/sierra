@@ -9,14 +9,25 @@ import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 
 public class FindingTypeCache extends Cache<FindingType> {
 
+	private static final FindingTypeCache INSTANCE = new FindingTypeCache();
+
+	private FindingTypeCache() {
+		super();
+	}
+
 	@Override
-	protected void doRefreshCall(AsyncCallback<List<FindingType>> callback) {
+	protected void doRefreshCall(final AsyncCallback<List<FindingType>> callback) {
 		ServiceHelper.getSettingsService().getFindingTypes(callback);
 	}
 
 	@Override
-	protected void doSaveCall(FindingType item, AsyncCallback<Status> callback) {
+	protected void doSaveCall(final FindingType item,
+			final AsyncCallback<Status> callback) {
 		callback.onSuccess(Status.failure("Not implemented"));
+	}
+
+	public static FindingTypeCache getInstance() {
+		return INSTANCE;
 	}
 
 }
