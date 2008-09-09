@@ -178,7 +178,10 @@ public class ReportCache extends Cache<Report> {
 		report.setDataSource(DataSource.TEAMSERVER);
 		report.setOutputTypes(OutputType.CHART);
 		final List<Parameter> params = report.getParameters();
-		params.add(new Parameter("scan", "Scans", Type.SCANS));
+		final Parameter project = new Parameter("project", "Projects",
+				Type.PROJECTS);
+		project.getChildren().add(new Parameter("scan", "Scans", Type.SCANS));
+		params.add(project);
 		params.add(new Parameter("importance", "Importance", Type.IMPORTANCE));
 		params.add(new Parameter("package", "Package", Type.TEXT));
 		return report;
@@ -193,9 +196,14 @@ public class ReportCache extends Cache<Report> {
 		report.setDataSource(DataSource.TEAMSERVER);
 		report.setOutputTypes(OutputType.CHART);
 		final List<Parameter> params = report.getParameters();
-		params.add(new Parameter("scan", "Scans", Type.SCANS));
+		final Parameter project = new Parameter("project", "Projects",
+				Type.PROJECTS);
+		final Parameter scan = new Parameter("scan", "Scans", Type.SCANS);
+		project.getChildren().add(scan);
+		scan.getChildren().add(
+				new Parameter("package", "Package", Type.PACKAGES));
+		params.add(project);
 		params.add(new Parameter("importance", "Importance", Type.IMPORTANCE));
-		params.add(new Parameter("package", "Package", Type.TEXT));
 		params.add(new Parameter("category", "Category", Type.CATEGORY));
 		return report;
 	}
@@ -208,9 +216,14 @@ public class ReportCache extends Cache<Report> {
 		report.setDataSource(DataSource.TEAMSERVER);
 		report.setOutputTypes(OutputType.TABLE);
 		final List<Parameter> params = report.getParameters();
-		params.add(new Parameter("scan", "Scans", Type.SCANS));
+		final Parameter project = new Parameter("project", "Projects",
+				Type.PROJECTS);
+		final Parameter scan = new Parameter("scan", "Scans", Type.SCANS);
+		project.getChildren().add(scan);
+		scan.getChildren().add(
+				new Parameter("package", "Package", Type.PACKAGES));
+		params.add(project);
 		params.add(new Parameter("importance", "Importance", Type.IMPORTANCE));
-		params.add(new Parameter("package", "Package", Type.TEXT));
 		return report;
 	}
 
@@ -223,9 +236,14 @@ public class ReportCache extends Cache<Report> {
 		report.setDataSource(DataSource.TEAMSERVER);
 		report.setOutputTypes(OutputType.TABLE);
 		final List<Parameter> params = report.getParameters();
-		params.add(new Parameter("scan", "Scans", Type.SCANS));
+		final Parameter project = new Parameter("project", "Projects",
+				Type.PROJECTS);
+		final Parameter scan = new Parameter("scan", "Scans", Type.SCANS);
+		project.getChildren().add(scan);
+		scan.getChildren().add(
+				new Parameter("package", "Package", Type.PACKAGES));
+		params.add(project);
 		params.add(new Parameter("category", "Category", Type.CATEGORY));
-		params.add(new Parameter("package", "Package", Type.TEXT));
 		return report;
 	}
 
@@ -251,7 +269,11 @@ public class ReportCache extends Cache<Report> {
 		report.setDataSource(DataSource.TEAMSERVER);
 		report.setOutputTypes(OutputType.TABLE, OutputType.CHART);
 		final List<Parameter> params = report.getParameters();
-		params.add(new Parameter("scans", "Scans", Type.SCANS));
+		final Parameter project = new Parameter("project", "Projects",
+				Type.PROJECTS);
+		final Parameter scan = new Parameter("scan", "Scans", Type.SCANS);
+		params.add(project);
+		project.getChildren().add(scan);
 		return report;
 	}
 
