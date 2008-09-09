@@ -17,16 +17,16 @@ import com.surelogic.sierra.gwt.client.data.ReportSettings;
 
 public class FindingTypeCounts implements IDatabasePlot {
 
-	public JFreeChart plot(PlotSize mutableSize, ReportSettings report,
-			Connection c) throws SQLException, IOException {
+	public JFreeChart plot(final PlotSize mutableSize,
+			final ReportSettings report, final Connection c)
+			throws SQLException, IOException {
 		c.setTransactionIsolation(Connection.TRANSACTION_READ_UNCOMMITTED);
 		final String uid = report.getSettingValue("uuid", 0);
 		if (uid != null) {
 			final DefaultCategoryDataset set = new ConnectionQuery(c).prepared(
 					"Plots.FindingType.count",
 					new ResultHandler<DefaultCategoryDataset>() {
-
-						public DefaultCategoryDataset handle(Result r) {
+						public DefaultCategoryDataset handle(final Result r) {
 							final DefaultCategoryDataset set = new DefaultCategoryDataset();
 							for (final Row row : r) {
 								set.setValue(row.nextInt(), "Findings", row
