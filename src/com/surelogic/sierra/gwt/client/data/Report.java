@@ -202,6 +202,7 @@ public class Report implements Serializable, Cacheable {
 
 		private String name;
 		private Type type;
+		private List<Parameter> children;
 
 		public Parameter() {
 			super();
@@ -229,8 +230,24 @@ public class Report implements Serializable, Cacheable {
 			this.type = type;
 		}
 
+		public List<Parameter> getChildren() {
+			if (children == null) {
+				children = new ArrayList<Parameter>();
+			}
+			return children;
+		}
+
+		public void setChildren(final List<Parameter> children) {
+			this.children = children;
+		}
+
 		public Parameter copy() {
-			return new Parameter(name, type);
+			final Parameter copy = new Parameter(name, type);
+			final List<Parameter> copyChildren = copy.getChildren();
+			for (final Parameter child : getChildren()) {
+				copyChildren.add(child.copy());
+			}
+			return copy;
 		}
 
 		@Override
@@ -244,6 +261,11 @@ public class Report implements Serializable, Cacheable {
 			int result = 1;
 			result = prime * result + ((name == null) ? 0 : name.hashCode());
 			result = prime * result + ((type == null) ? 0 : type.hashCode());
+			if (children != null) {
+				for (final Parameter child : children) {
+					result = prime * result + child.hashCode();
+				}
+			}
 			return result;
 		}
 
@@ -261,6 +283,9 @@ public class Report implements Serializable, Cacheable {
 				return false;
 			}
 			if (type != other.type) {
+				return false;
+			}
+			if (!LangUtil.equals(children, other.children)) {
 				return false;
 			}
 			return true;
