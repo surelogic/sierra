@@ -80,28 +80,35 @@ public class ScanContent extends ContentComposite {
 
 						@Override
 						protected void doSuccess(final ScanDetail result) {
-							setTitle(result.getProject() + " - "
-									+ result.getDate());
-							detailPanel.add(HtmlHelper.p(result.getClasses()));
-							detailPanel.add(HtmlHelper.p(result.getPackages()));
-							detailPanel.add(HtmlHelper.p(result.getFindings()));
-							detailPanel.add(HtmlHelper.p(result
-									.getLinesOfCode()));
-							detailPanel.add(HtmlHelper.p(result.getDensity()));
-							pak = new PackageChoice(result.getCompilations()
-									.keySet(), true);
-							imp = new MultipleImportanceChoice();
-							cat = new CategoryChoice();
-							optionsPanel.add(pak);
-							optionsPanel.add(imp);
-							optionsPanel.add(cat);
-							optionsPanel.add(new Button("Show",
-									new ClickListener() {
-										public void onClick(final Widget sender) {
-											showFindings();
-										}
-									}));
-							showFindings();
+							if (result != null) {
+								setTitle(result.getProject() + " - "
+										+ result.getDate());
+								detailPanel.add(HtmlHelper.p(result
+										.getClasses()));
+								detailPanel.add(HtmlHelper.p(result
+										.getPackages()));
+								detailPanel.add(HtmlHelper.p(result
+										.getFindings()));
+								detailPanel.add(HtmlHelper.p(result
+										.getLinesOfCode()));
+								detailPanel.add(HtmlHelper.p(result
+										.getDensity()));
+								pak = new PackageChoice(result
+										.getCompilations().keySet(), true);
+								imp = new MultipleImportanceChoice();
+								cat = new CategoryChoice();
+								optionsPanel.add(pak);
+								optionsPanel.add(imp);
+								optionsPanel.add(cat);
+								optionsPanel.add(new Button("Show",
+										new ClickListener() {
+											public void onClick(
+													final Widget sender) {
+												showFindings();
+											}
+										}));
+								showFindings();
+							}
 						}
 					});
 		}
