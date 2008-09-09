@@ -7,15 +7,34 @@ import java.util.List;
 import java.util.Set;
 
 import com.google.gwt.user.client.ui.ListBox;
+import com.surelogic.sierra.gwt.client.data.ScanDetail;
+import com.surelogic.sierra.gwt.client.service.ServiceHelper;
+import com.surelogic.sierra.gwt.client.service.callback.StandardCallback;
 
 public class PackageChoice extends ListBox {
 
 	private final List<String> packageList;
 
+	public PackageChoice(final boolean allowMultiples) {
+		super(allowMultiples);
+		packageList = new ArrayList<String>();
+	}
+
+	/**
+	 * Create a package choice box w/ the specified packages as options.
+	 * 
+	 * @param packages
+	 */
 	public PackageChoice(final Set<String> packages) {
 		this(packages, false);
 	}
 
+	/**
+	 * Create a package choice box w/ the specified packages as options.
+	 * 
+	 * @param packages
+	 * @param allowMultiples
+	 */
 	public PackageChoice(final Set<String> packages,
 			final boolean allowMultiples) {
 		super(allowMultiples);
@@ -63,4 +82,28 @@ public class PackageChoice extends ListBox {
 		return selected;
 	}
 
+	/**
+	 * Display the packages available for this particular scan as choices.
+	 * 
+	 * @param scanUuid
+	 */
+	public void displayScanPackages(final String scanUuid) {
+		ServiceHelper.getFindingService().getScanDetail(scanUuid,
+				new StandardCallback<ScanDetail>() {
+					@Override
+					protected void doSuccess(final ScanDetail result) {
+						final Set<String> packages = result.getCompilations()
+								.keySet();
+						clear();
+						packageList.clear();
+						addItem("*all packages*");
+						setSelectedIndex(0);
+						packageList.addAll(packages);
+						Collections.sort(packageList);
+						for (final String pakkage : packageList) {
+							addItem(pakkage);
+						}
+					}
+				});
+	}
 }
