@@ -41,7 +41,7 @@ public class ReportParametersView extends BlockPanel {
 	private final Label description = new Label("", true);
 	private final FlexTable parametersTable = new FlexTable();
 	private final ActionPanel reportActions = new ActionPanel();
-	private final VerticalPanel settingsPanel = new VerticalPanel();
+	private BlockPanel settingsPanel;
 	private final Map<Report.Parameter, Widget> paramUIMap = new HashMap<Report.Parameter, Widget>();
 	private final Map<OutputType, Label> actionOutputMap = new HashMap<OutputType, Label>();
 	private Report selection;
@@ -54,15 +54,30 @@ public class ReportParametersView extends BlockPanel {
 		description.addStyleName("padded");
 		paramPanel.add(description);
 
-		parametersTable.setWidth("50%");
+		parametersTable.setWidth("100%");
 		paramPanel.add(parametersTable);
 
 		paramPanel.add(reportActions);
 		paramPanel.setCellHorizontalAlignment(reportActions,
 				HasHorizontalAlignment.ALIGN_CENTER);
+
 		final HorizontalPanel h = new HorizontalPanel();
 		h.add(paramPanel);
+		h.setCellWidth(paramPanel, "70%");
+		final Label placeholder = new Label("");
+		h.add(placeholder);
+		h.setCellWidth(placeholder, "5%");
+		settingsPanel = new BlockPanel() {
+
+			@Override
+			protected void onInitialize(final VerticalPanel contentPanel) {
+				setTitle("Saved Reports");
+				setSubsectionStyle(true);
+			}
+		};
+		settingsPanel.initialize();
 		h.add(settingsPanel);
+		h.setCellWidth(settingsPanel, "25%");
 		h.setWidth("100%");
 		contentPanel.add(h);
 	}
@@ -92,7 +107,7 @@ public class ReportParametersView extends BlockPanel {
 
 		int rowIndex = 0;
 		for (final Report.Parameter param : report.getParameters()) {
-			parametersTable.setText(rowIndex, 0, param.getName() + ":");
+			parametersTable.setText(rowIndex, 0, param.getTitle() + ":");
 			parametersTable.getCellFormatter().setVerticalAlignment(rowIndex,
 					0, HasVerticalAlignment.ALIGN_TOP);
 			final Widget paramUI = getParameterUI(param,
@@ -102,8 +117,8 @@ public class ReportParametersView extends BlockPanel {
 			paramUIMap.put(param, paramUI);
 			rowIndex++;
 		}
-		parametersTable.getColumnFormatter().setWidth(0, "10%");
-		parametersTable.getColumnFormatter().setWidth(1, "90%");
+		parametersTable.getColumnFormatter().setWidth(0, "33%");
+		parametersTable.getColumnFormatter().setWidth(1, "67%");
 
 		for (final Map.Entry<OutputType, Label> actionEntry : actionOutputMap
 				.entrySet()) {
@@ -111,12 +126,20 @@ public class ReportParametersView extends BlockPanel {
 					report.hasOutputType(actionEntry.getKey()));
 		}
 
-		settingsPanel.clear();
-		for (final ReportSettings rs : report.getSavedReports()) {
-			final Context reportContext = Context.current().setUuid(report);
-			settingsPanel.add(new Hyperlink(rs.getTitle(), reportContext
-					.setParameter("reportSettingsUuid", rs.getUuid())
-					.toString()));
+		final List<ReportSettings> savedReports = report.getSavedReports();
+		if (savedReports.isEmpty()) {
+			settingsPanel.setVisible(false);
+		} else {
+			settingsPanel.setVisible(true);
+			final VerticalPanel settingsContent = settingsPanel
+					.getContentPanel();
+			settingsContent.clear();
+			for (final ReportSettings rs : savedReports) {
+				final Context reportContext = Context.current().setUuid(report);
+				settingsContent.add(new Hyperlink(rs.getTitle(), reportContext
+						.setParameter("reportSettingsUuid", rs.getUuid())
+						.toString()));
+			}
 		}
 	}
 
@@ -214,6 +237,7 @@ public class ReportParametersView extends BlockPanel {
 			return new CheckBox();
 		case CATEGORY:
 			final ListBox catB = new ListBox(true);
+			catB.setWidth("100%");
 			CategoryCache.getInstance().refresh(false,
 					new CacheListenerAdapter<Category>() {
 						@Override
@@ -227,6 +251,7 @@ public class ReportParametersView extends BlockPanel {
 			return catB;
 		case FINDING_TYPE:
 			final ListBox ftB = new ListBox(true);
+			ftB.setWidth("100%");
 			FindingTypeCache.getInstance().refresh(false,
 					new CacheListenerAdapter<FindingType>() {
 						@Override

@@ -113,7 +113,7 @@ public class ReportCache extends Cache<Report> {
 		report.setDataSource(DataSource.TEAMSERVER);
 		report.setOutputTypes(OutputType.CHART);
 		final List<Parameter> params = report.getParameters();
-		params.add(new Parameter("uuid", Type.CATEGORY));
+		params.add(new Parameter("uuid", "Category", Type.CATEGORY));
 		return report;
 	}
 
@@ -125,8 +125,8 @@ public class ReportCache extends Cache<Report> {
 		report.setDataSource(DataSource.TEAMSERVER);
 		report.setOutputTypes(OutputType.CHART);
 		final List<Parameter> params = report.getParameters();
-		params.add(new Parameter("Projects", Type.PROJECTS));
-		params.add(new Parameter("Importance", Type.IMPORTANCE));
+		params.add(new Parameter("Projects", "Projects", Type.PROJECTS));
+		params.add(new Parameter("Importance", "Importance", Type.IMPORTANCE));
 		return report;
 	}
 
@@ -139,7 +139,7 @@ public class ReportCache extends Cache<Report> {
 		report.setOutputTypes(OutputType.TABLE, OutputType.CHART,
 				OutputType.PDF);
 		final List<Parameter> params = report.getParameters();
-		params.add(new Parameter("Importance", Type.IMPORTANCE));
+		params.add(new Parameter("Importance", "Importance", Type.IMPORTANCE));
 		return report;
 	}
 
@@ -151,8 +151,8 @@ public class ReportCache extends Cache<Report> {
 		report.setDataSource(DataSource.TEAMSERVER);
 		report.setOutputTypes(OutputType.CHART);
 		final List<Parameter> params = report.getParameters();
-		params.add(new Parameter("projectName", Type.PROJECTS));
-		params.add(new Parameter("kLoC", Type.BOOLEAN));
+		params.add(new Parameter("projectName", "Projects", Type.PROJECTS));
+		params.add(new Parameter("kLoC", "Show KLoC", Type.BOOLEAN));
 		return report;
 	}
 
@@ -164,8 +164,8 @@ public class ReportCache extends Cache<Report> {
 		report.setDataSource(DataSource.TEAMSERVER);
 		report.setOutputTypes(OutputType.CHART);
 		final List<Parameter> params = report.getParameters();
-		params.add(new Parameter("projectName", Type.PROJECTS));
-		params.add(new Parameter("kLoC", Type.BOOLEAN));
+		params.add(new Parameter("projectName", "Projects", Type.PROJECTS));
+		params.add(new Parameter("kLoC", "Show KLoC", Type.BOOLEAN));
 		return report;
 	}
 
@@ -178,9 +178,9 @@ public class ReportCache extends Cache<Report> {
 		report.setDataSource(DataSource.TEAMSERVER);
 		report.setOutputTypes(OutputType.CHART);
 		final List<Parameter> params = report.getParameters();
-		params.add(new Parameter("scan", Type.SCANS));
-		params.add(new Parameter("importance", Type.IMPORTANCE));
-		params.add(new Parameter("package", Type.TEXT));
+		params.add(new Parameter("scan", "Scans", Type.SCANS));
+		params.add(new Parameter("importance", "Importance", Type.IMPORTANCE));
+		params.add(new Parameter("package", "Package", Type.TEXT));
 		return report;
 	}
 
@@ -193,10 +193,10 @@ public class ReportCache extends Cache<Report> {
 		report.setDataSource(DataSource.TEAMSERVER);
 		report.setOutputTypes(OutputType.CHART);
 		final List<Parameter> params = report.getParameters();
-		params.add(new Parameter("scan", Type.SCANS));
-		params.add(new Parameter("importance", Type.IMPORTANCE));
-		params.add(new Parameter("package", Type.TEXT));
-		params.add(new Parameter("category", Type.CATEGORY));
+		params.add(new Parameter("scan", "Scans", Type.SCANS));
+		params.add(new Parameter("importance", "Importance", Type.IMPORTANCE));
+		params.add(new Parameter("package", "Package", Type.TEXT));
+		params.add(new Parameter("category", "Category", Type.CATEGORY));
 		return report;
 	}
 
@@ -208,9 +208,9 @@ public class ReportCache extends Cache<Report> {
 		report.setDataSource(DataSource.TEAMSERVER);
 		report.setOutputTypes(OutputType.TABLE);
 		final List<Parameter> params = report.getParameters();
-		params.add(new Parameter("scan", Type.SCANS));
-		params.add(new Parameter("importance", Type.IMPORTANCE));
-		params.add(new Parameter("package", Type.TEXT));
+		params.add(new Parameter("scan", "Scans", Type.SCANS));
+		params.add(new Parameter("importance", "Importance", Type.IMPORTANCE));
+		params.add(new Parameter("package", "Package", Type.TEXT));
 		return report;
 	}
 
@@ -223,9 +223,9 @@ public class ReportCache extends Cache<Report> {
 		report.setDataSource(DataSource.TEAMSERVER);
 		report.setOutputTypes(OutputType.TABLE);
 		final List<Parameter> params = report.getParameters();
-		params.add(new Parameter("scan", Type.SCANS));
-		params.add(new Parameter("category", Type.CATEGORY));
-		params.add(new Parameter("package", Type.TEXT));
+		params.add(new Parameter("scan", "Scans", Type.SCANS));
+		params.add(new Parameter("category", "Category", Type.CATEGORY));
+		params.add(new Parameter("package", "Package", Type.TEXT));
 		return report;
 	}
 
@@ -238,7 +238,7 @@ public class ReportCache extends Cache<Report> {
 		report.setDataSource(DataSource.TEAMSERVER);
 		report.setOutputTypes(OutputType.CHART);
 		final List<Parameter> params = report.getParameters();
-		params.add(new Parameter("uuid", Type.FINDING_TYPE));
+		params.add(new Parameter("uuid", "Finding Types", Type.FINDING_TYPE));
 		return report;
 	}
 
@@ -251,7 +251,7 @@ public class ReportCache extends Cache<Report> {
 		report.setDataSource(DataSource.TEAMSERVER);
 		report.setOutputTypes(OutputType.TABLE, OutputType.CHART);
 		final List<Parameter> params = report.getParameters();
-		params.add(new Parameter("scans", Type.SCANS));
+		params.add(new Parameter("scans", "Scans", Type.SCANS));
 		return report;
 	}
 

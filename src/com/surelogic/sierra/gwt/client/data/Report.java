@@ -99,8 +99,22 @@ public class Report implements Serializable, Cacheable {
 
 	public Parameter getParameter(final String name) {
 		for (final Parameter param : getParameters()) {
-			if (LangUtil.equals(param.getName(), name)) {
-				return param;
+			final Parameter found = findParameter(param, name);
+			if (found != null) {
+				return found;
+			}
+		}
+		return null;
+	}
+
+	private Parameter findParameter(final Parameter param, final String name) {
+		if (LangUtil.equalsIgnoreCase(param.getName(), name)) {
+			return param;
+		}
+		for (final Parameter child : param.getChildren()) {
+			final Parameter found = findParameter(child, name);
+			if (found != null) {
+				return found;
 			}
 		}
 		return null;
@@ -201,6 +215,7 @@ public class Report implements Serializable, Cacheable {
 		}
 
 		private String name;
+		private String title;
 		private Type type;
 		private List<Parameter> children;
 
@@ -208,9 +223,10 @@ public class Report implements Serializable, Cacheable {
 			super();
 		}
 
-		public Parameter(final String name, final Type type) {
+		public Parameter(final String name, final String title, final Type type) {
 			super();
 			this.name = name;
+			this.title = title;
 			this.type = type;
 		}
 
@@ -220,6 +236,14 @@ public class Report implements Serializable, Cacheable {
 
 		public void setName(final String name) {
 			this.name = name;
+		}
+
+		public String getTitle() {
+			return title;
+		}
+
+		public void setTitle(final String title) {
+			this.title = title;
 		}
 
 		public Type getType() {
@@ -242,7 +266,7 @@ public class Report implements Serializable, Cacheable {
 		}
 
 		public Parameter copy() {
-			final Parameter copy = new Parameter(name, type);
+			final Parameter copy = new Parameter(name, title, type);
 			final List<Parameter> copyChildren = copy.getChildren();
 			for (final Parameter child : getChildren()) {
 				copyChildren.add(child.copy());
@@ -252,7 +276,7 @@ public class Report implements Serializable, Cacheable {
 
 		@Override
 		public String toString() {
-			return "{" + name + ": " + type + "}";
+			return "{" + title + " (" + name + "): " + type + "}";
 		}
 
 		@Override
@@ -260,6 +284,7 @@ public class Report implements Serializable, Cacheable {
 			final int prime = 31;
 			int result = 1;
 			result = prime * result + ((name == null) ? 0 : name.hashCode());
+			result = prime * result + ((title == null) ? 0 : title.hashCode());
 			result = prime * result + ((type == null) ? 0 : type.hashCode());
 			if (children != null) {
 				for (final Parameter child : children) {
@@ -280,6 +305,9 @@ public class Report implements Serializable, Cacheable {
 
 			final Parameter other = (Parameter) obj;
 			if (!LangUtil.equals(name, other.name)) {
+				return false;
+			}
+			if (!LangUtil.equals(title, other.title)) {
 				return false;
 			}
 			if (type != other.type) {
