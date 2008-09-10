@@ -18,7 +18,6 @@ public class ScanChoice extends ListBox {
 				new StandardCallback<List<Scan>>() {
 					@Override
 					protected void doSuccess(final List<Scan> result) {
-
 						for (final Scan scan : result) {
 							addItem(scan.getScanTimeDisplay(), scan.getUuid());
 						}
