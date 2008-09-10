@@ -107,15 +107,7 @@ public class ReportParametersView extends BlockPanel {
 
 		int rowIndex = 0;
 		for (final Report.Parameter param : report.getParameters()) {
-			parametersTable.setText(rowIndex, 0, param.getTitle() + ":");
-			parametersTable.getCellFormatter().setVerticalAlignment(rowIndex,
-					0, HasVerticalAlignment.ALIGN_TOP);
-			final Widget paramUI = getParameterUI(param,
-					settings == null ? null : settings.getSettingValue(param
-							.getName()));
-			parametersTable.setWidget(rowIndex, 1, paramUI);
-			paramUIMap.put(param, paramUI);
-			rowIndex++;
+			rowIndex = addParameterUI(param, settings, rowIndex);
 		}
 		parametersTable.getColumnFormatter().setWidth(0, "33%");
 		parametersTable.getColumnFormatter().setWidth(1, "67%");
@@ -141,6 +133,22 @@ public class ReportParametersView extends BlockPanel {
 						.toString()));
 			}
 		}
+	}
+
+	private int addParameterUI(final Report.Parameter param,
+			final ReportSettings settings, int rowIndex) {
+		parametersTable.setText(rowIndex, 0, param.getTitle() + ":");
+		parametersTable.getCellFormatter().setVerticalAlignment(rowIndex, 0,
+				HasVerticalAlignment.ALIGN_TOP);
+		final Widget paramUI = getParameterUI(param, settings == null ? null
+				: settings.getSettingValue(param.getName()));
+		parametersTable.setWidget(rowIndex, 1, paramUI);
+		paramUIMap.put(param, paramUI);
+		rowIndex++;
+		for (final Parameter child : param.getChildren()) {
+			rowIndex = addParameterUI(child, settings, rowIndex);
+		}
+		return rowIndex;
 	}
 
 	public Report getSelection() {
