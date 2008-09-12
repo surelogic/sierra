@@ -15,6 +15,10 @@ public class PackageChoice extends ListBox {
 
 	private final List<String> packageList;
 
+	public PackageChoice() {
+		this(true);
+	}
+
 	public PackageChoice(final boolean allowMultiples) {
 		super(allowMultiples);
 		packageList = new ArrayList<String>();

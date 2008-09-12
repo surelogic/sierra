@@ -5,7 +5,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
+import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -19,6 +21,7 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.Context;
+import com.surelogic.sierra.gwt.client.content.scans.PackageChoice;
 import com.surelogic.sierra.gwt.client.data.Category;
 import com.surelogic.sierra.gwt.client.data.FindingType;
 import com.surelogic.sierra.gwt.client.data.ImportanceView;
@@ -26,13 +29,15 @@ import com.surelogic.sierra.gwt.client.data.Report;
 import com.surelogic.sierra.gwt.client.data.ReportSettings;
 import com.surelogic.sierra.gwt.client.data.Report.OutputType;
 import com.surelogic.sierra.gwt.client.data.Report.Parameter;
+import com.surelogic.sierra.gwt.client.data.Report.Parameter.Type;
 import com.surelogic.sierra.gwt.client.data.cache.Cache;
 import com.surelogic.sierra.gwt.client.data.cache.CacheListenerAdapter;
 import com.surelogic.sierra.gwt.client.data.cache.CategoryCache;
 import com.surelogic.sierra.gwt.client.data.cache.FindingTypeCache;
-import com.surelogic.sierra.gwt.client.service.ServiceHelper;
-import com.surelogic.sierra.gwt.client.service.callback.StandardCallback;
 import com.surelogic.sierra.gwt.client.ui.MultipleImportanceChoice;
+import com.surelogic.sierra.gwt.client.ui.ProjectChoice;
+import com.surelogic.sierra.gwt.client.ui.ScanChoice;
+import com.surelogic.sierra.gwt.client.ui.SingleImportanceChoice;
 import com.surelogic.sierra.gwt.client.ui.panel.ActionPanel;
 import com.surelogic.sierra.gwt.client.ui.panel.BlockPanel;
 import com.surelogic.sierra.gwt.client.util.LangUtil;
@@ -109,6 +114,7 @@ public class ReportParametersView extends BlockPanel {
 		for (final Report.Parameter param : report.getParameters()) {
 			rowIndex = addParameterUI(param, settings, rowIndex);
 		}
+		wireParameterUpdates();
 		parametersTable.getColumnFormatter().setWidth(0, "33%");
 		parametersTable.getColumnFormatter().setWidth(1, "67%");
 
@@ -131,6 +137,46 @@ public class ReportParametersView extends BlockPanel {
 				settingsContent.add(new Hyperlink(rs.getTitle(), reportContext
 						.setParameter("reportSettingsUuid", rs.getUuid())
 						.toString()));
+			}
+		}
+	}
+
+	// Set up ui triggers between widgets.
+	private void wireParameterUpdates() {
+		for (final Entry<Parameter, Widget> entry : paramUIMap.entrySet()) {
+			final Parameter param = entry.getKey();
+			for (final Parameter child : param.getChildren()) {
+				switch (param.getType()) {
+				case PROJECT:
+					if (child.getType() == Type.SCAN) {
+						final ProjectChoice pc = (ProjectChoice) entry
+								.getValue();
+						final ScanChoice sc = (ScanChoice) paramUIMap
+								.get(child);
+						pc.addChangeListener(new ChangeListener() {
+							public void onChange(final Widget sender) {
+								sc.displayProjectScans(pc.getValue(pc
+										.getSelectedIndex()));
+							}
+						});
+					}
+					break;
+				case SCAN:
+					if (child.getType() == Type.PACKAGES) {
+						final ScanChoice sc = (ScanChoice) entry.getValue();
+						final PackageChoice pc = (PackageChoice) paramUIMap
+								.get(child);
+						sc.addChangeListener(new ChangeListener() {
+							public void onChange(final Widget sender) {
+								pc.displayScanPackages(sc.getValue(sc
+										.getSelectedIndex()));
+							}
+						});
+					}
+					break;
+				default:
+					break;
+				}
 			}
 		}
 	}
@@ -208,30 +254,13 @@ public class ReportParametersView extends BlockPanel {
 		// List declaration for the callback
 		final List<String> lbValues = values;
 		switch (param.getType()) {
+		case PROJECT:
+			return new ProjectChoice(lbValues, false);
 		case PROJECTS:
-			final ListBox lb = createListBox(4, "100%");
-			ServiceHelper.getSettingsService().searchProjects("*", -1,
-					new StandardCallback<List<String>>() {
-
-						@Override
-						protected void doSuccess(final List<String> result) {
-							if (result.isEmpty()) {
-								lb.setEnabled(false);
-								lb.addItem("No Projects");
-							} else {
-								lb.setEnabled(true);
-								for (final String project : result) {
-									lb.addItem(project);
-									if (lbValues.contains(project)) {
-										lb.setItemSelected(
-												lb.getItemCount() - 1, true);
-									}
-								}
-							}
-						}
-					});
-			return lb;
+			return new ProjectChoice(lbValues, true);
 		case IMPORTANCE:
+			return new SingleImportanceChoice();
+		case IMPORTANCES:
 			final MultipleImportanceChoice choice = new MultipleImportanceChoice();
 			final List<ImportanceView> imps = new ArrayList<ImportanceView>(
 					values.size());
@@ -271,6 +300,12 @@ public class ReportParametersView extends BlockPanel {
 						}
 					});
 			return ftB;
+		case PACKAGES:
+			return new PackageChoice();
+		case SCAN:
+			return new ScanChoice(false);
+		case SCANS:
+			return new ScanChoice(true);
 		default:
 			final TextBox tb = new TextBox();
 			tb.setWidth("100%");
@@ -279,19 +314,6 @@ public class ReportParametersView extends BlockPanel {
 			}
 			return tb;
 		}
-	}
-
-	private ListBox createListBox(final int visibleItemCount,
-			final String width, final String... items) {
-		final ListBox lb = new ListBox(true);
-		lb.setWidth(width);
-		lb.setVisibleItemCount(visibleItemCount);
-		if (items != null) {
-			for (final String item : items) {
-				lb.addItem(item);
-			}
-		}
-		return lb;
 	}
 
 }

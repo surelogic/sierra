@@ -9,7 +9,7 @@ import com.surelogic.sierra.gwt.client.service.callback.StandardCallback;
 
 public class ScanChoice extends ListBox {
 
-	public ScanChoice() {
+	public ScanChoice(final boolean allowMultiples) {
 		super(false);
 	}
 
