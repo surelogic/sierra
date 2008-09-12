@@ -19,9 +19,9 @@ public class PackageChoice extends ListBox {
 		this(true);
 	}
 
+	@SuppressWarnings("unchecked")
 	public PackageChoice(final boolean allowMultiples) {
-		super(allowMultiples);
-		packageList = new ArrayList<String>();
+		this(Collections.EMPTY_SET, allowMultiples);
 	}
 
 	/**
