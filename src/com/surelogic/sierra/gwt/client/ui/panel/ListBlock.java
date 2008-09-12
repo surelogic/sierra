@@ -4,23 +4,17 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
-import com.surelogic.sierra.gwt.client.Context;
 import com.surelogic.sierra.gwt.client.content.ContentComposite;
 import com.surelogic.sierra.gwt.client.data.cache.Cacheable;
-import com.surelogic.sierra.gwt.client.ui.ItemLabel;
 import com.surelogic.sierra.gwt.client.ui.LabelHelper;
-import com.surelogic.sierra.gwt.client.ui.SelectionTracker;
+import com.surelogic.sierra.gwt.client.ui.link.ContentLink;
 
 public abstract class ListBlock<E extends Cacheable> extends BlockPanel {
 	private final String title;
-	private final SelectionTracker<ItemLabel<E>> selectionTracker = new SelectionTracker<ItemLabel<E>>();
 	private final List<E> items = new ArrayList<E>();
 	private final Label none = LabelHelper.italics(new Label("None", false));
-	private ClickListener clickListener;
 
 	public ListBlock(final String title) {
 		super();
@@ -31,16 +25,6 @@ public abstract class ListBlock<E extends Cacheable> extends BlockPanel {
 	protected final void onInitialize(final VerticalPanel contentPanel) {
 		setTitle(title);
 		setSubsectionStyle(true);
-
-		clickListener = new ClickListener() {
-
-			public void onClick(final Widget sender) {
-				final ItemLabel<?> itemUI = (ItemLabel<?>) sender;
-				final Cacheable item = (Cacheable) itemUI.getItem();
-				new Context(getItemContent(), item.getUuid()).submit();
-			}
-
-		};
 	}
 
 	protected abstract ContentComposite getItemContent();
@@ -61,10 +45,10 @@ public abstract class ListBlock<E extends Cacheable> extends BlockPanel {
 	}
 
 	public void addItem(final E item) {
-		final ItemLabel<E> itemUI = new ItemLabel<E>(getItemText(item), item,
-				clickListener);
-		itemUI.setSelectionTracker(selectionTracker);
+		final ContentLink itemUI = new ContentLink(getItemText(item),
+				getItemContent(), item.getUuid());
 		itemUI.setTitle(getItemTooltip(item));
+
 		final VerticalPanel content = getContentPanel();
 		content.remove(none);
 		content.add(itemUI);

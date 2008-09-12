@@ -160,6 +160,11 @@ public abstract class ListContentComposite<E extends Cacheable, C extends Cache<
 		}
 
 		@Override
+		protected ContentComposite getItemContent() {
+			return ListContentComposite.this;
+		}
+
+		@Override
 		protected boolean isItemVisible(final E item, final String searchText) {
 			return ListContentComposite.this.isItemVisible(item, searchText);
 		}
@@ -173,11 +178,6 @@ public abstract class ListContentComposite<E extends Cacheable, C extends Cache<
 		protected Widget getItemDecorator(final E item) {
 			return ListContentComposite.this.getItemDecorator(item);
 		};
-
-		@Override
-		protected void doItemClick(final E item) {
-			Context.current().setUuid(item).submit();
-		}
 
 	}
 

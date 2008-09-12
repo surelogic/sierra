@@ -122,7 +122,7 @@ public abstract class HeaderComposite extends Composite {
 	protected final Label addUtilityItem(final String text,
 			final ClickListener clickListener) {
 		showUtilities();
-		final Label lbl = new Label(text);
+		final Label lbl = new Label(text, false);
 		lbl.addStyleName(UTILITY_STYLE);
 		if (clickListener != null) {
 			lbl.addStyleName(UTILITY_STYLE + "-clickable");

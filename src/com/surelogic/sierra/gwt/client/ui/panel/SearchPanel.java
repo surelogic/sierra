@@ -3,15 +3,16 @@ package com.surelogic.sierra.gwt.client.ui.panel;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.surelogic.sierra.gwt.client.content.ContentComposite;
 import com.surelogic.sierra.gwt.client.data.cache.Cache;
 import com.surelogic.sierra.gwt.client.data.cache.Cacheable;
-import com.surelogic.sierra.gwt.client.ui.ItemLabel;
-import com.surelogic.sierra.gwt.client.ui.SelectionTracker;
+import com.surelogic.sierra.gwt.client.ui.UIItem;
+import com.surelogic.sierra.gwt.client.ui.link.ContentLink;
 import com.surelogic.sierra.gwt.client.ui.panel.PagingPanel.PageListener;
 import com.surelogic.sierra.gwt.client.ui.panel.SearchInputPanel.SearchListener;
 
@@ -59,17 +60,16 @@ public abstract class SearchPanel<E extends Cacheable, T extends Cache<E>>
 		results.setSelection(item);
 	}
 
+	protected abstract ContentComposite getItemContent();
+
 	protected abstract boolean isItemVisible(E item, String searchText);
 
 	protected abstract String getItemText(E item);
 
 	protected abstract Widget getItemDecorator(E item);
 
-	protected abstract void doItemClick(E item);
-
 	private class SearchResultsPanel extends BlockPanel {
-		private final SelectionTracker<ItemLabel<E>> selectionTracker = new SelectionTracker<ItemLabel<E>>();
-		private final List<ItemLabel<E>> searchResultsData = new ArrayList<ItemLabel<E>>();
+		private final List<UIItem<HorizontalPanel, E>> searchResultsData = new ArrayList<UIItem<HorizontalPanel, E>>();
 		private PagingPanel pagingPanel;
 		private String searchText;
 
@@ -87,7 +87,8 @@ public abstract class SearchPanel<E extends Cacheable, T extends Cache<E>>
 							* ITEMS_PER_PAGE;
 					for (int itemIndex = firstItemIndex; (itemIndex < (firstItemIndex + ITEMS_PER_PAGE))
 							&& (itemIndex < searchResultsData.size()); itemIndex++) {
-						getContentPanel().add(searchResultsData.get(itemIndex));
+						getContentPanel().add(
+								searchResultsData.get(itemIndex).getUI());
 					}
 				}
 
@@ -114,12 +115,19 @@ public abstract class SearchPanel<E extends Cacheable, T extends Cache<E>>
 			final String query = queryBuf.toString();
 			for (final E item : cache) {
 				if (isItemVisible(item, query)) {
-					final ItemLabel<E> itemUI = new ItemLabel<E>(
-							getItemText(item), item, new SearchResultListener(
-									item));
-					itemUI.setSelectionTracker(selectionTracker);
-					itemUI.setDecorator(getItemDecorator(item), true);
-					searchResultsData.add(itemUI);
+					final HorizontalPanel itemPanel = new HorizontalPanel();
+					itemPanel.setWidth("100%");
+					final ContentLink itemUI = new ContentLink(
+							getItemText(item), getItemContent(), item.getUuid());
+					itemPanel.add(itemUI);
+					final Widget decorator = getItemDecorator(item);
+					if (decorator != null) {
+						itemPanel.add(decorator);
+						itemPanel.setCellHorizontalAlignment(decorator,
+								HorizontalPanel.ALIGN_RIGHT);
+					}
+					searchResultsData.add(new UIItem<HorizontalPanel, E>(
+							itemPanel, item));
 				}
 			}
 			if (searchResultsData.isEmpty()) {
@@ -133,7 +141,6 @@ public abstract class SearchPanel<E extends Cacheable, T extends Cache<E>>
 		public void clearResults() {
 			getContentPanel().clear();
 			searchResultsData.clear();
-			selectionTracker.setSelected(null);
 		}
 
 		public void refreshResults() {
@@ -141,11 +148,12 @@ public abstract class SearchPanel<E extends Cacheable, T extends Cache<E>>
 		}
 
 		public void setSelection(final E item) {
-			final ItemLabel<E> itemUI = getItemUI(item);
+			final HorizontalPanel itemUI = UIItem.findItemUI(searchResultsData,
+					item);
 
 			// update the page index and count
 			if (item != null) {
-				final int itemIndex = searchResultsData.indexOf(itemUI);
+				final int itemIndex = UIItem.indexOf(searchResultsData, itemUI);
 				pagingPanel.setPaging(itemIndex / ITEMS_PER_PAGE,
 						1 + (searchResultsData.size() / ITEMS_PER_PAGE));
 			} else {
@@ -153,35 +161,7 @@ public abstract class SearchPanel<E extends Cacheable, T extends Cache<E>>
 						1 + (searchResultsData.size() / ITEMS_PER_PAGE));
 			}
 
-			// update the ui item selection
-			if (itemUI == null) {
-				selectionTracker.setSelected(null);
-			} else {
-				itemUI.setSelected(true);
-			}
 		}
 
-		private ItemLabel<E> getItemUI(final E item) {
-			for (final ItemLabel<E> nextItem : searchResultsData) {
-				if (nextItem.getItem().equals(item)) {
-					return nextItem;
-				}
-			}
-			return null;
-		}
-
-		private class SearchResultListener implements ClickListener {
-			private final E item;
-
-			public SearchResultListener(final E item) {
-				super();
-				this.item = item;
-			}
-
-			public void onClick(final Widget sender) {
-				doItemClick(item);
-			}
-
-		}
 	}
 }

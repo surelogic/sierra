@@ -2,38 +2,26 @@ package com.surelogic.sierra.gwt.client.content.projects;
 
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasFocus;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.ListBox;
 import com.surelogic.sierra.gwt.client.data.ScanFilter;
 import com.surelogic.sierra.gwt.client.data.cache.Cache;
-import com.surelogic.sierra.gwt.client.data.cache.CacheListener;
 import com.surelogic.sierra.gwt.client.data.cache.CacheListenerAdapter;
 import com.surelogic.sierra.gwt.client.data.cache.ScanFilterCache;
-import com.surelogic.sierra.gwt.client.ui.ImageHelper;
-import com.surelogic.sierra.gwt.client.ui.ItemLabel;
-import com.surelogic.sierra.gwt.client.ui.LabelHelper;
-import com.surelogic.sierra.gwt.client.ui.SelectionTracker;
 import com.surelogic.sierra.gwt.client.ui.dialog.FormDialog;
+import com.surelogic.sierra.gwt.client.util.LangUtil;
 
 public class ScanFilterDialog extends FormDialog {
-	private final VerticalPanel scanFilterPanel = new VerticalPanel();
-	private final SelectionTracker<ItemLabel<ScanFilter>> selectionTracker = new SelectionTracker<ItemLabel<ScanFilter>>();
+	private ListBox filters;
 
 	public ScanFilterDialog() {
-		super("Select Scan Filter", "500px");
+		super("Select Scan Filter", "200px");
 	}
 
 	@Override
-	protected void doInitialize(FlexTable contentTable) {
-		scanFilterPanel.setWidth("100%");
-
-		final ScrollPanel scanFilterScroller = new ScrollPanel(scanFilterPanel);
-		scanFilterScroller.setWidth("100%");
-		scanFilterScroller.setAlwaysShowScrollBars(true);
-		scanFilterScroller.setHeight("425px");
-
-		contentTable.setWidget(0, 0, scanFilterScroller);
+	protected void doInitialize(final FlexTable contentTable) {
+		filters = new ListBox(false);
+		filters.setWidth("100%");
+		contentTable.setWidget(0, 0, filters);
 	}
 
 	@Override
@@ -42,45 +30,46 @@ public class ScanFilterDialog extends FormDialog {
 	}
 
 	public void update(final ScanFilter selectedFilter) {
-		final ScanFilterCache scanFilters = ScanFilterCache.getInstance();
+		ScanFilterCache.getInstance().refresh(false,
+				new CacheListenerAdapter<ScanFilter>() {
+					@Override
+					public void onStartRefresh(final Cache<ScanFilter> cache) {
+						filters.clear();
+						filters.addItem("Retrieving filters");
+						filters.setSelectedIndex(0);
+					}
 
-		final CacheListener<ScanFilter> cacheListener = new CacheListenerAdapter<ScanFilter>() {
-			@Override
-			public void onStartRefresh(Cache<ScanFilter> cache) {
-				scanFilterPanel.add(ImageHelper.getWaitImage(16));
-			}
+					@Override
+					public void onRefresh(final Cache<ScanFilter> cache,
+							final Throwable failure) {
+						filters.clear();
+						for (final ScanFilter filter : cache) {
+							filters.addItem(filter.getName(), filter.getUuid());
+							if (LangUtil.equals(filter, selectedFilter)) {
+								filters
+										.setSelectedIndex(filters
+												.getItemCount() - 1);
+							}
+						}
 
-			@Override
-			public void onRefresh(Cache<ScanFilter> cache, Throwable failure) {
-				scanFilters.removeListener(this);
+						if (filters.getItemCount() == 0) {
+							filters.addItem("No scan filters to add");
+							setOkEnabled(false);
+						} else {
+							setOkEnabled(true);
+						}
+					}
 
-				scanFilterPanel.clear();
-				for (final ScanFilter filter : scanFilters) {
-					final ItemLabel<ScanFilter> filterCheck = new ItemLabel<ScanFilter>(
-							filter.getName(), filter, null);
-					filterCheck.setSelectionTracker(selectionTracker);
-					scanFilterPanel.add(filterCheck);
-					filterCheck.setSelected(filter.equals(selectedFilter));
-				}
-
-				if (scanFilterPanel.getWidgetCount() == 0) {
-					scanFilterPanel.add(LabelHelper.italics(new Label(
-							"No scan filters to add")));
-					setOkEnabled(false);
-				} else {
-					setOkEnabled(true);
-				}
-			}
-
-		};
-
-		scanFilters.addListener(cacheListener);
-		scanFilters.refresh();
+				});
 	}
 
 	public ScanFilter getSelectedFilter() {
-		final ItemLabel<ScanFilter> selection = selectionTracker.getSelected();
-		return selection == null ? null : selection.getItem();
+		final int selectedIndex = filters.getSelectedIndex();
+		if (selectedIndex >= 0) {
+			final String uuid = filters.getValue(selectedIndex);
+			return ScanFilterCache.getInstance().getItem(uuid);
+		}
+		return null;
 	}
 
 }
