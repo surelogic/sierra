@@ -62,7 +62,8 @@ public class DashboardQueries {
 						j++;
 						final ReportWidget report = (ReportWidget) widget;
 						insertReport.call(user.getId(), i, j, report
-								.getSettings(), report.getOutputType());
+								.getSettings().getUuid(), report
+								.getOutputType());
 					}
 				}
 			}
