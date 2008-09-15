@@ -180,10 +180,12 @@ public class ReportCache extends Cache<Report> {
 		final List<Parameter> params = report.getParameters();
 		final Parameter project = new Parameter("project", "Projects",
 				Type.PROJECT);
-		project.getChildren().add(new Parameter("scan", "Scans", Type.SCAN));
+		final Parameter scan = new Parameter("scan", "Scans", Type.SCAN);
+		project.getChildren().add(scan);
+		scan.getChildren().add(
+				new Parameter("package", "Package", Type.PACKAGES));
 		params.add(project);
 		params.add(new Parameter("importance", "Importance", Type.IMPORTANCES));
-		params.add(new Parameter("package", "Package", Type.TEXT));
 		return report;
 	}
 
