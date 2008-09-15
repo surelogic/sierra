@@ -19,6 +19,10 @@ public class ReportView extends BlockPanel {
 		contentPanel.add(report);
 	}
 
+	public void clear() {
+		report.clear();
+	}
+
 	public void retrieveChart(final ReportSettings selection) {
 		report.clear();
 		// retrieve and display the report

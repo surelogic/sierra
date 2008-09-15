@@ -135,6 +135,7 @@ public abstract class ReportsContent extends
 			}
 		}
 		reportParamsView.setSelection(item, null);
+		reportView.clear();
 	}
 
 	@Override
