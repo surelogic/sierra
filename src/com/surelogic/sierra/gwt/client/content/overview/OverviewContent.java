@@ -3,6 +3,7 @@ package com.surelogic.sierra.gwt.client.content.overview;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.HTML;
@@ -15,6 +16,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.Context;
 import com.surelogic.sierra.gwt.client.content.ContentComposite;
 import com.surelogic.sierra.gwt.client.data.ReportSettings;
+import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.data.Report.OutputType;
 import com.surelogic.sierra.gwt.client.data.dashboard.DashboardSettings;
 import com.surelogic.sierra.gwt.client.data.dashboard.DashboardWidget;
@@ -22,6 +24,7 @@ import com.surelogic.sierra.gwt.client.data.dashboard.ReportWidget;
 import com.surelogic.sierra.gwt.client.data.dashboard.DashboardSettings.DashboardRow;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.service.callback.StandardCallback;
+import com.surelogic.sierra.gwt.client.service.callback.StatusCallback;
 import com.surelogic.sierra.gwt.client.ui.Direction;
 import com.surelogic.sierra.gwt.client.ui.ImageHelper;
 import com.surelogic.sierra.gwt.client.ui.panel.ActionPanel;
@@ -36,6 +39,7 @@ public final class OverviewContent extends ContentComposite {
 	private static final String ACTION_SAVE = "Save";
 	private static final String ACTION_CANCEL = "Cancel";
 	private final ActionPanel actionPanel = new ActionPanel();
+	private DashboardSettings settings;
 	private final VerticalPanel dashboard = new VerticalPanel();
 	private final List<BlockPanel> dashboardWidgetUIs = new ArrayList<BlockPanel>();
 
@@ -103,12 +107,13 @@ public final class OverviewContent extends ContentComposite {
 	}
 
 	private void updateDashboardUI(final DashboardSettings result) {
+		settings = result;
 		dashboard.clear();
 		dashboardWidgetUIs.clear();
 
 		int lastColumnCount = 0;
 		ColumnPanel currentColPanel = null;
-		for (final DashboardRow row : result.getRows()) {
+		for (final DashboardRow row : settings.getRows()) {
 			final List<DashboardWidget> cols = row.getColumns();
 			if (currentColPanel == null || lastColumnCount != cols.size()) {
 				currentColPanel = new ColumnPanel();
@@ -214,9 +219,22 @@ public final class OverviewContent extends ContentComposite {
 	}
 
 	private void saveDashboard() {
-		// TODO save the dashboard and leave edit mode
+		actionPanel.setWaitStatus();
+		ServiceHelper.getSettingsService().saveDashboardSettings(settings,
+				new StatusCallback() {
 
-		toggleDashboardEdit(false);
+					@Override
+					protected void doStatus(final Status status) {
+						actionPanel.clearWaitStatus();
+						if (status.isSuccess()) {
+							toggleDashboardEdit(false);
+						} else {
+							Window
+									.alert("Dashboard Settings could not be saved: "
+											+ status.getMessage());
+						}
+					}
+				});
 	}
 
 	private void viewReport(final BlockPanel dashPanel) {
