@@ -1,9 +1,13 @@
 package com.surelogic.sierra.jdbc.dashboard;
 
+import java.util.UUID;
+
 import com.surelogic.common.jdbc.NullRowHandler;
+import com.surelogic.common.jdbc.Nulls;
 import com.surelogic.common.jdbc.Query;
 import com.surelogic.common.jdbc.Queryable;
 import com.surelogic.common.jdbc.Row;
+import com.surelogic.sierra.gwt.client.data.ReportSettings;
 import com.surelogic.sierra.gwt.client.data.Report.OutputType;
 import com.surelogic.sierra.gwt.client.data.dashboard.DashboardSettings;
 import com.surelogic.sierra.gwt.client.data.dashboard.DashboardWidget;
@@ -19,6 +23,8 @@ public class DashboardQueries {
 
 	public static UserQuery<DashboardSettings> getDashboard() {
 		return new UserQuery<DashboardSettings>() {
+			boolean exists = false;
+
 			public DashboardSettings perform(final Query query,
 					final Server server, final User user) {
 				final DashboardSettings s = new DashboardSettings();
@@ -27,6 +33,7 @@ public class DashboardQueries {
 
 					@Override
 					protected void doHandle(final Row r) {
+						exists = true;
 						final int thisRow = r.nextInt();
 						final String reportSettings = r.nextString();
 						final OutputType out = OutputType.values()[r.nextInt()];
@@ -34,12 +41,13 @@ public class DashboardQueries {
 							rowNum = thisRow;
 							s.addRow();
 						}
-						new ReportWidget(ReportSettingQueries
-								.getUserReportSettings(reportSettings).perform(
-										query, server, user), out);
+						s.addColumn(reportSettings == null ? null
+								: new ReportWidget(ReportSettingQueries
+										.getUserReportSettings(reportSettings)
+										.perform(query, server, user), out));
 					}
 				}).call(user.getId());
-				return null;
+				return exists ? s : null;
 			}
 		};
 	}
@@ -61,9 +69,30 @@ public class DashboardQueries {
 					for (final DashboardWidget widget : row.getColumns()) {
 						j++;
 						final ReportWidget report = (ReportWidget) widget;
-						insertReport.call(user.getId(), i, j, report
-								.getSettings().getUuid(), report
-								.getOutputType());
+						Object settingUuid;
+						Object outputType;
+						if (report != null) {
+							final ReportSettings settings = report
+									.getSettings();
+							if (settings.getUuid() == null) {
+								// We haven't saved these settings yet, so go
+								// ahead
+								// and do that now
+								if (settings.getUuid() == null) {
+									settings.setUuid(UUID.randomUUID()
+											.toString());
+								}
+								ReportSettingQueries.save(settings).perform(
+										query, server, user);
+							}
+							settingUuid = settings.getUuid();
+							outputType = report.getOutputType().ordinal();
+						} else {
+							settingUuid = Nulls.STRING;
+							outputType = Nulls.INT;
+						}
+						insertReport.call(user.getId(), i, j, settingUuid,
+								outputType);
 					}
 				}
 			}
