@@ -37,15 +37,15 @@ import com.surelogic.sierra.gwt.client.ui.LabelHelper;
 import com.surelogic.sierra.gwt.client.ui.StatusBox;
 import com.surelogic.sierra.gwt.client.ui.link.ContentLink;
 import com.surelogic.sierra.gwt.client.ui.panel.BlockPanel;
-import com.surelogic.sierra.gwt.client.ui.panel.ReportTablePanel;
-import com.surelogic.sierra.gwt.client.ui.panel.TablePanel;
+import com.surelogic.sierra.gwt.client.ui.panel.ReportTableBlock;
+import com.surelogic.sierra.gwt.client.ui.panel.TableBlock;
 
 public class ProjectView extends BlockPanel {
 	private final StatusBox box = new StatusBox();
 	private final ScanDetailView latestScan = new ScanDetailView();
 	private final VerticalPanel chart = new VerticalPanel();
 	private final VerticalPanel diff = new VerticalPanel();
-	private final ProjectTableSection scans = new ProjectTableSection();
+	private final ProjectTableBlock scans = new ProjectTableBlock();
 	private final FlexTable scanFilterTable = new FlexTable();
 	private final HorizontalPanel scanFilterField = new HorizontalPanel();
 	private Project selection;
@@ -136,7 +136,7 @@ public class ProjectView extends BlockPanel {
 		}
 	}
 
-	private class ProjectTableSection extends TablePanel {
+	private class ProjectTableBlock extends TableBlock {
 
 		private Map<Scan, CheckBox> scans;
 
@@ -178,8 +178,8 @@ public class ProjectView extends BlockPanel {
 						r2.setTitle("Fixed Findings");
 						r2.setSettingValue("scans", fixed);
 						diff.clear();
-						diff.add(new ReportTablePanel(r1));
-						diff.add(new ReportTablePanel(r2));
+						diff.add(new ReportTableBlock(r1));
+						diff.add(new ReportTableBlock(r2));
 						diff.add(ChartBuilder.report(
 								ReportCache.compareProjectScans()).prop(
 								"scans", fixed).build());

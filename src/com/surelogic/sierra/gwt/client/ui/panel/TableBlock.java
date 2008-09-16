@@ -9,7 +9,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.data.ColumnDataType;
 import com.surelogic.sierra.gwt.client.util.LangUtil;
 
-public abstract class TablePanel extends BlockPanel {
+public abstract class TableBlock extends BlockPanel {
 	private static final String PRIMARY_STYLE = "sl-TableSection";
 	private final FlexTable grid = new FlexTable();
 	private ColumnDataType[] columnTypes;

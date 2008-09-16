@@ -16,15 +16,15 @@ import com.surelogic.sierra.gwt.client.ui.link.ContentLink;
 import com.surelogic.sierra.gwt.client.ui.panel.PagingPanel.PageListener;
 import com.surelogic.sierra.gwt.client.ui.panel.SearchInputPanel.SearchListener;
 
-public abstract class SearchPanel<E extends Cacheable, T extends Cache<E>>
+public abstract class SearchBlock<E extends Cacheable, T extends Cache<E>>
 		extends BlockPanel {
 	private static final int ITEMS_PER_PAGE = 25;
 	private final T cache;
 	private final SearchInputPanel searchPanel = new SearchInputPanel();
-	private final SearchResultsPanel results = new SearchResultsPanel();
+	private final SearchResultsBlock results = new SearchResultsBlock();
 	private E selection;
 
-	public SearchPanel(final T cache) {
+	public SearchBlock(final T cache) {
 		super();
 		this.cache = cache;
 	}
@@ -68,7 +68,7 @@ public abstract class SearchPanel<E extends Cacheable, T extends Cache<E>>
 
 	protected abstract Widget getItemDecorator(E item);
 
-	private class SearchResultsPanel extends BlockPanel {
+	private class SearchResultsBlock extends BlockPanel {
 		private final List<UIItem<HorizontalPanel, E>> searchResultsData = new ArrayList<UIItem<HorizontalPanel, E>>();
 		private PagingPanel pagingPanel;
 		private String searchText;

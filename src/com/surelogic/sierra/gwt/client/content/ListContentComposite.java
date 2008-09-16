@@ -11,7 +11,7 @@ import com.surelogic.sierra.gwt.client.data.cache.Cache;
 import com.surelogic.sierra.gwt.client.data.cache.CacheListener;
 import com.surelogic.sierra.gwt.client.data.cache.Cacheable;
 import com.surelogic.sierra.gwt.client.ui.panel.BlockPanel;
-import com.surelogic.sierra.gwt.client.ui.panel.SearchPanel;
+import com.surelogic.sierra.gwt.client.ui.panel.SearchBlock;
 import com.surelogic.sierra.gwt.client.util.LangUtil;
 
 public abstract class ListContentComposite<E extends Cacheable, C extends Cache<E>>
@@ -154,7 +154,7 @@ public abstract class ListContentComposite<E extends Cacheable, C extends Cache<
 		}
 	}
 
-	private class ListView extends SearchPanel<E, C> {
+	private class ListView extends SearchBlock<E, C> {
 		public ListView(final C cache) {
 			super(cache);
 		}

@@ -29,9 +29,9 @@ import com.surelogic.sierra.gwt.client.ui.Direction;
 import com.surelogic.sierra.gwt.client.ui.ImageHelper;
 import com.surelogic.sierra.gwt.client.ui.panel.ActionPanel;
 import com.surelogic.sierra.gwt.client.ui.panel.BlockPanel;
-import com.surelogic.sierra.gwt.client.ui.panel.ChartPanel;
+import com.surelogic.sierra.gwt.client.ui.panel.ChartBlock;
 import com.surelogic.sierra.gwt.client.ui.panel.ColumnPanel;
-import com.surelogic.sierra.gwt.client.ui.panel.ReportTablePanel;
+import com.surelogic.sierra.gwt.client.ui.panel.ReportTableBlock;
 
 public final class OverviewContent extends ContentComposite {
 	private static final OverviewContent instance = new OverviewContent();
@@ -137,9 +137,9 @@ public final class OverviewContent extends ContentComposite {
 			final OutputType outputType = rw.getOutputType();
 			BlockPanel bp = null;
 			if (outputType == OutputType.CHART) {
-				bp = new ChartPanel(rw.getSettings());
+				bp = new ChartBlock(rw.getSettings());
 			} else if (outputType == OutputType.TABLE) {
-				bp = new ReportTablePanel(rw.getSettings());
+				bp = new ReportTableBlock(rw.getSettings());
 			}
 			if (bp != null) {
 				bp.initialize();
@@ -242,10 +242,10 @@ public final class OverviewContent extends ContentComposite {
 
 	private void viewReport(final BlockPanel dashPanel) {
 		ReportSettings settings;
-		if (dashPanel instanceof ReportTablePanel) {
-			settings = ((ReportTablePanel) dashPanel).getReportSettings();
-		} else if (dashPanel instanceof ChartPanel) {
-			settings = ((ChartPanel) dashPanel).getReportSettings();
+		if (dashPanel instanceof ReportTableBlock) {
+			settings = ((ReportTableBlock) dashPanel).getReportSettings();
+		} else if (dashPanel instanceof ChartBlock) {
+			settings = ((ChartBlock) dashPanel).getReportSettings();
 		} else {
 			return;
 		}
