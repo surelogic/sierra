@@ -135,17 +135,20 @@ public final class OverviewContent extends ContentComposite {
 		if (dw instanceof ReportWidget) {
 			final ReportWidget rw = (ReportWidget) dw;
 			final OutputType outputType = rw.getOutputType();
+			BlockPanel bp = null;
 			if (outputType == OutputType.CHART) {
-				final BlockPanel bp = new ChartPanel(rw.getSettings());
-				bp.initialize();
-				return bp;
+				bp = new ChartPanel(rw.getSettings());
 			} else if (outputType == OutputType.TABLE) {
-				final BlockPanel bp = new ReportTablePanel(rw.getSettings());
-				bp.initialize();
-				return bp;
+				bp = new ReportTablePanel(rw.getSettings());
 			}
-			throw new IllegalArgumentException("Unsupported output type: "
-					+ rw.getOutputType());
+			if (bp != null) {
+				bp.initialize();
+
+				return bp;
+			} else {
+				throw new IllegalArgumentException("Unsupported output type: "
+						+ rw.getOutputType());
+			}
 		}
 		throw new IllegalArgumentException("Unsupported dashboard widget: "
 				+ dw.getClass().getName());
