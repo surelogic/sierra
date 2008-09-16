@@ -65,6 +65,9 @@ public class ReportSettings implements Serializable {
 	 * @return
 	 */
 	public List<ReportSetting> getSettingParams() {
+		if (settings == null) {
+			return Collections.emptyList();
+		}
 		return Collections.unmodifiableList(settings);
 	}
 
