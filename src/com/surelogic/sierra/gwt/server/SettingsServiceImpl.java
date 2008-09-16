@@ -681,29 +681,34 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 	}
 
 	public DashboardSettings getDashboardSettings() {
-		final DashboardSettings settings = new DashboardSettings();
 
-		final ReportSettings latestScans = new ReportSettings(ReportCache
-				.latestScans());
-		latestScans.setWidth("450");
-		settings.addColumn(new ReportWidget(latestScans, OutputType.CHART));
+		DashboardSettings settings = ConnectionFactory
+				.withUserReadOnly(DashboardQueries.getDashboard());
+		if (settings == null) {
+			settings = new DashboardSettings();
+			final ReportSettings latestScans = new ReportSettings(ReportCache
+					.latestScans());
+			latestScans.setWidth("450");
+			settings.addColumn(new ReportWidget(latestScans, OutputType.CHART));
 
-		final ReportSettings auditContribs = new ReportSettings(ReportCache
-				.auditContributions());
-		latestScans.setWidth("320");
-		settings.addColumn(new ReportWidget(auditContribs, OutputType.CHART));
+			final ReportSettings auditContribs = new ReportSettings(ReportCache
+					.auditContributions());
+			latestScans.setWidth("320");
+			settings
+					.addColumn(new ReportWidget(auditContribs, OutputType.CHART));
 
-		settings.addRow();
-		final ReportSettings userAudits = new ReportSettings(ReportCache
-				.userAudits());
-		settings.setColumn(1, new ReportWidget(userAudits, OutputType.TABLE));
+			settings.addRow();
+			final ReportSettings userAudits = new ReportSettings(ReportCache
+					.userAudits());
+			settings.setColumn(1,
+					new ReportWidget(userAudits, OutputType.TABLE));
 
-		settings.addRow();
-		final ReportSettings publishedProjects = new ReportSettings(ReportCache
-				.publishedProjects());
-		settings
-				.addColumn(new ReportWidget(publishedProjects, OutputType.TABLE));
-
+			settings.addRow();
+			final ReportSettings publishedProjects = new ReportSettings(
+					ReportCache.publishedProjects());
+			settings.addColumn(new ReportWidget(publishedProjects,
+					OutputType.TABLE));
+		}
 		return settings;
 	}
 
