@@ -15,7 +15,6 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.Context;
 import com.surelogic.sierra.gwt.client.content.ContentComposite;
-import com.surelogic.sierra.gwt.client.data.ReportSettings;
 import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.data.Report.OutputType;
 import com.surelogic.sierra.gwt.client.data.dashboard.DashboardSettings;
@@ -27,11 +26,12 @@ import com.surelogic.sierra.gwt.client.service.callback.StandardCallback;
 import com.surelogic.sierra.gwt.client.service.callback.StatusCallback;
 import com.surelogic.sierra.gwt.client.ui.Direction;
 import com.surelogic.sierra.gwt.client.ui.ImageHelper;
+import com.surelogic.sierra.gwt.client.ui.block.ChartBlock;
+import com.surelogic.sierra.gwt.client.ui.block.ContentBlockPanel;
+import com.surelogic.sierra.gwt.client.ui.block.ReportTableBlock;
 import com.surelogic.sierra.gwt.client.ui.panel.ActionPanel;
 import com.surelogic.sierra.gwt.client.ui.panel.BlockPanel;
-import com.surelogic.sierra.gwt.client.ui.panel.ChartBlock;
 import com.surelogic.sierra.gwt.client.ui.panel.ColumnPanel;
-import com.surelogic.sierra.gwt.client.ui.panel.ReportTableBlock;
 
 public final class OverviewContent extends ContentComposite {
 	private static final OverviewContent instance = new OverviewContent();
@@ -137,9 +137,10 @@ public final class OverviewContent extends ContentComposite {
 			final OutputType outputType = rw.getOutputType();
 			BlockPanel bp = null;
 			if (outputType == OutputType.CHART) {
-				bp = new ChartBlock(rw.getSettings());
+				bp = new ContentBlockPanel(new ChartBlock(rw.getSettings()));
 			} else if (outputType == OutputType.TABLE) {
-				bp = new ReportTableBlock(rw.getSettings());
+				bp = new ContentBlockPanel(new ReportTableBlock(rw
+						.getSettings()));
 			}
 			if (bp != null) {
 				bp.initialize();
@@ -241,14 +242,17 @@ public final class OverviewContent extends ContentComposite {
 	}
 
 	private void viewReport(final BlockPanel dashPanel) {
-		ReportSettings settings;
-		if (dashPanel instanceof ReportTableBlock) {
-			settings = ((ReportTableBlock) dashPanel).getReportSettings();
-		} else if (dashPanel instanceof ChartBlock) {
-			settings = ((ChartBlock) dashPanel).getReportSettings();
-		} else {
-			return;
-		}
+		// TODO finish. Commented out below, doesn't do anything and had
+		// warnings
+
+		// ReportSettings settings;
+		// if (dashPanel instanceof ReportTableBlock) {
+		// settings = ((ReportTableBlock) dashPanel).getReportSettings();
+		// } else if (dashPanel instanceof ChartBlock) {
+		// settings = ((ChartBlock) dashPanel).getReportSettings();
+		// } else {
+		// return;
+		// }
 
 	}
 }

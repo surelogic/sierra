@@ -11,6 +11,8 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment.HorizontalAlignmentConstant;
 import com.surelogic.sierra.gwt.client.ui.ImageHelper;
 import com.surelogic.sierra.gwt.client.ui.LabelHelper;
+import com.surelogic.sierra.gwt.client.ui.Status;
+import com.surelogic.sierra.gwt.client.ui.Status.State;
 
 public class BasicPanel extends Composite {
 	private static final String PRIMARY_STYLE = "sl-Section";
@@ -126,8 +128,19 @@ public class BasicPanel extends Composite {
 	}
 
 	public void setWaitStatus() {
-		setStatus(ImageHelper.getWaitImage(16),
-				HasHorizontalAlignment.ALIGN_CENTER);
+		setWaitStatus(null);
+	}
+
+	public void setWaitStatus(final String text) {
+		if (text != null) {
+			final HorizontalPanel waitPanel = new HorizontalPanel();
+			waitPanel.add(ImageHelper.getWaitImage(16));
+			waitPanel.add(LabelHelper.italics(new Label(text)));
+			setStatus(waitPanel, HasHorizontalAlignment.ALIGN_CENTER);
+		} else {
+			setStatus(ImageHelper.getWaitImage(16),
+					HasHorizontalAlignment.ALIGN_CENTER);
+		}
 	}
 
 	public void setErrorStatus(final String text) {
@@ -148,6 +161,23 @@ public class BasicPanel extends Composite {
 		status = w;
 		contentPanel.add(status);
 		contentPanel.setCellHorizontalAlignment(status, align);
+	}
+
+	public void setStatus(final Status status) {
+		if (status == null) {
+			clearStatus();
+		} else {
+			final State state = status.getState();
+			if (state == State.WAIT) {
+				setWaitStatus(status.getMessage());
+			} else if (state == State.FAILURE) {
+				setErrorStatus(status.getMessage());
+			} else if (state == State.SUCCESS) {
+				setSuccessStatus(status.getMessage());
+			} else {
+				clearStatus();
+			}
+		}
 	}
 
 	public void clearStatus() {

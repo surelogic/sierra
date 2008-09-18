@@ -35,10 +35,12 @@ import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.service.callback.StandardCallback;
 import com.surelogic.sierra.gwt.client.ui.LabelHelper;
 import com.surelogic.sierra.gwt.client.ui.StatusBox;
+import com.surelogic.sierra.gwt.client.ui.TableBuilder;
+import com.surelogic.sierra.gwt.client.ui.block.ContentBlock;
+import com.surelogic.sierra.gwt.client.ui.block.ContentBlockPanel;
+import com.surelogic.sierra.gwt.client.ui.block.ReportTableBlock;
 import com.surelogic.sierra.gwt.client.ui.link.ContentLink;
 import com.surelogic.sierra.gwt.client.ui.panel.BlockPanel;
-import com.surelogic.sierra.gwt.client.ui.panel.ReportTableBlock;
-import com.surelogic.sierra.gwt.client.ui.panel.TableBlock;
 
 public class ProjectView extends BlockPanel {
 	private final StatusBox box = new StatusBox();
@@ -54,7 +56,7 @@ public class ProjectView extends BlockPanel {
 	protected void onInitialize(final VerticalPanel contentPanel) {
 		contentPanel.add(latestScan);
 		contentPanel.add(chart);
-		contentPanel.add(scans);
+		contentPanel.add(new ContentBlockPanel(scans));
 		contentPanel.add(diff);
 		contentPanel.add(box);
 
@@ -136,16 +138,29 @@ public class ProjectView extends BlockPanel {
 		}
 	}
 
-	private class ProjectTableBlock extends TableBlock {
-
+	private class ProjectTableBlock extends ContentBlock<FlexTable> {
 		private Map<Scan, CheckBox> scans;
 
+		public ProjectTableBlock() {
+			super(new FlexTable());
+			setupTable();
+		}
+
 		@Override
-		protected void doInitialize(final FlexTable grid) {
-			setTitle("Scans");
-			setHeaderTitles(new String[] { "Time", "User", "Vendor", "Version",
-					"" });
-			setColumnTypes(new ColumnDataType[] { ColumnDataType.DATE,
+		public String getName() {
+			return "Scans";
+		}
+
+		@Override
+		public String getSummary() {
+			return null;
+		}
+
+		private void setupTable() {
+			final TableBuilder tb = new TableBuilder(getRoot());
+			tb.setHeaderTitles(new String[] { "Time", "User", "Vendor",
+					"Version", "" });
+			tb.setColumnTypes(new ColumnDataType[] { ColumnDataType.DATE,
 					ColumnDataType.TEXT, ColumnDataType.TEXT,
 					ColumnDataType.TEXT, ColumnDataType.WIDGET });
 			addAction("Compare", new ClickListener() {
@@ -178,8 +193,12 @@ public class ProjectView extends BlockPanel {
 						r2.setTitle("Fixed Findings");
 						r2.setSettingValue("scans", fixed);
 						diff.clear();
-						diff.add(new ReportTableBlock(r1));
-						diff.add(new ReportTableBlock(r2));
+						diff
+								.add(new ContentBlockPanel(
+										new ReportTableBlock(r1)));
+						diff
+								.add(new ContentBlockPanel(
+										new ReportTableBlock(r2)));
 						diff.add(ChartBuilder.report(
 								ReportCache.compareProjectScans()).prop(
 								"scans", fixed).build());
@@ -193,7 +212,8 @@ public class ProjectView extends BlockPanel {
 		}
 
 		public void setSelection(final Project project) {
-			clearRows();
+			final TableBuilder tb = new TableBuilder(getRoot());
+			tb.clearRows();
 			setWaitStatus();
 			if (project != null) {
 				ServiceHelper.getFindingService().getScans(project.getUuid(),
@@ -203,21 +223,21 @@ public class ProjectView extends BlockPanel {
 							protected void doSuccess(final List<Scan> result) {
 								scans = new HashMap<Scan, CheckBox>();
 								setSuccessStatus(null);
-								clearRows();
+								tb.clearRows();
 								for (final Scan s : result) {
-									addRow();
+									tb.addRow();
 									final Context scanCtx = new Context(
 											ScanContent.getInstance(), s);
 									final Hyperlink h = new Hyperlink(s
 											.getScanTimeDisplay(), scanCtx
 											.toString());
-									addColumn(h);
-									addColumn(s.getUser());
-									addColumn(s.getJavaVendor());
-									addColumn(s.getJavaVersion());
+									tb.addColumn(h);
+									tb.addColumn(s.getUser());
+									tb.addColumn(s.getJavaVendor());
+									tb.addColumn(s.getJavaVersion());
 									final CheckBox box = new CheckBox();
 									scans.put(s, box);
-									addColumn(box);
+									tb.addColumn(box);
 								}
 							}
 						});
