@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasFocus;
 import com.google.gwt.user.client.ui.Label;
@@ -15,7 +16,7 @@ import com.surelogic.sierra.gwt.client.data.cache.CacheListener;
 import com.surelogic.sierra.gwt.client.data.cache.CacheListenerAdapter;
 import com.surelogic.sierra.gwt.client.data.cache.CategoryCache;
 import com.surelogic.sierra.gwt.client.ui.ImageHelper;
-import com.surelogic.sierra.gwt.client.ui.ItemCheckBox;
+import com.surelogic.sierra.gwt.client.ui.ItemWidget;
 import com.surelogic.sierra.gwt.client.ui.LabelHelper;
 import com.surelogic.sierra.gwt.client.ui.dialog.FormDialog;
 
@@ -27,7 +28,7 @@ public class CategorySelectionDialog extends FormDialog {
 	}
 
 	@Override
-	protected void doInitialize(FlexTable contentTable) {
+	protected void doInitialize(final FlexTable contentTable) {
 		categoryPanel.setWidth("100%");
 
 		final ScrollPanel categoryScroller = new ScrollPanel(categoryPanel);
@@ -49,20 +50,21 @@ public class CategorySelectionDialog extends FormDialog {
 
 		final CacheListener<Category> cacheListener = new CacheListenerAdapter<Category>() {
 			@Override
-			public void onStartRefresh(Cache<Category> cache) {
+			public void onStartRefresh(final Cache<Category> cache) {
 				categoryPanel.add(ImageHelper.getWaitImage(16));
 			}
 
 			@Override
-			public void onRefresh(Cache<Category> cache, Throwable failure) {
+			public void onRefresh(final Cache<Category> cache,
+					final Throwable failure) {
 				categories.removeListener(this);
 
 				categoryPanel.clear();
 				for (final Category cat : categories) {
 					if ((cat.isLocal() || showLocal)
 							&& !excludeCategoryIds.contains(cat.getUuid())) {
-						final ItemCheckBox<Category> catCheck = new ItemCheckBox<Category>(
-								cat.getName(), cat);
+						final CategoryCheckBox catCheck = new CategoryCheckBox(
+								cat);
 						categoryPanel.add(catCheck);
 					}
 				}
@@ -85,13 +87,20 @@ public class CategorySelectionDialog extends FormDialog {
 	public Set<Category> getSelectedCategories() {
 		final Set<Category> cats = new HashSet<Category>();
 		for (int catIndex = 0; catIndex < categoryPanel.getWidgetCount(); catIndex++) {
-			final ItemCheckBox<?> catCheck = (ItemCheckBox<?>) categoryPanel
+			final CategoryCheckBox catCheck = (CategoryCheckBox) categoryPanel
 					.getWidget(catIndex);
-			if (catCheck.isChecked()) {
-				cats.add((Category) catCheck.getItem());
+			if (catCheck.getUI().isChecked()) {
+				cats.add(catCheck.getItem());
 			}
 		}
 		return cats;
 	}
 
+	private class CategoryCheckBox extends ItemWidget<CheckBox, Category> {
+
+		public CategoryCheckBox(final Category item) {
+			super(new CheckBox(item.getName()), item);
+		}
+
+	}
 }

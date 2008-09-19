@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasFocus;
@@ -16,7 +17,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.data.Category;
 import com.surelogic.sierra.gwt.client.data.FindingTypeFilter;
 import com.surelogic.sierra.gwt.client.ui.ImageHelper;
-import com.surelogic.sierra.gwt.client.ui.ItemCheckBox;
+import com.surelogic.sierra.gwt.client.ui.ItemWidget;
 import com.surelogic.sierra.gwt.client.ui.dialog.FormDialog;
 import com.surelogic.sierra.gwt.client.ui.panel.SearchInputPanel;
 import com.surelogic.sierra.gwt.client.ui.panel.SearchInputPanel.SearchListener;
@@ -44,7 +45,8 @@ public class FindingSelectionDialog extends FormDialog {
 
 		searchPanel.addListener(new SearchListener() {
 
-			public void onSearch(final SearchInputPanel sender, final String text) {
+			public void onSearch(final SearchInputPanel sender,
+					final String text) {
 				search(text);
 			}
 		});
@@ -65,10 +67,9 @@ public class FindingSelectionDialog extends FormDialog {
 
 	public final void addCategory(final Category cat,
 			final Set<String> excludeFindings) {
-		final ItemCheckBox<Category> catCheck = new ItemCheckBox<Category>(cat
-				.getName(), cat);
+		final CategoryCheckBox catCheck = new CategoryCheckBox(cat);
 		final TreeItem catItem = categoryTree.addItem(catCheck);
-		catCheck.addClickListener(new CategoryCheckListener(catItem));
+		catCheck.getUI().addClickListener(new CategoryCheckListener(catItem));
 
 		final List<FindingTypeFilter> sortedFindings = new ArrayList<FindingTypeFilter>(
 				cat.getEntries());
@@ -77,8 +78,8 @@ public class FindingSelectionDialog extends FormDialog {
 		for (final FindingTypeFilter finding : sortedFindings) {
 			if (excludeFindings == null
 					|| !isExcluded(finding.getUuid(), excludeFindings)) {
-				final ItemCheckBox<FindingTypeFilter> findingCheck = new ItemCheckBox<FindingTypeFilter>(
-						finding.getName(), finding);
+				final FindingCheckBox findingCheck = new FindingCheckBox(
+						finding);
 				catItem.addItem(findingCheck);
 			}
 		}
@@ -97,16 +98,16 @@ public class FindingSelectionDialog extends FormDialog {
 			boolean hasSelected = false;
 			for (int findingIndex = 0; findingIndex < catItem.getChildCount(); findingIndex++) {
 				final TreeItem findingItem = catItem.getChild(findingIndex);
-				final ItemCheckBox<?> findingCheck = (ItemCheckBox<?>) findingItem
+				final FindingCheckBox findingCheck = (FindingCheckBox) findingItem
 						.getWidget();
-				if (findingCheck.isChecked()) {
+				if (findingCheck.getUI().isChecked()) {
 					hasSelected = true;
 				}
 			}
 			if (hasSelected) {
-				final ItemCheckBox<?> catCheck = (ItemCheckBox<?>) catItem
-						.getWidget();
-				cats.add((Category) catCheck.getItem());
+				final Category cat = ((CategoryCheckBox) catItem.getWidget())
+						.getItem();
+				cats.add(cat);
 			}
 		}
 		return cats;
@@ -119,10 +120,10 @@ public class FindingSelectionDialog extends FormDialog {
 
 			for (int findingIndex = 0; findingIndex < catItem.getChildCount(); findingIndex++) {
 				final TreeItem findingItem = catItem.getChild(findingIndex);
-				final ItemCheckBox<?> findingCheck = (ItemCheckBox<?>) findingItem
+				final FindingCheckBox findingCheckBox = (FindingCheckBox) findingItem
 						.getWidget();
-				if (findingCheck.isChecked()) {
-					selected.add((FindingTypeFilter) findingCheck.getItem());
+				if (findingCheckBox.getUI().isChecked()) {
+					selected.add(findingCheckBox.getItem());
 				}
 			}
 		}
@@ -137,12 +138,12 @@ public class FindingSelectionDialog extends FormDialog {
 			boolean hasSelected = false;
 			for (int findingIndex = 0; findingIndex < catItem.getChildCount(); findingIndex++) {
 				final TreeItem findingItem = catItem.getChild(findingIndex);
-				final ItemCheckBox<?> findingCheck = (ItemCheckBox<?>) findingItem
+				final FindingCheckBox findingCheckBox = (FindingCheckBox) findingItem
 						.getWidget();
-				if (findingCheck.isChecked()) {
+				if (findingCheckBox.getUI().isChecked()) {
 					hasSelected = true;
 				} else {
-					nonSelected.add((FindingTypeFilter) findingCheck.getItem());
+					nonSelected.add(findingCheckBox.getItem());
 				}
 			}
 			if (hasSelected) {
@@ -193,19 +194,35 @@ public class FindingSelectionDialog extends FormDialog {
 		}
 
 		public void onClick(final Widget sender) {
-			if (sender instanceof ItemCheckBox<?>) {
-				final ItemCheckBox<?> catCheckBox = (ItemCheckBox<?>) sender;
+			if (sender instanceof CheckBox) {
+				final CheckBox catCheckBox = (CheckBox) sender;
 				final boolean checked = catCheckBox.isChecked();
 				for (int filterIndex = 0; filterIndex < categoryItem
 						.getChildCount(); filterIndex++) {
 					final TreeItem filterItem = categoryItem
 							.getChild(filterIndex);
-					((ItemCheckBox<?>) filterItem.getWidget())
+					((FindingCheckBox) filterItem.getWidget()).getUI()
 							.setChecked(checked);
 				}
 
 			}
 
+		}
+	}
+
+	private class CategoryCheckBox extends ItemWidget<CheckBox, Category> {
+
+		public CategoryCheckBox(final Category item) {
+			super(new CheckBox(item.getName()), item);
+		}
+
+	}
+
+	private class FindingCheckBox extends
+			ItemWidget<CheckBox, FindingTypeFilter> {
+
+		public FindingCheckBox(final FindingTypeFilter item) {
+			super(new CheckBox(item.getName()), item);
 		}
 
 	}
