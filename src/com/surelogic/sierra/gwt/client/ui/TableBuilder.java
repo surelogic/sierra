@@ -20,6 +20,8 @@ public final class TableBuilder {
 		this.table = target;
 		target.setWidth("100%");
 		target.addStyleName(PRIMARY_STYLE);
+		currentRow = target.getRowCount();
+		currentColumn = 0;
 	}
 
 	public void setHeaderTitles(final List<String> titles) {
