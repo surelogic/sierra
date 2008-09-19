@@ -11,7 +11,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.content.ContentComposite;
 import com.surelogic.sierra.gwt.client.data.cache.Cache;
 import com.surelogic.sierra.gwt.client.data.cache.Cacheable;
-import com.surelogic.sierra.gwt.client.ui.UIItem;
+import com.surelogic.sierra.gwt.client.ui.ItemWidget;
 import com.surelogic.sierra.gwt.client.ui.link.ContentLink;
 import com.surelogic.sierra.gwt.client.ui.panel.PagingPanel.PageListener;
 import com.surelogic.sierra.gwt.client.ui.panel.SearchInputPanel.SearchListener;
@@ -69,7 +69,7 @@ public abstract class SearchBlock<E extends Cacheable, T extends Cache<E>>
 	protected abstract Widget getItemDecorator(E item);
 
 	private class SearchResultsBlock extends BlockPanel {
-		private final List<UIItem<HorizontalPanel, E>> searchResultsData = new ArrayList<UIItem<HorizontalPanel, E>>();
+		private final List<PanelItem> searchResultsData = new ArrayList<PanelItem>();
 		private PagingPanel pagingPanel;
 		private String searchText;
 
@@ -87,8 +87,7 @@ public abstract class SearchBlock<E extends Cacheable, T extends Cache<E>>
 							* ITEMS_PER_PAGE;
 					for (int itemIndex = firstItemIndex; (itemIndex < (firstItemIndex + ITEMS_PER_PAGE))
 							&& (itemIndex < searchResultsData.size()); itemIndex++) {
-						getContentPanel().add(
-								searchResultsData.get(itemIndex).getUI());
+						getContentPanel().add(searchResultsData.get(itemIndex));
 					}
 				}
 
@@ -126,8 +125,7 @@ public abstract class SearchBlock<E extends Cacheable, T extends Cache<E>>
 						itemPanel.setCellHorizontalAlignment(decorator,
 								HorizontalPanel.ALIGN_RIGHT);
 					}
-					searchResultsData.add(new UIItem<HorizontalPanel, E>(
-							itemPanel, item));
+					searchResultsData.add(new PanelItem(itemPanel, item));
 				}
 			}
 			if (searchResultsData.isEmpty()) {
@@ -148,12 +146,13 @@ public abstract class SearchBlock<E extends Cacheable, T extends Cache<E>>
 		}
 
 		public void setSelection(final E item) {
-			final HorizontalPanel itemUI = UIItem.findItemUI(searchResultsData,
-					item);
+			final HorizontalPanel itemUI = ItemWidget.findItemUI(
+					searchResultsData, item);
 
 			// update the page index and count
 			if (item != null) {
-				final int itemIndex = UIItem.indexOf(searchResultsData, itemUI);
+				final int itemIndex = ItemWidget.indexOf(searchResultsData,
+						itemUI);
 				pagingPanel.setPaging(itemIndex / ITEMS_PER_PAGE,
 						1 + (searchResultsData.size() / ITEMS_PER_PAGE));
 			} else {
@@ -163,5 +162,12 @@ public abstract class SearchBlock<E extends Cacheable, T extends Cache<E>>
 
 		}
 
+		private class PanelItem extends ItemWidget<HorizontalPanel, E> {
+
+			public PanelItem(final HorizontalPanel ui, final E item) {
+				super(ui, item);
+			}
+
+		}
 	}
 }
