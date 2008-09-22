@@ -17,7 +17,7 @@ import com.surelogic.sierra.gwt.client.data.cache.CacheListenerAdapter;
 import com.surelogic.sierra.gwt.client.data.cache.CategoryCache;
 import com.surelogic.sierra.gwt.client.ui.ImageHelper;
 import com.surelogic.sierra.gwt.client.ui.ItemWidget;
-import com.surelogic.sierra.gwt.client.ui.LabelHelper;
+import com.surelogic.sierra.gwt.client.ui.StyleHelper;
 import com.surelogic.sierra.gwt.client.ui.dialog.FormDialog;
 
 public class CategorySelectionDialog extends FormDialog {
@@ -70,7 +70,7 @@ public class CategorySelectionDialog extends FormDialog {
 				}
 
 				if (categoryPanel.getWidgetCount() == 0) {
-					categoryPanel.add(LabelHelper.italics(new Label(
+					categoryPanel.add(StyleHelper.italics(new Label(
 							"No categories to add")));
 					setOkEnabled(false);
 				} else {

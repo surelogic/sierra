@@ -8,13 +8,13 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.surelogic.sierra.gwt.client.content.ContentComposite;
 import com.surelogic.sierra.gwt.client.data.cache.Cacheable;
-import com.surelogic.sierra.gwt.client.ui.LabelHelper;
+import com.surelogic.sierra.gwt.client.ui.StyleHelper;
 import com.surelogic.sierra.gwt.client.ui.link.ContentLink;
 
 public abstract class ListBlock<E extends Cacheable> extends BlockPanel {
 	private final String title;
 	private final List<E> items = new ArrayList<E>();
-	private final Label none = LabelHelper.italics(new Label("None", false));
+	private final Label none = StyleHelper.italics(new Label("None", false));
 
 	public ListBlock(final String title) {
 		super();

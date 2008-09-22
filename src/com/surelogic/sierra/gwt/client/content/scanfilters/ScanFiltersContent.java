@@ -15,7 +15,7 @@ import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.service.callback.StandardCallback;
 import com.surelogic.sierra.gwt.client.service.callback.StatusCallback;
 import com.surelogic.sierra.gwt.client.ui.FormButton;
-import com.surelogic.sierra.gwt.client.ui.LabelHelper;
+import com.surelogic.sierra.gwt.client.ui.StyleHelper;
 import com.surelogic.sierra.gwt.client.util.LangUtil;
 
 public class ScanFiltersContent extends
@@ -34,7 +34,7 @@ public class ScanFiltersContent extends
 
 		viewer.initialize();
 
-		final Label expandCategoriesAction = LabelHelper.clickable(new Label(
+		final Label expandCategoriesAction = StyleHelper.clickable(new Label(
 				"Expand Categories", false));
 		expandCategoriesAction.addClickListener(new ClickListener() {
 
@@ -49,7 +49,7 @@ public class ScanFiltersContent extends
 		});
 		viewer.addAction(expandCategoriesAction);
 
-		editAction = LabelHelper.clickable(new Label("Edit", false),
+		editAction = StyleHelper.clickable(new Label("Edit", false),
 				new ClickListener() {
 
 					public void onClick(final Widget sender) {
@@ -59,7 +59,7 @@ public class ScanFiltersContent extends
 		viewer.addAction(editAction);
 		viewer.setActionVisible(editAction, false);
 
-		deleteAction = LabelHelper.clickable(new Label("Delete", false),
+		deleteAction = StyleHelper.clickable(new Label("Delete", false),
 				new ClickListener() {
 
 					public void onClick(final Widget sender) {

@@ -18,7 +18,7 @@ import com.surelogic.sierra.gwt.client.data.ImportanceView;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.service.callback.ResultCallback;
 import com.surelogic.sierra.gwt.client.service.callback.StandardCallback;
-import com.surelogic.sierra.gwt.client.ui.LabelHelper;
+import com.surelogic.sierra.gwt.client.ui.StyleHelper;
 import com.surelogic.sierra.gwt.client.ui.SingleImportanceChoice;
 
 public final class FindingContent extends ContentComposite {
@@ -49,16 +49,16 @@ public final class FindingContent extends ContentComposite {
 	@Override
 	protected void onInitialize(final DockPanel rootPanel) {
 		final VerticalPanel panel = new VerticalPanel();
-		panel.add(LabelHelper.strong(new Label("Synopsis")));
+		panel.add(StyleHelper.strong(new Label("Synopsis")));
 		panel.add(synopsis);
-		panel.add(LabelHelper.strong(new Label("Location")));
+		panel.add(StyleHelper.strong(new Label("Location")));
 		panel.add(location);
-		panel.add(LabelHelper.strong(new Label("Description")));
+		panel.add(StyleHelper.strong(new Label("Description")));
 		panel.add(description);
-		panel.add(LabelHelper.strong(new Label("Audits")));
+		panel.add(StyleHelper.strong(new Label("Audits")));
 		panel.add(audits);
 		panel.add(auditBox);
-		panel.add(LabelHelper.strong(new Label("Artifacts")));
+		panel.add(StyleHelper.strong(new Label("Artifacts")));
 		panel.add(artifacts);
 		getRootPanel().add(panel, DockPanel.CENTER);
 	}

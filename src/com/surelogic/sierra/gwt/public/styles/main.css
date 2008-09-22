@@ -5,20 +5,6 @@ body {
 	font-size: medium;
 }
 
-h2 {
-	color: #FF7010;
-	font-size: large;
-	margin-bottom: 1ex;
-	margin-top: 1ex;
-}
-
-h3 {
-	color: #FF7010;
-	font-size: medium;
-	margin-bottom: 1ex;
-	margin-top: 1ex;
-}
-
 a {
 	color: #005596;
 	text-decoration: underline;
@@ -164,7 +150,7 @@ img {
 
 /* Log */
 #log-pane {
-	position: absolute;
+	float: bottom;
 	bottom: 0px;
 	right: 0px;
 	left: 0px;

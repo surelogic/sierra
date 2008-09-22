@@ -10,7 +10,7 @@ import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment.HorizontalAlignmentConstant;
-import com.surelogic.sierra.gwt.client.ui.LabelHelper;
+import com.surelogic.sierra.gwt.client.ui.StyleHelper;
 import com.surelogic.sierra.gwt.client.ui.Status;
 
 public abstract class ContentBlock<T extends Widget> extends Composite {
@@ -63,7 +63,7 @@ public abstract class ContentBlock<T extends Widget> extends Composite {
 
 	protected final void addAction(final String text,
 			final ClickListener clickListener) {
-		actions.add(LabelHelper
+		actions.add(StyleHelper
 				.clickable(new Label(text, false), clickListener));
 	}
 

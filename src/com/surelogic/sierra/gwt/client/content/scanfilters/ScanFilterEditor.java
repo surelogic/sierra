@@ -22,7 +22,7 @@ import com.surelogic.sierra.gwt.client.data.FindingTypeFilter;
 import com.surelogic.sierra.gwt.client.data.ScanFilter;
 import com.surelogic.sierra.gwt.client.data.ScanFilterEntry;
 import com.surelogic.sierra.gwt.client.data.Status;
-import com.surelogic.sierra.gwt.client.ui.LabelHelper;
+import com.surelogic.sierra.gwt.client.ui.StyleHelper;
 import com.surelogic.sierra.gwt.client.ui.SingleImportanceChoice;
 import com.surelogic.sierra.gwt.client.ui.StatusBox;
 import com.surelogic.sierra.gwt.client.ui.panel.BlockPanel;
@@ -177,7 +177,7 @@ public class ScanFilterEditor extends BlockPanel {
 				filterGrid.removeRow(1);
 			}
 			if (filters == null || filters.size() == 0) {
-				filterGrid.setWidget(1, 0, LabelHelper
+				filterGrid.setWidget(1, 0, StyleHelper
 						.italics(new Label("None")));
 				filterGrid.setText(1, 1, "");
 				filterGrid.setText(1, 2, "");
@@ -205,7 +205,7 @@ public class ScanFilterEditor extends BlockPanel {
 				}
 			});
 
-			final Label removeLabel = LabelHelper
+			final Label removeLabel = StyleHelper
 					.clickable(new Label("Remove"));
 			removeLabel.addClickListener(new ClickListener() {
 				public void onClick(final Widget sender) {
