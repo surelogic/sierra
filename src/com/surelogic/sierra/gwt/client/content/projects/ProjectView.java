@@ -54,9 +54,12 @@ public class ProjectView extends BlockPanel {
 
 	@Override
 	protected void onInitialize(final VerticalPanel contentPanel) {
+		latestScan.setWidth("50%");
 		contentPanel.add(latestScan);
 		contentPanel.add(chart);
-		contentPanel.add(new ContentBlockPanel(scans));
+		final ContentBlockPanel scansPanel = new ContentBlockPanel(scans);
+		scansPanel.initialize();
+		contentPanel.add(scansPanel);
 		contentPanel.add(diff);
 		contentPanel.add(box);
 
