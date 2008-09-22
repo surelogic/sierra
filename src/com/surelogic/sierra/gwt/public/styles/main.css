@@ -41,6 +41,14 @@ img {
 	color: #999999;
 }
 
+.font-strong {
+	color: #FF7010;
+	font-size: medium;
+	font-weight: bold;
+	margin-top: 5px;
+	margin-left: 2px;
+}
+
 .logo {
 	padding: 4px;
 }
@@ -219,6 +227,13 @@ img {
 .sl-ContentComposite {
 	width: 100%;
 	height: 100%;
+}
+
+.sl-ContentComposite-title {
+	color: #FF7010;
+	font-size: large;
+	margin-bottom: 1ex;
+	margin-top: 1ex;
 }
 
 .sl-TabComposite {

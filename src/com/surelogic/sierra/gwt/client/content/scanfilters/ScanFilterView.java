@@ -24,7 +24,6 @@ import com.surelogic.sierra.gwt.client.data.ScanFilterEntry;
 import com.surelogic.sierra.gwt.client.data.cache.Cache;
 import com.surelogic.sierra.gwt.client.data.cache.CacheListenerAdapter;
 import com.surelogic.sierra.gwt.client.data.cache.CategoryCache;
-import com.surelogic.sierra.gwt.client.ui.HtmlHelper;
 import com.surelogic.sierra.gwt.client.ui.LabelHelper;
 import com.surelogic.sierra.gwt.client.ui.link.ContentLink;
 import com.surelogic.sierra.gwt.client.ui.panel.BlockPanel;
@@ -146,7 +145,8 @@ public class ScanFilterView extends BlockPanel {
 		if (categoryBlock != null || findingBlock != null) {
 			final String importanceTitle = importance == null ? "Default"
 					: importance.getName();
-			importanceBlocks.add(HtmlHelper.h3(importanceTitle + " Priority"));
+			importanceBlocks.add(LabelHelper.strong(new Label(importanceTitle
+					+ " Priority", false)));
 		}
 		if (categoryBlock != null) {
 			importanceBlocks.add(categoryBlock);

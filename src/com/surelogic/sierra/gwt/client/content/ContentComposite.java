@@ -2,12 +2,13 @@ package com.surelogic.sierra.gwt.client.content;
 
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockPanel;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.surelogic.sierra.gwt.client.Context;
-import com.surelogic.sierra.gwt.client.ui.HtmlHelper;
 
 public abstract class ContentComposite extends Composite {
+	public static final String PRIMARY_STYLE = "sl-ContentComposite";
+	public static final String CAPTION_STYLE = PRIMARY_STYLE + "-title";
 	private final DockPanel rootPanel = new DockPanel();
 	private final HorizontalPanel titlePanel = new HorizontalPanel();
 	private boolean initialized;
@@ -16,7 +17,7 @@ public abstract class ContentComposite extends Composite {
 	public ContentComposite() {
 		super();
 		initWidget(rootPanel);
-		rootPanel.addStyleName("sl-ContentComposite");
+		rootPanel.addStyleName(PRIMARY_STYLE);
 
 		rootPanel.add(titlePanel, DockPanel.NORTH);
 	}
@@ -57,7 +58,8 @@ public abstract class ContentComposite extends Composite {
 	}
 
 	protected final void setCaption(final String text) {
-		final HTML title = HtmlHelper.h2(text);
+		final Label title = new Label(text);
+		title.addStyleName(CAPTION_STYLE);
 		titlePanel.add(title);
 		titlePanel
 				.setCellHorizontalAlignment(title, HorizontalPanel.ALIGN_LEFT);

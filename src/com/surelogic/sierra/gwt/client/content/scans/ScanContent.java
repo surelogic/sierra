@@ -8,6 +8,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.Context;
@@ -19,7 +20,6 @@ import com.surelogic.sierra.gwt.client.data.ScanDetail;
 import com.surelogic.sierra.gwt.client.data.cache.ReportCache;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.service.callback.StandardCallback;
-import com.surelogic.sierra.gwt.client.ui.HtmlHelper;
 import com.surelogic.sierra.gwt.client.ui.MultipleImportanceChoice;
 import com.surelogic.sierra.gwt.client.ui.block.ContentBlockPanel;
 import com.surelogic.sierra.gwt.client.ui.block.ReportTableBlock;
@@ -84,16 +84,14 @@ public class ScanContent extends ContentComposite {
 							if (result != null) {
 								setTitle(result.getProject() + " - "
 										+ result.getDate());
-								detailPanel.add(HtmlHelper.p(result
-										.getClasses()));
-								detailPanel.add(HtmlHelper.p(result
-										.getPackages()));
-								detailPanel.add(HtmlHelper.p(result
-										.getFindings()));
-								detailPanel.add(HtmlHelper.p(result
+								detailPanel.add(new Label(result.getClasses()));
+								detailPanel
+										.add(new Label(result.getPackages()));
+								detailPanel
+										.add(new Label(result.getFindings()));
+								detailPanel.add(new Label(result
 										.getLinesOfCode()));
-								detailPanel.add(HtmlHelper.p(result
-										.getDensity()));
+								detailPanel.add(new Label(result.getDensity()));
 								pak = new PackageChoice(result
 										.getCompilations().keySet(), true);
 								imp = new MultipleImportanceChoice();

@@ -6,11 +6,11 @@ import java.util.List;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DockPanel;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.Context;
@@ -35,7 +35,7 @@ import com.surelogic.sierra.gwt.client.ui.panel.ColumnPanel;
 
 public final class OverviewContent extends ContentComposite {
 	private static final OverviewContent instance = new OverviewContent();
-	private static final String ACTION_CUSTOMIZE = "Customize";
+	private static final String ACTION_CUSTOMIZE = "Customize Dashboard";
 	private static final String ACTION_SAVE = "Save";
 	private static final String ACTION_CANCEL = "Cancel";
 	private final ActionPanel actionPanel = new ActionPanel();
@@ -56,7 +56,9 @@ public final class OverviewContent extends ContentComposite {
 		final HorizontalPanel titlePanel = new HorizontalPanel();
 		titlePanel.setWidth("100%");
 		titlePanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
-		titlePanel.add(new HTML("<p>Welcome to Sierra Team Server!</p>"));
+		final Label caption = new Label("Welcome to Sierra Team Server!");
+		caption.addStyleName(ContentComposite.CAPTION_STYLE);
+		titlePanel.add(caption);
 		actionPanel.addAction(ACTION_CUSTOMIZE, new ClickListener() {
 
 			public void onClick(final Widget sender) {

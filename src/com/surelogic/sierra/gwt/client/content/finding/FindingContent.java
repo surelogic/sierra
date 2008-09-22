@@ -5,6 +5,7 @@ import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -17,7 +18,7 @@ import com.surelogic.sierra.gwt.client.data.ImportanceView;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.service.callback.ResultCallback;
 import com.surelogic.sierra.gwt.client.service.callback.StandardCallback;
-import com.surelogic.sierra.gwt.client.ui.HtmlHelper;
+import com.surelogic.sierra.gwt.client.ui.LabelHelper;
 import com.surelogic.sierra.gwt.client.ui.SingleImportanceChoice;
 
 public final class FindingContent extends ContentComposite {
@@ -48,16 +49,16 @@ public final class FindingContent extends ContentComposite {
 	@Override
 	protected void onInitialize(final DockPanel rootPanel) {
 		final VerticalPanel panel = new VerticalPanel();
-		panel.add(HtmlHelper.h3("Synopsis"));
+		panel.add(LabelHelper.strong(new Label("Synopsis")));
 		panel.add(synopsis);
-		panel.add(HtmlHelper.h3("Location"));
+		panel.add(LabelHelper.strong(new Label("Location")));
 		panel.add(location);
-		panel.add(HtmlHelper.h3("Description"));
+		panel.add(LabelHelper.strong(new Label("Description")));
 		panel.add(description);
-		panel.add(HtmlHelper.h3("Audits"));
+		panel.add(LabelHelper.strong(new Label("Audits")));
 		panel.add(audits);
 		panel.add(auditBox);
-		panel.add(HtmlHelper.h3("Artifacts"));
+		panel.add(LabelHelper.strong(new Label("Artifacts")));
 		panel.add(artifacts);
 		getRootPanel().add(panel, DockPanel.CENTER);
 	}
@@ -108,7 +109,7 @@ public final class FindingContent extends ContentComposite {
 		String firstReported = null;
 		String firstReportedBy = null;
 		if (f.getAudits().isEmpty()) {
-			audits.add(HtmlHelper.p("No comments"));
+			audits.add(new Label("No comments"));
 		} else {
 			for (final AuditOverview audit : f.getAudits()) {
 				if (firstReported == null) {

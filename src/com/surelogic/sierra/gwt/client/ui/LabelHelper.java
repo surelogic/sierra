@@ -9,17 +9,23 @@ public final class LabelHelper {
 		// singleton
 	}
 
-	public static Label italics(Label label) {
+	public static Label italics(final Label label) {
 		label.addStyleName("font-italic");
 		return label;
 	}
 
-	public static Label clickable(Label label) {
+	public static Label strong(final Label label) {
+		label.addStyleName("font-strong");
+		return label;
+	}
+
+	public static Label clickable(final Label label) {
 		label.addStyleName("clickable");
 		return label;
 	}
 
-	public static Label clickable(Label label, ClickListener listener) {
+	public static Label clickable(final Label label,
+			final ClickListener listener) {
 		label.addStyleName("clickable");
 		label.addClickListener(listener);
 		return label;
