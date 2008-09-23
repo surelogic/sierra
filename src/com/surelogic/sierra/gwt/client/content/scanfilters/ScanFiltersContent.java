@@ -16,6 +16,7 @@ import com.surelogic.sierra.gwt.client.service.callback.StandardCallback;
 import com.surelogic.sierra.gwt.client.service.callback.StatusCallback;
 import com.surelogic.sierra.gwt.client.ui.FormButton;
 import com.surelogic.sierra.gwt.client.ui.StyleHelper;
+import com.surelogic.sierra.gwt.client.ui.StyleHelper.Style;
 import com.surelogic.sierra.gwt.client.util.LangUtil;
 
 public class ScanFiltersContent extends
@@ -34,8 +35,8 @@ public class ScanFiltersContent extends
 
 		viewer.initialize();
 
-		final Label expandCategoriesAction = StyleHelper.clickable(new Label(
-				"Expand Categories", false));
+		final Label expandCategoriesAction = StyleHelper.add(new Label(
+				"Expand Categories", false), Style.CLICKABLE);
 		expandCategoriesAction.addClickListener(new ClickListener() {
 
 			public void onClick(final Widget sender) {
@@ -49,23 +50,24 @@ public class ScanFiltersContent extends
 		});
 		viewer.addAction(expandCategoriesAction);
 
-		editAction = StyleHelper.clickable(new Label("Edit", false),
-				new ClickListener() {
+		editAction = StyleHelper.add(new Label("Edit", false), Style.CLICKABLE);
+		editAction.addClickListener(new ClickListener() {
 
-					public void onClick(final Widget sender) {
-						setScanFilter(viewer.getSelection(), true);
-					}
-				});
+			public void onClick(final Widget sender) {
+				setScanFilter(viewer.getSelection(), true);
+			}
+		});
 		viewer.addAction(editAction);
 		viewer.setActionVisible(editAction, false);
 
-		deleteAction = StyleHelper.clickable(new Label("Delete", false),
-				new ClickListener() {
+		deleteAction = StyleHelper.add(new Label("Delete", false),
+				Style.CLICKABLE);
+		deleteAction.addClickListener(new ClickListener() {
 
-					public void onClick(final Widget sender) {
-						deleteScanFilter(viewer.getSelection());
-					}
-				});
+			public void onClick(final Widget sender) {
+				deleteScanFilter(viewer.getSelection());
+			}
+		});
 		viewer.addAction(deleteAction);
 		viewer.setActionVisible(deleteAction, false);
 

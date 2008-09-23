@@ -11,6 +11,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment.HorizontalAlignmentConstant;
 import com.surelogic.sierra.gwt.client.ui.ImageHelper;
 import com.surelogic.sierra.gwt.client.ui.StyleHelper;
+import com.surelogic.sierra.gwt.client.ui.StyleHelper.Style;
 import com.surelogic.sierra.gwt.client.ui.type.Status;
 import com.surelogic.sierra.gwt.client.ui.type.Status.State;
 
@@ -112,7 +113,10 @@ public class BasicPanel extends Composite {
 
 	public final void addAction(final String text,
 			final ClickListener clickListener) {
-		addAction(StyleHelper.clickable(new Label(text, false), clickListener));
+		final Label action = StyleHelper.add(new Label(text, false),
+				Style.CLICKABLE);
+		action.addClickListener(clickListener);
+		addAction(action);
 	}
 
 	public final void removeAction(final Widget w) {
@@ -135,7 +139,7 @@ public class BasicPanel extends Composite {
 		if (text != null) {
 			final HorizontalPanel waitPanel = new HorizontalPanel();
 			waitPanel.add(ImageHelper.getWaitImage(16));
-			waitPanel.add(StyleHelper.italics(new Label(text)));
+			waitPanel.add(StyleHelper.add(new Label(text), Style.ITALICS));
 			setStatus(waitPanel, HasHorizontalAlignment.ALIGN_CENTER);
 		} else {
 			setStatus(ImageHelper.getWaitImage(16),

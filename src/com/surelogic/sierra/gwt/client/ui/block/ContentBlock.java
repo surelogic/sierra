@@ -11,6 +11,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment.HorizontalAlignmentConstant;
 import com.surelogic.sierra.gwt.client.ui.StyleHelper;
+import com.surelogic.sierra.gwt.client.ui.StyleHelper.Style;
 import com.surelogic.sierra.gwt.client.ui.type.Status;
 
 public abstract class ContentBlock<T extends Widget> extends Composite {
@@ -63,8 +64,10 @@ public abstract class ContentBlock<T extends Widget> extends Composite {
 
 	protected final void addAction(final String text,
 			final ClickListener clickListener) {
-		actions.add(StyleHelper
-				.clickable(new Label(text, false), clickListener));
+		final Label action = StyleHelper.add(new Label(text, false),
+				Style.CLICKABLE);
+		action.addClickListener(clickListener);
+		actions.add(action);
 	}
 
 	protected final void removeAction(final Widget w) {

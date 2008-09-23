@@ -23,6 +23,7 @@ import com.surelogic.sierra.gwt.client.data.FindingTypeFilter;
 import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.data.cache.CategoryCache;
 import com.surelogic.sierra.gwt.client.ui.StyleHelper;
+import com.surelogic.sierra.gwt.client.ui.StyleHelper.Style;
 import com.surelogic.sierra.gwt.client.ui.link.ContentLink;
 import com.surelogic.sierra.gwt.client.ui.panel.BlockPanel;
 
@@ -195,8 +196,8 @@ public class CategoryEditor extends BlockPanel {
 			final ContentLink findingLink = new ContentLink(finding.getName(),
 					FindingTypesContent.getInstance(), finding.getUuid());
 
-			final Label removeLabel = StyleHelper
-					.clickable(new Label("Remove"));
+			final Label removeLabel = StyleHelper.add(new Label("Remove"),
+					Style.CLICKABLE);
 			removeLabel.addClickListener(new RemoveFindingListener(finding));
 
 			final HorizontalPanel findingPanel = new HorizontalPanel();

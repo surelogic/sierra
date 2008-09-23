@@ -19,6 +19,7 @@ import com.surelogic.sierra.gwt.client.data.FindingTypeFilter;
 import com.surelogic.sierra.gwt.client.ui.ImageHelper;
 import com.surelogic.sierra.gwt.client.ui.ItemWidget;
 import com.surelogic.sierra.gwt.client.ui.StyleHelper;
+import com.surelogic.sierra.gwt.client.ui.StyleHelper.Style;
 import com.surelogic.sierra.gwt.client.ui.dialog.FormDialog;
 import com.surelogic.sierra.gwt.client.ui.panel.SearchInputPanel;
 import com.surelogic.sierra.gwt.client.ui.panel.SearchInputPanel.SearchListener;
@@ -179,9 +180,9 @@ public class FindingSelectionDialog extends FormDialog {
 		item.setVisible(itemMatch || childContains);
 		item.setState(childContains);
 		if (item.getChildCount() > 0 && childContains && !itemMatch) {
-			StyleHelper.gray(item.getWidget());
+			StyleHelper.add(item.getWidget(), Style.GRAY);
 		} else {
-			StyleHelper.ungray(item.getWidget());
+			StyleHelper.remove(item.getWidget(), Style.GRAY);
 		}
 		return itemMatch || childContains;
 	}

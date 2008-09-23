@@ -33,9 +33,10 @@ import com.surelogic.sierra.gwt.client.data.cache.ProjectCache;
 import com.surelogic.sierra.gwt.client.data.cache.ReportCache;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.service.callback.StandardCallback;
-import com.surelogic.sierra.gwt.client.ui.StyleHelper;
 import com.surelogic.sierra.gwt.client.ui.StatusBox;
+import com.surelogic.sierra.gwt.client.ui.StyleHelper;
 import com.surelogic.sierra.gwt.client.ui.TableBuilder;
+import com.surelogic.sierra.gwt.client.ui.StyleHelper.Style;
 import com.surelogic.sierra.gwt.client.ui.block.ContentBlock;
 import com.surelogic.sierra.gwt.client.ui.block.ContentBlockPanel;
 import com.surelogic.sierra.gwt.client.ui.block.ReportTableBlock;
@@ -66,8 +67,9 @@ public class ProjectView extends BlockPanel {
 		scanFilterTable.setWidth("50%");
 		scanFilterTable.setWidget(0, 0, scanFilterField);
 		scanFilterField.add(new Label("Scan Filter:"));
-		final Label changeScanFilter = StyleHelper.clickable(new Label(
-				"Change Scan Filter"), new ClickListener() {
+		final Label changeScanFilter = StyleHelper.add(new Label(
+				"Change Scan Filter"), Style.CLICKABLE);
+		changeScanFilter.addClickListener(new ClickListener() {
 
 			public void onClick(final Widget sender) {
 				promptForScanFilter();
