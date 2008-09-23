@@ -26,9 +26,9 @@ import com.surelogic.sierra.gwt.client.ui.StatusBox;
 import com.surelogic.sierra.gwt.client.ui.StyleHelper;
 import com.surelogic.sierra.gwt.client.ui.StyleHelper.Style;
 import com.surelogic.sierra.gwt.client.ui.choice.SingleImportanceChoice;
-import com.surelogic.sierra.gwt.client.ui.panel.BlockPanel;
+import com.surelogic.sierra.gwt.client.ui.panel.BasicPanel;
 
-public class ScanFilterEditor extends BlockPanel {
+public class ScanFilterEditor extends BasicPanel {
 
 	private final ScanFilterBlock categoryFilters = new ScanFilterBlock(
 			"Categories");
@@ -140,7 +140,7 @@ public class ScanFilterEditor extends BlockPanel {
 		dialog.update(selection.getCategories(), selection.getTypes());
 	}
 
-	private static class ScanFilterBlock extends BlockPanel {
+	private static class ScanFilterBlock extends BasicPanel {
 		private final FlexTable filterGrid = new FlexTable();
 
 		public ScanFilterBlock(final String title) {

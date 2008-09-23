@@ -39,14 +39,14 @@ import com.surelogic.sierra.gwt.client.ui.choice.ProjectChoice;
 import com.surelogic.sierra.gwt.client.ui.choice.ScanChoice;
 import com.surelogic.sierra.gwt.client.ui.choice.SingleImportanceChoice;
 import com.surelogic.sierra.gwt.client.ui.panel.ActionPanel;
-import com.surelogic.sierra.gwt.client.ui.panel.BlockPanel;
+import com.surelogic.sierra.gwt.client.ui.panel.BasicPanel;
 import com.surelogic.sierra.gwt.client.util.LangUtil;
 
-public class ReportParametersView extends BlockPanel {
+public class ReportParametersView extends BasicPanel {
 	private final Label description = new Label("", true);
 	private final FlexTable parametersTable = new FlexTable();
 	private final ActionPanel reportActions = new ActionPanel();
-	private BlockPanel settingsPanel;
+	private BasicPanel settingsPanel;
 	private final Map<Report.Parameter, Widget> paramUIMap = new HashMap<Report.Parameter, Widget>();
 	private final Map<OutputType, Label> actionOutputMap = new HashMap<OutputType, Label>();
 	private Report selection;
@@ -72,7 +72,7 @@ public class ReportParametersView extends BlockPanel {
 		final Label placeholder = new Label("");
 		h.add(placeholder);
 		h.setCellWidth(placeholder, "5%");
-		settingsPanel = new BlockPanel() {
+		settingsPanel = new BasicPanel() {
 
 			@Override
 			protected void onInitialize(final VerticalPanel contentPanel) {

@@ -9,9 +9,9 @@ import com.surelogic.sierra.gwt.client.service.callback.ResultCallback;
 import com.surelogic.sierra.gwt.client.ui.block.ContentBlockPanel;
 import com.surelogic.sierra.gwt.client.ui.block.ReportTableBlock;
 import com.surelogic.sierra.gwt.client.ui.chart.Chart;
-import com.surelogic.sierra.gwt.client.ui.panel.BlockPanel;
+import com.surelogic.sierra.gwt.client.ui.panel.BasicPanel;
 
-public class ReportView extends BlockPanel {
+public class ReportView extends BasicPanel {
 
 	VerticalPanel report = new VerticalPanel();
 

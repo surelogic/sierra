@@ -23,7 +23,7 @@ import com.surelogic.sierra.gwt.client.ui.block.ContentBlockPanel;
 import com.surelogic.sierra.gwt.client.ui.block.ReportTableBlock;
 import com.surelogic.sierra.gwt.client.ui.chart.ChartBuilder;
 import com.surelogic.sierra.gwt.client.ui.choice.MultipleImportanceChoice;
-import com.surelogic.sierra.gwt.client.ui.panel.BlockPanel;
+import com.surelogic.sierra.gwt.client.ui.panel.BasicPanel;
 
 public class ScanContent extends ContentComposite {
 
@@ -45,7 +45,7 @@ public class ScanContent extends ContentComposite {
 		view.setScan(context.getUuid());
 	}
 
-	private static class ScanView extends BlockPanel {
+	private static class ScanView extends BasicPanel {
 
 		private VerticalPanel optionsPanel;
 		private VerticalPanel chartPanel;

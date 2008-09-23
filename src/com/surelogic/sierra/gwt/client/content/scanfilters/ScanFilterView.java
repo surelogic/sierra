@@ -27,9 +27,9 @@ import com.surelogic.sierra.gwt.client.data.cache.CategoryCache;
 import com.surelogic.sierra.gwt.client.ui.StyleHelper;
 import com.surelogic.sierra.gwt.client.ui.StyleHelper.Style;
 import com.surelogic.sierra.gwt.client.ui.link.ContentLink;
-import com.surelogic.sierra.gwt.client.ui.panel.BlockPanel;
+import com.surelogic.sierra.gwt.client.ui.panel.BasicPanel;
 
-public class ScanFilterView extends BlockPanel {
+public class ScanFilterView extends BasicPanel {
 	private final VerticalPanel importanceBlocks = new VerticalPanel();
 	private ScanFilter selection;
 	private boolean showCategories = true;
@@ -171,7 +171,7 @@ public class ScanFilterView extends BlockPanel {
 		return block;
 	}
 
-	private static class FilterBlock extends BlockPanel {
+	private static class FilterBlock extends BasicPanel {
 		private final VerticalPanel categoriesLeft = new VerticalPanel();
 		private final VerticalPanel categoriesRight = new VerticalPanel();
 		private final VerticalPanel findingsLeft = new VerticalPanel();

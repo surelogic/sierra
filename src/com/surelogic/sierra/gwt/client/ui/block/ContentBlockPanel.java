@@ -3,9 +3,9 @@ package com.surelogic.sierra.gwt.client.ui.block;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.ui.block.ContentBlock.ContentBlockListener;
-import com.surelogic.sierra.gwt.client.ui.panel.BlockPanel;
+import com.surelogic.sierra.gwt.client.ui.panel.BasicPanel;
 
-public class ContentBlockPanel extends BlockPanel implements
+public class ContentBlockPanel extends BasicPanel implements
 		ContentBlockListener {
 	private final ContentBlock<?> block;
 

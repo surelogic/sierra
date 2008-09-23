@@ -25,9 +25,9 @@ import com.surelogic.sierra.gwt.client.data.cache.CategoryCache;
 import com.surelogic.sierra.gwt.client.ui.StyleHelper;
 import com.surelogic.sierra.gwt.client.ui.StyleHelper.Style;
 import com.surelogic.sierra.gwt.client.ui.link.ContentLink;
-import com.surelogic.sierra.gwt.client.ui.panel.BlockPanel;
+import com.surelogic.sierra.gwt.client.ui.panel.BasicPanel;
 
-public class CategoryEditor extends BlockPanel {
+public class CategoryEditor extends BasicPanel {
 	public static final String PRIMARY_STYLE = "categories-category";
 	private final FlexTable categoryInfo = new FlexTable();
 	private final TextBox nameEditText = new TextBox();
@@ -138,7 +138,7 @@ public class CategoryEditor extends BlockPanel {
 		setCategory(category);
 	}
 
-	public class FindingsEditor extends BlockPanel {
+	public class FindingsEditor extends BasicPanel {
 
 		@Override
 		protected void onInitialize(final VerticalPanel contentPanel) {

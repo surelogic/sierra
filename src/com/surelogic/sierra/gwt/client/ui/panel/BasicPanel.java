@@ -15,7 +15,7 @@ import com.surelogic.sierra.gwt.client.ui.StyleHelper.Style;
 import com.surelogic.sierra.gwt.client.ui.type.Status;
 import com.surelogic.sierra.gwt.client.ui.type.Status.State;
 
-public class BasicPanel extends Composite {
+public abstract class BasicPanel extends Composite {
 	private static final String PRIMARY_STYLE = "sl-Section";
 	private static final String SUBSECTION_STYLE = "sl-Subsection";
 	private final DockPanel rootPanel = new DockPanel();
@@ -24,6 +24,7 @@ public class BasicPanel extends Composite {
 	private final Label sectionSummary = new Label();
 	private final HorizontalPanel actionPanel = new HorizontalPanel();
 	private final VerticalPanel contentPanel = new VerticalPanel();
+	private boolean initialized;
 	private Widget status;
 
 	public BasicPanel() {
@@ -61,6 +62,16 @@ public class BasicPanel extends Composite {
 		contentPanel.addStyleName(PRIMARY_STYLE + "-contentpanel");
 		rootPanel.add(contentPanel, DockPanel.CENTER);
 	}
+
+	public final void initialize() {
+		if (initialized) {
+			return;
+		}
+		onInitialize(getContentPanel());
+		initialized = true;
+	}
+
+	protected abstract void onInitialize(VerticalPanel contentPanel);
 
 	@Override
 	public final String getTitle() {

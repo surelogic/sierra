@@ -15,11 +15,11 @@ import com.surelogic.sierra.gwt.client.data.FindingType.CategoryInfo;
 import com.surelogic.sierra.gwt.client.data.FindingType.ScanFilterInfo;
 import com.surelogic.sierra.gwt.client.data.cache.ReportCache;
 import com.surelogic.sierra.gwt.client.ui.chart.ChartBuilder;
-import com.surelogic.sierra.gwt.client.ui.panel.BlockPanel;
+import com.surelogic.sierra.gwt.client.ui.panel.BasicPanel;
 import com.surelogic.sierra.gwt.client.ui.panel.ListBlock;
 import com.surelogic.sierra.gwt.client.util.LangUtil;
 
-public class FindingTypeView extends BlockPanel {
+public class FindingTypeView extends BasicPanel {
 	private final HTML description = new HTML();
 	private final CategoryList categoriesIncluding = new CategoryList(
 			"Categories including this type of finding");
@@ -145,7 +145,7 @@ public class FindingTypeView extends BlockPanel {
 
 	}
 
-	private class ArtifactTypeList extends BlockPanel {
+	private class ArtifactTypeList extends BasicPanel {
 
 		@Override
 		protected void onInitialize(final VerticalPanel contentPanel) {

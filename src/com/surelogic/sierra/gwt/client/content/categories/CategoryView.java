@@ -12,11 +12,11 @@ import com.surelogic.sierra.gwt.client.data.Category;
 import com.surelogic.sierra.gwt.client.data.FindingTypeFilter;
 import com.surelogic.sierra.gwt.client.data.cache.ReportCache;
 import com.surelogic.sierra.gwt.client.ui.chart.ChartBuilder;
-import com.surelogic.sierra.gwt.client.ui.panel.BlockPanel;
+import com.surelogic.sierra.gwt.client.ui.panel.BasicPanel;
 import com.surelogic.sierra.gwt.client.ui.panel.ListBlock;
 import com.surelogic.sierra.gwt.client.util.LangUtil;
 
-public class CategoryView extends BlockPanel {
+public class CategoryView extends BasicPanel {
 	private final VerticalPanel categoryInfo = new VerticalPanel();
 	private final Label description = new Label();
 	private final FindingsView findingsView = new FindingsView();

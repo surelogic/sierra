@@ -41,9 +41,9 @@ import com.surelogic.sierra.gwt.client.ui.block.ContentBlockPanel;
 import com.surelogic.sierra.gwt.client.ui.block.ReportTableBlock;
 import com.surelogic.sierra.gwt.client.ui.chart.ChartBuilder;
 import com.surelogic.sierra.gwt.client.ui.link.ContentLink;
-import com.surelogic.sierra.gwt.client.ui.panel.BlockPanel;
+import com.surelogic.sierra.gwt.client.ui.panel.BasicPanel;
 
-public class ProjectView extends BlockPanel {
+public class ProjectView extends BasicPanel {
 	private final StatusBox box = new StatusBox();
 	private final ScanDetailView latestScan = new ScanDetailView();
 	private final VerticalPanel chart = new VerticalPanel();
