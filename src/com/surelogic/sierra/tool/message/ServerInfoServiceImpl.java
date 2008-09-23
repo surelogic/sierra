@@ -18,14 +18,14 @@ public class ServerInfoServiceImpl extends SRPCServlet implements
 
 	private final ServerInfoReply reply = new ServerInfoReply();
 
-	public ServerInfoReply getServerInfo(ServerInfoRequest request) {
+	public ServerInfoReply getServerInfo(final ServerInfoRequest request) {
 		synchronized (reply) {
 			return reply;
 		}
 	}
 
 	@Override
-	public void init(ServletConfig config) throws ServletException {
+	public void init(final ServletConfig config) throws ServletException {
 		synchronized (reply) {
 			final List<Services> services = reply.getServices();
 			if ("on".equals(config.getServletContext().getInitParameter(
@@ -34,11 +34,11 @@ public class ServerInfoServiceImpl extends SRPCServlet implements
 			}
 			// XXX for now buglink is always on
 			services.add(Services.BUGLINK);
-			reply.setUid(ConnectionFactory
-					.withReadOnly(new ServerTransaction<String>() {
+			reply.setUid(ConnectionFactory.getInstance().withReadOnly(
+					new ServerTransaction<String>() {
 
-						public String perform(Connection conn, Server server)
-								throws SQLException {
+						public String perform(final Connection conn,
+								final Server server) throws SQLException {
 							return server.getUid();
 						}
 					}));

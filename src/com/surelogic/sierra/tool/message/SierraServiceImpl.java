@@ -55,59 +55,76 @@ public class SierraServiceImpl extends SecureServiceServlet implements
 		if (qList != null) {
 			timeseries.addAll(qList);
 		}
-		ConnectionFactory.withUserTransaction(new UserTransaction<Void>() {
+		ConnectionFactory.getInstance().withUserTransaction(
+				new UserTransaction<Void>() {
 
-			public Void perform(final Connection conn, final Server server,
-					final User user) throws SQLException {
-				final String uid = scan.getUid();
-				final ScanRecord s = ScanRecordFactory.getInstance(conn)
-						.newScan();
-				s.setUid(uid);
-				if (!s.select()) {
-					final String project = scan.getConfig().getProject();
-					final ScanManager manager = ScanManager.getInstance(conn);
-					final FindingFilter filter = SettingQueries
-							.scanFilterForProject(project).perform(
-									new ConnectionQuery(conn));
-					final ScanGenerator generator = manager
-							.getScanGenerator(filter);
-					generator.timeseries(timeseries).user(user.getName());
-					MessageWarehouse.readScan(scan, generator);
-					ConnectionFactory
-							.delayUserTransaction(new UserTransaction<Void>() {
+					public Void perform(final Connection conn,
+							final Server server, final User user)
+							throws SQLException {
+						final String uid = scan.getUid();
+						final ScanRecord s = ScanRecordFactory
+								.getInstance(conn).newScan();
+						s.setUid(uid);
+						if (!s.select()) {
+							final String project = scan.getConfig()
+									.getProject();
+							final ScanManager manager = ScanManager
+									.getInstance(conn);
+							final FindingFilter filter = SettingQueries
+									.scanFilterForProject(project).perform(
+											new ConnectionQuery(conn));
+							final ScanGenerator generator = manager
+									.getScanGenerator(filter);
+							generator.timeseries(timeseries).user(
+									user.getName());
+							MessageWarehouse.readScan(scan, generator);
+							ConnectionFactory.getInstance()
+									.delayUserTransaction(
+											new UserTransaction<Void>() {
 
-								public Void perform(final Connection conn,
-										final Server server, final User user)
-										throws SQLException {
-									final ServerFindingManager fm = ServerFindingManager
-											.getInstance(conn);
-									try {
-										fm.generateFindings(project, uid,
-												filter, null);
-										fm.generateOverview(project, uid,
-												timeseries);
-										// Increment the revision whenever a
-										// scan is
-										// published.
-										server.nextRevision();
-										conn.commit();
-										ScanManager.getInstance(conn)
-												.finalizeScan(uid);
-										log.info("Scan " + uid + " finalized");
-									} catch (final RuntimeException e) {
-										handleScanException(conn, uid);
-										throw e;
-									} catch (final SQLException e) {
-										handleScanException(conn, uid);
-										throw e;
-									}
-									return null;
-								}
-							});
-				}
-				return null;
-			}
-		});
+												public Void perform(
+														final Connection conn,
+														final Server server,
+														final User user)
+														throws SQLException {
+													final ServerFindingManager fm = ServerFindingManager
+															.getInstance(conn);
+													try {
+														fm.generateFindings(
+																project, uid,
+																filter, null);
+														fm.generateOverview(
+																project, uid,
+																timeseries);
+														// Increment the
+														// revision whenever a
+														// scan is
+														// published.
+														server.nextRevision();
+														conn.commit();
+														ScanManager
+																.getInstance(
+																		conn)
+																.finalizeScan(
+																		uid);
+														log.info("Scan " + uid
+																+ " finalized");
+													} catch (final RuntimeException e) {
+														handleScanException(
+																conn, uid);
+														throw e;
+													} catch (final SQLException e) {
+														handleScanException(
+																conn, uid);
+														throw e;
+													}
+													return null;
+												}
+											});
+						}
+						return null;
+					}
+				});
 	}
 
 	private void handleScanException(final Connection conn, final String uid) {
@@ -125,8 +142,8 @@ public class SierraServiceImpl extends SecureServiceServlet implements
 	}
 
 	public Timeseries getTimeseries(final TimeseriesRequest request) {
-		return ConnectionFactory
-				.withUserReadOnly(new UserTransaction<Timeseries>() {
+		return ConnectionFactory.getInstance().withUserReadOnly(
+				new UserTransaction<Timeseries>() {
 
 					public Timeseries perform(final Connection conn,
 							final Server server, final User user)
@@ -188,8 +205,8 @@ public class SierraServiceImpl extends SecureServiceServlet implements
 
 			}
 		};
-		final String localUid = ConnectionFactory
-				.withReadOnly(new ServerTransaction<String>() {
+		final String localUid = ConnectionFactory.getInstance().withReadOnly(
+				new ServerTransaction<String>() {
 					public String perform(final Connection conn,
 							final Server server) throws Exception {
 						return server.getUid();
@@ -201,8 +218,8 @@ public class SierraServiceImpl extends SecureServiceServlet implements
 					+ " does not match the server's uid: " + localUid);
 		}
 		if ((trails != null) && !trails.isEmpty()) {
-			return ConnectionFactory
-					.withUserTransaction(new UserTransaction<SyncResponse>() {
+			return ConnectionFactory.getInstance().withUserTransaction(
+					new UserTransaction<SyncResponse>() {
 
 						public SyncResponse perform(final Connection conn,
 								final Server server, final User user)
@@ -215,8 +232,8 @@ public class SierraServiceImpl extends SecureServiceServlet implements
 						}
 					});
 		} else {
-			return ConnectionFactory
-					.withUserReadOnly(new UserTransaction<SyncResponse>() {
+			return ConnectionFactory.getInstance().withUserReadOnly(
+					new UserTransaction<SyncResponse>() {
 
 						public SyncResponse perform(final Connection conn,
 								final Server server, final User user)

@@ -30,9 +30,10 @@ public class BugLinkServiceImpl extends SecureServiceServlet implements
 
 	public CreateCategoryResponse createCategory(
 			final CreateCategoryRequest request) {
-		return ConnectionFactory
-				.withTransaction(new ServerQuery<CreateCategoryResponse>() {
-					public CreateCategoryResponse perform(Query q, Server s) {
+		return ConnectionFactory.getInstance().withTransaction(
+				new ServerQuery<CreateCategoryResponse>() {
+					public CreateCategoryResponse perform(final Query q,
+							final Server s) {
 						final Categories sets = new Categories(q);
 						final long revision = s.nextRevision();
 						final CategoryDO set = sets.createCategory(request
@@ -57,17 +58,18 @@ public class BugLinkServiceImpl extends SecureServiceServlet implements
 	}
 
 	public ListCategoryResponse listCategories(final ListCategoryRequest request) {
-		return ConnectionFactory
-				.withReadOnly(new ServerQuery<ListCategoryResponse>() {
+		return ConnectionFactory.getInstance().withReadOnly(
+				new ServerQuery<ListCategoryResponse>() {
 
-					public ListCategoryResponse perform(Query q, Server s) {
+					public ListCategoryResponse perform(final Query q,
+							final Server s) {
 						final ListCategoryResponse response = new ListCategoryResponse();
 						// Filter out all servers w/ that do not have a newer
 						// revision than the client claims to have.
 						final HashMap<String, Long> servers = new HashMap<String, Long>();
 						q.statement("FilterSets.latestServerRevisions",
 								new RowHandler<Void>() {
-									public Void handle(Row r) {
+									public Void handle(final Row r) {
 										servers.put(r.nextString(), r
 												.nextLong());
 										return null;
@@ -109,9 +111,10 @@ public class BugLinkServiceImpl extends SecureServiceServlet implements
 
 	public UpdateCategoryResponse updateCategory(
 			final UpdateCategoryRequest request) throws RevisionException {
-		return ConnectionFactory
-				.withTransaction(new ServerQuery<UpdateCategoryResponse>() {
-					public UpdateCategoryResponse perform(Query q, Server s) {
+		return ConnectionFactory.getInstance().withTransaction(
+				new ServerQuery<UpdateCategoryResponse>() {
+					public UpdateCategoryResponse perform(final Query q,
+							final Server s) {
 						final UpdateCategoryResponse response = new UpdateCategoryResponse();
 						response.setSet(Categories.convert(new Categories(q)
 								.updateCategory(Categories.convertDO(request
@@ -124,9 +127,10 @@ public class BugLinkServiceImpl extends SecureServiceServlet implements
 
 	public CreateScanFilterResponse createScanFilter(
 			final CreateScanFilterRequest request) {
-		return ConnectionFactory
-				.withTransaction(new ServerQuery<CreateScanFilterResponse>() {
-					public CreateScanFilterResponse perform(Query q, Server s) {
+		return ConnectionFactory.getInstance().withTransaction(
+				new ServerQuery<CreateScanFilterResponse>() {
+					public CreateScanFilterResponse perform(final Query q,
+							final Server s) {
 						final ScanFilters filters = new ScanFilters(q);
 						final long revision = s.nextRevision();
 						final ScanFilterDO filter = filters.createScanFilter(
@@ -157,16 +161,17 @@ public class BugLinkServiceImpl extends SecureServiceServlet implements
 
 	public ListScanFilterResponse listScanFilters(
 			final ListScanFilterRequest request) {
-		return ConnectionFactory
-				.withReadOnly(new ServerQuery<ListScanFilterResponse>() {
-					public ListScanFilterResponse perform(Query q, Server s) {
+		return ConnectionFactory.getInstance().withReadOnly(
+				new ServerQuery<ListScanFilterResponse>() {
+					public ListScanFilterResponse perform(final Query q,
+							final Server s) {
 						final ListScanFilterResponse response = new ListScanFilterResponse();
 						// Filter out all servers w/ that do not have a newer
 						// revision than the client claims to have.
 						final HashMap<String, Long> servers = new HashMap<String, Long>();
 						q.statement("ScanFilters.latestServerRevisions",
 								new RowHandler<Void>() {
-									public Void handle(Row r) {
+									public Void handle(final Row r) {
 										servers.put(r.nextString(), r
 												.nextLong());
 										return null;
@@ -208,9 +213,10 @@ public class BugLinkServiceImpl extends SecureServiceServlet implements
 
 	public UpdateScanFilterResponse updateScanFilter(
 			final UpdateScanFilterRequest request) throws RevisionException {
-		return ConnectionFactory
-				.withTransaction(new ServerQuery<UpdateScanFilterResponse>() {
-					public UpdateScanFilterResponse perform(Query q, Server s) {
+		return ConnectionFactory.getInstance().withTransaction(
+				new ServerQuery<UpdateScanFilterResponse>() {
+					public UpdateScanFilterResponse perform(final Query q,
+							final Server s) {
 						final UpdateScanFilterResponse response = new UpdateScanFilterResponse();
 						response.setFilter(ScanFilters.convert(new ScanFilters(
 								q).updateScanFilter(ScanFilters
