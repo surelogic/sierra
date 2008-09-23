@@ -2,8 +2,8 @@ package com.surelogic.sierra.gwt.client.ui.block;
 
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment.HorizontalAlignmentConstant;
-import com.surelogic.sierra.gwt.client.chart.Chart;
 import com.surelogic.sierra.gwt.client.data.ReportSettings;
+import com.surelogic.sierra.gwt.client.ui.chart.Chart;
 
 public class ChartBlock extends ReportBlock<Chart> {
 

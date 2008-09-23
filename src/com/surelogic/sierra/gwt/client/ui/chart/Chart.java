@@ -1,4 +1,4 @@
-package com.surelogic.sierra.gwt.client.chart;
+package com.surelogic.sierra.gwt.client.ui.chart;
 
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Image;

@@ -1,4 +1,4 @@
-package com.surelogic.sierra.gwt.client.chart;
+package com.surelogic.sierra.gwt.client.ui.chart;
 
 import java.util.ArrayList;
 import java.util.Collection;

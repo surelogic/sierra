@@ -2,13 +2,13 @@ package com.surelogic.sierra.gwt.client.content.reports;
 
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.surelogic.sierra.gwt.client.chart.Chart;
 import com.surelogic.sierra.gwt.client.data.ReportSettings;
 import com.surelogic.sierra.gwt.client.data.Ticket;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.service.callback.ResultCallback;
 import com.surelogic.sierra.gwt.client.ui.block.ContentBlockPanel;
 import com.surelogic.sierra.gwt.client.ui.block.ReportTableBlock;
+import com.surelogic.sierra.gwt.client.ui.chart.Chart;
 import com.surelogic.sierra.gwt.client.ui.panel.BlockPanel;
 
 public class ReportView extends BlockPanel {
