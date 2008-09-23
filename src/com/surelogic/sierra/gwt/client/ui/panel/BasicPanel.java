@@ -11,8 +11,8 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment.HorizontalAlignmentConstant;
 import com.surelogic.sierra.gwt.client.ui.ImageHelper;
 import com.surelogic.sierra.gwt.client.ui.StyleHelper;
-import com.surelogic.sierra.gwt.client.ui.Status;
-import com.surelogic.sierra.gwt.client.ui.Status.State;
+import com.surelogic.sierra.gwt.client.ui.type.Status;
+import com.surelogic.sierra.gwt.client.ui.type.Status.State;
 
 public class BasicPanel extends Composite {
 	private static final String PRIMARY_STYLE = "sl-Section";

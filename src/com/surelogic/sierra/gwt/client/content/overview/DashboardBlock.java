@@ -8,9 +8,9 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.surelogic.sierra.gwt.client.ui.Direction;
 import com.surelogic.sierra.gwt.client.ui.ImageHelper;
 import com.surelogic.sierra.gwt.client.ui.panel.BlockPanel;
+import com.surelogic.sierra.gwt.client.ui.type.Direction;
 
 public class DashboardBlock extends BlockPanel {
 	private final HorizontalPanel movementActions = new HorizontalPanel();

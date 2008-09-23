@@ -19,7 +19,7 @@ import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.service.callback.ResultCallback;
 import com.surelogic.sierra.gwt.client.service.callback.StandardCallback;
 import com.surelogic.sierra.gwt.client.ui.StyleHelper;
-import com.surelogic.sierra.gwt.client.ui.SingleImportanceChoice;
+import com.surelogic.sierra.gwt.client.ui.choice.SingleImportanceChoice;
 
 public final class FindingContent extends ContentComposite {
 	public static final String PARAM_FINDING = "finding";

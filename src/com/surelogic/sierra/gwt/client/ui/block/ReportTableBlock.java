@@ -8,9 +8,9 @@ import com.surelogic.sierra.gwt.client.data.ReportSettings;
 import com.surelogic.sierra.gwt.client.data.ReportTable;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.service.callback.ResultCallback;
-import com.surelogic.sierra.gwt.client.ui.Status;
 import com.surelogic.sierra.gwt.client.ui.TableBuilder;
-import com.surelogic.sierra.gwt.client.ui.Status.State;
+import com.surelogic.sierra.gwt.client.ui.type.Status;
+import com.surelogic.sierra.gwt.client.ui.type.Status.State;
 
 public class ReportTableBlock extends ReportBlock<FlexTable> {
 

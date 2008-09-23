@@ -1,4 +1,4 @@
-package com.surelogic.sierra.gwt.client.ui;
+package com.surelogic.sierra.gwt.client.ui.choice;
 
 import java.util.HashSet;
 import java.util.List;

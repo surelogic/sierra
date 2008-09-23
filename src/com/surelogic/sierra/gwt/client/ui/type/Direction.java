@@ -1,4 +1,4 @@
-package com.surelogic.sierra.gwt.client.ui;
+package com.surelogic.sierra.gwt.client.ui.type;
 
 public enum Direction {
 	UP("up"), DOWN("down"), LEFT("left"), RIGHT("right");

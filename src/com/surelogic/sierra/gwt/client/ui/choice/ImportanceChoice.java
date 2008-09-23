@@ -1,4 +1,4 @@
-package com.surelogic.sierra.gwt.client.ui;
+package com.surelogic.sierra.gwt.client.ui.choice;
 
 import com.google.gwt.user.client.ui.ListBox;
 import com.surelogic.sierra.gwt.client.data.ImportanceView;

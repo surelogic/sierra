@@ -11,7 +11,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment.HorizontalAlignmentConstant;
 import com.surelogic.sierra.gwt.client.ui.StyleHelper;
-import com.surelogic.sierra.gwt.client.ui.Status;
+import com.surelogic.sierra.gwt.client.ui.type.Status;
 
 public abstract class ContentBlock<T extends Widget> extends Composite {
 	private final T root;
