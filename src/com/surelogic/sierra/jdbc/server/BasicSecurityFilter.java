@@ -81,8 +81,8 @@ public class BasicSecurityFilter implements Filter {
 						// In this example, we simply check
 						// that neither field is blank
 
-						user = ConnectionFactory
-								.withReadOnly(new ServerTransaction<User>() {
+						user = ConnectionFactory.getInstance().withReadOnly(
+								new ServerTransaction<User>() {
 
 									public User perform(final Connection conn,
 											final Server server)

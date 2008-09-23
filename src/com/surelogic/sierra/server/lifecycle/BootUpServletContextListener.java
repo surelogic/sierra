@@ -104,7 +104,7 @@ public class BootUpServletContextListener implements ServletContextListener {
 		/*
 		 * Bootstrap or update up the database as necessary.
 		 */
-		ConnectionFactory.withTransaction(new ServerTransaction<Void>() {
+		ConnectionFactory.getInstance().withTransaction(new ServerTransaction<Void>() {
 			public Void perform(final Connection conn, final Server server)
 					throws Exception {
 				SchemaUtility

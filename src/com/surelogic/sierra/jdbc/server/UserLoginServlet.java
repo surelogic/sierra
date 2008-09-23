@@ -36,8 +36,9 @@ public class UserLoginServlet extends HttpServlet {
 	private static final long serialVersionUID = 3047892708417176135L;
 
 	@Override
-	protected void service(HttpServletRequest request,
-			HttpServletResponse response) throws ServletException, IOException {
+	protected void service(final HttpServletRequest request,
+			final HttpServletResponse response) throws ServletException,
+			IOException {
 		final HttpSession session = request.getSession();
 		final String userName = request.getParameter(SecurityHelper.AUTH_NAME);
 		final String password64 = request
@@ -48,11 +49,11 @@ public class UserLoginServlet extends HttpServlet {
 			context = "/";
 		}
 		if (userName != null && password != null) {
-			final User u = ConnectionFactory
-					.withReadOnly(new ServerTransaction<User>() {
+			final User u = ConnectionFactory.getInstance().withReadOnly(
+					new ServerTransaction<User>() {
 
-						public User perform(Connection conn, Server server)
-								throws Exception {
+						public User perform(final Connection conn,
+								final Server server) throws Exception {
 							return ServerUserManager.getInstance(conn).login(
 									userName, password);
 						}

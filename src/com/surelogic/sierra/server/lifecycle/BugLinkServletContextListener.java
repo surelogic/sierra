@@ -30,12 +30,12 @@ public class BugLinkServletContextListener implements ServletContextListener {
 
 	public void contextInitialized(final ServletContextEvent event) {
 		try {
-			ConnectionFactory.lookupTimerService().scheduleWithFixedDelay(
-					new Runnable() {
+			ConnectionFactory.getInstance().lookupTimerService()
+					.scheduleWithFixedDelay(new Runnable() {
 						public void run() {
 							try {
 								final Set<SierraServerLocation> locations = ConnectionFactory
-										.withReadOnly(
+										.getInstance().withReadOnly(
 												ServerLocations
 														.fetchQuery(null))
 										.keySet();
@@ -61,24 +61,34 @@ public class BugLinkServletContextListener implements ServletContextListener {
 									}
 								}
 								ConnectionFactory
-										.withTransaction(ServerLocations
-												.updateServerLocationInfo(validServers));
+										.getInstance()
+										.withTransaction(
+												ServerLocations
+														.updateServerLocationInfo(validServers));
 								for (final SierraServerLocation location : validServers
 										.keySet()) {
 									ConnectionFactory
-											.withTransaction(SettingQueries
-													.retrieveCategories(
-															location,
-															ConnectionFactory
-																	.withReadOnly(SettingQueries
-																			.categoryRequest())));
+											.getInstance()
+											.withTransaction(
+													SettingQueries
+															.retrieveCategories(
+																	location,
+																	ConnectionFactory
+																			.getInstance()
+																			.withReadOnly(
+																					SettingQueries
+																							.categoryRequest())));
 									ConnectionFactory
-											.withTransaction(SettingQueries
-													.retrieveScanFilters(
-															location,
-															ConnectionFactory
-																	.withReadOnly(SettingQueries
-																			.scanFilterRequest())));
+											.getInstance()
+											.withTransaction(
+													SettingQueries
+															.retrieveScanFilters(
+																	location,
+																	ConnectionFactory
+																			.getInstance()
+																			.withReadOnly(
+																					SettingQueries
+																							.scanFilterRequest())));
 								}
 							} catch (final Error e) {
 								SLLogger.getLogger().log(Level.SEVERE,

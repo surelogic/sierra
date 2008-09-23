@@ -14,16 +14,21 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 
+import com.surelogic.common.jdbc.DBConnection;
 import com.surelogic.common.jdbc.DBQuery;
 import com.surelogic.common.jdbc.DBTransaction;
 import com.surelogic.common.jdbc.TransactionException;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.jdbc.user.User;
 
-public final class ConnectionFactory {
-
+public enum ConnectionFactory implements DBConnection {
+	INSTANCE;
 	private static final Logger log = SLLogger
 			.getLoggerFor(ConnectionFactory.class);
+
+	public static ConnectionFactory getInstance() {
+		return INSTANCE;
+	}
 
 	/**
 	 * Return a connection to the server capable of executing transactions.
@@ -31,7 +36,7 @@ public final class ConnectionFactory {
 	 * @return
 	 * @throws SQLException
 	 */
-	public static ServerConnection transaction() throws SQLException {
+	public ServerConnection transaction() throws SQLException {
 		return new ServerConnection(lookupConnection(), false);
 	}
 
@@ -41,7 +46,7 @@ public final class ConnectionFactory {
 	 * @return
 	 * @throws SQLException
 	 */
-	public static ServerConnection readUncommitted() throws SQLException {
+	public ServerConnection readUncommitted() throws SQLException {
 		return new ServerConnection(lookupConnection(), true,
 				Connection.TRANSACTION_READ_COMMITTED);
 	}
@@ -52,7 +57,7 @@ public final class ConnectionFactory {
 	 * @return
 	 * @throws SQLException
 	 */
-	public static ServerConnection readOnly() throws SQLException {
+	public ServerConnection readOnly() throws SQLException {
 		return new ServerConnection(lookupConnection(), true);
 	}
 
@@ -62,7 +67,7 @@ public final class ConnectionFactory {
 	 * @return
 	 * @throws SQLException
 	 */
-	public static UserConnection userTransaction() throws SQLException {
+	public UserConnection userTransaction() throws SQLException {
 		return new UserConnection(lookupConnection(), lookupUser(), false);
 	}
 
@@ -72,7 +77,7 @@ public final class ConnectionFactory {
 	 * @return
 	 * @throws SQLException
 	 */
-	public static UserConnection userReadOnly() throws SQLException {
+	public UserConnection userReadOnly() throws SQLException {
 		return new UserConnection(lookupConnection(), lookupUser(), true);
 	}
 
@@ -83,9 +88,8 @@ public final class ConnectionFactory {
 	 * @param t
 	 * @return
 	 */
-	public static void scheduleTransactionWithFixedDelay(
-			final ServerQuery<?> t, final long initialDelay, final long delay,
-			final TimeUnit unit) {
+	public void scheduleTransactionWithFixedDelay(final ServerQuery<?> t,
+			final long initialDelay, final long delay, final TimeUnit unit) {
 		lookupTimerService().scheduleWithFixedDelay(new Runnable() {
 			public void run() {
 				try {
@@ -105,9 +109,8 @@ public final class ConnectionFactory {
 	 * @param t
 	 * @return
 	 */
-	public static void scheduleTransactionWithFixedDelay(
-			final ServerTransaction<?> t, final long initialDelay,
-			final long delay, final TimeUnit unit) {
+	public void scheduleTransactionWithFixedDelay(final ServerTransaction<?> t,
+			final long initialDelay, final long delay, final TimeUnit unit) {
 		lookupTimerService().scheduleWithFixedDelay(new Runnable() {
 			public void run() {
 				try {
@@ -126,7 +129,7 @@ public final class ConnectionFactory {
 	 * @param t
 	 * @return
 	 */
-	public static <T> Future<T> delayTransaction(final ServerQuery<T> t) {
+	public <T> Future<T> delayTransaction(final ServerQuery<T> t) {
 		return lookupExecutor().submit(new Callable<T>() {
 
 			public T call() throws Exception {
@@ -142,7 +145,7 @@ public final class ConnectionFactory {
 	 * @param t
 	 * @return
 	 */
-	public static <T> Future<T> delayTransaction(final ServerTransaction<T> t) {
+	public <T> Future<T> delayTransaction(final ServerTransaction<T> t) {
 		return lookupExecutor().submit(new Callable<T>() {
 
 			public T call() throws Exception {
@@ -158,7 +161,7 @@ public final class ConnectionFactory {
 	 * @param t
 	 * @return
 	 */
-	public static <T> Future<T> delayReadOnly(final ServerQuery<T> t) {
+	public <T> Future<T> delayReadOnly(final ServerQuery<T> t) {
 		return lookupExecutor().submit(new Callable<T>() {
 
 			public T call() throws Exception {
@@ -174,7 +177,7 @@ public final class ConnectionFactory {
 	 * @param t
 	 * @return
 	 */
-	public static <T> Future<T> delayReadOnly(final ServerTransaction<T> t) {
+	public <T> Future<T> delayReadOnly(final ServerTransaction<T> t) {
 		return lookupExecutor().submit(new Callable<T>() {
 
 			public T call() throws Exception {
@@ -190,7 +193,7 @@ public final class ConnectionFactory {
 	 * @param t
 	 * @return
 	 */
-	public static <T> Future<T> delayUserTransaction(final UserQuery<T> t) {
+	public <T> Future<T> delayUserTransaction(final UserQuery<T> t) {
 		final User user = lookupUser();
 		return lookupExecutor().submit(new Callable<T>() {
 
@@ -208,7 +211,7 @@ public final class ConnectionFactory {
 	 * @param t
 	 * @return
 	 */
-	public static <T> Future<T> delayUserTransaction(final UserTransaction<T> t) {
+	public <T> Future<T> delayUserTransaction(final UserTransaction<T> t) {
 		final User user = lookupUser();
 		return lookupExecutor().submit(new Callable<T>() {
 
@@ -226,7 +229,7 @@ public final class ConnectionFactory {
 	 * @param t
 	 * @return
 	 */
-	public static <T> Future<T> delayUserReadOnly(final UserQuery<T> t) {
+	public <T> Future<T> delayUserReadOnly(final UserQuery<T> t) {
 		final User user = lookupUser();
 		return lookupExecutor().submit(new Callable<T>() {
 
@@ -244,7 +247,7 @@ public final class ConnectionFactory {
 	 * @param t
 	 * @return
 	 */
-	public static <T> Future<T> delayUserReadOnly(final UserTransaction<T> t) {
+	public <T> Future<T> delayUserReadOnly(final UserTransaction<T> t) {
 		final User user = lookupUser();
 		return lookupExecutor().submit(new Callable<T>() {
 
@@ -262,7 +265,7 @@ public final class ConnectionFactory {
 	 * @param t
 	 * @return
 	 */
-	public static <T> T withTransaction(final DBQuery<T> t) {
+	public <T> T withTransaction(final DBQuery<T> t) {
 		try {
 			return with(transaction(), t);
 		} catch (final SQLException e) {
@@ -277,7 +280,7 @@ public final class ConnectionFactory {
 	 * @param t
 	 * @return
 	 */
-	public static <T> T withTransaction(final DBTransaction<T> t) {
+	public <T> T withTransaction(final DBTransaction<T> t) {
 		try {
 			return with(transaction(), t);
 		} catch (final SQLException e) {
@@ -292,7 +295,7 @@ public final class ConnectionFactory {
 	 * @param t
 	 * @return
 	 */
-	public static <T> T withTransaction(final ServerQuery<T> t) {
+	public <T> T withTransaction(final ServerQuery<T> t) {
 		try {
 			return with(transaction(), t);
 		} catch (final SQLException e) {
@@ -307,7 +310,7 @@ public final class ConnectionFactory {
 	 * @param t
 	 * @return
 	 */
-	public static <T> T withTransaction(final ServerTransaction<T> t) {
+	public <T> T withTransaction(final ServerTransaction<T> t) {
 		try {
 			return with(transaction(), t);
 		} catch (final SQLException e) {
@@ -323,7 +326,7 @@ public final class ConnectionFactory {
 	 * @param t
 	 * @return
 	 */
-	public static <T> T withReadUncommitted(final ServerQuery<T> t) {
+	public <T> T withReadUncommitted(final ServerQuery<T> t) {
 		try {
 			return with(readUncommitted(), t);
 		} catch (final SQLException e) {
@@ -339,7 +342,7 @@ public final class ConnectionFactory {
 	 * @param t
 	 * @return
 	 */
-	public static <T> T withReadUncommitted(final ServerTransaction<T> t) {
+	public <T> T withReadUncommitted(final ServerTransaction<T> t) {
 		try {
 			return with(readUncommitted(), t);
 		} catch (final SQLException e) {
@@ -354,7 +357,7 @@ public final class ConnectionFactory {
 	 * @param t
 	 * @return
 	 */
-	public static <T> T withReadOnly(final DBQuery<T> t) {
+	public <T> T withReadOnly(final DBTransaction<T> t) {
 		try {
 			return with(readOnly(), t);
 		} catch (final SQLException e) {
@@ -369,7 +372,7 @@ public final class ConnectionFactory {
 	 * @param t
 	 * @return
 	 */
-	public static <T> T withReadOnly(final ServerQuery<T> t) {
+	public <T> T withReadOnly(final DBQuery<T> t) {
 		try {
 			return with(readOnly(), t);
 		} catch (final SQLException e) {
@@ -384,7 +387,22 @@ public final class ConnectionFactory {
 	 * @param t
 	 * @return
 	 */
-	public static <T> T withReadOnly(final ServerTransaction<T> t) {
+	public <T> T withReadOnly(final ServerQuery<T> t) {
+		try {
+			return with(readOnly(), t);
+		} catch (final SQLException e) {
+			throw new TransactionException(e);
+		}
+	}
+
+	/**
+	 * Retrieve a connection, and execute the given read-only user transaction.
+	 * 
+	 * @param <T>
+	 * @param t
+	 * @return
+	 */
+	public <T> T withReadOnly(final ServerTransaction<T> t) {
 		try {
 			return with(readOnly(), t);
 		} catch (final SQLException e) {
@@ -399,7 +417,7 @@ public final class ConnectionFactory {
 	 * @param t
 	 * @return
 	 */
-	public static <T> T withUserTransaction(final UserQuery<T> t) {
+	public <T> T withUserTransaction(final UserQuery<T> t) {
 		try {
 			return withUser(userTransaction(), t);
 		} catch (final SQLException e) {
@@ -414,7 +432,7 @@ public final class ConnectionFactory {
 	 * @param t
 	 * @return
 	 */
-	public static <T> T withUserTransaction(final UserTransaction<T> t) {
+	public <T> T withUserTransaction(final UserTransaction<T> t) {
 		try {
 			return withUser(userTransaction(), t);
 		} catch (final SQLException e) {
@@ -429,7 +447,7 @@ public final class ConnectionFactory {
 	 * @param t
 	 * @return
 	 */
-	public static <T> T withUserReadOnly(final UserQuery<T> t) {
+	public <T> T withUserReadOnly(final UserQuery<T> t) {
 		try {
 			return withUser(userReadOnly(), t);
 		} catch (final SQLException e) {
@@ -444,7 +462,7 @@ public final class ConnectionFactory {
 	 * @param t
 	 * @return
 	 */
-	public static <T> T withUserReadOnly(final UserTransaction<T> t) {
+	public <T> T withUserReadOnly(final UserTransaction<T> t) {
 		try {
 			return withUser(userReadOnly(), t);
 		} catch (final SQLException e) {
@@ -452,8 +470,7 @@ public final class ConnectionFactory {
 		}
 	}
 
-	private static <T> T withUser(final UserConnection server,
-			final UserQuery<T> t) {
+	private <T> T withUser(final UserConnection server, final UserQuery<T> t) {
 		RuntimeException exc = null;
 		try {
 			return server.perform(t);
@@ -473,7 +490,7 @@ public final class ConnectionFactory {
 		throw exc;
 	}
 
-	private static <T> T withUser(final UserConnection server,
+	private <T> T withUser(final UserConnection server,
 			final UserTransaction<T> t) {
 		RuntimeException exc = null;
 		try {
@@ -494,7 +511,7 @@ public final class ConnectionFactory {
 		throw exc;
 	}
 
-	private static <T> T with(final ServerConnection server, final DBQuery<T> t) {
+	private <T> T with(final ServerConnection server, final DBQuery<T> t) {
 		RuntimeException exc = null;
 		try {
 			return server.perform(t);
@@ -514,8 +531,7 @@ public final class ConnectionFactory {
 		throw exc;
 	}
 
-	private static <T> T with(final ServerConnection server,
-			final DBTransaction<T> t) {
+	private <T> T with(final ServerConnection server, final DBTransaction<T> t) {
 		RuntimeException exc = null;
 		try {
 			return server.perform(t);
@@ -535,8 +551,7 @@ public final class ConnectionFactory {
 		throw exc;
 	}
 
-	private static <T> T with(final ServerConnection server,
-			final ServerQuery<T> t) {
+	private <T> T with(final ServerConnection server, final ServerQuery<T> t) {
 		RuntimeException exc = null;
 		try {
 			return server.perform(t);
@@ -556,7 +571,7 @@ public final class ConnectionFactory {
 		throw exc;
 	}
 
-	private static <T> T with(final ServerConnection server,
+	private <T> T with(final ServerConnection server,
 			final ServerTransaction<T> t) {
 		RuntimeException exc = null;
 		try {
@@ -577,7 +592,7 @@ public final class ConnectionFactory {
 		throw exc;
 	}
 
-	private static User lookupUser() {
+	private User lookupUser() {
 		final User user = UserContext.peek();
 		if (user == null) {
 			throw new IllegalStateException("There must be a user in context.");
@@ -588,7 +603,7 @@ public final class ConnectionFactory {
 	/*
 	 * Look up the JDBC data source.
 	 */
-	private static Connection lookupConnection() throws SQLException {
+	private Connection lookupConnection() throws SQLException {
 		try {
 			final InitialContext context = new InitialContext();
 			try {
@@ -605,7 +620,7 @@ public final class ConnectionFactory {
 	/*
 	 * Look up the transaction handler.
 	 */
-	private static ExecutorService lookupExecutor() {
+	private ExecutorService lookupExecutor() {
 		try {
 			final InitialContext context = new InitialContext();
 			try {
@@ -624,7 +639,7 @@ public final class ConnectionFactory {
 	 * 
 	 * @return
 	 */
-	public static ScheduledExecutorService lookupTimerService() {
+	public ScheduledExecutorService lookupTimerService() {
 		try {
 			final InitialContext context = new InitialContext();
 			try {
@@ -636,6 +651,20 @@ public final class ConnectionFactory {
 		} catch (final NamingException e) {
 			throw new IllegalStateException(e);
 		}
+	}
+
+	public Connection getConnection() throws SQLException {
+		return lookupConnection();
+	}
+
+	public Connection readOnlyConnection() throws SQLException {
+		final Connection c = lookupConnection();
+		c.setReadOnly(true);
+		return c;
+	}
+
+	public Connection transactionConnection() throws SQLException {
+		return lookupConnection();
 	}
 
 }
