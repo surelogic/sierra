@@ -57,7 +57,7 @@ public class TableCache implements Sweepable {
 				+ ticket.getUUID().toString() + ".rev");
 	}
 
-	private static ReportTable readTable(File file) throws IOException,
+	private static ReportTable readTable(final File file) throws IOException,
 			ServletException {
 		final ObjectInputStream in = new ObjectInputStream(new FileInputStream(
 				file));
@@ -70,7 +70,7 @@ public class TableCache implements Sweepable {
 		}
 	}
 
-	private static void writeTable(ReportTable table, File file)
+	private static void writeTable(final ReportTable table, final File file)
 			throws IOException {
 		final ObjectOutputStream out = new ObjectOutputStream(
 				new FileOutputStream(file));
@@ -96,7 +96,7 @@ public class TableCache implements Sweepable {
 				final BufferedReader reader = new BufferedReader(
 						new FileReader(file));
 				final long rev = Long.valueOf(reader.readLine());
-				final long lastRevision = ConnectionFactory
+				final long lastRevision = ConnectionFactory.getInstance()
 						.withReadUncommitted(new RevisionQuery());
 
 				createOrUpdateCacheFiles = lastRevision > rev;
@@ -119,43 +119,46 @@ public class TableCache implements Sweepable {
 		}
 		final IDatabaseTable generator = getGenerator(type);
 
-		ConnectionFactory.withReadOnly(new ServerTransaction<Void>() {
-			public Void perform(Connection conn, Server server)
-					throws SQLException {
-				try {
-					/*
-					 * Output table file
-					 */
-					final ReportTable table = generator.generate(report, conn);
-					final File tableFile = getTableFileFor(ticket);
-					writeTable(table, tableFile);
-					/*
-					 * Output revision file.
-					 */
-					final File revFile = getRevFileFor(ticket);
-					final PrintWriter revWriter = new PrintWriter(revFile);
-					try {
-						revWriter.println(new RevisionQuery().perform(
-								new ConnectionQuery(conn), server));
+		ConnectionFactory.getInstance().withReadOnly(
+				new ServerTransaction<Void>() {
+					public Void perform(final Connection conn,
+							final Server server) throws SQLException {
+						try {
+							/*
+							 * Output table file
+							 */
+							final ReportTable table = generator.generate(
+									report, conn);
+							final File tableFile = getTableFileFor(ticket);
+							writeTable(table, tableFile);
+							/*
+							 * Output revision file.
+							 */
+							final File revFile = getRevFileFor(ticket);
+							final PrintWriter revWriter = new PrintWriter(
+									revFile);
+							try {
+								revWriter.println(new RevisionQuery().perform(
+										new ConnectionQuery(conn), server));
 
-					} finally {
-						revWriter.close();
+							} finally {
+								revWriter.close();
+							}
+							return null;
+						} catch (final IOException e) {
+							final SQLException sqle = new SQLException();
+							sqle.initCause(e);
+							throw sqle;
+						}
 					}
-					return null;
-				} catch (final IOException e) {
-					final SQLException sqle = new SQLException();
-					sqle.initCause(e);
-					throw sqle;
-				}
-			}
-		});
+				});
 	}
 
 	private static class RevisionQuery implements ServerQuery<Long> {
-		public Long perform(Query q, Server s) {
+		public Long perform(final Query q, final Server s) {
 			return q.statement("Revision.maxRevision",
 					new ResultHandler<Long>() {
-						public Long handle(Result r) {
+						public Long handle(final Result r) {
 							for (final Row row : r) {
 								return row.nextLong();
 							}
@@ -170,7 +173,8 @@ public class TableCache implements Sweepable {
 	 */
 	private final Map<String, IDatabaseTable> f_typeToGenerator = new HashMap<String, IDatabaseTable>();
 
-	private IDatabaseTable getGenerator(String type) throws ServletException {
+	private IDatabaseTable getGenerator(final String type)
+			throws ServletException {
 		assert type != null;
 
 		IDatabaseTable generator;

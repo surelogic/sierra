@@ -107,7 +107,7 @@ public final class ChartCache implements Sweepable {
 				final BufferedReader reader = new BufferedReader(
 						new FileReader(file));
 				final long rev = Long.valueOf(reader.readLine());
-				final long lastRevision = ConnectionFactory
+				final long lastRevision = ConnectionFactory.getInstance()
 						.withReadUncommitted(new RevisionQuery());
 
 				createOrUpdateCacheFiles = lastRevision > rev;
@@ -130,60 +130,64 @@ public final class ChartCache implements Sweepable {
 		}
 		final IDatabasePlot plotter = getPlotter(type);
 
-		ConnectionFactory.withReadOnly(new ServerTransaction<Void>() {
-			public Void perform(Connection conn, Server server)
-					throws SQLException {
-				try {
-					final PlotSize mutableSize = new PlotSize(
-							getWidthHint(report), getHeightHint(report));
-					final JFreeChart chart = plotter.plot(mutableSize, report,
-							conn);
+		ConnectionFactory.getInstance().withReadOnly(
+				new ServerTransaction<Void>() {
+					public Void perform(final Connection conn,
+							final Server server) throws SQLException {
+						try {
+							final PlotSize mutableSize = new PlotSize(
+									getWidthHint(report), getHeightHint(report));
+							final JFreeChart chart = plotter.plot(mutableSize,
+									report, conn);
 
-					setupTooltips(chart);
-					final ChartRenderingInfo info = new ChartRenderingInfo(
-							new StandardEntityCollection());
-					/*
-					 * Output PNG image file.
-					 */
-					final File pngFile = getPngFileFor(ticket);
-					final OutputStream pngWriter = new FileOutputStream(pngFile);
-					ChartUtilities.writeChartAsPNG(pngWriter, chart,
-							mutableSize.getWidth(), mutableSize.getHeight(),
-							info, true, 9);
-					pngWriter.close();
+							setupTooltips(chart);
+							final ChartRenderingInfo info = new ChartRenderingInfo(
+									new StandardEntityCollection());
+							/*
+							 * Output PNG image file.
+							 */
+							final File pngFile = getPngFileFor(ticket);
+							final OutputStream pngWriter = new FileOutputStream(
+									pngFile);
+							ChartUtilities.writeChartAsPNG(pngWriter, chart,
+									mutableSize.getWidth(), mutableSize
+											.getHeight(), info, true, 9);
+							pngWriter.close();
 
-					/*
-					 * Output image map file.
-					 */
-					final File mapFile = getMapFileFor(ticket);
-					final PrintWriter mapWriter = new PrintWriter(mapFile);
-					ChartUtilities.writeImageMap(mapWriter, "map"
-							+ ticket.getUUID(), info, false);
-					mapWriter.close();
+							/*
+							 * Output image map file.
+							 */
+							final File mapFile = getMapFileFor(ticket);
+							final PrintWriter mapWriter = new PrintWriter(
+									mapFile);
+							ChartUtilities.writeImageMap(mapWriter, "map"
+									+ ticket.getUUID(), info, false);
+							mapWriter.close();
 
-					/*
-					 * Output revision file.
-					 */
-					final File revFile = getRevFileFor(ticket);
-					final PrintWriter revWriter = new PrintWriter(revFile);
-					revWriter.println(new RevisionQuery().perform(
-							new ConnectionQuery(conn), server));
-					revWriter.close();
-					return null;
-				} catch (final IOException e) {
-					final SQLException sqle = new SQLException();
-					sqle.initCause(e);
-					throw sqle;
-				}
-			}
-		});
+							/*
+							 * Output revision file.
+							 */
+							final File revFile = getRevFileFor(ticket);
+							final PrintWriter revWriter = new PrintWriter(
+									revFile);
+							revWriter.println(new RevisionQuery().perform(
+									new ConnectionQuery(conn), server));
+							revWriter.close();
+							return null;
+						} catch (final IOException e) {
+							final SQLException sqle = new SQLException();
+							sqle.initCause(e);
+							throw sqle;
+						}
+					}
+				});
 	}
 
 	private static class RevisionQuery implements ServerQuery<Long> {
-		public Long perform(Query q, Server s) {
+		public Long perform(final Query q, final Server s) {
 			return q.statement("Revision.maxRevision",
 					new ResultHandler<Long>() {
-						public Long handle(Result r) {
+						public Long handle(final Result r) {
 							for (final Row row : r) {
 								return row.nextLong();
 							}
@@ -198,7 +202,7 @@ public final class ChartCache implements Sweepable {
 	 */
 	private final Map<String, IDatabasePlot> f_typeToPlotter = new HashMap<String, IDatabasePlot>();
 
-	private IDatabasePlot getPlotter(String type) throws ServletException {
+	private IDatabasePlot getPlotter(final String type) throws ServletException {
 		assert type != null;
 
 		IDatabasePlot plotter;
@@ -242,7 +246,7 @@ public final class ChartCache implements Sweepable {
 	 *            the servlet parameters.
 	 * @return the value of the {@code width} parameter or 400 if it is not set.
 	 */
-	private int getWidthHint(ReportSettings report) {
+	private int getWidthHint(final ReportSettings report) {
 		int widthHint = 400;
 		final String param = report.getSettingValue("width", 0);
 		if (param != null) {
@@ -265,7 +269,7 @@ public final class ChartCache implements Sweepable {
 	 * @return the value of the {@code height} parameter or 400 if it is not
 	 *         set.
 	 */
-	private int getHeightHint(ReportSettings report) {
+	private int getHeightHint(final ReportSettings report) {
 		int heightHint = 400;
 		final String param = report.getSettingValue("height", 0);
 		if (param != null) {

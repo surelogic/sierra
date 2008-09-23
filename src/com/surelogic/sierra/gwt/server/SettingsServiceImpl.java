@@ -69,8 +69,8 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 	private static final long serialVersionUID = 6781260512153199775L;
 
 	public List<String> searchProjects(final String query, final int limit) {
-		return ConnectionFactory
-				.withUserReadOnly(new UserQuery<List<String>>() {
+		return ConnectionFactory.getInstance().withUserReadOnly(
+				new UserQuery<List<String>>() {
 					public List<String> perform(final Query q, final Server s,
 							final User u) {
 						return q.prepared("Projects.query",
@@ -96,8 +96,8 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 	}
 
 	public List<Project> getProjects() {
-		return ConnectionFactory
-				.withUserTransaction(new UserQuery<List<Project>>() {
+		return ConnectionFactory.getInstance().withUserTransaction(
+				new UserQuery<List<Project>>() {
 					public List<Project> perform(final Query q, final Server s,
 							final User u) {
 						final List<Project> result = new ArrayList<Project>();
@@ -124,8 +124,8 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 	}
 
 	public List<Category> getCategories() {
-		return ConnectionFactory
-				.withUserReadOnly(new UserQuery<List<Category>>() {
+		return ConnectionFactory.getInstance().withUserReadOnly(
+				new UserQuery<List<Category>>() {
 
 					public List<Category> perform(final Query q,
 							final Server server, final User user) {
@@ -236,8 +236,8 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 
 	public Result<String> createCategory(final String name,
 			final List<String> entries, final List<String> parents) {
-		return ConnectionFactory
-				.withUserTransaction(new UserQuery<Result<String>>() {
+		return ConnectionFactory.getInstance().withUserTransaction(
+				new UserQuery<Result<String>>() {
 					public Result<String> perform(final Query q,
 							final Server s, final User u) {
 						final Categories sets = new Categories(q);
@@ -262,70 +262,77 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 
 	// TODO do this w/o passing back and forth the whole graph
 	public Status updateCategory(final Category c) {
-		return ConnectionFactory.withUserTransaction(new UserQuery<Status>() {
-			public Status perform(final Query q, final Server s, final User u) {
-				if (!s.getUid().equals(
-						q.prepared("Definitions.getDefinitionServer",
-								new StringResultHandler()).call(c.getUuid()))) {
-					return Status
-							.failure("This category is not owned by this server, and cannot be updated.");
-				}
-				final Categories sets = new Categories(q);
-				final long revision = s.nextRevision();
-				final CategoryDO set = new CategoryDO();
-				set.setUid(c.getUuid());
-				set.setInfo(c.getInfo());
-				set.setName(c.getName());
-				set.setRevision(c.getRevision());
-				final Set<String> parentSet = set.getParents();
-				final Set<Category> parents = c.getParents();
-				for (final Category parent : parents) {
-					parentSet.add(parent.getUuid());
-				}
-				final Set<CategoryEntryDO> entrySet = set.getFilters();
-				final Set<FindingTypeFilter> entries = c.getEntries();
-				for (final FindingTypeFilter entry : entries) {
-					entrySet.add(new CategoryEntryDO(entry.getUuid(), entry
-							.isFiltered()));
-				}
-				try {
-					sets.updateCategory(set, revision);
-				} catch (final RevisionException e) {
-					return Status.failure(e.getMessage());
-				} catch (final IllegalArgumentException e) {
-					return Status.failure(e.getMessage());
-				}
-				return Status.success("Category " + c.getName() + " updated.");
-			}
-		});
+		return ConnectionFactory.getInstance().withUserTransaction(
+				new UserQuery<Status>() {
+					public Status perform(final Query q, final Server s,
+							final User u) {
+						if (!s.getUid().equals(
+								q.prepared("Definitions.getDefinitionServer",
+										new StringResultHandler()).call(
+										c.getUuid()))) {
+							return Status
+									.failure("This category is not owned by this server, and cannot be updated.");
+						}
+						final Categories sets = new Categories(q);
+						final long revision = s.nextRevision();
+						final CategoryDO set = new CategoryDO();
+						set.setUid(c.getUuid());
+						set.setInfo(c.getInfo());
+						set.setName(c.getName());
+						set.setRevision(c.getRevision());
+						final Set<String> parentSet = set.getParents();
+						final Set<Category> parents = c.getParents();
+						for (final Category parent : parents) {
+							parentSet.add(parent.getUuid());
+						}
+						final Set<CategoryEntryDO> entrySet = set.getFilters();
+						final Set<FindingTypeFilter> entries = c.getEntries();
+						for (final FindingTypeFilter entry : entries) {
+							entrySet.add(new CategoryEntryDO(entry.getUuid(),
+									entry.isFiltered()));
+						}
+						try {
+							sets.updateCategory(set, revision);
+						} catch (final RevisionException e) {
+							return Status.failure(e.getMessage());
+						} catch (final IllegalArgumentException e) {
+							return Status.failure(e.getMessage());
+						}
+						return Status.success("Category " + c.getName()
+								+ " updated.");
+					}
+				});
 	}
 
 	public Status deleteCategory(final String uuid) {
-		return ConnectionFactory.withUserTransaction(new UserQuery<Status>() {
-			public Status perform(final Query q, final Server s, final User u) {
-				final Categories cats = new Categories(q);
-				final String server = s.getUid();
-				if (server.equals(q.prepared("Definitions.getDefinitionServer",
-						new StringResultHandler()).call(uuid))) {
-					try {
-						q.prepared("FilterSets.insertDeletedFilterSet").call(
-								uuid, server, s.nextRevision());
-						cats.deleteCategory(uuid);
-					} catch (final IllegalArgumentException e) {
-						return Status.failure(e.getMessage());
+		return ConnectionFactory.getInstance().withUserTransaction(
+				new UserQuery<Status>() {
+					public Status perform(final Query q, final Server s,
+							final User u) {
+						final Categories cats = new Categories(q);
+						final String server = s.getUid();
+						if (server.equals(q.prepared(
+								"Definitions.getDefinitionServer",
+								new StringResultHandler()).call(uuid))) {
+							try {
+								q.prepared("FilterSets.insertDeletedFilterSet")
+										.call(uuid, server, s.nextRevision());
+								cats.deleteCategory(uuid);
+							} catch (final IllegalArgumentException e) {
+								return Status.failure(e.getMessage());
+							}
+						} else {
+							return Status
+									.failure("The category does not belong to this server and cannot be deleted.");
+						}
+						return Status.success("Category deleted");
 					}
-				} else {
-					return Status
-							.failure("The category does not belong to this server and cannot be deleted.");
-				}
-				return Status.success("Category deleted");
-			}
-		});
+				});
 	}
 
 	public List<FindingType> getFindingTypes() {
-		return ConnectionFactory
-				.withUserTransaction(new UserQuery<List<FindingType>>() {
+		return ConnectionFactory.getInstance().withUserTransaction(
+				new UserQuery<List<FindingType>>() {
 					public List<FindingType> perform(final Query q,
 							final Server s, final User u) {
 						final List<FindingType> result = new ArrayList<FindingType>();
@@ -340,8 +347,8 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 	}
 
 	public Result<FindingType> getFindingType(final String uuid) {
-		return ConnectionFactory
-				.withUserTransaction(new UserQuery<Result<FindingType>>() {
+		return ConnectionFactory.getInstance().withUserTransaction(
+				new UserQuery<Result<FindingType>>() {
 					public Result<FindingType> perform(final Query q,
 							final Server s, final User u) {
 						final FindingTypes types = new FindingTypes(q);
@@ -401,8 +408,8 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 	}
 
 	public List<ScanFilter> getScanFilters() {
-		return ConnectionFactory
-				.withReadOnly(new ServerQuery<List<ScanFilter>>() {
+		return ConnectionFactory.getInstance().withReadOnly(
+				new ServerQuery<List<ScanFilter>>() {
 
 					public List<ScanFilter> perform(final Query q,
 							final Server s) {
@@ -458,8 +465,8 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 	}
 
 	public ScanFilter createScanFilter(final String name) {
-		return ConnectionFactory
-				.withUserTransaction(new UserQuery<ScanFilter>() {
+		return ConnectionFactory.getInstance().withUserTransaction(
+				new UserQuery<ScanFilter>() {
 					public ScanFilter perform(final Query q, final Server s,
 							final User u) {
 						final ScanFilters filters = new ScanFilters(q);
@@ -494,58 +501,72 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 			t.setFindingType(e.getUuid());
 			types.add(t);
 		}
-		return ConnectionFactory.withUserTransaction(new UserQuery<Status>() {
-			public Status perform(final Query q, final Server s, final User u) {
-				if (!s.getUid().equals(
-						q.prepared("Definitions.getDefinitionServer",
-								new StringResultHandler()).call(fDO.getUid()))) {
-					return Status
-							.failure("This scan filter is not owned by this server, and cannot be updated.");
-				}
-				final ScanFilters sf = new ScanFilters(q);
-				try {
-					sf.updateScanFilter(fDO, s.nextRevision());
-				} catch (final RevisionException e) {
-					return Status
-							.failure("Someone else has already updated this scan filter.");
-				}
-				return Status.success("Scan filter updated");
-			}
-		});
+		return ConnectionFactory.getInstance().withUserTransaction(
+				new UserQuery<Status>() {
+					public Status perform(final Query q, final Server s,
+							final User u) {
+						if (!s.getUid().equals(
+								q.prepared("Definitions.getDefinitionServer",
+										new StringResultHandler()).call(
+										fDO.getUid()))) {
+							return Status
+									.failure("This scan filter is not owned by this server, and cannot be updated.");
+						}
+						final ScanFilters sf = new ScanFilters(q);
+						try {
+							sf.updateScanFilter(fDO, s.nextRevision());
+						} catch (final RevisionException e) {
+							return Status
+									.failure("Someone else has already updated this scan filter.");
+						}
+						return Status.success("Scan filter updated");
+					}
+				});
 
 	}
 
 	public Status deleteScanFilter(final String uuid) {
-		return ConnectionFactory.withUserTransaction(new UserQuery<Status>() {
-			public Status perform(final Query q, final Server s, final User u) {
-				return ConnectionFactory
-						.withUserTransaction(new UserQuery<Status>() {
-							public Status perform(final Query q,
-									final Server s, final User u) {
-								final ScanFilters filters = new ScanFilters(q);
-								final String server = s.getUid();
-								if (server.equals(q.prepared(
-										"Definitions.getDefinitionServer",
-										new StringResultHandler()).call(uuid))) {
-									try {
-										q
-												.prepared(
-														"ScanFilters.insertDeletedScanFilter")
-												.call(uuid, server,
-														s.nextRevision());
-										filters.deleteScanFilter(uuid);
-									} catch (final IllegalArgumentException e) {
-										return Status.failure(e.getMessage());
+		return ConnectionFactory.getInstance().withUserTransaction(
+				new UserQuery<Status>() {
+					public Status perform(final Query q, final Server s,
+							final User u) {
+						return ConnectionFactory.getInstance()
+								.withUserTransaction(new UserQuery<Status>() {
+									public Status perform(final Query q,
+											final Server s, final User u) {
+										final ScanFilters filters = new ScanFilters(
+												q);
+										final String server = s.getUid();
+										if (server
+												.equals(q
+														.prepared(
+																"Definitions.getDefinitionServer",
+																new StringResultHandler())
+														.call(uuid))) {
+											try {
+												q
+														.prepared(
+																"ScanFilters.insertDeletedScanFilter")
+														.call(
+																uuid,
+																server,
+																s
+																		.nextRevision());
+												filters.deleteScanFilter(uuid);
+											} catch (final IllegalArgumentException e) {
+												return Status.failure(e
+														.getMessage());
+											}
+										} else {
+											return Status
+													.failure("The scan filter does not belong to this server and cannot be deleted.");
+										}
+										return Status
+												.success("Category deleted");
 									}
-								} else {
-									return Status
-											.failure("The scan filter does not belong to this server and cannot be deleted.");
-								}
-								return Status.success("Category deleted");
-							}
-						});
-			}
-		});
+								});
+					}
+				});
 	}
 
 	private static Importance importance(final ImportanceView i) {
@@ -588,8 +609,10 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 	@SuppressWarnings("unchecked")
 	public List<ServerLocation> listServerLocations() {
 		final List<ServerLocation> servers = new ArrayList<com.surelogic.sierra.gwt.client.data.ServerLocation>();
-		for (final SierraServerLocation l : ConnectionFactory.withReadOnly(
-				ServerLocations.fetchQuery(Collections.EMPTY_MAP)).keySet()) {
+		for (final SierraServerLocation l : ConnectionFactory
+				.getInstance()
+				.withReadOnly(ServerLocations.fetchQuery(Collections.EMPTY_MAP))
+				.keySet()) {
 			final ServerLocation s = new ServerLocation();
 			s.setContext(l.getContextPath());
 			s.setHost(l.getHost());
@@ -604,85 +627,90 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 	}
 
 	public Status deleteServerLocation(final String label) {
-		return ConnectionFactory.withTransaction(new DBQuery<Status>() {
+		return ConnectionFactory.getInstance().withTransaction(
+				new DBQuery<Status>() {
 
-			public Status perform(final Query q) {
-				final Map<SierraServerLocation, Collection<String>> servers = ServerLocations
-						.fetchQuery(null).perform(q);
-				SierraServerLocation loc = null;
-				for (final SierraServerLocation l : servers.keySet()) {
-					if (l.getLabel().equals(label)) {
-						loc = l;
-						break;
+					public Status perform(final Query q) {
+						final Map<SierraServerLocation, Collection<String>> servers = ServerLocations
+								.fetchQuery(null).perform(q);
+						SierraServerLocation loc = null;
+						for (final SierraServerLocation l : servers.keySet()) {
+							if (l.getLabel().equals(label)) {
+								loc = l;
+								break;
+							}
+						}
+						if (loc != null) {
+							servers.remove(loc);
+						}
+						ServerLocations.saveQuery(servers).doPerform(q);
+						return Status.success(label + " deleted.");
 					}
-				}
-				if (loc != null) {
-					servers.remove(loc);
-				}
-				ServerLocations.saveQuery(servers).doPerform(q);
-				return Status.success(label + " deleted.");
-			}
-		});
+				});
 	}
 
 	public Status saveServerLocation(final ServerLocation loc) {
-		return ConnectionFactory.withTransaction(new DBQuery<Status>() {
+		return ConnectionFactory.getInstance().withTransaction(
+				new DBQuery<Status>() {
 
-			public Status perform(final Query q) {
-				final Map<SierraServerLocation, Collection<String>> servers = ServerLocations
-						.fetchQuery(null).perform(q);
-				final SierraServerLocation l = new SierraServerLocation(loc
-						.getLabel(), loc.getHost(),
-						loc.getProtocol() == Protocol.HTTPS, loc.getPort(), loc
-								.getContext(), loc.getUser(), loc.getPass());
-				Collection<String> projects = servers.get(l);
-				if (projects == null) {
-					projects = Collections.emptyList();
-				}
-				servers.remove(l);
-				servers.put(l, projects);
-				ServerLocations.saveQuery(servers).doPerform(q);
-				return Status.success(loc.getLabel() + " updated.");
-			}
-		});
+					public Status perform(final Query q) {
+						final Map<SierraServerLocation, Collection<String>> servers = ServerLocations
+								.fetchQuery(null).perform(q);
+						final SierraServerLocation l = new SierraServerLocation(
+								loc.getLabel(), loc.getHost(), loc
+										.getProtocol() == Protocol.HTTPS, loc
+										.getPort(), loc.getContext(), loc
+										.getUser(), loc.getPass());
+						Collection<String> projects = servers.get(l);
+						if (projects == null) {
+							projects = Collections.emptyList();
+						}
+						servers.remove(l);
+						servers.put(l, projects);
+						ServerLocations.saveQuery(servers).doPerform(q);
+						return Status.success(loc.getLabel() + " updated.");
+					}
+				});
 
 	}
 
 	public Status saveProjectFilter(final String project,
 			final String scanFilter) {
-		return ConnectionFactory.withUserTransaction(new UserQuery<Status>() {
-			public Status perform(final Query query, final Server server,
-					final User user) {
-				new Projects(query).updateProjectFilter(project, scanFilter);
-				return Status.success();
-			}
-		});
+		return ConnectionFactory.getInstance().withUserTransaction(
+				new UserQuery<Status>() {
+					public Status perform(final Query query,
+							final Server server, final User user) {
+						new Projects(query).updateProjectFilter(project,
+								scanFilter);
+						return Status.success();
+					}
+				});
 
 	}
 
 	public List<ReportSettings> listReportSettings() {
-		return ConnectionFactory.withUserReadOnly(ReportSettingQueries
-				.listUserQueries());
+		return ConnectionFactory.getInstance().withUserReadOnly(
+				ReportSettingQueries.listUserQueries());
 	}
 
 	public Status saveReportSettings(final ReportSettings settings) {
 		if (settings.getUuid() == null) {
 			settings.setUuid(UUID.randomUUID().toString());
 		}
-		ConnectionFactory.withUserTransaction(ReportSettingQueries
-				.save(settings));
+		ConnectionFactory.getInstance().withUserTransaction(
+				ReportSettingQueries.save(settings));
 		return Status.success("Settings saved.");
 	}
 
 	public Status deleteReportSettings(final String uuid) {
-		ConnectionFactory
-				.withUserTransaction(ReportSettingQueries.delete(uuid));
+		ConnectionFactory.getInstance().withUserTransaction(
+				ReportSettingQueries.delete(uuid));
 		return Status.success("Settings deleted");
 	}
 
 	public DashboardSettings getDashboardSettings() {
 
-		DashboardSettings settings = ConnectionFactory
+		DashboardSettings settings = ConnectionFactory.getInstance()
 				.withUserReadOnly(DashboardQueries.getDashboard());
 		if (settings == null) {
 			settings = new DashboardSettings();
@@ -713,8 +741,8 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 	}
 
 	public Status saveDashboardSettings(final DashboardSettings settings) {
-		ConnectionFactory.withUserTransaction(DashboardQueries
-				.updateDashboard(settings));
+		ConnectionFactory.getInstance().withUserTransaction(
+				DashboardQueries.updateDashboard(settings));
 		return Status.success();
 	}
 }

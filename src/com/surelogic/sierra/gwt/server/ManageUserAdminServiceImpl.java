@@ -34,8 +34,9 @@ public class ManageUserAdminServiceImpl extends SierraServiceServlet implements
 		} else {
 			return performAdmin(false, new UserTransaction<Result<String>>() {
 
-				public Result<String> perform(Connection conn, Server server,
-						User serverUser) throws SQLException {
+				public Result<String> perform(final Connection conn,
+						final Server server, final User serverUser)
+						throws SQLException {
 					final ServerUserManager man = ServerUserManager
 							.getInstance(conn);
 					final String user = account.getUserName();
@@ -58,15 +59,15 @@ public class ManageUserAdminServiceImpl extends SierraServiceServlet implements
 	public List<UserAccount> findUser(final String userQueryString) {
 		return performAdmin(true, new UserTransaction<List<UserAccount>>() {
 
-			public List<UserAccount> perform(Connection conn, Server server,
-					User user) throws SQLException {
+			public List<UserAccount> perform(final Connection conn,
+					final Server server, final User user) throws SQLException {
 				final ServerUserManager man = ServerUserManager
 						.getInstance(conn);
 
 				final List<User> users = man.findUser(userQueryString);
 				final List<UserAccount> userAccounts = new ArrayList<UserAccount>(
 						users.size());
-				for (User u : users) {
+				for (final User u : users) {
 					userAccounts.add(convertUser(man, u));
 				}
 				return userAccounts;
@@ -76,11 +77,12 @@ public class ManageUserAdminServiceImpl extends SierraServiceServlet implements
 	}
 
 	public List<UserAccount> getUsers() {
-		return ConnectionFactory
-				.withUserReadOnly(new UserTransaction<List<UserAccount>>() {
+		return ConnectionFactory.getInstance().withUserReadOnly(
+				new UserTransaction<List<UserAccount>>() {
 
-					public List<UserAccount> perform(Connection conn,
-							Server server, User user) throws SQLException {
+					public List<UserAccount> perform(final Connection conn,
+							final Server server, final User user)
+							throws SQLException {
 						return listUsers(conn);
 					}
 				});
@@ -89,8 +91,9 @@ public class ManageUserAdminServiceImpl extends SierraServiceServlet implements
 	public UserAccount getUserInfo(final String targetUser) {
 		return performAdmin(true, new UserTransaction<UserAccount>() {
 
-			public UserAccount perform(Connection conn, Server server,
-					User serverUser) throws SQLException {
+			public UserAccount perform(final Connection conn,
+					final Server server, final User serverUser)
+					throws SQLException {
 				final ServerUserManager man = ServerUserManager
 						.getInstance(conn);
 				final User user = man.getUserByName(targetUser);
@@ -104,11 +107,12 @@ public class ManageUserAdminServiceImpl extends SierraServiceServlet implements
 
 	public Result<String> changeUserPassword(final String targetUser,
 			final String currentUserPassword, final String newPassword) {
-		return ConnectionFactory
-				.withUserTransaction(new UserTransaction<Result<String>>() {
+		return ConnectionFactory.getInstance().withUserTransaction(
+				new UserTransaction<Result<String>>() {
 
-					public Result<String> perform(Connection conn,
-							Server server, User user) throws Exception {
+					public Result<String> perform(final Connection conn,
+							final Server server, final User user)
+							throws Exception {
 						final ServerUserManager man = ServerUserManager
 								.getInstance(conn);
 						if (user.getName().equals(targetUser)
@@ -133,8 +137,8 @@ public class ManageUserAdminServiceImpl extends SierraServiceServlet implements
 	public Result<UserAccount> updateUser(final UserAccount account) {
 		return performAdmin(false, new UserTransaction<Result<UserAccount>>() {
 
-			public Result<UserAccount> perform(Connection conn, Server server,
-					User user) throws Exception {
+			public Result<UserAccount> perform(final Connection conn,
+					final Server server, final User user) throws Exception {
 				final ServerUserManager man = ServerUserManager
 						.getInstance(conn);
 				final String targetUserName = account.getUserName();
@@ -151,7 +155,7 @@ public class ManageUserAdminServiceImpl extends SierraServiceServlet implements
 						&& targetUserAccount.isAdministrator()
 						&& (!account.isActive() || !account.isAdministrator())) {
 					int count = 0;
-					for (UserAccount u : listUsers(conn)) {
+					for (final UserAccount u : listUsers(conn)) {
 						if (u.isActive() && u.isAdministrator()) {
 							count++;
 						}
@@ -176,31 +180,34 @@ public class ManageUserAdminServiceImpl extends SierraServiceServlet implements
 	}
 
 	public boolean isAvailable() {
-		Boolean isAdmin = performAdmin(true, new UserTransaction<Boolean>() {
-			public Boolean perform(Connection conn, Server server, User user)
-					throws Exception {
-				return Boolean.TRUE;
-			}
-		});
+		final Boolean isAdmin = performAdmin(true,
+				new UserTransaction<Boolean>() {
+					public Boolean perform(final Connection conn,
+							final Server server, final User user)
+							throws Exception {
+						return Boolean.TRUE;
+					}
+				});
 		return Boolean.TRUE.equals(isAdmin);
 	}
 
-	private List<UserAccount> listUsers(Connection conn) throws SQLException {
+	private List<UserAccount> listUsers(final Connection conn)
+			throws SQLException {
 		final ServerUserManager man = ServerUserManager.getInstance(conn);
 
 		final List<User> users = man.listUsers();
 		final List<UserAccount> userAccounts = new ArrayList<UserAccount>(users
 				.size());
-		for (User u : users) {
+		for (final User u : users) {
 			userAccounts.add(convertUser(man, u));
 		}
 		return userAccounts;
 	}
 
-	private UserAccount convertUser(ServerUserManager man, User u)
+	private UserAccount convertUser(final ServerUserManager man, final User u)
 			throws SQLException {
 		final String userName = u.getName();
-		boolean isAdmin = man.isUserInGroup(userName, SierraGroup.ADMIN
+		final boolean isAdmin = man.isUserInGroup(userName, SierraGroup.ADMIN
 				.getName());
 		return new UserAccount(u.getId(), userName, isAdmin, u.isActive());
 	}
@@ -210,11 +217,11 @@ public class ManageUserAdminServiceImpl extends SierraServiceServlet implements
 		if (users != null && !users.isEmpty()) {
 			performAdmin(false, new UserTransaction<Void>() {
 
-				public Void perform(Connection conn, Server server, User user)
-						throws Exception {
+				public Void perform(final Connection conn, final Server server,
+						final User user) throws Exception {
 					final ServerUserManager man = ServerUserManager
 							.getInstance(conn);
-					for (Object userName : users) {
+					for (final Object userName : users) {
 						man.changeUserStatus((String) userName, isActive);
 					}
 					return null;

@@ -46,8 +46,8 @@ public class FindingServiceImpl extends SierraServiceServlet implements
 		if ((key == null) || "".equals(key)) {
 			return null;
 		}
-		return ConnectionFactory
-				.withUserReadOnly(new UserQuery<FindingOverview>() {
+		return ConnectionFactory.getInstance().withUserReadOnly(
+				new UserQuery<FindingOverview>() {
 
 					public FindingOverview perform(final Query query,
 							final Server server, final User user) {
@@ -138,72 +138,81 @@ public class FindingServiceImpl extends SierraServiceServlet implements
 	}
 
 	public List<Scan> getScans(final String project) {
-		return ConnectionFactory.withUserReadOnly(new UserQuery<List<Scan>>() {
-			public List<Scan> perform(final Query query, final Server server,
-					final User user) {
-				final List<Scan> scans = new ArrayList<Scan>();
-				for (final ScanInfo info : new Scans(query)
-						.getScanInfo(project)) {
-					final Scan s = new Scan();
-					s.setJavaVendor(info.getJavaVendor());
-					s.setJavaVersion(info.getJavaVersion());
-					s.setProject(info.getProject());
-					s.setScanTime(info.getScanTime());
-					s.setScanTimeDisplay(Dates.format(info.getScanTime()));
-					s.setUser(info.getUser());
-					s.setUuid(info.getUid());
-					scans.add(s);
-				}
-				return scans;
-			}
-		});
+		return ConnectionFactory.getInstance().withUserReadOnly(
+				new UserQuery<List<Scan>>() {
+					public List<Scan> perform(final Query query,
+							final Server server, final User user) {
+						final List<Scan> scans = new ArrayList<Scan>();
+						for (final ScanInfo info : new Scans(query)
+								.getScanInfo(project)) {
+							final Scan s = new Scan();
+							s.setJavaVendor(info.getJavaVendor());
+							s.setJavaVersion(info.getJavaVersion());
+							s.setProject(info.getProject());
+							s.setScanTime(info.getScanTime());
+							s.setScanTimeDisplay(Dates.format(info
+									.getScanTime()));
+							s.setUser(info.getUser());
+							s.setUuid(info.getUid());
+							scans.add(s);
+						}
+						return scans;
+					}
+				});
 	}
 
 	public ScanDetail getScanDetail(final String uuid) {
-		return ConnectionFactory.withUserReadOnly(new ScanDetailQuery(uuid));
+		return ConnectionFactory.getInstance().withUserReadOnly(
+				new ScanDetailQuery(uuid));
 	}
 
 	public Result<FindingOverview> changeImportance(final long findingId,
 			final ImportanceView view) {
-		ConnectionFactory.withUserTransaction(new NullUserTransaction() {
-			@Override
-			public void doPerform(final Connection conn, final Server server,
-					final User user) throws Exception {
-				ServerFindingManager.getInstance(conn).setImportance(findingId,
-						user, server.nextRevision(),
-						Importance.values()[view.ordinal()]);
-			}
-		});
+		ConnectionFactory.getInstance().withUserTransaction(
+				new NullUserTransaction() {
+					@Override
+					public void doPerform(final Connection conn,
+							final Server server, final User user)
+							throws Exception {
+						ServerFindingManager.getInstance(conn).setImportance(
+								findingId, user, server.nextRevision(),
+								Importance.values()[view.ordinal()]);
+					}
+				});
 		return Result.success(getFinding(Long.toString(findingId)));
 	}
 
 	public Result<FindingOverview> comment(final long findingId,
 			final String comment) {
-		ConnectionFactory.withUserTransaction(new NullUserTransaction() {
-			@Override
-			public void doPerform(final Connection conn, final Server server,
-					final User user) throws Exception {
-				ServerFindingManager.getInstance(conn).comment(findingId, user,
-						server.nextRevision(), comment);
-			}
-		});
+		ConnectionFactory.getInstance().withUserTransaction(
+				new NullUserTransaction() {
+					@Override
+					public void doPerform(final Connection conn,
+							final Server server, final User user)
+							throws Exception {
+						ServerFindingManager.getInstance(conn)
+								.comment(findingId, user,
+										server.nextRevision(), comment);
+					}
+				});
 		return Result.success(getFinding(Long.toString(findingId)));
 	}
 
 	public ScanDetail getLatestScanDetail(final String project) {
-		return ConnectionFactory.withUserReadOnly(new UserQuery<ScanDetail>() {
+		return ConnectionFactory.getInstance().withUserReadOnly(
+				new UserQuery<ScanDetail>() {
 
-			public ScanDetail perform(final Query query, final Server server,
-					final User user) {
-				final ScanInfo info = new Scans(query)
-						.getLatestScanInfo(project);
-				if (info != null) {
-					return new ScanDetailQuery(info.getUid()).perform(query,
-							server, user);
-				}
-				return null;
-			}
-		});
+					public ScanDetail perform(final Query query,
+							final Server server, final User user) {
+						final ScanInfo info = new Scans(query)
+								.getLatestScanInfo(project);
+						if (info != null) {
+							return new ScanDetailQuery(info.getUid()).perform(
+									query, server, user);
+						}
+						return null;
+					}
+				});
 	}
 
 	private static class ScanDetailQuery implements UserQuery<ScanDetail> {

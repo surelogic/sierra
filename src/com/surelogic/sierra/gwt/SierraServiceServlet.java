@@ -58,8 +58,8 @@ public abstract class SierraServiceServlet extends RemoteServiceServlet {
 			}
 		};
 		if (readOnly) {
-			return ConnectionFactory.withUserReadOnly(adminTrans);
+			return ConnectionFactory.getInstance().withUserReadOnly(adminTrans);
 		}
-		return ConnectionFactory.withUserTransaction(adminTrans);
+		return ConnectionFactory.getInstance().withUserTransaction(adminTrans);
 	}
 }
