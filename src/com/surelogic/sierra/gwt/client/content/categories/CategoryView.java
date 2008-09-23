@@ -13,7 +13,7 @@ import com.surelogic.sierra.gwt.client.data.FindingTypeFilter;
 import com.surelogic.sierra.gwt.client.data.cache.ReportCache;
 import com.surelogic.sierra.gwt.client.ui.chart.ChartBuilder;
 import com.surelogic.sierra.gwt.client.ui.panel.BasicPanel;
-import com.surelogic.sierra.gwt.client.ui.panel.ListBlock;
+import com.surelogic.sierra.gwt.client.ui.panel.ListPanel;
 import com.surelogic.sierra.gwt.client.util.LangUtil;
 
 public class CategoryView extends BasicPanel {
@@ -66,7 +66,7 @@ public class CategoryView extends BasicPanel {
 		}
 	}
 
-	private class FindingsView extends ListBlock<FindingTypeFilter> {
+	private class FindingsView extends ListPanel<FindingTypeFilter> {
 
 		public FindingsView() {
 			super("Finding Types");

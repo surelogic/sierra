@@ -16,7 +16,7 @@ import com.surelogic.sierra.gwt.client.data.FindingType.ScanFilterInfo;
 import com.surelogic.sierra.gwt.client.data.cache.ReportCache;
 import com.surelogic.sierra.gwt.client.ui.chart.ChartBuilder;
 import com.surelogic.sierra.gwt.client.ui.panel.BasicPanel;
-import com.surelogic.sierra.gwt.client.ui.panel.ListBlock;
+import com.surelogic.sierra.gwt.client.ui.panel.ListPanel;
 import com.surelogic.sierra.gwt.client.util.LangUtil;
 
 public class FindingTypeView extends BasicPanel {
@@ -100,7 +100,7 @@ public class FindingTypeView extends BasicPanel {
 		return categoryIds;
 	}
 
-	private class CategoryList extends ListBlock<CategoryInfo> {
+	private class CategoryList extends ListPanel<CategoryInfo> {
 
 		public CategoryList(final String title) {
 			super(title);
@@ -122,7 +122,7 @@ public class FindingTypeView extends BasicPanel {
 		}
 	}
 
-	private class ScanFilterList extends ListBlock<ScanFilterInfo> {
+	private class ScanFilterList extends ListPanel<ScanFilterInfo> {
 
 		public ScanFilterList() {
 			super("Scan Filters that use this type of finding");

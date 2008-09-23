@@ -12,13 +12,13 @@ import com.surelogic.sierra.gwt.client.ui.StyleHelper;
 import com.surelogic.sierra.gwt.client.ui.StyleHelper.Style;
 import com.surelogic.sierra.gwt.client.ui.link.ContentLink;
 
-public abstract class ListBlock<E extends Cacheable> extends BasicPanel {
+public abstract class ListPanel<E extends Cacheable> extends BasicPanel {
 	private final String title;
 	private final List<E> items = new ArrayList<E>();
 	private final Label none = StyleHelper.add(new Label("None", false),
 			Style.ITALICS);
 
-	public ListBlock(final String title) {
+	public ListPanel(final String title) {
 		super();
 		this.title = title;
 	}

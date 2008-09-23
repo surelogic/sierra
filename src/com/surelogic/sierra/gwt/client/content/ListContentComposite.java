@@ -11,7 +11,7 @@ import com.surelogic.sierra.gwt.client.data.cache.Cache;
 import com.surelogic.sierra.gwt.client.data.cache.CacheListener;
 import com.surelogic.sierra.gwt.client.data.cache.Cacheable;
 import com.surelogic.sierra.gwt.client.ui.panel.BasicPanel;
-import com.surelogic.sierra.gwt.client.ui.panel.SearchBlock;
+import com.surelogic.sierra.gwt.client.ui.panel.SearchPanel;
 import com.surelogic.sierra.gwt.client.util.LangUtil;
 
 public abstract class ListContentComposite<E extends Cacheable, C extends Cache<E>>
@@ -19,7 +19,7 @@ public abstract class ListContentComposite<E extends Cacheable, C extends Cache<
 	private final C cache;
 	private final ListView listView;
 	private final VerticalPanel westPanel = new VerticalPanel();
-	private final ActionBlock actionBlock = new ActionBlock();
+	private final ActionPanel actionPanel = new ActionPanel();
 	private final VerticalPanel selectionPanel = new VerticalPanel();
 	private CacheListener<E> cacheListener;
 	private E selection;
@@ -107,10 +107,10 @@ public abstract class ListContentComposite<E extends Cacheable, C extends Cache<
 	}
 
 	protected final void addAction(final Widget actionUI) {
-		if (westPanel.getWidgetIndex(actionBlock) == -1) {
-			westPanel.insert(actionBlock, 0);
+		if (westPanel.getWidgetIndex(actionPanel) == -1) {
+			westPanel.insert(actionPanel, 0);
 		}
-		actionBlock.addItem(actionUI);
+		actionPanel.addItem(actionUI);
 	}
 
 	private void refreshContext(final Context context) {
@@ -141,7 +141,7 @@ public abstract class ListContentComposite<E extends Cacheable, C extends Cache<
 
 	protected abstract boolean isItemVisible(E item, String searchText);
 
-	private class ActionBlock extends BasicPanel {
+	private class ActionPanel extends BasicPanel {
 
 		@Override
 		protected void onInitialize(final VerticalPanel contentPanel) {
@@ -154,7 +154,7 @@ public abstract class ListContentComposite<E extends Cacheable, C extends Cache<
 		}
 	}
 
-	private class ListView extends SearchBlock<E, C> {
+	private class ListView extends SearchPanel<E, C> {
 		public ListView(final C cache) {
 			super(cache);
 		}

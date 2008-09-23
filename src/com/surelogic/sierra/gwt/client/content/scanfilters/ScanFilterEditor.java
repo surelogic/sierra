@@ -30,9 +30,9 @@ import com.surelogic.sierra.gwt.client.ui.panel.BasicPanel;
 
 public class ScanFilterEditor extends BasicPanel {
 
-	private final ScanFilterBlock categoryFilters = new ScanFilterBlock(
+	private final ScanFilterPanel categoryFilters = new ScanFilterPanel(
 			"Categories");
-	private final ScanFilterBlock findingFilters = new ScanFilterBlock(
+	private final ScanFilterPanel findingFilters = new ScanFilterPanel(
 			"Findings");
 	private ScanFilter selection;
 	private StatusBox status;
@@ -140,10 +140,10 @@ public class ScanFilterEditor extends BasicPanel {
 		dialog.update(selection.getCategories(), selection.getTypes());
 	}
 
-	private static class ScanFilterBlock extends BasicPanel {
+	private static class ScanFilterPanel extends BasicPanel {
 		private final FlexTable filterGrid = new FlexTable();
 
-		public ScanFilterBlock(final String title) {
+		public ScanFilterPanel(final String title) {
 			super();
 			setSubsectionStyle(true);
 			setTitle(title);

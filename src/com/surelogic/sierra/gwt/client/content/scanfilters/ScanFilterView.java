@@ -30,15 +30,15 @@ import com.surelogic.sierra.gwt.client.ui.link.ContentLink;
 import com.surelogic.sierra.gwt.client.ui.panel.BasicPanel;
 
 public class ScanFilterView extends BasicPanel {
-	private final VerticalPanel importanceBlocks = new VerticalPanel();
+	private final VerticalPanel importancePanels = new VerticalPanel();
 	private ScanFilter selection;
 	private boolean showCategories = true;
 	private boolean refreshedCategories;
 
 	@Override
 	protected void onInitialize(final VerticalPanel contentPanel) {
-		importanceBlocks.setWidth("100%");
-		contentPanel.add(importanceBlocks);
+		importancePanels.setWidth("100%");
+		contentPanel.add(importancePanels);
 	}
 
 	public ScanFilter getSelection() {
@@ -53,20 +53,20 @@ public class ScanFilterView extends BasicPanel {
 		}
 
 		selection = filter;
-		importanceBlocks.clear();
+		importancePanels.clear();
 
 		if (selection != null) {
 			setSummary(selection.getName());
 
-			final Map<ImportanceView, FilterBlock> categoryImportanceBlocks = new HashMap<ImportanceView, FilterBlock>();
+			final Map<ImportanceView, FilterPanel> categoryImportancePanels = new HashMap<ImportanceView, FilterPanel>();
 			final Set<ScanFilterEntry> categoryFindings = new HashSet<ScanFilterEntry>();
 			if (showCategories) {
 				final List<ScanFilterEntry> sortedCategories = new ArrayList<ScanFilterEntry>(
 						filter.getCategories());
 				Collections.sort(sortedCategories);
 				for (final ScanFilterEntry category : sortedCategories) {
-					final FilterBlock filterList = getFilterBlock(
-							categoryImportanceBlocks, category.getImportance(),
+					final FilterPanel filterList = getFilterPanel(
+							categoryImportancePanels, category.getImportance(),
 							true);
 					filterList.addFilterEntry(category);
 				}
@@ -85,7 +85,7 @@ public class ScanFilterView extends BasicPanel {
 				}
 			}
 
-			final Map<ImportanceView, FilterBlock> findingImportanceBlocks = new HashMap<ImportanceView, FilterBlock>();
+			final Map<ImportanceView, FilterPanel> findingImportancePanels = new HashMap<ImportanceView, FilterPanel>();
 			final List<ScanFilterEntry> sortedFindings = new ArrayList<ScanFilterEntry>(
 					filter.getTypes());
 			if (!categoryFindings.isEmpty()) {
@@ -93,22 +93,23 @@ public class ScanFilterView extends BasicPanel {
 			}
 			Collections.sort(sortedFindings);
 			for (final ScanFilterEntry finding : sortedFindings) {
-				final FilterBlock filterList = getFilterBlock(
-						findingImportanceBlocks, finding.getImportance(), false);
+				final FilterPanel filterList = getFilterPanel(
+						findingImportancePanels, finding.getImportance(), false);
 				filterList.addFilterEntry(finding);
 			}
 
 			final ImportanceView[] importances = ImportanceView.values();
 
 			for (int i = importances.length - 1; i >= 0; i--) {
-				addBlocks(importances[i], categoryImportanceBlocks,
-						findingImportanceBlocks);
+				addFilterPanels(importances[i], categoryImportancePanels,
+						findingImportancePanels);
 
 			}
-			addBlocks(null, categoryImportanceBlocks, findingImportanceBlocks);
+			addFilterPanels(null, categoryImportancePanels,
+					findingImportancePanels);
 
-			if (importanceBlocks.getWidgetCount() == 0) {
-				importanceBlocks.add(StyleHelper.add(new Label(
+			if (importancePanels.getWidgetCount() == 0) {
+				importancePanels.add(StyleHelper.add(new Label(
 						"No categories or findings in this Scan Filter."),
 						Style.ITALICS));
 			}
@@ -139,45 +140,45 @@ public class ScanFilterView extends BasicPanel {
 		CategoryCache.getInstance().refresh(false);
 	}
 
-	private void addBlocks(final ImportanceView importance,
-			final Map<ImportanceView, FilterBlock> categoryBlocks,
-			final Map<ImportanceView, FilterBlock> findingBlocks) {
-		final FilterBlock categoryBlock = categoryBlocks.get(importance);
-		final FilterBlock findingBlock = findingBlocks.get(importance);
-		if (categoryBlock != null || findingBlock != null) {
+	private void addFilterPanels(final ImportanceView importance,
+			final Map<ImportanceView, FilterPanel> categoryPanels,
+			final Map<ImportanceView, FilterPanel> findingPanels) {
+		final FilterPanel categoryPanel = categoryPanels.get(importance);
+		final FilterPanel findingPanel = findingPanels.get(importance);
+		if (categoryPanel != null || findingPanel != null) {
 			final String importanceTitle = importance == null ? "Default"
 					: importance.getName();
-			importanceBlocks.add(StyleHelper.add(new Label(importanceTitle
+			importancePanels.add(StyleHelper.add(new Label(importanceTitle
 					+ " Priority", false), Style.STRONG));
 		}
-		if (categoryBlock != null) {
-			importanceBlocks.add(categoryBlock);
+		if (categoryPanel != null) {
+			importancePanels.add(categoryPanel);
 		}
 
-		if (findingBlock != null) {
-			importanceBlocks.add(findingBlock);
+		if (findingPanel != null) {
+			importancePanels.add(findingPanel);
 		}
 	}
 
-	private FilterBlock getFilterBlock(
-			final Map<ImportanceView, FilterBlock> blocksByImportance,
+	private FilterPanel getFilterPanel(
+			final Map<ImportanceView, FilterPanel> filtersByImportance,
 			final ImportanceView importance, final boolean isCategory) {
-		FilterBlock block = blocksByImportance.get(importance);
-		if (block == null) {
-			block = new FilterBlock(isCategory);
-			block.initialize();
-			blocksByImportance.put(importance, block);
+		FilterPanel panel = filtersByImportance.get(importance);
+		if (panel == null) {
+			panel = new FilterPanel(isCategory);
+			panel.initialize();
+			filtersByImportance.put(importance, panel);
 		}
-		return block;
+		return panel;
 	}
 
-	private static class FilterBlock extends BasicPanel {
+	private static class FilterPanel extends BasicPanel {
 		private final VerticalPanel categoriesLeft = new VerticalPanel();
 		private final VerticalPanel categoriesRight = new VerticalPanel();
 		private final VerticalPanel findingsLeft = new VerticalPanel();
 		private final VerticalPanel findingsRight = new VerticalPanel();
 
-		public FilterBlock(final boolean categories) {
+		public FilterPanel(final boolean categories) {
 			super();
 			setTitle(categories ? "Categories" : "Findings");
 			setSubsectionStyle(true);
