@@ -5,6 +5,7 @@ import java.io.File;
 import org.eclipse.core.runtime.IPath;
 
 import com.surelogic.common.derby.DerbyConnection;
+import com.surelogic.common.jdbc.DBConnection;
 import com.surelogic.common.jdbc.SchemaData;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
 import com.surelogic.sierra.schema.SierraSchemaData;
@@ -13,7 +14,7 @@ public final class Data extends DerbyConnection {
 
 	private static final Data INSTANCE = new Data();
 
-	public static Data getInstance() {
+	public static DBConnection getInstance() {
 		INSTANCE.loggedBootAndCheckSchema();
 		return INSTANCE;
 	}
