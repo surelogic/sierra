@@ -22,6 +22,10 @@ public class ContentBlockPanel extends BlockPanel implements
 		onRefresh(block);
 	}
 
+	public final ContentBlock<?> getBlock() {
+		return block;
+	}
+
 	public void onRefresh(final ContentBlock<?> sender) {
 		setTitle(sender.getName());
 		setSummary(sender.getSummary());

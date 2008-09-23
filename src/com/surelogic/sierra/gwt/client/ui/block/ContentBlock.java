@@ -62,19 +62,20 @@ public abstract class ContentBlock<T extends Widget> extends Composite {
 		actions.add(w);
 	}
 
-	protected final void addAction(final String text,
+	protected final Label addAction(final String text,
 			final ClickListener clickListener) {
 		final Label action = StyleHelper.add(new Label(text, false),
 				Style.CLICKABLE);
 		action.addClickListener(clickListener);
 		actions.add(action);
+		return action;
 	}
 
 	protected final void removeAction(final Widget w) {
 		actions.remove(w);
 	}
 
-	protected final void clearActions() {
+	protected final void removeActions() {
 		actions.clear();
 	}
 
