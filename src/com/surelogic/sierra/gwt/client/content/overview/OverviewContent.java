@@ -43,6 +43,7 @@ public final class OverviewContent extends ContentComposite {
 	private DashboardSettings settings;
 	private final VerticalPanel dashboard = new VerticalPanel();
 	private final Map<ContentBlockPanel, DashboardBlock> dashboardWidgetUIs = new HashMap<ContentBlockPanel, DashboardBlock>();
+	private boolean editMode;
 
 	public static OverviewContent getInstance() {
 		return instance;
@@ -63,7 +64,7 @@ public final class OverviewContent extends ContentComposite {
 		actionPanel.addAction(ACTION_CUSTOMIZE, new ClickListener() {
 
 			public void onClick(final Widget sender) {
-				toggleDashboardEdit(true);
+				toggleEditMode(true);
 			}
 		});
 		actionPanel.addAction(ACTION_SAVE, new ClickListener() {
@@ -75,7 +76,7 @@ public final class OverviewContent extends ContentComposite {
 		actionPanel.addAction(ACTION_CANCEL, new ClickListener() {
 
 			public void onClick(final Widget sender) {
-				toggleDashboardEdit(false);
+				retrieveDashboard();
 			}
 		});
 		titlePanel.add(actionPanel);
@@ -102,8 +103,8 @@ public final class OverviewContent extends ContentComposite {
 
 					@Override
 					protected void doSuccess(final DashboardSettings result) {
+						editMode = false;
 						updateDashboardUI(result);
-						toggleDashboardEdit(false);
 					}
 
 				});
@@ -135,6 +136,8 @@ public final class OverviewContent extends ContentComposite {
 			}
 			lastColumnCount = cols.size();
 		}
+
+		toggleEditMode(editMode);
 	}
 
 	private DashboardBlock createWidgetUI(final DashboardWidget dw) {
@@ -148,7 +151,7 @@ public final class OverviewContent extends ContentComposite {
 				db = new DashboardBlock(new ReportTableBlock(rw.getSettings()));
 			}
 			if (db != null) {
-				db.addDashboardListener(new EditModeListener());
+				db.addDashboardListener(new EditModeListener(dw));
 				return db;
 			} else {
 				throw new IllegalArgumentException("Unsupported output type: "
@@ -169,7 +172,8 @@ public final class OverviewContent extends ContentComposite {
 		dashboard.clear();
 	}
 
-	private void toggleDashboardEdit(final boolean editMode) {
+	private void toggleEditMode(final boolean editMode) {
+		this.editMode = editMode;
 		actionPanel.setActionVisible(ACTION_CUSTOMIZE, !editMode);
 		actionPanel.setActionVisible(ACTION_SAVE, editMode);
 		actionPanel.setActionVisible(ACTION_CANCEL, editMode);
@@ -188,7 +192,7 @@ public final class OverviewContent extends ContentComposite {
 					protected void doStatus(final Status status) {
 						actionPanel.clearWaitStatus();
 						if (status.isSuccess()) {
-							toggleDashboardEdit(false);
+							toggleEditMode(false);
 						} else {
 							Window
 									.alert("Dashboard Settings could not be saved: "
@@ -199,6 +203,12 @@ public final class OverviewContent extends ContentComposite {
 	}
 
 	private final class EditModeListener implements DashboardListener {
+		private final DashboardWidget dashboardWidget;
+
+		public EditModeListener(final DashboardWidget dw) {
+			super();
+			this.dashboardWidget = dw;
+		}
 
 		public void onMove(final DashboardBlock block, final Direction direction) {
 			// TODO move this block and re-render layout
@@ -206,8 +216,8 @@ public final class OverviewContent extends ContentComposite {
 		}
 
 		public void onRemove(final DashboardBlock block) {
-			// TODO remove this block and re-render layout
-
+			settings.removeColumn(dashboardWidget);
+			updateDashboardUI(settings);
 		}
 
 	}

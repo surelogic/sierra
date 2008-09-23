@@ -39,6 +39,31 @@ public class DashboardSettings implements Serializable {
 		cols.set(col, widget);
 	}
 
+	public void removeColumn(final DashboardWidget dashboardWidget) {
+		for (final DashboardRow row : getRows()) {
+			row.getColumns().remove(dashboardWidget);
+		}
+		cleanup();
+	}
+
+	public void cleanup() {
+		int rowIndex = 0;
+		final List<DashboardRow> rows = getRows();
+		while (rowIndex < rows.size()) {
+			boolean emptyRow = true;
+			for (final DashboardWidget w : rows.get(rowIndex).getColumns()) {
+				if (w != null) {
+					emptyRow = false;
+				}
+			}
+			if (emptyRow) {
+				rows.remove(rowIndex);
+			} else {
+				rowIndex++;
+			}
+		}
+	}
+
 	public static class DashboardRow implements Serializable {
 		private static final long serialVersionUID = 5839295537032841813L;
 
@@ -52,4 +77,5 @@ public class DashboardSettings implements Serializable {
 		}
 
 	}
+
 }
