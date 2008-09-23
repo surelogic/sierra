@@ -12,6 +12,7 @@ public class ContentBlockPanel extends BasicPanel implements
 	public ContentBlockPanel(final ContentBlock<?> block) {
 		super();
 		this.block = block;
+		block.addListener(this);
 	}
 
 	@Override

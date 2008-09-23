@@ -126,7 +126,6 @@ public final class OverviewContent extends ContentComposite {
 				final DashboardWidget dw = cols.get(i);
 				if (dw != null) {
 					final DashboardBlock db = createWidgetUI(dw);
-					// db.setWidth("100%");
 					final ContentBlockPanel cbp = new ContentBlockPanel(db);
 					cbp.initialize();
 					cbp.setWidth("100%");
