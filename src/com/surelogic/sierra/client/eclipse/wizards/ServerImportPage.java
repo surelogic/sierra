@@ -128,14 +128,14 @@ public class ServerImportPage extends AbstractImportWizardPage {
 	}
 
 	@Override
-  protected boolean areCustomFieldsComplete() {
-    if (f_transfersTable.getItemCount() > 0 && !hasChecked()) {
-      setErrorMessage("No Sierra Team Server locations selected to import");
-      return false;
-    }
-    return true;
-  }
-  
+	protected boolean areCustomFieldsComplete() {
+		if (f_transfersTable.getItemCount() > 0 && !hasChecked()) {
+			setErrorMessage("No Sierra Team Server locations selected to import");
+			return false;
+		}
+		return true;
+	}
+
 	private void createServersTable(Composite composite) {
 
 		f_tableGroup = new Group(composite, SWT.NONE);
@@ -258,7 +258,7 @@ public class ServerImportPage extends AbstractImportWizardPage {
 		deselectButton.setFont(parentFont);
 	}
 
-  @Override
+	@Override
 	protected void layoutImportFileGroup(Composite importFileSelectionGroup) {
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 3;
@@ -274,11 +274,11 @@ public class ServerImportPage extends AbstractImportWizardPage {
 				GridData.HORIZONTAL_ALIGN_FILL));
 	}
 
-  @Override
-  protected void updateState(File holder) {
-    getServers(holder);
-  }
-  
+	@Override
+	protected void updateState(File holder) {
+		getServers(holder);
+	}
+
 	/**
 	 * Parse the provided server document and obtain the information about the
 	 * servers. It uses exceptions to notify validity of the page.
@@ -300,10 +300,7 @@ public class ServerImportPage extends AbstractImportWizardPage {
 			// Clear the table and description, table.clearAll() does not work
 			// properly
 			if (f_transfersTable.getItemCount() > 0) {
-				TableItem[] items = f_transfersTable.getItems();
-				for (TableItem ti : items) {
-					ti.dispose();
-				}
+				f_transfersTable.removeAll();
 				f_tableItemDescription
 						.setText("Select a Sierra Team Server location to get more information");
 			}
@@ -326,7 +323,8 @@ public class ServerImportPage extends AbstractImportWizardPage {
 					TableItem t = new TableItem(f_transfersTable, SWT.CHECK);
 					t.setText(ssh.getLabel());
 					t.setData(ssh);
-					t.setImage(SLImages.getImage(CommonImages.IMG_SIERRA_SERVER));
+					t.setImage(SLImages
+							.getImage(CommonImages.IMG_SIERRA_SERVER));
 				} else {
 					f_existingServers.add(ssh.getLabel());
 				}
