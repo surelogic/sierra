@@ -1,8 +1,10 @@
 package com.surelogic.sierra.gwt.client.content.overview;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -117,7 +119,9 @@ public final class OverviewContent extends ContentComposite {
 
 		int lastColumnCount = 0;
 		ColumnPanel currentColPanel = null;
-		for (final DashboardRow row : settings.getRows()) {
+		int rowIndex = 0;
+		final List<DashboardRow> rows = settings.getRows();
+		for (final DashboardRow row : rows) {
 			final List<DashboardWidget> cols = row.getColumns();
 			if (currentColPanel == null || lastColumnCount != cols.size()) {
 				currentColPanel = new ColumnPanel();
@@ -127,6 +131,8 @@ public final class OverviewContent extends ContentComposite {
 				final DashboardWidget dw = cols.get(i);
 				if (dw != null) {
 					final DashboardBlock db = createWidgetUI(dw);
+					db.updateMovementActions(getAllowedMovements(settings,
+							rowIndex, rows.size(), i, cols.size()));
 					final ContentBlockPanel cbp = new ContentBlockPanel(db);
 					cbp.initialize();
 					cbp.setWidth("100%");
@@ -135,6 +141,7 @@ public final class OverviewContent extends ContentComposite {
 				}
 			}
 			lastColumnCount = cols.size();
+			rowIndex++;
 		}
 
 		toggleEditMode(editMode);
@@ -160,6 +167,33 @@ public final class OverviewContent extends ContentComposite {
 		}
 		throw new IllegalArgumentException("Unsupported dashboard widget: "
 				+ dw.getClass().getName());
+	}
+
+	private Set<Direction> getAllowedMovements(
+			final DashboardSettings settings, final int rowIndex,
+			final int rowCount, final int colIndex, final int colCount) {
+		final Set<Direction> allowedMovements = new HashSet<Direction>();
+		if (colIndex > 0) {
+			allowedMovements.add(Direction.LEFT);
+		}
+		if (colIndex == 0 && colCount > 1) {
+			allowedMovements.add(Direction.RIGHT);
+		}
+		final DashboardRow previousRow = rowIndex > 0 ? settings.getRows().get(
+				rowIndex - 1) : null;
+		if (colCount > 1) {
+			if (previousRow != null && previousRow.getColumns().size() > 1) {
+				allowedMovements.add(Direction.UP);
+			}
+		} else if (rowIndex > 0) {
+			allowedMovements.add(Direction.UP);
+		}
+		if (colCount > 1) {
+			allowedMovements.add(Direction.DOWN);
+		} else if (rowIndex < rowCount - 1) {
+			allowedMovements.add(Direction.DOWN);
+		}
+		return allowedMovements;
 	}
 
 	@Override
@@ -211,8 +245,9 @@ public final class OverviewContent extends ContentComposite {
 		}
 
 		public void onMove(final DashboardBlock block, final Direction direction) {
-			// TODO move this block and re-render layout
-
+			if (settings.moveColumn(dashboardWidget, direction)) {
+				updateDashboardUI(settings);
+			}
 		}
 
 		public void onRemove(final DashboardBlock block) {

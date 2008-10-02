@@ -2,6 +2,7 @@ package com.surelogic.sierra.gwt.client.content.overview;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -15,16 +16,20 @@ import com.surelogic.sierra.gwt.client.ui.type.Direction;
 public class DashboardBlock extends ContentBlock<ContentBlock<?>> {
 
 	private final HorizontalPanel movementActions = new HorizontalPanel();
+	private final Image moveUp = createArrowImage(Direction.UP);
+	private final Image moveDown = createArrowImage(Direction.DOWN);
+	private final Image moveLeft = createArrowImage(Direction.LEFT);
+	private final Image moveRight = createArrowImage(Direction.RIGHT);
 	private final List<DashboardListener> dashboardListeners = new ArrayList<DashboardListener>();
 	private boolean editing;
 
 	public DashboardBlock(final ContentBlock<?> content) {
 		super(content);
 
-		movementActions.add(createArrowImage(Direction.UP));
-		movementActions.add(createArrowImage(Direction.DOWN));
-		movementActions.add(createArrowImage(Direction.LEFT));
-		movementActions.add(createArrowImage(Direction.RIGHT));
+		movementActions.add(moveLeft);
+		movementActions.add(moveRight);
+		movementActions.add(moveUp);
+		movementActions.add(moveDown);
 
 		content.addListener(new ContentBlockListener() {
 
@@ -71,6 +76,13 @@ public class DashboardBlock extends ContentBlock<ContentBlock<?>> {
 		}
 
 		fireRefresh();
+	}
+
+	public void updateMovementActions(final Set<Direction> allowedMovements) {
+		moveUp.setVisible(allowedMovements.contains(Direction.UP));
+		moveDown.setVisible(allowedMovements.contains(Direction.DOWN));
+		moveLeft.setVisible(allowedMovements.contains(Direction.LEFT));
+		moveRight.setVisible(allowedMovements.contains(Direction.RIGHT));
 	}
 
 	private Image createArrowImage(final Direction direction) {
