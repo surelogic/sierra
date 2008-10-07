@@ -45,8 +45,7 @@ public final class Data extends DerbyConnection {
 		return "SIERRA";
 	}
 
-	@Override
-	protected SchemaData getSchemaLoader() {
+	public SchemaData getSchemaLoader() {
 		return new SierraSchemaData();
 	}
 }
