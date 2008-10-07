@@ -17,6 +17,7 @@ import javax.sql.DataSource;
 import com.surelogic.common.jdbc.DBConnection;
 import com.surelogic.common.jdbc.DBQuery;
 import com.surelogic.common.jdbc.DBTransaction;
+import com.surelogic.common.jdbc.SchemaData;
 import com.surelogic.common.jdbc.TransactionException;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.jdbc.user.User;
@@ -665,6 +666,11 @@ public enum ConnectionFactory implements DBConnection {
 
 	public Connection transactionConnection() throws SQLException {
 		return lookupConnection();
+	}
+
+	public SchemaData getSchemaLoader() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
