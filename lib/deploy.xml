@@ -21,6 +21,7 @@
 		<copy file="../sierra-message/srpc/commons-httpclient-3.1.jar" todir="../sierra-portal/lib/web-dependencies/"/>
 		<copy file="../sierra-message/srpc/commons-logging-1.1.1.jar" todir="../sierra-portal/lib/web-dependencies/"/>			
 		<jar destfile="../sierra-portal/lib/web-dependencies/common.jar" basedir="../common/bin" />
+		<jar destfile="../sierra-portal/lib/web-dependencies/derby-common.jar" basedir="../derby-common/bin" />
 		<jar destfile="../sierra-portal/lib/web-dependencies/sierra-jdbc.jar" basedir="../sierra-jdbc/bin" />
 		<jar destfile="../sierra-portal/lib/web-dependencies/sierra-jdbc-server.jar" basedir="../sierra-jdbc-server/bin" />
 		<jar destfile="../sierra-portal/lib/web-dependencies/sierra-message.jar" basedir="../sierra-message/bin" />
