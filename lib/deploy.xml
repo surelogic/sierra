@@ -97,6 +97,7 @@
 		<!-- services.war is obsolete after Mar 17 -->
 		<delete quiet="true" file="../jetty/webapps/services.war" />
 		<delete quiet="true" file="../sierra-portal/lib/web-dependencies/common.jar" />
+		<delete quiet="true" file="../sierra-portal/lib/web-dependencies/derby-common.jar" />
 		<delete quiet="true" file="../sierra-portal/lib/web-dependencies/sierra-jdbc.jar" />
 		<delete quiet="true" file="../sierra-portal/lib/web-dependencies/sierra-message.jar" />
 		<!-- sierra-portal-rpc.jar is obsolete after Jan 08 -->
