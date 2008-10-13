@@ -7,10 +7,10 @@ import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.surelogic.common.derby.LazyPreparedStatementConnection;
 import com.surelogic.common.jdbc.ConnectionQuery;
 import com.surelogic.common.jdbc.DBQuery;
 import com.surelogic.common.jdbc.DBTransaction;
-import com.surelogic.common.jdbc.LazyPreparedStatementConnection;
 import com.surelogic.common.jdbc.TransactionException;
 import com.surelogic.common.logging.SLLogger;
 

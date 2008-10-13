@@ -8,5 +8,6 @@
 	<classpathentry kind="lib" path="lib/mail.jar"/>
 	<classpathentry kind="lib" path="lib/servlet-api.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/sierra-portal"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/derby-common"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
