@@ -7,6 +7,7 @@ import java.net.URL;
 
 import com.surelogic.common.jdbc.SchemaAction;
 import com.surelogic.common.jdbc.SchemaData;
+import com.surelogic.common.license.SLLicenseUtility;
 
 public class SierraSchemaData implements SchemaData {
 
@@ -53,5 +54,10 @@ public class SierraSchemaData implements SchemaData {
 
 	private String getSchemaResourcePath(final String resource) {
 		return schemaPackage.replace(".", "/") + "/" + resource;
+	}
+
+	@Override
+	public String getLicenseSubject() {
+		return SLLicenseUtility.SIERRA_SUBJECT;
 	}
 }
