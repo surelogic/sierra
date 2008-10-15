@@ -56,7 +56,6 @@ public class SierraSchemaData implements SchemaData {
 		return schemaPackage.replace(".", "/") + "/" + resource;
 	}
 
-	@Override
 	public String getLicenseSubject() {
 		return SLLicenseUtility.SIERRA_SUBJECT;
 	}
