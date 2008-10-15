@@ -36,10 +36,10 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.progress.UIJob;
 
+import com.surelogic.common.SLUtility;
 import com.surelogic.common.eclipse.CascadingList;
 import com.surelogic.common.eclipse.ISearchBoxObserver;
 import com.surelogic.common.eclipse.SearchBox;
-import com.surelogic.common.eclipse.StringUtility;
 import com.surelogic.common.eclipse.jobs.SLUIJob;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.model.selection.Filter;
@@ -279,8 +279,8 @@ public final class MFilterSelectionColumn extends MColumn implements
 				f_barColorLight = new Color(f_reportContents.getDisplay(), 238,
 						216, 198);
 				/**
-				 * See
-				 * http://publicobject.com/glazedlists/documentation/swt_virtual_tables.html
+				 * See http://publicobject.com/glazedlists/documentation/
+				 * swt_virtual_tables.html
 				 */
 				f_reportContents.addListener(SWT.SetData, new Listener() {
 					// Only called the first time the TableItem is shown
@@ -294,8 +294,8 @@ public final class MFilterSelectionColumn extends MColumn implements
 
 				/**
 				 * Note that the next three listeners implement the bar graph
-				 * See
-				 * http://www.eclipse.org/articles/article.php?file=Article-CustomDrawingTableAndTreeItems/index.html
+				 * See http://www.eclipse.org/articles/article.php?file=Article-
+				 * CustomDrawingTableAndTreeItems/index.html
 				 */
 				f_reportContents.addListener(SWT.MeasureItem, new Listener() {
 					/**
@@ -401,7 +401,7 @@ public final class MFilterSelectionColumn extends MColumn implements
 								gc.drawLine(event.x + p, event.y, event.x + p,
 										event.y + height);
 							}
-							String text = StringUtility.toCommaSepString(count);
+							String text = SLUtility.toCommaSepString(count);
 							Point size = gc.textExtent(text);
 							int offset = Math.max(0, (height - size.y) / 2);
 							int rightJ = GRAPH_WIDTH - 2 - size.x;
@@ -443,7 +443,8 @@ public final class MFilterSelectionColumn extends MColumn implements
 						"filter the list above",
 						"Clear the current filter expression", observer);
 				if (!f_filter.isFilterExpressionClear()) {
-					final String filterExpression = f_filter.getFilterExpression();
+					final String filterExpression = f_filter
+							.getFilterExpression();
 					f_searchBox.setText(filterExpression);
 					getSelection().refreshFilters();
 				}
@@ -566,7 +567,7 @@ public final class MFilterSelectionColumn extends MColumn implements
 		 * Fix total count at the top.
 		 */
 		final int total = f_filter.getFindingCountTotal();
-		f_totalCount.setText(StringUtility.toCommaSepString(total)
+		f_totalCount.setText(SLUtility.toCommaSepString(total)
 				+ (total == 1 ? " Finding" : " Findings"));
 
 		/*
@@ -605,7 +606,7 @@ public final class MFilterSelectionColumn extends MColumn implements
 		if (f_porousCount != null && !f_porousCount.isDisposed())
 			f_porousCount.setText("");
 		if (f_reportContents.getItemCount() > 0) {
-			final String porousCountString = StringUtility
+			final String porousCountString = SLUtility
 					.toCommaSepString(porousCount);
 			f_porousCount.setText(porousCountString);
 			String msg = (porousCount == 0 ? "No" : porousCountString)
