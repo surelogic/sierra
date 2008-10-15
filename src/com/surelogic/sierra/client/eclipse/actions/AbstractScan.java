@@ -19,7 +19,7 @@ import org.eclipse.ui.progress.UIJob;
 
 import com.surelogic.common.XUtil;
 import com.surelogic.common.eclipse.BalloonUtility;
-import com.surelogic.common.eclipse.jdt.JavaUtil;
+import com.surelogic.common.eclipse.JDTUtility;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.dialogs.ScanTestCodeSelectionDialog;
@@ -75,7 +75,7 @@ public abstract class AbstractScan<T extends IJavaElement> {
 		}
 		return sb;
 	}
-	
+
 	public void scan(final T elt) {
 		@SuppressWarnings("unchecked")
 		List<T> elts = new ArrayList(1);
@@ -107,7 +107,7 @@ public abstract class AbstractScan<T extends IJavaElement> {
 							throws CoreException {
 						try {
 							boolean built = checkIfBuilt(elements);
-							Collection<String> erroneous = JavaUtil
+							Collection<String> erroneous = JDTUtility
 									.findCompilationErrors(elements);
 							boolean compiled = erroneous.isEmpty();
 

@@ -1,7 +1,8 @@
 package com.surelogic.sierra.client.eclipse.actions;
 
 import java.sql.SQLException;
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -9,7 +10,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.ICompilationUnit;
 
-import com.surelogic.common.eclipse.jdt.JavaUtil;
+import com.surelogic.common.eclipse.JDTUtility;
 import com.surelogic.common.eclipse.jobs.DatabaseJob;
 import com.surelogic.common.eclipse.jobs.SLProgressMonitorWrapper;
 import com.surelogic.common.jobs.SLProgressMonitor;
@@ -26,7 +27,7 @@ public class NewPartialScan extends AbstractScan<ICompilationUnit> {
 
 	@Override
 	boolean checkIfBuilt(Collection<ICompilationUnit> elements) {
-		return JavaUtil.compUnitsUpToDate(elements);
+		return JDTUtility.compUnitsUpToDate(elements);
 	}
 
 	@Override

@@ -1,7 +1,9 @@
 package com.surelogic.sierra.client.eclipse.actions;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.logging.Level;
 
 import org.eclipse.core.runtime.jobs.Job;
@@ -9,7 +11,7 @@ import org.eclipse.jdt.core.IJavaProject;
 
 import com.surelogic.common.FileUtility;
 import com.surelogic.common.eclipse.BalloonUtility;
-import com.surelogic.common.eclipse.jdt.JavaUtil;
+import com.surelogic.common.eclipse.JDTUtility;
 import com.surelogic.common.eclipse.jobs.DatabaseJob;
 import com.surelogic.sierra.client.eclipse.jobs.ImportScanDocumentJob;
 import com.surelogic.sierra.client.eclipse.model.ConfigGenerator;
@@ -24,7 +26,7 @@ public class NewScan extends AbstractScan<IJavaProject> {
 
 	@Override
 	boolean checkIfBuilt(Collection<IJavaProject> elements) {
-		return JavaUtil.projectsUpToDate(elements);
+		return JDTUtility.projectsUpToDate(elements);
 	}
 
 	/**

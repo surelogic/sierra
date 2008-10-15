@@ -15,7 +15,7 @@ import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaProject;
 
 import com.surelogic.common.eclipse.BalloonUtility;
-import com.surelogic.common.eclipse.jdt.JavaUtil;
+import com.surelogic.common.eclipse.JDTUtility;
 import com.surelogic.common.eclipse.jobs.DatabaseJob;
 import com.surelogic.common.eclipse.logging.SLEclipseStatusUtility;
 import com.surelogic.common.i18n.I18N;
@@ -77,7 +77,7 @@ public class ScanChangedProjectsAction extends
 
 							monitor.worked(1);
 
-							final Collection<ICompilationUnit> selectedCompilationUnits = JavaUtil
+							final Collection<ICompilationUnit> selectedCompilationUnits = JDTUtility
 									.modifiedCompUnits(times, monitor);
 
 							boolean startedScan = false;
@@ -102,7 +102,8 @@ public class ScanChangedProjectsAction extends
 				} catch (final TransactionException e) {
 					final int errNo = 46;
 					final String msg = I18N.err(errNo, getName());
-					return SLEclipseStatusUtility.createErrorStatus(errNo, msg, e);
+					return SLEclipseStatusUtility.createErrorStatus(errNo, msg,
+							e);
 				}
 				return Status.OK_STATUS;
 			}
