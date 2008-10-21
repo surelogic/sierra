@@ -33,7 +33,7 @@ public final class SynchronizeMediator extends AbstractSierraViewMediator {
 
 	private final Table f_syncTable;
 
-	public SynchronizeMediator(IViewCallback cb, Table syncTable) {
+	public SynchronizeMediator(final IViewCallback cb, final Table syncTable) {
 		super(cb);
 		f_syncTable = syncTable;
 	}
@@ -49,7 +49,7 @@ public final class SynchronizeMediator extends AbstractSierraViewMediator {
 	@Override
 	public Listener getNoDataListener() {
 		return new Listener() {
-			public void handleEvent(Event event) {
+			public void handleEvent(final Event event) {
 				new SynchronizeProjectDialogAction().run();
 			}
 		};
@@ -59,7 +59,7 @@ public final class SynchronizeMediator extends AbstractSierraViewMediator {
 	public void init() {
 		super.init();
 		f_syncTable.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event event) {
+			public void handleEvent(final Event event) {
 				final TableItem[] items = f_syncTable.getSelection();
 				if (items.length > 0) {
 					final TableItem item = items[0];
@@ -84,6 +84,11 @@ public final class SynchronizeMediator extends AbstractSierraViewMediator {
 	}
 
 	@Override
+	public void databaseDeleted() {
+		asyncUpdateContents();
+	}
+
+	@Override
 	public void serverSynchronized() {
 		asyncUpdateContents();
 	}
@@ -92,14 +97,15 @@ public final class SynchronizeMediator extends AbstractSierraViewMediator {
 		final Job job = new DatabaseJob(
 				"Updating set of server synchronization events") {
 			@Override
-			protected IStatus run(IProgressMonitor monitor) {
+			protected IStatus run(final IProgressMonitor monitor) {
 				monitor.beginTask("Updating list", IProgressMonitor.UNKNOWN);
 				try {
 					updateContents();
-				} catch (Exception e) {
+				} catch (final Exception e) {
 					final int errNo = 58;
 					final String msg = I18N.err(errNo);
-					return SLEclipseStatusUtility.createErrorStatus(errNo, msg, e);
+					return SLEclipseStatusUtility.createErrorStatus(errNo, msg,
+							e);
 				}
 				monitor.done();
 				return Status.OK_STATUS;
@@ -111,7 +117,7 @@ public final class SynchronizeMediator extends AbstractSierraViewMediator {
 	private void updateContents() throws Exception {
 		Data.getInstance().withReadOnly(new NullDBTransaction() {
 			@Override
-			public void doPerform(Connection conn) throws Exception {
+			public void doPerform(final Connection conn) throws Exception {
 				final List<SynchOverview> synchList = SynchOverview
 						.listOverviews(conn);
 				asyncUpdateContentsForUI(new IViewUpdater() {
@@ -126,12 +132,12 @@ public final class SynchronizeMediator extends AbstractSierraViewMediator {
 	/**
 	 * Must be called from the SWT thread.
 	 */
-	private void updateSyncTableContents(List<SynchOverview> synchList) {
+	private void updateSyncTableContents(final List<SynchOverview> synchList) {
 		final SimpleDateFormat dateFormat = new SimpleDateFormat(
 				"yyyy/MM/dd 'at' HH:mm:ss");
 		f_syncTable.removeAll();
 
-		for (SynchOverview so : synchList) {
+		for (final SynchOverview so : synchList) {
 			if (PreferenceConstants.hideEmptySynchronizeEntries()
 					&& so.isEmpty()) {
 				continue;
@@ -150,7 +156,7 @@ public final class SynchronizeMediator extends AbstractSierraViewMediator {
 			item.setText(1, serverName);
 			final int numCommitted = so.getNumCommitted();
 			final int numReceived = so.getNumReceived();
-			StringBuilder b = new StringBuilder();
+			final StringBuilder b = new StringBuilder();
 			b.append(projectName).append(" had ");
 			b.append(numCommitted);
 			b.append(numCommitted == 1 ? " audit" : " audits");
@@ -174,13 +180,13 @@ public final class SynchronizeMediator extends AbstractSierraViewMediator {
 	}
 
 	private void packTable(final Table table) {
-		for (TableColumn col : table.getColumns()) {
+		for (final TableColumn col : table.getColumns()) {
 			col.pack();
 		}
 	}
 
-	public void setHideEmptyEntries(boolean hide) {
-		boolean old = PreferenceConstants.hideEmptySynchronizeEntries();
+	public void setHideEmptyEntries(final boolean hide) {
+		final boolean old = PreferenceConstants.hideEmptySynchronizeEntries();
 		if (old != hide) {
 			PreferenceConstants.setHideEmptySynchronizeEntries(hide);
 			asyncUpdateContents();

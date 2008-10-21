@@ -41,7 +41,7 @@ public final class Projects extends DatabaseObservable<IProjectsObserver> {
 	}
 
 	@Override
-	protected void notifyObserver(IProjectsObserver o) {
+	protected void notifyObserver(final IProjectsObserver o) {
 		o.notify(this);
 	}
 
@@ -49,33 +49,33 @@ public final class Projects extends DatabaseObservable<IProjectsObserver> {
 	 * Protected by a lock on <code>this</code>.
 	 */
 	private final LinkedList<String> f_projectNames = new LinkedList<String>();
-	
-    /**
-     * Counts of consecutive server project failures
-     */
-    private final Map<String,Integer> projectProblems = new HashMap<String,Integer>();
-    
-	private <T> int incrProblem(Map<T,Integer> map, T key) {
+
+	/**
+	 * Counts of consecutive server project failures
+	 */
+	private final Map<String, Integer> projectProblems = new HashMap<String, Integer>();
+
+	private <T> int incrProblem(final Map<T, Integer> map, final T key) {
 		Integer count = map.get(key);
-		count = (count == null) ? 1 : count+1;
+		count = (count == null) ? 1 : count + 1;
 		map.put(key, count);
 		return count;
 	}
-	
-	public synchronized void markAsConnected(String name) {
+
+	public synchronized void markAsConnected(final String name) {
 		projectProblems.remove(name);
 	}
 
-	public synchronized int encounteredProblem(String name) {
+	public synchronized int encounteredProblem(final String name) {
 		try {
 			return incrProblem(projectProblems, name);
 		} finally {
 			notifyObservers();
 		}
 	}
-	
-	public synchronized int getProblemCount(String name) {
-		Integer count = projectProblems.get(name);
+
+	public synchronized int getProblemCount(final String name) {
+		final Integer count = projectProblems.get(name);
 		return count == null ? 0 : count;
 	}
 
@@ -128,7 +128,7 @@ public final class Projects extends DatabaseObservable<IProjectsObserver> {
 	}
 
 	public void refresh() {
-		List<String> projectNames = new ArrayList<String>();
+		final List<String> projectNames = new ArrayList<String>();
 		try {
 			final Connection c = Data.getInstance().readOnlyConnection();
 			try {
@@ -142,7 +142,7 @@ public final class Projects extends DatabaseObservable<IProjectsObserver> {
 					} finally {
 						rs.close();
 					}
-				} catch (SQLException e) {
+				} catch (final SQLException e) {
 					SLLogger
 							.getLogger()
 							.log(
@@ -155,7 +155,7 @@ public final class Projects extends DatabaseObservable<IProjectsObserver> {
 			} finally {
 				c.close();
 			}
-		} catch (SQLException e) {
+		} catch (final SQLException e) {
 			SLLogger.getLogger().log(Level.SEVERE,
 					"Unable to read the list of projects in the database", e);
 		}
@@ -167,8 +167,9 @@ public final class Projects extends DatabaseObservable<IProjectsObserver> {
 				notify = true;
 			}
 		}
-		if (notify)
+		if (notify) {
 			notifyObservers();
+		}
 	}
 
 	@Override
@@ -188,6 +189,11 @@ public final class Projects extends DatabaseObservable<IProjectsObserver> {
 
 	@Override
 	public void projectDeleted() {
+		refresh();
+	}
+
+	@Override
+	public void databaseDeleted() {
 		refresh();
 	}
 

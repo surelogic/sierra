@@ -21,8 +21,9 @@ public final class DatabaseHub {
 	private final Set<IDatabaseObserver> f_observers = new CopyOnWriteArraySet<IDatabaseObserver>();
 
 	public void addObserver(final IDatabaseObserver o) {
-		if (o == null)
+		if (o == null) {
 			return;
+		}
 		f_observers.add(o);
 	}
 
@@ -35,7 +36,7 @@ public final class DatabaseHub {
 			SLLogger.getLogger().log(Level.FINE,
 					"DatabaseHub notifyScanLoaded() to " + f_observers);
 		}
-		for (IDatabaseObserver o : f_observers) {
+		for (final IDatabaseObserver o : f_observers) {
 			o.scanLoaded();
 			o.changed();
 		}
@@ -46,7 +47,7 @@ public final class DatabaseHub {
 			SLLogger.getLogger().log(Level.FINE,
 					"DatabaseHub notifyProjectDeleted() to " + f_observers);
 		}
-		for (IDatabaseObserver o : f_observers) {
+		for (final IDatabaseObserver o : f_observers) {
 			o.projectDeleted();
 			o.changed();
 		}
@@ -57,7 +58,7 @@ public final class DatabaseHub {
 			SLLogger.getLogger().log(Level.FINE,
 					"DatabaseHub notifyServerSynchronized() to " + f_observers);
 		}
-		for (IDatabaseObserver o : f_observers) {
+		for (final IDatabaseObserver o : f_observers) {
 			o.serverSynchronized();
 			o.changed();
 		}
@@ -68,8 +69,19 @@ public final class DatabaseHub {
 			SLLogger.getLogger().log(Level.FINE,
 					"DatabaseHub notifyFindingMutated() to " + f_observers);
 		}
-		for (IDatabaseObserver o : f_observers) {
+		for (final IDatabaseObserver o : f_observers) {
 			o.findingMutated();
+			o.changed();
+		}
+	}
+
+	public void notifyDatabaseDeleted() {
+		if (SLLogger.getLogger().isLoggable(Level.FINE)) {
+			SLLogger.getLogger().log(Level.FINE,
+					"DatabaseHub notifyDatabaseDeleted() to " + f_observers);
+		}
+		for (final IDatabaseObserver o : f_observers) {
+			o.databaseDeleted();
 			o.changed();
 		}
 	}

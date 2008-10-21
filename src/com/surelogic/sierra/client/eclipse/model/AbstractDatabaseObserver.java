@@ -21,4 +21,8 @@ public abstract class AbstractDatabaseObserver implements IDatabaseObserver {
 	public void findingMutated() {
 		// Do nothing
 	}
+
+	public void databaseDeleted() {
+		// Do nothing
+	}
 }

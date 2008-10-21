@@ -21,6 +21,12 @@ public interface IDatabaseObserver {
 	void projectDeleted();
 
 	/**
+	 * Notification that the Sierra database has been removed from the file
+	 * system.
+	 */
+	void databaseDeleted();
+
+	/**
 	 * Notification that the client database has been synchronized with a Sierra
 	 * server.
 	 */

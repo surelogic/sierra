@@ -6,6 +6,7 @@ import java.util.List;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
@@ -30,6 +31,7 @@ import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.common.eclipse.jobs.SLUIJob;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.images.CommonImages;
+import com.surelogic.sierra.client.eclipse.jobs.DeleteDatabaseJob;
 import com.surelogic.sierra.client.eclipse.jobs.DeleteProjectDataJob;
 import com.surelogic.sierra.client.eclipse.model.IProjectsObserver;
 import com.surelogic.sierra.client.eclipse.model.Projects;
@@ -38,7 +40,7 @@ public class ScanDataPreferencePage extends PreferencePage implements
 		IWorkbenchPreferencePage {
 
 	@Override
-	protected Control createContents(Composite parent) {
+	protected Control createContents(final Composite parent) {
 		final Composite panel = new Composite(parent, SWT.NONE);
 		GridLayout grid = new GridLayout();
 		panel.setLayout(grid);
@@ -65,7 +67,7 @@ public class ScanDataPreferencePage extends PreferencePage implements
 		t.setLayoutData(data);
 
 		final Composite c = new Composite(pGroup, SWT.NONE);
-		RowLayout rl = new RowLayout(SWT.VERTICAL);
+		final RowLayout rl = new RowLayout(SWT.VERTICAL);
 		rl.fill = true;
 		c.setLayout(rl);
 		c.setLayoutData(new GridData(SWT.CENTER, SWT.TOP, false, false));
@@ -76,8 +78,6 @@ public class ScanDataPreferencePage extends PreferencePage implements
 
 		final Button deleteDatabase = new Button(panel, SWT.PUSH);
 		deleteDatabase.setText("Delete All Sierra Data For This Workspace");
-		deleteDatabase.setEnabled(!PreferenceConstants
-				.deleteDatabaseOnStartup());
 		deleteDatabase.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true,
 				false));
 
@@ -92,7 +92,7 @@ public class ScanDataPreferencePage extends PreferencePage implements
 		return panel;
 	}
 
-	public void init(IWorkbench workbench) {
+	public void init(final IWorkbench workbench) {
 		setDescription("Use this page to delete obsolete scan data.");
 	}
 
@@ -102,8 +102,8 @@ public class ScanDataPreferencePage extends PreferencePage implements
 		private final Button f_deleteSelectedProjects;
 		private final Button f_deleteDatabase;
 
-		Mediator(Table projectTable, Button deleteSelectedProjects,
-				Button deleteDatabase) {
+		Mediator(final Table projectTable, final Button deleteSelectedProjects,
+				final Button deleteDatabase) {
 			f_projectTable = projectTable;
 			f_deleteSelectedProjects = deleteSelectedProjects;
 			f_deleteDatabase = deleteDatabase;
@@ -115,7 +115,8 @@ public class ScanDataPreferencePage extends PreferencePage implements
 					// Get into a UI thread!
 					final UIJob job = new SLUIJob() {
 						@Override
-						public IStatus runInUIThread(IProgressMonitor monitor) {
+						public IStatus runInUIThread(
+								final IProgressMonitor monitor) {
 							setTableContents(p.getProjectNames());
 							return Status.OK_STATUS;
 						}
@@ -128,22 +129,23 @@ public class ScanDataPreferencePage extends PreferencePage implements
 			obs.notify(Projects.getInstance());
 
 			f_projectTable.addListener(SWT.Selection, new Listener() {
-				public void handleEvent(Event event) {
+				public void handleEvent(final Event event) {
 					f_deleteSelectedProjects.setEnabled(f_projectTable
 							.getSelectionCount() != 0);
 				}
 			});
 
 			f_deleteSelectedProjects.addListener(SWT.Selection, new Listener() {
-				public void handleEvent(Event event) {
-					TableItem[] selection = f_projectTable.getSelection();
+				public void handleEvent(final Event event) {
+					final TableItem[] selection = f_projectTable.getSelection();
 					final List<String> projectNames = new ArrayList<String>();
-					for (TableItem item : selection) {
+					for (final TableItem item : selection) {
 						final String projectName = item.getText();
 						projectNames.add(projectName);
 					}
-					if (projectNames.isEmpty())
+					if (projectNames.isEmpty()) {
 						return;
+					}
 
 					DeleteProjectDataJob.utility(projectNames, f_projectTable
 							.getShell(), false);
@@ -151,29 +153,28 @@ public class ScanDataPreferencePage extends PreferencePage implements
 			});
 
 			f_deleteDatabase.addListener(SWT.Selection, new Listener() {
-				public void handleEvent(Event event) {
+				public void handleEvent(final Event event) {
 					final StringBuilder b = new StringBuilder();
 					b.append("Are you sure you want to delete all ");
 					b.append("Sierra data in your Eclipse workspace?\n\n");
-					b.append("This action will not take effect until");
-					b.append(" you restart Eclipse.\n");
 					b.append("This action will not ");
 					b.append("change or delete data on any Sierra server.");
 					if (!MessageDialog.openConfirm(f_projectTable.getShell(),
 							"Confirm Sierra Data Deletion", b.toString())) {
 						return; // bail
 					}
-					f_deleteDatabase.setEnabled(false);
-					PreferenceConstants.setDeleteDatabaseOnStartup(true);
+					final Job job = new DeleteDatabaseJob();
+					job.schedule();
 				}
 			});
 		}
 
-		void setTableContents(List<String> projectNames) {
+		void setTableContents(final List<String> projectNames) {
 			if (!f_projectTable.isDisposed()) {
 				f_projectTable.removeAll();
-				for (String projectName : projectNames) {
-					TableItem item = new TableItem(f_projectTable, SWT.NULL);
+				for (final String projectName : projectNames) {
+					final TableItem item = new TableItem(f_projectTable,
+							SWT.NULL);
 					item.setText(projectName);
 					/*
 					 * TODO: Fix to use ILabelDecorator to look like a Java
