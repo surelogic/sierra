@@ -15,7 +15,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.GZIPOutputStream;
 
-import com.surelogic.common.JavaConstants;
+import com.surelogic.common.SLUtility;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.jobs.SLProgressMonitor;
 import com.surelogic.common.logging.SLLogger;
@@ -283,7 +283,7 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator {
 
 		public MetricBuilder packageName(String name) {
 			if ((name == null) || "".equals(name)) {
-				name = JavaConstants.DEFAULT_PACKAGE;
+				name = SLUtility.JAVA_DEFAULT_PACKAGE;
 			}
 			pakkage = name;
 			return this;
@@ -387,7 +387,7 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator {
 
 			public SourceLocationBuilder packageName(String name) {
 				if ((name == null) || "".equals(name)) {
-					name = JavaConstants.DEFAULT_PACKAGE;
+					name = SLUtility.JAVA_DEFAULT_PACKAGE;
 				}
 				sourceBuilder.packageName(name);
 				return this;
