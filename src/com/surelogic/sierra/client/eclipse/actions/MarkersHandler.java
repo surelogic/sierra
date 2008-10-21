@@ -35,7 +35,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.UIJob;
 
-import com.surelogic.common.JavaConstants;
+import com.surelogic.common.SLUtility;
 import com.surelogic.common.eclipse.jobs.DatabaseJob;
 import com.surelogic.common.eclipse.jobs.SLUIJob;
 import com.surelogic.common.i18n.I18N;
@@ -216,7 +216,7 @@ public final class MarkersHandler extends AbstractDatabaseObserver implements
 							IPackageDeclaration[] packageDeclarations = cu
 									.getPackageDeclarations();
 
-							String packageName = JavaConstants.DEFAULT_PACKAGE;
+							String packageName = SLUtility.JAVA_DEFAULT_PACKAGE;
 							if (packageDeclarations.length > 0) {
 								packageName = packageDeclarations[0]
 										.getElementName();
@@ -319,7 +319,8 @@ public final class MarkersHandler extends AbstractDatabaseObserver implements
 	/**
 	 * Refer to
 	 * 
-	 * http://wiki.eclipse.org/FAQ_How_do_I_create_problem_markers_for_my_compiler%3F
+	 * http://wiki.eclipse.org/
+	 * FAQ_How_do_I_create_problem_markers_for_my_compiler%3F
 	 * 
 	 * @param editor
 	 * @return

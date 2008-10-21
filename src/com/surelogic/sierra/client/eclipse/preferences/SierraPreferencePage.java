@@ -108,7 +108,7 @@ public class SierraPreferencePage extends PreferencePage implements
 		memoryGroup.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
 		memoryGroup.setText("Code Scanning");
 
-		final int estimatedMax = MemoryUtility.computeMaxMemorySize();
+		final int estimatedMax = MemoryUtility.computeMaxMemorySizeInMb();
 		int mb = PreferenceConstants.getToolMemoryMB();
 		if (mb > estimatedMax) {
 			mb = estimatedMax;

@@ -29,7 +29,7 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 
 import com.surelogic.common.FileUtility;
-import com.surelogic.common.JavaConstants;
+import com.surelogic.common.SLUtility;
 import com.surelogic.common.eclipse.Activator;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
@@ -170,7 +170,7 @@ public final class ConfigGenerator {
 
 					int lastPeriod = qualifiedName.lastIndexOf('.');
 
-					String packageName = JavaConstants.DEFAULT_PACKAGE;
+					String packageName = SLUtility.JAVA_DEFAULT_PACKAGE;
 					if (lastPeriod != -1) {
 						packageName = qualifiedName.substring(0, lastPeriod);
 					}
@@ -360,9 +360,12 @@ public final class ConfigGenerator {
 		config.setMemorySize(PreferenceConstants.getToolMemoryMB());
 		config.setToolsDirectory(new File(tools));
 		config.setPluginDirs(pluginDirs);
-		config.setComplianceLevel(javaProject.getOption(JavaCore.COMPILER_COMPLIANCE, true));
-		config.setSourceLevel(javaProject.getOption(JavaCore.COMPILER_SOURCE, true));
-		config.setTargetLevel(javaProject.getOption(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, true));
+		config.setComplianceLevel(javaProject.getOption(
+				JavaCore.COMPILER_COMPLIANCE, true));
+		config.setSourceLevel(javaProject.getOption(JavaCore.COMPILER_SOURCE,
+				true));
+		config.setTargetLevel(javaProject.getOption(
+				JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, true));
 	}
 
 	/**
