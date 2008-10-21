@@ -669,8 +669,11 @@ public enum ConnectionFactory implements DBConnection {
 	}
 
 	public SchemaData getSchemaLoader() {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException();
+	}
+
+	public void destroy() {
+		throw new UnsupportedOperationException();
 	}
 
 }
