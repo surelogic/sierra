@@ -47,7 +47,7 @@ public class LocalTeamServerPreferencePage extends PreferencePage implements
 		memoryGroup.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
 		memoryGroup.setText("Memory Use");
 
-		final int estimatedMax = MemoryUtility.computeMaxMemorySize();
+		final int estimatedMax = MemoryUtility.computeMaxMemorySizeInMb();
 		int mb = PreferenceConstants.getServerMemoryMB();
 		if (mb > estimatedMax) {
 			mb = estimatedMax;
