@@ -2,7 +2,6 @@ package com.surelogic.sierra.client.eclipse.preferences;
 
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.IntegerFieldEditor;
-import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.preference.RadioGroupFieldEditor;
 import org.eclipse.jface.preference.ScaleFieldEditor;
 import org.eclipse.swt.SWT;
@@ -15,16 +14,15 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
 
 import com.surelogic.common.eclipse.MemoryUtility;
+import com.surelogic.common.eclipse.preferences.AbstractLicensePreferencePage;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.sierra.client.eclipse.Activator;
 import com.surelogic.sierra.tool.message.Importance;
 
-public class SierraPreferencePage extends PreferencePage implements
-		IWorkbenchPreferencePage {
+public class SierraPreferencePage extends AbstractLicensePreferencePage {
 
 	static private final String ESTIMATE_LABEL = "sierra.eclipse.computedMaxToolMemoryLabel";
 	static private final String TOOL_MB_LABEL = "sierra.eclipse.toolMemoryPreferenceLabel";
