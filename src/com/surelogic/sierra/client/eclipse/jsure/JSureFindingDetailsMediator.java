@@ -2,65 +2,79 @@ package com.surelogic.sierra.client.eclipse.jsure;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 
-import com.surelogic.common.eclipse.*;
+import com.surelogic.common.eclipse.JDTUtility;
+import com.surelogic.common.eclipse.ViewUtility;
 import com.surelogic.common.eclipse.jobs.DatabaseJob;
 import com.surelogic.common.eclipse.logging.SLEclipseStatusUtility;
 import com.surelogic.common.i18n.I18N;
-import com.surelogic.common.jdbc.*;
-import com.surelogic.sierra.client.eclipse.*;
+import com.surelogic.common.jdbc.ConnectionQuery;
+import com.surelogic.common.jdbc.Query;
+import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.views.AbstractSierraViewMediator;
 import com.surelogic.sierra.client.eclipse.views.FindingDetailsView;
 import com.surelogic.sierra.client.eclipse.views.IViewUpdater;
 import com.surelogic.sierra.client.eclipse.views.selection.FindingsSelectionView;
-import com.surelogic.sierra.jdbc.finding.*;
+import com.surelogic.sierra.jdbc.finding.FindingDetail;
+import com.surelogic.sierra.jdbc.finding.FindingRelation;
+import com.surelogic.sierra.jdbc.finding.FindingRelationOverview;
 
 public class JSureFindingDetailsMediator extends AbstractSierraViewMediator
-implements IViewUpdater {
+		implements IViewUpdater {
 	private static final int VIEW_OWN_DEPENDENCIES = 0;
 	private static final int VIEW_DEPENDENT_ON_THIS = 1;
-  
-	//private final RGB f_BackgroundColorRGB;
+
+	// private final RGB f_BackgroundColorRGB;
 
 	private final Composite[] f_parents;
-	//private final Label[] f_labels;
+	// private final Label[] f_labels;
 	private final TreeViewer[] f_viewers;
-	
+
 	private volatile FindingDetail f_finding;
 	private FindingRelationOverview f_relatedChildren;
 	private FindingRelationOverview f_relatedAncestors;
-	private final Map<Long,FindingDetail> details = new HashMap<Long,FindingDetail>();
-	private final Map<Long,FindingRelationOverview> f_childOverviews = 
-		new HashMap<Long,FindingRelationOverview>();
-	private final Map<Long,FindingRelationOverview> f_ancestorOverviews = 
-		new HashMap<Long,FindingRelationOverview>();
-	
+	private final Map<Long, FindingDetail> details = new HashMap<Long, FindingDetail>();
+	private final Map<Long, FindingRelationOverview> f_childOverviews = new HashMap<Long, FindingRelationOverview>();
+	private final Map<Long, FindingRelationOverview> f_ancestorOverviews = new HashMap<Long, FindingRelationOverview>();
+
 	private volatile Object lastSelected;
 
-	public JSureFindingDetailsMediator(final JSureFindingDetailsView view, 
-			                           Composite[] parents, Label[] labels, TreeViewer[] viewers) {
+	public JSureFindingDetailsMediator(final JSureFindingDetailsView view,
+			Composite[] parents, Label[] labels, TreeViewer[] viewers) {
 		super(view);
 		f_parents = parents;
-		//f_labels  = labels;
+		// f_labels = labels;
 		f_viewers = viewers;
-		
-		int i=0;
-		for(TreeViewer v : viewers) {
+
+		int i = 0;
+		for (TreeViewer v : viewers) {
 			final boolean lookAtChildren = (i == 0);
 			Provider p = new Provider(lookAtChildren);
 			v.setLabelProvider(p);
-			v.setContentProvider(p);			
+			v.setContentProvider(p);
 			v.addSelectionChangedListener(new ISelectionChangedListener() {
 				public void selectionChanged(SelectionChangedEvent event) {
 					IStructuredSelection selection;
@@ -78,24 +92,26 @@ implements IViewUpdater {
 				public void handleEvent(Event event) {
 					final Object last = lastSelected;
 					final FindingDetail data;
-					if (last instanceof FindingRelationOverview) {						
+					if (last instanceof FindingRelationOverview) {
 						final FindingRelationOverview fro = (FindingRelationOverview) last;
 						data = details.get(fro.getId());
 					} else {
-						final FindingRelation fr = (FindingRelation) lastSelected;				
-						data = getDetail(fr, lookAtChildren);	
+						final FindingRelation fr = (FindingRelation) lastSelected;
+						data = getDetail(fr, lookAtChildren);
 					}
-					if (data != null) {				
-						JDTUtility.tryToOpenInEditor(data.getProjectName(), 
-								data.getPackageName(), data.getClassName(), data.getLineOfCode());
-						
-						FindingDetailsView.findingSelected(data.getFindingId(), false);
+					if (data != null) {
+						JDTUtility.tryToOpenInEditor(data.getProjectName(),
+								data.getPackageName(), data.getClassName(),
+								data.getLineOfCode());
+
+						FindingDetailsView.findingSelected(data.getFindingId(),
+								false);
 					}
 				}
 			});
 			i++;
 		}
-		
+
 		final Action children = new Action("Dependencies", SWT.PUSH) {
 			@Override
 			public void run() {
@@ -109,22 +125,23 @@ implements IViewUpdater {
 			public void run() {
 				view.setDataPage(VIEW_DEPENDENT_ON_THIS);
 			}
-		});		
+		});
 		/*
-		f_BackgroundColorRGB = parents[0].getDisplay().getSystemColor(
-				SWT.COLOR_LIST_BACKGROUND).getRGB();
-		*/
+		 * f_BackgroundColorRGB = parents[0].getDisplay().getSystemColor(
+		 * SWT.COLOR_LIST_BACKGROUND).getRGB();
+		 */
 	}
 
 	public String getHelpId() {
-	  // TODO
+		// TODO
 		return "com.surelogic.sierra.client.eclipse.view-finding-details";
 	}
 
 	public String getNoDataI18N() {
-	  // TODO
+		// TODO
 		return "sierra.eclipse.noDataFindingDetails";
 	}
+
 	@Override
 	public Listener getNoDataListener() {
 		return new Listener() {
@@ -133,64 +150,73 @@ implements IViewUpdater {
 			}
 		};
 	}
-	
+
 	enum Direction {
 		BOTH(true, true), AT_CHILDREN(true, false), AT_ANCESTORS(false, true);
-		
+
 		private final boolean atChildren, atAncestors;
+
 		private Direction(boolean children, boolean ancestors) {
-			
+
 			atChildren = children;
 			atAncestors = ancestors;
 		}
+
 		boolean lookAtChildren() {
 			return atChildren;
 		}
+
 		boolean lookAtAncestors() {
 			return atAncestors;
 		}
 	}
-	
+
 	class RelationComparator implements Comparator<FindingRelation> {
 		final boolean lookAtChildren;
+
 		RelationComparator(boolean atChildren) {
 			lookAtChildren = atChildren;
 		}
-		
+
 		public int compare(FindingRelation o1, FindingRelation o2) {
-			return getLabel(o1, lookAtChildren).compareTo(getLabel(o2, lookAtChildren));
-		}								
+			return getLabel(o1, lookAtChildren).compareTo(
+					getLabel(o2, lookAtChildren));
+		}
 	}
-	
+
 	final RelationComparator childComparator = new RelationComparator(true);
 	final RelationComparator ancestorComparator = new RelationComparator(false);
-	
+
 	void asyncQueryAndShow(final FindingDetail detail) {
 		final Long findingIdObj = detail.getFindingId();
 		f_finding = detail;
-	  
-		final Job job = new DatabaseJob("Querying JSure details of finding " + findingIdObj) {
+
+		final Job job = new DatabaseJob("Querying JSure details of finding "
+				+ findingIdObj) {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				monitor.beginTask("Querying finding data",
 						IProgressMonitor.UNKNOWN);
 				try {
 					Connection c = Data.getInstance().readOnlyConnection();
-					try {						
+					try {
 						Query q = new ConnectionQuery(c);
 						synchronized (details) {
 							// FIX really only need to clear if database changes
 							details.clear();
 							f_childOverviews.clear();
 							f_ancestorOverviews.clear();
-							
-							getOverviews(c, q, findingIdObj, detail, Direction.BOTH);
-							
-							f_relatedChildren  = f_childOverviews.get(findingIdObj);
-							f_relatedAncestors = f_ancestorOverviews.get(findingIdObj);						
-						}												
+
+							getOverviews(c, q, findingIdObj, detail,
+									Direction.BOTH);
+
+							f_relatedChildren = f_childOverviews
+									.get(findingIdObj);
+							f_relatedAncestors = f_ancestorOverviews
+									.get(findingIdObj);
+						}
 						// got details, update the view in the UI thread
-						asyncUpdateContentsForUI(JSureFindingDetailsMediator.this);							  
+						asyncUpdateContentsForUI(JSureFindingDetailsMediator.this);
 					} finally {
 						if (c != null) {
 							c.close();
@@ -201,40 +227,46 @@ implements IViewUpdater {
 				} catch (SQLException e) {
 					final int errNo = 57;
 					final String msg = I18N.err(errNo, findingIdObj);
-					return SLEclipseStatusUtility.createErrorStatus(errNo, msg, e);
+					return SLEclipseStatusUtility.createErrorStatus(errNo, msg,
+							e);
 				}
 			}
 
-			private void getOverviews(final Connection c, final Query q, 
-					                  final Long rootId, FindingDetail detail, Direction d) {
-				//System.out.println(d+" : "+rootId);
+			private void getOverviews(final Connection c, final Query q,
+					final Long rootId, FindingDetail detail, Direction d) {
+				// System.out.println(d+" : "+rootId);
 				details.put(rootId, detail);
 				if (d.lookAtChildren()) {
-					FindingRelationOverview children  = FindingRelationOverview.getOverviewOrNull(q, rootId, true);					
+					FindingRelationOverview children = FindingRelationOverview
+							.getOverviewOrNull(q, rootId, true);
 					f_childOverviews.put(rootId, children);
-					for(FindingRelation r : children.getRelations()) {
+					for (FindingRelation r : children.getRelations()) {
 						Long id = r.getChildId();
-						//System.out.println("Details for child "+id);
+						// System.out.println("Details for child "+id);
 						getDetails(c, q, id, Direction.AT_CHILDREN);
 					}
 					children.filter(new Filter(true, children.getRelations()));
 					children.sort(childComparator);
 				}
 				if (d.lookAtAncestors()) {
-					FindingRelationOverview ancestors = FindingRelationOverview.getOverviewOrNull(q, rootId, false);
+					FindingRelationOverview ancestors = FindingRelationOverview
+							.getOverviewOrNull(q, rootId, false);
 					f_ancestorOverviews.put(rootId, ancestors);
-					for(FindingRelation r : ancestors.getRelations()) {
+					for (FindingRelation r : ancestors.getRelations()) {
 						Long id = r.getParentId();
 						getDetails(c, q, id, Direction.AT_ANCESTORS);
 					}
-					ancestors.filter(new Filter(false, ancestors.getRelations()));
-					ancestors.sort(ancestorComparator);		
-				}		
+					ancestors
+							.filter(new Filter(false, ancestors.getRelations()));
+					ancestors.sort(ancestorComparator);
+				}
 			}
 
-			private void getDetails(final Connection c, final Query q, Long id, Direction d) {
+			private void getDetails(final Connection c, final Query q, Long id,
+					Direction d) {
 				if (!details.containsKey(id)) {
-					FindingDetail finding = FindingDetail.getDetailOrNull(c, id);
+					FindingDetail finding = FindingDetail
+							.getDetailOrNull(c, id);
 					getOverviews(c, q, id, finding, d);
 				}
 			}
@@ -244,42 +276,46 @@ implements IViewUpdater {
 
 	static class Filter implements FindingRelationOverview.Filter {
 		final boolean lookAtChildren;
-		final Map<Long,FindingRelation> nonDeponents = new HashMap<Long,FindingRelation>();
-		
+		final Map<Long, FindingRelation> nonDeponents = new HashMap<Long, FindingRelation>();
+
 		Filter(boolean lookAtChildren, Iterable<FindingRelation> relations) {
 			this.lookAtChildren = lookAtChildren;
-			for(FindingRelation r : relations) {
-				if (!com.surelogic.jsure.xml.JSureXMLReader.DEPONENT.equals(r.getRelationType())) {
+			for (FindingRelation r : relations) {
+				if (!com.surelogic.jsure.xml.JSureXMLReader.DEPONENT.equals(r
+						.getRelationType())) {
 					nonDeponents.put(getId(r), r);
 				}
 			}
 		}
+
 		private Long getId(FindingRelation r) {
 			return lookAtChildren ? r.getChildId() : r.getParentId();
 		}
-		
+
 		public boolean filterOut(FindingRelation r) {
-			if (com.surelogic.jsure.xml.JSureXMLReader.DEPONENT.equals(r.getRelationType())) {
+			if (com.surelogic.jsure.xml.JSureXMLReader.DEPONENT.equals(r
+					.getRelationType())) {
 				Long id = getId(r);
 				return nonDeponents.get(id) != null;
 			}
 			return false;
-		}		
+		}
 	}
-	
+
 	@Override
 	public void init() {
 		super.init();
 
 		updateContentsForUI();
 	}
+
 	@Override
 	public void dispose() {
 		super.dispose();
 	}
 
 	public void setFocus() {
-	  // TODO
+		// TODO
 	}
 
 	/**
@@ -294,46 +330,47 @@ implements IViewUpdater {
 		}
 		if (!showFinding)
 			return;
-		
-		//f_labels[VIEW_OWN_DEPENDENCIES].setText("Dependencies for "+f_finding.getSummary());
+
+		// f_labels[VIEW_OWN_DEPENDENCIES].setText("Dependencies for "+f_finding.getSummary());
 		f_viewers[VIEW_OWN_DEPENDENCIES].setInput(new Root(f_relatedChildren));
-		
-		//f_labels[VIEW_DEPENDENT_ON_THIS].setText("Dependents on "+f_finding.getSummary());
-		f_viewers[VIEW_DEPENDENT_ON_THIS].setInput(new Root(f_relatedAncestors));
-		
-		for(Composite parent : f_parents) {
+
+		// f_labels[VIEW_DEPENDENT_ON_THIS].setText("Dependents on "+f_finding.getSummary());
+		f_viewers[VIEW_DEPENDENT_ON_THIS]
+				.setInput(new Root(f_relatedAncestors));
+
+		for (Composite parent : f_parents) {
 			parent.layout(true, true);
 		}
 	}
-	
+
 	static class Root {
 		final FindingRelationOverview overview;
-		
+
 		Root(FindingRelationOverview o) {
 			overview = o;
 		}
 	}
-	
+
 	static final Object[] emptyArray = new Object[0];
-	
+
 	class Provider implements ILabelProvider, ITreeContentProvider {
 		final boolean includeFocus = true;
 		final boolean lookAtChildren;
-		
+
 		public Provider(boolean lookAtChildren) {
 			this.lookAtChildren = lookAtChildren;
 		}
 
 		public void addListener(ILabelProviderListener listener) {
-			// TODO Auto-generated method stub			
+			// TODO Auto-generated method stub
 		}
 
 		public void removeListener(ILabelProviderListener listener) {
 			// TODO Auto-generated method stub
 		}
-		
+
 		public void dispose() {
-			// TODO Auto-generated method stub			
+			// TODO Auto-generated method stub
 		}
 
 		public boolean isLabelProperty(Object element, String property) {
@@ -354,27 +391,29 @@ implements IViewUpdater {
 		}
 
 		public boolean hasChildren(Object parent) {
-			final FindingRelationOverview fro = getOverview(parent, lookAtChildren);						
-			return fro != null && !fro.isEmpty();			
-		}	
-		
+			final FindingRelationOverview fro = getOverview(parent,
+					lookAtChildren);
+			return fro != null && !fro.isEmpty();
+		}
+
 		public Object[] getChildren(Object parent) {
-			final FindingRelationOverview fro = getOverview(parent, lookAtChildren);
+			final FindingRelationOverview fro = getOverview(parent,
+					lookAtChildren);
 			return fro != null && !fro.isEmpty() ? fro.toArray() : emptyArray;
 		}
 
 		public Object getParent(Object elt) {
 			if (elt instanceof FindingRelationOverview) {
 				return null;
-			} 
+			}
 			FindingRelation fr = (FindingRelation) elt;
 			Long parentId = lookAtChildren ? fr.getParentId() : fr.getChildId();
 			if (parentId == f_finding.getFindingId()) {
-				return lookAtChildren ? f_relatedChildren : f_relatedAncestors;			
+				return lookAtChildren ? f_relatedChildren : f_relatedAncestors;
 			}
 			return null;
 		}
-		
+
 		public Image getImage(Object elt) {
 			FindingDetail fd;
 			if (elt instanceof FindingRelationOverview) {
@@ -384,40 +423,42 @@ implements IViewUpdater {
 				FindingRelation fr = (FindingRelation) elt;
 				fd = getDetail(fr, lookAtChildren);
 			}
-			return JSureUtil.getImageFor(fd.getFindingType(), fd.getAssuranceType());
+			return JSureUtil.getImageFor(fd.getFindingType(), fd
+					.getAssuranceType());
 		}
 
 		public String getText(Object elt) {
 			if (elt instanceof FindingRelationOverview) {
 				FindingRelationOverview fro = (FindingRelationOverview) elt;
-				FindingDetail fd            = details.get(fro.getId());
+				FindingDetail fd = details.get(fro.getId());
 				return fd.getSummary();
 			}
 			FindingRelation fr = (FindingRelation) elt;
 			return getLabel(fr, lookAtChildren);
 		}
 	}
-	
+
 	private FindingDetail getDetail(FindingRelation fr, boolean lookAtChildren) {
 		return details.get(lookAtChildren ? fr.getChildId() : fr.getParentId());
 	}
-	
+
 	private String getLabel(FindingRelation fr, boolean lookAtChildren) {
 		FindingDetail fd = getDetail(fr, lookAtChildren);
-		//String pre = lookAtChildren ? "child " : "parent "; 
-		//return pre + fr.getRelationType() + ' ' + fd.getSummary();
+		// String pre = lookAtChildren ? "child " : "parent ";
+		// return pre + fr.getRelationType() + ' ' + fd.getSummary();
 		return fr.getRelationType() + ' ' + fd.getSummary();
 	}
 
-	private FindingRelationOverview getOverview(Object parent, boolean lookAtChildren) {
+	private FindingRelationOverview getOverview(Object parent,
+			boolean lookAtChildren) {
 		final FindingRelationOverview fro;
 		if (parent instanceof FindingRelationOverview) {
 			fro = (FindingRelationOverview) parent;
 		} else {
 			FindingRelation fr = (FindingRelation) parent;
 			Long parentId = lookAtChildren ? fr.getChildId() : fr.getParentId();
-			Map<Long,FindingRelationOverview> overviews = 
-				lookAtChildren ? f_childOverviews : f_ancestorOverviews;
+			Map<Long, FindingRelationOverview> overviews = lookAtChildren ? f_childOverviews
+					: f_ancestorOverviews;
 			fro = overviews.get(parentId);
 		}
 		return fro;
