@@ -7,6 +7,7 @@ import org.eclipse.core.runtime.Status;
 import com.surelogic.common.eclipse.jobs.DatabaseJob;
 import com.surelogic.common.eclipse.jobs.SLProgressMonitorWrapper;
 import com.surelogic.common.jobs.SLProgressMonitor;
+import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.model.DatabaseHub;
 
@@ -24,6 +25,7 @@ public final class DeleteDatabaseJob extends DatabaseJob {
 		slMonitor.begin();
 		Data.getInstance().destroy();
 		DatabaseHub.getInstance().notifyDatabaseDeleted();
+		SLLogger.getLogger().info("The client database has been deleted");
 		return Status.OK_STATUS;
 	}
 }
