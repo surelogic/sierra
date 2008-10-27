@@ -671,7 +671,9 @@ public class FindingDetailsMediator extends AbstractSierraViewMediator
 		f_parent.layout(true, true);
 
 		// if (XUtil.useExperimental()) {
-		JSureFindingDetailsView.findingSelected(f_finding, false);
+		if (f_finding.getAssuranceType() != null) {
+			JSureFindingDetailsView.findingSelected(f_finding, false);
+		}
 		// }
 	}
 
