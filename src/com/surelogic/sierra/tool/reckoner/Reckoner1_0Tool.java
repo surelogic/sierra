@@ -45,7 +45,12 @@ public class Reckoner1_0Tool extends AbstractTool {
 		});
         
         final Set<String> processed = new HashSet<String>();
-		monitor.begin(targets.size());
+        final int size = targets.size();
+        if (size <= 0) {
+        	monitor.begin();
+        } else {
+        	monitor.begin(size);
+        }
         for(File f : targets) {
         	final String path = f.getPath();
         	monitor.subTask("Building metrics for "+path);
