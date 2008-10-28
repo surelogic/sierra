@@ -9,14 +9,14 @@ import org.apache.tools.ant.Project;
 import org.apache.tools.ant.types.*;
 
 import com.surelogic.common.jobs.AbstractSLJob;
-import com.surelogic.common.jobs.JobException;
-import com.surelogic.common.jobs.Local;
-import com.surelogic.common.jobs.Remote;
-import com.surelogic.common.jobs.SLJobConstants;
 import com.surelogic.common.jobs.SLProgressMonitor;
 import com.surelogic.common.jobs.SLStatus;
 import com.surelogic.common.jobs.SubSLProgressMonitor;
-import com.surelogic.common.jobs.TestCode;
+import com.surelogic.common.jobs.remote.JobException;
+import com.surelogic.common.jobs.remote.Local;
+import com.surelogic.common.jobs.remote.Remote;
+import com.surelogic.common.jobs.remote.SLJobConstants;
+import com.surelogic.common.jobs.remote.TestCode;
 import com.surelogic.common.logging.SLLogger;
 
 public abstract class AbstractLocalSLJob extends AbstractSLJob {

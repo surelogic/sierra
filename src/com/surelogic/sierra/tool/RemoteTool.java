@@ -14,6 +14,7 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 
 import com.surelogic.common.jobs.*;
+import com.surelogic.common.jobs.remote.AbstractRemoteSLJob;
 import com.surelogic.sierra.tool.message.*;
 import com.surelogic.sierra.tool.targets.*;
 

@@ -1,6 +1,6 @@
 package com.surelogic.sierra.tool;
 
-import com.surelogic.common.jobs.JobException;
+import com.surelogic.common.jobs.remote.JobException;
 
 public class ToolException extends JobException {  
   private static final long serialVersionUID = 1L;

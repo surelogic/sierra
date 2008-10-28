@@ -15,6 +15,8 @@ import org.apache.tools.ant.Project;
 import org.apache.tools.ant.types.*;
 
 import com.surelogic.common.jobs.*;
+import com.surelogic.common.jobs.remote.JobException;
+import com.surelogic.common.jobs.remote.TestCode;
 import com.surelogic.sierra.tool.jobs.AbstractLocalSLJob;
 import com.surelogic.sierra.tool.message.*;
 import com.surelogic.sierra.tool.targets.*;
