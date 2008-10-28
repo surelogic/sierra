@@ -15,7 +15,7 @@ import org.apache.tools.ant.Project;
 import org.apache.tools.ant.types.*;
 
 import com.surelogic.common.jobs.*;
-import com.surelogic.common.jobs.remote.JobException;
+import com.surelogic.common.jobs.remote.RemoteSLJobException;
 import com.surelogic.common.jobs.remote.TestCode;
 import com.surelogic.sierra.tool.jobs.AbstractLocalSLJob;
 import com.surelogic.sierra.tool.message.*;
@@ -90,7 +90,7 @@ public class LocalTool extends AbstractTool {
 			config = c;
 		}
 
-		protected JobException newException(int number, Object... args) {
+		protected RemoteSLJobException newException(int number, Object... args) {
 			throw new ToolException(number, args);
 		}
 		

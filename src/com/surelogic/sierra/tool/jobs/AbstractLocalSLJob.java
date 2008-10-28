@@ -12,10 +12,10 @@ import com.surelogic.common.jobs.AbstractSLJob;
 import com.surelogic.common.jobs.SLProgressMonitor;
 import com.surelogic.common.jobs.SLStatus;
 import com.surelogic.common.jobs.SubSLProgressMonitor;
-import com.surelogic.common.jobs.remote.JobException;
+import com.surelogic.common.jobs.remote.RemoteSLJobException;
 import com.surelogic.common.jobs.remote.Local;
 import com.surelogic.common.jobs.remote.Remote;
-import com.surelogic.common.jobs.remote.SLJobConstants;
+import com.surelogic.common.jobs.remote.RemoteSLJobConstants;
 import com.surelogic.common.jobs.remote.TestCode;
 import com.surelogic.common.logging.SLLogger;
 
@@ -36,8 +36,8 @@ public abstract class AbstractLocalSLJob extends AbstractSLJob {
 		memorySize = memSize;
 	}
 
-	protected JobException newException(int number, Object... args) {
-		throw new JobException(number, args);
+	protected RemoteSLJobException newException(int number, Object... args) {
+		throw new RemoteSLJobException(number, args);
 	}
 	
 	protected void addToPath(Project proj, Path path, String name) {
@@ -51,12 +51,12 @@ public abstract class AbstractLocalSLJob extends AbstractSLJob {
 		if (!exists) {
 			if (required) {
 				throw newException(
-						SLJobConstants.ERROR_CODE_MISSING_FOR_JOB,
+						RemoteSLJobConstants.ERROR_CODE_MISSING_FOR_JOB,
 						name);
 			}
 		} else if (TestCode.MISSING_CODE.equals(testCode)) {
 			throw newException(
-					SLJobConstants.ERROR_CODE_MISSING_FOR_JOB, name);
+					RemoteSLJobConstants.ERROR_CODE_MISSING_FOR_JOB, name);
 		} else {
 			path.add(new Path(proj, name));
 		}
@@ -147,7 +147,7 @@ public abstract class AbstractLocalSLJob extends AbstractSLJob {
 			System.out.println("First line = " + firstLine);
 
 			if (firstLine == null) {
-				throw newException(SLJobConstants.ERROR_NO_OUTPUT_FROM_JOB);
+				throw newException(RemoteSLJobConstants.ERROR_NO_OUTPUT_FROM_JOB);
 			}
 			final String[] firstLines = new String[FIRST_LINES];
 			int numLines = 1;
@@ -207,7 +207,7 @@ public abstract class AbstractLocalSLJob extends AbstractSLJob {
 							if (msg
 									.contains("FAILED:  java.lang.OutOfMemoryError")) {
 								throw newException(
-										SLJobConstants.ERROR_MEMORY_SIZE_TOO_SMALL,
+										RemoteSLJobConstants.ERROR_MEMORY_SIZE_TOO_SMALL,
 										memorySize);
 							}
 							throw new RuntimeException(msg);
@@ -242,7 +242,7 @@ public abstract class AbstractLocalSLJob extends AbstractSLJob {
 			pout.close();
 			if (value != 0) {
 				examineFirstLines(firstLines);
-				throw newException(SLJobConstants.ERROR_PROCESS_FAILED, value);
+				throw newException(RemoteSLJobConstants.ERROR_PROCESS_FAILED, value);
 			}
 		} catch (Exception e) {
 			throw new RuntimeException(e);
@@ -254,7 +254,7 @@ public abstract class AbstractLocalSLJob extends AbstractSLJob {
 	protected final void setupJVM(boolean debug, CommandlineJava cmdj) {
 		if (testCode != null) {
 			cmdj.createVmArgument().setValue(
-					"-D" + SLJobConstants.TEST_CODE_PROPERTY + "="
+					"-D" + RemoteSLJobConstants.TEST_CODE_PROPERTY + "="
 							+ testCode);
 		}
 		if (TestCode.LOW_MEMORY.equals(testCode)) {
@@ -301,7 +301,7 @@ public abstract class AbstractLocalSLJob extends AbstractSLJob {
 	private void cancel(Process p, final PrintStream pout) {
 		pout.println("##" + Local.CANCEL);
 		p.destroy();
-		throw newException(SLJobConstants.ERROR_JOB_CANCELLED);
+		throw newException(RemoteSLJobConstants.ERROR_JOB_CANCELLED);
 	}
 
 	private void examineFirstLines(String[] firstLines) {
@@ -309,7 +309,7 @@ public abstract class AbstractLocalSLJob extends AbstractSLJob {
 			if (line.startsWith("Could not reserve enough space")
 					|| line.startsWith("Invalid maximum heap size")) {
 				throw newException(
-						SLJobConstants.ERROR_MEMORY_SIZE_TOO_BIG,
+						RemoteSLJobConstants.ERROR_MEMORY_SIZE_TOO_BIG,
 						memorySize);
 			}
 		}
