@@ -10,6 +10,7 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
 import com.surelogic.common.jobs.*;
+import com.surelogic.common.jobs.remote.TestCode;
 import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.common.images.CommonImages;
 import com.surelogic.sierra.tool.message.Config;
