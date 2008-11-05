@@ -18,18 +18,18 @@ import com.surelogic.sierra.jdbc.tool.ToolBuilder.ArtifactTypeBuilder;
  */
 class FindBugsParser extends DefaultHandler {
 
-	private static final String BUG_PATTERN = "BugPattern";
+	static final String BUG_PATTERN = "BugPattern";
 
-	private static final String TYPE = "type";
+	static final String TYPE = "type";
 
-	private static final String CATEGORY = "category";
+	static final String CATEGORY = "category";
 
-	private final Map<String, String> infoMap;
+	private final Map<String, FindBugsMessageParser.Info> infoMap;
 
 	private final ArtifactTypeBuilder builder;
 
 	public FindBugsParser(ArtifactTypeBuilder findingTypeBuilder,
-			Map<String, String> infoMap) {
+			Map<String, FindBugsMessageParser.Info> infoMap) {
 		builder = findingTypeBuilder;
 		this.infoMap = infoMap;
 	}
@@ -41,7 +41,7 @@ class FindBugsParser extends DefaultHandler {
 			String mnemonic = attributes.getValue(TYPE);
 			try {
 				builder.category(attributes.getValue(CATEGORY)).mnemonic(
-						mnemonic).info(infoMap.get(mnemonic)).build();
+						mnemonic).info(infoMap.get(mnemonic).details).build();
 			} catch (SQLException e) {
 				throw new IllegalStateException(
 						"SQL exception encountered while writing out Findbugs finding types.",
