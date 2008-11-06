@@ -676,4 +676,12 @@ public enum ConnectionFactory implements DBConnection {
 		throw new UnsupportedOperationException();
 	}
 
+	public void bootAndCheckSchema() throws Exception {
+		throw new UnsupportedOperationException();
+	}
+
+	public void loggedBootAndCheckSchema() {
+		throw new UnsupportedOperationException();
+	}
+
 }
