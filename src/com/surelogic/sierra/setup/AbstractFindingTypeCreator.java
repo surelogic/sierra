@@ -58,5 +58,18 @@ public abstract class AbstractFindingTypeCreator {
 		return this;
 	}
 	
+	protected static void output(PrintStream out, String tool, String name, FindingTypeInfo info) {
+		out.println("  <findingType>");
+		out.println("    <id>"+name+"</id>");
+		out.println("    <artifact tool=\""+tool+"\"	mnemonic=\""+name+"\"/>");
+		out.println("    <shortMessage>"+info.shortDesc+"</shortMessage>");
+		//System.out.println("LongDesc:  "+info.longDesc);
+		out.println("    <info>");
+		out.println("      <![CDATA["+info.details+"]]>");
+		out.println("    </info>");
+		out.println("    <name>"+info.shortDesc+"</name>");
+		out.println("  </findingType>");
+	}
+	
 	public abstract void finish() throws IOException;
 }

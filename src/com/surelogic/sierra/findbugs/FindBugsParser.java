@@ -11,6 +11,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import com.surelogic.sierra.jdbc.tool.ToolBuilder.ArtifactTypeBuilder;
+import com.surelogic.sierra.setup.FindingTypeInfo;
 
 /**
  * @author nathan
@@ -24,12 +25,12 @@ class FindBugsParser extends DefaultHandler {
 
 	static final String CATEGORY = "category";
 
-	private final Map<String, FindBugsMessageParser.Info> infoMap;
+	private final Map<String, FindingTypeInfo> infoMap;
 
 	private final ArtifactTypeBuilder builder;
 
 	public FindBugsParser(ArtifactTypeBuilder findingTypeBuilder,
-			Map<String, FindBugsMessageParser.Info> infoMap) {
+			Map<String, FindingTypeInfo> infoMap) {
 		builder = findingTypeBuilder;
 		this.infoMap = infoMap;
 	}

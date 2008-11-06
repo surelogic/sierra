@@ -13,6 +13,7 @@ import org.xml.sax.helpers.DefaultHandler;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.common.xml.XMLUtil;
 import com.surelogic.sierra.setup.AbstractFindingTypeCreator;
+import com.surelogic.sierra.setup.FindingTypeInfo;
 
 public class FindBugsFindingTypeCreator extends AbstractFindingTypeCreator {
 	// Tool: FindBugs Version: 1.3.6 Mnemonic: RpC_REPEATED_CONDITIONAL_TEST
@@ -39,12 +40,12 @@ public class FindBugsFindingTypeCreator extends AbstractFindingTypeCreator {
 	}
 	
 	static class FindBugsXMLParser extends DefaultHandler {
-		private final Map<String, FindBugsMessageParser.Info> infoMap;
+		private final Map<String, FindingTypeInfo> infoMap;
 		private final List<String> mnemonics;
 		private final String tool;
 		private final Map<String,List<String>> category2types = new HashMap<String,List<String>>();
 
-		FindBugsXMLParser(String tool, List<String> mnemonics, Map<String, FindBugsMessageParser.Info> infoMap) {
+		FindBugsXMLParser(String tool, List<String> mnemonics, Map<String, FindingTypeInfo> infoMap) {
 			this.infoMap = infoMap;
 			this.mnemonics = mnemonics;
 			this.tool = tool;
@@ -66,17 +67,8 @@ public class FindBugsFindingTypeCreator extends AbstractFindingTypeCreator {
 				}
 				types.add(mnemonic);
 				
-				System.out.println("  <findingType>");
-				System.out.println("    <id>"+mnemonic+"</id>");
-				System.out.println("    <artifact tool=\""+tool+"\"	mnemonic=\""+mnemonic+"\"/>");
-				final FindBugsMessageParser.Info info = infoMap.get(mnemonic);
-				System.out.println("    <shortMessage>"+info.shortDesc+"</shortMessage>");
-				//System.out.println("LongDesc:  "+info.longDesc);
-				System.out.println("    <info>");
-				System.out.println("      <![CDATA["+info.details+"]]>");
-				System.out.println("    </info>");
-				System.out.println("    <name>"+info.shortDesc+"</name>");
-				System.out.println("  </findingType>");
+				final FindingTypeInfo info = infoMap.get(mnemonic);
+				output(System.out, tool, mnemonic, info);
 			}
 		}
 		
