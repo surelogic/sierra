@@ -94,7 +94,6 @@ public abstract class ReportsContent extends
 					}
 				});
 		selectionPanel.add(reportParamsView);
-		selectionPanel.add(reportView);
 	}
 
 	private void saveReportConfig(final ReportSettings settings) {

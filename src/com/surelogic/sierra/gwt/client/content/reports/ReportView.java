@@ -49,6 +49,11 @@ public class ReportView extends BasicPanel {
 	public void retrieveTable(final ReportSettings selection) {
 		report.clear();
 		// retrieve and display the report
-		report.add(new ContentBlockPanel(new ReportTableBlock(selection)));
+		final ContentBlockPanel tablePanel = new ContentBlockPanel(
+				new ReportTableBlock(selection));
+		tablePanel.initialize();
+		tablePanel.getTitlePanel().setVisible(false);
+		tablePanel.setWidth("100%");
+		report.add(tablePanel);
 	}
 }
