@@ -17,6 +17,7 @@ public class ReportView extends BasicPanel {
 
 	@Override
 	protected void onInitialize(final VerticalPanel contentPanel) {
+		report.setWidth("100%");
 		contentPanel.add(report);
 	}
 
@@ -53,7 +54,6 @@ public class ReportView extends BasicPanel {
 				new ReportTableBlock(selection));
 		tablePanel.initialize();
 		tablePanel.getTitlePanel().setVisible(false);
-		tablePanel.setWidth("100%");
 		report.add(tablePanel);
 	}
 }
