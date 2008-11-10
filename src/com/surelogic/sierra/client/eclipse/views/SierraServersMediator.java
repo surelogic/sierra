@@ -683,6 +683,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 				boolean allConnected = someProjects;
 				boolean allHasScans = someProjects;
 				if (someProjects) {
+					//try {
 					for (final ProjectStatus ps : status) {
 						if ((f_manager == null) || (ps == null)) {
 							LOG.severe("Null project status");
@@ -691,10 +692,15 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 						if (!f_manager.isConnected(ps.name)) {
 							allConnected = false;
 						}
-						if (ps.scanInfo.isPartial()) {
+						if (ps.scanInfo == null || ps.scanInfo.isPartial()) {
 							allHasScans = false;
 						}
 					}
+					/*
+					} catch (Throwable t) {
+						t.printStackTrace();
+					}
+					*/
 				}
 				f_scanProjectItem.setEnabled(someProjects);
 				f_rescanProjectItem.setEnabled(someProjects);
