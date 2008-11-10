@@ -692,7 +692,10 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 						if (!f_manager.isConnected(ps.name)) {
 							allConnected = false;
 						}
-						if (ps.scanInfo == null || ps.scanInfo.isPartial()) {
+						if (ps.scanDoc == null || !ps.scanDoc.exists()) {
+							allHasScans = false;
+						}
+						else if (ps.scanInfo != null && ps.scanInfo.isPartial()) {
 							allHasScans = false;
 						}
 					}
