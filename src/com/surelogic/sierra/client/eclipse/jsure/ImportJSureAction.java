@@ -12,7 +12,7 @@ import com.surelogic.common.FileUtility;
 
 public final class ImportJSureAction implements IWorkbenchWindowActionDelegate {
 	private static final boolean debug = true;
-	
+
 	public void dispose() {
 		// Nothing to do
 	}
@@ -22,13 +22,14 @@ public final class ImportJSureAction implements IWorkbenchWindowActionDelegate {
 	}
 
 	private FileDialog fd = null;
-	
+
 	public void run(IAction action) {
 		if (fd == null && !debug) {
 			fd = new FileDialog(PlatformUI.getWorkbench()
 					.getActiveWorkbenchWindow().getShell(), SWT.OPEN);
 			fd.setText("Import Scan");
-			fd.setFilterPath(FileUtility.getSierraDataDirectory());
+			fd.setFilterPath(FileUtility.getSierraDataDirectory()
+					.getAbsolutePath());
 			fd.setFilterExtensions(new String[] { "*.sea.xml", "*.sea.xml.gz",
 					"*.*" });
 			fd.setFilterNames(new String[] { "Scan Documents (*.sea.xml)",
@@ -37,15 +38,15 @@ public final class ImportJSureAction implements IWorkbenchWindowActionDelegate {
 		}
 		final String selectedFilename;
 		if (debug) {
-    		File userDir = new File(System.getProperty("user.home"));
-    		File desktop = new File(userDir, "Desktop");
-    		String first = null;
-    		for(String file : desktop.list()) {
-    			if (file.endsWith(".sea.xml")) {
-    				first = new File(desktop, file).getAbsolutePath();
-    				break;
-    			}
-    		}
+			File userDir = new File(System.getProperty("user.home"));
+			File desktop = new File(userDir, "Desktop");
+			String first = null;
+			for (String file : desktop.list()) {
+				if (file.endsWith(".sea.xml")) {
+					first = new File(desktop, file).getAbsolutePath();
+					break;
+				}
+			}
 			selectedFilename = first;
 		} else {
 			selectedFilename = fd.open();
@@ -59,10 +60,10 @@ public final class ImportJSureAction implements IWorkbenchWindowActionDelegate {
 	public static void asyncImportJSureDocument(File runDocument) {
 		if (runDocument.canRead()) {
 			final String name = runDocument.getName();
-			final int last    = name.length() - ".sea.xml".length();
-			final String proj = name.substring(0, last);				
-			final ImportJSureDocumentJob job = 
-				new ImportJSureDocumentJob(proj, runDocument);
+			final int last = name.length() - ".sea.xml".length();
+			final String proj = name.substring(0, last);
+			final ImportJSureDocumentJob job = new ImportJSureDocumentJob(proj,
+					runDocument);
 			job.setUser(true);
 			job.schedule();
 		}

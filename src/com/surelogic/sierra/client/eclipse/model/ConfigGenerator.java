@@ -64,7 +64,8 @@ public final class ConfigGenerator {
 			SierraToolConstants.SIERRA_RESULTS_PATH);
 
 	/** The default folder from the preference page */
-	private final String f_sierraPath = FileUtility.getSierraDataDirectory();
+	private final String f_sierraPath = FileUtility.getSierraDataDirectory()
+			.getAbsolutePath();
 
 	/** The plug-in directory that has tools folder */
 	private final String tools;

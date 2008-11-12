@@ -19,10 +19,10 @@ public class PublishScanAction extends AbstractWebServiceMenuAction {
 	@Override
 	void runServerAction(final ServerProjectGroupJob family,
 			String projectName, SierraServer server, Shell shell) {
-		final String sierraDataDirectory = FileUtility.getSierraDataDirectory();
-		final String scanFileName = sierraDataDirectory + File.separator
-				+ projectName + SierraToolConstants.PARSED_FILE_SUFFIX;
-		final File scanFile = new File(scanFileName);
+		final String scanFileName = projectName
+				+ SierraToolConstants.PARSED_FILE_SUFFIX;
+		final File scanFile = new File(FileUtility.getSierraDataDirectory(),
+				scanFileName);
 		if (scanFile.exists()) {
 			final ShareScanJob job = new ShareScanJob(family, projectName,
 					server, scanFile, ServerFailureReport.SHOW_DIALOG);
@@ -30,9 +30,11 @@ public class PublishScanAction extends AbstractWebServiceMenuAction {
 		} else {
 			final int errNo = 21;
 			final String msg = I18N.err(errNo, projectName, server.getLabel(),
-					projectName, sierraDataDirectory, File.separator,
-					projectName, projectName);
-			final IStatus reason = SLEclipseStatusUtility.createErrorStatus(errNo, msg);
+					projectName, FileUtility.getSierraDataDirectory()
+							.getAbsolutePath(), File.separator, projectName,
+					projectName);
+			final IStatus reason = SLEclipseStatusUtility.createErrorStatus(
+					errNo, msg);
 			ErrorDialogUtility.open(shell, "No Scan Exists", reason);
 		}
 	}

@@ -34,7 +34,8 @@ public final class ImportScanAction implements IWorkbenchWindowActionDelegate {
 			fd = new FileDialog(PlatformUI.getWorkbench()
 					.getActiveWorkbenchWindow().getShell(), SWT.OPEN);
 			fd.setText("Import Scan");
-			fd.setFilterPath(FileUtility.getSierraDataDirectory());
+			fd.setFilterPath(FileUtility.getSierraDataDirectory()
+					.getAbsolutePath());
 			fd.setFilterExtensions(new String[] { "*.sierra", "*.sierra.gz",
 					"*.*" });
 			fd.setFilterNames(new String[] { "Scan Documents (*.sierra)",
