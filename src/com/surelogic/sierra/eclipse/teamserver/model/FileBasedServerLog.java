@@ -52,7 +52,7 @@ public abstract class FileBasedServerLog extends ServerLog {
 	}
 
 	private File getSierraServerDir() {
-		File sd = new File(FileUtility.getSierraLocalTeamServerDirectory());
+		final File sd = FileUtility.getSierraLocalTeamServerDirectory();
 		return sd;
 	}
 
