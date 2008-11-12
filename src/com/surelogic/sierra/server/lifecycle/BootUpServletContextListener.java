@@ -66,25 +66,24 @@ public class BootUpServletContextListener implements ServletContextListener {
 		if (loggerOption != null) {
 			final SimpleDateFormat dateFormat = new SimpleDateFormat(
 					"-yyyy_MM_dd");
-			final String logFileName;
-			final String tail = File.separator + "log-" + loggerTag
+			final File path;
+			final String tail = "log-" + loggerTag
 					+ dateFormat.format(new Date()) + ".txt";
 			if ("serverdir".equals(loggerOption)) {
-				final String serverDirectory = FileUtility
-						.getSierraLocalTeamServerDirectory();
-				FileUtility.createDirectory(serverDirectory);
-				logFileName = serverDirectory + tail;
+				path = FileUtility.getSierraLocalTeamServerDirectory();
 			} else {
-				logFileName = System.getProperty("java.io.tmpdir") + tail;
+				path = new File(System.getProperty("java.io.tmpdir"));
 			}
+			final File logFile = new File(path, tail);
 			try {
-				final FileHandler fh = new FileHandler(logFileName, true);
+				final FileHandler fh = new FileHandler(logFile
+						.getAbsolutePath(), true);
 				SLLogger.addHandler(fh);
 			} catch (final Exception e) {
 				SLLogger.getLogger().log(Level.SEVERE,
-						I18N.err(29, logFileName), e);
+						I18N.err(29, logFile.getAbsolutePath()), e);
 			}
-			toString = "to '" + logFileName + "' ";
+			toString = "to '" + logFile.getAbsolutePath() + "' ";
 		}
 		final Runtime rt = Runtime.getRuntime();
 		final long maxMemoryMB = rt.maxMemory() / 1024L / 1024L;
@@ -104,14 +103,15 @@ public class BootUpServletContextListener implements ServletContextListener {
 		/*
 		 * Bootstrap or update up the database as necessary.
 		 */
-		ConnectionFactory.getInstance().withTransaction(new ServerTransaction<Void>() {
-			public Void perform(final Connection conn, final Server server)
-					throws Exception {
-				SchemaUtility
-						.checkAndUpdate(conn, new SierraSchemaData(), true);
-				return null;
-			}
-		});
+		ConnectionFactory.getInstance().withTransaction(
+				new ServerTransaction<Void>() {
+					public Void perform(final Connection conn,
+							final Server server) throws Exception {
+						SchemaUtility.checkAndUpdate(conn,
+								new SierraSchemaData(), true);
+						return null;
+					}
+				});
 		SLLogger.getLogger().log(
 				Level.INFO,
 				"Derby booted with derby.storage.pageSize="
@@ -122,8 +122,9 @@ public class BootUpServletContextListener implements ServletContextListener {
 	}
 
 	private void clearCache() {
-		final String cacheDir = FileUtility.getSierraTeamServerCacheDirectory();
-		FileUtility.deleteDirectoryAndContents(new File(cacheDir));
-		SLLogger.getLogger().log(Level.INFO, "Cache cleared from " + cacheDir);
+		final File cacheDir = FileUtility.getSierraTeamServerCacheDirectory();
+		FileUtility.deleteDirectoryAndContents(cacheDir);
+		SLLogger.getLogger().log(Level.INFO,
+				"Cache cleared from " + cacheDir.getAbsolutePath());
 	}
 }
