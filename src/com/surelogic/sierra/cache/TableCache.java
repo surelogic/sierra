@@ -46,15 +46,14 @@ public class TableCache implements Sweepable {
 	private static final String TABLE_CACHE_FILE_PREFIX = "table-";
 
 	private File getTableFileFor(final Ticket ticket) {
-		return new File(FileUtility.getSierraTeamServerCacheDirectory()
-				+ File.separator + TABLE_CACHE_FILE_PREFIX
-				+ ticket.getUUID().toString() + ".table");
+		return new File(FileUtility.getSierraTeamServerCacheDirectory(),
+				TABLE_CACHE_FILE_PREFIX + ticket.getUUID().toString()
+						+ ".table");
 	}
 
 	private File getRevFileFor(final Ticket ticket) {
-		return new File(FileUtility.getSierraTeamServerCacheDirectory()
-				+ File.separator + TABLE_CACHE_FILE_PREFIX
-				+ ticket.getUUID().toString() + ".rev");
+		return new File(FileUtility.getSierraTeamServerCacheDirectory(),
+				TABLE_CACHE_FILE_PREFIX + ticket.getUUID().toString() + ".rev");
 	}
 
 	private static ReportTable readTable(final File file) throws IOException,

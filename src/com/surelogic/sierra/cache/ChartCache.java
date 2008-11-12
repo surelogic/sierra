@@ -75,21 +75,18 @@ public final class ChartCache implements Sweepable {
 	private static final String CHART_CACHE_FILE_PREFIX = "chart-";
 
 	private File getPngFileFor(final Ticket ticket) {
-		return new File(FileUtility.getSierraTeamServerCacheDirectory()
-				+ File.separator + CHART_CACHE_FILE_PREFIX
-				+ ticket.getUUID().toString() + ".png");
+		return new File(FileUtility.getSierraTeamServerCacheDirectory(),
+				CHART_CACHE_FILE_PREFIX + ticket.getUUID().toString() + ".png");
 	}
 
 	private File getMapFileFor(final Ticket ticket) {
-		return new File(FileUtility.getSierraTeamServerCacheDirectory()
-				+ File.separator + CHART_CACHE_FILE_PREFIX
-				+ ticket.getUUID().toString() + ".map");
+		return new File(FileUtility.getSierraTeamServerCacheDirectory(),
+				CHART_CACHE_FILE_PREFIX + ticket.getUUID().toString() + ".map");
 	}
 
 	private File getRevFileFor(final Ticket ticket) {
-		return new File(FileUtility.getSierraTeamServerCacheDirectory()
-				+ File.separator + CHART_CACHE_FILE_PREFIX
-				+ ticket.getUUID().toString() + ".rev");
+		return new File(FileUtility.getSierraTeamServerCacheDirectory(),
+				CHART_CACHE_FILE_PREFIX + ticket.getUUID().toString() + ".rev");
 	}
 
 	private void checkAndUpdateCache(final Ticket ticket)
