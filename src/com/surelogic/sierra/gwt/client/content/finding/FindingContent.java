@@ -11,6 +11,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.Context;
 import com.surelogic.sierra.gwt.client.content.ContentComposite;
+import com.surelogic.sierra.gwt.client.content.scans.ScanContent;
 import com.surelogic.sierra.gwt.client.data.ArtifactOverview;
 import com.surelogic.sierra.gwt.client.data.AuditOverview;
 import com.surelogic.sierra.gwt.client.data.FindingOverview;
@@ -21,11 +22,14 @@ import com.surelogic.sierra.gwt.client.service.callback.StandardCallback;
 import com.surelogic.sierra.gwt.client.ui.StyleHelper;
 import com.surelogic.sierra.gwt.client.ui.StyleHelper.Style;
 import com.surelogic.sierra.gwt.client.ui.choice.SingleImportanceChoice;
+import com.surelogic.sierra.gwt.client.ui.link.ContentLink;
 
 public final class FindingContent extends ContentComposite {
 	public static final String PARAM_FINDING = "finding";
 
 	private static final FindingContent instance = new FindingContent();
+
+	private final VerticalPanel findingPanel = new VerticalPanel();
 
 	private final HTML synopsis = new HTML();
 
@@ -39,6 +43,8 @@ public final class FindingContent extends ContentComposite {
 
 	private final VerticalPanel artifacts = new VerticalPanel();
 
+	private final VerticalPanel selectionPanel = new VerticalPanel();
+
 	public static FindingContent getInstance() {
 		return instance;
 	}
@@ -49,19 +55,27 @@ public final class FindingContent extends ContentComposite {
 
 	@Override
 	protected void onInitialize(final DockPanel rootPanel) {
-		final VerticalPanel panel = new VerticalPanel();
-		panel.add(StyleHelper.add(new Label("Synopsis"), Style.STRONG));
-		panel.add(synopsis);
-		panel.add(StyleHelper.add(new Label("Location"), Style.STRONG));
-		panel.add(location);
-		panel.add(StyleHelper.add(new Label("Description"), Style.STRONG));
-		panel.add(description);
-		panel.add(StyleHelper.add(new Label("Audits"), Style.STRONG));
-		panel.add(audits);
-		panel.add(auditBox);
-		panel.add(StyleHelper.add(new Label("Artifacts"), Style.STRONG));
-		panel.add(artifacts);
-		getRootPanel().add(panel, DockPanel.CENTER);
+		findingPanel.add(StyleHelper.add(new Label("Synopsis"), Style.STRONG));
+		findingPanel.add(synopsis);
+		findingPanel.add(StyleHelper.add(new Label("Location"), Style.STRONG));
+		findingPanel.add(location);
+		findingPanel.add(StyleHelper
+				.add(new Label("Description"), Style.STRONG));
+		findingPanel.add(description);
+		findingPanel.add(StyleHelper.add(new Label("Audits"), Style.STRONG));
+		findingPanel.add(audits);
+		findingPanel.add(auditBox);
+		findingPanel.add(StyleHelper.add(new Label("Artifacts"), Style.STRONG));
+		findingPanel.add(artifacts);
+		getRootPanel().add(findingPanel, DockPanel.CENTER);
+		findingPanel.setVisible(false);
+		final ContentLink link = new ContentLink(
+				"Select a Finding from the Scans tab", ScanContent
+						.getInstance(), null);
+		link.addStyleName("padded");
+		selectionPanel.add(link);
+		getRootPanel().add(selectionPanel, DockPanel.NORTH);
+		selectionPanel.setVisible(false);
 	}
 
 	@Override
@@ -102,11 +116,14 @@ public final class FindingContent extends ContentComposite {
 
 	private void setEmpty() {
 		clear();
-		synopsis.setText("No Finding");
+		findingPanel.setVisible(false);
+		selectionPanel.setVisible(true);
 	}
 
 	private void setFinding(final FindingOverview f) {
 		clear();
+		findingPanel.setVisible(true);
+		selectionPanel.setVisible(false);
 		String firstReported = null;
 		String firstReportedBy = null;
 		if (f.getAudits().isEmpty()) {

@@ -13,6 +13,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.Context;
 import com.surelogic.sierra.gwt.client.content.ContentComposite;
+import com.surelogic.sierra.gwt.client.content.projects.ProjectsContent;
 import com.surelogic.sierra.gwt.client.data.ImportanceView;
 import com.surelogic.sierra.gwt.client.data.ReportSettings;
 import com.surelogic.sierra.gwt.client.data.ScanDetail;
@@ -23,7 +24,9 @@ import com.surelogic.sierra.gwt.client.ui.block.ContentBlockPanel;
 import com.surelogic.sierra.gwt.client.ui.block.ReportTableBlock;
 import com.surelogic.sierra.gwt.client.ui.chart.ChartBuilder;
 import com.surelogic.sierra.gwt.client.ui.choice.MultipleImportanceChoice;
+import com.surelogic.sierra.gwt.client.ui.link.ContentLink;
 import com.surelogic.sierra.gwt.client.ui.panel.BasicPanel;
+import com.surelogic.sierra.gwt.client.util.LangUtil;
 
 public class ScanContent extends ContentComposite {
 
@@ -76,6 +79,15 @@ public class ScanContent extends ContentComposite {
 			optionsPanel.clear();
 			chartPanel.clear();
 			detailPanel.clear();
+			if (LangUtil.isEmpty(uuid)) {
+				setTitle("No Scan Selected");
+				final ContentLink link = new ContentLink(
+						"Select a Scan from the Projects tab", ProjectsContent
+								.getInstance(), null);
+				link.addStyleName("padded");
+				optionsPanel.add(link);
+			}
+
 			ServiceHelper.getFindingService().getScanDetail(uuid,
 					new StandardCallback<ScanDetail>() {
 
