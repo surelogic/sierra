@@ -2,7 +2,6 @@ package com.surelogic.sierra.gwt.client.data.dashboard;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import com.surelogic.sierra.gwt.client.ui.type.Direction;
@@ -18,27 +17,24 @@ public class DashboardSettings implements Serializable {
 		return rows;
 	}
 
-	public DashboardRow getLastRow() {
+	public DashboardRow getRow(final int row, final boolean createIfNotExists) {
 		final List<DashboardRow> rows = getRows();
-		if (rows.size() == 0) {
-			addRow();
+		DashboardRow currentRow = row < rows.size() ? rows.get(row) : null;
+		if (currentRow == null && createIfNotExists) {
+			while (rows.size() < row + 1) {
+				rows.add(new DashboardRow());
+			}
+			currentRow = rows.get(row);
 		}
-		return rows.get(rows.size() - 1);
+		return currentRow;
 	}
 
-	public DashboardRow addRow() {
-		final DashboardRow newRow = new DashboardRow();
-		getRows().add(newRow);
-		return newRow;
+	public void setWidget(final int row, final int column,
+			final DashboardWidget widget) {
+		getRow(row, true).setColumn(column, widget);
 	}
 
-	public DashboardRow addRow(final int index) {
-		final DashboardRow newRow = new DashboardRow();
-		getRows().add(index, newRow);
-		return newRow;
-	}
-
-	public DashboardRow findRow(final DashboardWidget widget) {
+	public DashboardRow findWidgetRow(final DashboardWidget widget) {
 		for (final DashboardRow row : getRows()) {
 			if (row.getColumns().indexOf(widget) != -1) {
 				return row;
@@ -47,17 +43,9 @@ public class DashboardSettings implements Serializable {
 		return null;
 	}
 
-	public void addColumn(final DashboardWidget widget) {
-		getLastRow().getColumns().add(widget);
-	}
-
-	public void setColumn(final int col, final DashboardWidget widget) {
-		getLastRow().setColumn(col, widget);
-	}
-
-	public boolean moveColumn(final DashboardWidget widget,
+	public boolean moveWidget(final DashboardWidget widget,
 			final Direction direction) {
-		final DashboardRow row = findRow(widget);
+		final DashboardRow row = findWidgetRow(widget);
 		if (row != null) {
 			final int rowIndex = getRows().indexOf(row);
 			final List<DashboardWidget> columns = row.getColumns();
@@ -65,12 +53,14 @@ public class DashboardSettings implements Serializable {
 
 			if (direction == Direction.LEFT) {
 				if (columnIndex > 0 && columns.size() > 1) {
-					Collections.swap(columns, columnIndex, columnIndex - 1);
+					row.getColumns().set(columnIndex, null);
+					insertColumn(widget, 0, rowIndex, 1);
 					return true;
 				}
 			} else if (direction == Direction.RIGHT) {
 				if (columnIndex == 0 && columns.size() > 1) {
-					Collections.swap(columns, columnIndex, columnIndex + 1);
+					row.getColumns().set(columnIndex, null);
+					insertColumn(widget, 1, rowIndex, 1);
 					return true;
 				}
 			} else if (direction == Direction.UP) {
@@ -81,8 +71,9 @@ public class DashboardSettings implements Serializable {
 					if (columns.size() == 1) {
 						return false;
 					} else {
-						final DashboardRow newRow = addRow(0);
-						newRow.setColumn(0, widget);
+						final DashboardRow newRow = new DashboardRow();
+						getRows().add(0, newRow);
+						newRow.setColumn(columnIndex, widget);
 						row.setColumn(columnIndex, null);
 						return true;
 					}
@@ -104,7 +95,9 @@ public class DashboardSettings implements Serializable {
 					searchIndex = 0;
 					searchCols = null;
 				}
-				final DashboardRow newRow = addRow(searchIndex);
+
+				final DashboardRow newRow = new DashboardRow();
+				getRows().add(searchIndex, newRow);
 				if (searchCols != null && searchCols.size() == 1) {
 					newRow.setColumn(0, widget);
 				} else {
@@ -119,11 +112,57 @@ public class DashboardSettings implements Serializable {
 		return false;
 	}
 
-	public void removeColumn(final DashboardWidget widget) {
-		final DashboardRow row = findRow(widget);
+	private void insertColumn(final DashboardWidget widget,
+			final int columnIndex, final int startRow, final int rowIncrement) {
+		final List<DashboardRow> rows = getRows();
+		final int rowCount = rows.size();
+
+		// move up or down through the rows
+		for (int rowIndex = startRow; (rowIndex < rowCount && rowIndex >= 0); rowIndex += rowIncrement) {
+			final DashboardRow row = rows.get(rowIndex);
+			final List<DashboardWidget> cols = row.getColumns();
+			final int colCount = cols.size();
+
+			// if we hit a row that extends across both columns, place our
+			// column before it
+			if (colCount < 2) {
+				final DashboardRow newRow = new DashboardRow();
+				if (rowIncrement > 0) {
+					rows.add(rowIndex, newRow);
+				} else {
+					rows.add(rowIndex + 1, newRow);
+				}
+				newRow.setColumn(columnIndex, widget);
+				return;
+			} else {
+				// the current row has multiple columns, see if there our column
+				// is null
+				final boolean colIsEmpty = columnIndex < colCount ? cols
+						.get(columnIndex) == null : true;
+				if (colIsEmpty) {
+					// our column is null, place the widget there
+					row.setColumn(columnIndex, widget);
+					return;
+				}
+			}
+		}
+
+		// we've hit the top or bottom of the dashboard, just insert a new row
+		final DashboardRow newRow = new DashboardRow();
+		newRow.setColumn(columnIndex, widget);
+		if (rowIncrement > 0) {
+			rows.add(newRow);
+		} else {
+			rows.add(0, newRow);
+		}
+
+	}
+
+	public void removeWidget(final DashboardWidget widget) {
+		final DashboardRow row = findWidgetRow(widget);
 		if (row != null) {
-			row.getColumns().remove(widget);
-			cleanup();
+			final int columnIndex = row.getColumns().indexOf(widget);
+			row.getColumns().set(columnIndex, null);
 		}
 	}
 
@@ -132,7 +171,8 @@ public class DashboardSettings implements Serializable {
 		final List<DashboardRow> rows = getRows();
 		while (rowIndex < rows.size()) {
 			boolean emptyRow = true;
-			for (final DashboardWidget w : rows.get(rowIndex).getColumns()) {
+			final List<DashboardWidget> cols = rows.get(rowIndex).getColumns();
+			for (final DashboardWidget w : cols) {
 				if (w != null) {
 					emptyRow = false;
 				}
@@ -140,9 +180,37 @@ public class DashboardSettings implements Serializable {
 			if (emptyRow) {
 				rows.remove(rowIndex);
 			} else {
+				if (cols.size() > 1) {
+					for (int i = 0; i < cols.size(); i++) {
+						if (cols.get(i) == null) {
+							collapseColumn(rowIndex, i);
+						}
+					}
+				}
 				rowIndex++;
 			}
 		}
+	}
+
+	private void collapseColumn(final int rowIndex, final int columnIndex) {
+		final List<DashboardRow> rows = getRows();
+		int searchRow = rowIndex + 1;
+		DashboardWidget foundColumn = null;
+		while (searchRow < rows.size() && foundColumn == null) {
+			final List<DashboardWidget> cols = rows.get(searchRow).getColumns();
+			if (cols.size() < 2) {
+				return;
+			}
+			foundColumn = columnIndex < cols.size() ? cols.get(columnIndex)
+					: null;
+			if (foundColumn != null) {
+				rows.get(rowIndex).setColumn(columnIndex, foundColumn);
+				cols.set(columnIndex, null);
+			} else {
+				searchRow++;
+			}
+		}
+
 	}
 
 	public static class DashboardRow implements Serializable {

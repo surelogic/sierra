@@ -20,6 +20,8 @@ public class DashboardBlock extends ContentBlock<ContentBlock<?>> {
 	private final Image moveDown = createArrowImage(Direction.DOWN);
 	private final Image moveLeft = createArrowImage(Direction.LEFT);
 	private final Image moveRight = createArrowImage(Direction.RIGHT);
+	private final Image shrink = createArrowImage(Direction.SHRINK);
+	private final Image expand = createArrowImage(Direction.GROW);
 	private final List<DashboardListener> dashboardListeners = new ArrayList<DashboardListener>();
 	private boolean editing;
 
@@ -30,6 +32,8 @@ public class DashboardBlock extends ContentBlock<ContentBlock<?>> {
 		movementActions.add(moveRight);
 		movementActions.add(moveUp);
 		movementActions.add(moveDown);
+		movementActions.add(shrink);
+		movementActions.add(expand);
 
 		content.addListener(new ContentBlockListener() {
 
@@ -83,6 +87,8 @@ public class DashboardBlock extends ContentBlock<ContentBlock<?>> {
 		moveDown.setVisible(allowedMovements.contains(Direction.DOWN));
 		moveLeft.setVisible(allowedMovements.contains(Direction.LEFT));
 		moveRight.setVisible(allowedMovements.contains(Direction.RIGHT));
+		expand.setVisible(allowedMovements.contains(Direction.GROW));
+		shrink.setVisible(allowedMovements.contains(Direction.SHRINK));
 	}
 
 	private Image createArrowImage(final Direction direction) {

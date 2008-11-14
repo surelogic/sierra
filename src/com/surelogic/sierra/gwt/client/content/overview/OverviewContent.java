@@ -106,6 +106,7 @@ public final class OverviewContent extends ContentComposite {
 					@Override
 					protected void doSuccess(final DashboardSettings result) {
 						editMode = false;
+						result.cleanup();
 						updateDashboardUI(result);
 					}
 
@@ -173,24 +174,24 @@ public final class OverviewContent extends ContentComposite {
 			final DashboardSettings settings, final int rowIndex,
 			final int rowCount, final int colIndex, final int colCount) {
 		final Set<Direction> allowedMovements = new HashSet<Direction>();
-		if (colIndex > 0) {
+		boolean horzMovementAllowed;
+		if (colCount == 1) {
+			// TODO temp remove - allowedMovements.add(Direction.GROW);
+			horzMovementAllowed = false;
+		} else {
+			// TODO temp remove - allowedMovements.add(Direction.SHRINK);
+			horzMovementAllowed = true;
+		}
+		if (horzMovementAllowed && colIndex > 0) {
 			allowedMovements.add(Direction.LEFT);
 		}
-		if (colIndex == 0 && colCount > 1) {
+		if (horzMovementAllowed && colIndex == 0) {
 			allowedMovements.add(Direction.RIGHT);
 		}
-		final DashboardRow previousRow = rowIndex > 0 ? settings.getRows().get(
-				rowIndex - 1) : null;
-		if (colCount > 1) {
-			if (previousRow != null && previousRow.getColumns().size() > 1) {
-				allowedMovements.add(Direction.UP);
-			}
-		} else if (rowIndex > 0) {
+		if (rowIndex > 0) {
 			allowedMovements.add(Direction.UP);
 		}
-		if (colCount > 1) {
-			allowedMovements.add(Direction.DOWN);
-		} else if (rowIndex < rowCount - 1) {
+		if (rowIndex < rowCount - 1) {
 			allowedMovements.add(Direction.DOWN);
 		}
 		return allowedMovements;
@@ -245,13 +246,15 @@ public final class OverviewContent extends ContentComposite {
 		}
 
 		public void onMove(final DashboardBlock block, final Direction direction) {
-			if (settings.moveColumn(dashboardWidget, direction)) {
+			if (settings.moveWidget(dashboardWidget, direction)) {
+				settings.cleanup();
 				updateDashboardUI(settings);
 			}
 		}
 
 		public void onRemove(final DashboardBlock block) {
-			settings.removeColumn(dashboardWidget);
+			settings.removeWidget(dashboardWidget);
+			settings.cleanup();
 			updateDashboardUI(settings);
 		}
 

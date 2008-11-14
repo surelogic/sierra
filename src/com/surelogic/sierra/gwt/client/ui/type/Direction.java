@@ -1,7 +1,8 @@
 package com.surelogic.sierra.gwt.client.ui.type;
 
 public enum Direction {
-	UP("up"), DOWN("down"), LEFT("left"), RIGHT("right");
+	UP("up"), DOWN("down"), LEFT("left"), RIGHT("right"), SHRINK("shrink"), GROW(
+			"grow");
 
 	private String text;
 
