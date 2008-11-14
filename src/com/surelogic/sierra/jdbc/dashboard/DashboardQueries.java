@@ -29,22 +29,22 @@ public class DashboardQueries {
 					final Server server, final User user) {
 				final DashboardSettings s = new DashboardSettings();
 				query.prepared("Dashboard.selectReports", new NullRowHandler() {
-					int rowNum = -1;
 
 					@Override
 					protected void doHandle(final Row r) {
 						exists = true;
-						final int thisRow = r.nextInt();
+
+						final int dbRow = r.nextInt();
+						final int column = s.getRow(dbRow, true).getColumns()
+								.size();
 						final String reportSettings = r.nextString();
 						final OutputType out = OutputType.values()[r.nextInt()];
-						if (thisRow != rowNum) {
-							rowNum = thisRow;
-							s.addRow();
-						}
-						s.addColumn(reportSettings == null ? null
+
+						final ReportWidget widget = reportSettings == null ? null
 								: new ReportWidget(ReportSettingQueries
 										.getUserReportSettings(reportSettings)
-										.perform(query, server, user), out));
+										.perform(query, server, user), out);
+						s.setWidget(dbRow, column, widget);
 					}
 				}).call(user.getId());
 				return exists ? s : null;
