@@ -27,14 +27,14 @@ public class SierraPreferencePage extends AbstractLicensePreferencePage {
 	static private final String ESTIMATE_LABEL = "sierra.eclipse.computedMaxToolMemoryLabel";
 	static private final String TOOL_MB_LABEL = "sierra.eclipse.toolMemoryPreferenceLabel";
 
-	BooleanFieldEditor f_balloonFlag;
-	BooleanFieldEditor f_selectProjectsToScan;
-	BooleanFieldEditor f_showMarkersInJavaEditorFlag;
-	RadioGroupFieldEditor f_showAbove;
-	BooleanFieldEditor f_saveResources;
-	IntegerFieldEditor f_findingsListLimit;
-	Label f_estimate;
-	ScaleFieldEditor f_toolMemoryMB;
+	private BooleanFieldEditor f_balloonFlag;
+	private BooleanFieldEditor f_selectProjectsToScan;
+	private BooleanFieldEditor f_showMarkersInJavaEditorFlag;
+	private RadioGroupFieldEditor f_showAbove;
+	private BooleanFieldEditor f_saveResources;
+	private IntegerFieldEditor f_findingsListLimit;
+	private Label f_estimate;
+	private ScaleFieldEditor f_toolMemoryMB;
 
 	public void init(IWorkbench workbench) {
 		setPreferenceStore(Activator.getDefault().getPreferenceStore());
