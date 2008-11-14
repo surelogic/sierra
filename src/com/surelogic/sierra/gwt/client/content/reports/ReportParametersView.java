@@ -34,6 +34,8 @@ import com.surelogic.sierra.gwt.client.data.cache.Cache;
 import com.surelogic.sierra.gwt.client.data.cache.CacheListenerAdapter;
 import com.surelogic.sierra.gwt.client.data.cache.CategoryCache;
 import com.surelogic.sierra.gwt.client.data.cache.FindingTypeCache;
+import com.surelogic.sierra.gwt.client.ui.StyleHelper;
+import com.surelogic.sierra.gwt.client.ui.StyleHelper.Style;
 import com.surelogic.sierra.gwt.client.ui.choice.MultipleImportanceChoice;
 import com.surelogic.sierra.gwt.client.ui.choice.ProjectChoice;
 import com.surelogic.sierra.gwt.client.ui.choice.ScanChoice;
@@ -125,13 +127,12 @@ public class ReportParametersView extends BasicPanel {
 		}
 
 		final List<ReportSettings> savedReports = report.getSavedReports();
+		final VerticalPanel settingsContent = settingsPanel.getContentPanel();
+		settingsContent.clear();
 		if (savedReports.isEmpty()) {
-			settingsPanel.setVisible(false);
+			settingsContent.add(StyleHelper.add(new Label("No reports saved"),
+					Style.ITALICS));
 		} else {
-			settingsPanel.setVisible(true);
-			final VerticalPanel settingsContent = settingsPanel
-					.getContentPanel();
-			settingsContent.clear();
 			for (final ReportSettings rs : savedReports) {
 				final Context reportContext = Context.current().setUuid(report);
 				settingsContent.add(new Hyperlink(rs.getTitle(), reportContext
