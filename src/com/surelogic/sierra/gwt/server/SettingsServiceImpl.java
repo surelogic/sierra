@@ -717,24 +717,23 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 			final ReportSettings latestScans = new ReportSettings(ReportCache
 					.latestScans());
 			latestScans.setWidth("450");
-			settings.addColumn(new ReportWidget(latestScans, OutputType.CHART));
+			settings.setWidget(0, 0, new ReportWidget(latestScans,
+					OutputType.CHART));
 
 			final ReportSettings auditContribs = new ReportSettings(ReportCache
 					.auditContributions());
 			latestScans.setWidth("320");
-			settings
-					.addColumn(new ReportWidget(auditContribs, OutputType.CHART));
+			settings.setWidget(0, 1, new ReportWidget(auditContribs,
+					OutputType.CHART));
 
-			settings.addRow();
 			final ReportSettings userAudits = new ReportSettings(ReportCache
 					.userAudits());
-			settings.setColumn(1,
-					new ReportWidget(userAudits, OutputType.TABLE));
+			settings.setWidget(1, 1, new ReportWidget(userAudits,
+					OutputType.TABLE));
 
-			settings.addRow();
 			final ReportSettings publishedProjects = new ReportSettings(
 					ReportCache.publishedProjects());
-			settings.addColumn(new ReportWidget(publishedProjects,
+			settings.setWidget(2, 0, new ReportWidget(publishedProjects,
 					OutputType.TABLE));
 		}
 		return settings;
