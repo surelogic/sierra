@@ -151,7 +151,7 @@ public class ReportCache extends Cache<Report> {
 		report.setDataSource(DataSource.TEAMSERVER);
 		report.setOutputTypes(OutputType.CHART);
 		final List<Parameter> params = report.getParameters();
-		params.add(new Parameter("projectName", "Projects", Type.PROJECTS));
+		params.add(new Parameter("projectName", "Projects", Type.PROJECT));
 		params.add(new Parameter("kLoC", "Show KLoC", Type.BOOLEAN));
 		return report;
 	}
