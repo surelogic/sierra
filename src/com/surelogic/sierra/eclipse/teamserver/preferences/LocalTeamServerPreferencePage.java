@@ -25,8 +25,7 @@ import com.surelogic.sierra.eclipse.teamserver.Activator;
 public class LocalTeamServerPreferencePage extends PreferencePage implements
 		IWorkbenchPreferencePage {
 
-	static private final String ESTIMATE_LABEL = "sierra.eclipse.teamserver.computedMaxToolMemoryLabel";
-	static private final String SERVER_MB_LABEL = "sierra.eclipse.teamserver.serverMemoryPreferenceLabel";
+	static private final String SERVER_MB_LABEL = "sierra.eclipse.teamserver.preference.page.serverMemoryPreferenceLabel";
 
 	Label f_estimate;
 	ScaleFieldEditor f_serverMemoryMB;
@@ -34,7 +33,8 @@ public class LocalTeamServerPreferencePage extends PreferencePage implements
 
 	public void init(IWorkbench workbench) {
 		setPreferenceStore(Activator.getDefault().getPreferenceStore());
-		setDescription("Use this page to customize your local Sierra team server.");
+		setDescription(I18N
+				.msg("sierra.eclipse.teamserver.preference.page.msg"));
 	}
 
 	@Override
@@ -45,7 +45,8 @@ public class LocalTeamServerPreferencePage extends PreferencePage implements
 
 		final Group memoryGroup = new Group(panel, SWT.NONE);
 		memoryGroup.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
-		memoryGroup.setText("Memory Use");
+		memoryGroup.setText(I18N
+				.msg("sierra.eclipse.teamserver.preference.page.group.memory"));
 
 		final int estimatedMax = MemoryUtility.computeMaxMemorySizeInMb();
 		int mb = PreferenceConstants.getServerMemoryMB();
@@ -58,6 +59,7 @@ public class LocalTeamServerPreferencePage extends PreferencePage implements
 		f_serverMemoryMB = new ScaleFieldEditor(
 				PreferenceConstants.P_SERVER_MEMORY_MB, label + "     ",
 				memoryGroup);
+		f_serverMemoryMB.fillIntoGrid(memoryGroup, 2);
 		f_serverMemoryMB.setMinimum(256);
 		f_serverMemoryMB.setMaximum(estimatedMax);
 		f_serverMemoryMB.setPageIncrement(256);
@@ -73,23 +75,25 @@ public class LocalTeamServerPreferencePage extends PreferencePage implements
 
 		f_estimate = new Label(memoryGroup, SWT.NONE);
 		f_estimate.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false,
-				false));
-		f_estimate.setText(I18N.msg(ESTIMATE_LABEL, estimatedMax));
+				false, 2, 1));
+		f_estimate
+				.setText(I18N
+						.msg(
+								"sierra.eclipse.teamserver.preference.page.computedMaxToolMemoryLabel",
+								estimatedMax));
 
-		if (memoryGroup.getLayout() instanceof GridLayout) {
-			GridLayout gl = (GridLayout) memoryGroup.getLayout();
-			gl.numColumns = 1;
-			memoryGroup.setLayout(gl);
-		}
+		memoryGroup.setLayout(new GridLayout(2, false));
 
 		final Group loggingGroup = new Group(panel, SWT.NONE);
 		loggingGroup
 				.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
-		loggingGroup.setText("Logging");
+		loggingGroup
+				.setText(I18N
+						.msg("sierra.eclipse.teamserver.preference.page.group.logging"));
 
 		f_showAbove = new RadioGroupFieldEditor(
 				PreferenceConstants.P_SERVER_LOGGING_LEVEL,
-				"Log messages at or above (requires server restart to take effect):",
+				I18N.msg("sierra.eclipse.teamserver.preference.page.showAbove"),
 				1, new String[][] {
 						{ Level.SEVERE.toString(), Level.SEVERE.toString() },
 						{ Level.WARNING.toString(), Level.WARNING.toString() },
