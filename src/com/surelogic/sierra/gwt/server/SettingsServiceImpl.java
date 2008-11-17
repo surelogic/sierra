@@ -721,7 +721,7 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 					OutputType.CHART));
 
 			final ReportSettings auditContribs = new ReportSettings(ReportCache
-					.auditContributions());
+					.userAudits());
 			latestScans.setWidth("320");
 			settings.setWidget(0, 1, new ReportWidget(auditContribs,
 					OutputType.CHART));

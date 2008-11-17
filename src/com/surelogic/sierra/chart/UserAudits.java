@@ -26,7 +26,7 @@ import com.surelogic.sierra.portal.PortalOverview;
  * @author nathan
  * 
  */
-public final class AuditContributions implements IDatabasePlot {
+public final class UserAudits implements IDatabasePlot {
 
 	public JFreeChart plot(final PlotSize mutableSize,
 			final ReportSettings report, final Connection c)
