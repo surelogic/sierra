@@ -287,8 +287,22 @@ public class ReportParametersView extends BasicPanel {
 						}
 					});
 			return catB;
+		case FINDING_TYPES:
+			final ListBox ftBs = new ListBox(true);
+			ftBs.setWidth("100%");
+			FindingTypeCache.getInstance().refresh(false,
+					new CacheListenerAdapter<FindingType>() {
+						@Override
+						public void onRefresh(final Cache<FindingType> cache,
+								final Throwable failure) {
+							for (final FindingType type : cache) {
+								ftBs.addItem(type.getName(), type.getUuid());
+							}
+						}
+					});
+			return ftBs;
 		case FINDING_TYPE:
-			final ListBox ftB = new ListBox(true);
+			final ListBox ftB = new ListBox(false);
 			ftB.setWidth("100%");
 			FindingTypeCache.getInstance().refresh(false,
 					new CacheListenerAdapter<FindingType>() {

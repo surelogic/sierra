@@ -8,7 +8,7 @@ import java.util.List;
 import com.surelogic.sierra.gwt.client.data.cache.Cacheable;
 import com.surelogic.sierra.gwt.client.util.LangUtil;
 
-public class Report implements Serializable, Cacheable {
+public class Report implements Serializable, Cacheable, Comparable<Report> {
 	public enum DataSource {
 		BUGLINK, TEAMSERVER
 	}
@@ -211,7 +211,7 @@ public class Report implements Serializable, Cacheable {
 		private static final long serialVersionUID = 3854024638284271950L;
 
 		public enum Type {
-			TEXT, IMPORTANCE, IMPORTANCES, PROJECT, PROJECTS, SCAN, SCANS, CATEGORY, BOOLEAN, FINDING_TYPE, PACKAGES
+			TEXT, IMPORTANCE, IMPORTANCES, PROJECT, PROJECTS, SCAN, SCANS, CATEGORY, BOOLEAN, FINDING_TYPE, FINDING_TYPES, PACKAGES
 		}
 
 		private String name;
@@ -318,6 +318,10 @@ public class Report implements Serializable, Cacheable {
 			}
 			return true;
 		}
+	}
+
+	public int compareTo(final Report o) {
+		return this.title.compareTo(o.title);
 	}
 
 }

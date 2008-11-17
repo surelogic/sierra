@@ -1,6 +1,7 @@
 package com.surelogic.sierra.gwt.client.data.cache;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -27,7 +28,6 @@ public class ReportCache extends Cache<Report> {
 
 	public static List<Report> allReports() {
 		final List<Report> reports = new ArrayList<Report>();
-		reports.add(auditContributions());
 		reports.add(latestScans());
 		reports.add(userAudits());
 		reports.add(publishedProjects());
@@ -42,6 +42,7 @@ public class ReportCache extends Cache<Report> {
 		reports.add(scanFindingsByCategory());
 		reports.add(findingTypeCounts());
 		reports.add(compareProjectScans());
+		Collections.sort(reports);
 		return reports;
 	}
 
@@ -64,16 +65,6 @@ public class ReportCache extends Cache<Report> {
 				});
 	}
 
-	public static Report auditContributions() {
-		final Report report = new Report();
-		report.setUuid("AuditContributions");
-		report.setTitle("Contributions");
-		report.setDescription("In The Last 30 Days");
-		report.setDataSource(DataSource.TEAMSERVER);
-		report.setOutputTypes(OutputType.CHART);
-		return report;
-	}
-
 	public static Report latestScans() {
 		final Report report = new Report();
 		report.setUuid("LatestScanResults");
@@ -88,17 +79,19 @@ public class ReportCache extends Cache<Report> {
 		final Report report = new Report();
 		report.setUuid("UserAudits");
 		report.setTitle("Users");
-		report.setDescription("Latest user audits");
+		report
+				.setDescription("Shows the active users and the number of comments made in the past 30 days.");
 		report.setDataSource(DataSource.TEAMSERVER);
-		report.setOutputTypes(OutputType.TABLE);
+		report.setOutputTypes(OutputType.TABLE, OutputType.CHART);
 		return report;
 	}
 
 	public static Report publishedProjects() {
 		final Report report = new Report();
 		report.setUuid("PublishedProjects");
-		report.setTitle("All Published Projects");
-		report.setDescription("All Published Projects");
+		report.setTitle("Published Projects");
+		report
+				.setDescription("General information on all projects commented on or published to the server.");
 		report.setDataSource(DataSource.TEAMSERVER);
 		report.setOutputTypes(OutputType.TABLE);
 		return report;
@@ -107,7 +100,7 @@ public class ReportCache extends Cache<Report> {
 	public static Report categoryCounts() {
 		final Report report = new Report();
 		report.setUuid("CategoryCounts");
-		report.setTitle("Category Counts");
+		report.setTitle("Category Findings");
 		report
 				.setDescription("Number of findings in each project for this category.");
 		report.setDataSource(DataSource.TEAMSERVER);
@@ -147,7 +140,7 @@ public class ReportCache extends Cache<Report> {
 		final Report report = new Report();
 		report.setUuid("ProjectFindingsChart");
 		report.setTitle("Project Findings");
-		report.setDescription("TODO");
+		report.setDescription("Shows finding trends over time for a project.");
 		report.setDataSource(DataSource.TEAMSERVER);
 		report.setOutputTypes(OutputType.CHART);
 		final List<Parameter> params = report.getParameters();
