@@ -7,6 +7,7 @@ import org.eclipse.jface.preference.ScaleFieldEditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
@@ -16,16 +17,19 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 
+import com.surelogic.common.FileUtility;
 import com.surelogic.common.eclipse.MemoryUtility;
+import com.surelogic.common.eclipse.SLImages;
+import com.surelogic.common.eclipse.dialogs.ChangeDataDirectoryDialog;
 import com.surelogic.common.eclipse.preferences.AbstractLicensePreferencePage;
 import com.surelogic.common.i18n.I18N;
+import com.surelogic.common.images.CommonImages;
 import com.surelogic.sierra.client.eclipse.Activator;
 import com.surelogic.sierra.tool.message.Importance;
 
 public class SierraPreferencePage extends AbstractLicensePreferencePage {
 
-	static private final String ESTIMATE_LABEL = "sierra.eclipse.computedMaxToolMemoryLabel";
-	static private final String TOOL_MB_LABEL = "sierra.eclipse.toolMemoryPreferenceLabel";
+	static private final String TOOL_MB_LABEL = "sierra.eclipse.preference.page.toolMemoryPreferenceLabel";
 
 	private BooleanFieldEditor f_balloonFlag;
 	private BooleanFieldEditor f_selectProjectsToScan;
@@ -35,10 +39,11 @@ public class SierraPreferencePage extends AbstractLicensePreferencePage {
 	private IntegerFieldEditor f_findingsListLimit;
 	private Label f_estimate;
 	private ScaleFieldEditor f_toolMemoryMB;
+	private Label f_dataDirectory;
 
 	public void init(IWorkbench workbench) {
 		setPreferenceStore(Activator.getDefault().getPreferenceStore());
-		setDescription("Use this page to customize Sierra.");
+		setDescription(I18N.msg("sierra.eclipse.preference.page.title.msg"));
 	}
 
 	@Override
@@ -47,45 +52,83 @@ public class SierraPreferencePage extends AbstractLicensePreferencePage {
 		GridLayout grid = new GridLayout();
 		panel.setLayout(grid);
 
+		final Group dataGroup = new Group(panel, SWT.NONE);
+		dataGroup.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
+		dataGroup
+				.setText(I18N.msg("sierra.eclipse.preference.page.group.data"));
+		dataGroup.setLayout(new GridLayout(2, false));
+
+		f_dataDirectory = new Label(dataGroup, SWT.NONE);
+		updateDataDirectory();
+		f_dataDirectory.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
+				false));
+
+		final Button change = new Button(dataGroup, SWT.PUSH);
+		change.setText(I18N
+				.msg("sierra.eclipse.preference.page.changeDataDirectory"));
+		change.setLayoutData(new GridData(SWT.DEFAULT, SWT.DEFAULT, false,
+				false));
+		change.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event event) {
+				ChangeDataDirectoryDialog
+						.open(
+								change.getShell(),
+								FileUtility.getSierraDataDirectoryAnchor(),
+								I18N
+										.msg("sierra.change.data.directory.dialog.title"),
+								SLImages.getImage(CommonImages.IMG_SIERRA_LOGO),
+								I18N
+										.msg("sierra.change.data.directory.dialog.information"),
+								null, null);
+				updateDataDirectory();
+			}
+		});
+
 		final Group diGroup = new Group(panel, SWT.NONE);
 		diGroup.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
-		diGroup.setText("Appearance");
+		diGroup.setText(I18N.msg("sierra.eclipse.preference.page.group.app"));
 
 		f_findingsListLimit = new IntegerFieldEditor(
 				PreferenceConstants.P_FINDINGS_LIST_LIMIT,
-				"Maximum number of findings shown in 'Findings Quick Search' results:",
+				I18N.msg("sierra.eclipse.preference.page.findingsListLimit"),
 				diGroup);
+		f_findingsListLimit.fillIntoGrid(diGroup, 2);
 		f_findingsListLimit.setPage(this);
 		f_findingsListLimit.setPreferenceStore(getPreferenceStore());
 		f_findingsListLimit.load();
 
 		f_balloonFlag = new BooleanFieldEditor(
-				PreferenceConstants.P_SIERRA_BALLOON_FLAG,
-				"Show 'balloon' notifications for scan start and completion.",
+				PreferenceConstants.P_SIERRA_BALLOON_FLAG, I18N
+						.msg("sierra.eclipse.preference.page.balloonFlag"),
 				diGroup);
+		f_balloonFlag.fillIntoGrid(diGroup, 2);
 		f_balloonFlag.setPage(this);
 		f_balloonFlag.setPreferenceStore(getPreferenceStore());
 		f_balloonFlag.load();
 
 		f_selectProjectsToScan = new BooleanFieldEditor(
 				PreferenceConstants.P_SELECT_PROJECTS_TO_SCAN,
-				"Allow the user to select the set of projects to scan even when projects are selected in the Package Explorer.",
+				I18N.msg("sierra.eclipse.preference.page.selectProjectsToScan"),
 				diGroup);
+		f_selectProjectsToScan.fillIntoGrid(diGroup, 2);
 		f_selectProjectsToScan.setPage(this);
 		f_selectProjectsToScan.setPreferenceStore(getPreferenceStore());
 		f_selectProjectsToScan.load();
 
 		f_showMarkersInJavaEditorFlag = new BooleanFieldEditor(
 				PreferenceConstants.P_SIERRA_SHOW_MARKERS,
-				"Show markers for findings in the Java editor.", diGroup);
+				I18N
+						.msg("sierra.eclipse.preference.page.showMarkersInJavaEditorFlag"),
+				diGroup);
+		f_showMarkersInJavaEditorFlag.fillIntoGrid(diGroup, 2);
 		f_showMarkersInJavaEditorFlag.setPage(this);
 		f_showMarkersInJavaEditorFlag.setPreferenceStore(getPreferenceStore());
 		f_showMarkersInJavaEditorFlag.load();
 
 		f_showAbove = new RadioGroupFieldEditor(
 				PreferenceConstants.P_SIERRA_SHOW_MARKERS_AT_OR_ABOVE_IMPORTANCE,
-				"Only show markers for findings in the Java editor at or above",
-				1, new String[][] {
+				I18N.msg("sierra.eclipse.preference.page.showAbove"), 1,
+				new String[][] {
 						{ Importance.CRITICAL.toStringSentenceCase(),
 								Importance.CRITICAL.toString() },
 						{ Importance.HIGH.toStringSentenceCase(),
@@ -98,13 +141,17 @@ public class SierraPreferencePage extends AbstractLicensePreferencePage {
 								Importance.IRRELEVANT.toString() } },
 
 				diGroup);
+		f_showAbove.fillIntoGrid(diGroup, 2);
 		f_showAbove.setPage(this);
 		f_showAbove.setPreferenceStore(getPreferenceStore());
 		f_showAbove.load();
 
+		diGroup.setLayout(new GridLayout(2, false));
+
 		final Group memoryGroup = new Group(panel, SWT.NONE);
 		memoryGroup.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
-		memoryGroup.setText("Code Scanning");
+		memoryGroup.setText(I18N
+				.msg("sierra.eclipse.preference.page.group.scan"));
 
 		final int estimatedMax = MemoryUtility.computeMaxMemorySizeInMb();
 		int mb = PreferenceConstants.getToolMemoryMB();
@@ -117,6 +164,7 @@ public class SierraPreferencePage extends AbstractLicensePreferencePage {
 		f_toolMemoryMB = new ScaleFieldEditor(
 				PreferenceConstants.P_TOOL_MEMORY_MB, label + "     ",
 				memoryGroup);
+		f_toolMemoryMB.fillIntoGrid(memoryGroup, 2);
 		f_toolMemoryMB.setMinimum(256);
 		f_toolMemoryMB.setMaximum(estimatedMax);
 		f_toolMemoryMB.setPageIncrement(256);
@@ -133,15 +181,20 @@ public class SierraPreferencePage extends AbstractLicensePreferencePage {
 		f_estimate = new Label(memoryGroup, SWT.NONE);
 		f_estimate.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false,
 				false, 2, 1));
-		f_estimate.setText(I18N.msg(ESTIMATE_LABEL, estimatedMax));
+		f_estimate.setText(I18N.msg(
+				"sierra.eclipse.preference.page.computedMaxToolMemoryLabel",
+				estimatedMax));
 
 		f_saveResources = new BooleanFieldEditor(
-				PreferenceConstants.P_SIERRA_ALWAYS_SAVE_RESOURCES,
-				"Save all modified resources automatically prior to starting a scan.",
+				PreferenceConstants.P_SIERRA_ALWAYS_SAVE_RESOURCES, I18N
+						.msg("sierra.eclipse.preference.page.saveModified"),
 				memoryGroup);
+		f_saveResources.fillIntoGrid(memoryGroup, 2);
 		f_saveResources.setPage(this);
 		f_saveResources.setPreferenceStore(getPreferenceStore());
 		f_saveResources.load();
+
+		memoryGroup.setLayout(new GridLayout(2, false));
 
 		/*
 		 * Allow access to help via the F1 key.
@@ -155,6 +208,11 @@ public class SierraPreferencePage extends AbstractLicensePreferencePage {
 	private void updateMBInLabel() {
 		final int mb = f_toolMemoryMB.getScaleControl().getSelection();
 		f_toolMemoryMB.setLabelText(I18N.msg(TOOL_MB_LABEL, mb));
+	}
+
+	private void updateDataDirectory() {
+		f_dataDirectory.setText(FileUtility.getSierraDataDirectory()
+				.getAbsolutePath());
 	}
 
 	@Override
