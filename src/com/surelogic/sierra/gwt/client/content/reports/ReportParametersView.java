@@ -273,8 +273,22 @@ public class ReportParametersView extends BasicPanel {
 			return choice;
 		case BOOLEAN:
 			return new CheckBox();
+		case CATEGORIES:
+			final ListBox catBs = new ListBox(true);
+			catBs.setWidth("100%");
+			CategoryCache.getInstance().refresh(false,
+					new CacheListenerAdapter<Category>() {
+						@Override
+						public void onRefresh(final Cache<Category> cache,
+								final Throwable failure) {
+							for (final Category cat : cache) {
+								catBs.addItem(cat.getName(), cat.getUuid());
+							}
+						}
+					});
+			return catBs;
 		case CATEGORY:
-			final ListBox catB = new ListBox(true);
+			final ListBox catB = new ListBox(false);
 			catB.setWidth("100%");
 			CategoryCache.getInstance().refresh(false,
 					new CacheListenerAdapter<Category>() {

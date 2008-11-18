@@ -211,7 +211,7 @@ public class Report implements Serializable, Cacheable, Comparable<Report> {
 		private static final long serialVersionUID = 3854024638284271950L;
 
 		public enum Type {
-			TEXT, IMPORTANCE, IMPORTANCES, PROJECT, PROJECTS, SCAN, SCANS, CATEGORY, BOOLEAN, FINDING_TYPE, FINDING_TYPES, PACKAGES
+			TEXT, IMPORTANCE, IMPORTANCES, PROJECT, PROJECTS, SCAN, SCANS, CATEGORY, CATEGORIES, BOOLEAN, FINDING_TYPE, FINDING_TYPES, PACKAGES
 		}
 
 		private String name;
