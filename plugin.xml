@@ -234,20 +234,25 @@
 			id="com.surelogic.sierra.client.eclipse">
 		</category>
 
-		<view allowMultiple="false"
-			category="com.surelogic.sierra.client.eclipse"
-			class="com.surelogic.adhoc.views.AdHocQueryView"
-			id="com.surelogic.sierra.client.eclipse.AdHocQueryView"
+		
+		<!-- UI for entering ad hoc queries -->
+		<view allowMultiple="false" category="com.surelogic.sierra.client.eclipse"
+			class="com.surelogic.sierra.client.eclipse.views.adhoc.QueryEditorView"
 			icon="platform:/plugin/com.surelogic.common/src/com/surelogic/common/images/query.gif"
+			id="com.surelogic.sierra.client.eclipse.views.adhoc.QueryEditorView"
+			name="Sierra Query Editor">
+		</view>
+		<view allowMultiple="false" category="com.surelogic.sierra.client.eclipse"
+			class="com.surelogic.sierra.client.eclipse.views.adhoc.QueryMenuView"
+			icon="platform:/plugin/com.surelogic.common/src/com/surelogic/common/images/query.gif"
+			id="com.surelogic.sierra.client.eclipse.views.adhoc.QueryMenuView"
 			name="Query Sierra">
 		</view>
-
-		<view allowMultiple="true"
-			category="com.surelogic.sierra.client.eclipse"
-			class="com.surelogic.adhoc.views.AdHocQueryResultsView"
-			id="com.surelogic.sierra.client.eclipse.AdHocQueryView.Results"
-			icon="platform:/plugin/com.surelogic.common/src/com/surelogic/common/images/query.gif"
-			name="Query Results">
+		<view allowMultiple="false" category="com.surelogic.sierra.client.eclipse"
+			class="com.surelogic.sierra.client.eclipse.views.adhoc.QueryResultsView"
+			icon="platform:/plugin/com.surelogic.common/src/com/surelogic/common/images/drum.gif"
+			id="com.surelogic.sierra.client.eclipse.views.adhoc.QueryResultsView"
+			name="Sierra Query Results">
 		</view>
 
 		<view category="com.surelogic.sierra.client.eclipse"
