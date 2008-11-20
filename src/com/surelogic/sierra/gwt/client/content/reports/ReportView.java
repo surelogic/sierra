@@ -27,6 +27,7 @@ public class ReportView extends BasicPanel {
 
 	public void retrieveChart(final ReportSettings selection) {
 		report.clear();
+		selection.setWidth("800");
 		// retrieve and display the report
 		ServiceHelper.getTicketService().getTicket(selection,
 				new ResultCallback<Ticket>() {
@@ -48,6 +49,7 @@ public class ReportView extends BasicPanel {
 	}
 
 	public void retrieveTable(final ReportSettings selection) {
+		selection.setWidth("800");
 		report.clear();
 		// retrieve and display the report
 		final ContentBlockPanel tablePanel = new ContentBlockPanel(

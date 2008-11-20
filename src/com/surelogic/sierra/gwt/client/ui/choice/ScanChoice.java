@@ -13,7 +13,7 @@ public class ScanChoice extends ListBox {
 	private final List<ChangeListener> changeListeners = new ArrayList<ChangeListener>();
 
 	public ScanChoice(final boolean allowMultiples) {
-		super(false);
+		super(allowMultiples);
 	}
 
 	public void displayProjectScans(final String project) {

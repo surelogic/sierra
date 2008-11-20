@@ -152,12 +152,13 @@ public class ReportCache extends Cache<Report> {
 	public static Report projectCompilations() {
 		final Report report = new Report();
 		report.setUuid("ProjectCompilationsChart");
-		report.setTitle("Project Compilations");
-		report.setDescription("TODO");
+		report.setTitle("Project Packages");
+		report
+				.setDescription("Shows the findings breakdown for each package in the project");
 		report.setDataSource(DataSource.TEAMSERVER);
 		report.setOutputTypes(OutputType.CHART);
 		final List<Parameter> params = report.getParameters();
-		params.add(new Parameter("projectName", "Projects", Type.PROJECTS));
+		params.add(new Parameter("projectName", "Project", Type.PROJECT));
 		params.add(new Parameter("kLoC", "Show KLoC", Type.BOOLEAN));
 		return report;
 	}
@@ -266,7 +267,7 @@ public class ReportCache extends Cache<Report> {
 		final List<Parameter> params = report.getParameters();
 		final Parameter project = new Parameter("project", "Projects",
 				Type.PROJECT);
-		final Parameter scan = new Parameter("scan", "Scans", Type.SCANS);
+		final Parameter scan = new Parameter("scans", "Scans", Type.SCANS);
 		params.add(project);
 		project.getChildren().add(scan);
 		return report;

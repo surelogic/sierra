@@ -149,7 +149,8 @@ public class ReportParametersView extends BasicPanel {
 			for (final Parameter child : param.getChildren()) {
 				switch (param.getType()) {
 				case PROJECT:
-					if (child.getType() == Type.SCAN) {
+					if (child.getType() == Type.SCANS
+							|| child.getType() == Type.SCAN) {
 						final ProjectChoice pc = (ProjectChoice) entry
 								.getValue();
 						final ScanChoice sc = (ScanChoice) paramUIMap
