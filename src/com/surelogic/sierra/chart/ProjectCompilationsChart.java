@@ -90,7 +90,6 @@ public class ProjectCompilationsChart implements IDatabasePlot {
 				"Latest Scan Findings By Package", null, "# of Findings"
 						+ (bykLoC ? " / kLoC" : ""), importanceData,
 				PlotOrientation.HORIZONTAL, true, false, false);
-
 		final BarRenderer bar = (BarRenderer) chart.getCategoryPlot()
 				.getRenderer();
 
@@ -124,5 +123,4 @@ public class ProjectCompilationsChart implements IDatabasePlot {
 				NumberAxis.createIntegerTickUnits());
 		return chart;
 	}
-
 }
