@@ -268,6 +268,11 @@ public class LocalTool extends AbstractTool {
 			setupConfigFile(cmdj);
 			// setupCustomClassLoader(debug, cmdj);
 			// cmdj.createBootclasspath(proj);
+			
+			//cmdj.createVmArgument().setValue("-Dfindbugs.debug.PluginLoader=true");
+			//cmdj.createVmArgument().setValue("-Dfindbugs.verbose=true");
+			//cmdj.createVmArgument().setValue("-Dfindbugs.debug=true");
+			//cmdj.createVmArgument().setValue("-Dfindbugs.execplan.debug=true");			
 		}
 		
 		@Override 
