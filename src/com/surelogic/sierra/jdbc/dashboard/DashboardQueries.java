@@ -35,8 +35,7 @@ public class DashboardQueries {
 						exists = true;
 
 						final int dbRow = r.nextInt();
-						final int column = s.getRow(dbRow, true).getColumns()
-								.size();
+						final int dbCol = r.nextInt();
 						final String reportSettings = r.nextString();
 						final OutputType out = OutputType.values()[r.nextInt()];
 
@@ -44,7 +43,22 @@ public class DashboardQueries {
 								: new ReportWidget(ReportSettingQueries
 										.getUserReportSettings(reportSettings)
 										.perform(query, server, user), out);
-						s.setWidget(dbRow, column, widget);
+						final DashboardRow row = s.getRow(dbRow, true);
+						switch (dbCol) {
+						case 0:
+							row.setSingleColumn(widget);
+							break;
+						case 1:
+							row.setLeftColumn(widget);
+							break;
+						case 2:
+							row.setRightColumn(widget);
+							break;
+						default:
+							throw new IllegalArgumentException(
+									"Invalid column: " + dbCol);
+						}
+
 					}
 				}).call(user.getId());
 				return exists ? s : null;
@@ -65,38 +79,50 @@ public class DashboardQueries {
 				int i = 0;
 				for (final DashboardRow row : dashboard.getRows()) {
 					i++;
-					int j = 0;
-					for (final DashboardWidget widget : row.getColumns()) {
-						j++;
-						final ReportWidget report = (ReportWidget) widget;
-						Object settingUuid;
-						Object outputType;
-						if (report != null) {
-							final ReportSettings settings = report
-									.getSettings();
-							if (settings.getUuid() == null) {
-								// We haven't saved these settings yet, so go
-								// ahead
-								// and do that now
-								if (settings.getUuid() == null) {
-									settings.setUuid(UUID.randomUUID()
-											.toString());
-								}
-								ReportSettingQueries.save(settings).perform(
-										query, server, user);
-							}
-							settingUuid = settings.getUuid();
-							outputType = report.getOutputType().ordinal();
-						} else {
-							settingUuid = Nulls.STRING;
-							outputType = Nulls.INT;
+					if (row.isSingleColumn()) {
+						saveDashboardWidget(query, server, user, insertReport,
+								i, 0, row.getSingleColumn());
+					} else {
+						if (row.getLeftColumn() != null) {
+							saveDashboardWidget(query, server, user,
+									insertReport, i, 1, row.getLeftColumn());
 						}
-						insertReport.call(user.getId(), i, j, settingUuid,
-								outputType);
+						if (row.getRightColumn() != null) {
+							saveDashboardWidget(query, server, user,
+									insertReport, i, 2, row.getRightColumn());
+						}
 					}
+
 				}
+			}
+
+			private void saveDashboardWidget(final Query query,
+					final Server server, final User user,
+					final Queryable<Void> insertReport, final int row,
+					final int column, final DashboardWidget widget) {
+				final ReportWidget report = (ReportWidget) widget;
+				Object settingUuid;
+				Object outputType;
+				if (report != null) {
+					final ReportSettings settings = report.getSettings();
+					if (settings.getUuid() == null) {
+						// We haven't saved these settings yet, so go
+						// ahead and do that now
+						if (settings.getUuid() == null) {
+							settings.setUuid(UUID.randomUUID().toString());
+						}
+						ReportSettingQueries.save(settings).perform(query,
+								server, user);
+					}
+					settingUuid = settings.getUuid();
+					outputType = report.getOutputType().ordinal();
+				} else {
+					settingUuid = Nulls.STRING;
+					outputType = Nulls.INT;
+				}
+				insertReport
+						.call(user.getId(), row, column, settingUuid, outputType);
 			}
 		};
 	}
-
 }
