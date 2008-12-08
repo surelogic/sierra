@@ -98,7 +98,7 @@ public class ReportParametersView extends BasicPanel {
 			setSummary("Select a report");
 		}
 
-		final String desc = report == null ? "" : report.getShortDescription();
+		final String desc = report == null ? "" : report.getLongDescription();
 		if (LangUtil.notEmpty(desc)) {
 			description.setText(desc);
 			description.removeStyleName("font-italic");
