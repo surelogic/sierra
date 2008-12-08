@@ -38,6 +38,7 @@ import com.surelogic.sierra.gwt.client.data.ServerLocation.Protocol;
 import com.surelogic.sierra.gwt.client.data.cache.ReportCache;
 import com.surelogic.sierra.gwt.client.data.dashboard.DashboardSettings;
 import com.surelogic.sierra.gwt.client.data.dashboard.ReportWidget;
+import com.surelogic.sierra.gwt.client.data.dashboard.DashboardSettings.DashboardRow;
 import com.surelogic.sierra.gwt.client.service.SettingsService;
 import com.surelogic.sierra.jdbc.RevisionException;
 import com.surelogic.sierra.jdbc.dashboard.DashboardQueries;
@@ -714,26 +715,29 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 				.withUserReadOnly(DashboardQueries.getDashboard());
 		if (settings == null) {
 			settings = new DashboardSettings();
+
+			final DashboardRow row0 = settings.getRow(0, true);
+
 			final ReportSettings latestScans = new ReportSettings(ReportCache
 					.latestScans());
 			latestScans.setWidth("450");
-			settings.setWidget(0, 0, new ReportWidget(latestScans,
-					OutputType.CHART));
+			row0.setLeftColumn(new ReportWidget(latestScans, OutputType.CHART));
 
 			final ReportSettings auditContribs = new ReportSettings(ReportCache
 					.userAudits());
 			latestScans.setWidth("320");
-			settings.setWidget(0, 1, new ReportWidget(auditContribs,
+			row0.setRightColumn(new ReportWidget(auditContribs,
 					OutputType.CHART));
 
+			final DashboardRow row1 = settings.getRow(1, true);
 			final ReportSettings userAudits = new ReportSettings(ReportCache
 					.userAudits());
-			settings.setWidget(1, 1, new ReportWidget(userAudits,
-					OutputType.TABLE));
+			row1.setRightColumn(new ReportWidget(userAudits, OutputType.TABLE));
 
+			final DashboardRow row2 = settings.getRow(2, true);
 			final ReportSettings publishedProjects = new ReportSettings(
 					ReportCache.publishedProjects());
-			settings.setWidget(2, 0, new ReportWidget(publishedProjects,
+			row2.setSingleColumn(new ReportWidget(publishedProjects,
 					OutputType.TABLE));
 		}
 		return settings;
