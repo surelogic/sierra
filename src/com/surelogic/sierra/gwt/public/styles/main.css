@@ -255,6 +255,10 @@ img {
 	vertical-align: top;
 }
 
+.dashboard-blankedit {
+	border: 1px dotted gray;
+}
+
 /* Table Section */
 .sl-TableSection {
 	border-spacing: 0px;

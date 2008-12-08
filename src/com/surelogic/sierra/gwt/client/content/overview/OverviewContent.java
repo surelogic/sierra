@@ -118,34 +118,50 @@ public final class OverviewContent extends ContentComposite {
 		dashboard.clear();
 		dashboardWidgetUIs.clear();
 
-		int lastColumnCount = 0;
 		ColumnPanel currentColPanel = null;
 		int rowIndex = 0;
 		final List<DashboardRow> rows = settings.getRows();
 		for (final DashboardRow row : rows) {
-			final List<DashboardWidget> cols = row.getColumns();
-			if (currentColPanel == null || lastColumnCount != cols.size()) {
-				currentColPanel = new ColumnPanel();
-				dashboard.add(currentColPanel);
-			}
-			for (int i = 0; i < cols.size(); i++) {
-				final DashboardWidget dw = cols.get(i);
-				if (dw != null) {
-					final DashboardBlock db = createWidgetUI(dw);
-					db.updateMovementActions(getAllowedMovements(settings,
-							rowIndex, rows.size(), i, cols.size()));
-					final ContentBlockPanel cbp = new ContentBlockPanel(db);
-					cbp.initialize();
-					cbp.setWidth("100%");
-					currentColPanel.addWidget(i, cbp);
-					dashboardWidgetUIs.put(cbp, db);
+			if (row.isSingleColumn()) {
+				currentColPanel = null;
+				final ContentBlockPanel cbp = createContentBlock(rowIndex, rows
+						.size(), row.getSingleColumn(), true, false);
+				dashboard.add(cbp);
+			} else {
+				if (currentColPanel == null) {
+					currentColPanel = new ColumnPanel();
+					dashboard.add(currentColPanel);
+				}
+
+				final DashboardWidget leftCol = row.getLeftColumn();
+				if (leftCol != null) {
+					final ContentBlockPanel cbp = createContentBlock(rowIndex,
+							rows.size(), leftCol, false, true);
+					currentColPanel.addWidget(0, cbp);
+				}
+				final DashboardWidget rightCol = row.getRightColumn();
+				if (rightCol != null) {
+					final ContentBlockPanel cbp = createContentBlock(rowIndex,
+							rows.size(), rightCol, false, false);
+					currentColPanel.addWidget(1, cbp);
 				}
 			}
-			lastColumnCount = cols.size();
 			rowIndex++;
 		}
-
 		toggleEditMode(editMode);
+	}
+
+	private ContentBlockPanel createContentBlock(final int rowIndex,
+			final int rowCount, final DashboardWidget col,
+			final boolean singleColumn, final boolean leftColumn) {
+		final DashboardBlock db = createWidgetUI(col);
+		db.updateMovementActions(getAllowedMovements(settings, singleColumn,
+				leftColumn, rowIndex, rowCount));
+		final ContentBlockPanel cbp = new ContentBlockPanel(db);
+		cbp.initialize();
+		cbp.setWidth("100%");
+		dashboardWidgetUIs.put(cbp, db);
+		return cbp;
 	}
 
 	private DashboardBlock createWidgetUI(final DashboardWidget dw) {
@@ -171,21 +187,21 @@ public final class OverviewContent extends ContentComposite {
 	}
 
 	private Set<Direction> getAllowedMovements(
-			final DashboardSettings settings, final int rowIndex,
-			final int rowCount, final int colIndex, final int colCount) {
+			final DashboardSettings settings, final boolean singleColumn,
+			final boolean leftColumn, final int rowIndex, final int rowCount) {
 		final Set<Direction> allowedMovements = new HashSet<Direction>();
 		boolean horzMovementAllowed;
-		if (colCount == 1) {
+		if (singleColumn) {
 			// TODO temp remove - allowedMovements.add(Direction.GROW);
 			horzMovementAllowed = false;
 		} else {
 			// TODO temp remove - allowedMovements.add(Direction.SHRINK);
 			horzMovementAllowed = true;
 		}
-		if (horzMovementAllowed && colIndex > 0) {
+		if (horzMovementAllowed && !leftColumn) {
 			allowedMovements.add(Direction.LEFT);
 		}
-		if (horzMovementAllowed && colIndex == 0) {
+		if (horzMovementAllowed && leftColumn) {
 			allowedMovements.add(Direction.RIGHT);
 		}
 		if (rowIndex > 0) {
