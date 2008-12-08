@@ -24,7 +24,7 @@ public class ReportSettings implements Serializable {
 		super();
 		this.report = report;
 		this.title = report.getTitle();
-		this.description = report.getDescription();
+		this.description = report.getShortDescription();
 	}
 
 	public ReportSettings(final Report report, final String title,

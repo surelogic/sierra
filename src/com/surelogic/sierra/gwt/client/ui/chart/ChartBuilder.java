@@ -27,7 +27,7 @@ public final class ChartBuilder {
 
 	public static ChartBuilder report(final Report report) {
 		return new ChartBuilder(report, report.getTitle(), report
-				.getDescription());
+				.getShortDescription());
 	}
 
 	private ChartBuilder(final Report report, final String title,

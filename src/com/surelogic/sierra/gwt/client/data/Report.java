@@ -21,7 +21,8 @@ public class Report implements Serializable, Cacheable, Comparable<Report> {
 	private String uuid;
 	private String title;
 	private long revision;
-	private String description;
+	private String shortDescription;
+	private String longDescription;
 	private DataSource dataSource;
 	private OutputType[] outputTypes;
 	private List<Parameter> parameters;
@@ -51,12 +52,20 @@ public class Report implements Serializable, Cacheable, Comparable<Report> {
 		this.revision = revision;
 	}
 
-	public String getDescription() {
-		return description;
+	public String getShortDescription() {
+		return shortDescription;
 	}
 
-	public void setDescription(final String description) {
-		this.description = description;
+	public void setShortDescription(final String shortDescription) {
+		this.shortDescription = shortDescription;
+	}
+
+	public String getLongDescription() {
+		return longDescription;
+	}
+
+	public void setLongDescription(final String longDescription) {
+		this.longDescription = longDescription;
 	}
 
 	public DataSource getDataSource() {
@@ -132,7 +141,8 @@ public class Report implements Serializable, Cacheable, Comparable<Report> {
 		copy.uuid = uuid;
 		copy.revision = revision;
 		copy.title = title;
-		copy.description = description;
+		copy.shortDescription = shortDescription;
+		copy.longDescription = longDescription;
 		copy.dataSource = dataSource;
 		copy.outputTypes = outputTypes;
 		for (final Parameter param : getParameters()) {
@@ -155,8 +165,11 @@ public class Report implements Serializable, Cacheable, Comparable<Report> {
 		int result = 1;
 		result = prime * result + ((uuid == null) ? 0 : uuid.hashCode());
 		result = prime * result + (int) (revision ^ (revision >>> 32));
+		result = prime
+				* result
+				+ ((shortDescription == null) ? 0 : shortDescription.hashCode());
 		result = prime * result
-				+ ((description == null) ? 0 : description.hashCode());
+				+ ((longDescription == null) ? 0 : longDescription.hashCode());
 		result = prime * result + ((title == null) ? 0 : title.hashCode());
 
 		result = prime * result
@@ -183,7 +196,10 @@ public class Report implements Serializable, Cacheable, Comparable<Report> {
 		if (revision != other.revision) {
 			return false;
 		}
-		if (!LangUtil.equals(description, other.description)) {
+		if (!LangUtil.equals(shortDescription, other.shortDescription)) {
+			return false;
+		}
+		if (!LangUtil.equals(longDescription, other.longDescription)) {
 			return false;
 		}
 		if (!LangUtil.equals(title, other.title)) {

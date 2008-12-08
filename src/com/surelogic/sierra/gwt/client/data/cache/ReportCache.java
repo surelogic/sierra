@@ -69,7 +69,9 @@ public class ReportCache extends Cache<Report> {
 		final Report report = new Report();
 		report.setUuid("LatestScanResults");
 		report.setTitle("Published Scans");
-		report.setDescription("Latest Scan Results");
+		report.setShortDescription("Latest Scan Results");
+		report
+				.setLongDescription("Shows the number of findings in the most recent published scan for each project.");
 		report.setDataSource(DataSource.TEAMSERVER);
 		report.setOutputTypes(OutputType.CHART, OutputType.TABLE);
 		return report;
@@ -79,8 +81,9 @@ public class ReportCache extends Cache<Report> {
 		final Report report = new Report();
 		report.setUuid("UserAudits");
 		report.setTitle("Users");
+		report.setShortDescription("Number of Comments In Last 30 Days");
 		report
-				.setDescription("Shows the active users and the number of comments made in the past 30 days.");
+				.setLongDescription("Shows the active users and the number of comments made in the past 30 days.");
 		report.setDataSource(DataSource.TEAMSERVER);
 		report.setOutputTypes(OutputType.TABLE, OutputType.CHART);
 		return report;
@@ -90,8 +93,9 @@ public class ReportCache extends Cache<Report> {
 		final Report report = new Report();
 		report.setUuid("PublishedProjects");
 		report.setTitle("Published Projects");
+		report.setShortDescription("Projects Published To This Portal");
 		report
-				.setDescription("General information on all projects commented on or published to the server.");
+				.setLongDescription("General information on all projects commented on or published to the server.");
 		report.setDataSource(DataSource.TEAMSERVER);
 		report.setOutputTypes(OutputType.TABLE);
 		return report;
@@ -101,8 +105,9 @@ public class ReportCache extends Cache<Report> {
 		final Report report = new Report();
 		report.setUuid("CategoryCounts");
 		report.setTitle("Category Findings");
+		report.setShortDescription("Findings For This Category By Project");
 		report
-				.setDescription("Number of findings in each project for this category.");
+				.setLongDescription("Number of findings in each project for this category.");
 		report.setDataSource(DataSource.TEAMSERVER);
 		report.setOutputTypes(OutputType.CHART);
 		final List<Parameter> params = report.getParameters();
@@ -114,7 +119,9 @@ public class ReportCache extends Cache<Report> {
 		final Report report = new Report();
 		report.setUuid("FindingsByProject");
 		report.setTitle("Findings By Project");
-		report.setDescription("Displays the number of findings per project.");
+		report.setShortDescription("Number of Findings By Project");
+		report
+				.setLongDescription("Displays the number of findings per project.");
 		report.setDataSource(DataSource.TEAMSERVER);
 		report.setOutputTypes(OutputType.CHART);
 		final List<Parameter> params = report.getParameters();
@@ -127,7 +134,9 @@ public class ReportCache extends Cache<Report> {
 		final Report report = new Report();
 		report.setUuid("FindingsByPriority");
 		report.setTitle("Findings By Priority");
-		report.setDescription("Just a placeholder report. Not implemented.");
+		report.setShortDescription("Number of Findings By Priority");
+		report
+				.setLongDescription("Displays the number of findings by priority.");
 		report.setDataSource(DataSource.BUGLINK);
 		report.setOutputTypes(OutputType.TABLE, OutputType.CHART,
 				OutputType.PDF);
@@ -140,7 +149,9 @@ public class ReportCache extends Cache<Report> {
 		final Report report = new Report();
 		report.setUuid("ProjectFindingsChart");
 		report.setTitle("Project Findings");
-		report.setDescription("Shows finding trends over time for a project.");
+		report.setShortDescription("Findings Over Time For This Project");
+		report
+				.setLongDescription("Shows finding trends over time for a project.");
 		report.setDataSource(DataSource.TEAMSERVER);
 		report.setOutputTypes(OutputType.CHART);
 		final List<Parameter> params = report.getParameters();
@@ -153,8 +164,9 @@ public class ReportCache extends Cache<Report> {
 		final Report report = new Report();
 		report.setUuid("ProjectCompilationsChart");
 		report.setTitle("Project Packages");
+		report.setShortDescription("Findings By Package For This Project");
 		report
-				.setDescription("Shows the findings breakdown for each package in the project");
+				.setLongDescription("Shows the findings breakdown for each package in the project");
 		report.setDataSource(DataSource.TEAMSERVER);
 		report.setOutputTypes(OutputType.CHART);
 		final List<Parameter> params = report.getParameters();
@@ -168,7 +180,9 @@ public class ReportCache extends Cache<Report> {
 		report.setUuid("ScanImportances");
 		report.setTitle("Scan Importances");
 		report
-				.setDescription("Show a breakdown of findings by importance for packages in a given scan of a project.");
+				.setShortDescription("Findings By Importance and Package For This Scan");
+		report
+				.setLongDescription("Show a breakdown of findings by importance for packages in a given scan of a project.");
 		report.setDataSource(DataSource.TEAMSERVER);
 		report.setOutputTypes(OutputType.CHART);
 		final List<Parameter> params = report.getParameters();
@@ -188,7 +202,9 @@ public class ReportCache extends Cache<Report> {
 		report.setUuid("ScanImportancesByCategory");
 		report.setTitle("Scan Importances By Category");
 		report
-				.setDescription("Show a breakdown of findings by importance for packages in a given scan of a project.");
+				.setShortDescription("Findings By Importance, Category, and Package For This Scan");
+		report
+				.setLongDescription("Show a breakdown of findings by importance and category for packages in a given scan of a project.");
 		report.setDataSource(DataSource.TEAMSERVER);
 		report.setOutputTypes(OutputType.CHART);
 		final List<Parameter> params = report.getParameters();
@@ -208,7 +224,8 @@ public class ReportCache extends Cache<Report> {
 		final Report report = new Report();
 		report.setUuid("ScanFindings");
 		report.setTitle("Scan Findings");
-		report.setDescription("Finding counts for a scan.");
+		report.setShortDescription("Finding counts By Scan");
+		report.setLongDescription("Finding counts for a scan.");
 		report.setDataSource(DataSource.TEAMSERVER);
 		report.setOutputTypes(OutputType.TABLE);
 		final List<Parameter> params = report.getParameters();
@@ -227,8 +244,9 @@ public class ReportCache extends Cache<Report> {
 		final Report report = new Report();
 		report.setUuid("ScanFindingsByCategory");
 		report.setTitle("Scan Findings By Category");
+		report.setShortDescription("Finding Counts By Category For This Scan");
 		report
-				.setDescription("Finding counts in for a scan for the selected categories.");
+				.setLongDescription("Finding counts in for a scan for the selected categories.");
 		report.setDataSource(DataSource.TEAMSERVER);
 		report.setOutputTypes(OutputType.TABLE);
 		final List<Parameter> params = report.getParameters();
@@ -247,8 +265,9 @@ public class ReportCache extends Cache<Report> {
 		final Report report = new Report();
 		report.setUuid("FindingTypeCounts");
 		report.setTitle("Finding Type Counts");
+		report.setShortDescription("Finding Count By Project For This Type");
 		report
-				.setDescription("The number of findings of this type in each project.");
+				.setLongDescription("The number of findings of this type in each project.");
 		report.setDataSource(DataSource.TEAMSERVER);
 		report.setOutputTypes(OutputType.CHART);
 		final List<Parameter> params = report.getParameters();
@@ -260,8 +279,9 @@ public class ReportCache extends Cache<Report> {
 		final Report report = new Report();
 		report.setUuid("CompareProjectScans");
 		report.setTitle("Compare Project Scans");
+		report.setShortDescription("Change Between Scans Of This Project");
 		report
-				.setDescription("Compute and show the differences between two scans of the same project.");
+				.setLongDescription("Compute and show the differences between two scans of the same project.");
 		report.setDataSource(DataSource.TEAMSERVER);
 		report.setOutputTypes(OutputType.TABLE, OutputType.CHART);
 		final List<Parameter> params = report.getParameters();
