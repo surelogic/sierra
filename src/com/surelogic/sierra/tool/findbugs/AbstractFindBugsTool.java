@@ -27,7 +27,9 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
 
 	protected IToolInstance create(String name, final ArtifactGenerator generator,
 			boolean close) {
-		System.setProperty("findbugs.home", fbDir);
+		//Removed to avoid problem with duplicate detector factories
+		//System.setProperty("findbugs.home", fbDir);
+		
 		// monitor.subTask("Set FB home to "+fbDir);
 
 		return new AbstractToolInstance(debug, this, generator, close) {
