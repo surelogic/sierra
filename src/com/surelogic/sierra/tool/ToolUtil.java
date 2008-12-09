@@ -24,7 +24,7 @@ public class ToolUtil {
     }
     final MultiTool t = new MultiTool(true);
     if (!config.getExcludedToolsList().contains("findbugs")) {
-      t.addTool(new FindBugs1_3_4Tool(config.getPluginDir(SierraToolConstants.FB_PLUGIN_ID), debug));
+      t.addTool(new FindBugs1_3_6Tool(config.getPluginDir(SierraToolConstants.FB_PLUGIN_ID), debug));
     }
     if (!config.getExcludedToolsList().contains("pmd")) {
       t.addTool(new PMD4_2_1Tool(debug));
