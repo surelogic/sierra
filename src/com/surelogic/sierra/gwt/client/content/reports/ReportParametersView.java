@@ -93,8 +93,10 @@ public class ReportParametersView extends BasicPanel {
 		selection = report;
 		selectionSettings = settings;
 		if (report != null) {
-			setSummary(report.getTitle());
+			setTitle(report.getTitle());
+			setSummary(report.getShortDescription());
 		} else {
+			setTitle("");
 			setSummary("Select a report");
 		}
 

@@ -3,7 +3,11 @@ package com.surelogic.sierra.gwt.client.ui.block;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
+import com.surelogic.sierra.gwt.client.Context;
+import com.surelogic.sierra.gwt.client.content.reports.BugLinkReportsContent;
+import com.surelogic.sierra.gwt.client.content.reports.TeamServerReportsContent;
 import com.surelogic.sierra.gwt.client.data.ReportSettings;
+import com.surelogic.sierra.gwt.client.data.Report.DataSource;
 
 public abstract class ReportBlock<T extends Widget> extends ContentBlock<T> {
 	private ReportSettings report;
@@ -24,9 +28,15 @@ public abstract class ReportBlock<T extends Widget> extends ContentBlock<T> {
 		viewReportAction = addAction("View Report", new ClickListener() {
 
 			public void onClick(final Widget sender) {
-				// TODO navigate to the proper report tab and show these
-				// settings
-
+				final Context ctx = new Context();
+				if (report.getReport().getDataSource() == DataSource.TEAMSERVER) {
+					ctx.setContent(TeamServerReportsContent.getInstance());
+				} else {
+					ctx.setContent(BugLinkReportsContent.getInstance());
+				}
+				ctx.setUuid(report.getReportUuid());
+				ctx.setParameter("reportSettingsUuid", report.getUuid());
+				ctx.submit();
 			}
 		});
 	}
