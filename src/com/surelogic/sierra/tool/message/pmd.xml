@@ -1,6 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <findingTypes>
 	<findingType>
+		<id>EmptyInitializer</id>
+		<artifact tool="PMD"
+			mnemonic="EmptyInitializer">
+		</artifact>
+		<shortMessage>
+      It is questionable to have an empty initializer.
+		</shortMessage>
+		<info>
+      It is questionable to have an empty initializer.
+		</info>
+		<name>Empty Initializer</name>
+	</findingType>
+	<findingType>
 		<id>AvoidNonConstructorMethodsWithClassName</id>
 		<artifact tool="PMD"
 			mnemonic="AvoidNonConstructorMethodsWithClassName">
@@ -3579,6 +3592,7 @@
 	<category>
 		<id>Basic Rules</id>
 		<findingType>AvoidMultipleUnaryOperators</findingType>
+		<findingType>EmptyInitializer</findingType>
 		<findingType>EmptyCatchBlock</findingType>
 		<findingType>EmptyIfStmt</findingType>
 		<findingType>EmptyWhileStmt</findingType>
