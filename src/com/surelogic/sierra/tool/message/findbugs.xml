@@ -7114,9 +7114,486 @@ mechanism, it must not be declared as a static method.
 		</info>
 		<name>Private readResolve() not inherited</name>
 	</findingType>
+  <findingType>
+    <id>RpC_REPEATED_CONDITIONAL_TEST</id>
+    <artifact tool="FindBugs"	mnemonic="RpC_REPEATED_CONDITIONAL_TEST"/>
+    <shortMessage>Repeated conditional tests</shortMessage>
+    <info>
+      <![CDATA[
 
+<p>The code contains a conditional test is performed twice, one right after the other
+(e.g., <code>x == 0 || x == 0</code>). Perhaps the second occurrence is intended to be something else
+(e.g., <code>x == 0 || y == 0</code>). 
+</p>
+
+    ]]>
+    </info>
+    <name>Repeated conditional tests</name>
+  </findingType>
+  <findingType>
+    <id>DMI_FUTILE_ATTEMPT_TO_CHANGE_MAXPOOL_SIZE_OF_SCHEDULED_THREAD_POOL_EXECUTOR</id>
+    <artifact tool="FindBugs"	mnemonic="DMI_FUTILE_ATTEMPT_TO_CHANGE_MAXPOOL_SIZE_OF_SCHEDULED_THREAD_POOL_EXECUTOR"/>
+    <shortMessage>Futile attempt to change max pool size of ScheduledThreadPoolExecutor</shortMessage>
+    <info>
+      <![CDATA[
+      
+	<p>(<a href="http://java.sun.com/javase/6/docs/api/java/util/concurrent/ScheduledThreadPoolExecutor.html">Javadoc</a>)
+While ScheduledThreadPoolExecutor inherits from ThreadPoolExecutor, a few of the inherited tuning methods are not useful for it. In particular, because it acts as a fixed-sized pool using corePoolSize threads and an unbounded queue, adjustments to maximumPoolSize have no useful effect.
+	</p>
+
+
+    ]]>
+    </info>
+    <name>Futile attempt to change max pool size of ScheduledThreadPoolExecutor</name>
+  </findingType>
+  <findingType>
+    <id>DMI_SCHEDULED_THREAD_POOL_EXECUTOR_WITH_ZERO_CORE_THREADS</id>
+    <artifact tool="FindBugs"	mnemonic="DMI_SCHEDULED_THREAD_POOL_EXECUTOR_WITH_ZERO_CORE_THREADS"/>
+    <shortMessage>Creation of ScheduledThreadPoolExecutor with zero core threads</shortMessage>
+    <info>
+      <![CDATA[
+      
+	<p>(<a href="http://java.sun.com/javase/6/docs/api/java/util/concurrent/ScheduledThreadPoolExecutor.html#ScheduledThreadPoolExecutor(int)">Javadoc</a>)
+A ScheduledThreadPoolExecutor with zero core threads will never execute anything; changes to the max pool size are ignored.
+</p>
+
+
+    ]]>
+    </info>
+    <name>Creation of ScheduledThreadPoolExecutor with zero core threads</name>
+  </findingType>
+  <findingType>
+    <id>DMI_UNSUPPORTED_METHOD</id>
+    <artifact tool="FindBugs"	mnemonic="DMI_UNSUPPORTED_METHOD"/>
+    <shortMessage>Call to unsupported method</shortMessage>
+    <info>
+      <![CDATA[
+      
+	<p>All targets of this method invocation throw an UnsupportedOperationException.
+</p>
+
+
+    ]]>
+    </info>
+    <name>Call to unsupported method</name>
+  </findingType>
+  <findingType>
+    <id>NP_DEREFERENCE_OF_READLINE_VALUE</id>
+    <artifact tool="FindBugs"	mnemonic="NP_DEREFERENCE_OF_READLINE_VALUE"/>
+    <shortMessage>Dereference of the result of readLine() without nullcheck</shortMessage>
+    <info>
+      <![CDATA[
+
+  <p> The result of invoking readLine() is dereferenced without checking to see if the result is null. If there are no more lines of text
+to read, readLine() will return null and dereferencing that will generate a null pointer exception.
+</p>
+
+    ]]>
+    </info>
+    <name>Dereference of the result of readLine() without nullcheck</name>
+  </findingType>
+  <findingType>
+    <id>EQ_CHECK_FOR_OPERAND_NOT_COMPATIBLE_WITH_THIS</id>
+    <artifact tool="FindBugs"	mnemonic="EQ_CHECK_FOR_OPERAND_NOT_COMPATIBLE_WITH_THIS"/>
+    <shortMessage>Equals checks for noncompatible operand</shortMessage>
+    <info>
+      <![CDATA[
+
+  <p> This equals method is checking to see if the argument is some incompatible type
+(i.e., a class that is neither a supertype nor subtype of the class that defines
+the equals method). For example, the Foo class might have an equals method
+that looks like:
+
+<p><code><pre>
+public boolean equals(Object o) {
+  if (o instanceof Foo)
+    return name.equals(((Foo)o).name);
+  else if (o instanceof String)
+    return name.equals(o);
+  else return false;
+</pre></code></p>
+
+<p>This is considered bad practice, as it makes it very hard to implement an equals method that
+is symmetric and transitive. Without those properties, very unexpected behavoirs are possible.
+</p>
+
+    ]]>
+    </info>
+    <name>Equals checks for noncompatible operand</name>
+  </findingType>
+  <findingType>
+    <id>NP_PARAMETER_MUST_BE_NONNULL_BUT_MARKED_AS_NULLABLE</id>
+    <artifact tool="FindBugs"	mnemonic="NP_PARAMETER_MUST_BE_NONNULL_BUT_MARKED_AS_NULLABLE"/>
+    <shortMessage>Parameter must be nonnull but is marked as nullable</shortMessage>
+    <info>
+      <![CDATA[
+
+<p> This parameter is always used in a way that requires it to be nonnull,
+but the parameter is explicitly annotated as being Nullable. Either the use
+of the parameter or the annotation is wrong.
+</p>
+
+    ]]>
+    </info>
+    <name>Parameter must be nonnull but is marked as nullable</name>
+  </findingType>
+  <findingType>
+    <id>VA_FORMAT_STRING_BAD_CONVERSION</id>
+    <artifact tool="FindBugs"	mnemonic="VA_FORMAT_STRING_BAD_CONVERSION"/>
+    <shortMessage>The type of a supplied argument doesn't match format specifier</shortMessage>
+    <info>
+      <![CDATA[
+
+<p>
+One of the arguments is uncompatible with the corresponding format string specifier.
+As a result, this will generate a runtime exception when executed.
+For example, <code>String.format("%d", "1")</code> will generate an exception, since
+the String "1" is incompatible with the format specifier %d.
+</p>
+
+ 	]]>
+    </info>
+    <name>The type of a supplied argument doesn't match format specifier</name>
+  </findingType>
+  <findingType>
+    <id>VA_FORMAT_STRING_BAD_CONVERSION_TO_BOOLEAN</id>
+    <artifact tool="FindBugs"	mnemonic="VA_FORMAT_STRING_BAD_CONVERSION_TO_BOOLEAN"/>
+    <shortMessage>Non-Boolean argument formatted using %b format specifier</shortMessage>
+    <info>
+      <![CDATA[
+
+<p>
+An argument not of type Boolean is being formatted with a %b format specifier. This won't throw an
+exception; instead, it will print true for any nonnull value, and false for null.
+This feature of format strings is strange, and may not be what you intended.
+</p>
+
+ 	]]>
+    </info>
+    <name>Non-Boolean argument formatted using %b format specifier</name>
+  </findingType>
+  <findingType>
+    <id>VA_FORMAT_STRING_BAD_CONVERSION_FROM_ARRAY</id>
+    <artifact tool="FindBugs"	mnemonic="VA_FORMAT_STRING_BAD_CONVERSION_FROM_ARRAY"/>
+    <shortMessage>Array formatted in useless way using format string</shortMessage>
+    <info>
+      <![CDATA[
+
+<p>
+One of the arguments being formatted with a format string is an array. This will be formatted
+using a fairly useless format, such as [I@304282, which doesn't actually show the contents
+of the array.
+Consider wrapping the array using <code>Arrays.asList(...)</code> before handling it off to a formatted.
+</p>
+
+ 	]]>
+    </info>
+    <name>Array formatted in useless way using format string</name>
+  </findingType>
+  <findingType>
+    <id>VA_FORMAT_STRING_NO_PREVIOUS_ARGUMENT</id>
+    <artifact tool="FindBugs"	mnemonic="VA_FORMAT_STRING_NO_PREVIOUS_ARGUMENT"/>
+    <shortMessage>No previous argument for format string</shortMessage>
+    <info>
+      <![CDATA[
+
+<p>
+The format string specifies a relative index to request that the argument for the previous format specifier
+be reused. However, there is no previous argument.
+For example, 
+</p>
+<p><code>formatter.format("%&lt;s %s", "a", "b")</code>
+</p>
+<p>would throw a MissingFormatArgumentException when executed.
+</p>
+
+ 	]]>
+    </info>
+    <name>No previous argument for format string</name>
+  </findingType>
+  <findingType>
+    <id>VA_FORMAT_STRING_BAD_ARGUMENT</id>
+    <artifact tool="FindBugs"	mnemonic="VA_FORMAT_STRING_BAD_ARGUMENT"/>
+    <shortMessage>Format string placeholder incompatible with passed argument</shortMessage>
+    <info>
+      <![CDATA[
+
+<p>
+The format string placeholder is incompatible with the corresponding
+argument. For example,
+<code>
+  System.out.println("%d\n", "hello");
+</code>
+<p>The %d placeholder requires a numeric argument, but a string value is
+passed instead. 
+A runtime exception will occur when 
+this statement is executed.
+</p>
+
+ 	]]>
+    </info>
+    <name>Format string placeholder incompatible with passed argument</name>
+  </findingType>
+  <findingType>
+    <id>VA_FORMAT_STRING_MISSING_ARGUMENT</id>
+    <artifact tool="FindBugs"	mnemonic="VA_FORMAT_STRING_MISSING_ARGUMENT"/>
+    <shortMessage>Format string references missing argument</shortMessage>
+    <info>
+      <![CDATA[
+
+<p>
+Not enough arguments are passed to satisfy a placeholder in the format string.
+A runtime exception will occur when 
+this statement is executed.
+</p>
+
+ 	]]>
+    </info>
+    <name>Format string references missing argument</name>
+  </findingType>
+  <findingType>
+    <id>VA_FORMAT_STRING_ILLEGAL</id>
+    <artifact tool="FindBugs"	mnemonic="VA_FORMAT_STRING_ILLEGAL"/>
+    <shortMessage>Illegal format string</shortMessage>
+    <info>
+      <![CDATA[
+
+<p>
+The format string is syntactically invalid, 
+and a runtime exception will occur when 
+this statement is executed.
+</p>
+
+ 	]]>
+    </info>
+    <name>Illegal format string</name>
+  </findingType>
+  <findingType>
+    <id>VA_FORMAT_STRING_EXTRA_ARGUMENTS_PASSED</id>
+    <artifact tool="FindBugs"	mnemonic="VA_FORMAT_STRING_EXTRA_ARGUMENTS_PASSED"/>
+    <shortMessage>More arguments are passed that are actually used in the format string</shortMessage>
+    <info>
+      <![CDATA[
+
+<p>
+A format-string method with a variable number of arguments is called,
+but more arguments are passed than are actually used by the format string.
+This won't cause a runtime exception, but the code may be silently omitting 
+information that was intended to be included in the formatted string.
+</p>
+
+ 	]]>
+    </info>
+    <name>More arguments are passed that are actually used in the format string</name>
+  </findingType>
+  <findingType>
+    <id>BIT_ADD_OF_SIGNED_BYTE</id>
+    <artifact tool="FindBugs"	mnemonic="BIT_ADD_OF_SIGNED_BYTE"/>
+    <shortMessage>Bitwise add of signed byte value</shortMessage>
+    <info>
+      <![CDATA[
+
+<p> Adds a byte value and a value which is known to the 8 lower bits clear.
+Values loaded from a byte array are sign extended to 32 bits
+before any any bitwise operations are performed on the value.
+Thus, if <code>b[0]</code> contains the value <code>0xff</code>, and
+<code>x</code> is initially 0, then the code 
+<code>((x &lt;&lt; 8) + b[0])</code>  will sign extend <code>0xff</code>
+to get <code>0xffffffff</code>, and thus give the value
+<code>0xffffffff</code> as the result.
+</p>
+
+<p>In particular, the following code for packing a byte array into an int is badly wrong: </p>
+<pre>
+int result = 0;
+for(int i = 0; i &lt; 4; i++) 
+  result = ((result &lt;&lt; 8) + b[i]);
+</pre>
+
+<p>The following idiom will work instead: </p>
+<pre>
+int result = 0;
+for(int i = 0; i &lt; 4; i++) 
+  result = ((result &lt;&lt; 8) + (b[i] &amp; 0xff));
+</pre>
+
+
+    ]]>
+    </info>
+    <name>Bitwise add of signed byte value</name>
+  </findingType>
+  <findingType>
+    <id>DMI_INVOKING_HASHCODE_ON_ARRAY</id>
+    <artifact tool="FindBugs"	mnemonic="DMI_INVOKING_HASHCODE_ON_ARRAY"/>
+    <shortMessage>Invocation of hashCode on an array</shortMessage>
+    <info>
+      <![CDATA[
+
+<p>
+The code invokes hashCode on an array. Calling hashCode on
+an array returns the same value as System.identityHashCode, and ingores
+the contents and length of the array. If you need a hashCode that
+depends on the contents of an array <code>a</code>, 
+use <code>java.util.Arrays.hashCode(a)</code>.
+
+</p>
+
+    ]]>
+    </info>
+    <name>Invocation of hashCode on an array</name>
+  </findingType>
+  <findingType>
+    <id>DMI_USING_REMOVEALL_TO_CLEAR_COLLECTION</id>
+    <artifact tool="FindBugs"	mnemonic="DMI_USING_REMOVEALL_TO_CLEAR_COLLECTION"/>
+    <shortMessage>Don't use removeAll to clear a collection</shortMessage>
+    <info>
+      <![CDATA[
+     
+     <p> If you want to remove all elements from a collection <code>c</code>, use <code>c.clear</code>,
+not <code>c.removeAll(c)</code>.
+	</p>
+     
+    ]]>
+    </info>
+    <name>Don't use removeAll to clear a collection</name>
+  </findingType>
+  <findingType>
+    <id>DMI_VACUOUS_SELF_COLLECTION_CALL</id>
+    <artifact tool="FindBugs"	mnemonic="DMI_VACUOUS_SELF_COLLECTION_CALL"/>
+    <shortMessage>Vacuous call to collections</shortMessage>
+    <info>
+      <![CDATA[
+     
+     <p> This call doesn't make sense. For any collection <code>c</code>, calling <code>c.containsAll(c)</code> should
+always be true, and <code>c.retainAll(c)</code> should have no effect.
+	</p>
+     
+    ]]>
+    </info>
+    <name>Vacuous call to collections</name>
+  </findingType>
+  <findingType>
+    <id>DMI_COLLECTIONS_SHOULD_NOT_CONTAIN_THEMSELVES</id>
+    <artifact tool="FindBugs"	mnemonic="DMI_COLLECTIONS_SHOULD_NOT_CONTAIN_THEMSELVES"/>
+    <shortMessage>Collections should not contain themselves</shortMessage>
+    <info>
+      <![CDATA[
+     
+     <p> This call to a generic collection's method would only make sense if a collection contained 
+itself (e.g., if <code>s.contains(s)</code> were true). This is unlikely to be true and would cause
+problems if it were true (such as the computation of the hash code resulting in infinite recursion).
+It is likely that the wrong value is being passed as a parameter.
+	</p>
+     
+    ]]>
+    </info>
+    <name>Collections should not contain themselves</name>
+  </findingType>
+  <findingType>
+    <id>TQ_EXPLICIT_UNKNOWN_SOURCE_VALUE_REACHES_NEVER_SINK</id>
+    <artifact tool="FindBugs"	mnemonic="TQ_EXPLICIT_UNKNOWN_SOURCE_VALUE_REACHES_NEVER_SINK"/>
+    <shortMessage>Explicit annotation inconsistent with use</shortMessage>
+    <info>
+      <![CDATA[
+      
+      <p>
+      A value is used in a way that requires it to be never be a value denoted by a type qualifier, but
+	there is an explicit annotation stating that it is not known where the value is prohibited from having that type qualifier.
+	Either the usage or the annotation is incorrect.
+      </p>
+      
+    ]]>
+    </info>
+    <name>Explicit annotation inconsistent with use</name>
+  </findingType>
+  <findingType>
+    <id>TQ_EXPLICIT_UNKNOWN_SOURCE_VALUE_REACHES_ALWAYS_SINK</id>
+    <artifact tool="FindBugs"	mnemonic="TQ_EXPLICIT_UNKNOWN_SOURCE_VALUE_REACHES_ALWAYS_SINK"/>
+    <shortMessage>Explicit annotation inconsistent with use</shortMessage>
+    <info>
+      <![CDATA[
+      
+      <p>
+      A value is used in a way that requires it to be always be a value denoted by a type qualifier, but
+	there is an explicit annotation stating that it is not known where the value is required to have that type qualifier.
+	Either the usage or the annotation is incorrect.
+      </p>
+      
+    ]]>
+    </info>
+    <name>Explicit annotation inconsistent with use</name>
+  </findingType>
+  <findingType>
+    <id>OBL_UNSATISFIED_OBLIGATION</id>
+    <artifact tool="FindBugs"	mnemonic="OBL_UNSATISFIED_OBLIGATION"/>
+    <shortMessage>Method may fail to clean up stream or resource</shortMessage>
+    <info>
+      <![CDATA[
+		  
+		  <p>
+		  This method may fail to clean up (close, dispose of) a stream,
+		  database object, or other
+		  resource requiring an explicit cleanup operation.
+		  </p>
+		  
+		  <p>
+		  In general, if a method opens a stream or other resource,
+		  the method should use a try/finally block to ensure that
+		  the stream or resource is cleaned up before the method
+		  returns.
+		  </p>
+		  
+		  <p>
+		  This bug pattern is essentially the same as the
+		  OS_OPEN_STREAM and ODR_OPEN_DATABASE_RESOURCE
+		  bug patterns, but is based on a different
+		  (and hopefully better) static analysis technique.
+		  We are interested is getting feedback about the
+		  usefulness of this bug pattern.
+		  To send feedback, either:
+		  </p>
+		  <ul>
+			<li>send email to findbugs@cs.umd.edu</li>
+			<li>file a bug report: <a href="http://findbugs.sourceforge.net/reportingBugs.html">http://findbugs.sourceforge.net/reportingBugs.html</a></li>
+		  </ul>
+		  
+		  <p>
+		  In particular,
+		  the false-positive suppression heuristics for this
+		  bug pattern have not been extensively tuned, so
+		  reports about false positives are helpful to us.
+		  </p>
+		  
+		  <p>
+		  See Weimer and Necula, <i>Finding and Preventing Run-Time Error Handling Mistakes</i>, for
+		  a description of the analysis technique.
+		  </p>
+		  
+	  ]]>
+    </info>
+    <name>Method may fail to clean up stream or resource</name>
+  </findingType>
+  
 	<category>
 		<id>Correctness</id>
+    <findingType>RpC_REPEATED_CONDITIONAL_TEST</findingType>
+    <findingType>DMI_FUTILE_ATTEMPT_TO_CHANGE_MAXPOOL_SIZE_OF_SCHEDULED_THREAD_POOL_EXECUTOR</findingType>
+    <findingType>DMI_SCHEDULED_THREAD_POOL_EXECUTOR_WITH_ZERO_CORE_THREADS</findingType>
+    <findingType>NP_PARAMETER_MUST_BE_NONNULL_BUT_MARKED_AS_NULLABLE</findingType>
+    <findingType>VA_FORMAT_STRING_BAD_CONVERSION</findingType>
+    <findingType>VA_FORMAT_STRING_BAD_CONVERSION_FROM_ARRAY</findingType>
+    <findingType>VA_FORMAT_STRING_NO_PREVIOUS_ARGUMENT</findingType>
+    <findingType>VA_FORMAT_STRING_BAD_ARGUMENT</findingType>
+    <findingType>VA_FORMAT_STRING_MISSING_ARGUMENT</findingType>
+    <findingType>VA_FORMAT_STRING_ILLEGAL</findingType>
+    <findingType>VA_FORMAT_STRING_EXTRA_ARGUMENTS_PASSED</findingType>
+    <findingType>BIT_ADD_OF_SIGNED_BYTE</findingType>
+    <findingType>DMI_INVOKING_HASHCODE_ON_ARRAY</findingType>
+    <findingType>DMI_USING_REMOVEALL_TO_CLEAR_COLLECTION</findingType>
+    <findingType>DMI_VACUOUS_SELF_COLLECTION_CALL</findingType>
+    <findingType>DMI_COLLECTIONS_SHOULD_NOT_CONTAIN_THEMSELVES</findingType>
+    <findingType>TQ_EXPLICIT_UNKNOWN_SOURCE_VALUE_REACHES_NEVER_SINK</findingType>
+    <findingType>TQ_EXPLICIT_UNKNOWN_SOURCE_VALUE_REACHES_ALWAYS_SINK</findingType>		
 		<findingType>EQ_COMPARING_CLASS_NAMES</findingType>
 		<findingType>EQ_UNUSUAL</findingType>
 		<findingType>EQ_GETCLASS_AND_CLASS_CONSTANT</findingType>
@@ -7276,6 +7753,7 @@ mechanism, it must not be declared as a static method.
 	</category>
 	<category>
 		<id>Bad practice</id>
+    <findingType>EQ_CHECK_FOR_OPERAND_NOT_COMPATIBLE_WITH_THIS</findingType>		
 		<findingType>CN_IMPLEMENTS_CLONE_BUT_NOT_CLONEABLE</findingType>
 		<findingType>
 			SwingMethodsShouldBeInvokedInSwingThread
@@ -7609,6 +8087,10 @@ mechanism, it must not be declared as a static method.
 	<category>
 		<id>Miscellaneous</id>
 		<findingType>SKIPPED_CLASS_TOO_BIG</findingType>
+    <findingType>OBL_UNSATISFIED_OBLIGATION</findingType>		
+    <findingType>DMI_UNSUPPORTED_METHOD</findingType>
+    <findingType>NP_DEREFERENCE_OF_READLINE_VALUE</findingType>
+    <findingType>VA_FORMAT_STRING_BAD_CONVERSION_TO_BOOLEAN</findingType>    
 		<name>Miscellaneous</name>
 		<description>
 			Other issues that don't fall into an obvious category
