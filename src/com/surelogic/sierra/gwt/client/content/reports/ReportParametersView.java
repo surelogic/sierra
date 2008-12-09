@@ -222,6 +222,9 @@ public class ReportParametersView extends BasicPanel {
 					values.add(imp.getName());
 				}
 				settings.setSettingValue(paramName, values);
+			} else if (paramUI instanceof PackageChoice) {
+				settings.setSettingValue(paramName, ((PackageChoice) paramUI)
+						.getSelectedPackages());
 			} else if (paramUI instanceof ListBox) {
 				final List<String> values = new ArrayList<String>();
 				final ListBox lb = (ListBox) paramUI;
