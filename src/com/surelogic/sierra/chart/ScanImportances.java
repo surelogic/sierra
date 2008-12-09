@@ -35,7 +35,8 @@ public class ScanImportances implements IDatabasePlot {
 			final ReportSettings report, final Connection c)
 			throws SQLException, IOException {
 		final String scan = report.getSettingValue("scan", 0);
-		final List<String> importancesNames = report.getSettingValue("importance");
+		final List<String> importancesNames = report
+				.getSettingValue("importance");
 		final List<String> packages = report.getSettingValue("package");
 		final DefaultCategoryDataset importanceData = new DefaultCategoryDataset();
 		final DefaultCategoryDataset totalData = new DefaultCategoryDataset();
@@ -110,6 +111,8 @@ public class ScanImportances implements IDatabasePlot {
 		chart.setBackgroundPaint(null);
 		plot.getRangeAxis().setStandardTickUnits(
 				NumberAxis.createIntegerTickUnits());
+		plot.getDomainAxis().setLowerMargin(0.0);
+		plot.getDomainAxis().setUpperMargin(0.0);
 		return chart;
 	}
 }

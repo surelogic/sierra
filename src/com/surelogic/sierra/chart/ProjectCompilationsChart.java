@@ -121,6 +121,8 @@ public class ProjectCompilationsChart implements IDatabasePlot {
 		chart.setBackgroundPaint(null);
 		plot.getRangeAxis().setStandardTickUnits(
 				NumberAxis.createIntegerTickUnits());
+		plot.getDomainAxis().setLowerMargin(0.0);
+		plot.getDomainAxis().setUpperMargin(0.0);
 		return chart;
 	}
 }
