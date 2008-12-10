@@ -10,7 +10,6 @@ import com.surelogic.sierra.gwt.client.content.finding.FindingContent;
 import com.surelogic.sierra.gwt.client.content.findingtypes.FindingTypesContent;
 import com.surelogic.sierra.gwt.client.content.overview.OverviewContent;
 import com.surelogic.sierra.gwt.client.content.projects.ProjectsContent;
-import com.surelogic.sierra.gwt.client.content.reports.BugLinkReportsContent;
 import com.surelogic.sierra.gwt.client.content.reports.TeamServerReportsContent;
 import com.surelogic.sierra.gwt.client.content.scanfilters.ScanFiltersContent;
 import com.surelogic.sierra.gwt.client.content.scans.ScanContent;
@@ -52,7 +51,6 @@ public final class UserHeader extends AuthenticatedHeader {
 		addTab(CategoriesContent.getInstance(), "buglink");
 		addTab(FindingTypesContent.getInstance(), "buglink");
 		addTab(ScanFiltersContent.getInstance(), "buglink");
-		addTab(BugLinkReportsContent.getInstance(), "buglink");
 		addTabSpacer();
 		addTab(ProjectsContent.getInstance(), "team");
 		addTab(ScanContent.getInstance(), "team");

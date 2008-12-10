@@ -4,10 +4,8 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.Context;
-import com.surelogic.sierra.gwt.client.content.reports.BugLinkReportsContent;
 import com.surelogic.sierra.gwt.client.content.reports.TeamServerReportsContent;
 import com.surelogic.sierra.gwt.client.data.ReportSettings;
-import com.surelogic.sierra.gwt.client.data.Report.DataSource;
 
 public abstract class ReportBlock<T extends Widget> extends ContentBlock<T> {
 	private ReportSettings report;
@@ -29,11 +27,7 @@ public abstract class ReportBlock<T extends Widget> extends ContentBlock<T> {
 
 			public void onClick(final Widget sender) {
 				final Context ctx = new Context();
-				if (report.getReport().getDataSource() == DataSource.TEAMSERVER) {
-					ctx.setContent(TeamServerReportsContent.getInstance());
-				} else {
-					ctx.setContent(BugLinkReportsContent.getInstance());
-				}
+				ctx.setContent(TeamServerReportsContent.getInstance());
 				ctx.setUuid(report.getReportUuid());
 				ctx.setParameter("reportSettingsUuid", report.getUuid());
 				ctx.submit();
