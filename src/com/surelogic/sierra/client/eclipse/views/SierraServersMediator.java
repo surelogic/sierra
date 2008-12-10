@@ -900,10 +900,17 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 
 	private void collectProjects(final List<ProjectStatus> projects,
 			final ServersViewContent parent) {
-		for (final ServersViewContent item : parent.getChildren()) {
-			if (projects.contains(item.getData())) {
+		// CONNECTED_PROJECTS
+		final ServersViewContent connectedProjects = parent.getChildren()[0];
+		
+		for (final ServersViewContent item : connectedProjects.getChildren()) {
+			if (item.getData() == null) {
+				LOG.severe("Null project status");
 				continue;
 			}
+			if (projects.contains(item.getData())) {
+				continue;
+			}			
 			projects.add((ProjectStatus) item.getData());
 		}
 	}
@@ -943,7 +950,10 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 
 		private void handleProjects(final List<IJavaProject> projects,
 				final ServersViewContent parent) {
-			for (final ServersViewContent item : parent.getChildren()) {
+			// CONNECTED_PROJECTS
+			final ServersViewContent connectedProjects = parent.getChildren()[0];
+			
+			for (final ServersViewContent item : connectedProjects.getChildren()) {
 				final ProjectStatus ps = (ProjectStatus) item.getData();
 				projects.add(ps.project);
 			}
