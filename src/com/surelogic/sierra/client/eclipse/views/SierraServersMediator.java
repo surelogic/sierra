@@ -525,9 +525,11 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 							 * Yes was selected, so send the result filters to
 							 * the server.
 							 */
-							final Job job = new SendScanFiltersJob(
-									ServerFailureReport.SHOW_DIALOG, server);
-							job.schedule();
+							if (SendScanFiltersJob.ENABLED) {
+								final Job job = new SendScanFiltersJob(
+										ServerFailureReport.SHOW_DIALOG, server);
+								job.schedule();
+							}
 						}
 					}
 				});
@@ -674,7 +676,11 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 				f_duplicateServerItem.setEnabled(onlyServer);
 				f_deleteServerItem.setEnabled(onlyServer);
 				f_serverConnectItem.setEnabled(onlyTeamServer);
-				f_sendResultFilters.setEnabled(onlyBugLink);
+				if (SendScanFiltersJob.ENABLED) {
+					f_sendResultFilters.setEnabled(onlyBugLink);
+				} else {
+					f_sendResultFilters.setEnabled(false);
+				}
 				f_getResultFilters.setEnabled(onlyBugLink);
 				f_serverPropertiesItem.setEnabled(onlyServer);
 
@@ -940,6 +946,14 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 				} else if ("Unconnected".equals(item.getText())) {
 					handleProjects(projects, item);
 				} else {
+					final ProjectStatus status = inProject(item.getParent());
+					if (status != null) {
+						if (projects.contains(status)) {
+							continue;
+						}
+						projects.add(status.project);
+						continue;
+					}
 					System.out.println("Ignoring selection: " + item.getText());
 				}
 			}
