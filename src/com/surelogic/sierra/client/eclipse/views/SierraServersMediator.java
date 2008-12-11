@@ -853,124 +853,127 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 			} else {
 				// System.out.println("Got a non-server selection:
 				// "+item.getText());
+				final SierraServer s = inServer(item.getParent());
+				if (s != null) {
+					if (servers.contains(s)) {
+						continue;
+					}
+					servers.add(s);
+					continue;
+				}
 				return Collections.emptyList();
 			}
 		}
 		return servers;
 	}
 
-	private List<ProjectStatus> collectSelectedProjectStatus() {
-		final IStructuredSelection si = (IStructuredSelection) f_statusTree
-				.getSelection();
-		if (si.size() == 0) {
-			return Collections.emptyList();
-		}
-		final List<ProjectStatus> projects = new ArrayList<ProjectStatus>();
-		@SuppressWarnings("unchecked")
-		final Iterator it = si.iterator();
-		while (it.hasNext()) {
-			final ServersViewContent item = (ServersViewContent) it.next();
-			if (item.getData() instanceof ProjectStatus) {
-				if (projects.contains(item.getData())) {
-					continue;
-				}
-				projects.add((ProjectStatus) item.getData());
-			} else if (item.getData() instanceof SierraServer) {
-				collectProjects(projects, item);
-			} else if ("Unconnected".equals(item.getText())) {
-				collectProjects(projects, item);
-			} else {
-				final ProjectStatus status = inProject(item.getParent());
-				if (status != null) {
-					if (projects.contains(status)) {
-						continue;
-					}
-					projects.add(status);
-					continue;
-				}
-				System.out.println("Ignoring selection: " + item.getText());
-			}
-		}
-		return projects;
-	}
-
-	private ProjectStatus inProject(ServersViewContent item) {
+	private SierraServer inServer(ServersViewContent item) {
 		while (item != null) {
 			if (item.getData() instanceof ProjectStatus) {
-				return (ProjectStatus) item.getData();
+				// Inside of a project, not a server
+				return null;
+			}
+			if (item.getData() instanceof SierraServer) {
+				return (SierraServer) item.getData();
 			}
 			item = item.getParent();
 		}
 		return null;
 	}
 
-	private void collectProjects(final List<ProjectStatus> projects,
-			final ServersViewContent parent) {
-		// CONNECTED_PROJECTS
-		final ServersViewContent connectedProjects = parent.getChildren()[0];
-		
-		for (final ServersViewContent item : connectedProjects.getChildren()) {
-			if (item.getData() == null) {
-				LOG.severe("Null project status");
-				continue;
-			}
-			if (projects.contains(item.getData())) {
-				continue;
+	private List<ProjectStatus> collectSelectedProjectStatus() {
+		final IStructuredSelection si = (IStructuredSelection) f_statusTree
+				.getSelection();
+		ProjectStatusCollector<ProjectStatus> collector = 
+			new ProjectStatusCollector<ProjectStatus>() {
+			@Override
+			ProjectStatus getSelectedInfo(ProjectStatus s) {
+				return s;
 			}			
-			projects.add((ProjectStatus) item.getData());
-		}
+		};
+		return collector.collectSelectedProjects(si);
 	}
 
-	private abstract class ProjectsActionListener implements Listener {
-		public final void handleEvent(final Event event) {
-			// FIX merge with collectProjects?
-			final IStructuredSelection si = (IStructuredSelection) f_statusTree
-					.getSelection();
-			if (si.size() == 0) {
+	private abstract class ProjectStatusCollector<T> {
+		private void add(List<T> projects, ProjectStatus s) {
+			final T info = getSelectedInfo(s);
+			if (projects.contains(info)) {
+				// Nothing else to do, since it's already there
 				return;
 			}
-			final List<IJavaProject> projects = new ArrayList<IJavaProject>();
-
-			for (final Object o : new Iterable<Object>() {
-				@SuppressWarnings("unchecked")
-				public Iterator<Object> iterator() {
-					return si.iterator();
-				}
-			}) {
-				final ServersViewContent item = (ServersViewContent) o;
+			projects.add(info);
+		}
+		
+		protected List<T> collectSelectedProjects(final IStructuredSelection si) {
+			if (si.size() == 0) {
+				return Collections.emptyList();
+			}
+			final List<T> projects = new ArrayList<T>();
+			
+			@SuppressWarnings("unchecked")
+			final Iterator it = si.iterator();
+			while (it.hasNext()) {
+				final ServersViewContent item = (ServersViewContent) it.next();
 				if (item.getData() instanceof ProjectStatus) {
-					final ProjectStatus ps = (ProjectStatus) item.getData();
-					projects.add(ps.project);
+					add(projects, (ProjectStatus) item.getData());
 				} else if (item.getData() instanceof SierraServer) {
-					handleProjects(projects, item);
+					collectProjects(projects, item);
 				} else if ("Unconnected".equals(item.getText())) {
-					handleProjects(projects, item);
+					collectProjects(projects, item);
 				} else {
 					final ProjectStatus status = inProject(item.getParent());
 					if (status != null) {
-						if (projects.contains(status)) {
-							continue;
-						}
-						projects.add(status.project);
+						add(projects, (ProjectStatus) item.getData());
 						continue;
 					}
 					System.out.println("Ignoring selection: " + item.getText());
 				}
 			}
-			if (!projects.isEmpty()) {
-				run(projects);
-			}
+			return projects;
 		}
-
-		private void handleProjects(final List<IJavaProject> projects,
+		
+		private void collectProjects(final List<T> projects,
 				final ServersViewContent parent) {
 			// CONNECTED_PROJECTS
 			final ServersViewContent connectedProjects = parent.getChildren()[0];
 			
 			for (final ServersViewContent item : connectedProjects.getChildren()) {
-				final ProjectStatus ps = (ProjectStatus) item.getData();
-				projects.add(ps.project);
+				if (item.getData() == null) {
+					LOG.severe("Null project status");
+					continue;
+				}
+				add(projects, (ProjectStatus) item.getData());
 			}
+		}
+		
+		private ProjectStatus inProject(ServersViewContent item) {
+			while (item != null) {
+				if (item.getData() instanceof ProjectStatus) {
+					return (ProjectStatus) item.getData();
+				}
+				item = item.getParent();
+			}
+			return null;
+		}
+		
+		abstract T getSelectedInfo(ProjectStatus s);
+	}
+	
+	private abstract class ProjectsActionListener extends ProjectStatusCollector<IJavaProject>
+	implements Listener 
+	{
+		public final void handleEvent(final Event event) {
+			// FIX merge with collectProjects?
+			final IStructuredSelection si = (IStructuredSelection) f_statusTree
+					.getSelection();
+			final List<IJavaProject> projects = collectSelectedProjects(si);
+			if (!projects.isEmpty()) {
+				run(projects);
+			}
+		}
+		@Override
+		IJavaProject getSelectedInfo(ProjectStatus s) {
+			return s.project;
 		}
 
 		protected abstract void run(List<IJavaProject> projects);
