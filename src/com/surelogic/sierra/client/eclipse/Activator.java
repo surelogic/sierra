@@ -23,6 +23,7 @@ import com.surelogic.sierra.client.eclipse.model.Projects;
 import com.surelogic.sierra.client.eclipse.model.SierraServerManager;
 import com.surelogic.sierra.client.eclipse.model.selection.SelectionManager;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
+import com.surelogic.sierra.client.eclipse.views.adhoc.AdHocDataSource;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -109,6 +110,7 @@ public final class Activator extends AbstractUIPlugin {
 	@Override
 	public void stop(final BundleContext context) throws Exception {
 		try {
+			AdHocDataSource.getInstance().dispose();
 			if (f_databaseInSync.get()) {
 				SierraServerManager.getInstance().save();
 				SelectionManager.getInstance().save(getSelectionSaveFile());

@@ -38,6 +38,10 @@ public final class AdHocDataSource extends AdHocManagerAdapter implements
 		INSTANCE.init();
 	}
 
+	public static AdHocDataSource getInstance() {
+		return INSTANCE;
+	}
+
 	public void init() {
 		getManager().addObserver(this);
 		getManager().setGlobalVariableValue(AdHocManager.DATABASE,
