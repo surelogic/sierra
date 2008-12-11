@@ -24,6 +24,7 @@ import com.surelogic.sierra.tool.message.InvalidLoginException;
 import com.surelogic.sierra.tool.message.SierraServiceClientException;
 
 public final class SendScanFiltersJob extends DatabaseJob {
+	public static final boolean ENABLED = false;
 	private final ServerFailureReport f_method;
 	private final SierraServer f_server;
 
