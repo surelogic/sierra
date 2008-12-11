@@ -1105,7 +1105,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 
 			@Override
 			protected void handleFindings(MenuItem item, FindingData data,
-					Collection<Long> ids) {
+					List<Long> ids) {
 				FindingMutationUtility.asyncChangeImportance(ids,
 						getImportance(item));
 			}
@@ -1125,7 +1125,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 
 			@Override
 			protected void handleFindings(MenuItem item, FindingData data,
-					Collection<Long> ids) {
+					List<Long> ids) {
 				FindingMutationUtility.asyncComment(ids,
 						FindingDetailsMediator.STAMP_COMMENT);
 			}
@@ -1141,9 +1141,17 @@ public final class MListOfFindingsColumn extends MColumn implements
 
 					@Override
 					protected void handleFindings(MenuItem item,
-							FindingData data, Collection<Long> ids) {
+							FindingData data, List<Long> ids) {
+						// Note that these findings should all have the same type
+						// (based on code in context menu's listener)				
+						if (ids.size() > 1) {
+							FindingMutationUtility.asyncFilterFindingTypeFromScans(
+									ids.get(0), data.f_findingTypeId);
+						}
+						/*
 						FindingMutationUtility.asyncFilterFindingTypeFromScans(
 								ids, data.f_findingTypeId);
+						*/
 					}
 				});
 
@@ -1169,7 +1177,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 					if (itemIndices.length == 1) {
 						handleFinding(item, data);
 					} else {
-						final Collection<Long> ids = extractFindingIds(itemIndices);
+						final List<Long> ids = extractFindingIds(itemIndices);
 						handleFindings(item, data, ids);
 					}
 				}
@@ -1178,8 +1186,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 
 		protected abstract void handleFinding(MenuItem item, FindingData data);
 
-		protected abstract void handleFindings(MenuItem item, FindingData data,
-				Collection<Long> ids);
+		protected abstract void handleFindings(MenuItem item, FindingData data, List<Long> ids);
 	}
 
 	private void refreshDisplay() {
@@ -1207,9 +1214,19 @@ public final class MListOfFindingsColumn extends MColumn implements
 	 * @param itemIndices
 	 * @return
 	 */
-	private Collection<Long> extractFindingIds(final int[] itemIndices) {
-		final Collection<Long> ids = new ArrayList<Long>(itemIndices.length);
+	private List<Long> extractFindingIds(final int[] itemIndices) {
+		final List<Long> ids = new ArrayList<Long>(itemIndices.length);
+		final int startSize = f_rows.size();
 		for (int ti : itemIndices) {
+			final int size = f_rows.size();
+			if (startSize != size) {
+				LOG.severe("Number of rows changed from "+startSize+" to "+size);
+				continue;
+			}
+			else if (ti >= size) {
+				LOG.severe("Index out of bounds: "+ti+" >= "+size);
+				continue;
+			}
 			FindingData fd = f_rows.get(ti);
 			if (fd != null) {
 				ids.add(fd.f_findingId);
