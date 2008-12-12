@@ -16,7 +16,7 @@ public class ServerInfoServiceImpl extends SRPCServlet implements
 		ServerInfoService {
 	private static final long serialVersionUID = 557394723869102797L;
 
-	private final ServerInfoReply reply = new ServerInfoReply();
+	private transient final ServerInfoReply reply = new ServerInfoReply();
 
 	public ServerInfoReply getServerInfo(final ServerInfoRequest request) {
 		synchronized (reply) {
