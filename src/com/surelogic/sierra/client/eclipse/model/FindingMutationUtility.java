@@ -26,6 +26,7 @@ public final class FindingMutationUtility {
 	static abstract class MutationJob extends DatabaseJob {
 		public MutationJob(String name) {
 			super(name);
+			setSystem(false);
 		}
 
 		@Override
