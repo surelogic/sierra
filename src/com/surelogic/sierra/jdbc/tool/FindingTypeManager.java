@@ -40,7 +40,7 @@ public final class FindingTypeManager {
 	private final PreparedStatement checkUncategorizedFindingTypes;
 	private final FindingTypeRecordFactory factory;
 
-	private FindingTypeManager(Connection conn) throws SQLException {
+	private FindingTypeManager(final Connection conn) throws SQLException {
 		selectArtifactType = conn
 				.prepareStatement("SELECT AR.ID FROM TOOL T, ARTIFACT_TYPE AR WHERE T.NAME = ? AND T.VERSION = ? AND AR.TOOL_ID = T.ID AND AR.MNEMONIC = ?");
 		selectArtifactTypesByFindingTypeId = conn
@@ -67,7 +67,7 @@ public final class FindingTypeManager {
 	 * @return the local finding type id, or <code>null</code> if none exists
 	 * @throws SQLException
 	 */
-	public Long getFindingTypeId(String uid) throws SQLException {
+	public Long getFindingTypeId(final String uid) throws SQLException {
 		final FindingTypeRecord ft = factory.newFindingTypeRecord();
 		ft.setUid(uid);
 		if (ft.select()) {
@@ -80,12 +80,12 @@ public final class FindingTypeManager {
 	 * Look up finding type information by its global identifier.
 	 * 
 	 * @param uid
-	 * @returnthe the relevant {@link FindingType}, or <code>null</code> if
-	 *            none exists
+	 * @returnthe the relevant {@link FindingType}, or <code>null</code> if none
+	 *            exists
 	 * @throws SQLException
 	 */
 	// TODO Return the artifact types that match this finding type
-	public FindingType getFindingType(String uid) throws SQLException {
+	public FindingType getFindingType(final String uid) throws SQLException {
 		final FindingTypeRecord ft = factory.newFindingTypeRecord();
 		ft.setUid(uid);
 		if (ft.select()) {
@@ -106,7 +106,7 @@ public final class FindingTypeManager {
 	 * @return the local category id, or <code>null</code> if none exists
 	 * @throws SQLException
 	 */
-	public Long getCategoryId(String uid) throws SQLException {
+	public Long getCategoryId(final String uid) throws SQLException {
 		final CategoryRecord ctRec = factory.newCategoryRecord();
 		ctRec.setUid(uid);
 		if (ctRec.select()) {
@@ -123,7 +123,7 @@ public final class FindingTypeManager {
 	 *         exists
 	 * @throws SQLException
 	 */
-	public Category getCategory(String uid) throws SQLException {
+	public Category getCategory(final String uid) throws SQLException {
 		final CategoryRecord ctRec = factory.newCategoryRecord();
 		ctRec.setUid(uid);
 		if (ctRec.select()) {
@@ -156,8 +156,8 @@ public final class FindingTypeManager {
 	 * @return
 	 * @throws SQLException
 	 */
-	public Long getArtifactTypeId(String tool, String version, String mnemonic)
-			throws SQLException {
+	public Long getArtifactTypeId(final String tool, final String version,
+			final String mnemonic) throws SQLException {
 		selectArtifactType.setString(1, tool);
 		selectArtifactType.setString(2, version);
 		selectArtifactType.setString(3, mnemonic);
@@ -181,8 +181,8 @@ public final class FindingTypeManager {
 		}
 	}
 
-	private Collection<Long> getArtifactTypesIds(String tool, String mnemonic)
-			throws SQLException {
+	private Collection<Long> getArtifactTypesIds(final String tool,
+			final String mnemonic) throws SQLException {
 		final List<Long> ids = new LinkedList<Long>();
 		selectArtifactTypesByToolAndMnemonic.setString(1, tool);
 		selectArtifactTypesByToolAndMnemonic.setString(2, mnemonic);
@@ -195,17 +195,11 @@ public final class FindingTypeManager {
 		} finally {
 			set.close();
 		}
-		if (ids.isEmpty()) {
-			final String message = "No artifact types could be found with tool "
-					+ tool + " and mnemonic " + mnemonic + ".";
-			log.severe(message);
-			throw new IllegalStateException(message);
-		}
 		return ids;
 	}
 
-	public FindingFilter getMessageFilter(Collection<FindingTypeFilter> filters)
-			throws SQLException {
+	public FindingFilter getMessageFilter(
+			final Collection<FindingTypeFilter> filters) throws SQLException {
 		final Map<Long, FindingTypeFilter> findingMap = new HashMap<Long, FindingTypeFilter>(
 				filters.size());
 		final Map<Long, FindingTypeFilter> artifactMap = new HashMap<Long, FindingTypeFilter>(
@@ -237,8 +231,8 @@ public final class FindingTypeManager {
 	 * @param types
 	 * @throws SQLException
 	 */
-	public void updateFindingTypes(List<FindingTypes> types, long revision)
-			throws SQLException {
+	public void updateFindingTypes(final List<FindingTypes> types,
+			final long revision) throws SQLException {
 		final Set<String> idSet = new HashSet<String>();
 		final Set<String> duplicates = new HashSet<String>();
 		final Set<String> categoryIdSet = new HashSet<String>();
@@ -399,7 +393,7 @@ public final class FindingTypeManager {
 		}
 	}
 
-	public static FindingTypeManager getInstance(Connection conn)
+	public static FindingTypeManager getInstance(final Connection conn)
 			throws SQLException {
 		return new FindingTypeManager(conn);
 	}
