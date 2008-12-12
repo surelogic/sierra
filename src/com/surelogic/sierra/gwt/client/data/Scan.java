@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 import com.surelogic.sierra.gwt.client.data.cache.Cacheable;
+import com.surelogic.sierra.gwt.client.util.LangUtil;
 
 public class Scan implements Serializable, Cacheable, Comparable<Scan> {
 	private static final long serialVersionUID = -6122774750507037724L;
@@ -72,8 +73,47 @@ public class Scan implements Serializable, Cacheable, Comparable<Scan> {
 		this.scanTime = scanTime;
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (!(obj instanceof Scan)) {
+			return false;
+		}
+		Scan other = (Scan) obj;
+		if (!LangUtil.equals(uuid, other.uuid)) {
+			return false;
+		}
+		if (!LangUtil.equals(user, other.user)) {
+			return false;
+		}
+		if (!LangUtil.equals(project, other.project)) {
+			return false;
+		}
+		if (!LangUtil.equals(javaVendor, other.javaVendor)) {
+			return false;
+		}
+		if (!LangUtil.equals(javaVersion, other.javaVersion)) {
+			return false;
+		}
+		if (!LangUtil.equals(scanTimeDisplay, other.scanTimeDisplay)) {
+			return false;
+		}
+		if (!LangUtil.equals(scanTime, other.scanTime)) {
+			return false;
+		}
+		return true;
+	}
+	
 	public int compareTo(final Scan o) {
-		return scanTime.compareTo(o.getScanTime());
+		if (scanTime == null) {
+			if (o.scanTime == null) {
+				return 0;
+			}
+			return -1;
+		} else if (o.scanTime == null) {
+			return 1;
+		}
+		
+		return scanTime.compareTo(o.scanTime);
 	}
 
 }

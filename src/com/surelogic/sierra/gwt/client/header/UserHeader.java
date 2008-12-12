@@ -37,7 +37,7 @@ public final class UserHeader extends AuthenticatedHeader {
 				final String url = ContentRegistry
 						.getContentUrl(SettingsContent.getInstance());
 				Window
-						.open(url.toString(), null,
+						.open(url, null,
 								"menubar=yes,location=yes,resizable=yes,scrollbars=yes,status=yes");
 			}
 		});

@@ -9,7 +9,7 @@ import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.service.SessionServiceAsync;
 import com.surelogic.sierra.gwt.client.service.callback.ResultCallback;
 
-public class SessionManager {
+public final class SessionManager {
 	private static UserAccount userAccount;
 	private static final List<SessionListener> sessionListeners = new ArrayList<SessionListener>();
 

@@ -13,7 +13,7 @@ import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.service.callback.ResultCallback;
 import com.surelogic.sierra.gwt.client.ui.ImageHelper;
 
-public class Chart extends Composite {
+public final class Chart extends Composite {
 	private final VerticalPanel rootPanel = new VerticalPanel();
 	private final Image waitImage = ImageHelper.getWaitImage(16);
 

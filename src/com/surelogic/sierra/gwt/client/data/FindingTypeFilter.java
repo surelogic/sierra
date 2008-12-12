@@ -68,7 +68,7 @@ public class FindingTypeFilter implements Serializable, Cacheable,
 		if (this == obj) {
 			return true;
 		}
-		if (obj == null) {
+		if (!(obj instanceof FindingTypeFilter)) {
 			return false;
 		}
 		final FindingTypeFilter other = (FindingTypeFilter) obj;

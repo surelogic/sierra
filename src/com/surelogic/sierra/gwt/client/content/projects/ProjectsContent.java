@@ -8,7 +8,7 @@ import com.surelogic.sierra.gwt.client.data.cache.ProjectCache;
 import com.surelogic.sierra.gwt.client.data.cache.ScanFilterCache;
 import com.surelogic.sierra.gwt.client.util.LangUtil;
 
-public class ProjectsContent extends
+public final class ProjectsContent extends
 		ListContentComposite<Project, ProjectCache> {
 	private static final ProjectsContent instance = new ProjectsContent();
 	private final ProjectView projectView = new ProjectView();

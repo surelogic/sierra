@@ -7,7 +7,7 @@ import com.surelogic.sierra.gwt.client.data.ScanFilter;
 import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 
-public class ScanFilterCache extends Cache<ScanFilter> {
+public final class ScanFilterCache extends Cache<ScanFilter> {
 
 	private static final ScanFilterCache instance = new ScanFilterCache();
 

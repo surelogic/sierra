@@ -15,7 +15,7 @@ import com.surelogic.sierra.gwt.client.data.Report.Parameter.Type;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.service.callback.StandardCallback;
 
-public class ReportCache extends Cache<Report> {
+public final class ReportCache extends Cache<Report> {
 	private static final ReportCache instance = new ReportCache();
 
 	public static ReportCache getInstance() {

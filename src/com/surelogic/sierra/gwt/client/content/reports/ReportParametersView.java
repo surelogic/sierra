@@ -114,9 +114,11 @@ public class ReportParametersView extends BasicPanel {
 		}
 		paramUIMap.clear();
 
-		int rowIndex = 0;
-		for (final Report.Parameter param : report.getParameters()) {
-			rowIndex = addParameterUI(param, settings, rowIndex);
+		if (report != null) {
+			int rowIndex = 0;
+			for (final Report.Parameter param : report.getParameters()) {
+				rowIndex = addParameterUI(param, settings, rowIndex);
+			}
 		}
 		wireParameterUpdates();
 		parametersTable.getColumnFormatter().setWidth(0, "33%");
@@ -128,10 +130,10 @@ public class ReportParametersView extends BasicPanel {
 					report.hasOutputType(actionEntry.getKey()));
 		}
 
-		final List<ReportSettings> savedReports = report.getSavedReports();
 		final VerticalPanel settingsContent = settingsPanel.getContentPanel();
 		settingsContent.clear();
-		if (savedReports.isEmpty()) {
+		final List<ReportSettings> savedReports = report == null ? null : report.getSavedReports();		
+		if (savedReports == null || savedReports.isEmpty()) {
 			settingsContent.add(StyleHelper.add(new Label("No reports saved"),
 					Style.ITALICS));
 		} else {

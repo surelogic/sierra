@@ -16,7 +16,7 @@ import com.surelogic.sierra.gwt.client.service.callback.StatusCallback;
 import com.surelogic.sierra.gwt.client.ui.StatusBox;
 import com.surelogic.sierra.gwt.client.util.LangUtil;
 
-public class ServerManagementContent extends
+public final class ServerManagementContent extends
 		ListContentComposite<ServerLocation, ServerLocationCache> {
 	private static final ServerManagementContent instance = new ServerManagementContent();
 	private final ServerLocationView serverView = new ServerLocationView();

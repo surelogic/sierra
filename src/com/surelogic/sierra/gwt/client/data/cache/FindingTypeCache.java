@@ -7,7 +7,7 @@ import com.surelogic.sierra.gwt.client.data.FindingType;
 import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 
-public class FindingTypeCache extends Cache<FindingType> {
+public final class FindingTypeCache extends Cache<FindingType> {
 
 	private static final FindingTypeCache INSTANCE = new FindingTypeCache();
 

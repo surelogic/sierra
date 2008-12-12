@@ -40,7 +40,7 @@ public class DebugCallback<T> implements AsyncCallback<T> {
 	private void showDebugMessage(String method, String param) {
 		final StringBuffer alertMsg = new StringBuffer(debugMessage);
 		alertMsg.append(' ').append(method);
-		alertMsg.append('(').append(param.toString()).append(')');
+		alertMsg.append('(').append(param).append(')');
 		Window.alert(alertMsg.toString());
 	}
 }

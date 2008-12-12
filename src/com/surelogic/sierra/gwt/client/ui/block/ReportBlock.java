@@ -45,11 +45,11 @@ public abstract class ReportBlock<T extends Widget> extends ContentBlock<T> {
 		return report == null ? null : report.getDescription();
 	}
 
-	public ReportSettings getReportSettings() {
+	public final ReportSettings getReportSettings() {
 		return report;
 	}
 
-	public void setReportSettings(final ReportSettings report) {
+	public final void setReportSettings(final ReportSettings report) {
 		this.report = report;
 		if (report != null) {
 			addAction(viewReportAction);

@@ -315,7 +315,7 @@ public class Report implements Serializable, Cacheable, Comparable<Report> {
 			if (this == obj) {
 				return true;
 			}
-			if (!(obj instanceof Report)) {
+			if (!(obj instanceof Parameter)) {
 				return false;
 			}
 

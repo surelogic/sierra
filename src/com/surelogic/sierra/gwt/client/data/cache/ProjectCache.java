@@ -7,7 +7,7 @@ import com.surelogic.sierra.gwt.client.data.Project;
 import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 
-public class ProjectCache extends Cache<Project> {
+public final class ProjectCache extends Cache<Project> {
 	private static final ProjectCache instance = new ProjectCache();
 
 	public static ProjectCache getInstance() {
