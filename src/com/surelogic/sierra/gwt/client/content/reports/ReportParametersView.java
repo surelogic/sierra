@@ -15,6 +15,7 @@ import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Hyperlink;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
@@ -27,6 +28,7 @@ import com.surelogic.sierra.gwt.client.data.FindingType;
 import com.surelogic.sierra.gwt.client.data.ImportanceView;
 import com.surelogic.sierra.gwt.client.data.Report;
 import com.surelogic.sierra.gwt.client.data.ReportSettings;
+import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.data.Report.OutputType;
 import com.surelogic.sierra.gwt.client.data.Report.Parameter;
 import com.surelogic.sierra.gwt.client.data.Report.Parameter.Type;
@@ -34,6 +36,10 @@ import com.surelogic.sierra.gwt.client.data.cache.Cache;
 import com.surelogic.sierra.gwt.client.data.cache.CacheListenerAdapter;
 import com.surelogic.sierra.gwt.client.data.cache.CategoryCache;
 import com.surelogic.sierra.gwt.client.data.cache.FindingTypeCache;
+import com.surelogic.sierra.gwt.client.data.cache.ReportCache;
+import com.surelogic.sierra.gwt.client.service.ServiceHelper;
+import com.surelogic.sierra.gwt.client.service.callback.StatusCallback;
+import com.surelogic.sierra.gwt.client.ui.ImageHelper;
 import com.surelogic.sierra.gwt.client.ui.StyleHelper;
 import com.surelogic.sierra.gwt.client.ui.StyleHelper.Style;
 import com.surelogic.sierra.gwt.client.ui.choice.MultipleImportanceChoice;
@@ -132,16 +138,31 @@ public class ReportParametersView extends BasicPanel {
 
 		final VerticalPanel settingsContent = settingsPanel.getContentPanel();
 		settingsContent.clear();
-		final List<ReportSettings> savedReports = report == null ? null : report.getSavedReports();		
+		final List<ReportSettings> savedReports = report == null ? null
+				: report.getSavedReports();
 		if (savedReports == null || savedReports.isEmpty()) {
 			settingsContent.add(StyleHelper.add(new Label("No reports saved"),
 					Style.ITALICS));
 		} else {
 			for (final ReportSettings rs : savedReports) {
+				final HorizontalPanel entryPanel = new HorizontalPanel();
+				entryPanel.setWidth("100%");
 				final Context reportContext = Context.current().setUuid(report);
-				settingsContent.add(new Hyperlink(rs.getTitle(), reportContext
+				entryPanel.add(new Hyperlink(rs.getTitle(), reportContext
 						.setParameter("reportSettingsUuid", rs.getUuid())
 						.toString()));
+				final Image deleteSettings = ImageHelper.getImage("delete.gif");
+				deleteSettings.setTitle("Remove " + rs.getTitle());
+				deleteSettings.addClickListener(new ClickListener() {
+
+					public void onClick(final Widget sender) {
+						deleteReportSettings(rs.getUuid());
+					}
+				});
+				entryPanel.add(deleteSettings);
+				entryPanel.setCellHorizontalAlignment(deleteSettings,
+						HasHorizontalAlignment.ALIGN_RIGHT);
+				settingsContent.add(entryPanel);
 			}
 		}
 	}
@@ -201,6 +222,18 @@ public class ReportParametersView extends BasicPanel {
 			rowIndex = addParameterUI(child, settings, rowIndex);
 		}
 		return rowIndex;
+	}
+
+	private void deleteReportSettings(final String settingsUuid) {
+		if (settingsUuid != null) {
+			ServiceHelper.getSettingsService().deleteReportSettings(
+					settingsUuid, new StatusCallback() {
+						@Override
+						protected void doStatus(final Status status) {
+							ReportCache.getInstance().refresh();
+						}
+					});
+		}
 	}
 
 	public Report getSelection() {

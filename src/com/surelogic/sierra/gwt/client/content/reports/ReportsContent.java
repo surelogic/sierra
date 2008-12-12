@@ -75,24 +75,6 @@ public abstract class ReportsContent extends
 					}
 
 				});
-		reportParamsView.addReportAction("Delete Report", null,
-				new ClickListener() {
-					public void onClick(final Widget sender) {
-						final String settingsUuid = ContextManager.getContext()
-								.getParameter("reportSettingsUuid");
-						if (settingsUuid != null) {
-							ServiceHelper.getSettingsService()
-									.deleteReportSettings(settingsUuid,
-											new StatusCallback() {
-												@Override
-												protected void doStatus(
-														final Status status) {
-													getCache().refresh();
-												}
-											});
-						}
-					}
-				});
 		selectionPanel.add(reportParamsView);
 	}
 
