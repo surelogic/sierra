@@ -103,11 +103,15 @@ public final class ChartCache implements Sweepable {
 			try {
 				final BufferedReader reader = new BufferedReader(
 						new FileReader(file));
-				final long rev = Long.valueOf(reader.readLine());
-				final long lastRevision = ConnectionFactory.getInstance()
-						.withReadUncommitted(new RevisionQuery());
+				try {
+					final long rev = Long.valueOf(reader.readLine());
+					final long lastRevision = ConnectionFactory.getInstance()
+							.withReadUncommitted(new RevisionQuery());
 
-				createOrUpdateCacheFiles = lastRevision > rev;
+					createOrUpdateCacheFiles = lastRevision > rev;
+				} finally {
+					reader.close();
+				}
 			} catch (final Exception e) {
 				throw new IllegalStateException(e);
 			}

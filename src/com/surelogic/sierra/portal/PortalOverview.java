@@ -27,14 +27,14 @@ public final class PortalOverview {
 
 	public List<UserOverview> getUserOverviews() throws SQLException {
 
-		PreparedStatement auditSt = conn
+		final PreparedStatement auditSt = conn
 				.prepareStatement("SELECT U.USER_NAME, MAX(U.IS_ACTIVE), COUNT(DISTINCT A.ID), MAX(R.DATE_TIME) "
 						+ "FROM SIERRA_USER U "
 						+ "LEFT OUTER JOIN SIERRA_AUDIT A ON A.USER_ID = U.ID "
 						+ "LEFT OUTER JOIN REVISION R ON R.REVISION = A.REVISION "
 						+ "WHERE A.REVISION >= (SELECT MIN(REVISION) FROM REVISION WHERE ? < DATE_TIME) OR A.REVISION IS NULL "
 						+ "GROUP BY U.USER_NAME ORDER BY U.USER_NAME");
-		PreparedStatement findingSt = conn
+		final PreparedStatement findingSt = conn
 				.prepareStatement("SELECT U.USER_NAME, COUNT(DISTINCT F.ID) "
 						+ "FROM SIERRA_USER U "
 						+ "LEFT OUTER JOIN SIERRA_AUDIT A ON A.USER_ID = U.ID "
@@ -42,7 +42,7 @@ public final class PortalOverview {
 						+ "WHERE A.REVISION >= (SELECT MIN(REVISION) FROM REVISION WHERE ? < DATE_TIME) OR A.REVISION IS NULL "
 						+ "GROUP BY U.USER_NAME ORDER BY U.USER_NAME");
 		final List<UserOverview> overviews = new ArrayList<UserOverview>();
-		Timestamp time = thirtyDaysAgo();
+		final Timestamp time = thirtyDaysAgo();
 		auditSt.setTimestamp(1, time);
 		findingSt.setTimestamp(1, time);
 		final ResultSet auditSet = auditSt.executeQuery();
@@ -74,8 +74,8 @@ public final class PortalOverview {
 		/*
 		 * Remove disabled users.
 		 */
-		for (Iterator<UserOverview> i = result.iterator(); i.hasNext();) {
-			UserOverview userOverview = i.next();
+		for (final Iterator<UserOverview> i = result.iterator(); i.hasNext();) {
+			final UserOverview userOverview = i.next();
 			if (!userOverview.isActive()) {
 				i.remove();
 			}
@@ -85,13 +85,13 @@ public final class PortalOverview {
 
 	public List<ProjectOverview> getProjectOverviews() throws SQLException {
 		final List<ProjectOverview> overview = new ArrayList<ProjectOverview>();
-		PreparedStatement auditSt = conn
+		final PreparedStatement auditSt = conn
 				.prepareStatement("SELECT P.NAME, COUNT(DISTINCT A.FINDING_ID), COUNT(A.ID)  "
 						+ "FROM PROJECT P LEFT OUTER JOIN FINDING F ON F.PROJECT_ID = P.ID  "
 						+ "LEFT OUTER JOIN SIERRA_AUDIT A ON A.FINDING_ID = F.ID  "
 						+ "WHERE A.REVISION >= (SELECT MIN(REVISION) FROM REVISION WHERE ? < DATE_TIME) OR A.REVISION IS NULL "
 						+ "GROUP BY P.NAME ORDER BY P.NAME");
-		PreparedStatement scanSt = conn
+		final PreparedStatement scanSt = conn
 				.prepareStatement("SELECT COUNT(F.ID), F.IMPORTANCE "
 						+ "FROM SCAN_OVERVIEW SO, FINDING F "
 						+ "WHERE F.ID = SO.FINDING_ID AND SO.SCAN_ID = ? "
