@@ -12,7 +12,6 @@
 		<copy file="./etc/sierra-embedded-derby.xml" todir="../jetty/etc/" />
 		<copy file="./etc/keystore" todir="../jetty/etc/" />
 		<copy file="./lib/derby.jar" todir="../jetty/lib/ext/" />
-		<copy file="./lib/derbyclient.jar" todir="../jetty/lib/ext/" />
 		<copy file="./lib/mail.jar" todir="../jetty/lib/ext/" />
 		<copy file="../sierra-portal-servlets/lib/jcommon-1.0.12.jar" todir="../sierra-portal/lib/web-dependencies/" />
 		<copy file="../sierra-portal-servlets/lib/jfreechart-1.0.9.jar" todir="../sierra-portal/lib/web-dependencies/" />

@@ -188,7 +188,7 @@
 		<Arg>jdbc/Sierra</Arg>
 		<Arg>
 			<New class="org.apache.derby.jdbc.EmbeddedDataSource">
-				<Set name="DatabaseName"><SystemProperty name="user.home" /><SystemProperty name="file.separator" />.sierra-data<SystemProperty name="file.separator" />server<SystemProperty name="file.separator" />db;user=SIERRASERVER</Set>
+				<Set name="DatabaseName"><SystemProperty name="user.home" /><SystemProperty name="file.separator" />.sierra-data<SystemProperty name="file.separator" />server<SystemProperty name="file.separator" />server-db</Set>
 				<Set name="createDatabase">create</Set>
 			</New>
 		</Arg>
