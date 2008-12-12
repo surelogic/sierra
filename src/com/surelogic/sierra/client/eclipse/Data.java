@@ -42,7 +42,7 @@ public final class Data extends DerbyConnection {
 
 	@Override
 	protected String getSchemaName() {
-		return "SIERRA";
+		return "SIERRAV1";
 	}
 
 	public SchemaData getSchemaLoader() {
