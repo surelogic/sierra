@@ -50,11 +50,13 @@ public class NewScanJob extends WorkspaceJob {
 				return dealWithException(ex);
 			}
 		}
-		if (!monitor.isCanceled() && status.getException() != null) {
-			return dealWithException(status.getException());
-		}
-		if (status != SLStatus.OK_STATUS) {
-			return SLEclipseStatusUtility.convert(status);
+		if (!monitor.isCanceled()) {
+			if (status.getException() != null) {
+				return dealWithException(status.getException());
+			}
+			if (status != SLStatus.OK_STATUS) {
+				return SLEclipseStatusUtility.convert(status);
+			}
 		}
 		return Status.OK_STATUS;
 	}
