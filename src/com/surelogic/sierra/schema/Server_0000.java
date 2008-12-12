@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.UUID;
 
 import com.surelogic.common.jdbc.SchemaAction;
 import com.surelogic.sierra.jdbc.user.Password;
@@ -12,6 +13,9 @@ import com.surelogic.sierra.jdbc.user.SierraGroup;
 public class Server_0000 implements SchemaAction {
 
 	public void run(final Connection c) throws SQLException {
+		c.createStatement().execute(
+				"INSERT INTO SERVER (UUID) VALUES('"
+						+ UUID.randomUUID().toString() + "')");
 		final PreparedStatement groupSt = c
 				.prepareStatement("INSERT INTO SIERRA_GROUP (NAME,INFO) VALUES (?,?)");
 		try {
@@ -40,6 +44,12 @@ public class Server_0000 implements SchemaAction {
 					.execute("INSERT INTO GROUP_USER_RELTN (USER_ID, GROUP_ID) VALUES ((SELECT ID FROM SIERRA_USER WHERE USER_NAME = 'admin'),(SELECT ID FROM SIERRA_GROUP WHERE NAME = 'Administrators'))");
 		} finally {
 			userGroupSt.close();
+		}
+		final Statement st = c.createStatement();
+		try {
+			st.execute("INSERT INTO QUALIFIER(NAME) VALUES('__ALL_SCANS__')");
+		} finally {
+			st.close();
 		}
 	}
 
