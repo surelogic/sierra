@@ -31,6 +31,9 @@ public class ProjectChoice extends ListBox {
 							setEnabled(true);
 							for (final String project : result) {
 								addItem(project);
+								if (projects.contains(project)) {
+									setItemSelected(getItemCount() - 1, true);
+								}
 							}
 							for (final ChangeListener listener : changeListeners) {
 								listener.onChange(ProjectChoice.this);
