@@ -81,6 +81,18 @@ public class PreferenceConstants {
 				P_SIERRA_SHOW_MARKERS, visible);
 	}
 
+	public static final String P_SIERRA_SHOW_JSURE_FINDINGS = "com.surelogic.sierra.show-jsure-findings";
+
+	public static boolean showJSureFindings() {
+		return Activator.getDefault().getPluginPreferences().getBoolean(
+				P_SIERRA_SHOW_JSURE_FINDINGS);
+	}
+
+	public static void setJSureFindingsVisibility(boolean visible) {
+		Activator.getDefault().getPluginPreferences().setValue(
+				P_SIERRA_SHOW_JSURE_FINDINGS, visible);
+	}
+
 	public static final String P_SIERRA_SHOW_MARKERS_AT_OR_ABOVE_IMPORTANCE = "com.surelogic.sierra.show-markers-at-or-above-importance";
 
 	public static Importance showMarkersAtOrAboveImportance() {
@@ -171,10 +183,10 @@ public class PreferenceConstants {
 				.valueOf(resultString);
 		return result;
 	}
-	
+
 	public static void setServerInteractionSetting(ServerInteractionSetting s) {
-		Activator.getDefault().getPluginPreferences()
-			.setValue(P_SERVER_INTERACTION_SETTING, s.toString());
+		Activator.getDefault().getPluginPreferences().setValue(
+				P_SERVER_INTERACTION_SETTING, s.toString());
 	}
 
 	/**
@@ -208,17 +220,17 @@ public class PreferenceConstants {
 	}
 
 	public static final String P_SERVER_INTERACTION_RETRY_THRESHOLD = "com.surelogic.common.eclipse.server-interaction-retry-limit";
-	
+
 	public static int getServerInteractionRetryThreshold() {
 		return Activator.getDefault().getPluginPreferences().getInt(
 				P_SERVER_INTERACTION_RETRY_THRESHOLD);
 	}
-	
+
 	public static void setServerInteractionRetryThreshold(int value) {
 		Activator.getDefault().getPluginPreferences().setValue(
 				P_SERVER_INTERACTION_RETRY_THRESHOLD, value);
 	}
-	
+
 	/**
 	 * Setting to control reporting of failures during automatic synchronization
 	 */
@@ -231,9 +243,9 @@ public class PreferenceConstants {
 				.valueOf(resultString);
 		return result;
 	}
-	
+
 	public static void getServerFailureReporting(ServerFailureReport s) {
-		Activator.getDefault().getPluginPreferences()
-			.setValue(P_SERVER_FAILURE_REPORTING, s.toString());
+		Activator.getDefault().getPluginPreferences().setValue(
+				P_SERVER_FAILURE_REPORTING, s.toString());
 	}
 }

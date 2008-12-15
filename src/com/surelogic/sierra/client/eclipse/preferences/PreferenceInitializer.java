@@ -30,6 +30,8 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		store.setDefault(PreferenceConstants.P_SIERRA_ALWAYS_SAVE_RESOURCES,
 				false);
 		store.setDefault(PreferenceConstants.P_SIERRA_SHOW_MARKERS, true);
+		store.setDefault(PreferenceConstants.P_SIERRA_SHOW_JSURE_FINDINGS,
+				false);
 		store.setDefault(PreferenceConstants.P_FINDINGS_LIST_LIMIT, 2000);
 		store.setDefault(PreferenceConstants.P_TOOL_MEMORY_MB, 1024);
 		store.setDefault(PreferenceConstants.P_WARN_MAXIMUM_FINDINGS_SHOWN,
@@ -47,7 +49,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 				PreferenceConstants.P_SERVER_INTERACTION_AUDIT_THRESHOLD, 200);
 		store.setDefault(
 				PreferenceConstants.P_SERVER_INTERACTION_RETRY_THRESHOLD, 4);
-		store.setDefault(PreferenceConstants.P_SERVER_FAILURE_REPORTING, 
-				         ServerFailureReport.SHOW_BALLOON.toString()); 
+		store.setDefault(PreferenceConstants.P_SERVER_FAILURE_REPORTING,
+				ServerFailureReport.SHOW_BALLOON.toString());
 	}
 }
