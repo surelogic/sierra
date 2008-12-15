@@ -16,12 +16,16 @@ import org.eclipse.jdt.core.IJavaProject;
 
 import com.surelogic.common.eclipse.BalloonUtility;
 import com.surelogic.common.eclipse.JDTUtility;
+import com.surelogic.common.eclipse.dialogs.ErrorDialogUtility;
 import com.surelogic.common.eclipse.jobs.DatabaseJob;
 import com.surelogic.common.eclipse.logging.SLEclipseStatusUtility;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.jdbc.DBQuery;
 import com.surelogic.common.jdbc.Query;
 import com.surelogic.common.jdbc.TransactionException;
+import com.surelogic.common.jobs.NullSLProgressMonitor;
+import com.surelogic.common.jobs.SLStatus;
+import com.surelogic.common.license.SLLicenseUtility;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.jdbc.scan.ScanInfo;
@@ -47,6 +51,19 @@ public class ScanChangedProjectsAction extends
 		if (projects.size() <= 0) {
 			return;
 		}
+
+		/*
+		 * License check: A hack because Sierra is not using SLJobs yet.
+		 */
+		final SLStatus failed = SLLicenseUtility.validateSLJob(
+				SLLicenseUtility.SIERRA_SUBJECT,
+				new NullSLProgressMonitor());
+		if (failed != null) {
+			IStatus status = SLEclipseStatusUtility.convert(failed);
+			ErrorDialogUtility.open(null, null, status, true);
+			return;
+		}
+
 		new DatabaseJob("Checking last scan times") {
 			@Override
 			protected IStatus run(final IProgressMonitor monitor) {
