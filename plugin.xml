@@ -79,79 +79,87 @@
 
 				<groupMarker name="client" />
 				<separator name="server" />
+				<separator name="license" />
 				<separator name="additions" />
 			</menu>
-
+			<action
+				class="com.surelogic.sierra.client.eclipse.actions.ManageLicensesAction"
+				id="com.surelogic.sierra.client.eclipse.actions.ManageLicensesAction"
+				label="Manage SureLogic Licenses" menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/license"
+				helpContextId="menu-manage-licenses">
+			</action>
+			<action
+				class="com.surelogic.sierra.client.eclipse.actions.SendProblemAction"
+				id="com.surelogic.sierra.client.eclipse.actions.SendProblemAction"
+				label="Send Problem Report" menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/service"
+				helpContextId="menu-send-problem-report">
+			</action>
+			<action class="com.surelogic.sierra.client.eclipse.actions.SendTipAction"
+				id="com.surelogic.sierra.client.eclipse.actions.SendTipAction"
+				label="Send Tip for Improvement" menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/service"
+				helpContextId="menu-send-tip-for-improvement">
+			</action>
 			<action
 				class="com.surelogic.sierra.client.eclipse.actions.ShowCodeReviewPerspectiveAction"
 				id="com.surelogic.sierra.client.eclipse.actions.ShowCodeReviewPerspectiveAction"
 				icon="platform:/plugin/com.surelogic.common/src/com/surelogic/common/images/sierra_investigate.gif"
-				label="Open Code Review Perspective"
-				menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/client"
+				label="Open Code Review Perspective" menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/client"
 				helpContextId="menu-open-code-review-perspective">
 			</action>
 			<action
 				class="com.surelogic.sierra.client.eclipse.actions.ScanChangedProjectsDialogAction"
 				id="com.surelogic.sierra.client.eclipse.actions.ScanChangedProjectsDialogAction"
 				icon="platform:/plugin/com.surelogic.common/src/com/surelogic/common/images/sierra_scan_delta.gif"
-				label="Re-Scan Changes in Project"
-				menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/client"
+				label="Re-Scan Changes in Project" menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/client"
 				enablesFor="*" helpContextId="menu-re-scan-changes-in-project">
 			</action>
 			<action
 				class="com.surelogic.sierra.client.eclipse.actions.NewScanDialogAction"
 				id="com.surelogic.sierra.client.eclipse.actions.ScanDialogAction"
 				icon="platform:/plugin/com.surelogic.common/src/com/surelogic/common/images/sierra_scan.gif"
-				label="Scan Project"
-				menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/client"
+				label="Scan Project" menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/client"
 				enablesFor="*" helpContextId="menu-scan-project">
 			</action>
 			<action
 				class="com.surelogic.sierra.client.eclipse.actions.DisconnectDialogAction"
 				id="com.surelogic.sierra.client.eclipse.actions.DisconnectDialogAction"
 				icon="platform:/plugin/com.surelogic.common/src/com/surelogic/common/images/sierra_disconnect.gif"
-				label="Disconnect"
-				menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/server"
+				label="Disconnect" menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/server"
 				enablesFor="*" helpContextId="menu-disconnect">
 			</action>
 			<action
 				class="com.surelogic.sierra.client.eclipse.actions.PublishScanDialogAction"
 				id="com.surelogic.sierra.client.eclipse.actions.PublishScanDialogAction"
 				icon="platform:/plugin/com.surelogic.common/src/com/surelogic/common/images/sierra_publish.gif"
-				label="Publish Latest Scan"
-				menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/server"
+				label="Publish Latest Scan" menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/server"
 				enablesFor="*" helpContextId="menu-publish-latest-scan">
 			</action>
 			<action
 				class="com.surelogic.sierra.client.eclipse.actions.SynchronizeProjectDialogAction"
 				id="com.surelogic.sierra.client.eclipse.actions.SynchronizeProjectDialogAction"
 				icon="platform:/plugin/com.surelogic.common/src/com/surelogic/common/images/sierra_sync.gif"
-				label="Synchronize Project"
-				menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/server"
+				label="Synchronize Project" menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/server"
 				enablesFor="*" helpContextId="menu-synchronize-project">
 			</action>
 			<action
 				class="com.surelogic.sierra.client.eclipse.actions.SynchronizeBugLinkServersAction"
 				id="com.surelogic.sierra.client.eclipse.actions.SynchronizeBugLinkServersAction"
 				icon="platform:/plugin/com.surelogic.common/src/com/surelogic/common/images/sierra_sync.gif"
-				label="Synchronize All BugLink Data"
-				menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/server"
+				label="Synchronize All BugLink Data" menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/server"
 				helpContextId="menu-synchronize-all-buglink-data">
-			</action>			
+			</action>
 			<action
 				class="com.surelogic.sierra.client.eclipse.actions.SynchronizeAllProjectsAction"
 				id="com.surelogic.sierra.client.eclipse.actions.SynchronizeAllProjectsAction"
 				icon="platform:/plugin/com.surelogic.common/src/com/surelogic/common/images/sierra_sync.gif"
-				label="Synchronize All Server Data"
-				menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/server"
+				label="Synchronize All Server Data" menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/server"
 				helpContextId="menu-synchronize-all-connected-projects">
 			</action>
 			<action
 				class="com.surelogic.sierra.client.eclipse.actions.ConfigureTeamServersAction"
 				id="com.surelogic.sierra.client.eclipse.actions.ConfigureTeamServersAction"
 				icon="platform:/plugin/com.surelogic.common/src/com/surelogic/common/images/sierra_server.gif"
-				label="Configure Team Servers"
-				menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/server"
+				label="Configure Team Servers" menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/server"
 				helpContextId="menu-configure-team-servers">
 			</action>
 		</actionSet>
@@ -160,8 +168,7 @@
 	<extension point="org.eclipse.ui.popupMenus">
 		<objectContribution id="Sierra.popupMenu"
 			objectClass="org.eclipse.jdt.core.IJavaProject">
-			<menu
-				id="com.surelogic.sierra.client.eclipse.projectContextMenu"
+			<menu id="com.surelogic.sierra.client.eclipse.projectContextMenu"
 				label="Sierra" path="additions">
 				<groupMarker name="client" />
 				<separator name="server" />
@@ -176,10 +183,8 @@
 				menubarPath="com.surelogic.sierra.client.eclipse.projectContextMenu/client"
 				helpContextId="menu-re-scan-changes-in-project" />
 
-			<action
-				class="com.surelogic.sierra.client.eclipse.actions.NewScanAction"
-				enablesFor="+"
-				id="com.surelogic.sierra.client.eclipse.actions.ScanAction"
+			<action class="com.surelogic.sierra.client.eclipse.actions.NewScanAction"
+				enablesFor="+" id="com.surelogic.sierra.client.eclipse.actions.ScanAction"
 				icon="platform:/plugin/com.surelogic.common/src/com/surelogic/common/images/sierra_scan.gif"
 				label="Scan Project"
 				menubarPath="com.surelogic.sierra.client.eclipse.projectContextMenu/client"
@@ -230,11 +235,10 @@
 
 	<extension point="org.eclipse.ui.views">
 
-		<category name="Sierra"
-			id="com.surelogic.sierra.client.eclipse">
+		<category name="Sierra" id="com.surelogic.sierra.client.eclipse">
 		</category>
 
-		
+
 		<!-- UI for entering ad hoc queries -->
 		<view allowMultiple="false" category="com.surelogic.sierra.client.eclipse"
 			class="com.surelogic.sierra.client.eclipse.views.adhoc.QueryEditorView"
@@ -268,7 +272,7 @@
 			icon="platform:/plugin/com.surelogic.common/src/com/surelogic/common/images/asterisk_diamond_orange.gif"
 			name="Finding Details">
 		</view>
-		
+
 		<view category="com.surelogic.sierra.client.eclipse"
 			class="com.surelogic.sierra.client.eclipse.jsure.JSureFindingDetailsView"
 			id="com.surelogic.sierra.client.eclipse.jsure.JSureFindingDetailsView"
@@ -284,8 +288,7 @@
 		</view>
 
 		<view category="com.surelogic.sierra.client.eclipse"
-			class="com.surelogic.sierra.client.eclipse.views.SynchronizeView"
-			id="com.surelogic.sierra.client.eclipse.views.SynchronizeView"
+			class="com.surelogic.sierra.client.eclipse.views.SynchronizeView" id="com.surelogic.sierra.client.eclipse.views.SynchronizeView"
 			icon="platform:/plugin/com.surelogic.common/src/com/surelogic/common/images/sierra_sync.gif"
 			name="Synchronize History">
 		</view>
@@ -311,8 +314,7 @@
 	<extension point="org.eclipse.ui.perspectiveExtensions">
 		<perspectiveExtension
 			targetID="com.surelogic.sierra.client.eclipse.perspectives.CodeReview">
-			<perspectiveShortcut
-				id="org.eclipse.jdt.ui.JavaPerspective">
+			<perspectiveShortcut id="org.eclipse.jdt.ui.JavaPerspective">
 			</perspectiveShortcut>
 			<viewShortcut
 				id="com.surelogic.sierra.client.eclipse.views.selection.FindingsSelectionView">
@@ -329,15 +331,13 @@
 			<viewShortcut
 				id="com.surelogic.sierra.client.eclipse.views.ProjectStatusView">
 			</viewShortcut>
-			<viewShortcut
-				id="com.surelogic.sierra.client.eclipse.AdHocQueryView">
+			<viewShortcut id="com.surelogic.sierra.client.eclipse.AdHocQueryView">
 			</viewShortcut>
 		</perspectiveExtension>
 	</extension>
 
 	<extension point="org.eclipse.ui.perspectiveExtensions">
-		<perspectiveExtension
-			targetID="org.eclipse.jdt.ui.JavaPerspective">
+		<perspectiveExtension targetID="org.eclipse.jdt.ui.JavaPerspective">
 			<viewShortcut
 				id="com.surelogic.sierra.client.eclipse.views.selection.FindingsSelectionView">
 			</viewShortcut>
@@ -352,11 +352,9 @@
 
 	<!-- Export and import wizards -->
 
-	<extension id="sierraexportwizards"
-		point="org.eclipse.ui.exportWizards">
+	<extension id="sierraexportwizards" point="org.eclipse.ui.exportWizards">
 		<category name="Sierra" id="sierra.export.category" />
-		<wizard category="sierra.export.category"
-			name="Finding Searches"
+		<wizard category="sierra.export.category" name="Finding Searches"
 			class="com.surelogic.sierra.client.eclipse.wizards.FindingSearchExportWizard"
 			id="finding.search.export.file.wizard"
 			icon="platform:/plugin/com.surelogic.common/src/com/surelogic/common/images/sierra_investigate.gif">
@@ -364,8 +362,7 @@
 				A wizard to export saved finding searches
 			</description>
 		</wizard>
-		<wizard category="sierra.export.category"
-			name="Team Server Locations"
+		<wizard category="sierra.export.category" name="Team Server Locations"
 			class="com.surelogic.sierra.client.eclipse.wizards.ServerExportWizard"
 			id="server.export.file.wizard"
 			icon="platform:/plugin/com.surelogic.common/src/com/surelogic/common/images/sierra_server.gif">
@@ -375,11 +372,9 @@
 		</wizard>
 	</extension>
 
-	<extension id="sierraimportwizards"
-		point="org.eclipse.ui.importWizards">
+	<extension id="sierraimportwizards" point="org.eclipse.ui.importWizards">
 		<category name="Sierra" id="sierra.import.category" />
-		<wizard category="sierra.import.category"
-			name="Team Server Locations"
+		<wizard category="sierra.import.category" name="Team Server Locations"
 			class="com.surelogic.sierra.client.eclipse.wizards.ServerImportWizard"
 			id="server.import.file.wizard"
 			icon="platform:/plugin/com.surelogic.common/src/com/surelogic/common/images/sierra_server.gif">
@@ -387,8 +382,7 @@
 				A wizard to import Sierra Team Server locations
 			</description>
 		</wizard>
-		<wizard category="sierra.import.category"
-			name="Finding Searches"
+		<wizard category="sierra.import.category" name="Finding Searches"
 			class="com.surelogic.sierra.client.eclipse.wizards.FindingSearchImportWizard"
 			id="finding.search.import.file.wizard"
 			icon="platform:/plugin/com.surelogic.common/src/com/surelogic/common/images/sierra_investigate.gif">
@@ -405,32 +399,24 @@
 		<super type="org.eclipse.core.resources.textmarker" />
 		<attribute name="findingid"></attribute>
 	</extension>
-	<extension
-		id="com.surelogic.sierra.client.eclipse.sierraMarkerCritical"
-		name="Sierra Finding (Critical)"
-		point="org.eclipse.core.resources.markers">
+	<extension id="com.surelogic.sierra.client.eclipse.sierraMarkerCritical"
+		name="Sierra Finding (Critical)" point="org.eclipse.core.resources.markers">
 		<super type="com.surelogic.sierra.client.eclipse.sierraMarker" />
 	</extension>
 	<extension id="com.surelogic.sierra.client.eclipse.sierraMarkerHigh"
-		name="Sierra Finding (High)"
-		point="org.eclipse.core.resources.markers">
+		name="Sierra Finding (High)" point="org.eclipse.core.resources.markers">
 		<super type="com.surelogic.sierra.client.eclipse.sierraMarker" />
 	</extension>
-	<extension
-		id="com.surelogic.sierra.client.eclipse.sierraMarkerMedium"
-		name="Sierra Finding (Medium)"
-		point="org.eclipse.core.resources.markers">
+	<extension id="com.surelogic.sierra.client.eclipse.sierraMarkerMedium"
+		name="Sierra Finding (Medium)" point="org.eclipse.core.resources.markers">
 		<super type="com.surelogic.sierra.client.eclipse.sierraMarker" />
 	</extension>
 	<extension id="com.surelogic.sierra.client.eclipse.sierraMarkerLow"
-		name="Sierra Finding (Low)"
-		point="org.eclipse.core.resources.markers">
+		name="Sierra Finding (Low)" point="org.eclipse.core.resources.markers">
 		<super type="com.surelogic.sierra.client.eclipse.sierraMarker" />
 	</extension>
-	<extension
-		id="com.surelogic.sierra.client.eclipse.sierraMarkerIrrelevant"
-		name="Sierra Finding (Irrelevant)"
-		point="org.eclipse.core.resources.markers">
+	<extension id="com.surelogic.sierra.client.eclipse.sierraMarkerIrrelevant"
+		name="Sierra Finding (Irrelevant)" point="org.eclipse.core.resources.markers">
 		<super type="com.surelogic.sierra.client.eclipse.sierraMarker" />
 		<persistent value="true" />
 	</extension>
@@ -455,94 +441,74 @@
 	<!-- Define marker icons -->
 
 	<extension point="org.eclipse.ui.editors.annotationTypes">
-		<type
-			name="com.surelogic.sierra.client.eclipse.sierraMarkerAnnotation"
-			super="org.eclipse.ui.workbench.texteditor.warning"
-			markerType="com.surelogic.sierra.client.eclipse.sierraMarker" />
+		<type name="com.surelogic.sierra.client.eclipse.sierraMarkerAnnotation"
+			super="org.eclipse.ui.workbench.texteditor.warning" markerType="com.surelogic.sierra.client.eclipse.sierraMarker" />
 
 	</extension>
-	<extension
-		point="org.eclipse.ui.editors.markerAnnotationSpecification">
+	<extension point="org.eclipse.ui.editors.markerAnnotationSpecification">
 		<specification
 			annotationType="com.surelogic.sierra.client.eclipse.sierraMarkerAnnotation"
-			icon="lib/icons/asterisk_orange_50.gif"
-			includeOnPreferencePage="true" label="sierraFinding"
-			quickFixIcon="lib/icons/asterisk_orange_50.gif" />
+			icon="lib/icons/asterisk_orange_50.gif" includeOnPreferencePage="true"
+			label="sierraFinding" quickFixIcon="lib/icons/asterisk_orange_50.gif" />
 	</extension>
 
 	<extension point="org.eclipse.ui.editors.annotationTypes">
 		<type
 			name="com.surelogic.sierra.client.eclipse.sierraMarkerAnnotationCritical"
-			super="org.eclipse.ui.workbench.texteditor.warning"
-			markerType="com.surelogic.sierra.client.eclipse.sierraMarkerCritical" />
+			super="org.eclipse.ui.workbench.texteditor.warning" markerType="com.surelogic.sierra.client.eclipse.sierraMarkerCritical" />
 
 	</extension>
-	<extension
-		point="org.eclipse.ui.editors.markerAnnotationSpecification">
+	<extension point="org.eclipse.ui.editors.markerAnnotationSpecification">
 		<specification
 			annotationType="com.surelogic.sierra.client.eclipse.sierraMarkerAnnotationCritical"
-			icon="lib/icons/asterisk_orange_100.gif"
-			includeOnPreferencePage="true" label="sierraFinding"
-			quickFixIcon="lib/icons/asterisk_orange_100.gif" />
+			icon="lib/icons/asterisk_orange_100.gif" includeOnPreferencePage="true"
+			label="sierraFinding" quickFixIcon="lib/icons/asterisk_orange_100.gif" />
 	</extension>
 
 	<extension point="org.eclipse.ui.editors.annotationTypes">
-		<type
-			name="com.surelogic.sierra.client.eclipse.sierraMarkerAnnotationHigh"
-			super="org.eclipse.ui.workbench.texteditor.warning"
-			markerType="com.surelogic.sierra.client.eclipse.sierraMarkerHigh" />
+		<type name="com.surelogic.sierra.client.eclipse.sierraMarkerAnnotationHigh"
+			super="org.eclipse.ui.workbench.texteditor.warning" markerType="com.surelogic.sierra.client.eclipse.sierraMarkerHigh" />
 
 	</extension>
-	<extension
-		point="org.eclipse.ui.editors.markerAnnotationSpecification">
+	<extension point="org.eclipse.ui.editors.markerAnnotationSpecification">
 		<specification
 			annotationType="com.surelogic.sierra.client.eclipse.sierraMarkerAnnotationHigh"
-			icon="lib/icons/asterisk_orange_75.gif"
-			includeOnPreferencePage="true" label="sierraFinding"
-			quickFixIcon="lib/icons/asterisk_orange_75.gif" />
+			icon="lib/icons/asterisk_orange_75.gif" includeOnPreferencePage="true"
+			label="sierraFinding" quickFixIcon="lib/icons/asterisk_orange_75.gif" />
 	</extension>
 
 	<extension point="org.eclipse.ui.editors.annotationTypes">
 		<type
 			name="com.surelogic.sierra.client.eclipse.sierraMarkerAnnotationMedium"
-			super="org.eclipse.ui.workbench.texteditor.warning"
-			markerType="com.surelogic.sierra.client.eclipse.sierraMarkerMedium" />
+			super="org.eclipse.ui.workbench.texteditor.warning" markerType="com.surelogic.sierra.client.eclipse.sierraMarkerMedium" />
 
 	</extension>
-	<extension
-		point="org.eclipse.ui.editors.markerAnnotationSpecification">
+	<extension point="org.eclipse.ui.editors.markerAnnotationSpecification">
 		<specification
 			annotationType="com.surelogic.sierra.client.eclipse.sierraMarkerAnnotationMedium"
-			icon="lib/icons/asterisk_orange_50.gif"
-			includeOnPreferencePage="true" label="sierraFinding"
-			quickFixIcon="lib/icons/asterisk_orange_50.gif" />
+			icon="lib/icons/asterisk_orange_50.gif" includeOnPreferencePage="true"
+			label="sierraFinding" quickFixIcon="lib/icons/asterisk_orange_50.gif" />
 	</extension>
 
 	<extension point="org.eclipse.ui.editors.annotationTypes">
-		<type
-			name="com.surelogic.sierra.client.eclipse.sierraMarkerAnnotationLow"
-			super="org.eclipse.ui.workbench.texteditor.warning"
-			markerType="com.surelogic.sierra.client.eclipse.sierraMarkerLow" />
+		<type name="com.surelogic.sierra.client.eclipse.sierraMarkerAnnotationLow"
+			super="org.eclipse.ui.workbench.texteditor.warning" markerType="com.surelogic.sierra.client.eclipse.sierraMarkerLow" />
 
 	</extension>
-	<extension
-		point="org.eclipse.ui.editors.markerAnnotationSpecification">
+	<extension point="org.eclipse.ui.editors.markerAnnotationSpecification">
 		<specification
 			annotationType="com.surelogic.sierra.client.eclipse.sierraMarkerAnnotationLow"
-			icon="lib/icons/asterisk_orange_25.gif"
-			includeOnPreferencePage="true" label="sierraFinding"
-			quickFixIcon="lib/icons/asterisk_orange_25.gif" />
+			icon="lib/icons/asterisk_orange_25.gif" includeOnPreferencePage="true"
+			label="sierraFinding" quickFixIcon="lib/icons/asterisk_orange_25.gif" />
 	</extension>
 
 	<extension point="org.eclipse.ui.editors.annotationTypes">
 		<type
 			name="com.surelogic.sierra.client.eclipse.sierraMarkerAnnotationIrrelevant"
-			super="org.eclipse.ui.workbench.texteditor.warning"
-			markerType="com.surelogic.sierra.client.eclipse.sierraMarkerIrrelevant" />
+			super="org.eclipse.ui.workbench.texteditor.warning" markerType="com.surelogic.sierra.client.eclipse.sierraMarkerIrrelevant" />
 
 	</extension>
-	<extension
-		point="org.eclipse.ui.editors.markerAnnotationSpecification">
+	<extension point="org.eclipse.ui.editors.markerAnnotationSpecification">
 		<specification
 			annotationType="com.surelogic.sierra.client.eclipse.sierraMarkerAnnotationIrrelevant"
 			icon="lib/icons/asterisk_orange_0.gif" includeOnPreferencePage="true"
@@ -554,55 +520,47 @@
 	<extension id="sierraBuilder" name="Sierra Builder"
 		point="org.eclipse.core.resources.builders">
 		<builder>
-			<run
-				class="com.surelogic.sierra.client.eclipse.builder.Builder">
+			<run class="com.surelogic.sierra.client.eclipse.builder.Builder">
 			</run>
 		</builder>
 	</extension>
 
-  <extension
-       point="org.eclipse.ui.decorators">
-    <decorator id="com.surelogic.sierra.client.content.warning.decorator"
-               label="SureLogic Server Warning Decorator"
-               state="true"
-               lightweight="true"
-               icon="lib/icons/warning_decr.gif"               
-               location="BOTTOM_LEFT">
-      <enablement>
-        <and>
-          <objectClass name="com.surelogic.sierra.client.eclipse.views.ServersViewContent"/>
-          <objectState name="Status" value="WARNING"/>
-          <not>
-            <objectState name="Source" value="WARNING"/>
-          </not>
-        </and>
-      </enablement>
-    </decorator>   
-    <decorator id="com.surelogic.sierra.client.content.team.decorator"
-               label="SureLogic Team Server Decorator"
-               state="true"
-               lightweight="true"
-               icon="lib/icons/team_server_decr.gif"               
-               location="BOTTOM_RIGHT">
-      <enablement>
-        <and>
-          <objectClass name="com.surelogic.sierra.client.eclipse.views.ServersViewContent"/>
-          <objectState name="ServerType" value="TEAM_SERVER"/>
-        </and>
-      </enablement>
-    </decorator>
-    <decorator id="com.surelogic.sierra.client.content.buglink.decorator"
-               label="SureLogic BugLink Server Decorator"
-               state="true"
-               lightweight="true"
-               icon="lib/icons/buglink_decr.gif"               
-               location="TOP_RIGHT">
-      <enablement>
-        <and>
-          <objectClass name="com.surelogic.sierra.client.eclipse.views.ServersViewContent"/>
-          <objectState name="ServerType" value="BUGLINK"/>
-        </and>
-      </enablement>
-    </decorator>                 			
- </extension>
+	<extension point="org.eclipse.ui.decorators">
+		<decorator id="com.surelogic.sierra.client.content.warning.decorator"
+			label="SureLogic Server Warning Decorator" state="true" lightweight="true"
+			icon="lib/icons/warning_decr.gif" location="BOTTOM_LEFT">
+			<enablement>
+				<and>
+					<objectClass
+						name="com.surelogic.sierra.client.eclipse.views.ServersViewContent" />
+					<objectState name="Status" value="WARNING" />
+					<not>
+						<objectState name="Source" value="WARNING" />
+					</not>
+				</and>
+			</enablement>
+		</decorator>
+		<decorator id="com.surelogic.sierra.client.content.team.decorator"
+			label="SureLogic Team Server Decorator" state="true" lightweight="true"
+			icon="lib/icons/team_server_decr.gif" location="BOTTOM_RIGHT">
+			<enablement>
+				<and>
+					<objectClass
+						name="com.surelogic.sierra.client.eclipse.views.ServersViewContent" />
+					<objectState name="ServerType" value="TEAM_SERVER" />
+				</and>
+			</enablement>
+		</decorator>
+		<decorator id="com.surelogic.sierra.client.content.buglink.decorator"
+			label="SureLogic BugLink Server Decorator" state="true" lightweight="true"
+			icon="lib/icons/buglink_decr.gif" location="TOP_RIGHT">
+			<enablement>
+				<and>
+					<objectClass
+						name="com.surelogic.sierra.client.eclipse.views.ServersViewContent" />
+					<objectState name="ServerType" value="BUGLINK" />
+				</and>
+			</enablement>
+		</decorator>
+	</extension>
 </plugin>
