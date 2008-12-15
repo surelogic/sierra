@@ -51,6 +51,13 @@ public class Server_0000 implements SchemaAction {
 		} finally {
 			st.close();
 		}
-	}
+		try {
+			st
+					.execute("INSERT INTO SERVER_LOCATION (LABEL,PROTOCOL,HOST,PORT,CONTEXT_PATH,SERVER_USER,PASSWORD) "
+							+ " VALUES ('BugLink','http','buglink.org',13376,'/sl/','buglink-user','bl!uzer')");
+		} finally {
+			st.close();
+		}
 
+	}
 }
