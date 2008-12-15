@@ -113,7 +113,8 @@ public final class ClientProjectManager extends ProjectManager {
 		}
 		final SyncResponse reply = service.synchronizeProject(request);
 		monitor.worked(1);
-
+		new Projects(conn).updateProjectFilter(projectName, reply
+				.getScanFilter());
 		if (!serverGet) {
 			monitor.subTask("Writing remote updates into local database.");
 			findingManager.updateLocalAuditRevision(projectName, server
