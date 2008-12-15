@@ -1,6 +1,5 @@
 package com.surelogic.sierra.gwt.client.content.settings;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DockPanel;
@@ -28,6 +27,8 @@ import com.surelogic.sierra.gwt.client.ui.StatusBox;
 public final class SettingsContent extends ContentComposite {
 	private static final SettingsContent instance = new SettingsContent();
 
+	private final TextBox siteNameTextBox = new TextBox();
+	private final Button updateSiteSettings = new Button("Update Site Settings");
 	private final HTML currentVersion = new HTML();
 	private final HTML availableVersion = new HTML();
 	private final HTML productVersion = new HTML();
@@ -50,8 +51,16 @@ public final class SettingsContent extends ContentComposite {
 	}
 
 	@Override
-	protected void onInitialize(DockPanel rootPanel) {
+	protected void onInitialize(final DockPanel rootPanel) {
 		final VerticalPanel panel = new VerticalPanel();
+		panel
+				.add(new HTML(
+						"<h3>Site Settings</h3><span class=\"settings-info-text\">These settings configure the global name and branding for this server.</span>"));
+		final FlexTable ssTable = new FlexTable();
+		ssTable.setWidget(0, 0, createLabel("Site Name"));
+		ssTable.setWidget(0, 1, siteNameTextBox);
+		panel.add(ssTable);
+		panel.add(updateSiteSettings);
 		panel
 				.add(new HTML(
 						"<h3>Version Information</h3><span class=\"settings-info-text\">The below table reports version information about this team server.</span>"));
@@ -105,35 +114,27 @@ public final class SettingsContent extends ContentComposite {
 		panel.add(status);
 		updateInfo(ServerInfo.getDefault());
 		getRootPanel().add(panel, DockPanel.CENTER);
-	}
-
-	@Override
-	protected void onUpdate(Context context) {
-		final AsyncCallback<ServerInfo> updateServerInfo = new StandardCallback<ServerInfo>() {
-			@Override
-			protected void doSuccess(ServerInfo result) {
-				updateInfo(result);
-				status.setStatus(new Status(true, "Information updated."));
-			}
-
-		};
 
 		final ManageServerServiceAsync msService = ServiceHelper
 				.getManageServerService();
-		updateEmailButton.addClickListener(new ClickListener() {
+		updateSiteSettings.addClickListener(new ClickListener() {
 
-			public void onClick(Widget sender) {
-				final EmailInfo email = new EmailInfo(
-						getString(smtpHostTextBox), getString(smtpPortTextBox),
-						getString(smtpUserTextBox), getString(smtpPassTextBox),
-						getString(serverEmailTextBox),
-						getString(adminEmailTextBox));
-				msService.setEmail(email, updateServerInfo);
+			public void onClick(final Widget sender) {
+				msService.setSiteName(siteNameTextBox.getText(),
+						new StandardCallback<ServerInfo>() {
+							@Override
+							protected void doSuccess(final ServerInfo result) {
+								updateInfo(result);
+								status.setStatus(new Status(true,
+										"Information updated."));
+							}
+
+						});
 			}
 		});
-		testEmailButton.addClickListener(new ClickListener() {
+		updateEmailButton.addClickListener(new ClickListener() {
 
-			public void onClick(Widget sender) {
+			public void onClick(final Widget sender) {
 				final EmailInfo email = new EmailInfo(
 						getString(smtpHostTextBox), getString(smtpPortTextBox),
 						getString(smtpUserTextBox), getString(smtpPassTextBox),
@@ -141,11 +142,30 @@ public final class SettingsContent extends ContentComposite {
 						getString(adminEmailTextBox));
 				msService.setEmail(email, new StandardCallback<ServerInfo>() {
 					@Override
-					protected void doSuccess(ServerInfo result) {
+					protected void doSuccess(final ServerInfo result) {
+						updateInfo(result);
+						status.setStatus(new Status(true,
+								"Information updated."));
+					}
+
+				});
+			}
+		});
+		testEmailButton.addClickListener(new ClickListener() {
+
+			public void onClick(final Widget sender) {
+				final EmailInfo email = new EmailInfo(
+						getString(smtpHostTextBox), getString(smtpPortTextBox),
+						getString(smtpUserTextBox), getString(smtpPassTextBox),
+						getString(serverEmailTextBox),
+						getString(adminEmailTextBox));
+				msService.setEmail(email, new StandardCallback<ServerInfo>() {
+					@Override
+					protected void doSuccess(final ServerInfo result) {
 
 						msService.testAdminEmail(new StandardCallback<Void>() {
 							@Override
-							protected void doSuccess(Void result) {
+							protected void doSuccess(final Void result) {
 								status.setStatus(Status
 										.success("Test email sent."));
 							}
@@ -160,14 +180,19 @@ public final class SettingsContent extends ContentComposite {
 				});
 			}
 		});
-		msService.getServerInfo(new StandardCallback<ServerInfo>() {
+	}
 
-			@Override
-			protected void doSuccess(ServerInfo result) {
-				updateInfo(result);
-			}
+	@Override
+	protected void onUpdate(final Context context) {
+		ServiceHelper.getManageServerService().getServerInfo(
+				new StandardCallback<ServerInfo>() {
 
-		});
+					@Override
+					protected void doSuccess(final ServerInfo result) {
+						updateInfo(result);
+					}
+
+				});
 	}
 
 	@Override
@@ -175,13 +200,14 @@ public final class SettingsContent extends ContentComposite {
 		// nothing to do
 	}
 
-	private Label createLabel(String text) {
+	private Label createLabel(final String text) {
 		final Label label = new Label(text);
 		label.addStyleName(".settings-label-text");
 		return label;
 	}
 
-	private void updateInfo(ServerInfo info) {
+	private void updateInfo(final ServerInfo info) {
+		siteNameTextBox.setText(info.getSiteName());
 		currentVersion.setHTML(info.getCurrentVersion());
 		availableVersion.setHTML(info.getAvailableVersion());
 		productVersion.setHTML(info.getProductVersion());
@@ -194,7 +220,7 @@ public final class SettingsContent extends ContentComposite {
 		smtpPortTextBox.setText(email.getPort());
 	}
 
-	private static String getString(TextBoxBase box) {
+	private static String getString(final TextBoxBase box) {
 		final String text = box.getText();
 		return ((text == null) || text.length() == 0) ? null : text;
 	}

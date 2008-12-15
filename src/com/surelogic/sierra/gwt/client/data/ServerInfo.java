@@ -3,21 +3,27 @@ package com.surelogic.sierra.gwt.client.data;
 import java.io.Serializable;
 
 public class ServerInfo implements Serializable {
-
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -934601985763096364L;
+
+	private String siteName;
 	private String productVersion;
 	private String currentVersion;
 	private String availableVersion;
 	private EmailInfo email;
 
+	public String getSiteName() {
+		return siteName;
+	}
+
+	public void setSiteName(final String siteName) {
+		this.siteName = siteName;
+	}
+
 	public String getProductVersion() {
 		return productVersion;
 	}
 
-	public void setProductVersion(String productVersion) {
+	public void setProductVersion(final String productVersion) {
 		this.productVersion = productVersion;
 	}
 
@@ -25,7 +31,7 @@ public class ServerInfo implements Serializable {
 		return currentVersion;
 	}
 
-	public void setCurrentVersion(String currentVersion) {
+	public void setCurrentVersion(final String currentVersion) {
 		this.currentVersion = currentVersion;
 	}
 
@@ -33,7 +39,7 @@ public class ServerInfo implements Serializable {
 		return availableVersion;
 	}
 
-	public void setAvailableVersion(String availableVersion) {
+	public void setAvailableVersion(final String availableVersion) {
 		this.availableVersion = availableVersion;
 	}
 
@@ -41,7 +47,7 @@ public class ServerInfo implements Serializable {
 		return email;
 	}
 
-	public void setEmail(EmailInfo email) {
+	public void setEmail(final EmailInfo email) {
 		this.email = email;
 	}
 
@@ -52,7 +58,7 @@ public class ServerInfo implements Serializable {
 	 * @return
 	 */
 	public static ServerInfo getDefault() {
-		ServerInfo info = new ServerInfo();
+		final ServerInfo info = new ServerInfo();
 		final String waiting = "Waiting...";
 		info.setAvailableVersion(waiting);
 		info.setCurrentVersion(waiting);

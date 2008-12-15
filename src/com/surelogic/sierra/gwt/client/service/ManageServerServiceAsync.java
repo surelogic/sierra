@@ -10,6 +10,8 @@ public interface ManageServerServiceAsync {
 
 	void deploySchema(AsyncCallback<ServerInfo> callback);
 
+	void setSiteName(final String name, final AsyncCallback<ServerInfo> callback);
+
 	void setEmail(EmailInfo email, AsyncCallback<ServerInfo> callback);
 
 	void testAdminEmail(AsyncCallback<Void> callback);
