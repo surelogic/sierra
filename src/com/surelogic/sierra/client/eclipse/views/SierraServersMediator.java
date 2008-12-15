@@ -917,9 +917,9 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 				if (item.getData() instanceof ProjectStatus) {
 					add(projects, (ProjectStatus) item.getData());
 				} else if (item.getData() instanceof SierraServer) {
-					collectProjects(projects, item);
+					collectProjects(projects, item, true);
 				} else if ("Unconnected".equals(item.getText())) {
-					collectProjects(projects, item);
+					collectProjects(projects, item, false);
 				} else {
 					final ProjectStatus status = inProject(item.getParent());
 					if (status != null) {
@@ -933,16 +933,24 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 		}
 		
 		private void collectProjects(final List<T> projects,
-				final ServersViewContent parent) {
-			// CONNECTED_PROJECTS
-			final ServersViewContent connectedProjects = parent.getChildren()[0];
-			
-			for (final ServersViewContent item : connectedProjects.getChildren()) {
+				final ServersViewContent parent, boolean server) {
+			final ServersViewContent projectItems;
+			if (server) {
+				// CONNECTED_PROJECTS (if a server)
+				projectItems = parent.getChildren()[0];
+			} else {
+				projectItems = parent;
+			}			
+			for (final ServersViewContent item : projectItems.getChildren()) {
 				if (item.getData() == null) {
 					LOG.severe("Null project status");
 					continue;
 				}
-				add(projects, (ProjectStatus) item.getData());
+				if (item.getData() instanceof ProjectStatus) {
+					add(projects, (ProjectStatus) item.getData());
+				} else {
+					LOG.severe("Unexpected: "+item.getData());
+				}
 			}
 		}
 		
