@@ -26,9 +26,6 @@ public final class ScanDetailView extends Composite {
 		super();
 		initWidget(root);
 		root.setWidth("100%");
-		// root.getColumnFormatter().setWidth(0, "25%");
-		// root.getColumnFormatter().setWidth(1, "50%");
-		// root.getColumnFormatter().setWidth(2, "25%");
 		root.setText(0, 0, "Last Scanned:");
 		root.setWidget(0, 1, lastScan);
 		root.setText(1, 0, "# of Findings:");
