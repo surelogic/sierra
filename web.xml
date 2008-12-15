@@ -233,13 +233,6 @@
 	<!-- Configure the server -->
 	<context-param>
 		<description>
-			Server Name
-		</description>
-		<param-name>server-name</param-name>
-		<param-value>CHANGE ME</param-value>
-	</context-param>
-	<context-param>
-		<description>
 			Determines whether or not team server capabilities are
 			turned on.
 		</description>
