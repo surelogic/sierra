@@ -100,6 +100,14 @@ public interface SettingsService extends RemoteService {
 	Status deleteScanFilter(String uuid);
 
 	/**
+	 * Update the given scan filter.
+	 * 
+	 * @param f
+	 * @return
+	 */
+	Status updateScanFilter(ScanFilter f);
+
+	/**
 	 * @return
 	 */
 	List<FindingType> getFindingTypes();
@@ -110,8 +118,6 @@ public interface SettingsService extends RemoteService {
 	 * @return
 	 */
 	Result<FindingType> getFindingType(String uuid);
-
-	Status updateScanFilter(ScanFilter f);
 
 	/**
 	 * Return a list of the servers that this server currently connects to.
