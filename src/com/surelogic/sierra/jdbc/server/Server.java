@@ -7,7 +7,10 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -47,6 +50,15 @@ public class Server {
 	Server(final Connection conn, final boolean readOnly) {
 		this.conn = conn;
 		this.readOnly = readOnly;
+	}
+
+	/**
+	 * Returns the current team server version.
+	 * 
+	 * @return
+	 */
+	public static String getSoftwareVersion() {
+		return I18N.msg("sierra.teamserver.version");
 	}
 
 	/**
@@ -138,6 +150,13 @@ public class Server {
 	}
 
 	/**
+	 * If notification settings are present, send an email notification with the
+	 * given subject and message.
+	 * 
+	 * @param subject
+	 *            subject of the email
+	 * @param message
+	 *            email body
 	 * @throws SQLException
 	 * 
 	 */
@@ -149,7 +168,7 @@ public class Server {
 			final String from = n.getFromEmail();
 			final String host = n.getHost();
 			final Integer port = n.getPort();
-			final String pass = n.getPass();
+			final String pass = n.getPassword();
 			final String user = n.getUser();
 			if ((to != null) && (to.length() > 0) && (host != null)
 					&& (host.length() > 0)) {
@@ -217,58 +236,184 @@ public class Server {
 		}
 	}
 
-	public Notification getNotification() throws SQLException {
+	/**
+	 * Retrieves a single site setting value.
+	 * 
+	 * @param key
+	 *            the site setting's name
+	 * @return value of the site setting, or null if it is not set
+	 * @throws SQLException
+	 * @see {@link #getSiteSettings(String, String...)}
+	 */
+	public String getSiteSetting(final String key) throws SQLException {
+		return getSiteSettings(null, key).get(key);
+	}
+
+	/**
+	 * Retrieves the name and value of a list of site settings.
+	 * 
+	 * @param keyPrefix
+	 *            a prefix to append to all key names, null is valid empty
+	 *            prefix
+	 * @param keys
+	 *            the list of keys to retrieve
+	 * @return a name/value map of settings
+	 * @throws SQLException
+	 */
+	public Map<String, String> getSiteSettings(final String keyPrefix,
+			final String... keys) throws SQLException {
 		final Statement st = conn.createStatement();
 		try {
-			final ResultSet set = st
-					.executeQuery("SELECT SMTP_HOST,SMTP_PORT,SMTP_USER,SMTP_PASS,TO_EMAIL,FROM_EMAIL FROM NOTIFICATION");
-			try {
-				if (set.next()) {
-					int idx = 1;
-					return new Notification(set.getString(idx++), JDBCUtils
-							.getNullableInteger(idx++, set), set
-							.getString(idx++), set.getString(idx++), set
-							.getString(idx++), set.getString(idx++));
+			final StringBuilder sql = new StringBuilder();
+			sql
+					.append("SELECT SETTING_NAME, SETTING_VALUE FROM SITE_SETTINGS WHERE SETTING_NAME IN (");
+			boolean first = true;
+			for (final String key : keys) {
+				if (first) {
+					first = false;
 				} else {
-					return null;
+					sql.append(", ");
 				}
+				String fqKey;
+				if (keyPrefix != null) {
+					fqKey = keyPrefix + "." + key;
+				} else {
+					fqKey = key;
+				}
+				sql.append(getLiteral(fqKey));
+			}
+			sql.append(")");
+			final ResultSet rs = st.executeQuery(sql.toString());
+			try {
+				final Map<String, String> settings = new HashMap<String, String>();
+				while (rs.next()) {
+					final String fqKey = rs.getString("SETTING_NAME");
+					String key;
+					if (keyPrefix != null) {
+						key = fqKey.substring(keyPrefix.length() + 1);
+					} else {
+						key = fqKey;
+					}
+					settings.put(key, rs.getString("SETTING_VALUE"));
+				}
+				return settings;
 			} finally {
-				set.close();
+				rs.close();
 			}
 		} finally {
 			st.close();
 		}
 	}
 
-	public void setNotification(final Notification notification)
+	/**
+	 * Stores a single site setting value.
+	 * 
+	 * @param key
+	 *            the setting's name
+	 * @param value
+	 *            the setting's value
+	 * @throws SQLException
+	 * @see {@link #setSiteSettings(Map)}
+	 */
+	public void setSiteSetting(final String key, final String value)
 			throws SQLException {
+		final Map<String, String> settings = new HashMap<String, String>();
+		settings.put(key, value);
+		setSiteSettings(null, settings);
+	}
+
+	/**
+	 * Stores a list of settings, overwriting existing values.
+	 * 
+	 * @param keyPrefix
+	 *            an option prefix for each key
+	 * @param settings
+	 *            a map of setting name and value pairs
+	 * @throws SQLException
+	 */
+	public void setSiteSettings(final String keyPrefix,
+			final Map<String, String> settings) throws SQLException {
 		final Statement st = conn.createStatement();
 		try {
-			st.execute("DELETE FROM NOTIFICATION");
-			st
-					.execute("INSERT INTO NOTIFICATION (SMTP_HOST,SMTP_PORT,SMTP_USER,SMTP_PASS,FROM_EMAIL,TO_EMAIL) VALUES "
-							+ escapedTuple(new Object[] {
-									notification.getHost(),
-									notification.getPort(),
-									notification.getUser(),
-									notification.getPass(),
-									notification.getFromEmail(),
-									notification.getToEmail() }));
+			final StringBuilder deleteSql = new StringBuilder();
+			deleteSql
+					.append("DELETE FROM SITE_SETTINGS WHERE SETTING_NAME IN (");
+
+			final StringBuilder insertSql = new StringBuilder();
+			insertSql
+					.append("INSERT INTO SITE_SETTINGS (SETTING_NAME, SETTING_VALUE) VALUES ");
+			boolean first = true;
+			for (final Entry<String, String> setting : settings.entrySet()) {
+				String fqKey = setting.getKey();
+				if (keyPrefix != null) {
+					fqKey = keyPrefix + "." + fqKey;
+				}
+				if (first) {
+					first = false;
+				} else {
+					deleteSql.append(", ");
+					insertSql.append(", ");
+				}
+				deleteSql.append(getLiteral(fqKey));
+
+				insertSql.append('(').append(getLiteral(fqKey));
+				insertSql.append(", ").append(getLiteral(setting.getValue()))
+						.append(')');
+			}
+			deleteSql.append(')');
+
+			st.executeUpdate(deleteSql.toString());
+			st.executeUpdate(insertSql.toString());
 		} finally {
 			st.close();
 		}
 	}
 
-	private static String escapedTuple(final Object[] values) {
-		final StringBuilder sb = new StringBuilder();
-		sb.append('(');
-		sb.append(getLiteral(values[0]));
-		for (int i = 1; i < values.length; i++) {
-			sb.append(',');
-			sb.append(getLiteral(values[i]));
+	/**
+	 * Retrieves email notification settings for the server.
+	 * 
+	 * @return
+	 * @throws SQLException
+	 */
+	public Notification getNotification() throws SQLException {
+		final Map<String, String> settings = getSiteSettings("notification",
+				"ToEmail", "FromEmail", "SmtpHost", "SmtpPort", "SmtpUser",
+				"SmtpPass");
+		if (settings.size() == 0) {
+			return null;
 		}
-		sb.append(')');
-		return sb.toString();
+
+		final Notification ntfn = new Notification();
+		ntfn.setToEmail(settings.get("ToEmail"));
+		ntfn.setFromEmail(settings.get("FromEmail"));
+		ntfn.setHost(settings.get("SmtpHost"));
+		try {
+			ntfn.setPort(Integer.valueOf(settings.get("SmtpPort")));
+		} catch (final NumberFormatException nfe) {
+			ntfn.setPort(25);
+		}
+		ntfn.setUser(settings.get("SmtpUser"));
+		ntfn.setPassword(settings.get("SmtpPass"));
+		return ntfn;
+	}
+
+	/**
+	 * Stores email notification settings.
+	 * 
+	 * @param notification
+	 * @throws SQLException
+	 */
+	public void setNotification(final Notification notification)
+			throws SQLException {
+		final Map<String, String> settings = new HashMap<String, String>();
+		settings.put("ToEmail", notification.getToEmail());
+		settings.put("FromEmail", notification.getFromEmail());
+		settings.put("SmtpHost", notification.getHost());
+		final Integer port = notification.getPort();
+		settings.put("SmtpPort", port == null ? null : port.toString());
+		settings.put("SmtpUser", notification.getUser());
+		settings.put("SmtpPass", notification.getPassword());
+		setSiteSettings("notification", settings);
 	}
 
 	private static String getLiteral(final Object value) {
@@ -281,12 +426,4 @@ public class Server {
 		}
 	}
 
-	/**
-	 * Returns the current team server version.
-	 * 
-	 * @return
-	 */
-	public static String getSoftwareVersion() {
-		return I18N.msg("sierra.teamserver.version");
-	}
 }
