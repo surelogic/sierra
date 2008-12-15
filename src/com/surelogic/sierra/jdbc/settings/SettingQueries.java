@@ -158,33 +158,30 @@ public class SettingQueries {
 		};
 	}
 
-	public static final DBQuery<ListScanFilterResponse> retrieveScanFilters(
+	public static final DBQuery<ServerScanFilterInfo> retrieveScanFilters(
 			final SierraServerLocation loc, final ListScanFilterRequest request) {
 		return getScanFilters(loc, request, true);
 	}
 
-	public static final DBQuery<ListScanFilterResponse> getNewScanFilters(
+	public static final DBQuery<ServerScanFilterInfo> getNewScanFilters(
 			final SierraServerLocation loc, final ListScanFilterRequest request) {
 		return getScanFilters(loc, request, false);
 	}
-
-	private static final DBQuery<ListScanFilterResponse> getScanFilters(
+	
+	private static final DBQuery<ServerScanFilterInfo> getScanFilters(
 			final SierraServerLocation loc,
 			final ListScanFilterRequest request, final boolean update) {
 		final ListScanFilterResponse response = BugLinkServiceClient
 				.create(loc).listScanFilters(request);
-		return new DBQuery<ListScanFilterResponse>() {
-			public ListScanFilterResponse perform(final Query q) {
+		final Set<ScanFilter> changed = new HashSet<ScanFilter>();
+		return new DBQuery<ServerScanFilterInfo>() {
+			public ServerScanFilterInfo perform(Query q) {
 				final ScanFilters filters = new ScanFilters(q);
 				final Queryable<Void> delete = update ? q
 						.prepared("Definitions.deleteDefinition") : null;
 				final Queryable<Void> insert = update ? q
 						.prepared("Definitions.insertDefinition") : null;
-				// for (final ScanFilter filter : response.getScanFilter()) {
-				final Iterator<ScanFilter> it = response.getScanFilter()
-						.iterator();
-				while (it.hasNext()) {
-					final ScanFilter filter = it.next();
+				for (final ScanFilter filter : response.getScanFilter()) {
 					final String uid = filter.getUid();
 					final ScanFilterDO f = filters.getScanFilter(uid);
 					if (f == null) {
@@ -193,6 +190,7 @@ public class SettingQueries {
 							filters.writeScanFilter(ScanFilters
 									.convertDO(filter));
 						}
+						changed.add(filter);
 					} else if (f.getRevision() < filter.getRevision()) {
 						if (update) {
 							delete.call(uid);
@@ -200,8 +198,7 @@ public class SettingQueries {
 							filters.writeScanFilter(ScanFilters
 									.convertDO(filter));
 						}
-					} else if (!update) {
-						it.remove(); // Remove since it's older
+						changed.add(filter);
 					}
 				}
 				if (update) {
@@ -209,7 +206,8 @@ public class SettingQueries {
 						filters.deleteScanFilter(uid);
 					}
 				}
-				return response;
+				return new ServerScanFilterInfo(response.getScanFilter(), changed, 
+						                        response.getDeletions());
 			}
 		};
 	}
