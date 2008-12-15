@@ -2,13 +2,13 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Sierra JDBC Code
 Bundle-SymbolicName: com.surelogic.sierra.jdbc
-Bundle-Version: 2.3.0.qualifier
+Bundle-Version: 2.2.0.qualifier
 Bundle-Vendor: SureLogic, Inc.
 Bundle-ClassPath: .
 Require-Bundle: com.surelogic.common,
  com.surelogic.sierra.message,
  com.surelogic.sierra.java5.compatibility;resolution:=optional,
- com.surelogic.common.derby;bundle-version="2.3.0"
+ com.surelogic.common.derby
 Export-Package: com.surelogic.sierra.findbugs,
  com.surelogic.sierra.findbugs1_2_1,
  com.surelogic.sierra.findbugs1_3_0,
