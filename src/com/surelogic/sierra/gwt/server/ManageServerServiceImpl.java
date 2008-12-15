@@ -24,11 +24,11 @@ public class ManageServerServiceImpl extends SierraServiceServlet implements
 	public ServerInfo deploySchema() {
 		return performAdmin(false, new UserTransaction<ServerInfo>() {
 
-			public ServerInfo perform(Connection conn, Server server, User user)
-					throws SQLException {
+			public ServerInfo perform(final Connection conn,
+					final Server server, final User user) throws SQLException {
 				try {
 					server.updateSchema();
-				} catch (FutureDatabaseException e) {
+				} catch (final FutureDatabaseException e) {
 					// Do Nothing
 				}
 				return readServerInfo(server);
@@ -39,8 +39,18 @@ public class ManageServerServiceImpl extends SierraServiceServlet implements
 	public ServerInfo getServerInfo() {
 		return performAdmin(true, new UserTransaction<ServerInfo>() {
 
-			public ServerInfo perform(Connection conn, Server server, User user)
-					throws SQLException {
+			public ServerInfo perform(final Connection conn,
+					final Server server, final User user) throws SQLException {
+				return readServerInfo(server);
+			}
+		});
+	}
+
+	public ServerInfo setSiteName(final String name) {
+		return performAdmin(false, new UserTransaction<ServerInfo>() {
+			public ServerInfo perform(final Connection conn,
+					final Server server, final User user) throws SQLException {
+				server.setName(name);
 				return readServerInfo(server);
 			}
 		});
@@ -49,10 +59,10 @@ public class ManageServerServiceImpl extends SierraServiceServlet implements
 	public ServerInfo setEmail(final EmailInfo info) {
 		return performAdmin(false, new UserTransaction<ServerInfo>() {
 
-			public ServerInfo perform(Connection conn, Server server, User user)
-					throws SQLException {
-				String portStr = info.getPort();
-				Integer port = portStr == null ? null : Integer
+			public ServerInfo perform(final Connection conn,
+					final Server server, final User user) throws SQLException {
+				final String portStr = info.getPort();
+				final Integer port = portStr == null ? null : Integer
 						.valueOf(portStr);
 				server.setNotification(new Notification(info.getHost(), port,
 						info.getUser(), info.getPass(), info.getAdminEmail(),
@@ -65,8 +75,8 @@ public class ManageServerServiceImpl extends SierraServiceServlet implements
 	public void testAdminEmail() {
 		performAdmin(true, new UserTransaction<Void>() {
 
-			public Void perform(Connection conn, Server server, User user)
-					throws Exception {
+			public Void perform(final Connection conn, final Server server,
+					final User user) throws Exception {
 				server
 						.notifyAdmin(
 								"This is a test.",
@@ -76,13 +86,14 @@ public class ManageServerServiceImpl extends SierraServiceServlet implements
 		});
 	}
 
-	private ServerInfo readServerInfo(Server server) {
-		ServerInfo info = new ServerInfo();
+	private ServerInfo readServerInfo(final Server server) throws SQLException {
+		final ServerInfo info = new ServerInfo();
+		info.setSiteName(server.getName());
 		info.setProductVersion(Server.getSoftwareVersion());
 		info.setAvailableVersion(server.getAvailableSchemaVersion());
 		try {
 			info.setCurrentVersion(server.getSchemaVersion());
-		} catch (SQLException e) {
+		} catch (final SQLException e) {
 			info.setCurrentVersion("Error");
 		}
 		try {
@@ -95,7 +106,7 @@ public class ManageServerServiceImpl extends SierraServiceServlet implements
 			} else {
 				info.setEmail(new EmailInfo());
 			}
-		} catch (SQLException e) {
+		} catch (final SQLException e) {
 			final String error = "Error";
 			info.setEmail(new EmailInfo(error, error, error, error, error,
 					error));
