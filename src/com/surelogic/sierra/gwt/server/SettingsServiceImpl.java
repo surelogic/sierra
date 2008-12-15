@@ -56,7 +56,6 @@ import com.surelogic.sierra.jdbc.settings.CategoryFilterDO;
 import com.surelogic.sierra.jdbc.settings.ScanFilterDO;
 import com.surelogic.sierra.jdbc.settings.ScanFilters;
 import com.surelogic.sierra.jdbc.settings.ServerLocations;
-import com.surelogic.sierra.jdbc.settings.SettingQueries;
 import com.surelogic.sierra.jdbc.settings.TypeFilterDO;
 import com.surelogic.sierra.jdbc.tool.ArtifactTypeDO;
 import com.surelogic.sierra.jdbc.tool.FindingTypeDO;
@@ -111,10 +110,7 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 							final Project prj = new Project();
 							prj.setUuid(projectDO.getUuid());
 							prj.setName(projectDO.getName());
-							String sfUuid = projectDO.getScanFilter();
-							if (sfUuid == null) {
-								sfUuid = SettingQueries.GLOBAL_UUID;
-							}
+							final String sfUuid = projectDO.getScanFilter();
 							prj.setScanFilter(getFilter(filters
 									.getScanFilter(sfUuid), types, cats));
 							result.add(prj);
