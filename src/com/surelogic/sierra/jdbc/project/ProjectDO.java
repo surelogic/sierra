@@ -2,11 +2,21 @@ package com.surelogic.sierra.jdbc.project;
 
 public class ProjectDO {
 
+	private long id;
+
 	private String uuid;
 
 	private String name;
 
 	private String scanFilter;
+
+	public long getId() {
+		return id;
+	}
+
+	public void setId(final long id) {
+		this.id = id;
+	}
 
 	public String getUuid() {
 		return uuid;

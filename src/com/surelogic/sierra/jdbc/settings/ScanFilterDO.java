@@ -17,8 +17,6 @@ public class ScanFilterDO {
 
 	private long revision;
 
-	private boolean local;
-
 	private final Set<CategoryFilterDO> filterSets = new HashSet<CategoryFilterDO>();
 
 	private final Set<TypeFilterDO> filterTypes = new HashSet<TypeFilterDO>();
@@ -45,14 +43,6 @@ public class ScanFilterDO {
 
 	public void setRevision(final long revision) {
 		this.revision = revision;
-	}
-
-	public boolean isLocal() {
-		return local;
-	}
-
-	public void setLocal(boolean local) {
-		this.local = local;
 	}
 
 	public Set<CategoryFilterDO> getCategories() {

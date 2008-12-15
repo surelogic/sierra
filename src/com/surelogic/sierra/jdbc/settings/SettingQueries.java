@@ -39,8 +39,8 @@ import com.surelogic.sierra.tool.message.SierraServerLocation;
  */
 public class SettingQueries {
 
-	public static final String GLOBAL_UUID = "de3034ec-65d5-4d4a-b059-1adf8fc7b12d";
-	public static final String GLOBAL_NAME = "GLOBAL";
+	public static final String LOCAL_UUID = "de3034ec-65d5-4d4a-b059-1adf8fc7b12d";
+	public static final String LOCAL_NAME = "Default";
 
 	/**
 	 * Return a view of the provided scan filter
@@ -51,7 +51,7 @@ public class SettingQueries {
 	public static DBQuery<ScanFilterView> scanFilterFor(
 			final ScanFilterDO scanFilter) {
 		return new DBQuery<ScanFilterView>() {
-			public ScanFilterView perform(Query q) {
+			public ScanFilterView perform(final Query q) {
 				return scanFilterView(q, scanFilter);
 			}
 		};
@@ -59,7 +59,7 @@ public class SettingQueries {
 
 	public static final DBQuery<ListCategoryRequest> categoryRequest() {
 		return new DBQuery<ListCategoryRequest>() {
-			public ListCategoryRequest perform(Query q) {
+			public ListCategoryRequest perform(final Query q) {
 				final ListCategoryRequest r = new ListCategoryRequest();
 				r.getServerRevisions().addAll(
 						q.statement("FilterSets.latestServerRevisions",
@@ -79,7 +79,7 @@ public class SettingQueries {
 	 * @return
 	 */
 	public static final DBQuery<ListCategoryResponse> retrieveCategories(
-			SierraServerLocation loc, ListCategoryRequest request) {
+			final SierraServerLocation loc, final ListCategoryRequest request) {
 		final ListCategoryResponse response = BugLinkServiceClient.create(loc)
 				.listCategories(request);
 		return updateCategories(response, true);
@@ -92,7 +92,7 @@ public class SettingQueries {
 	 * local copy will not be returned.
 	 */
 	public static final DBQuery<ListCategoryResponse> getNewCategories(
-			SierraServerLocation loc, ListCategoryRequest request) {
+			final SierraServerLocation loc, final ListCategoryRequest request) {
 		final ListCategoryResponse response = BugLinkServiceClient.create(loc)
 				.listCategories(request);
 		return updateCategories(response, false);
@@ -101,7 +101,7 @@ public class SettingQueries {
 	public static final DBQuery<ListCategoryResponse> updateCategories(
 			final ListCategoryResponse response, final boolean update) {
 		return new DBQuery<ListCategoryResponse>() {
-			public ListCategoryResponse perform(Query q) {
+			public ListCategoryResponse perform(final Query q) {
 				final Categories sets = new Categories(q);
 				final Queryable<Void> delete = update ? q
 						.prepared("Definitions.deleteDefinition") : null;
@@ -139,7 +139,7 @@ public class SettingQueries {
 
 	public static final DBQuery<List<CategoryDO>> getLocalCategories() {
 		return new DBQuery<List<CategoryDO>>() {
-			public List<CategoryDO> perform(Query q) {
+			public List<CategoryDO> perform(final Query q) {
 				final Categories sets = new Categories(q);
 				return sets.listCategories();
 			}
@@ -148,7 +148,7 @@ public class SettingQueries {
 
 	public static final DBQuery<ListScanFilterRequest> scanFilterRequest() {
 		return new DBQuery<ListScanFilterRequest>() {
-			public ListScanFilterRequest perform(Query q) {
+			public ListScanFilterRequest perform(final Query q) {
 				final ListScanFilterRequest r = new ListScanFilterRequest();
 				r.getServerRevisions().addAll(
 						q.statement("ScanFilters.latestServerRevisions",
@@ -159,22 +159,22 @@ public class SettingQueries {
 	}
 
 	public static final DBQuery<ListScanFilterResponse> retrieveScanFilters(
-			SierraServerLocation loc, ListScanFilterRequest request) {
+			final SierraServerLocation loc, final ListScanFilterRequest request) {
 		return getScanFilters(loc, request, true);
 	}
 
 	public static final DBQuery<ListScanFilterResponse> getNewScanFilters(
-			SierraServerLocation loc, ListScanFilterRequest request) {
+			final SierraServerLocation loc, final ListScanFilterRequest request) {
 		return getScanFilters(loc, request, false);
 	}
 
 	private static final DBQuery<ListScanFilterResponse> getScanFilters(
-			SierraServerLocation loc, ListScanFilterRequest request,
-			final boolean update) {
+			final SierraServerLocation loc,
+			final ListScanFilterRequest request, final boolean update) {
 		final ListScanFilterResponse response = BugLinkServiceClient
 				.create(loc).listScanFilters(request);
 		return new DBQuery<ListScanFilterResponse>() {
-			public ListScanFilterResponse perform(Query q) {
+			public ListScanFilterResponse perform(final Query q) {
 				final ScanFilters filters = new ScanFilters(q);
 				final Queryable<Void> delete = update ? q
 						.prepared("Definitions.deleteDefinition") : null;
@@ -216,7 +216,7 @@ public class SettingQueries {
 
 	public static final DBQuery<List<ScanFilterDO>> getLocalScanFilters() {
 		return new DBQuery<List<ScanFilterDO>>() {
-			public List<ScanFilterDO> perform(Query q) {
+			public List<ScanFilterDO> perform(final Query q) {
 				final ScanFilters filters = new ScanFilters(q);
 				return filters.listScanFilters();
 			}
@@ -233,7 +233,7 @@ public class SettingQueries {
 	public static final DBQuery<ScanFilterView> scanFilterForUid(
 			final String uid) {
 		return new DBQuery<ScanFilterView>() {
-			public ScanFilterView perform(Query q) {
+			public ScanFilterView perform(final Query q) {
 				final ScanFilters filters = new ScanFilters(q);
 				final ScanFilterDO sf = filters.getScanFilter(uid);
 				if (sf == null) {
@@ -256,12 +256,10 @@ public class SettingQueries {
 	public static final DBQuery<ScanFilterView> scanFilterForProject(
 			final String projectName) {
 		return new DBQuery<ScanFilterView>() {
-			public ScanFilterView perform(Query q) {
+			public ScanFilterView perform(final Query q) {
 				final ScanFilters filters = new ScanFilters(q);
-				ScanFilterDO sf = filters.getScanFilterByProject(projectName);
-				if (sf == null) {
-					sf = filters.getScanFilter(GLOBAL_UUID);
-				}
+				final ScanFilterDO sf = filters
+						.getScanFilterByProject(projectName);
 				return scanFilterView(q, sf);
 			}
 		};
@@ -278,9 +276,9 @@ public class SettingQueries {
 			final Collection<String> uids) {
 		return new NullDBQuery() {
 			@Override
-			public void doPerform(Query q) {
+			public void doPerform(final Query q) {
 				final ScanFilters s = new ScanFilters(q);
-				final ScanFilterDO scanFilter = s.getScanFilter(GLOBAL_UUID);
+				final ScanFilterDO scanFilter = s.getDefaultScanFilter();
 				final Set<TypeFilterDO> types = scanFilter.getFilterTypes();
 				types.clear();
 				for (final String uid : uids) {
@@ -291,7 +289,8 @@ public class SettingQueries {
 		};
 	}
 
-	private static ScanFilterView scanFilterView(Query q, ScanFilterDO sf) {
+	private static ScanFilterView scanFilterView(final Query q,
+			final ScanFilterDO sf) {
 		final Categories cats = new Categories(q);
 		final FindingTypes types = new FindingTypes(q);
 		final Set<CategoryFilterDO> catFilters = sf.getCategories();

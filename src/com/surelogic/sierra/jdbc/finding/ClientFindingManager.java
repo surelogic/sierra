@@ -1016,7 +1016,7 @@ public final class ClientFindingManager extends FindingManager {
 			final ScanFilters filters = new ScanFilters(new ConnectionQuery(
 					conn));
 			final ScanFilterDO scanFilter = filters
-					.getScanFilter(SettingQueries.GLOBAL_UUID);
+					.getScanFilter(SettingQueries.LOCAL_UUID);
 			for (final TypeFilterDO filter : scanFilter.getFilterTypes()) {
 				if (type.equals(filter.getFindingType())) {
 					filter.setFiltered(true);

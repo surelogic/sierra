@@ -13,9 +13,10 @@ import com.surelogic.common.jdbc.Query;
 import com.surelogic.common.jdbc.Queryable;
 import com.surelogic.common.jdbc.Row;
 import com.surelogic.common.jdbc.RowHandler;
-import com.surelogic.common.jdbc.SingleRowHandler;
+import com.surelogic.common.jdbc.StringResultHandler;
 import com.surelogic.common.jdbc.StringRowHandler;
 import com.surelogic.sierra.jdbc.RevisionException;
+import com.surelogic.sierra.jdbc.project.Projects;
 import com.surelogic.sierra.tool.message.CategoryFilter;
 import com.surelogic.sierra.tool.message.Importance;
 import com.surelogic.sierra.tool.message.ScanFilter;
@@ -46,6 +47,12 @@ public class ScanFilters {
 		q = new ConnectionQuery(conn);
 	}
 
+	/**
+	 * List all scan filters known to be owned by the given server.
+	 * 
+	 * @param server
+	 * @return
+	 */
 	public List<ScanFilterDO> listServerScanFilters(final String server) {
 		final List<ScanFilterDO> list = new ArrayList<ScanFilterDO>();
 		for (final String s : q.prepared("ScanFilters.listServerScanFilters",
@@ -233,9 +240,7 @@ public class ScanFilters {
 		if (project == null) {
 			throw new IllegalArgumentException("Project may not be null.");
 		}
-		final String uid = q.prepared("ScanFilters.selectByProject",
-				SingleRowHandler.from(new StringRowHandler())).call(project);
-		return uid == null ? null : getScanFilter(uid);
+		return getScanFilter(new Projects(q).getProjectFilter(project));
 	}
 
 	private static class FilterSetHandler implements
@@ -298,5 +303,15 @@ public class ScanFilters {
 			tSet.add(tf);
 		}
 		return filter;
+	}
+
+	/**
+	 * Retrieves the default scan filter. May not return <code>null</code>.
+	 * 
+	 * @return
+	 */
+	public ScanFilterDO getDefaultScanFilter() {
+		return getScanFilter(q.prepared("ScanFilters.selectDefault",
+				new StringResultHandler()).call());
 	}
 }

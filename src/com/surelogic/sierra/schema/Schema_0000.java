@@ -17,7 +17,7 @@ public class Schema_0000 implements SchemaAction {
 		FindBugs1_3_6ToolInfoGenerator.generateTool(conn);
 		PMD4_2_4ToolInfoGenerator.generateTool(conn);
 		SchemaUtil.updateFindingTypes(conn);
-		SchemaUtil.setupScanFilters(conn);
+		SchemaUtil.setupLocalScanFilter(conn);
 		SchemaUtil.setupCategories(conn);
 	}
 

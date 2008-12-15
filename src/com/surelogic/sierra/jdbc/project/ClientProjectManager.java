@@ -29,40 +29,43 @@ public final class ClientProjectManager extends ProjectManager {
 	private final PreparedStatement deleteSynchByProject;
 	private final PreparedStatement selectServerUid;
 	private final PreparedStatement insertServerUid;
+	private final PreparedStatement deleteProjectScanFilter;
 
-	private ClientProjectManager(Connection conn) throws SQLException {
+	private ClientProjectManager(final Connection conn) throws SQLException {
 		super(conn);
 		findingManager = ClientFindingManager.getInstance(conn);
 		insertSynchRecord = conn
-				.prepareStatement("INSERT INTO SYNCH (PROJECT_ID,DATE_TIME,COMMIT_REVISION,PRIOR_REVISION,COMMIT_COUNT,UPDATE_COUNT) VALUES (?,?,?,?,?,?)");
+				.prepareStatement("INSERT INTO SYNCH (PROJECnT_ID,DATE_TIME,COMMIT_REVISION,PRIOR_REVISION,COMMIT_COUNT,UPDATE_COUNT) VALUES (?,?,?,?,?,?)");
 		deleteSynchByProject = conn
 				.prepareStatement("DELETE FROM SYNCH WHERE PROJECT_ID = ?");
 		selectServerUid = conn
 				.prepareStatement("SELECT SERVER_UUID FROM PROJECT_SERVER WHERE PROJECT_ID = ?");
 		insertServerUid = conn
 				.prepareStatement("INSERT INTO PROJECT_SERVER (PROJECT_ID, SERVER_UUID) VALUES (?,?)");
+		deleteProjectScanFilter = conn
+				.prepareStatement("DELETE FROM SETTINGS_PROJECT_RELTN WHERE PROJECT_NAME = ?");
 	}
 
 	public ClientFindingManager getFindingManager() {
 		return findingManager;
 	}
 
-	public void synchronizeProject(SierraServerLocation server,
-			String projectName, SLProgressMonitor monitor)
+	public void synchronizeProject(final SierraServerLocation server,
+			final String projectName, final SLProgressMonitor monitor)
 			throws ServerMismatchException, SQLException {
 		synchronizeProjectWithServer(server, projectName, monitor, false);
 	}
 
 	public List<SyncTrailResponse> getProjectUpdates(
-			SierraServerLocation server, String projectName,
-			SLProgressMonitor monitor) throws ServerMismatchException,
+			final SierraServerLocation server, final String projectName,
+			final SLProgressMonitor monitor) throws ServerMismatchException,
 			SQLException {
 		return synchronizeProjectWithServer(server, projectName, monitor, true);
 	}
 
 	private List<SyncTrailResponse> synchronizeProjectWithServer(
-			SierraServerLocation server, String projectName,
-			SLProgressMonitor monitor, boolean serverGet)
+			final SierraServerLocation server, final String projectName,
+			final SLProgressMonitor monitor, final boolean serverGet)
 			throws ServerMismatchException, SQLException {
 		final SierraService service = SierraServiceClient.create(server);
 
@@ -145,8 +148,8 @@ public final class ClientProjectManager extends ProjectManager {
 	}
 
 	@Override
-	public void deleteProject(String projectName, SLProgressMonitor monitor)
-			throws SQLException {
+	public void deleteProject(final String projectName,
+			final SLProgressMonitor monitor) throws SQLException {
 		final ProjectRecord rec = projectFactory.newProject();
 		rec.setName(projectName);
 		if (rec.select()) {
@@ -157,6 +160,8 @@ public final class ClientProjectManager extends ProjectManager {
 			deleteSynchByProject.setLong(1, rec.getId());
 			deleteSynchByProject.execute();
 			findingManager.deleteFindings(projectName, monitor);
+			deleteProjectScanFilter.setString(1, projectName);
+			deleteProjectScanFilter.execute();
 			if (monitor != null) {
 				if (!monitor.isCanceled()) {
 					rec.delete();
@@ -165,7 +170,7 @@ public final class ClientProjectManager extends ProjectManager {
 		}
 	}
 
-	public static ClientProjectManager getInstance(Connection conn)
+	public static ClientProjectManager getInstance(final Connection conn)
 			throws SQLException {
 		return new ClientProjectManager(conn);
 	}

@@ -13,9 +13,9 @@ import com.surelogic.sierra.jdbc.user.SierraGroup;
 public class Server_0000 implements SchemaAction {
 
 	public void run(final Connection c) throws SQLException {
+		final String serverUuid = UUID.randomUUID().toString();
 		c.createStatement().execute(
-				"INSERT INTO SERVER (UUID) VALUES('"
-						+ UUID.randomUUID().toString() + "')");
+				"INSERT INTO SERVER (UUID) VALUES('" + serverUuid + "')");
 		final PreparedStatement groupSt = c
 				.prepareStatement("INSERT INTO SIERRA_GROUP (NAME,INFO) VALUES (?,?)");
 		try {
@@ -59,6 +59,6 @@ public class Server_0000 implements SchemaAction {
 		} finally {
 			st.close();
 		}
-
+		SchemaUtil.setupServerScanFilter(c, serverUuid);
 	}
 }

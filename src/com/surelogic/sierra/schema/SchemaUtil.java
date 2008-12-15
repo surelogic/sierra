@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -13,6 +14,7 @@ import javax.xml.bind.Unmarshaller;
 
 import com.surelogic.common.jdbc.ConnectionQuery;
 import com.surelogic.common.jdbc.Query;
+import com.surelogic.common.jdbc.StringResultHandler;
 import com.surelogic.common.jdbc.StringRowHandler;
 import com.surelogic.sierra.jdbc.settings.ScanFilterDO;
 import com.surelogic.sierra.jdbc.settings.ScanFilters;
@@ -24,7 +26,7 @@ import com.surelogic.sierra.tool.message.ListCategoryResponse;
 import com.surelogic.sierra.tool.message.MessageWarehouse;
 
 public class SchemaUtil {
-	static void updateFindingTypes(Connection conn) throws SQLException {
+	static void updateFindingTypes(final Connection conn) throws SQLException {
 		final FindingTypeManager ftMan = FindingTypeManager.getInstance(conn);
 		final List<FindingTypes> types = new ArrayList<FindingTypes>(3);
 
@@ -36,14 +38,14 @@ public class SchemaUtil {
 		ftMan.updateFindingTypes(types, 0);
 	}
 
-	private static FindingTypes getFindingTypes(String file) {
+	private static FindingTypes getFindingTypes(final String file) {
 		final InputStream in = Thread.currentThread().getContextClassLoader()
 				.getResourceAsStream(
 						"com/surelogic/sierra/tool/message/" + file);
 		return MessageWarehouse.getInstance().fetchFindingTypes(in);
 	}
 
-	static void setupCategories(Connection c) throws SQLException {
+	static void setupCategories(final Connection c) throws SQLException {
 		final Query q = new ConnectionQuery(c);
 		try {
 			final JAXBContext ctx = JAXBContext
@@ -61,15 +63,15 @@ public class SchemaUtil {
 		}
 	}
 
-	static void setupScanFilters(Connection c) throws SQLException {
+	static void setupLocalScanFilter(final Connection c) throws SQLException {
 		final Query q = new ConnectionQuery(c);
 		final ScanFilters filters = new ScanFilters(q);
-		if (filters.getScanFilter(SettingQueries.GLOBAL_UUID) == null) {
+		if (filters.getScanFilter(SettingQueries.LOCAL_UUID) == null) {
 			final Set<String> excluded = SettingQueries
 					.getSureLogicDefaultScanFilters();
 			final ScanFilterDO filter = new ScanFilterDO();
-			filter.setName(SettingQueries.GLOBAL_NAME);
-			filter.setUid(SettingQueries.GLOBAL_UUID);
+			filter.setName(SettingQueries.LOCAL_NAME);
+			filter.setUid(SettingQueries.LOCAL_UUID);
 			filter.setRevision(0L);
 			final Set<TypeFilterDO> typeFs = filter.getFilterTypes();
 			for (final String type : q.statement(
@@ -81,5 +83,29 @@ public class SchemaUtil {
 			}
 			filters.writeScanFilter(filter);
 		}
+		if (q.prepared("ScanFilters.selectDefault", new StringResultHandler())
+				.call() == null) {
+			q.prepared("ScanFilters.insertDefault").call(
+					SettingQueries.LOCAL_UUID);
+		}
 	}
+
+	/*
+	 * The client sets up a purely local copy of the settings. When we boot the
+	 * server, we want to change this local copy to a server-owned copy.
+	 */
+	static void setupServerScanFilter(final Connection c,
+			final String serverUuid) {
+		final Query q = new ConnectionQuery(c);
+		if (q.prepared("ScanFilters.selectDefault", new StringResultHandler())
+				.call() == SettingQueries.LOCAL_UUID) {
+			final String newUuid = UUID.randomUUID().toString();
+			q.prepared("ScanFilters.updateUuid").call(newUuid,
+					SettingQueries.LOCAL_UUID);
+			q.prepared("Definitions.insertDefinition")
+					.call(newUuid, serverUuid);
+			q.prepared("ScanFilters.updateDefault").call(newUuid);
+		}
+	}
+
 }

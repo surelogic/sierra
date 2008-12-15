@@ -7,6 +7,9 @@ import com.surelogic.common.jdbc.ConnectionQuery;
 import com.surelogic.common.jdbc.Query;
 import com.surelogic.common.jdbc.Row;
 import com.surelogic.common.jdbc.RowHandler;
+import com.surelogic.common.jdbc.SingleRowHandler;
+import com.surelogic.common.jdbc.StringResultHandler;
+import com.surelogic.common.jdbc.StringRowHandler;
 
 public final class Projects {
 
@@ -37,6 +40,17 @@ public final class Projects {
 			final String scanFilterUuid) {
 		q.prepared("Projects.deleteScanFilter").call(project);
 		q.prepared("Projects.insertScanFilter").call(project, scanFilterUuid);
+	}
+
+	public String getProjectFilter(final String project) {
+		String uuid = q.prepared("ScanFilters.selectByProject",
+				SingleRowHandler.from(new StringRowHandler())).call(project);
+		if (uuid == null) {
+			uuid = q.prepared("ScanFilters.selectDefault",
+					new StringResultHandler()).call();
+			updateProjectFilter(project, uuid);
+		}
+		return uuid;
 	}
 
 }
