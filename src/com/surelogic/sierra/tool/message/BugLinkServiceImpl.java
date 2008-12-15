@@ -218,13 +218,14 @@ public class BugLinkServiceImpl extends SecureServiceServlet implements
 					public UpdateScanFilterResponse perform(final Query q,
 							final Server s) {
 						final UpdateScanFilterResponse response = new UpdateScanFilterResponse();
-						response.setFilter(ScanFilters.convert(new ScanFilters(
-								q).updateScanFilter(ScanFilters
-								.convertDO(request.getFilter()), s
-								.nextRevision()), s.getUid()));
+						final ScanFilterDO sf = ScanFilters.convertDO(request
+								.getFilter());
+						final ScanFilter updated = ScanFilters.convert(
+								new ScanFilters(q).updateScanFilter(sf, s
+										.nextRevision()), s.getUid());
+						response.setFilter(updated);
 						return response;
 					}
 				});
 	}
-
 }

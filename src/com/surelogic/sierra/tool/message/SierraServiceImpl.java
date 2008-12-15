@@ -19,6 +19,7 @@ import com.surelogic.common.jdbc.ConnectionQuery;
 import com.surelogic.common.jobs.NullSLProgressMonitor;
 import com.surelogic.sierra.jdbc.finding.ServerFindingManager;
 import com.surelogic.sierra.jdbc.project.ProjectRecordFactory;
+import com.surelogic.sierra.jdbc.project.Projects;
 import com.surelogic.sierra.jdbc.record.ProjectRecord;
 import com.surelogic.sierra.jdbc.record.ScanRecord;
 import com.surelogic.sierra.jdbc.scan.ScanManager;
@@ -217,31 +218,23 @@ public class SierraServiceImpl extends SecureServiceServlet implements
 			throw new ServerMismatchException(serverUid
 					+ " does not match the server's uid: " + localUid);
 		}
-		if ((trails != null) && !trails.isEmpty()) {
-			return ConnectionFactory.getInstance().withUserTransaction(
-					new UserTransaction<SyncResponse>() {
+		return ConnectionFactory.getInstance().withUserTransaction(
+				new UserTransaction<SyncResponse>() {
 
-						public SyncResponse perform(final Connection conn,
-								final Server server, final User user)
-								throws Exception {
-							final SyncResponse response = readChanges.perform(
-									conn, server, user);
+					public SyncResponse perform(final Connection conn,
+							final Server server, final User user)
+							throws Exception {
+						final SyncResponse response = readChanges.perform(conn,
+								server, user);
+						if (trails != null && !trails.isEmpty()) {
 							response.setCommitRevision(commitChanges.perform(
 									conn, server, user));
-							return response;
 						}
-					});
-		} else {
-			return ConnectionFactory.getInstance().withUserReadOnly(
-					new UserTransaction<SyncResponse>() {
-
-						public SyncResponse perform(final Connection conn,
-								final Server server, final User user)
-								throws Exception {
-							return readChanges.perform(conn, server, user);
-						}
-					});
-		}
+						response.setScanFilter(new Projects(conn)
+								.getProjectFilter(project));
+						return response;
+					}
+				});
 	}
 
 	@Override
