@@ -79,6 +79,7 @@
 
 				<groupMarker name="client" />
 				<separator name="server" />
+				<separator name="service" />
 				<separator name="license" />
 				<separator name="additions" />
 			</menu>
