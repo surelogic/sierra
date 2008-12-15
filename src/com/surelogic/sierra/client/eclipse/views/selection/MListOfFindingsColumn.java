@@ -5,7 +5,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -886,8 +885,8 @@ public final class MListOfFindingsColumn extends MColumn implements
 	private static final Rectangle ZERO = new Rectangle(0, 0, 0, 0);
 
 	int computeValueWidth(final ColumnData cd) {
-		Image temp = new Image(null, 100, 100);
-		GC gc = new GC(temp);
+		Image imageForGC = new Image(null, 1, 1);
+		GC gc = new GC(imageForGC);
 		int longest = 0;
 		FindingData longestData = null;
 		int longestIndex = -1;
@@ -906,7 +905,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 			i++;
 		}
 		gc.dispose();
-		temp.dispose();
+		imageForGC.dispose();
 		if (longestData != null) {
 			if (longestIndex >= f_table.getItemCount()) {
 				LOG.warning("Got index outside of table: " + longestIndex
@@ -917,22 +916,12 @@ public final class MListOfFindingsColumn extends MColumn implements
 			}
 		}
 
+		final int PAD = 30;
 		if (longest < 25) {
-			return 30;
+			return PAD;
 		}
-		final int rv = longest + 5;
-		Rectangle bounds = f_table.getClientArea();
-		Composite p = f_table.getParent();
-		while (p != null) {
-			// System.out.println(p+" : "+p.getClientArea().width);
-			if (p instanceof CascadingList) {
-				bounds = p.getClientArea();
-				break;
-			}
-			p = p.getParent();
-		}
-		final int maxWidth = bounds.width - 50;
-		return rv > maxWidth ? maxWidth : rv;
+		final int result = longest + PAD;
+		return result;
 	}
 
 	private boolean initTableItem(final int i, FindingData data,
@@ -1142,16 +1131,18 @@ public final class MListOfFindingsColumn extends MColumn implements
 					@Override
 					protected void handleFindings(MenuItem item,
 							FindingData data, List<Long> ids) {
-						// Note that these findings should all have the same type
-						// (based on code in context menu's listener)				
+						// Note that these findings should all have the same
+						// type
+						// (based on code in context menu's listener)
 						if (ids.size() > 1) {
-							FindingMutationUtility.asyncFilterFindingTypeFromScans(
-									ids.get(0), data.f_findingTypeId);
+							FindingMutationUtility
+									.asyncFilterFindingTypeFromScans(
+											ids.get(0), data.f_findingTypeId);
 						}
 						/*
-						FindingMutationUtility.asyncFilterFindingTypeFromScans(
-								ids, data.f_findingTypeId);
-						*/
+						 * FindingMutationUtility.asyncFilterFindingTypeFromScans
+						 * ( ids, data.f_findingTypeId);
+						 */
 					}
 				});
 
@@ -1186,7 +1177,8 @@ public final class MListOfFindingsColumn extends MColumn implements
 
 		protected abstract void handleFinding(MenuItem item, FindingData data);
 
-		protected abstract void handleFindings(MenuItem item, FindingData data, List<Long> ids);
+		protected abstract void handleFindings(MenuItem item, FindingData data,
+				List<Long> ids);
 	}
 
 	private void refreshDisplay() {
@@ -1220,11 +1212,11 @@ public final class MListOfFindingsColumn extends MColumn implements
 		for (int ti : itemIndices) {
 			final int size = f_rows.size();
 			if (startSize != size) {
-				LOG.severe("Number of rows changed from "+startSize+" to "+size);
+				LOG.severe("Number of rows changed from " + startSize + " to "
+						+ size);
 				continue;
-			}
-			else if (ti >= size) {
-				LOG.severe("Index out of bounds: "+ti+" >= "+size);
+			} else if (ti >= size) {
+				LOG.severe("Index out of bounds: " + ti + " >= " + size);
 				continue;
 			}
 			FindingData fd = f_rows.get(ti);
