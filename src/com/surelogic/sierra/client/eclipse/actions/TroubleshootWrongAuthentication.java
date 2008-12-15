@@ -28,7 +28,7 @@ public final class TroubleshootWrongAuthentication extends
 	@Override
 	protected IStatus createStatus() {
 		return SLEclipseStatusUtility
-				.createInfoStatus("Unable to authenicate to "
+				.createInfoStatus("Unable to authenticate to "
 						+ f_server.getLabel());
 	}
 
