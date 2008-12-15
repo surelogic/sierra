@@ -10,51 +10,47 @@ import java.util.Map.Entry;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.HasHorizontalAlignment;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Hyperlink;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupListener;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.Context;
-import com.surelogic.sierra.gwt.client.content.scanfilters.ScanFiltersContent;
 import com.surelogic.sierra.gwt.client.content.scans.ScanContent;
 import com.surelogic.sierra.gwt.client.data.ColumnDataType;
 import com.surelogic.sierra.gwt.client.data.Project;
 import com.surelogic.sierra.gwt.client.data.ReportSettings;
 import com.surelogic.sierra.gwt.client.data.Scan;
 import com.surelogic.sierra.gwt.client.data.ScanDetail;
-import com.surelogic.sierra.gwt.client.data.ScanFilter;
 import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.data.cache.ProjectCache;
 import com.surelogic.sierra.gwt.client.data.cache.ReportCache;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.service.callback.StandardCallback;
 import com.surelogic.sierra.gwt.client.ui.StatusBox;
-import com.surelogic.sierra.gwt.client.ui.StyleHelper;
 import com.surelogic.sierra.gwt.client.ui.TableBuilder;
-import com.surelogic.sierra.gwt.client.ui.StyleHelper.Style;
 import com.surelogic.sierra.gwt.client.ui.block.ContentBlock;
 import com.surelogic.sierra.gwt.client.ui.block.ContentBlockPanel;
 import com.surelogic.sierra.gwt.client.ui.block.ReportTableBlock;
 import com.surelogic.sierra.gwt.client.ui.chart.ChartBuilder;
-import com.surelogic.sierra.gwt.client.ui.link.ContentLink;
 import com.surelogic.sierra.gwt.client.ui.panel.BasicPanel;
 
 public class ProjectView extends BasicPanel {
 	private final StatusBox box = new StatusBox();
-	private final ScanDetailView latestScan = new ScanDetailView();
+	private ScanDetailView latestScan;
 	private final VerticalPanel chart = new VerticalPanel();
 	private final VerticalPanel diff = new VerticalPanel();
 	private final ProjectTableBlock scans = new ProjectTableBlock();
-	private final FlexTable scanFilterTable = new FlexTable();
-	private final HorizontalPanel scanFilterField = new HorizontalPanel();
 	private Project selection;
 
 	@Override
 	protected void onInitialize(final VerticalPanel contentPanel) {
+		latestScan = new ScanDetailView(new ClickListener() {
+
+			public void onClick(final Widget sender) {
+				promptForScanFilter();
+			}
+		});
 		latestScan.setWidth("50%");
 		contentPanel.add(latestScan);
 		contentPanel.add(chart);
@@ -63,23 +59,6 @@ public class ProjectView extends BasicPanel {
 		contentPanel.add(scansPanel);
 		contentPanel.add(diff);
 		contentPanel.add(box);
-
-		scanFilterTable.setWidth("50%");
-		scanFilterTable.setWidget(0, 0, scanFilterField);
-		scanFilterField.add(new Label("Scan Filter:"));
-		final Label changeScanFilter = StyleHelper.add(new Label(
-				"Change Scan Filter"), Style.CLICKABLE);
-		changeScanFilter.addClickListener(new ClickListener() {
-
-			public void onClick(final Widget sender) {
-				promptForScanFilter();
-			}
-		});
-		scanFilterTable.setWidget(0, 1, changeScanFilter);
-		scanFilterTable.getCellFormatter().setHorizontalAlignment(0, 1,
-				HasHorizontalAlignment.ALIGN_RIGHT);
-
-		contentPanel.add(scanFilterTable);
 	}
 
 	public Project getSelection() {
@@ -103,19 +82,11 @@ public class ProjectView extends BasicPanel {
 					.width(800).prop("projectName", project.getName()).prop(
 							"kLoC", "true").build());
 
-			final ScanFilter sf = project.getScanFilter();
-			final ContentLink sfLink = new ContentLink(sf.getName(),
-					ScanFiltersContent.getInstance(), sf.getUuid());
-			sfLink.setWidth("100%");
-			if (scanFilterField.getWidgetCount() > 1) {
-				scanFilterField.remove(1);
-			}
-			scanFilterField.add(sfLink);
 			ServiceHelper.getFindingService().getLatestScanDetail(
 					project.getUuid(), new StandardCallback<ScanDetail>() {
 						@Override
 						protected void doSuccess(final ScanDetail result) {
-							latestScan.setScan(result);
+							latestScan.setScan(project, result);
 						}
 					});
 		}
