@@ -58,6 +58,7 @@ public final class MFilterSelectionColumn extends MColumn implements
 	private Composite f_panel = null;
 	private Table f_reportContents = null;
 	private Label f_totalCount = null;
+	private Composite f_bottomSection = null;
 	private SearchBox f_searchBox = null;
 	private Label f_porousCount = null;
 	private Group f_reportGroup = null;
@@ -274,8 +275,8 @@ public final class MFilterSelectionColumn extends MColumn implements
 					}
 				});
 
-				f_barColorDark = new Color(f_reportContents.getDisplay(), 255,
-						113, 18);
+				 f_barColorDark = new Color(f_reportContents.getDisplay(), 255,
+						102, 51);
 				f_barColorLight = new Color(f_reportContents.getDisplay(), 238,
 						216, 198);
 				/**
@@ -362,7 +363,6 @@ public final class MFilterSelectionColumn extends MColumn implements
 							final boolean mouseOverGraph = f_mouseOverLine == null ? value == null
 									: f_mouseOverLine.equals(value);
 							if (mouseOverGraph) {
-								// gc.setForeground(f_barColorDark);
 								gc.setBackground(display
 										.getSystemColor(SWT.COLOR_WHITE));
 								gc.fillRectangle(event.x, event.y, GRAPH_WIDTH,
@@ -371,7 +371,6 @@ public final class MFilterSelectionColumn extends MColumn implements
 								gc.fillRectangle(event.x, event.y, width,
 										height);
 							} else {
-								// gc.setForeground(f_barColorLight);
 								gc.setBackground(f_reportGroup.getBackground());
 								gc.fillRectangle(event.x, event.y, GRAPH_WIDTH,
 										height);
@@ -419,13 +418,13 @@ public final class MFilterSelectionColumn extends MColumn implements
 					}
 				});
 
-				Composite bottomSection = new Composite(f_reportGroup, SWT.NONE);
-				bottomSection.setLayoutData(new GridData(SWT.FILL, SWT.DEFAULT,
-						true, false));
+				f_bottomSection = new Composite(f_reportGroup, SWT.NONE);
+				f_bottomSection.setLayoutData(new GridData(SWT.FILL,
+						SWT.DEFAULT, true, false));
 				GridLayout bottomGrid = new GridLayout();
 				bottomGrid.numColumns = 2;
 				bottomGrid.marginHeight = bottomGrid.marginWidth = 0;
-				bottomSection.setLayout(bottomGrid);
+				f_bottomSection.setLayout(bottomGrid);
 
 				final ISearchBoxObserver observer = new ISearchBoxObserver() {
 
@@ -439,7 +438,7 @@ public final class MFilterSelectionColumn extends MColumn implements
 						getSelection().refreshFilters();
 					}
 				};
-				f_searchBox = new SearchBox(bottomSection,
+				f_searchBox = new SearchBox(f_bottomSection,
 						"filter the list above",
 						"Clear the current filter expression", observer);
 				if (!f_filter.isFilterExpressionClear()) {
@@ -454,8 +453,8 @@ public final class MFilterSelectionColumn extends MColumn implements
 				searchGridData.horizontalIndent = 4;
 				f_searchBox.getComposite().setLayoutData(searchGridData);
 
-				f_porousCount = new Label(bottomSection, SWT.RIGHT);
-				final GridData porousCountGridData = new GridData(SWT.DEFAULT,
+				f_porousCount = new Label(f_bottomSection, SWT.RIGHT);
+				final GridData porousCountGridData = new GridData(SWT.FILL,
 						SWT.CENTER, false, false);
 				// Make a slight space between the search box
 				porousCountGridData.horizontalIndent = 4;
@@ -501,7 +500,6 @@ public final class MFilterSelectionColumn extends MColumn implements
 							}
 						});
 
-				// f_reportViewport.setMenu(f_menu);
 				f_reportContents.setMenu(f_menu);
 				f_reportGroup.setMenu(f_menu);
 				f_totalCount.setMenu(f_menu);
@@ -603,24 +601,25 @@ public final class MFilterSelectionColumn extends MColumn implements
 		}
 
 		final int porousCount = f_filter.getFindingCountPorous();
-		if (f_porousCount != null && !f_porousCount.isDisposed())
-			f_porousCount.setText("");
-		if (f_reportContents.getItemCount() > 0) {
-			final String porousCountString = SLUtility
-					.toCommaSepString(porousCount);
-			f_porousCount.setText(porousCountString);
-			String msg = (porousCount == 0 ? "No" : porousCountString)
-					+ (porousCount != 1 ? " findings" : " finding")
-					+ " selected";
-			f_totalCount.setToolTipText(msg);
-			f_porousCount.setToolTipText(msg);
+		if (f_porousCount != null && !f_porousCount.isDisposed()) {
+			if (f_reportContents.getItemCount() > 0) {
+				final String porousCountString = SLUtility
+						.toCommaSepString(porousCount);
+				f_porousCount.setText(porousCountString);
+				String msg = (porousCount == 0 ? "No" : porousCountString)
+						+ (porousCount != 1 ? " findings" : " finding")
+						+ " selected";
+				f_totalCount.setToolTipText(msg);
+				f_porousCount.setToolTipText(msg);
+			} else {
+				f_porousCount.setText("");
+			}
 		}
 		f_valueColumn.setWidth(computeValueWidth());
 		f_graphColumn.setWidth(GRAPH_WIDTH + 5);
-		f_reportContents.layout();
-		f_reportGroup.layout();
-		f_panel.pack();
+		f_bottomSection.layout();
 		f_panel.layout();
+		f_panel.pack();
 		f_panel.setRedraw(true);
 	}
 
