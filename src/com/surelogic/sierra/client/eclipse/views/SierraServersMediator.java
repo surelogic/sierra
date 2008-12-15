@@ -104,9 +104,9 @@ import com.surelogic.sierra.jdbc.finding.FindingAudits;
 import com.surelogic.sierra.jdbc.project.ClientProjectManager;
 import com.surelogic.sierra.jdbc.scan.ScanInfo;
 import com.surelogic.sierra.jdbc.scan.Scans;
+import com.surelogic.sierra.jdbc.settings.ServerScanFilterInfo;
 import com.surelogic.sierra.jdbc.settings.SettingQueries;
 import com.surelogic.sierra.tool.message.ListCategoryResponse;
-import com.surelogic.sierra.tool.message.ListScanFilterResponse;
 import com.surelogic.sierra.tool.message.ServerMismatchException;
 import com.surelogic.sierra.tool.message.SierraServerLocation;
 import com.surelogic.sierra.tool.message.SierraServiceClientException;
@@ -936,6 +936,9 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 				final ServersViewContent parent, boolean server) {
 			final ServersViewContent projectItems;
 			if (server) {
+				if (parent.getChildren().length == 0) {
+					return; // No children
+				}
 				// CONNECTED_PROJECTS (if a server)
 				projectItems = parent.getChildren()[0];
 			} else {
@@ -1154,88 +1157,137 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 		job.schedule();
 	}
 
+	private static boolean isFailedServer(Set<SierraServer> failedServers, SierraServer server, 
+			                              int numProblems) {
+		if ((failedServers != null)
+				&& failedServers.contains(server)) {
+			return true;
+		}
+		final int threshold = PreferenceConstants.getServerInteractionRetryThreshold();
+		final int numServerProbs = server.getProblemCount();
+		if (numServerProbs > threshold) {
+			failedServers = markAsFailedServer(failedServers,
+					server);
+			return true;
+		}
+		if (numServerProbs + numProblems > threshold) {
+			return true;
+		}
+		return false;
+	}
+	
+	private class ServerHandler {
+		final Connection c;
+		final ClientProjectManager cpm;
+		Set<SierraServer> failedServers = null;
+		Set<SierraServer> connectedServers = new HashSet<SierraServer>();
+		
+		List<SyncTrailResponse> responses;
+		ServerUpdateStatus serverResponse;
+		
+		ServerHandler(Connection c, ClientProjectManager cpm) {
+			this.c = c;
+			this.cpm = cpm;
+		}
+		
+		private void init(SierraServer server) {
+			responses = null;
+			serverResponse = serverResponseMap.get(server);
+		}
+		
+		void queryForProjects(SierraServerManager manager) {
+			final int threshold = PreferenceConstants.getServerInteractionRetryThreshold();
+			for (final IJavaProject jp : JDTUtility.getJavaProjects()) {
+				final String name = jp.getElementName();
+				final int numProblems = Projects.getInstance()
+						.getProblemCount(name);
+				if (!Projects.getInstance().contains(name)
+						|| (numProblems > threshold)) {
+					continue; // Not scanned
+				}
+				
+				// Check for new remote audits
+				final SierraServer server = manager.getServer(name);
+				init(server);					
+				queryServerForProject(server, name, numProblems);					
+			}
+		}
+		
+		void queryServers(SierraServerManager manager) {
+			for(SierraServer server : manager.getServers()) {	
+				if (connectedServers.contains(server)) {
+					return; // Already handled
+				}
+				init(server);	
+				queryServer(server, null, 0, true);
+			}
+		}
+		
+		void queryServerForProject(SierraServer server, String name, int numProblems) {
+			queryServer(server, name, numProblems, false);
+		}
+		
+		void queryServer(SierraServer server, String name, int numProblems, boolean onlyServer) {
+			if (server != null) {
+				connectedServers.add(server);
+				
+				if (isFailedServer(failedServers, server, numProblems)) {
+					return;
+				}
+				final SLProgressMonitor monitor = new NullSLProgressMonitor();
+				
+				// Try to distinguish server failure/disconnection and
+				// RPC failure
+				final ServerFailureReport method = PreferenceConstants
+						.getServerFailureReporting();
+				TroubleshootConnection tc;
+				try {
+					final SierraServerLocation loc = server.getServer();
+					if (!onlyServer) {
+						responses = cpm.getProjectUpdates(loc, name, monitor);
+					}
+					serverResponse = checkForBugLinkUpdates(c, serverResponse, loc);
+				} catch (final ServerMismatchException e) {
+					tc = new TroubleshootWrongServer(method, server,
+							name);
+					failedServers = handleServerProblem(failedServers,
+							server, tc, e);
+				} catch (final SierraServiceClientException e) {
+					tc = AbstractServerProjectJob
+							.getTroubleshootConnection(method, server,
+									name, e);
+					failedServers = handleServerProblem(failedServers,
+							server, tc, e);
+				} catch (final Exception e) {
+					tc = new TroubleshootException(method, server,
+							name, e, e instanceof SQLException);
+					failedServers = handleServerProblem(failedServers,
+							server, tc, e);
+				}
+			}
+			if (!onlyServer && responses != null) {
+				responseMap.put(name, responses);
+				handleServerSuccess(server, name);
+			}
+			if (serverResponse != null) {
+				serverResponseMap.put(server, serverResponse);
+				server.markAsConnected();
+			}
+		}
+	}
+	
 	private void updateServerInfo() throws Exception {
 		final Connection c = Data.getInstance().transactionConnection();
 		Exception exc = null;
 		try {
-			final ClientProjectManager cpm = ClientProjectManager
-					.getInstance(c);
+			final ClientProjectManager cpm = ClientProjectManager.getInstance(c);
+			final ServerHandler handler = new ServerHandler(c, cpm);
 			synchronized (responseMap) {
-				final int threshold = PreferenceConstants
-						.getServerInteractionRetryThreshold();
-				Set<SierraServer> failedServers = null;
 				responseMap.clear();
 				serverResponseMap.clear();
-
-				for (final IJavaProject jp : JDTUtility.getJavaProjects()) {
-					final String name = jp.getElementName();
-					final int numProblems = Projects.getInstance()
-							.getProblemCount(name);
-					if (!Projects.getInstance().contains(name)
-							|| (numProblems > threshold)) {
-						continue; // Not scanned
-					}
-
-					// Check for new remote audits
-					final SierraServer server = f_manager.getServer(name);
-					List<SyncTrailResponse> responses = null;
-					ServerUpdateStatus serverResponse = serverResponseMap
-							.get(server);
-					if (server != null) {
-						if ((failedServers != null)
-								&& failedServers.contains(server)) {
-							continue;
-						}
-						final int numServerProbs = server.getProblemCount();
-						if (numServerProbs > threshold) {
-							failedServers = markAsFailedServer(failedServers,
-									server);
-							continue;
-						}
-						if (numServerProbs + numProblems > threshold) {
-							continue;
-						}
-
-						final SLProgressMonitor monitor = new NullSLProgressMonitor();
-						// Try to distinguish server failure/disconnection and
-						// RPC failure
-						final ServerFailureReport method = PreferenceConstants
-								.getServerFailureReporting();
-						TroubleshootConnection tc;
-						try {
-							final SierraServerLocation loc = server.getServer();
-							responses = cpm.getProjectUpdates(loc, name,
-									monitor);
-
-							serverResponse = checkForBugLinkUpdates(c,
-									serverResponse, loc);
-						} catch (final ServerMismatchException e) {
-							tc = new TroubleshootWrongServer(method, server,
-									name);
-							failedServers = handleServerProblem(failedServers,
-									server, tc, e);
-						} catch (final SierraServiceClientException e) {
-							tc = AbstractServerProjectJob
-									.getTroubleshootConnection(method, server,
-											name, e);
-							failedServers = handleServerProblem(failedServers,
-									server, tc, e);
-						} catch (final Exception e) {
-							tc = new TroubleshootException(method, server,
-									name, e, e instanceof SQLException);
-							failedServers = handleServerProblem(failedServers,
-									server, tc, e);
-						}
-					}
-					if (responses != null) {
-						responseMap.put(name, responses);
-						handleServerSuccess(server, name);
-					}
-					if (serverResponse != null) {
-						serverResponseMap.put(server, serverResponse);
-						server.markAsConnected();
-					}
-				}
+				
+				handler.queryForProjects(f_manager);
+				handler.queryServers(f_manager);
 			}
 			c.commit();
 
@@ -1262,7 +1314,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 			final ListCategoryResponse cr = SettingQueries.getNewCategories(
 					loc, SettingQueries.categoryRequest().perform(q))
 					.perform(q);
-			final ListScanFilterResponse sfr = SettingQueries
+			final ServerScanFilterInfo sfr = SettingQueries
 					.getNewScanFilters(loc,
 							SettingQueries.scanFilterRequest().perform(q))
 					.perform(q);
@@ -1283,7 +1335,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 		return failedServers;
 	}
 
-	private Set<SierraServer> markAsFailedServer(
+	private static Set<SierraServer> markAsFailedServer(
 			Set<SierraServer> failedServers, final SierraServer server) {
 		if (failedServers == null) {
 			failedServers = new HashSet<SierraServer>();

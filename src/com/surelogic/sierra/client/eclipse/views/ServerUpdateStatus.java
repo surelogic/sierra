@@ -1,12 +1,13 @@
 package com.surelogic.sierra.client.eclipse.views;
 
+import com.surelogic.sierra.jdbc.settings.ServerScanFilterInfo;
 import com.surelogic.sierra.tool.message.*;
 
 class ServerUpdateStatus {
 	private final ListCategoryResponse categoriesResponse;
-	private final ListScanFilterResponse filtersResponse;
+	private final ServerScanFilterInfo filtersResponse;
 	
-	ServerUpdateStatus(ListCategoryResponse cr, ListScanFilterResponse sfr) {
+	ServerUpdateStatus(ListCategoryResponse cr, ServerScanFilterInfo sfr) {
 		categoriesResponse = cr;
 		filtersResponse = sfr;
 	}
@@ -22,6 +23,7 @@ class ServerUpdateStatus {
 		if (filtersResponse == null) {
 			return 0;
 		}
-		return filtersResponse.getScanFilter().size();
+		return filtersResponse.numChanged() + 
+		       filtersResponse.getDeletions().size();
 	}
 }
