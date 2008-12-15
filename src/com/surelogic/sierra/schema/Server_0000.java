@@ -45,12 +45,13 @@ public class Server_0000 implements SchemaAction {
 		} finally {
 			userGroupSt.close();
 		}
-		final Statement st = c.createStatement();
+		Statement st = c.createStatement();
 		try {
 			st.execute("INSERT INTO QUALIFIER(NAME) VALUES('__ALL_SCANS__')");
 		} finally {
 			st.close();
 		}
+		st = c.createStatement();
 		try {
 			st
 					.execute("INSERT INTO SERVER_LOCATION (LABEL,PROTOCOL,HOST,PORT,CONTEXT_PATH,SERVER_USER,PASSWORD) "
