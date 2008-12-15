@@ -311,7 +311,7 @@ public class ScanFilterPreferencePage extends PreferencePage implements
 							}).call());
 
 					f_filterList.addAll(SettingQueries.scanFilterForUid(
-							SettingQueries.GLOBAL_UUID).perform(q)
+							SettingQueries.LOCAL_UUID).perform(q)
 							.getIncludedFindingTypes());
 
 				}
