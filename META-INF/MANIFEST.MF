@@ -31,4 +31,5 @@ Require-Bundle: org.eclipse.ui,
 Eclipse-LazyStart: true
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .
-Export-Package: com.surelogic.sierra.client.eclipse.jsure
+Export-Package: com.surelogic.sierra.client.eclipse.jsure,
+ com.surelogic.sierra.client.eclipse.preferences

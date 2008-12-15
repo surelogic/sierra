@@ -14,12 +14,14 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.preference.PreferenceStore;
 
 import com.surelogic.common.eclipse.jobs.DatabaseJob;
 import com.surelogic.common.eclipse.logging.SLEclipseStatusUtility;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.sierra.client.eclipse.model.AbstractDatabaseObserver;
 import com.surelogic.sierra.client.eclipse.model.DatabaseHub;
+import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
 import com.surelogic.sierra.client.eclipse.views.selection.MListOfFindingsColumn;
 
 /**
@@ -50,9 +52,12 @@ public final class Selection extends AbstractDatabaseObserver {
 		allFilters.add(FilterProject.FACTORY);
 		allFilters.add(FilterSelection.FACTORY);
 		allFilters.add(FilterTool.FACTORY);
-		allFilters.add(FilterVerificationStatus.FACTORY);
-		allFilters.add(FilterResultType.FACTORY);
-		allFilters.add(FilterModels.FACTORY);
+		
+		if (PreferenceConstants.showJSureFindings()) {
+			allFilters.add(FilterVerificationStatus.FACTORY);
+			allFilters.add(FilterResultType.FACTORY);
+			allFilters.add(FilterModels.FACTORY);
+		}
 		f_allFilters = Collections.unmodifiableSet(allFilters);
 	}
 
