@@ -24,13 +24,18 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
 import com.surelogic.common.i18n.I18N;
+import com.surelogic.common.jdbc.ConnectionQuery;
 import com.surelogic.common.jdbc.DBType;
 import com.surelogic.common.jdbc.FutureDatabaseException;
 import com.surelogic.common.jdbc.JDBCUtils;
+import com.surelogic.common.jdbc.Query;
 import com.surelogic.common.jdbc.SchemaUtility;
 import com.surelogic.common.jdbc.StatementException;
+import com.surelogic.common.jdbc.StringResultHandler;
 import com.surelogic.common.jdbc.TransactionException;
 import com.surelogic.common.logging.SLLogger;
+import com.surelogic.sierra.jdbc.settings.ScanFilterDO;
+import com.surelogic.sierra.jdbc.settings.ScanFilters;
 import com.surelogic.sierra.schema.SierraSchemaData;
 
 /**
@@ -414,6 +419,39 @@ public class Server {
 		settings.put("SmtpUser", notification.getUser());
 		settings.put("SmtpPass", notification.getPassword());
 		setSiteSettings("notification", settings);
+	}
+
+	/**
+	 * Get the server name.
+	 * 
+	 * @return
+	 * @throws SQLException
+	 */
+	public String getName() throws SQLException {
+		return getSiteSetting("Name");
+	}
+
+	/**
+	 * Set the server name. This will also modify the name of the default scan
+	 * filter (as long as we own it!).
+	 * 
+	 * @param name
+	 * @throws SQLException
+	 */
+	public void setName(final String name) throws SQLException {
+		if (name == null) {
+			throw new IllegalArgumentException("Name may not be null.");
+		}
+		setSiteSetting("Name", name);
+		final Query q = new ConnectionQuery(conn);
+		final ScanFilters sf = new ScanFilters(q);
+		final ScanFilterDO filter = sf.getDefaultScanFilter();
+		if (q.prepared("Definitions.getDefinitionServer",
+				new StringResultHandler()).call(filter.getUid()).equals(
+				getUid())) {
+			filter.setName(name + " Defaults");
+			sf.updateScanFilter(filter, nextRevision());
+		}
 	}
 
 	private static String getLiteral(final Object value) {
