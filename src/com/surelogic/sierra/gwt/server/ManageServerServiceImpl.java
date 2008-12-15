@@ -90,7 +90,7 @@ public class ManageServerServiceImpl extends SierraServiceServlet implements
 			if (n != null) {
 				final Integer port = n.getPort();
 				info.setEmail(new EmailInfo(n.getHost(), port == null ? null
-						: port.toString(), n.getUser(), n.getPass(), n
+						: port.toString(), n.getUser(), n.getPassword(), n
 						.getFromEmail(), n.getToEmail()));
 			} else {
 				info.setEmail(new EmailInfo());
