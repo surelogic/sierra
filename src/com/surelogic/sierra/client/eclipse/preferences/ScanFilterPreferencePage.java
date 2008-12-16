@@ -500,7 +500,7 @@ public class ScanFilterPreferencePage extends PreferencePage implements
 	private IStatus updateSettings(List<String> filterUUIDList) {
 		try {
 			Data.getInstance().withTransaction(SettingQueries
-					.updateGlobalFilterSet(filterUUIDList));
+					.updateDefaultScanFilter(filterUUIDList));
 		} catch (final TransactionException e) {
 			final int errNo = 56;
 			final String msg = I18N.err(errNo);
