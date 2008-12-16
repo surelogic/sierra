@@ -98,7 +98,7 @@ public class SchemaUtil {
 			final String serverUuid) {
 		final Query q = new ConnectionQuery(c);
 		if (q.prepared("ScanFilters.selectDefault", new StringResultHandler())
-				.call() == SettingQueries.LOCAL_UUID) {
+				.call().equals(SettingQueries.LOCAL_UUID)) {
 			final String newUuid = UUID.randomUUID().toString();
 			q.prepared("ScanFilters.updateUuid").call(newUuid,
 					SettingQueries.LOCAL_UUID);
