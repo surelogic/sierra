@@ -1,10 +1,8 @@
 package com.surelogic.sierra.gwt.client.header;
 
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
-import com.surelogic.sierra.gwt.client.content.ContentRegistry;
 import com.surelogic.sierra.gwt.client.content.categories.CategoriesContent;
 import com.surelogic.sierra.gwt.client.content.finding.FindingContent;
 import com.surelogic.sierra.gwt.client.content.findingtypes.FindingTypesContent;
@@ -34,11 +32,7 @@ public final class UserHeader extends AuthenticatedHeader {
 		manageSite = addUtilityItem("Manage Site", new ClickListener() {
 
 			public void onClick(final Widget sender) {
-				final String url = ContentRegistry
-						.getContentUrl(SettingsContent.getInstance());
-				Window
-						.open(url, null,
-								"menubar=yes,location=yes,resizable=yes,scrollbars=yes,status=yes");
+				SettingsContent.getInstance().show();
 			}
 		});
 		manageSiteSeparator = addUtilitySeparator();
