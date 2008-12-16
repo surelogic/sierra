@@ -68,7 +68,7 @@ public class ManageUserAdminServiceImpl extends SierraServiceServlet implements
 				final List<UserAccount> userAccounts = new ArrayList<UserAccount>(
 						users.size());
 				for (final User u : users) {
-					userAccounts.add(convertUser(man, u));
+					userAccounts.add(convertUser(man, u, server));
 				}
 				return userAccounts;
 			}
@@ -83,7 +83,7 @@ public class ManageUserAdminServiceImpl extends SierraServiceServlet implements
 					public List<UserAccount> perform(final Connection conn,
 							final Server server, final User user)
 							throws SQLException {
-						return listUsers(conn);
+						return listUsers(conn, server);
 					}
 				});
 	}
@@ -98,7 +98,7 @@ public class ManageUserAdminServiceImpl extends SierraServiceServlet implements
 						.getInstance(conn);
 				final User user = man.getUserByName(targetUser);
 				if (user != null) {
-					return convertUser(man, user);
+					return convertUser(man, user, server);
 				}
 				return null;
 			}
@@ -145,7 +145,7 @@ public class ManageUserAdminServiceImpl extends SierraServiceServlet implements
 				man.changeUserName(account.getId(), account.getUserName());
 				final User targetUser = man.getUserByName(targetUserName);
 				final UserAccount targetUserAccount = convertUser(man, man
-						.getUserByName(targetUserName));
+						.getUserByName(targetUserName), server);
 				// Make sure that the user name of the session stays valid
 				if (targetUser.getId() == user.getId()) {
 					getThreadLocalRequest().getSession().setAttribute(
@@ -155,7 +155,7 @@ public class ManageUserAdminServiceImpl extends SierraServiceServlet implements
 						&& targetUserAccount.isAdministrator()
 						&& (!account.isActive() || !account.isAdministrator())) {
 					int count = 0;
-					for (final UserAccount u : listUsers(conn)) {
+					for (final UserAccount u : listUsers(conn, server)) {
 						if (u.isActive() && u.isAdministrator()) {
 							count++;
 						}
@@ -191,25 +191,26 @@ public class ManageUserAdminServiceImpl extends SierraServiceServlet implements
 		return Boolean.TRUE.equals(isAdmin);
 	}
 
-	private List<UserAccount> listUsers(final Connection conn)
-			throws SQLException {
+	private List<UserAccount> listUsers(final Connection conn,
+			final Server server) throws SQLException {
 		final ServerUserManager man = ServerUserManager.getInstance(conn);
 
 		final List<User> users = man.listUsers();
 		final List<UserAccount> userAccounts = new ArrayList<UserAccount>(users
 				.size());
 		for (final User u : users) {
-			userAccounts.add(convertUser(man, u));
+			userAccounts.add(convertUser(man, u, server));
 		}
 		return userAccounts;
 	}
 
-	private UserAccount convertUser(final ServerUserManager man, final User u)
-			throws SQLException {
+	private UserAccount convertUser(final ServerUserManager man, final User u,
+			final Server server) throws SQLException {
 		final String userName = u.getName();
 		final boolean isAdmin = man.isUserInGroup(userName, SierraGroup.ADMIN
 				.getName());
-		return new UserAccount(u.getId(), userName, isAdmin, u.isActive());
+		return new UserAccount(u.getId(), userName, server.getName(), isAdmin,
+				u.isActive());
 	}
 
 	public void updateUsersStatus(final List<String> users,
