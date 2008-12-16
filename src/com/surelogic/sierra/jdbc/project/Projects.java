@@ -27,7 +27,9 @@ public final class Projects {
 		return q.prepared("Projects.listProjects", new RowHandler<ProjectDO>() {
 			public ProjectDO handle(final Row r) {
 				final ProjectDO project = new ProjectDO();
+				final long id = r.nextLong();
 				final String uuid = r.nextString();
+				project.setId(id);
 				project.setUuid(uuid);
 				project.setName(uuid);
 				project.setScanFilter(r.nextString());
