@@ -449,7 +449,7 @@ public class Server {
 		if (q.prepared("Definitions.getDefinitionServer",
 				new StringResultHandler()).call(filter.getUid()).equals(
 				getUid())) {
-			filter.setName(name + " Defaults");
+			filter.setName(String.format("Defaults for %s", name));
 			sf.updateScanFilter(filter, nextRevision());
 		}
 	}
