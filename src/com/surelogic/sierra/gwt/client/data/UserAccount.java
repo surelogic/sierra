@@ -7,6 +7,7 @@ public final class UserAccount implements Serializable {
 
 	private long id;
 	private String userName;
+	private String serverName;
 	private boolean isAdministrator;
 	private boolean isActive;
 
@@ -14,20 +15,21 @@ public final class UserAccount implements Serializable {
 		super();
 	}
 
-	public UserAccount(long id, String user, boolean isAdministrator,
-			boolean isActive) {
+	public UserAccount(final long id, final String user, final String server,
+			final boolean isAdministrator, final boolean isActive) {
 		super();
 		this.id = id;
 		this.userName = user;
 		this.isAdministrator = isAdministrator;
 		this.isActive = isActive;
+		this.serverName = server;
 	}
 
 	public long getId() {
 		return id;
 	}
 
-	public void setId(long id) {
+	public void setId(final long id) {
 		this.id = id;
 	}
 
@@ -35,7 +37,7 @@ public final class UserAccount implements Serializable {
 		return userName;
 	}
 
-	public void setUserName(String userName) {
+	public void setUserName(final String userName) {
 		this.userName = userName;
 	}
 
@@ -43,7 +45,7 @@ public final class UserAccount implements Serializable {
 		return isAdministrator;
 	}
 
-	public void setAdministrator(boolean isAdministrator) {
+	public void setAdministrator(final boolean isAdministrator) {
 		this.isAdministrator = isAdministrator;
 	}
 
@@ -51,8 +53,16 @@ public final class UserAccount implements Serializable {
 		return isActive;
 	}
 
-	public void setActive(boolean isActive) {
+	public void setActive(final boolean isActive) {
 		this.isActive = isActive;
+	}
+
+	public String getServerName() {
+		return serverName;
+	}
+
+	public void setServerName(final String serverName) {
+		this.serverName = serverName;
 	}
 
 }
