@@ -75,10 +75,12 @@ public class TeamServerView extends ViewPart {
 		data = new GridData(SWT.CENTER, SWT.TOP, false, true);
 		logBar.setLayoutData(data);
 		final ToolItem jettyConsoleLogItem = new ToolItem(logBar, SWT.RADIO);
-		jettyConsoleLogItem.setImage(SLImages.getImage(CommonImages.IMG_CONSOLE));
+		jettyConsoleLogItem.setImage(SLImages
+				.getImage(CommonImages.IMG_CONSOLE));
 		jettyConsoleLogItem.setToolTipText("Show Jetty Console Output");
 		final ToolItem jettyRequestLogItem = new ToolItem(logBar, SWT.RADIO);
-		jettyRequestLogItem.setImage(SLImages.getImage(CommonImages.IMG_JETTY_LOG));
+		jettyRequestLogItem.setImage(SLImages
+				.getImage(CommonImages.IMG_JETTY_LOG));
 		jettyRequestLogItem.setToolTipText("Show Jetty Request Log");
 
 		final Text logText = new Text(logGroup, SWT.MULTI | SWT.H_SCROLL
@@ -89,6 +91,9 @@ public class TeamServerView extends ViewPart {
 
 		final String menuText = "Show Server Logs";
 
+		/*
+		 * Setup a context menu.
+		 */
 		final Menu logContextMenu = new Menu(logBar.getShell(), SWT.POP_UP);
 		final MenuItem toggleLogVisibilityMenuItem = new MenuItem(
 				logContextMenu, SWT.CHECK);
@@ -99,6 +104,9 @@ public class TeamServerView extends ViewPart {
 		trafficLight.setMenu(logContextMenu);
 		portLabel.setMenu(logContextMenu);
 
+		/*
+		 * Setup the view menu.
+		 */
 		final IMenuManager menu = getViewSite().getActionBars()
 				.getMenuManager();
 		final Action showLogAction = new Action(menuText, Action.AS_CHECK_BOX) {
