@@ -566,6 +566,30 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 				});
 	}
 
+	public ScanFilter getDefaultScanFilter() {
+		return ConnectionFactory.getInstance().withUserTransaction(
+				new UserQuery<ScanFilter>() {
+					public ScanFilter perform(final Query q, final Server s,
+							final User u) {
+						final ScanFilters filters = new ScanFilters(q);
+						return getFilter(filters.getDefaultScanFilter(),
+								new FindingTypes(q), new Categories(q));
+					}
+				});
+	}
+
+	public Status setDefaultScanFilter(final ScanFilter f) {
+		return ConnectionFactory.getInstance().withUserTransaction(
+				new UserQuery<Status>() {
+					public Status perform(final Query q, final Server s,
+							final User u) {
+						final ScanFilters filters = new ScanFilters(q);
+						filters.setDefaultScanFilter(f.getUuid());
+						return Status.success("Default scan filter saved.");
+					}
+				});
+	}
+
 	private static Importance importance(final ImportanceView i) {
 		if (i == null) {
 			return null;
