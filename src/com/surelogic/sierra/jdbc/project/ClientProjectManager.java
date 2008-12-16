@@ -35,7 +35,7 @@ public final class ClientProjectManager extends ProjectManager {
 		super(conn);
 		findingManager = ClientFindingManager.getInstance(conn);
 		insertSynchRecord = conn
-				.prepareStatement("INSERT INTO SYNCH (PROJECnT_ID,DATE_TIME,COMMIT_REVISION,PRIOR_REVISION,COMMIT_COUNT,UPDATE_COUNT) VALUES (?,?,?,?,?,?)");
+				.prepareStatement("INSERT INTO SYNCH (PROJECT_ID,DATE_TIME,COMMIT_REVISION,PRIOR_REVISION,COMMIT_COUNT,UPDATE_COUNT) VALUES (?,?,?,?,?,?)");
 		deleteSynchByProject = conn
 				.prepareStatement("DELETE FROM SYNCH WHERE PROJECT_ID = ?");
 		selectServerUid = conn
