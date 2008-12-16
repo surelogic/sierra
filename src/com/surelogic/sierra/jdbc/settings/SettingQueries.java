@@ -269,6 +269,14 @@ public class SettingQueries {
 		};
 	}
 
+	/**
+	 * Copy the local default settings to the given server.
+	 * 
+	 * @param loc
+	 * @param name
+	 *            the name for the settings.
+	 * @return
+	 */
 	public static NullDBQuery copyDefaultScanFilterToServer(
 			final SierraServerLocation loc, final String name) {
 		return new NullDBQuery() {
