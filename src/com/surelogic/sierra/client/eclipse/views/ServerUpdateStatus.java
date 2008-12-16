@@ -26,4 +26,16 @@ class ServerUpdateStatus {
 		return filtersResponse.numChanged() + 
 		       filtersResponse.getDeletions().size();
 	}
+
+	public Iterable<FilterSet> getUpdatedCategories() {
+		return categoriesResponse.getFilterSets();
+	}
+	
+	public Iterable<ScanFilter> getScanFilters() {
+		return filtersResponse.getScanFilters();
+	}
+	
+	public boolean isChanged(ScanFilter f) {
+		return filtersResponse.isChanged(f);
+	}
 }

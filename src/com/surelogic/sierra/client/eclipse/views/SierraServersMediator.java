@@ -106,6 +106,7 @@ import com.surelogic.sierra.jdbc.scan.ScanInfo;
 import com.surelogic.sierra.jdbc.scan.Scans;
 import com.surelogic.sierra.jdbc.settings.ServerScanFilterInfo;
 import com.surelogic.sierra.jdbc.settings.SettingQueries;
+import com.surelogic.sierra.tool.message.FilterSet;
 import com.surelogic.sierra.tool.message.ListCategoryResponse;
 import com.surelogic.sierra.tool.message.ServerMismatchException;
 import com.surelogic.sierra.tool.message.SierraServerLocation;
@@ -1663,9 +1664,18 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 						ChangeStatus.REMOTE);
 			}
 			label.setChangeStatus(ChangeStatus.REMOTE);
+			createChangedCategories(update, label);
 			return root;
 		}
 		return null;
+	}
+	
+	private void createChangedCategories(ServerUpdateStatus update, ServersViewContent parent) {
+		List<ServersViewContent> children = new ArrayList<ServersViewContent>();
+		for(FilterSet f : update.getUpdatedCategories()) {
+			createLabel(parent, children, delta + f.getName(), ChangeStatus.REMOTE);
+		}
+		parent.setChildren(children.toArray(emptyChildren));
 	}
 
 	private ServersViewContent createScanFilters(
@@ -1677,8 +1687,17 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 					SLImages.getImage(CommonImages.IMG_FILTER));
 			root.setText(delta + SCAN_FILTERS);
 
-			createLabel(root, delta + num + " scan filter" + s(num)
-					+ " to update", ChangeStatus.REMOTE);
+			ServersViewContent label = createLabel(root, delta + num + " scan filter" + s(num)
+					                               + " to update", ChangeStatus.REMOTE);
+			List<ServersViewContent> children = new ArrayList<ServersViewContent>();
+			for(com.surelogic.sierra.tool.message.ScanFilter f : update.getScanFilters()) {
+				if (update.isChanged(f)) {
+					createLabel(label, children, delta + f.getName(), ChangeStatus.REMOTE);
+				} else {
+					createLabel(label, children, f.getName(), ChangeStatus.NONE);
+				}
+			}
+			label.setChildren(children.toArray(emptyChildren));
 			return root;
 		}
 		return null;
@@ -1782,6 +1801,13 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 		return c;
 	}
 
+	private ServersViewContent createLabel(final ServersViewContent parent,
+			final List<ServersViewContent> children, final String text, final ChangeStatus delta) {
+		ServersViewContent c = createLabel(parent, children, text);
+		c.setChangeStatus(delta);
+		return c;
+	}
+	
 	private ServersViewContent createLabel(final ServersViewContent parent,
 			final List<ServersViewContent> children, final String text) {
 		final ServersViewContent c = new ServersViewContent(parent, null);
