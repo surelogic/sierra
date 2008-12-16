@@ -35,6 +35,10 @@ img {
 	margin-left: 2px;
 }
 
+.outlined-table {
+	border: 1px solid black;
+}
+
 .logo {
 	padding: 4px;
 }

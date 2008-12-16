@@ -13,7 +13,6 @@ import com.google.gwt.user.client.ui.TextBoxBase;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.FlexTable.FlexCellFormatter;
-import com.google.gwt.user.client.ui.HTMLTable.RowFormatter;
 import com.surelogic.sierra.gwt.client.Context;
 import com.surelogic.sierra.gwt.client.content.ContentComposite;
 import com.surelogic.sierra.gwt.client.data.EmailInfo;
@@ -66,7 +65,7 @@ public final class SettingsContent extends ContentComposite {
 						"<h3>Version Information</h3><span class=\"settings-info-text\">The below table reports version information about this team server.</span>"));
 		final FlexTable t = new FlexTable();
 		final FlexCellFormatter tf = t.getFlexCellFormatter();
-		t.addStyleName("overview-table");
+		t.addStyleName("outlined-table");
 		t.setWidget(2, 2, availableVersion);
 		t.setText(0, 0, "Software");
 		tf.setRowSpan(0, 0, 2);
@@ -76,13 +75,6 @@ public final class SettingsContent extends ContentComposite {
 		t.setText(1, 1, "Available");
 		t.setText(0, 1, "Database Schema");
 		tf.setColSpan(0, 1, 2);
-		final RowFormatter rf = t.getRowFormatter();
-		rf.addStyleName(0, "overview-header");
-		rf.addStyleName(1, "overview-header");
-		rf.addStyleName(2, "overview-data");
-		for (int i = 0; i < 3; i++) {
-			tf.addStyleName(2, i, "cell-number");
-		}
 		panel.add(t);
 		adminEmailTextBox.setWidth("40ex");
 		serverEmailTextBox.setWidth("40ex");
