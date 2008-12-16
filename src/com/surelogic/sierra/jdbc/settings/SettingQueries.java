@@ -15,12 +15,14 @@ import java.util.Set;
 import java.util.logging.Level;
 
 import com.surelogic.common.jdbc.DBQuery;
+import com.surelogic.common.jdbc.NullDBQuery;
 import com.surelogic.common.jdbc.Query;
 import com.surelogic.common.jdbc.Queryable;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.jdbc.tool.FindingTypeDO;
 import com.surelogic.sierra.jdbc.tool.FindingTypes;
 import com.surelogic.sierra.tool.message.BugLinkServiceClient;
+import com.surelogic.sierra.tool.message.CreateScanFilterRequest;
 import com.surelogic.sierra.tool.message.FilterSet;
 import com.surelogic.sierra.tool.message.ListCategoryRequest;
 import com.surelogic.sierra.tool.message.ListCategoryResponse;
@@ -263,6 +265,23 @@ public class SettingQueries {
 				final ScanFilterDO sf = filters
 						.getScanFilterByProject(projectName);
 				return scanFilterView(q, sf);
+			}
+		};
+	}
+
+	public static NullDBQuery copyDefaultScanFilterToServer(
+			final SierraServerLocation loc, final String name) {
+		return new NullDBQuery() {
+			@Override
+			public void doPerform(final Query q) {
+				final ScanFilters filters = new ScanFilters(q);
+				final ScanFilter f = ScanFilters.convert(filters
+						.getDefaultScanFilter(), null);
+				final CreateScanFilterRequest r = new CreateScanFilterRequest();
+				r.setName(name);
+				r.getCategoryFilter().addAll(f.getCategoryFilter());
+				r.getTypeFilter().addAll(f.getTypeFilter());
+				BugLinkServiceClient.create(loc).createScanFilter(r);
 			}
 		};
 	}
