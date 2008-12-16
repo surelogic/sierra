@@ -11,15 +11,12 @@ import com.surelogic.sierra.gwt.client.data.UserAccount;
 
 public abstract class AuthenticatedHeader extends HeaderComposite {
 	private Label userName;
+	private Label server;
 
 	@Override
 	protected void onInitialize(final VerticalPanel rootPanel) {
-		final StringBuffer location = new StringBuffer();
-		location.append("Logged in to ");
-		location.append(GWT.getHostPageBaseURL().replaceFirst(".*//", "")
-				.replaceFirst("/sl.*", ""));
-		location.append(" as");
-		addUtilityItem(location.toString(), null);
+
+		server = addUtilityItem(null, null);
 
 		userName = addUtilityItem(null, null);
 		userName.addStyleName("user");
@@ -27,7 +24,7 @@ public abstract class AuthenticatedHeader extends HeaderComposite {
 
 		addUtilities();
 
-		addUtilityItem("Log out", new ClickListener() {
+		addUtilityItem("Log Out", new ClickListener() {
 
 			public void onClick(final Widget sender) {
 				SessionManager.logout(null);
@@ -35,6 +32,19 @@ public abstract class AuthenticatedHeader extends HeaderComposite {
 		});
 
 		addTabs();
+	}
+
+	private String getLocation(final String serverName) {
+		final StringBuffer location = new StringBuffer();
+		location.append("Logged in to ");
+		if (serverName == null) {
+			location.append(GWT.getHostPageBaseURL().replaceFirst(".*//", "")
+					.replaceFirst("/sl.*", ""));
+		} else {
+			location.append(serverName);
+		}
+		location.append(" as");
+		return location.toString();
 	}
 
 	protected abstract void addUtilities();
@@ -60,6 +70,7 @@ public abstract class AuthenticatedHeader extends HeaderComposite {
 	protected void onUpdateUser(final UserAccount user) {
 		if (user != null) {
 			userName.setText(user.getUserName());
+			server.setText(getLocation(user.getServerName()));
 		}
 	}
 }
