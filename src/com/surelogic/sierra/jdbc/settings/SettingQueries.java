@@ -167,7 +167,7 @@ public class SettingQueries {
 			final SierraServerLocation loc, final ListScanFilterRequest request) {
 		return getScanFilters(loc, request, false);
 	}
-	
+
 	private static final DBQuery<ServerScanFilterInfo> getScanFilters(
 			final SierraServerLocation loc,
 			final ListScanFilterRequest request, final boolean update) {
@@ -175,7 +175,7 @@ public class SettingQueries {
 				.create(loc).listScanFilters(request);
 		final Set<ScanFilter> changed = new HashSet<ScanFilter>();
 		return new DBQuery<ServerScanFilterInfo>() {
-			public ServerScanFilterInfo perform(Query q) {
+			public ServerScanFilterInfo perform(final Query q) {
 				final ScanFilters filters = new ScanFilters(q);
 				final Queryable<Void> delete = update ? q
 						.prepared("Definitions.deleteDefinition") : null;
@@ -206,12 +206,17 @@ public class SettingQueries {
 						filters.deleteScanFilter(uid);
 					}
 				}
-				return new ServerScanFilterInfo(response.getScanFilter(), changed, 
-						                        response.getDeletions());
+				return new ServerScanFilterInfo(response.getScanFilter(),
+						changed, response.getDeletions());
 			}
 		};
 	}
 
+	/**
+	 * Returns a list of the scan filters that are currently available locally.
+	 * 
+	 * @return
+	 */
 	public static final DBQuery<List<ScanFilterDO>> getLocalScanFilters() {
 		return new DBQuery<List<ScanFilterDO>>() {
 			public List<ScanFilterDO> perform(final Query q) {
@@ -264,21 +269,51 @@ public class SettingQueries {
 	}
 
 	/**
-	 * Update the global filter set locally. Do not increment the revision.
+	 * Updates the default scan filter to be equivalent to the given scan
+	 * filter. This is a copy operation, so later changes to the provided scan
+	 * filter will have no effect on the local defaults.
+	 * 
+	 * @param scanFilterUuid
+	 * @return
+	 */
+	public static NullDBQuery updateDefaultScanFilter(
+			final String scanFilterUuid) {
+		return new NullDBQuery() {
+			@Override
+			public void doPerform(final Query q) {
+				final ScanFilters filters = new ScanFilters(q);
+				final ScanFilterDO sf = filters.getScanFilter(scanFilterUuid);
+				if (sf == null) {
+					throw new IllegalArgumentException(String.format(
+							"%s is not a locally available scan filter.",
+							scanFilterUuid));
+				}
+				sf.setName(LOCAL_NAME);
+				sf.setUid(LOCAL_UUID);
+				sf.setRevision(0L);
+				filters.writeScanFilter(sf);
+			}
+		};
+	}
+
+	/**
+	 * Update the default filter set locally. Do not increment the revision.
 	 * 
 	 * @param uids
 	 *            a list of finding type identifiers to include in scans
 	 * @return
 	 */
-	public static NullDBQuery updateGlobalFilterSet(
+	public static NullDBQuery updateDefaultScanFilter(
 			final Collection<String> uids) {
 		return new NullDBQuery() {
 			@Override
 			public void doPerform(final Query q) {
 				final ScanFilters s = new ScanFilters(q);
-				final ScanFilterDO scanFilter = s.getDefaultScanFilter();
+				final ScanFilterDO scanFilter = new ScanFilterDO();
+				scanFilter.setName(LOCAL_NAME);
+				scanFilter.setUid(LOCAL_UUID);
+				scanFilter.setRevision(0L);
 				final Set<TypeFilterDO> types = scanFilter.getFilterTypes();
-				types.clear();
 				for (final String uid : uids) {
 					types.add(new TypeFilterDO(uid, null, false));
 				}
