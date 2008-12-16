@@ -102,12 +102,16 @@ import com.surelogic.sierra.client.eclipse.wizards.ServerImportWizard;
 import com.surelogic.sierra.jdbc.finding.ClientFindingManager;
 import com.surelogic.sierra.jdbc.finding.FindingAudits;
 import com.surelogic.sierra.jdbc.project.ClientProjectManager;
+import com.surelogic.sierra.jdbc.project.ProjectDO;
 import com.surelogic.sierra.jdbc.scan.ScanInfo;
 import com.surelogic.sierra.jdbc.scan.Scans;
+import com.surelogic.sierra.jdbc.settings.ScanFilterDO;
+import com.surelogic.sierra.jdbc.settings.ScanFilters;
 import com.surelogic.sierra.jdbc.settings.ServerScanFilterInfo;
 import com.surelogic.sierra.jdbc.settings.SettingQueries;
 import com.surelogic.sierra.tool.message.FilterSet;
 import com.surelogic.sierra.tool.message.ListCategoryResponse;
+import com.surelogic.sierra.tool.message.ScanFilter;
 import com.surelogic.sierra.tool.message.ServerMismatchException;
 import com.surelogic.sierra.tool.message.SierraServerLocation;
 import com.surelogic.sierra.tool.message.SierraServiceClientException;
@@ -142,6 +146,8 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 	 */
 	private final Map<String, List<SyncTrailResponse>> responseMap = new HashMap<String, List<SyncTrailResponse>>();
 
+	private final Map<String, ProjectDO> projectMap = new HashMap<String,ProjectDO>();
+	
 	/**
 	 * Used in a similar way as responseMap
 	 */
@@ -1286,9 +1292,20 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 			synchronized (responseMap) {
 				responseMap.clear();
 				serverResponseMap.clear();
+				projectMap.clear();
 				
 				handler.queryForProjects(f_manager);
 				handler.queryServers(f_manager);
+				
+				com.surelogic.sierra.jdbc.project.Projects projects =
+					new com.surelogic.sierra.jdbc.project.Projects(c);
+				ScanFilters filters = new ScanFilters(c);
+				for(ProjectDO p : projects.listProjects()) {
+					// Update to use scan filter's name, not uid
+					ScanFilterDO filter = filters.getScanFilter(p.getScanFilter());
+					p.setScanFilter(filter.getName());
+					projectMap.put(p.getName(), p);
+				}
 			}
 			c.commit();
 
@@ -1402,9 +1419,10 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 					// server?)
 					final File scan = NewScan.getScanDocumentFile(name);
 					final ScanInfo info = sm.getLatestScanInfo(name);
+					final ProjectDO dbInfo = projectMap.get(name);
 					final ProjectStatus s = new ProjectStatus(jp, scan, info,
 							findings, responses, numServerProblems,
-							numProjectProblems);
+							numProjectProblems, dbInfo);
 					projects.add(s);
 				}
 				serverUpdates = new HashMap<SierraServer, ServerUpdateStatus>(
@@ -1893,6 +1911,13 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 					+ server.getLabel());
 			problems.setServerStatus(ServerStatus.WARNING);
 		}
+		if (ps.localDBInfo != null) {
+			final ServersViewContent scanFilter = 
+				new ServersViewContent(root, SLImages.getImage(CommonImages.IMG_FILTER));
+			contents.add(scanFilter);
+			scanFilter.setText("Scan filter: "+ps.localDBInfo.getScanFilter());
+			scanFilter.setData(ps.localDBInfo);
+		}		
 		if (ps.serverData == null) {
 			if (server != null) {
 				final ServersViewContent noServer = new ServersViewContent(
