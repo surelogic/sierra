@@ -44,6 +44,10 @@ public interface SettingsServiceAsync {
 
 	void deleteScanFilter(String uuid, AsyncCallback<Status> callback);
 
+	void getDefaultScanFilter(AsyncCallback<ScanFilter> callback);
+
+	void setDefaultScanFilter(ScanFilter f, AsyncCallback<Status> callback);
+
 	void listServerLocations(AsyncCallback<List<ServerLocation>> callback);
 
 	void deleteServerLocation(String uuid, AsyncCallback<Status> callback);

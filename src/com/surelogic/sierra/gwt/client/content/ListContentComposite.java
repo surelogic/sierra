@@ -54,6 +54,7 @@ public abstract class ListContentComposite<E extends Cacheable, C extends Cache<
 			}
 
 			public void onRefresh(final Cache<E> cache, final Throwable failure) {
+				onCacheRefresh(cache, failure);
 				listView.clearStatus();
 				listView.refresh();
 				refreshContext(ContextManager.getContext());
@@ -129,6 +130,10 @@ public abstract class ListContentComposite<E extends Cacheable, C extends Cache<
 				}
 			}
 		}
+	}
+
+	protected void onCacheRefresh(final Cache<E> cache, final Throwable failure) {
+		// override if needed
 	}
 
 	protected abstract void onSelectionChanged(E item);

@@ -1,5 +1,6 @@
 package com.surelogic.sierra.gwt.client.content.scanfilters;
 
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -10,6 +11,7 @@ import com.surelogic.sierra.gwt.client.Context;
 import com.surelogic.sierra.gwt.client.content.ListContentComposite;
 import com.surelogic.sierra.gwt.client.data.ScanFilter;
 import com.surelogic.sierra.gwt.client.data.Status;
+import com.surelogic.sierra.gwt.client.data.cache.Cache;
 import com.surelogic.sierra.gwt.client.data.cache.ScanFilterCache;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.service.callback.StandardCallback;
@@ -23,8 +25,11 @@ public class ScanFiltersContent extends
 		ListContentComposite<ScanFilter, ScanFilterCache> {
 	private final ScanFilterView viewer = new ScanFilterView();
 	private final ScanFilterEditor editor = new ScanFilterEditor();
+	private Label setDefaultAction;
 	private Label editAction;
 	private Label deleteAction;
+
+	private ScanFilter defaultScanFilter;
 
 	@Override
 	protected void onInitialize(final DockPanel rootPanel,
@@ -34,6 +39,30 @@ public class ScanFiltersContent extends
 		addAction(new CreateScanFilterForm());
 
 		viewer.initialize();
+
+		setDefaultAction = StyleHelper.add(new Label("Set as Default", false),
+				Style.CLICKABLE);
+		setDefaultAction.addClickListener(new ClickListener() {
+
+			public void onClick(final Widget sender) {
+				ServiceHelper.getSettingsService().setDefaultScanFilter(
+						viewer.getSelection(), new StatusCallback() {
+
+							@Override
+							protected void doStatus(final Status status) {
+								if (!status.isSuccess()) {
+									Window
+											.alert("Unable to save default scan filter: "
+													+ status.getMessage());
+								} else {
+									ScanFilterCache.getInstance().refresh(true);
+								}
+							}
+						});
+			}
+		});
+		viewer.addAction(setDefaultAction);
+		viewer.setActionVisible(setDefaultAction, false);
 
 		final Label expandCategoriesAction = StyleHelper.add(new Label(
 				"Expand Categories", false), Style.CLICKABLE);
@@ -98,8 +127,37 @@ public class ScanFiltersContent extends
 	}
 
 	@Override
+	protected Widget getItemDecorator(final ScanFilter item) {
+		if (item != null && item.equals(defaultScanFilter)) {
+			final Widget w = StyleHelper.add(new Label("(Default)", false),
+					Style.ITALICS);
+			w
+					.setTitle(item.getName()
+							+ " is used by all projects without a manually configured Scan Filter.");
+			return w;
+		}
+		return null;
+	}
+
+	@Override
 	protected boolean isItemVisible(final ScanFilter item, final String query) {
 		return LangUtil.containsIgnoreCase(item.getName(), query);
+	}
+
+	@Override
+	protected void onCacheRefresh(final Cache<ScanFilter> cache,
+			final Throwable failure) {
+		ServiceHelper.getSettingsService().getDefaultScanFilter(
+				new StandardCallback<ScanFilter>() {
+
+					@Override
+					protected void doSuccess(final ScanFilter result) {
+						if (!LangUtil.equals(defaultScanFilter, result)) {
+							defaultScanFilter = result;
+							cache.refresh();
+						}
+					}
+				});
 	}
 
 	@Override
@@ -118,6 +176,9 @@ public class ScanFiltersContent extends
 			}
 		} else {
 			viewer.setSelection(filter);
+			viewer.setActionVisible(setDefaultAction,
+					defaultScanFilter == null ? false : !defaultScanFilter
+							.equals(filter));
 			final boolean localFilter = filter != null && filter.isLocal();
 			viewer.setActionVisible(editAction, localFilter);
 			viewer.setActionVisible(deleteAction, localFilter);

@@ -108,6 +108,21 @@ public interface SettingsService extends RemoteService {
 	Status updateScanFilter(ScanFilter f);
 
 	/**
+	 * Returns the default scan filter used by projects on this server.
+	 * 
+	 * @return
+	 */
+	ScanFilter getDefaultScanFilter();
+
+	/**
+	 * Sets the default scan filter used by projects on this server.
+	 * 
+	 * @param f
+	 * @return
+	 */
+	Status setDefaultScanFilter(ScanFilter f);
+
+	/**
 	 * @return
 	 */
 	List<FindingType> getFindingTypes();
