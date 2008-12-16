@@ -314,4 +314,16 @@ public class ScanFilters {
 		return getScanFilter(q.prepared("ScanFilters.selectDefault",
 				new StringResultHandler()).call());
 	}
+
+	/**
+	 * Change the default scan filter.
+	 * 
+	 * @param scanFilterUuid
+	 */
+	public void setDefaultScanFilter(final String scanFilterUuid) {
+		if (scanFilterUuid == null) {
+			throw new IllegalArgumentException("May not be null.");
+		}
+		q.prepared("ScanFilters.updateDefault").call(scanFilterUuid);
+	}
 }
