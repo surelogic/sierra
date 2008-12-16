@@ -15,7 +15,6 @@ import java.util.Set;
 import java.util.logging.Level;
 
 import com.surelogic.common.jdbc.DBQuery;
-import com.surelogic.common.jdbc.NullDBQuery;
 import com.surelogic.common.jdbc.Query;
 import com.surelogic.common.jdbc.Queryable;
 import com.surelogic.common.logging.SLLogger;
@@ -276,11 +275,10 @@ public class SettingQueries {
 	 * @param scanFilterUuid
 	 * @return
 	 */
-	public static NullDBQuery updateDefaultScanFilter(
+	public static DBQuery<ScanFilterDO> updateDefaultScanFilter(
 			final String scanFilterUuid) {
-		return new NullDBQuery() {
-			@Override
-			public void doPerform(final Query q) {
+		return new DBQuery<ScanFilterDO>() {
+			public ScanFilterDO perform(final Query q) {
 				final ScanFilters filters = new ScanFilters(q);
 				final ScanFilterDO sf = filters.getScanFilter(scanFilterUuid);
 				if (sf == null) {
@@ -292,6 +290,7 @@ public class SettingQueries {
 				sf.setUid(LOCAL_UUID);
 				sf.setRevision(0L);
 				filters.writeScanFilter(sf);
+				return sf;
 			}
 		};
 	}
@@ -303,11 +302,10 @@ public class SettingQueries {
 	 *            a list of finding type identifiers to include in scans
 	 * @return
 	 */
-	public static NullDBQuery updateDefaultScanFilter(
+	public static DBQuery<ScanFilterDO> updateDefaultScanFilter(
 			final Collection<String> uids) {
-		return new NullDBQuery() {
-			@Override
-			public void doPerform(final Query q) {
+		return new DBQuery<ScanFilterDO>() {
+			public ScanFilterDO perform(final Query q) {
 				final ScanFilters s = new ScanFilters(q);
 				final ScanFilterDO scanFilter = new ScanFilterDO();
 				scanFilter.setName(LOCAL_NAME);
@@ -318,6 +316,7 @@ public class SettingQueries {
 					types.add(new TypeFilterDO(uid, null, false));
 				}
 				s.writeScanFilter(scanFilter);
+				return scanFilter;
 			}
 		};
 	}
