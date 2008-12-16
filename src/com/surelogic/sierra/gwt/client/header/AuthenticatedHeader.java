@@ -53,7 +53,7 @@ public abstract class AuthenticatedHeader extends HeaderComposite {
 
 	@Override
 	protected void onActivate(final Context context, final UserAccount user) {
-		// nothing to do
+		updateUserInfo(user);
 	}
 
 	@Override
@@ -68,6 +68,10 @@ public abstract class AuthenticatedHeader extends HeaderComposite {
 
 	@Override
 	protected void onUpdateUser(final UserAccount user) {
+		updateUserInfo(user);
+	}
+
+	private void updateUserInfo(final UserAccount user) {
 		if (user != null) {
 			userName.setText(user.getUserName());
 			server.setText(getLocation(user.getServerName()));
