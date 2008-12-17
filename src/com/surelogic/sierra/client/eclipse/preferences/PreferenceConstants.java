@@ -198,6 +198,9 @@ public class PreferenceConstants {
 	public static final String P_SERVER_INTERACTION_PERIOD_IN_MINUTES = "com.surelogic.common.eclipse.server-interaction-period-in-minutes";
 
 	public static int getServerInteractionPeriodInMinutes() {
+		if (Activator.getDefault() == null) {
+			return 0;
+		}
 		return Activator.getDefault().getPluginPreferences().getInt(
 				P_SERVER_INTERACTION_PERIOD_IN_MINUTES);
 	}
