@@ -22,7 +22,7 @@ public final class TroubleshootWrongAuthentication extends
 
 	@Override
 	protected String getLabel() {
-		return "Unable To Authenicate";
+		return "Unable To Authenticate";
 	}
 
 	@Override
