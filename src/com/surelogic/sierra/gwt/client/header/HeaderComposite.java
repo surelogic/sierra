@@ -147,7 +147,7 @@ public abstract class HeaderComposite extends Composite {
 			headerRow.setCellHorizontalAlignment(utilityRow,
 					HorizontalPanel.ALIGN_RIGHT);
 			headerRow.setCellVerticalAlignment(utilityRow,
-					HorizontalPanel.ALIGN_MIDDLE);
+					HorizontalPanel.ALIGN_TOP);
 		}
 	}
 
