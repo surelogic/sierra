@@ -13,7 +13,8 @@ import com.surelogic.sierra.schema.SierraSchemaData;
 public final class Data extends DerbyConnection {
 
 	private static final Data INSTANCE = new Data();
-
+	private String pluginStatePath;
+	
 	public static DBConnection getInstance() {
 		INSTANCE.loggedBootAndCheckSchema();
 		return INSTANCE;
@@ -34,9 +35,11 @@ public final class Data extends DerbyConnection {
 	}
 
 	@Override
-	protected String getDatabaseLocation() {
-		final IPath pluginState = Activator.getDefault().getStateLocation();
-		return pluginState.toOSString() + File.separator
+	protected synchronized String getDatabaseLocation() {
+		if (pluginStatePath == null) {
+			pluginStatePath = Activator.getDefault().getStateLocation().toOSString();
+		}
+		return pluginStatePath + File.separator
 				+ DATABASE_PATH_FRAGMENT;
 	}
 
