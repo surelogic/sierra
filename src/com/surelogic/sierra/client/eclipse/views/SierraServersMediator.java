@@ -50,7 +50,6 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.browser.IWebBrowser;
 import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
@@ -165,6 +164,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 
 	private final TreeViewer f_statusTree;
 	private final Menu f_contextMenu;
+	private final ActionListener f_buglinkSyncAction;
 	private final ActionListener f_serverSyncAction;
 	private final ActionListener f_serverUpdateAction;
 	private final ActionListener f_newServerAction;
@@ -314,11 +314,18 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 			}
 		};
 		// view.addToActionBar(f_serverUpdateAction);
-		f_serverSyncAction = new ActionListener("Synchronize All",
+		f_buglinkSyncAction = new ActionListener("Synchronize All BugLink Data",
+		"Synchronize BugLink servers") {
+			@Override
+			public void run() {
+				asyncSyncWithServer(ServerSyncType.BUGLINK);
+			}
+		};
+		f_serverSyncAction = new ActionListener("Synchronize All Server Data",
 				"Synchronize servers and connected projects") {
 			@Override
 			public void run() {
-				asyncSyncWithServer();
+				asyncSyncWithServer(ServerSyncType.ALL);
 			}
 		};
 		/*
@@ -474,6 +481,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 		};
 		f_view.addToViewMenu(serverInteractionAction);
 		f_view.addToViewMenu(f_serverSyncAction);
+		f_view.addToViewMenu(f_buglinkSyncAction);
 		f_view.addToViewMenu(f_serverUpdateAction);
 		f_view.addToViewMenu(new Separator());
 
@@ -787,7 +795,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 
 			@Override
 			protected void run() {
-				asyncSyncWithServer();
+				asyncSyncWithServer(ServerSyncType.ALL);
 			}
 		};
 		doServerAutoSync.schedule(doServerAutoSync.getDelay());
@@ -807,9 +815,9 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 								synchronized (responseMap) {
 									if (s.useAuditThreshold()
 											&& checkAutoSyncTrigger(projects)) {
-										asyncSyncWithServer();
+										asyncSyncWithServer(ServerSyncType.ALL);
 									} else if (s.doServerAutoSync()) {
-										asyncSyncWithServer();
+										asyncSyncWithServer(ServerSyncType.ALL);
 									} else if (s.doServerAutoUpdate()) {
 										asyncUpdateServerInfo();
 									}
@@ -1106,7 +1114,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 		asyncUpdateContents();
 	}
 
-	void asyncSyncWithServer() {
+	void asyncSyncWithServer(final ServerSyncType type) {
 		final long now = System.currentTimeMillis();
 		lastServerUpdateTime.set(now); // Sync >> update
 		System.out.println("Sync at: " + now);
@@ -1541,7 +1549,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 			}
 			// FIX should this be per-project?
 			if (audits > auditThreshold) {
-				asyncSyncWithServer();
+				asyncSyncWithServer(ServerSyncType.ALL);
 				return true;
 			}
 		}
