@@ -83,11 +83,8 @@ import com.surelogic.sierra.client.eclipse.actions.TroubleshootException;
 import com.surelogic.sierra.client.eclipse.actions.TroubleshootWrongServer;
 import com.surelogic.sierra.client.eclipse.dialogs.ConnectProjectsDialog;
 import com.surelogic.sierra.client.eclipse.dialogs.ServerLocationDialog;
-import com.surelogic.sierra.client.eclipse.jobs.AbstractServerProjectJob;
-import com.surelogic.sierra.client.eclipse.jobs.DeleteProjectDataJob;
-import com.surelogic.sierra.client.eclipse.jobs.GetCategoriesJob;
-import com.surelogic.sierra.client.eclipse.jobs.SendScanFiltersJob;
-import com.surelogic.sierra.client.eclipse.jobs.ServerProjectGroupJob;
+import com.surelogic.sierra.client.eclipse.jobs.*;
+
 import com.surelogic.sierra.client.eclipse.model.IProjectsObserver;
 import com.surelogic.sierra.client.eclipse.model.ISierraServerObserver;
 import com.surelogic.sierra.client.eclipse.model.Projects;
@@ -111,6 +108,7 @@ import com.surelogic.sierra.jdbc.settings.ServerScanFilterInfo;
 import com.surelogic.sierra.jdbc.settings.SettingQueries;
 import com.surelogic.sierra.tool.message.FilterSet;
 import com.surelogic.sierra.tool.message.ListCategoryResponse;
+import com.surelogic.sierra.tool.message.ListScanFilterRequest;
 import com.surelogic.sierra.tool.message.ScanFilter;
 import com.surelogic.sierra.tool.message.ServerMismatchException;
 import com.surelogic.sierra.tool.message.SierraServerLocation;
@@ -243,6 +241,20 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 		}
 	}
 
+	private abstract class ScanFilterActionListener extends ServerActionListener {
+		ScanFilterActionListener(String msg) {
+			super(msg);
+		}
+		@Override
+		protected void handleEventOnServer(final SierraServer server) {
+			List<ScanFilter> filters = collectScanFilters();
+			for(ScanFilter f : filters) {
+				handleEventOnFilter(server, f);
+			}
+		}
+		protected abstract void handleEventOnFilter(final SierraServer server, final ScanFilter filter);
+	}
+	
 	private abstract class IJavaProjectsActionListener extends
 			ServerActionListener {
 		IJavaProjectsActionListener(final String msg) {
@@ -541,20 +553,16 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 					}
 				});
 
-		f_getResultFilters.addListener(SWT.Selection, new ServerActionListener(
-				"Get scan filters pressed with no server focus.") {
+		f_getResultFilters.addListener(SWT.Selection, new ScanFilterActionListener(
+				"Overwrite local scan filter with one from a server.") {
 			@Override
-			protected void handleEventOnServer(final SierraServer server) {
-				final StringBuilder msg = new StringBuilder();
-				msg
-						.append("Do you want overwrite your local scan filters with");
-				msg.append(" the scan filters on");
-				msg.append(" the Sierra server '");
-				msg.append(server.getLabel());
-				msg.append("'?");
+			protected void handleEventOnFilter(final SierraServer server, final ScanFilter f) {
+				final String msg = "Do you want to overwrite your local scan filter with"+
+				                   " the scan filter '"+f.getName()+"' from the Sierra server '"+
+                                   server.getLabel()+"'?";
 				final MessageDialog dialog = new MessageDialog(f_statusTree
-						.getTree().getShell(), "Get Scan Filters", null, msg
-						.toString(), MessageDialog.QUESTION, new String[] {
+						.getTree().getShell(), "Get Scan Filters", null, msg, 
+						MessageDialog.QUESTION, new String[] {
 						"Yes", "No" }, 0);
 				if (dialog.open() == 0) {
 					/*
@@ -562,8 +570,8 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 					 * server.
 					 */
 
-					final Job job = new GetCategoriesJob(
-							ServerFailureReport.SHOW_DIALOG, server);
+					final Job job = new OverwriteLocalScanFilterJob(
+							ServerFailureReport.SHOW_DIALOG, server, f);
 					job.schedule();
 				}
 			}
@@ -688,9 +696,12 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 				} else {
 					f_sendResultFilters.setEnabled(false);
 				}
-				f_getResultFilters.setEnabled(onlyBugLink);
 				f_serverPropertiesItem.setEnabled(onlyServer);
 
+				final List<ScanFilter> filters = collectScanFilters();
+				final boolean onlyScanFilter = filters.size() == 1;
+				f_getResultFilters.setEnabled(onlyScanFilter);
+				
 				final List<ProjectStatus> status = collectSelectedProjectStatus();
 				final boolean someProjects = !status.isEmpty();
 				boolean allConnected = someProjects;
@@ -841,6 +852,23 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 		protected abstract long getDelay(); // In msec
 	}
 
+	private List<ScanFilter> collectScanFilters() {
+		final IStructuredSelection si = (IStructuredSelection) f_statusTree.getSelection();
+		if (si.size() == 0) {
+			return Collections.emptyList();
+		}
+		final List<ScanFilter> filters = new ArrayList<ScanFilter>();
+		@SuppressWarnings("unchecked")
+		final Iterator it = si.iterator();
+		while (it.hasNext()) {
+			final ServersViewContent item = (ServersViewContent) it.next();
+			if (item.getData() instanceof ScanFilter) {
+				filters.add((ScanFilter) item.getData());
+			}
+		}
+		return filters;
+	}
+	
 	private List<SierraServer> collectServers() {
 		final IStructuredSelection si = (IStructuredSelection) f_statusTree
 				.getSelection();
@@ -1333,8 +1361,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 					loc, SettingQueries.categoryRequest().perform(q))
 					.perform(q);
 			final ServerScanFilterInfo sfr = SettingQueries
-					.getNewScanFilters(loc,
-							SettingQueries.scanFilterRequest().perform(q))
+					.getNewScanFilters(loc,	new ListScanFilterRequest()) // Need all
 					.perform(q);
 			serverResponse = new ServerUpdateStatus(cr, sfr);
 		} else {
@@ -1708,11 +1735,13 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 			ServersViewContent label = createLabel(root, delta + num + " scan filter" + s(num)
 					                               + " to update", ChangeStatus.REMOTE);
 			List<ServersViewContent> children = new ArrayList<ServersViewContent>();
-			for(com.surelogic.sierra.tool.message.ScanFilter f : update.getScanFilters()) {
+			for(ScanFilter f : update.getScanFilters()) {
+				ServersViewContent filter;
 				if (update.isChanged(f)) {
-					createLabel(label, children, delta + f.getName(), ChangeStatus.REMOTE);
+					filter = createLabel(label, children, delta + f.getName(), ChangeStatus.REMOTE);
 				} else {
-					createLabel(label, children, f.getName(), ChangeStatus.NONE);
+					filter = createLabel(label, children, f.getName(), ChangeStatus.NONE);
+					filter.setData(f);
 				}
 			}
 			label.setChildren(children.toArray(emptyChildren));

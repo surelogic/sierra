@@ -56,9 +56,9 @@ public final class SierraServersView extends
 
 		new MenuItem(contextMenu, SWT.SEPARATOR);
 		final MenuItem sendResultFilters = createMenuItem(contextMenu,
-				"Send Scan Filter...", CommonImages.IMG_FILTER);
+				"Send Local Scan Filter...", CommonImages.IMG_FILTER);
 		final MenuItem getResultFilters = new MenuItem(contextMenu, SWT.PUSH);
-		getResultFilters.setText("Get Scan Filter...");
+		getResultFilters.setText("Overwrite Local Scan Filter...");
 		new MenuItem(contextMenu, SWT.SEPARATOR);
 		final MenuItem serverPropertiesItem = new MenuItem(contextMenu,
 				SWT.PUSH);
