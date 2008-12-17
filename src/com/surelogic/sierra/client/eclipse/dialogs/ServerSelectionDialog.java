@@ -9,6 +9,10 @@ public final class ServerSelectionDialog extends AbstractServerSelectionDialog {
 	public boolean useForAllUnconnectedProjects() {
 		return f_useForAllUnconnectedProjects;
 	}
+	
+	public void setUseForAllUnconnectedProjects(boolean value) {
+		f_useForAllUnconnectedProjects = value;
+	}
 
 	public ServerSelectionDialog(Shell parentShell, String projectName) {
 		super(parentShell, "Select the server to connect '" + projectName + "' to:");

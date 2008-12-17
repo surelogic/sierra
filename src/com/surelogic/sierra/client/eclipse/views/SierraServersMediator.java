@@ -43,6 +43,7 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
@@ -84,6 +85,7 @@ import com.surelogic.sierra.client.eclipse.actions.TroubleshootWrongServer;
 import com.surelogic.sierra.client.eclipse.dialogs.ConnectProjectsDialog;
 import com.surelogic.sierra.client.eclipse.dialogs.PromptForFilterNameDialog;
 import com.surelogic.sierra.client.eclipse.dialogs.ServerLocationDialog;
+import com.surelogic.sierra.client.eclipse.dialogs.ServerSelectionDialog;
 import com.surelogic.sierra.client.eclipse.jobs.AbstractServerProjectJob;
 import com.surelogic.sierra.client.eclipse.jobs.DeleteProjectDataJob;
 import com.surelogic.sierra.client.eclipse.jobs.OverwriteLocalScanFilterJob;
@@ -227,9 +229,15 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 
 		@Override
 		public final void run() {
+			final List<SierraServer> servers = collectServers();
+			if (servers.size() == 1) {
+				handleEventOnServer(servers.get(0));
+				/*
+			}
 			final SierraServer server = f_manager.getFocus();
 			if (server != null) {
 				handleEventOnServer(server);
+				*/
 			} else {
 				handleEventWithoutServer();
 			}
@@ -517,13 +525,54 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 				f_duplicateServerAction);
 		f_deleteServerItem.addListener(SWT.Selection, f_deleteServerAction);
 
-		final Listener connectAction = new ServerActionListener(
-				"No server to connect to") {
+		final Listener connectAction = 
+			new ServerActionListener("No server to connect to, or no project to connect") {
+			private List<String> collectProjects() {
+				ProjectStatusCollector<String> projects = new ProjectStatusCollector<String>() {
+					@Override String getSelectedInfo(ProjectStatus s) {
+						return s.name;
+					}
+				};
+				return projects.collectSelectedProjects((IStructuredSelection) f_statusTree.getSelection());
+			}
+			private void doConnect(final SierraServer server, List<String> projects) {
+				for (String projectName : projects) {
+					if (f_manager.isConnected(projectName)) {
+						continue;
+					}
+					f_manager.connect(projectName, server);
+				}
+			}			
 			@Override
 			protected void handleEventOnServer(final SierraServer server) {
+				List<String> projects = collectProjects();
+				if (!projects.isEmpty()) {
+					doConnect(server, projects);
+					return;
+				}
 				final ConnectProjectsDialog dialog = new ConnectProjectsDialog(
 						f_statusTree.getTree().getShell());
 				dialog.open();
+			}
+
+			@Override
+			protected void handleEventWithoutServer() {
+				List<String> projects = collectProjects();
+				if (projects.isEmpty()) {
+					super.handleEventWithoutServer();
+				} else {
+					ServerSelectionDialog dialog = new ServerSelectionDialog(
+							f_statusTree.getTree().getShell(), projects.get(0));
+					dialog.setUseForAllUnconnectedProjects(true);
+					if (dialog.open() == Window.CANCEL) {
+						return;
+					}
+					SierraServer server = dialog.getServer();
+					if (!dialog.confirmNonnullServer()) {
+						return;
+					}
+					doConnect(server, projects);
+				}
 			}
 		};
 
@@ -697,6 +746,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 				f_newServerItem.setEnabled(true);
 
 				final List<SierraServer> servers = collectServers();
+				final List<SierraServer> otherServers = new ArrayList<SierraServer>(servers);
 				final boolean onlyServer = servers.size() == 1;
 				final boolean onlyTeamServer;
 				final boolean onlyBugLink;
@@ -713,7 +763,6 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 				f_browseServerItem.setEnabled(onlyServer);
 				f_duplicateServerItem.setEnabled(onlyServer);
 				f_deleteServerItem.setEnabled(onlyServer);
-				f_serverConnectItem.setEnabled(onlyTeamServer);
 				if (SendScanFiltersJob.ENABLED) {
 					f_sendResultFilters.setEnabled(onlyBugLink && onlyServer);
 				} else {
@@ -738,6 +787,8 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 						}
 						if (!f_manager.isConnected(ps.name)) {
 							allConnected = false;
+						} else {
+							otherServers.remove(f_manager.getServer(ps.name));
 						}
 						if (ps.scanDoc == null || !ps.scanDoc.exists()) {
 							allHasScans = false;
@@ -750,6 +801,8 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 					 * } catch (Throwable t) { t.printStackTrace(); }
 					 */
 				}
+				f_serverConnectItem.setEnabled((onlyTeamServer && !otherServers.isEmpty()) || 
+						                       (someProjects && !allConnected));
 				f_scanProjectItem.setEnabled(someProjects);
 				f_rescanProjectItem.setEnabled(someProjects);
 				f_synchConnectedProjects.setEnabled(someProjects);
@@ -891,7 +944,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 		return filters;
 	}
 
-	private List<SierraServer> collectServers() {
+	List<SierraServer> collectServers() {
 		final IStructuredSelection si = (IStructuredSelection) f_statusTree
 				.getSelection();
 		if (si.size() == 0) {
