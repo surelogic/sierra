@@ -1752,31 +1752,37 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 	private ServersViewContent createScanFilters(
 			final ServersViewContent serverNode, final SierraServer server) {
 		final ServerUpdateStatus update = serverUpdates.get(server);
-		final int num = update == null ? 0 : update.getNumUpdatedScanFilters();
-		if (num > 0) {
-			final ServersViewContent root = new ServersViewContent(serverNode,
-					SLImages.getImage(CommonImages.IMG_FILTER));
-			root.setText(delta + SCAN_FILTERS);
-
-			ServersViewContent label = createLabel(root, delta + num
-					+ " scan filter" + s(num) + " to update",
-					ChangeStatus.REMOTE);
-			List<ServersViewContent> children = new ArrayList<ServersViewContent>();
-			for (ScanFilter f : update.getScanFilters()) {
-				ServersViewContent filter;
-				if (update.isChanged(f)) {
-					filter = createLabel(label, children, delta + f.getName(),
-							ChangeStatus.REMOTE);
-				} else {
-					filter = createLabel(label, children, f.getName(),
-							ChangeStatus.NONE);
-					filter.setData(f);
-				}
-			}
-			label.setChildren(children.toArray(emptyChildren));
-			return root;
+		if (update == null || update.getNumScanFilters() == 0) {
+			return null;
 		}
-		return null;
+		final int num = update == null ? 0 : update.getNumUpdatedScanFilters();
+		final boolean changed = num > 0;
+				
+		final ServersViewContent root = new ServersViewContent(serverNode,
+					SLImages.getImage(CommonImages.IMG_FILTER));
+		root.setText(changed ? delta + SCAN_FILTERS : SCAN_FILTERS);
+		
+		final ServersViewContent filterRoot;
+		if (changed) {
+			filterRoot = createLabel(root, delta+num+" scan filter"+s(num)+" to update",
+					ChangeStatus.REMOTE);			
+		} else {
+			filterRoot = root;
+		}		
+		List<ServersViewContent> children = new ArrayList<ServersViewContent>();
+		for (ScanFilter f : update.getScanFilters()) {
+			ServersViewContent filter;
+			if (update.isChanged(f)) {
+				filter = createLabel(filterRoot, children, delta + f.getName(),
+						ChangeStatus.REMOTE);
+			} else {
+				filter = createLabel(filterRoot, children, f.getName(),
+						ChangeStatus.NONE);
+				filter.setData(f);
+			}
+		}
+		filterRoot.setChildren(children.toArray(emptyChildren));
+		return root;
 	}
 
 	private void createUnassociatedProjectItems(
