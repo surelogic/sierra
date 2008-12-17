@@ -55,7 +55,7 @@ public abstract class HeaderComposite extends Composite {
 		tabLeft.addStyleName("header-tab-left");
 		tabStylingPanel.add(tabLeft);
 		tabStylingPanel.setCellHeight(tabLeft, "100%");
-		tabStylingPanel.setCellWidth(tabLeft, "1%");
+		tabStylingPanel.setCellWidth(tabLeft, "10px");
 		tabStylingPanel.setCellVerticalAlignment(tabLeft,
 				HasVerticalAlignment.ALIGN_BOTTOM);
 
