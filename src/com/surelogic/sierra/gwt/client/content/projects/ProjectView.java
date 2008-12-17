@@ -68,7 +68,7 @@ public class ProjectView extends BasicPanel {
 	public void setSelection(final Project project) {
 		selection = project;
 		if (project == null) {
-			setSummary("Select a project");
+			setSummary("Select a Project");
 		} else {
 			final String projectName = project.getName();
 			setSummary(projectName);

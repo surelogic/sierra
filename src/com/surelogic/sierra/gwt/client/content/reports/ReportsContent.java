@@ -58,7 +58,7 @@ public abstract class ReportsContent extends
 					}
 				});
 
-		reportParamsView.addReportAction("Export to PDF", OutputType.PDF,
+		reportParamsView.addReportAction("Export To PDF", OutputType.PDF,
 				new ClickListener() {
 
 					public void onClick(final Widget sender) {

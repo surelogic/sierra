@@ -103,7 +103,7 @@ public class ReportParametersView extends BasicPanel {
 			setSummary(report.getShortDescription());
 		} else {
 			setTitle("");
-			setSummary("Select a report");
+			setSummary("Select a Report");
 		}
 
 		final String desc = report == null ? "" : report.getLongDescription();

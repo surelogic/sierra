@@ -30,7 +30,9 @@ public final class ScanDetailView extends Composite {
 		root.setWidget(0, 1, lastScan);
 		root.setText(1, 0, "# of Findings:");
 		root.setWidget(1, 1, numFindings);
-		root.setText(2, 0, "kLoC:");
+		final Label klocLabel = new Label("KLoC:", false);
+		klocLabel.setTitle("1000's of lines of code.");
+		root.setWidget(2, 0, klocLabel);
 		root.setWidget(2, 1, kloc);
 		root.setText(3, 0, "Scan Filter:");
 		scanFilterPanel.add(scanFilter);

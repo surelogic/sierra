@@ -56,7 +56,7 @@ public final class UserManagementContent extends ContentComposite {
 		usersPanel.setWidth("100%");
 		final boolean isAdmin = SessionManager.getUser().isAdministrator();
 		if (isAdmin) {
-			userActionsPanel.addAction("Create a new user",
+			userActionsPanel.addAction("Create a New User",
 					new ClickListener() {
 						public void onClick(final Widget sender) {
 							usersGrid.clearStatus();
@@ -66,7 +66,7 @@ public final class UserManagementContent extends ContentComposite {
 					});
 		}
 		usersPanel.add(userActionsPanel);
-		usersGridPanel.addGridOption("Show disabled users",
+		usersGridPanel.addGridOption("Show Disabled Users",
 				new ClickListener() {
 					public void onClick(final Widget sender) {
 						showDisabled = !showDisabled;

@@ -246,7 +246,7 @@ public final class OverviewContent extends ContentComposite {
 							toggleEditMode(false);
 						} else {
 							Window
-									.alert("Dashboard Settings could not be saved: "
+									.alert("Dashboard settings could not be saved: "
 											+ status.getMessage());
 						}
 					}

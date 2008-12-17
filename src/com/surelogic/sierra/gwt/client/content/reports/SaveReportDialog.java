@@ -12,7 +12,7 @@ public class SaveReportDialog extends FormDialog {
 	private final TextBox name = new TextBox();
 
 	public SaveReportDialog() {
-		super("Save the current report settings as...", null);
+		super("Save Report Settings As", null);
 	}
 
 	public String getName() {
@@ -20,7 +20,7 @@ public class SaveReportDialog extends FormDialog {
 	}
 
 	@Override
-	protected void doInitialize(FlexTable contentTable) {
+	protected void doInitialize(final FlexTable contentTable) {
 		addField("Report Name", name);
 	}
 

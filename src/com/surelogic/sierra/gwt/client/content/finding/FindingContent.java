@@ -70,7 +70,7 @@ public final class FindingContent extends ContentComposite {
 		getRootPanel().add(findingPanel, DockPanel.CENTER);
 		findingPanel.setVisible(false);
 		final ContentLink link = new ContentLink(
-				"Select a Finding from the Scans tab", ScanContent
+				"Select a Finding From the Scans Tab", ScanContent
 						.getInstance(), null);
 		link.addStyleName("padded");
 		selectionPanel.add(link);

@@ -10,7 +10,7 @@ public class CreateServerDialog extends FormDialog {
 	TextBox label = new TextBox();
 
 	public CreateServerDialog() {
-		super("Choose A Label For The Server Location", "600px");
+		super("Choose a Server Location", "600px");
 	}
 
 	@Override

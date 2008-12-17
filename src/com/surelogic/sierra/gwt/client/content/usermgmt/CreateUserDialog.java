@@ -18,11 +18,11 @@ public class CreateUserDialog extends FormDialog {
 	private final CheckBox isAdmin = new CheckBox();
 
 	public CreateUserDialog() {
-		super("Create a user", null);
+		super("Create a User", null);
 	}
 
 	@Override
-	protected void doInitialize(FlexTable contentTable) {
+	protected void doInitialize(final FlexTable contentTable) {
 		addField("User Name:", userName);
 		addField("Password:", password);
 		addField("Confirm Password:", passwordAgain);
@@ -54,18 +54,20 @@ public class CreateUserDialog extends FormDialog {
 					new ResultCallback<String>() {
 
 						@Override
-						protected void doException(Throwable caught) {
+						protected void doException(final Throwable caught) {
 							hide();
 						}
 
 						@Override
-						protected void doFailure(String message, String result) {
+						protected void doFailure(final String message,
+								final String result) {
 							setStatus(Status.failure(message));
 							hide();
 						}
 
 						@Override
-						protected void doSuccess(String message, String result) {
+						protected void doSuccess(final String message,
+								final String result) {
 							setStatus(Status.success(message));
 							hide();
 						}

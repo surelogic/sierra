@@ -35,7 +35,7 @@ public class ScanFilterDialog extends FormDialog {
 					@Override
 					public void onStartRefresh(final Cache<ScanFilter> cache) {
 						filters.clear();
-						filters.addItem("Retrieving filters");
+						filters.addItem("Retrieving filters...");
 						filters.setSelectedIndex(0);
 					}
 
@@ -53,7 +53,7 @@ public class ScanFilterDialog extends FormDialog {
 						}
 
 						if (filters.getItemCount() == 0) {
-							filters.addItem("No scan filters to add");
+							filters.addItem("No scan filters");
 							setOkEnabled(false);
 						} else {
 							setOkEnabled(true);
