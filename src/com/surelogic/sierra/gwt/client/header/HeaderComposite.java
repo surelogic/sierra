@@ -6,6 +6,7 @@ import java.util.Map;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Image;
@@ -55,9 +56,13 @@ public abstract class HeaderComposite extends Composite {
 		tabStylingPanel.add(tabLeft);
 		tabStylingPanel.setCellHeight(tabLeft, "100%");
 		tabStylingPanel.setCellWidth(tabLeft, "1%");
+		tabStylingPanel.setCellVerticalAlignment(tabLeft,
+				HasVerticalAlignment.ALIGN_BOTTOM);
 
 		tabStylingPanel.add(tabPanel);
 		tabStylingPanel.setCellWidth(tabPanel, "1%");
+		tabStylingPanel.setCellVerticalAlignment(tabPanel,
+				HasVerticalAlignment.ALIGN_BOTTOM);
 
 		final HTML tabRight = new HTML("&nbsp;", true);
 		tabRight.addStyleName("header-tab-right");
@@ -65,6 +70,8 @@ public abstract class HeaderComposite extends Composite {
 		tabStylingPanel.setCellHeight(tabRight, "100%");
 		tabStylingPanel.setCellHorizontalAlignment(tabRight,
 				HorizontalPanel.ALIGN_LEFT);
+		tabStylingPanel.setCellVerticalAlignment(tabRight,
+				HasVerticalAlignment.ALIGN_BOTTOM);
 
 		utilityRow.addStyleName(PRIMARY_STYLE);
 	}
@@ -155,6 +162,8 @@ public abstract class HeaderComposite extends Composite {
 			contentLink.addStyleName("header-tab-" + tabStyleName);
 			tabContent.put(content, contentLink);
 			tabPanel.add(contentLink);
+			tabPanel.setCellVerticalAlignment(contentLink,
+					HasVerticalAlignment.ALIGN_BOTTOM);
 		}
 	}
 
@@ -163,6 +172,8 @@ public abstract class HeaderComposite extends Composite {
 		spacer.addStyleName("header-tab-spacer");
 		spacer.setHeight("100%");
 		tabPanel.add(spacer);
+		tabPanel.setCellVerticalAlignment(spacer,
+				HasVerticalAlignment.ALIGN_BOTTOM);
 	}
 
 	protected final void removeTab(final ContentComposite content) {
@@ -176,6 +187,8 @@ public abstract class HeaderComposite extends Composite {
 	protected final void showTabs() {
 		if (rootPanel.getWidgetIndex(tabStylingPanel) == -1) {
 			rootPanel.add(tabStylingPanel);
+			rootPanel.setCellVerticalAlignment(tabStylingPanel,
+					HasVerticalAlignment.ALIGN_BOTTOM);
 		}
 	}
 

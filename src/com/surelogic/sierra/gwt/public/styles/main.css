@@ -2,7 +2,7 @@
 
 body {
 	font-family: Helvetica, Verdana, Arial, sans-serif;
-	font-size: medium;
+	font-size: small;
 }
 
 a {
@@ -69,7 +69,6 @@ img {
 }
 
 .header-tab {
-	font-size: medium;
 	font-weight: normal;
 	text-align: center;
 	white-space: nowrap;
@@ -214,7 +213,7 @@ img {
 
 .sl-ContentComposite-title {
 	color: #FF7010;
-	font-size: large;
+	font-size: medium;
 	margin-bottom: 1ex;
 	margin-top: 1ex;
 }
@@ -526,7 +525,7 @@ img {
 
 .gwt-TabBar {
 	background-color: #005495;
-	font-size: medium;
+	font-size: small;
 	font-weight: normal;
 	text-align: center;
 	color: white;
