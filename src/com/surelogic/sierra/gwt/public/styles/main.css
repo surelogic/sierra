@@ -1,13 +1,25 @@
 @CHARSET "ISO-8859-1";
 
+/* Set default font sizes */
 body {
 	font-family: Helvetica, Verdana, Arial, sans-serif;
-	font-size: small;
+	font-size: 100%;
 }
+
+p, ul, ol, td {
+	font-size: 90%;
+}
+
+h1 { font-size: 160%; }
+h2 { font-size: 140%; }
+h3 { font-size: 120%; }
+h4 { font-size: 100%; }
+h5 { font-size: 90%; }
 
 a {
 	color: #005596;
 	text-decoration: underline;
+	font-size: 90%;
 }
 
 a.hover {
@@ -29,7 +41,7 @@ img {
 
 .font-strong {
 	color: #FF7010;
-	font-size: medium;
+	font-size: 100%;
 	font-weight: bold;
 	margin-top: 5px;
 	margin-left: 2px;
