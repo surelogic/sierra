@@ -177,6 +177,9 @@ public class PreferenceConstants {
 	public static final String P_SERVER_INTERACTION_SETTING = "com.surelogic.sierra.server-interaction-setting";
 
 	public static ServerInteractionSetting getServerInteractionSetting() {
+		if (Activator.getDefault() == null) {
+			return ServerInteractionSetting.NEVER;
+		}
 		final String resultString = Activator.getDefault()
 				.getPluginPreferences().getString(P_SERVER_INTERACTION_SETTING);
 		final ServerInteractionSetting result = ServerInteractionSetting
