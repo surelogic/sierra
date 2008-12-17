@@ -33,6 +33,9 @@ public class PreferenceConstants {
 	public static final String P_SIERRA_BALLOON_FLAG = "com.surelogic.sierra.balloon-flag";
 
 	public static boolean showBalloonNotifications() {
+		if (Activator.getDefault() == null) {
+			return false;
+		}
 		return Activator.getDefault().getPluginPreferences().getBoolean(
 				P_SIERRA_BALLOON_FLAG);
 	}
