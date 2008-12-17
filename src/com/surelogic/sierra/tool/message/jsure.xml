@@ -1,613 +1,787 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <findingTypes>
-	<findingType>
-		<id>JSure</id>
-		<artifact tool="JSure"
-			mnemonic="JSure">
-		</artifact>
-		<shortMessage>
-		  TBD
-		</shortMessage>
-		<info>
-		  TBD
-		</info>
-		<name>JSure Issue</name>
-	</findingType>
   <findingType>
-    <id>ColorSecondPass_inferredColor</id>
+    <id>JSure</id>
+    <artifact tool="JSure"
+	      mnemonic="JSure">
+    </artifact>
+    <shortMessage>
+      TBD
+    </shortMessage>
+    <info>
+      TBD
+    </info>
+    <name>JSure Issue</name>
+  </findingType>
+  <findingType>
+    <id>ColorSecondPass_inferredColor</id> 
     <artifact tool="JSure" mnemonic="ColorSecondPass_inferredColor"/>
     <shortMessage>TBD</shortMessage>
     <info>TBD</info>
     <name>Inferred Color</name>
   </findingType>
   <findingType>
-    <id>ColorSecondPass_inheritedColor</id>
-    <artifact tool="JSure" mnemonic="ColorSecondPass_inheritedColor"/>
+    <id>ColorSecondPass_inheritedColor</id> 
+    <artifact tool="JSure"
+	      mnemonic="ColorSecondPass_inheritedColor"/>
     <shortMessage>TBD</shortMessage>
     <info>TBD</info>
     <name>Inherited Color</name>
   </findingType>
   <findingType>
-    <id>ColorSecondPass_inheritedTransparent</id>
-    <artifact tool="JSure" mnemonic="ColorSecondPass_inheritedTransparent"/>
+    <id>ColorSecondPass_inheritedTransparent</id> 
+    <artifact tool="JSure"
+	      mnemonic="ColorSecondPass_inheritedTransparent"/>
     <shortMessage>TBD</shortMessage>
     <info>TBD</info>
     <name>Inherited as Transparent</name>
   </findingType>
   <findingType>
     <id>ColorSecondPass_colorContextDrop</id>
-    <artifact tool="JSure" mnemonic="ColorSecondPass_colorContextDrop"/>
-    <shortMessage>TBD</shortMessage>
-    <info>TBD</info>
+    <artifact tool="JSure"
+	      mnemonic="ColorSecondPass_colorContextDrop"/>
+    <shortMessage>Establishes a constraint on the colors of threads that may execute the
+      annotated method.</shortMessage>
+    <info><![CDATA[
+      Establishes a constraint on the colors of threads that may execute the
+      annotated method. At analysis time the "Thread Coloring" analysis will
+      enforce the constraint that the calling thread must always have a set of
+      associated color bindings that satisfy the boolean expression.
+    ]]></info>
     <name>@ColorContext</name>
   </findingType>
   <findingType>
-    <id>ThreadEffectsAnalysis_noThreadsDrop</id>
-    <artifact tool="JSure" mnemonic="ThreadEffectsAnalysis_noThreadsDrop"/>
+    <id>ThreadEffectsAnalysis_noThreadsDrop</id> 
+    <artifact tool="JSure"
+	      mnemonic="ThreadEffectsAnalysis_noThreadsDrop"/>
     <shortMessage>TBD</shortMessage>
     <info>TBD</info>
     <name>No Threads Started</name>
   </findingType>
   <findingType>
-    <id>ThreadEffectsAnalysis_threadEffectDrop</id>
-    <artifact tool="JSure" mnemonic="ThreadEffectsAnalysis_threadEffectDrop"/>
+    <id>ThreadEffectsAnalysis_threadEffectDrop</id> 
+    <artifact tool="JSure"
+	      mnemonic="ThreadEffectsAnalysis_threadEffectDrop"/>
     <shortMessage>TBD</shortMessage>
     <info>TBD</info>
     <name>Illegal Thread Effects</name>
   </findingType>
   <findingType>
-    <id>ThreadEffectsAnalysis_callPromiseDrop</id>
-    <artifact tool="JSure" mnemonic="ThreadEffectsAnalysis_callPromiseDrop"/>
+    <id>ThreadEffectsAnalysis_callPromiseDrop</id> 
+    <artifact tool="JSure"
+	      mnemonic="ThreadEffectsAnalysis_callPromiseDrop"/>
     <shortMessage>TBD</shortMessage>
     <info>TBD</info>
     <name>Call Will Not Start Threads</name>
   </findingType>
   <findingType>
-    <id>ThreadEffectsAnalysis_callNotPromiseDrop</id>
-    <artifact tool="JSure" mnemonic="ThreadEffectsAnalysis_callNotPromiseDrop"/>
+    <id>ThreadEffectsAnalysis_callNotPromiseDrop</id> 
+    <artifact tool="JSure"
+	      mnemonic="ThreadEffectsAnalysis_callNotPromiseDrop"/>
     <shortMessage>TBD</shortMessage>
     <info>TBD</info>
     <name>Call May Start Threads</name>
   </findingType>
   <findingType>
     <id>LockAnalysis_ds_SynchronizedConstructorAssured</id>
-    <artifact tool="JSure" mnemonic="LockAnalysis_ds_SynchronizedConstructorAssured"/>
+    
+    <artifact tool="JSure"
+	      mnemonic="LockAnalysis_ds_SynchronizedConstructorAssured"/>
     <shortMessage>TBD</shortMessage>
     <info>TBD</info>
     <name>Single-threaded Constructor Assured</name>
   </findingType>
   <findingType>
     <id>LockAnalysis_ds_SynchronizedConstructorNotAssured</id>
-    <artifact tool="JSure" mnemonic="LockAnalysis_ds_SynchronizedConstructorNotAssured"/>
+    
+    <artifact tool="JSure"
+	      mnemonic="LockAnalysis_ds_SynchronizedConstructorNotAssured"/>
     <shortMessage>TBD</shortMessage>
     <info>TBD</info>
     <name>Single-threaded Constructor Not Assured</name>
   </findingType>
   <findingType>
-    <id>LockAnalysis_ds_AggregationNeeded</id>
-    <artifact tool="JSure" mnemonic="LockAnalysis_ds_AggregationNeeded"/>
+    <id>LockAnalysis_ds_AggregationNeeded</id> 
+    <artifact tool="JSure"
+	      mnemonic="LockAnalysis_ds_AggregationNeeded"/>
     <shortMessage>TBD</shortMessage>
     <info>TBD</info>
     <name>Object Aggregation Needed</name>
   </findingType>
   <findingType>
-    <id>LockAnalysis_ds_AggregationNeeded2</id>
-    <artifact tool="JSure" mnemonic="LockAnalysis_ds_AggregationNeeded2"/>
+    <id>LockAnalysis_ds_AggregationNeeded2</id> 
+    <artifact tool="JSure"
+	      mnemonic="LockAnalysis_ds_AggregationNeeded2"/>
     <shortMessage>TBD</shortMessage>
     <info>TBD</info>
     <name>Receiver Aggregation Needed</name>
   </findingType>
   <findingType>
-    <id>LockAnalysis_ds_FieldAccessAssured</id>
-    <artifact tool="JSure" mnemonic="LockAnalysis_ds_FieldAccessAssured"/>
+    <id>LockAnalysis_ds_FieldAccessAssured</id> 
+    <artifact tool="JSure"
+	      mnemonic="LockAnalysis_ds_FieldAccessAssured"/>
     <shortMessage>TBD</shortMessage>
     <info>TBD</info>
     <name>Field Access Assured</name>
   </findingType>
   <findingType>
     <id>LockAnalysis_ds_FieldAccessAssuredAlternative</id>
-    <artifact tool="JSure" mnemonic="LockAnalysis_ds_FieldAccessAssuredAlternative"/>
+    
+    <artifact tool="JSure"
+	      mnemonic="LockAnalysis_ds_FieldAccessAssuredAlternative"/>
     <shortMessage>TBD</shortMessage>
     <info>TBD</info>
     <name>Field Access Assured</name>
   </findingType>
   <findingType>
-    <id>LockAnalysis_ds_FieldAccessNotAssured</id>
-    <artifact tool="JSure" mnemonic="LockAnalysis_ds_FieldAccessNotAssured"/>
+    <id>LockAnalysis_ds_FieldAccessNotAssured</id> 
+    <artifact tool="JSure"
+	      mnemonic="LockAnalysis_ds_FieldAccessNotAssured"/>
     <shortMessage>TBD</shortMessage>
     <info>TBD</info>
     <name>Field Access Not Assured</name>
   </findingType>
   <findingType>
-    <id>LockAnalysis_ds_FieldAccessNotResolvable</id>
-    <artifact tool="JSure" mnemonic="LockAnalysis_ds_FieldAccessNotResolvable"/>
+    <id>LockAnalysis_ds_FieldAccessNotResolvable</id> 
+    <artifact tool="JSure"
+	      mnemonic="LockAnalysis_ds_FieldAccessNotResolvable"/>
     <shortMessage>TBD</shortMessage>
     <info>TBD</info>
     <name>Unresolvable Field Access</name>
   </findingType>
   <findingType>
-    <id>LockAnalysis_ds_PreconditionsAssured</id>
-    <artifact tool="JSure" mnemonic="LockAnalysis_ds_PreconditionsAssured"/>
+    <id>LockAnalysis_ds_PreconditionsAssured</id> 
+    <artifact tool="JSure"
+	      mnemonic="LockAnalysis_ds_PreconditionsAssured"/>
     <shortMessage>TBD</shortMessage>
     <info>TBD</info>
     <name>Lock Precondition Assured</name>
   </findingType>
   <findingType>
     <id>LockAnalysis_ds_PreconditionsAssuredAlternative</id>
-    <artifact tool="JSure" mnemonic="LockAnalysis_ds_PreconditionsAssuredAlternative"/>
+    <artifact tool="JSure"
+	      mnemonic="LockAnalysis_ds_PreconditionsAssuredAlternative"/>
     <shortMessage>TBD</shortMessage>
     <info>TBD</info>
     <name>Lock Precondition Assured</name>
   </findingType>
   <findingType>
-    <id>LockAnalysis_ds_PreconditionsNotAssured</id>
-    <artifact tool="JSure" mnemonic="LockAnalysis_ds_PreconditionsNotAssured"/>
+    <id>LockAnalysis_ds_PreconditionsNotAssured</id> 
+    <artifact tool="JSure"
+	      mnemonic="LockAnalysis_ds_PreconditionsNotAssured"/>
     <shortMessage>TBD</shortMessage>
     <info>TBD</info>
     <name>Lock Precondition Not Assured</name>
   </findingType>
   <findingType>
-    <id>LockAnalysis_ds_PreconditionNotResolvable</id>
-    <artifact tool="JSure" mnemonic="LockAnalysis_ds_PreconditionNotResolvable"/>
+    <id>LockAnalysis_ds_PreconditionNotResolvable</id> 
+    <artifact tool="JSure"
+	      mnemonic="LockAnalysis_ds_PreconditionNotResolvable"/>
     <shortMessage>TBD</shortMessage>
     <info>TBD</info>
     <name>Unresolvable Lock Precondition</name>
   </findingType>
   <findingType>
-    <id>LockAnalysis_ds_IndirectFieldAccessAssured</id>
-    <artifact tool="JSure" mnemonic="LockAnalysis_ds_IndirectFieldAccessAssured"/>
+    <id>LockAnalysis_ds_IndirectFieldAccessAssured</id> 
+    <artifact tool="JSure"
+	      mnemonic="LockAnalysis_ds_IndirectFieldAccessAssured"/>
     <shortMessage>TBD</shortMessage>
     <info>TBD</info>
     <name>Indirect Field Access Assured</name>
   </findingType>
   <findingType>
     <id>LockAnalysis_ds_IndirectFieldAccessAssuredAlternative</id>
-    <artifact tool="JSure" mnemonic="LockAnalysis_ds_IndirectFieldAccessAssuredAlternative"/>
+    <artifact tool="JSure"
+	      mnemonic="LockAnalysis_ds_IndirectFieldAccessAssuredAlternative"/>
     <shortMessage>TBD</shortMessage>
     <info>TBD</info>
     <name>Indirect Field Access Assured</name>
   </findingType>
   <findingType>
     <id>LockAnalysis_ds_IndirectFieldAccessNotAssured</id>
-    <artifact tool="JSure" mnemonic="LockAnalysis_ds_IndirectFieldAccessNotAssured"/>
+    <artifact tool="JSure"
+	      mnemonic="LockAnalysis_ds_IndirectFieldAccessNotAssured"/>
     <shortMessage>TBD</shortMessage>
     <info>TBD</info>
     <name>Indirect Field Access Not Assured</name>
   </findingType>
   <findingType>
-    <id>LockAnalysis_ds_ReturnAssured</id>
-    <artifact tool="JSure" mnemonic="LockAnalysis_ds_ReturnAssured"/>
-    <shortMessage>TBD</shortMessage>
+    <id>LockAnalysis_ds_ReturnAssured</id> 
+    <artifact tool="JSure"
+	      mnemonic="LockAnalysis_ds_ReturnAssured"/>
+p    <shortMessage>TBD</shortMessage>
     <info>TBD</info>
     <name>Return Statement Assured</name>
   </findingType>
   <findingType>
-    <id>LockAnalysis_ds_ReturnNotAssured</id>
-    <artifact tool="JSure" mnemonic="LockAnalysis_ds_ReturnNotAssured"/>
+    <id>LockAnalysis_ds_ReturnNotAssured</id> 
+    <artifact tool="JSure"
+	      mnemonic="LockAnalysis_ds_ReturnNotAssured"/>
     <shortMessage>TBD</shortMessage>
     <info>TBD</info>
     <name>Return Statement Not Assured</name>
   </findingType>
   <findingType>
     <id>LockAnalysis_ds_SynchronizedMethodWarningDetails</id>
-    <artifact tool="JSure" mnemonic="LockAnalysis_ds_SynchronizedMethodWarningDetails"/>
+    <artifact tool="JSure"
+	      mnemonic="LockAnalysis_ds_SynchronizedMethodWarningDetails"/>
     <shortMessage>TBD</shortMessage>
     <info>TBD</info>
     <name>Unidentified Lock: 'this'</name>
   </findingType>
   <findingType>
     <id>LockAnalysis_ds_SynchronizedStaticMethodWarningDetails</id>
-    <artifact tool="JSure" mnemonic="LockAnalysis_ds_SynchronizedStaticMethodWarningDetails"/>
+    <artifact tool="JSure"
+	      mnemonic="LockAnalysis_ds_SynchronizedStaticMethodWarningDetails"/>
     <shortMessage>TBD</shortMessage>
     <info>TBD</info>
     <name>Unidentified Lock: Class</name>
   </findingType>
   <findingType>
-    <id>LockAnalysis_ds_SynchronizationUnused</id>
-    <artifact tool="JSure" mnemonic="LockAnalysis_ds_SynchronizationUnused"/>
+    <id>LockAnalysis_ds_SynchronizationUnused</id> 
+    <artifact tool="JSure"
+	      mnemonic="LockAnalysis_ds_SynchronizationUnused"/>
     <shortMessage>TBD</shortMessage>
     <info>TBD</info>
     <name>Unused Locks</name>
   </findingType>
   <findingType>
-    <id>LockAnalysis_ds_NonfinalExpression</id>
-    <artifact tool="JSure" mnemonic="LockAnalysis_ds_NonfinalExpression"/>
+    <id>LockAnalysis_ds_NonfinalExpression</id> 
+    <artifact tool="JSure"
+	      mnemonic="LockAnalysis_ds_NonfinalExpression"/>
     <shortMessage>TBD</shortMessage>
     <info>TBD</info>
     <name>Non-final Lock Expression</name>
   </findingType>
   <findingType>
-    <id>LockAnalysis_ds_UnidentifiableLock</id>
-    <artifact tool="JSure" mnemonic="LockAnalysis_ds_UnidentifiableLock"/>
+    <id>LockAnalysis_ds_UnidentifiableLock</id> 
+    <artifact tool="JSure"
+	      mnemonic="LockAnalysis_ds_UnidentifiableLock"/>
     <shortMessage>TBD</shortMessage>
     <info>TBD</info>
     <name>Unidentified Lock</name>
   </findingType>
   <findingType>
-    <id>LockAnalysis_ds_RedundantSynchronized</id>
-    <artifact tool="JSure" mnemonic="LockAnalysis_ds_RedundantSynchronized"/>
+    <id>LockAnalysis_ds_RedundantSynchronized</id> 
+    <artifact tool="JSure"
+	      mnemonic="LockAnalysis_ds_RedundantSynchronized"/>
     <shortMessage>TBD</shortMessage>
     <info>TBD</info>
     <name>Redundant Synchronization</name>
   </findingType>
   <findingType>
-    <id>LockAnalysis_ds_SyncedJUCLock</id>
-    <artifact tool="JSure" mnemonic="LockAnalysis_ds_SyncedJUCLock"/>
+    <id>LockAnalysis_ds_SyncedJUCLock</id> 
+    <artifact tool="JSure"
+	      mnemonic="LockAnalysis_ds_SyncedJUCLock"/>
     <shortMessage>TBD</shortMessage>
     <info>TBD</info>
     <name>Native Synchronization On JUC Lock</name>
   </findingType>
   <findingType>
-    <id>LockAnalysis_ds_MasqueradingCall</id>
-    <artifact tool="JSure" mnemonic="LockAnalysis_ds_MasqueradingCall"/>
+    <id>LockAnalysis_ds_MasqueradingCall</id> 
+    <artifact tool="JSure"
+	      mnemonic="LockAnalysis_ds_MasqueradingCall"/>
     <shortMessage>TBD</shortMessage>
     <info>TBD</info>
     <name>Masquerading JUC Lock Call</name>
   </findingType>
   <findingType>
-    <id>LockAnalysis_ds_MasqueradingCall2</id>
-    <artifact tool="JSure" mnemonic="LockAnalysis_ds_MasqueradingCall2"/>
+    <id>LockAnalysis_ds_MasqueradingCall2</id> 
+    <artifact tool="JSure"
+	      mnemonic="LockAnalysis_ds_MasqueradingCall2"/>
     <shortMessage>TBD</shortMessage>
     <info>TBD</info>
     <name>Masquerading JUC ReadWriteLock Call</name>
   </findingType>
   <findingType>
-    <id>LockAnalysis_ds_JUCLockFields</id>
-    <artifact tool="JSure" mnemonic="LockAnalysis_ds_JUCLockFields"/>
+    <id>LockAnalysis_ds_JUCLockFields</id> 
+    <artifact tool="JSure"
+	      mnemonic="LockAnalysis_ds_JUCLockFields"/>
     <shortMessage>TBD</shortMessage>
     <info>TBD</info>
     <name>Fields Declared As JUC Locks</name>
   </findingType>
   <findingType>
-    <id>LockAnalysis_ds_DeclaredJUCLockField</id>
-    <artifact tool="JSure" mnemonic="LockAnalysis_ds_DeclaredJUCLockField"/>
+    <id>LockAnalysis_ds_DeclaredJUCLockField</id> 
+    <artifact tool="JSure"
+	      mnemonic="LockAnalysis_ds_DeclaredJUCLockField"/>
     <shortMessage>TBD</shortMessage>
     <info>TBD</info>
     <name>Field Declared As JUC Lock</name>
   </findingType>
   <findingType>
-    <id>UniquenessAssurance_uniquenessContraints1</id>
-    <artifact tool="JSure" mnemonic="UniquenessAssurance_uniquenessContraints1"/>
+    <id>UniquenessAssurance_uniquenessContraints1</id> 
+    <artifact tool="JSure"
+	      mnemonic="UniquenessAssurance_uniquenessContraints1"/>
     <shortMessage>TBD</shortMessage>
     <info>TBD</info>
     <name>Uniqueness Assured</name>
   </findingType>
   <findingType>
-    <id>UniquenessAssurance_uniquenessContraints2</id>
-    <artifact tool="JSure" mnemonic="UniquenessAssurance_uniquenessContraints2"/>
+    <id>UniquenessAssurance_uniquenessContraints2</id> 
+    <artifact tool="JSure"
+	      mnemonic="UniquenessAssurance_uniquenessContraints2"/>
     <shortMessage>TBD</shortMessage>
     <info>TBD</info>
     <name>Uniqueness Not Assured</name>
   </findingType>
   <findingType>
-    <id>UniquenessAssurance_uniqueReturnDrop</id>
-    <artifact tool="JSure" mnemonic="UniquenessAssurance_uniqueReturnDrop"/>
+    <id>UniquenessAssurance_uniqueReturnDrop</id> 
+    <artifact tool="JSure"
+	      mnemonic="UniquenessAssurance_uniqueReturnDrop"/>
     <shortMessage>TBD</shortMessage>
     <info>TBD</info>
     <name>Unique Return Value</name>
   </findingType>
   <findingType>
-    <id>UniquenessAssurance_borrowedParametersDrop</id>
-    <artifact tool="JSure" mnemonic="UniquenessAssurance_borrowedParametersDrop"/>
+    <id>UniquenessAssurance_borrowedParametersDrop</id> 
+    <artifact tool="JSure"
+	      mnemonic="UniquenessAssurance_borrowedParametersDrop"/>
     <shortMessage>TBD</shortMessage>
     <info>TBD</info>
     <name>Borrowed Parameters</name>
   </findingType>
   <findingType>
-    <id>UniquenessAssurance_uniqueParametersDrop</id>
-    <artifact tool="JSure" mnemonic="UniquenessAssurance_uniqueParametersDrop"/>
+    <id>UniquenessAssurance_uniqueParametersDrop</id> 
+    <artifact tool="JSure"
+	      mnemonic="UniquenessAssurance_uniqueParametersDrop"/>
     <shortMessage>TBD</shortMessage>
     <info>Unique Parameters</info>
     <name>TBD</name>
   </findingType>
   <findingType>
-    <id>UniquenessAssurance_effectOfCallDrop</id>
-    <artifact tool="JSure" mnemonic="UniquenessAssurance_effectOfCallDrop"/>
+    <id>UniquenessAssurance_effectOfCallDrop</id> 
+    <artifact tool="JSure"
+	      mnemonic="UniquenessAssurance_effectOfCallDrop"/>
     <shortMessage>TBD</shortMessage>
     <info>TBD</info>
     <name>Method Call Effects</name>
   </findingType>
   <findingType>
-    <id>UniquenessAssurance_dependencyDrop</id>
-    <artifact tool="JSure" mnemonic="UniquenessAssurance_dependencyDrop"/>
+    <id>UniquenessAssurance_dependencyDrop</id> 
+    <artifact tool="JSure"
+	      mnemonic="UniquenessAssurance_dependencyDrop"/>
     <shortMessage>TBD</shortMessage>
     <info>TBD</info>
     <name>Conservative Uniqueness Dependency</name>
   </findingType>
   <findingType>
-    <id>UniquenessAssurance_error</id>
-    <artifact tool="JSure" mnemonic="UniquenessAssurance_error"/>
+    <id>UniquenessAssurance_error</id> 
+    <artifact tool="JSure"
+	      mnemonic="UniquenessAssurance_error"/>
     <shortMessage>TBD</shortMessage>
     <info>TBD</info>
     <name>Uniqueness Error</name>
   </findingType>
   <findingType>
-    <id>UniquenessAssurance</id>
-    <artifact tool="JSure" mnemonic="UniquenessAssurance"/>
+    <id>UniquenessAssurance</id> 
+    <artifact tool="JSure"
+	      mnemonic="UniquenessAssurance"/>
     <shortMessage>TBD</shortMessage>
     <info>TBD</info>
     <name>Uniqueness Assurance</name>
   </findingType>
-  
   <findingType>
-    <id>BorrowedPromiseDrop</id>
-    <artifact tool="JSure" mnemonic="BorrowedPromiseDrop"/>
-    <shortMessage>TBD</shortMessage>
-    <info>TBD</info>
+    <id>BorrowedPromiseDrop</id> 
+    <artifact tool="JSure"
+	      mnemonic="BorrowedPromiseDrop"/>
+    <shortMessage>Indicates that the parameter or receiver, in the case of an
+      annotated method/constructor, does not receive any new aliases during
+      execution of the method.</shortMessage>
+    <info><![CDATA[
+      Indicates that the parameter or receiver, in the case of an annotated
+      method/constructor, does not receive any new aliases during execution of
+      the method.  That is, <tt>@Unique</tt> values can be safely passed to the
+      parameter or receiver with the guarantee that they will still be unique
+      when the method returns.
+      <p>
+	It is an error to use this annotation on a method whose return type is
+	primitive. It is an error to use this annotation on a parameter whose
+	type is primitive.
+      </p>
+    ]]></info>
     <name>@Borrowed</name>
   </findingType>
   <findingType>
-    <id>UniquePromiseDrop</id>
-    <artifact tool="JSure" mnemonic="UniquePromiseDrop"/>
-    <shortMessage>TBD</shortMessage>
-    <info>TBD</info>
+    <id>UniquePromiseDrop</id> 
+    <artifact tool="JSure"
+	      mnemonic="UniquePromiseDrop"/>
+    <shortMessage>Indicates that the parameter, receiver, return value, or field is unique.</shortMessage>
+    <info><![CDATA[
+      Indicates that the parameter, receiver, return value, or field is unique.
+      <p>
+	It is an error to annotate a method return value if the return type is
+	primitive. It is an error to annotate a parameter if the parameter's
+	type is primitive.
+      </p>
+    ]]></info>
     <name>@Unique</name>
   </findingType>
   <findingType>
-    <id>AggregatePromiseDrop</id>
-    <artifact tool="JSure" mnemonic="AggregatePromiseDrop"/>
-    <shortMessage>TBD</shortMessage>
-    <info>TBD</info>
+    <id>AggregatePromiseDrop</id> 
+    <artifact tool="JSure"
+	      mnemonic="AggregatePromiseDrop"/>
+    <shortMessage>Declares that regions of the object referenced by this field
+      are to be mapped or "aggregated" into regions of the object that contains
+      the field.</shortMessage>
+    <info><![CDATA[
+      Declares that regions of the object referenced by this field are to be
+      mapped or "aggregated" into regions of the object that contains the field.
+      It is an error if the field is not also annotated with <tt>@Unique</tt>.
+    ]]></info>
     <name>@Aggregate</name>
   </findingType>
   <findingType>
-    <id>StartsPromiseDrop</id>
-    <artifact tool="JSure" mnemonic="StartsPromiseDrop"/>
-    <shortMessage>TBD</shortMessage>
-    <info>TBD</info>
+    <id>StartsPromiseDrop</id> 
+    <artifact tool="JSure"
+	      mnemonic="StartsPromiseDrop"/>
+    <shortMessage>Indicates what threads, if any, are started, i.e., by
+      Thread.start(), during the execution of the method or
+      constructor.</shortMessage>
+    <info><![CDATA[
+      Indicates what threads, if any, are started, i.e., by
+      <tt>Thread.start()</tt>, during the execution of the method or
+      constructor. Presently this annotation has only one legal form,
+      <tt>@Starts("nothing")</tt>, that indicates that the method/constructor
+      does not cause any threads to be started.
+    ]]></info>
     <name>@Starts</name>
   </findingType>
   <findingType>
-    <id>RegionEffectsPromiseDrop</id>
-    <artifact tool="JSure" mnemonic="RegionEffectsPromiseDrop"/>
-    <shortMessage>TBD</shortMessage>
-    <info>TBD</info>
+    <id>RegionEffectsPromiseDrop</id> 
+    <artifact tool="JSure"
+	      mnemonic="RegionEffectsPromiseDrop"/>
+    <shortMessage>Declares the regions that may be read or written during
+      execution of this method or constructor.</shortMessage>
+    <info><![CDATA[
+      Declares the regions that may be read or written during execution of this
+      method or constructor. Because writing implies the ability to read,
+      regions that may be both read and written by the method only need to be
+      declared in writes clause of the annotation.
+    ]]></info>
     <name>@RegionEffects</name>
   </findingType>
   <findingType>
-    <id>InRegionPromiseDrop</id>
-    <artifact tool="JSure" mnemonic="InRegionPromiseDrop"/>
-    <shortMessage>TBD</shortMessage>
-    <info>TBD</info>
+    <id>InRegionPromiseDrop</id> 
+    <artifact tool="JSure"
+	      mnemonic="InRegionPromiseDrop"/>
+    <shortMessage>Indicates that the annotated field is mapped into the named
+      abstract region.</shortMessage>
+    <info><![CDATA[Indicates that the annotated field is mapped into the named abstract
+      region.]]></info>
     <name>@InRegion</name>
   </findingType>
   <findingType>
-    <id>RegionModel</id>
+    <id>RegionModel</id> 
     <artifact tool="JSure" mnemonic="RegionModel"/>
-    <shortMessage>TBD</shortMessage>
-    <info>TBD</info>
+    <shortMessage>Declares a new abstract region of state for the annotated class.</shortMessage>
+    <info><![CDATA[
+      Declares a new abstract region of state for the annotated class.  To
+      declare more than one region for a class use the <tt>@Regions</tt>
+      annotation.  It is an error for a class to have both a
+      <tt>@Regions</tt> and a <tt>@Region</tt> annotation.
+    ]]></info>
     <name>@Region</name>
   </findingType>
   <findingType>
-    <id>LockModel</id>
+    <id>LockModel</id> 
     <artifact tool="JSure" mnemonic="LockModel"/>
-    <shortMessage>TBD</shortMessage>
-    <info>TBD</info>
+    <shortMessage>Declare a new region lock in the annotated class.</shortMessage>
+    <info><![CDATA[
+      Declare a new region lock in the annotated class.  Creates a new named
+      lock that associates a particular lock object with a region of the
+      class. The region may only be accessed when the lock is held.
+      <p>
+	To declare more than one lock for a class use the <tt>@RegionLocks</tt>
+	annotation.  It is an error for a class to have both a
+	<tt>@RegionLocks</tt> and a <tt>@RegionLock</tt> annotation.
+      </p>
+      <p>The named lock is a Java object If the object's type
+	implements<tt>java.util.concurrent.locks.Lock</tt> then the lock object
+	must be used according to the protocol of the <tt>@Lock</tt> interface.
+	Otherwise, the object must be used as a Java intrinsic lock, i.e.,
+	with <tt>synchronized</tt> blocks.
+      </p>
+    ]]></info>
     <name>@RegionLock</name>
   </findingType>
   <findingType>
-    <id>RequiresLockPromiseDrop</id>
-    <artifact tool="JSure" mnemonic="RequiresLockPromiseDrop"/>
-    <shortMessage>TBD</shortMessage>
-    <info>TBD</info>
+    <id>RequiresLockPromiseDrop</id> 
+    <artifact tool="JSure"
+	      mnemonic="RequiresLockPromiseDrop"/>
+    <shortMessage>Declares that the method/constructor assumes that the caller
+      holds the named locks.</shortMessage>
+    <info><![CDATA[
+      Declares that the method/constructor assumes that the caller holds the
+      named locks.  Analysis of the method/constructor proceeds as if the named
+      locks were held; call sites of the method are scrutinized to determine if
+      the precondition is satisfied.
+      <p>
+	The list of locks is allowed to be empty, in which case it means that
+	the method/constructor does not require any locks to be held by the
+	caller.
+      </p>
+    ]]></info>
     <name>@RequiresLock</name>
   </findingType>
   <findingType>
-    <id>SelfProtectedPromiseDrop</id>
-    <artifact tool="JSure" mnemonic="SelfProtectedPromiseDrop"/>
-    <shortMessage>TBD</shortMessage>
-    <info>TBD</info>
+    <id>SelfProtectedPromiseDrop</id> 
+    <artifact tool="JSure"
+	      mnemonic="SelfProtectedPromiseDrop"/>
+    <shortMessage>Marker annotation that indicates that the annotated type
+      protects itself.</shortMessage>
+    <info><![CDATA[
+      Marker annotation that indicates that the annotated type protects
+      itself. That is, it is safe to call any two methods from the class
+      simultaneously from different threads.  This annotation does not imply
+      anything about how the class is implemented.  Of course, it also does not
+      imply that a sequence of calls to methods of this class are atomic.  It is
+      a the responsibility of the caller to insure that such call sequences
+      execute atomically.  <i>This annotation is not checked</i>; rather it is
+      used to quiet warnings that would otherwise be raised when accessing an
+      object through a field protected by a lock.
+    ]]></info>
     <name>@SelfProtected</name>
   </findingType>
   <findingType>
-    <id>SingleThreadedPromiseDrop</id>
-    <artifact tool="JSure" mnemonic="SingleThreadedPromiseDrop"/>
-    <shortMessage>TBD</shortMessage>
-    <info>TBD</info>
+    <id>SingleThreadedPromiseDrop</id> 
+    <artifact tool="JSure"
+	      mnemonic="SingleThreadedPromiseDrop"/>
+    <shortMessage>Marker annotation that indicates that the object created by
+      the constructor is only operated on by the thread that invoked the
+      constructor.</shortMessage>
+    <info><![CDATA[
+      Marker annotation that indicates that the object created by the
+      constructor is only operated on by the thread that invoked the
+      constructor.  This knowledge allows fields of the newly create object to
+      be accessed without the normally required locking within the body of the
+      constructor.
+    ]]></info>
     <name>@SingleThreaded</name>
   </findingType>
   <findingType>
-    <id>TransparentPromiseDrop</id>
-    <artifact tool="JSure" mnemonic="TransparentPromiseDrop"/>
-    <shortMessage>TBD</shortMessage>
-    <info>TBD</info>
+    <id>TransparentPromiseDrop</id> 
+    <artifact tool="JSure"
+	      mnemonic="TransparentPromiseDrop"/>
+    <shortMessage>Indicates that the annotated method may be called from any
+      thread color context.</shortMessage>
+    <info><![CDATA[
+      Indicates that the annotated method may be called from any thread color
+      context. Semantically equivalent to <tt>@Color true</tt>.
+    ]]></info>
     <name>@Transparent</name>
   </findingType>
   <findingType>
-    <id>PromisePromiseDrop</id>
-    <artifact tool="JSure" mnemonic="PromisePromiseDrop"/>
+    <id>PromisePromiseDrop</id> 
+    <artifact tool="JSure"
+	      mnemonic="PromisePromiseDrop"/>
     <shortMessage>TBD</shortMessage>
     <info>TBD</info>
     <name>Scoped Promise</name>
   </findingType>
   <findingType>
-    <id>LockAnalysis_ds_OnBehalfOfConstructor</id>
-    <artifact tool="JSure" mnemonic="LockAnalysis_ds_OnBehalfOfConstructor"/>
+    <id>LockAnalysis_ds_OnBehalfOfConstructor</id> 
+    <artifact tool="JSure"
+	      mnemonic="LockAnalysis_ds_OnBehalfOfConstructor"/>
     <shortMessage>TBD</shortMessage>
     <info>TBD</info>
     <name>Analyzed Initializers</name>
   </findingType>
   <findingType>
-    <id>LockAnalysis_ds_FieldDeclaration</id>
-    <artifact tool="JSure" mnemonic="LockAnalysis_ds_FieldDeclaration"/>
+    <id>LockAnalysis_ds_FieldDeclaration</id> 
+    <artifact tool="JSure"
+	      mnemonic="LockAnalysis_ds_FieldDeclaration"/>
     <shortMessage>TBD</shortMessage>
     <info>TBD</info>
     <name>Field Declaration</name>
   </findingType>
   <findingType>
-    <id>LockAnalysis_ds_HeldLock</id>
-    <artifact tool="JSure" mnemonic="LockAnalysis_ds_HeldLock"/>
+    <id>LockAnalysis_ds_HeldLock</id> 
+    <artifact tool="JSure"
+	      mnemonic="LockAnalysis_ds_HeldLock"/>
     <shortMessage>TBD</shortMessage>
     <info>TBD</info>
     <name>Intrinsic Lock Held</name>
   </findingType>
   <findingType>
-    <id>LockAnalysis_ds_HeldJUCLock</id>
-    <artifact tool="JSure" mnemonic="LockAnalysis_ds_HeldJUCLock"/>
+    <id>LockAnalysis_ds_HeldJUCLock</id> 
+    <artifact tool="JSure"
+	      mnemonic="LockAnalysis_ds_HeldJUCLock"/>
     <shortMessage>TBD</shortMessage>
     <info>TBD</info>
     <name>JUC Lock Held</name>
   </findingType>
   <findingType>
-    <id>LockAnalysis_ds_PoisonedLockCall</id>
-    <artifact tool="JSure" mnemonic="LockAnalysis_ds_PoisonedLockCall"/>
+    <id>LockAnalysis_ds_PoisonedLockCall</id> 
+    <artifact tool="JSure"
+	      mnemonic="LockAnalysis_ds_PoisonedLockCall"/>
     <shortMessage>TBD</shortMessage>
     <info>TBD</info>
     <name>Inconsistent Matching Locks</name>
   </findingType>
   <findingType>
-    <id>LockAnalysis_ds_NoMatchingUnlocks</id>
-    <artifact tool="JSure" mnemonic="LockAnalysis_ds_NoMatchingUnlocks"/>
+    <id>LockAnalysis_ds_NoMatchingUnlocks</id> 
+    <artifact tool="JSure"
+	      mnemonic="LockAnalysis_ds_NoMatchingUnlocks"/>
     <shortMessage>No Matching Unlocks</shortMessage>
     <info>TBD</info>
     <name>No Matching Unlocks</name>
   </findingType>
   <findingType>
-    <id>LockAnalysis_ds_MatchingUnlock</id>
-    <artifact tool="JSure" mnemonic="LockAnalysis_ds_MatchingUnlock"/>
+    <id>LockAnalysis_ds_MatchingUnlock</id> 
+    <artifact tool="JSure"
+	      mnemonic="LockAnalysis_ds_MatchingUnlock"/>
     <shortMessage>TBD</shortMessage>
     <info>TBD</info>
     <name>Matching Unlock</name>
   </findingType>
   <findingType>
-    <id>LockAnalysis_ds_PoisonedUnlockCall</id>
-    <artifact tool="JSure" mnemonic="LockAnalysis_ds_PoisonedUnlockCall"/>
+    <id>LockAnalysis_ds_PoisonedUnlockCall</id> 
+    <artifact tool="JSure"
+	      mnemonic="LockAnalysis_ds_PoisonedUnlockCall"/>
     <shortMessage>TBD</shortMessage>
     <info>TBD</info>
     <name>Inconsistent Matching Unlocks</name>
   </findingType>
   <findingType>
-    <id>LockAnalysis_ds_NoMatchingLocks</id>
-    <artifact tool="JSure" mnemonic="LockAnalysis_ds_NoMatchingLocks"/>
+    <id>LockAnalysis_ds_NoMatchingLocks</id> 
+    <artifact tool="JSure"
+	      mnemonic="LockAnalysis_ds_NoMatchingLocks"/>
     <shortMessage>TBD</shortMessage>
     <info>TBD</info>
     <name>No Matching Locks</name>
   </findingType>
   <findingType>
-    <id>LockAnalysis_ds_MatchingLock</id>
-    <artifact tool="JSure" mnemonic="LockAnalysis_ds_MatchingLock"/>
+    <id>LockAnalysis_ds_MatchingLock</id> 
+    <artifact tool="JSure"
+	      mnemonic="LockAnalysis_ds_MatchingLock"/>
     <shortMessage>TBD</shortMessage>
     <info>TBD</info>
     <name>Matching Lock</name>
   </findingType>
   <findingType>
-    <id>LockAnalysis_ds_AggregationEvidence</id>
-    <artifact tool="JSure" mnemonic="LockAnalysis_ds_AggregationEvidence"/>
+    <id>LockAnalysis_ds_AggregationEvidence</id> 
+    <artifact tool="JSure"
+	      mnemonic="LockAnalysis_ds_AggregationEvidence"/>
     <shortMessage>TBD</shortMessage>
     <info>TBD</info>
     <name>Aggregation Evidence</name>
   </findingType>
   
   <findingType>
-    <id>EffectAssurance_msgUnaccountedFor</id>
-    <artifact tool="JSure" mnemonic="EffectAssurance_msgUnaccountedFor"/>
+    <id>EffectAssurance_msgUnaccountedFor</id> 
+    <artifact tool="JSure"
+	      mnemonic="EffectAssurance_msgUnaccountedFor"/>
     <shortMessage>TBD</shortMessage>
     <info>TBD</info>
     <name>Unaccounted Region Effects</name>
-  </findingType>	
+  </findingType>
   <findingType>
-    <id>EffectAssurance_msgCheckedBy</id>
-    <artifact tool="JSure" mnemonic="EffectAssurance_msgCheckedBy"/>
+    <id>EffectAssurance_msgCheckedBy</id> 
+    <artifact tool="JSure"
+	      mnemonic="EffectAssurance_msgCheckedBy"/>
     <shortMessage>TBD</shortMessage>
     <info>TBD</info>
     <name>Checked Region Effects</name>
-  </findingType>	
+  </findingType>
   <findingType>
-    <id>EffectAssurance_msgEmptyEffects</id>
-    <artifact tool="JSure" mnemonic="EffectAssurance_msgEmptyEffects"/>
+    <id>EffectAssurance_msgEmptyEffects</id> 
+    <artifact tool="JSure"
+	      mnemonic="EffectAssurance_msgEmptyEffects"/>
     <shortMessage>TBD</shortMessage>
     <info>TBD</info>
     <name>Empty Region Effects</name>
-  </findingType>	
+  </findingType>
   <findingType>
-    <id>EffectAssurance_msgContructorRule</id>
-    <artifact tool="JSure" mnemonic="EffectAssurance_msgContructorRule"/>
+    <id>EffectAssurance_msgContructorRule</id> 
+    <artifact tool="JSure"
+	      mnemonic="EffectAssurance_msgContructorRule"/>
     <shortMessage>TBD</shortMessage>
     <info>TBD</info>
     <name>Region Effects Checked By Constructor</name>
-  </findingType>	
-  	
-	
-	<category>
-		<id>JSure</id>
-		<findingType>JSure</findingType>
-		<findingType>BorrowedPromiseDrop</findingType>
-		<findingType>UniquePromiseDrop</findingType>
-		<findingType>AggregatePromiseDrop</findingType>
-		<findingType>StartsPromiseDrop</findingType>	
-		<findingType>RegionEffectsPromiseDrop</findingType>
-		<findingType>InRegionPromiseDrop</findingType>
-		<findingType>RegionModel</findingType>
-		<findingType>LockModel</findingType>		
-		<findingType>RequiresLockPromiseDrop</findingType>
-		<findingType>SelfProtectedPromiseDrop</findingType>
-		<findingType>SingleThreadedPromiseDrop</findingType>
-		<findingType>TransparentPromiseDrop</findingType>
-		<findingType>PromisePromiseDrop</findingType>
-		<findingType>LockAnalysis_ds_PreconditionsAssured</findingType>
-		<findingType>LockAnalysis_ds_PreconditionsNotAssured</findingType>
-		<findingType>ThreadEffectsAnalysis_threadEffectDrop</findingType>
-		<findingType>ThreadEffectsAnalysis_callPromiseDrop</findingType>
-		<findingType>LockAnalysis_ds_IndirectFieldAccessNotAssured</findingType>
-		<findingType>LockAnalysis_ds_SynchronizedMethodWarningDetails</findingType>
-		<findingType>LockAnalysis_ds_ReturnAssured</findingType>
-		<findingType>LockAnalysis_ds_SynchronizedConstructorAssured</findingType>
-		<findingType>ColorSecondPass_inheritedColor</findingType>
-		<findingType>ColorSecondPass_inferredColor</findingType>
-		<findingType>LockAnalysis_ds_FieldAccessNotAssured</findingType>
-		<findingType>LockAnalysis_ds_DeclaredJUCLockField</findingType>
-		<findingType>ThreadEffectsAnalysis_callNotPromiseDrop</findingType>
-		<findingType>LockAnalysis_ds_SyncedJUCLock</findingType>
-		<findingType>LockAnalysis_ds_PreconditionsAssuredAlternative</findingType>
-		<findingType>LockAnalysis_ds_RedundantSynchronized</findingType>
-		<findingType>LockAnalysis_ds_FieldAccessAssured</findingType>
-		<findingType>LockAnalysis_ds_FieldAccessNotResolvable</findingType>
-		<findingType>LockAnalysis_ds_MasqueradingCall2</findingType>
-		<findingType>ColorSecondPass_colorContextDrop</findingType>
-		<findingType>ThreadEffectsAnalysis_noThreadsDrop</findingType>
-		<findingType>LockAnalysis_ds_JUCLockFields</findingType>
-		<findingType>LockAnalysis_ds_PreconditionNotResolvable</findingType>
-		<findingType>LockAnalysis_ds_SynchronizedConstructorNotAssured</findingType>
-		<findingType>LockAnalysis_ds_FieldAccessAssuredAlternative</findingType>
-		<findingType>ColorSecondPass_inheritedTransparent</findingType>
-		<findingType>LockAnalysis_ds_AggregationNeeded</findingType>
-		<findingType>LockAnalysis_ds_UnidentifiableLock</findingType>
-		<findingType>LockAnalysis_ds_NonfinalExpression</findingType>
-		<findingType>LockAnalysis_ds_IndirectFieldAccessAssuredAlternative</findingType>
-		<findingType>LockAnalysis_ds_ReturnNotAssured</findingType>
-		<findingType>LockAnalysis_ds_MasqueradingCall</findingType>
-		<findingType>LockAnalysis_ds_SynchronizedStaticMethodWarningDetails</findingType>
-		<findingType>LockAnalysis_ds_SynchronizationUnused</findingType>
-		<findingType>LockAnalysis_ds_IndirectFieldAccessAssured</findingType>
-		<findingType>LockAnalysis_ds_AggregationNeeded2</findingType>
-		<findingType>UniquenessAssurance_uniquenessContraints1</findingType>
-		<findingType>UniquenessAssurance_uniquenessContraints2</findingType>
-		<findingType>UniquenessAssurance_uniqueReturnDrop</findingType>
-		<findingType>UniquenessAssurance_borrowedParametersDrop</findingType>
-		<findingType>UniquenessAssurance_uniqueParametersDrop</findingType>
-		<findingType>UniquenessAssurance_effectOfCallDrop</findingType>
-		<findingType>UniquenessAssurance_dependencyDrop</findingType>
-		<findingType>UniquenessAssurance_error</findingType>		
-		<findingType>UniquenessAssurance</findingType>
-		<findingType>LockAnalysis_ds_OnBehalfOfConstructor</findingType>
-		<findingType>LockAnalysis_ds_FieldDeclaration</findingType>
-		<findingType>LockAnalysis_ds_HeldLock</findingType>
-		<findingType>LockAnalysis_ds_HeldJUCLock</findingType>
-		<findingType>LockAnalysis_ds_PoisonedLockCall</findingType>
-		<findingType>LockAnalysis_ds_NoMatchingUnlocks</findingType>
-		<findingType>LockAnalysis_ds_MatchingUnlock</findingType>
-		<findingType>LockAnalysis_ds_PoisonedUnlockCall</findingType>
-		<findingType>LockAnalysis_ds_NoMatchingLocks</findingType>
-		<findingType>LockAnalysis_ds_MatchingLock</findingType>
-		<findingType>LockAnalysis_ds_AggregationEvidence</findingType>
-		<findingType>EffectAssurance_msgUnaccountedFor</findingType>
-		<findingType>EffectAssurance_msgCheckedBy</findingType>
-		<findingType>EffectAssurance_msgEmptyEffects</findingType>
-		<findingType>EffectAssurance_msgContructorRule</findingType>
+  </findingType>
+  
+  
+  <category>
+    <id>JSure</id>
+    <findingType>JSure</findingType>
+    <findingType>BorrowedPromiseDrop</findingType>
+    <findingType>UniquePromiseDrop</findingType>
+    <findingType>AggregatePromiseDrop</findingType>
+    <findingType>StartsPromiseDrop</findingType>
+    <findingType>RegionEffectsPromiseDrop</findingType>
+    <findingType>InRegionPromiseDrop</findingType>
+    <findingType>RegionModel</findingType>
+    <findingType>LockModel</findingType>
+    <findingType>RequiresLockPromiseDrop</findingType>
+    <findingType>SelfProtectedPromiseDrop</findingType>
+    <findingType>SingleThreadedPromiseDrop</findingType>
+    <findingType>TransparentPromiseDrop</findingType>
+    <findingType>PromisePromiseDrop</findingType>
+    <findingType>LockAnalysis_ds_PreconditionsAssured</findingType>
+    <findingType>LockAnalysis_ds_PreconditionsNotAssured</findingType>
+    <findingType>ThreadEffectsAnalysis_threadEffectDrop</findingType>
+    <findingType>ThreadEffectsAnalysis_callPromiseDrop</findingType>
+    <findingType>LockAnalysis_ds_IndirectFieldAccessNotAssured</findingType>
+    <findingType>LockAnalysis_ds_SynchronizedMethodWarningDetails</findingType>
+    <findingType>LockAnalysis_ds_ReturnAssured</findingType>
+    <findingType>LockAnalysis_ds_SynchronizedConstructorAssured</findingType>
+    <findingType>ColorSecondPass_inheritedColor</findingType>
+    <findingType>ColorSecondPass_inferredColor</findingType>
+    <findingType>LockAnalysis_ds_FieldAccessNotAssured</findingType>
+    <findingType>LockAnalysis_ds_DeclaredJUCLockField</findingType>
+    <findingType>ThreadEffectsAnalysis_callNotPromiseDrop</findingType>
+    <findingType>LockAnalysis_ds_SyncedJUCLock</findingType>
+    <findingType>LockAnalysis_ds_PreconditionsAssuredAlternative</findingType>
+    <findingType>LockAnalysis_ds_RedundantSynchronized</findingType>
+    <findingType>LockAnalysis_ds_FieldAccessAssured</findingType>
+    <findingType>LockAnalysis_ds_FieldAccessNotResolvable</findingType>
+    <findingType>LockAnalysis_ds_MasqueradingCall2</findingType>
+    <findingType>ColorSecondPass_colorContextDrop</findingType>
+    <findingType>ThreadEffectsAnalysis_noThreadsDrop</findingType>
+    <findingType>LockAnalysis_ds_JUCLockFields</findingType>
+    <findingType>LockAnalysis_ds_PreconditionNotResolvable</findingType>
+    <findingType>LockAnalysis_ds_SynchronizedConstructorNotAssured</findingType>
+    <findingType>LockAnalysis_ds_FieldAccessAssuredAlternative</findingType>
+    <findingType>ColorSecondPass_inheritedTransparent</findingType>
+    <findingType>LockAnalysis_ds_AggregationNeeded</findingType>
+    <findingType>LockAnalysis_ds_UnidentifiableLock</findingType>
+    <findingType>LockAnalysis_ds_NonfinalExpression</findingType>
+    <findingType>LockAnalysis_ds_IndirectFieldAccessAssuredAlternative</findingType>
+    <findingType>LockAnalysis_ds_ReturnNotAssured</findingType>
+    <findingType>LockAnalysis_ds_MasqueradingCall</findingType>
+    <findingType>LockAnalysis_ds_SynchronizedStaticMethodWarningDetails</findingType>
+    <findingType>LockAnalysis_ds_SynchronizationUnused</findingType>
+    <findingType>LockAnalysis_ds_IndirectFieldAccessAssured</findingType>
+    <findingType>LockAnalysis_ds_AggregationNeeded2</findingType>
+    <findingType>UniquenessAssurance_uniquenessContraints1</findingType>
+    <findingType>UniquenessAssurance_uniquenessContraints2</findingType>
+    <findingType>UniquenessAssurance_uniqueReturnDrop</findingType>
+    <findingType>UniquenessAssurance_borrowedParametersDrop</findingType>
+    <findingType>UniquenessAssurance_uniqueParametersDrop</findingType>
+    <findingType>UniquenessAssurance_effectOfCallDrop</findingType>
+    <findingType>UniquenessAssurance_dependencyDrop</findingType>
+    <findingType>UniquenessAssurance_error</findingType>
+    <findingType>UniquenessAssurance</findingType>
+    <findingType>LockAnalysis_ds_OnBehalfOfConstructor</findingType>
+    <findingType>LockAnalysis_ds_FieldDeclaration</findingType>
+    <findingType>LockAnalysis_ds_HeldLock</findingType>
+    <findingType>LockAnalysis_ds_HeldJUCLock</findingType>
+    <findingType>LockAnalysis_ds_PoisonedLockCall</findingType>
+    <findingType>LockAnalysis_ds_NoMatchingUnlocks</findingType>
+    <findingType>LockAnalysis_ds_MatchingUnlock</findingType>
+    <findingType>LockAnalysis_ds_PoisonedUnlockCall</findingType>
+    <findingType>LockAnalysis_ds_NoMatchingLocks</findingType>
+    <findingType>LockAnalysis_ds_MatchingLock</findingType>
+    <findingType>LockAnalysis_ds_AggregationEvidence</findingType>
+    <findingType>EffectAssurance_msgUnaccountedFor</findingType>
+    <findingType>EffectAssurance_msgCheckedBy</findingType>
+    <findingType>EffectAssurance_msgEmptyEffects</findingType>
+    <findingType>EffectAssurance_msgContructorRule</findingType>
 
-		<name>JSure Issue</name>
-		<description>
-			This encompasses various issues related to JSure
-		</description>
-	</category>
+    <name>JSure Issue</name>
+    <description>
+      This encompasses various issues related to JSure
+    </description>
+  </category>
 </findingTypes>
