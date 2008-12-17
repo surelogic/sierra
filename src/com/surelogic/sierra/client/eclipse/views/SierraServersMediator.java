@@ -46,10 +46,14 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.browser.IWebBrowser;
 import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
@@ -523,30 +527,33 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 
 		f_sendResultFilters.addListener(SWT.Selection,
 				new ServerActionListener(
-						"Send scan filters pressed with no server focus.") {
+						"Send local scan filter  pressed with no server focus.") {
+			        Text name;
+			        
 					@Override
 					protected void handleEventOnServer(final SierraServer server) {
-						final StringBuilder msg = new StringBuilder();
-						msg
-								.append("Do you want your local scan filters to become");
-						msg
-								.append(" the scan filters used by (and available from)");
-						msg.append(" the Sierra server '");
-						msg.append(server.getLabel());
-						msg.append("'?");
+						final String msg = "What do you want to call your scan filter "+
+		                                   "on the Sierra server '"+server.getLabel()+"'";						
 						final MessageDialog dialog = new MessageDialog(
 								f_statusTree.getTree().getShell(),
-								"Send Scan Filters", null, msg.toString(),
-								MessageDialog.QUESTION, new String[] { "Yes",
-										"No" }, 0);
+								"Send Local Scan Filter", null, msg,
+								MessageDialog.QUESTION, new String[] { "Send",
+										"Cancel" }, 0) {
+							@Override						
+							protected Control createCustomArea(Composite parent) {														
+								name = new Text(parent, SWT.SINGLE);
+								name.setLayoutData(new GridData(GridData.FILL_BOTH));
+								return name;
+							}
+						};
 						if (dialog.open() == 0) {
 							/*
-							 * Yes was selected, so send the result filters to
+							 * Yes was selected, so send the local scan filters to
 							 * the server.
 							 */
 							if (SendScanFiltersJob.ENABLED) {
 								final Job job = new SendScanFiltersJob(
-										ServerFailureReport.SHOW_DIALOG, server);
+										ServerFailureReport.SHOW_DIALOG, server, name.getText());
 								job.schedule();
 							}
 						}
@@ -554,14 +561,14 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 				});
 
 		f_getResultFilters.addListener(SWT.Selection, new ScanFilterActionListener(
-				"Overwrite local scan filter with one from a server.") {
+				"Overwrite local scan filter  pressed with no server focus.") {
 			@Override
 			protected void handleEventOnFilter(final SierraServer server, final ScanFilter f) {
 				final String msg = "Do you want to overwrite your local scan filter with"+
 				                   " the scan filter '"+f.getName()+"' from the Sierra server '"+
                                    server.getLabel()+"'?";
 				final MessageDialog dialog = new MessageDialog(f_statusTree
-						.getTree().getShell(), "Get Scan Filters", null, msg, 
+						.getTree().getShell(), "Overwrite Local Scan Filter", null, msg, 
 						MessageDialog.QUESTION, new String[] {
 						"Yes", "No" }, 0);
 				if (dialog.open() == 0) {
@@ -692,7 +699,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 				f_deleteServerItem.setEnabled(onlyServer);
 				f_serverConnectItem.setEnabled(onlyTeamServer);
 				if (SendScanFiltersJob.ENABLED) {
-					f_sendResultFilters.setEnabled(onlyBugLink);
+					f_sendResultFilters.setEnabled(onlyBugLink && onlyServer);
 				} else {
 					f_sendResultFilters.setEnabled(false);
 				}

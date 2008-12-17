@@ -20,23 +20,26 @@ import com.surelogic.sierra.client.eclipse.actions.TroubleshootNoSuchServer;
 import com.surelogic.sierra.client.eclipse.actions.TroubleshootWrongAuthentication;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
 import com.surelogic.sierra.client.eclipse.preferences.ServerFailureReport;
+import com.surelogic.sierra.jdbc.settings.SettingQueries;
 import com.surelogic.sierra.tool.message.InvalidLoginException;
 import com.surelogic.sierra.tool.message.SierraServiceClientException;
 
 public final class SendScanFiltersJob extends DatabaseJob {
-	public static final boolean ENABLED = false;
+	public static final boolean ENABLED = true;
 	private final ServerFailureReport f_method;
 	private final SierraServer f_server;
-
-	public SendScanFiltersJob(ServerFailureReport method, SierraServer server) {
-		super("Sending scan filter settings to " + server.getLabel());
+	private final String f_name;
+	
+	public SendScanFiltersJob(ServerFailureReport method, SierraServer server, String name) {
+		super("Sending local scan filter settings to " + server.getLabel());
 		f_server = server;
+		f_name = name;
 		f_method = method;
 	}
 
 	@Override
 	protected IStatus run(IProgressMonitor monitor) {
-		final String msg = "Sending scan filter settings to the Sierra team server '"
+		final String msg = "Sending local scan filter settings to the Sierra team server '"
 				+ f_server + "'";
 		final SLProgressMonitor slMonitor = new SLProgressMonitorWrapper(
 				monitor, msg);
@@ -72,13 +75,7 @@ public final class SendScanFiltersJob extends DatabaseJob {
 	private IStatus sendResultFilters(Connection conn,
 			SLProgressMonitor slMonitor) throws SQLException {
 		try {
-			// TODO
-			// final GlobalSettings settings = new GlobalSettings();
-			// settings.getFilter().addAll(
-			// SettingsManager.getInstance(conn).getGlobalSettings());
-			// final SierraService service = SierraServiceClient.create(f_server
-			// .getServer());
-			// service.writeGlobalSettings(settings);
+			SettingQueries.copyDefaultScanFilterToServer(f_server.getServer(), f_name);
 			f_server.markAsConnected();
 		} catch (final SierraServiceClientException e) {
 			TroubleshootConnection troubleshoot;
