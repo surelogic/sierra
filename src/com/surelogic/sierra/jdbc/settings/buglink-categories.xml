@@ -187,12 +187,6 @@
         </filter>
     </filterSets>
     <filterSets>
-        <uid>06cba31c-d719-471b-8c7b-d85a0562d545</uid>
-        <owner>9a997ac4-ec2b-4d02-869a-423999fecfed</owner>
-        <revision>7</revision>
-        <name>Edwin</name>
-    </filterSets>
-    <filterSets>
         <uid>114e6241-e570-442d-8ba0-b69d32f7a026</uid>
         <owner>9a997ac4-ec2b-4d02-869a-423999fecfed</owner>
         <revision>0</revision>
