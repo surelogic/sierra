@@ -37,14 +37,6 @@ public final class PromptForFilterNameDialog extends MessageDialog {
 	}
 
 	@Override
-	protected void okPressed() {
-		if (f_name != null) {
-			f_enteredName = f_name.getText();
-		}
-		super.okPressed();
-	}
-
-	@Override
 	protected Control createCustomArea(Composite parent) {
 		f_name = new Text(parent, SWT.SINGLE);
 		f_name.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -67,8 +59,12 @@ public final class PromptForFilterNameDialog extends MessageDialog {
 	}
 
 	private void setButtonState() {
-		boolean tipTyped = f_name.getText().length() != 0;
-		final Button ok = getButton(IDialogConstants.OK_ID);
-		ok.setEnabled(tipTyped);
+		if (f_name != null) {
+			final String typed = f_name.getText();
+			f_enteredName = typed;
+			boolean tipTyped = typed.length() != 0;
+			final Button ok = getButton(IDialogConstants.OK_ID);
+			ok.setEnabled(tipTyped);
+		}
 	}
 }
