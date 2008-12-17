@@ -29,8 +29,9 @@ public final class SendScanFiltersJob extends DatabaseJob {
 	private final ServerFailureReport f_method;
 	private final SierraServer f_server;
 	private final String f_name;
-	
-	public SendScanFiltersJob(ServerFailureReport method, SierraServer server, String name) {
+
+	public SendScanFiltersJob(final ServerFailureReport method,
+			final SierraServer server, final String name) {
 		super("Sending local scan filter settings to " + server.getLabel());
 		f_server = server;
 		f_name = name;
@@ -38,7 +39,7 @@ public final class SendScanFiltersJob extends DatabaseJob {
 	}
 
 	@Override
-	protected IStatus run(IProgressMonitor monitor) {
+	protected IStatus run(final IProgressMonitor monitor) {
 		final String msg = "Sending local scan filter settings to the Sierra team server '"
 				+ f_server + "'";
 		final SLProgressMonitor slMonitor = new SLProgressMonitorWrapper(
@@ -72,10 +73,12 @@ public final class SendScanFiltersJob extends DatabaseJob {
 		return status;
 	}
 
-	private IStatus sendResultFilters(Connection conn,
-			SLProgressMonitor slMonitor) throws SQLException {
+	private IStatus sendResultFilters(final Connection conn,
+			final SLProgressMonitor slMonitor) throws SQLException {
 		try {
-			SettingQueries.copyDefaultScanFilterToServer(f_server.getServer(), f_name);
+			Data.getInstance().withReadOnly(
+					SettingQueries.copyDefaultScanFilterToServer(f_server
+							.getServer(), f_name));
 			f_server.markAsConnected();
 		} catch (final SierraServiceClientException e) {
 			TroubleshootConnection troubleshoot;
