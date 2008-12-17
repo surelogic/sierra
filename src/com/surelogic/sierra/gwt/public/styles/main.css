@@ -45,7 +45,7 @@ img {
 
 /* Header */
 .header {
-	background-color: #555555;
+	background-color: #FFFFFF;
 	background-repeat: repeat-x;
 	width: 100%;
 	padding: 0px 0px 0px 0px;
@@ -53,27 +53,32 @@ img {
 }
 
 .header-tab-panel {
-	
+	width: 100%;
+	border-spacing: 0px;
 }
 
 .header-tab-left {
-	
+	border-top: 1px solid #FFFFFF;
+	border-right: 1px solid #000000;
+	border-bottom: 1px solid #000000;
 }
 	
 .header-tab-right {
-	border-left: 1px solid #000000;
+	border-top: 1px solid #FFFFFF;
+	border-bottom: 1px solid #000000;
 }
 
 .header-tab {
 	font-size: medium;
 	font-weight: normal;
 	text-align: center;
+	white-space: nowrap;
 	cursor: pointer;
 	cursor: hand;
 	padding-left: 1ex;
 	padding-right: 1ex;
-	border-bottom: solid 1px #000000;
 	color: #FFFFFF;
+	border-bottom: 1px solid #000000;
 }
 
 .header-tab a {
@@ -83,37 +88,32 @@ img {
 
 .header-tab-spacer {
 	width: 10px;
-	border-top: solid 1px #555555;
-	border-bottom: solid 1px #000000;
-	border-left: solid 1px #000000;
+	border-top: solid 1px #FFFFFF;
+	border-right: solid 1px #000000;
+	border-bottom: 1px solid #000000;
 }
 
 .header-tab-welcome {
 	background-color: #AA5555;
-	border-left: solid 1px #000000;
+	border-right: solid 1px #000000;
 	border-top: solid 1px #000000;
 }
 
 .header-tab-buglink {
 	background-color: #8899AA;
-	border-left: solid 1px #000000;
+	border-right: solid 1px #000000;
 	border-top: solid 1px #000000;
 }
 
 .header-tab-team {
 	background-color: #b57857;
-	border-left: solid 1px #000000;
-	border-top: solid 1px #000000;
-}
-
-.header-tab-reports {
-	border-left: solid 1px #000000;
+	border-right: solid 1px #000000;
 	border-top: solid 1px #000000;
 }
 
 .header-tab-admin {
 	background-color: #AA5555;
-	border-left: solid 1px #000000;
+	border-right: solid 1px #000000;
 	border-top: solid 1px #000000;
 }
 
@@ -121,10 +121,9 @@ img {
 	cursor: pointer;
 	cursor: hand;
 	background-color: #FFFFFF;
-	border-top: solid 1px #000000;
-	border-left: solid 1px #000000;
-	border-bottom: none;
-	font-weight: bold;
+	border-top: 1px solid #000000;
+	border-right: 1px solid #000000;
+	border-bottom: 1px solid #FFFFFF;
 	color: #000000;
 }
 	
@@ -133,7 +132,7 @@ img {
 }
 
 .sl-HeaderComposite-utility {
-	color: #FFFFFF;
+	color: #333333;
 	margin-right: 5px;
 	margin-top: 5px;
 }

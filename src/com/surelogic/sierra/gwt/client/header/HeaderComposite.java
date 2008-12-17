@@ -41,7 +41,7 @@ public abstract class HeaderComposite extends Composite {
 
 		headerRow.addStyleName(PRIMARY_STYLE);
 		headerRow.setWidth("100%");
-		final Image sierraLogo = ImageHelper.getImage("surelogic.png");
+		final Image sierraLogo = ImageHelper.getImage("surelogic-white.png");
 		sierraLogo.addStyleName("logo");
 		headerRow.add(sierraLogo);
 		headerRow.setCellVerticalAlignment(sierraLogo,
@@ -52,21 +52,19 @@ public abstract class HeaderComposite extends Composite {
 
 		final HTML tabLeft = new HTML("&nbsp;", true);
 		tabLeft.addStyleName("header-tab-left");
-		tabLeft.setHeight("100%");
 		tabStylingPanel.add(tabLeft);
 		tabStylingPanel.setCellHeight(tabLeft, "100%");
+		tabStylingPanel.setCellWidth(tabLeft, "1%");
 
 		tabStylingPanel.add(tabPanel);
+		tabStylingPanel.setCellWidth(tabPanel, "1%");
 
 		final HTML tabRight = new HTML("&nbsp;", true);
 		tabRight.addStyleName("header-tab-right");
-		tabRight.setHeight("100%");
 		tabStylingPanel.add(tabRight);
 		tabStylingPanel.setCellHeight(tabRight, "100%");
 		tabStylingPanel.setCellHorizontalAlignment(tabRight,
 				HorizontalPanel.ALIGN_LEFT);
-
-		tabStylingPanel.add(new HTML("&nbsp;", true));
 
 		utilityRow.addStyleName(PRIMARY_STYLE);
 	}
