@@ -1031,8 +1031,8 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 					collectProjects(projects, item, false);
 				} else {
 					final ProjectStatus status = inProject(item.getParent());
-					if (status != null) {
-						add(projects, (ProjectStatus) item.getData());
+					if (status != null) {						
+						add(projects, status);
 						continue;
 					}
 					System.out.println("Ignoring selection: " + item.getText());
