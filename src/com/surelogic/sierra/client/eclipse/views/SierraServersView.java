@@ -45,20 +45,20 @@ public final class SierraServersView extends
 				"Re-Scan Changes in Project",
 				CommonImages.IMG_SIERRA_SCAN_DELTA);
 		final MenuItem synchProjects = createMenuItem(contextMenu,
-				"Synchronize Projects", CommonImages.IMG_SIERRA_SYNC);
+				"Synchronize Project", CommonImages.IMG_SIERRA_SYNC);
 
 		new MenuItem(contextMenu, SWT.SEPARATOR);
 		final MenuItem publishScansItem = createMenuItem(contextMenu,
-				"Publish Scans", CommonImages.IMG_SIERRA_PUBLISH);
+				"Publish Latest Scan", CommonImages.IMG_SIERRA_PUBLISH);
 
 		final MenuItem disconnectProjectItem = createMenuItem(contextMenu,
 				"Disconnect", CommonImages.IMG_SIERRA_DISCONNECT);
 
 		new MenuItem(contextMenu, SWT.SEPARATOR);
 		final MenuItem sendResultFilters = createMenuItem(contextMenu,
-				"Send Local Scan Filter...", CommonImages.IMG_FILTER);
+				"Send Local Scan Filter As ...", CommonImages.IMG_FILTER);
 		final MenuItem getResultFilters = new MenuItem(contextMenu, SWT.PUSH);
-		getResultFilters.setText("Overwrite Local Scan Filter...");
+		getResultFilters.setText("Overwrite Local Scan Filter");
 		new MenuItem(contextMenu, SWT.SEPARATOR);
 		final MenuItem serverPropertiesItem = new MenuItem(contextMenu,
 				SWT.PUSH);
