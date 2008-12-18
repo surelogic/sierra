@@ -184,7 +184,12 @@ public final class SierraServerPersistence {
 				final SierraServer s = manager.getOrCreate(loc.getLabel());
 				s.setContextPath(loc.getContextPath());
 				s.setHost(loc.getHost());
-				s.setPassword(loc.getPass());
+				final String password = loc.getPass();
+				// If we have a password, we must be saving it.
+				if (password != null) {
+					s.setPassword(loc.getPass());
+					s.setSavePassword(true);
+				}
 				s.setPort(loc.getPort());
 				s.setSecure(loc.isSecure());
 				s.setUser(loc.getUser());
