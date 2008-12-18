@@ -27,8 +27,10 @@ public final class SierraServer {
 		f_manager = manager;
 		assert label != null;
 		f_label = label;
-		assert !f_manager.f_labelToServer.containsKey(f_label);
-		f_manager.f_labelToServer.put(f_label, this);
+		synchronized (f_manager) {
+			assert !f_manager.f_labelToServer.containsKey(f_label);
+			f_manager.f_labelToServer.put(f_label, this);
+		}
 	}
 
 	private String f_label = "";
@@ -47,10 +49,12 @@ public final class SierraServer {
 	}
 
 	private void setLabel_internal(String label) {
-		// overwrite semantics, i.e., no check if the new name is in use
-		f_manager.f_labelToServer.remove(f_label);
-		f_label = label;
-		f_manager.f_labelToServer.put(f_label, this);
+		synchronized (f_manager) {
+			// overwrite semantics, i.e., no check if the new name is in use
+			f_manager.f_labelToServer.remove(f_label);
+			f_label = label;
+			f_manager.f_labelToServer.put(f_label, this);
+		}
 	}
 
 	private boolean f_secure = false;

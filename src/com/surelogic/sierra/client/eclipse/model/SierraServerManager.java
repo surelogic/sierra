@@ -39,15 +39,15 @@ public final class SierraServerManager extends
 	 * @return <code>true</code> if the label is used for an existing server,
 	 *         <code>false</code> otherwise.
 	 */
-	public boolean exists(final String label) {
+	public synchronized boolean exists(final String label) {
 		return f_labelToServer.containsKey(label);
 	}
 
-	public boolean isEmpty() {
+	public synchronized boolean isEmpty() {
 		return f_labelToServer.isEmpty();
 	}
 
-	public Set<SierraServer> getServers() {
+	public synchronized Set<SierraServer> getServers() {
 		final Set<SierraServer> servers = new HashSet<SierraServer>(
 				f_labelToServer.values());
 		return servers;
@@ -73,7 +73,7 @@ public final class SierraServerManager extends
 	 *            a server label.
 	 * @return the server with the passed label.
 	 */
-	public SierraServer getOrCreate(final String label) {
+	public synchronized SierraServer getOrCreate(final String label) {
 		if (label == null) {
 			throw new IllegalArgumentException("label must be non-null");
 		}
@@ -123,7 +123,7 @@ public final class SierraServerManager extends
 				SierraServerLocation.DEFAULT_PATH, "", "");
 	}
 
-	public void delete(SierraServer server) {
+	public synchronized void delete(SierraServer server) {
 		if (server.getManager() != this) {
 			SLLogger.getLogger().log(
 					Level.WARNING,
@@ -151,7 +151,7 @@ public final class SierraServerManager extends
 		notifyObservers();
 	}
 
-	public void delete(String label) {
+	public synchronized void delete(String label) {
 		final SierraServer server = f_labelToServer.get(label);
 		if (server != null) {
 			delete(server);
@@ -211,7 +211,7 @@ public final class SierraServerManager extends
 	 * 
 	 * @return the ordered list of server labels.
 	 */
-	public String[] getLabels() {
+	public synchronized String[] getLabels() {
 		final List<String> labels = new ArrayList<String>(f_labelToServer
 				.keySet());
 		Collections.sort(labels);
@@ -314,7 +314,7 @@ public final class SierraServerManager extends
 		getOrCreateBugLinkOrg();
 	}
 
-	public SierraServer getServerByLabel(String label) {
+	public synchronized SierraServer getServerByLabel(String label) {
 		if (label == null) {
 			return null;
 		}
