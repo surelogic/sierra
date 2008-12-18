@@ -81,7 +81,6 @@ public class CategoriesContent extends
 	@Override
 	protected Widget getItemDecorator(final Category item) {
 		if (!item.isLocal()) {
-			// TODO add methods to access the owning server of this category
 			return new RemoteServerLink(item.getName()
 					+ " is from "
 					+ (item.getOwnerLabel() == null ? "unknown" : item
