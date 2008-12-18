@@ -229,7 +229,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 
 		@Override
 		public final void run() {
-			final List<SierraServer> servers = collectServers();
+			final List<SierraServer> servers = collectServers().indirect;
 			if (servers.size() == 1) {
 				handleEventOnServer(servers.get(0));
 				/*
@@ -730,7 +730,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 				.addSelectionChangedListener(new ISelectionChangedListener() {
 					public void selectionChanged(
 							final SelectionChangedEvent event) {
-						final List<SierraServer> servers = collectServers();
+						final List<SierraServer> servers = collectServers().indirect;
 						final boolean onlyServer = servers.size() == 1;
 						if (onlyServer) {
 							final SierraServer focus = servers.get(0);
@@ -745,13 +745,12 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 			public void handleEvent(final Event event) {
 				f_newServerItem.setEnabled(true);
 
-				final List<SierraServer> servers = collectServers();
-				final List<SierraServer> otherServers = new ArrayList<SierraServer>(servers);
-				final boolean onlyServer = servers.size() == 1;
+				final SelectedServers servers = collectServers();
+				final boolean onlyServer = servers.indirect.size() == 1;
 				final boolean onlyTeamServer;
 				final boolean onlyBugLink;
 				if (onlyServer) {
-					final SierraServer focus = servers.get(0);
+					final SierraServer focus = servers.indirect.get(0);
 					onlyTeamServer = focus.isTeamServer();
 					onlyBugLink = focus.isBugLink();
 				} else {
@@ -787,8 +786,6 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 						}
 						if (!f_manager.isConnected(ps.name)) {
 							allConnected = false;
-						} else {
-							otherServers.remove(f_manager.getServer(ps.name));
 						}
 						if (ps.scanDoc == null || !ps.scanDoc.exists()) {
 							allHasScans = false;
@@ -801,7 +798,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 					 * } catch (Throwable t) { t.printStackTrace(); }
 					 */
 				}
-				f_serverConnectItem.setEnabled((onlyTeamServer && !otherServers.isEmpty()) || 
+				f_serverConnectItem.setEnabled((onlyTeamServer && !servers.direct.isEmpty()) || 
 						                       (someProjects && !allConnected));
 				f_scanProjectItem.setEnabled(someProjects);
 				f_rescanProjectItem.setEnabled(someProjects);
@@ -944,34 +941,50 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 		return filters;
 	}
 
-	List<SierraServer> collectServers() {
+	private static class SelectedServers {
+		final List<SierraServer> direct; 
+		final List<SierraServer> indirect;
+		
+		SelectedServers(boolean allocate) {
+			if (allocate) {
+				direct = new ArrayList<SierraServer>();
+				indirect = new ArrayList<SierraServer>();
+			} else {
+				direct = indirect = Collections.emptyList();
+			}
+		}
+	}
+	
+	SelectedServers collectServers() {
 		final IStructuredSelection si = (IStructuredSelection) f_statusTree
 				.getSelection();
 		if (si.size() == 0) {
-			return Collections.emptyList();
+			return new SelectedServers(false);
 		}
-		final List<SierraServer> servers = new ArrayList<SierraServer>();
+		final SelectedServers servers = new SelectedServers(true);
 		@SuppressWarnings("unchecked")
 		final Iterator it = si.iterator();
 		while (it.hasNext()) {
 			final ServersViewContent item = (ServersViewContent) it.next();
 			if (item.getData() instanceof SierraServer) {
-				if (servers.contains(item.getData())) {
+				SierraServer s = (SierraServer) item.getData();
+				if (servers.indirect.contains(s)) {
 					continue;
 				}
-				servers.add((SierraServer) item.getData());
+				servers.direct.add(s);
+				servers.indirect.add(s);
 			} else {
 				// System.out.println("Got a non-server selection:
 				// "+item.getText());
 				final SierraServer s = inServer(item.getParent());
 				if (s != null) {
-					if (servers.contains(s)) {
+					if (servers.indirect.contains(s)) {
 						continue;
 					}
-					servers.add(s);
+					servers.indirect.add(s);
 					continue;
 				}
-				return Collections.emptyList();
+				return new SelectedServers(false);
 			}
 		}
 		return servers;
@@ -1563,7 +1576,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 		 * 
 		 * f_statusTree.setRedraw(false);
 		 */
-		final List<SierraServer> servers = collectServers();
+		final List<SierraServer> servers = collectServers().indirect;
 		final boolean onlyServer = servers.size() == 1;
 		f_duplicateServerAction.setEnabled(onlyServer);
 		f_deleteServerAction.setEnabled(onlyServer);
