@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.ui.Anchor;
+import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.surelogic.sierra.gwt.client.content.ContentComposite;
@@ -18,6 +21,7 @@ import com.surelogic.sierra.gwt.client.util.LangUtil;
 
 public class CategoryView extends BasicPanel {
 	private final VerticalPanel categoryInfo = new VerticalPanel();
+	private final Grid ownerGrid = new Grid(1, 3);
 	private final Label description = new Label();
 	private final FindingsView findingsView = new FindingsView();
 	private final VerticalPanel chart = new VerticalPanel();
@@ -27,6 +31,13 @@ public class CategoryView extends BasicPanel {
 	protected void onInitialize(final VerticalPanel contentPanel) {
 		categoryInfo.setWidth("100%");
 		categoryInfo.addStyleName("padded");
+		ownerGrid.setCellPadding(0);
+		ownerGrid.setCellSpacing(0);
+		ownerGrid.addStyleName("padded-bottom");
+		ownerGrid.setText(0, 0, "Owner:");
+		ownerGrid.getColumnFormatter().setWidth(1, "5px");
+		categoryInfo.add(ownerGrid);
+		ownerGrid.setVisible(false);
 		categoryInfo.add(description);
 		contentPanel.add(categoryInfo);
 
@@ -47,6 +58,16 @@ public class CategoryView extends BasicPanel {
 			setSummary(cat.getName());
 		} else {
 			setSummary("Select a Category");
+		}
+		if (cat == null || (cat != null && cat.isLocal())) {
+			ownerGrid.setVisible(false);
+		} else {
+			ownerGrid.setVisible(true);
+			final Anchor ownerLink = Anchor.wrap(DOM.createAnchor());
+			ownerLink.setText(cat.getOwnerLabel() == null ? "Unknown" : cat
+					.getOwnerLabel());
+			ownerLink.setHref(cat.getOwnerURL());
+			ownerGrid.setWidget(0, 2, ownerLink);
 		}
 
 		final String catInfo = cat == null ? "" : cat.getInfo();

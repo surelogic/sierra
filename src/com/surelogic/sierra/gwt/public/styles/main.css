@@ -216,6 +216,10 @@ img {
 	padding: 4px;
 }
 
+.padded-bottom {
+	padding-bottom: 4px;
+}
+
 /* SureLogic Component Styling */
 .sl-ContentComposite {
 	width: 100%;
