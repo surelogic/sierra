@@ -137,6 +137,11 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 	 * This should only be changed in the UI thread
 	 */
 	private List<ProjectStatus> projects = Collections.emptyList();
+	
+	/**
+	 * This should only be changed in the UI thread
+	 */
+	private List<ScanFilterDO> localFilters = Collections.emptyList();
 
 	/**
 	 * This should only be changed in the UI thread
@@ -256,22 +261,19 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 		}
 	}
 
-	private abstract class ScanFilterActionListener extends
-			ServerActionListener {
-		ScanFilterActionListener(String msg) {
-			super(msg);
+	private abstract class ScanFilterActionListener extends ActionListener {
+		ScanFilterActionListener(String tooltip) {
+			super((Image) null, tooltip);
 		}
 
 		@Override
-		protected void handleEventOnServer(final SierraServer server) {
-			List<ScanFilter> filters = collectScanFilters();
-			for (ScanFilter f : filters) {
-				handleEventOnFilter(server, f);
+		public final void run() {
+			for(ScanFilterDO f : collectScanFilters()) {
+				handleEventOnFilter(f);
 			}
 		}
-
-		protected abstract void handleEventOnFilter(final SierraServer server,
-				final ScanFilter filter);
+		
+		protected abstract void handleEventOnFilter(final ScanFilterDO filter);
 	}
 
 	private abstract class IJavaProjectsActionListener extends
@@ -653,17 +655,11 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 		f_getResultFilters
 				.addListener(
 						SWT.Selection,
-						new ScanFilterActionListener(
-								"Overwrite local scan filter pressed with no server focus.") {
+						new ScanFilterActionListener("Overwrite local scan filter") {
 							@Override
-							protected void handleEventOnFilter(
-									final SierraServer server,
-									final ScanFilter f) {
+							protected void handleEventOnFilter(final ScanFilterDO f) {
 								final String msg = "Do you want to overwrite your local scan filter with"
-										+ " the scan filter '"
-										+ f.getName()
-										+ "' from the Sierra server '"
-										+ server.getLabel() + "'?";
+										+ " the scan filter '" + f.getName() + "'?";
 								final MessageDialog dialog = new MessageDialog(
 										f_statusTree.getTree().getShell(),
 										"Overwrite Local Scan Filter", null,
@@ -675,9 +671,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 									 * filters from the server.
 									 */
 
-									final Job job = new OverwriteLocalScanFilterJob(
-											ServerFailureReport.SHOW_DIALOG,
-											server, f);
+									final Job job = new OverwriteLocalScanFilterJob(f);
 									job.schedule();
 								}
 							}
@@ -803,7 +797,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 				}
 				f_serverPropertiesItem.setEnabled(onlyServer);
 
-				final List<ScanFilter> filters = collectScanFilters();
+				final List<ScanFilterDO> filters = collectScanFilters();
 				final boolean onlyScanFilter = filters.size() == 1;
 				f_getResultFilters.setEnabled(onlyScanFilter);
 
@@ -957,19 +951,19 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 		protected abstract long getDelay(); // In msec
 	}
 
-	private List<ScanFilter> collectScanFilters() {
+	private List<ScanFilterDO> collectScanFilters() {
 		final IStructuredSelection si = (IStructuredSelection) f_statusTree
 				.getSelection();
 		if (si.size() == 0) {
 			return Collections.emptyList();
 		}
-		final List<ScanFilter> filters = new ArrayList<ScanFilter>();
+		final List<ScanFilterDO> filters = new ArrayList<ScanFilterDO>();
 		@SuppressWarnings("unchecked")
 		final Iterator it = si.iterator();
 		while (it.hasNext()) {
 			final ServersViewContent item = (ServersViewContent) it.next();
-			if (item.getData() instanceof ScanFilter) {
-				filters.add((ScanFilter) item.getData());
+			if (item.getData() instanceof ScanFilterDO) {
+				filters.add((ScanFilterDO) item.getData());
 			}
 		}
 		return filters;
@@ -1201,7 +1195,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 		}
 		if (sort != PreferenceConstants.getServerStatusSort()) {
 			PreferenceConstants.setServerStatusSort(sort);
-			updateContentsInUI(projects, serverUpdates);
+			updateContentsInUI(projects, serverUpdates, localFilters);
 		}
 	}
 
@@ -1543,9 +1537,11 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 			final ClientProjectManager cpm = ClientProjectManager
 					.getInstance(c);
 			final ClientFindingManager cfm = cpm.getFindingManager();
-			final Scans sm = new Scans(new ConnectionQuery(c));
+			final Query q = new ConnectionQuery(c);
+			final Scans sm = new Scans(q);
 			final List<ProjectStatus> projects = new ArrayList<ProjectStatus>();
 			final Map<SierraServer, ServerUpdateStatus> serverUpdates;
+			final List<ScanFilterDO> filters;
 			synchronized (responseMap) {
 				for (final IJavaProject jp : JDTUtility.getJavaProjects()) {
 					final String name = jp.getElementName();
@@ -1578,10 +1574,11 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 				}
 				serverUpdates = new HashMap<SierraServer, ServerUpdateStatus>(
 						serverResponseMap);
+				filters = SettingQueries.getLocalScanFilters().perform(q);
 			}
 			asyncUpdateContentsForUI(new IViewUpdater() {
 				public void updateContentsForUI() {
-					updateContentsInUI(projects, serverUpdates);
+					updateContentsInUI(projects, serverUpdates, filters);
 				}
 			});
 			c.commit();
@@ -1600,10 +1597,12 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 	}
 
 	public void updateContentsInUI(final List<ProjectStatus> projects,
-			final Map<SierraServer, ServerUpdateStatus> serverUpdates) {
+			final Map<SierraServer, ServerUpdateStatus> serverUpdates,
+			final List<ScanFilterDO> filters) {
 		// No need to synchronize since only updated/viewed in UI thread?
 		this.projects = projects;
 		this.serverUpdates = serverUpdates;
+		this.localFilters = filters;
 
 		/*
 		 * if (f_statusTree.isDisposed()) return;
@@ -1911,9 +1910,19 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 		}
 	}
 
-	private void createLocalScanFilterItems(
-			final List<ServersViewContent> content) {
-		// FIX localStatus
+	private void createLocalScanFilterItems(final List<ServersViewContent> content) {
+		ServersViewContent filterRoot = 
+			new ServersViewContent(null, SLImages.getImage(CommonImages.IMG_FILTER));
+		content.add(filterRoot);
+
+		List<ServersViewContent> children = new ArrayList<ServersViewContent>();
+		for(ScanFilterDO f : localFilters) {
+			ServersViewContent filter = createLabel(filterRoot, children, f.getName(),
+							                        ChangeStatus.NONE);
+			filter.setData(f);			
+		}
+		filterRoot.setText("Known Scan Filters");
+		filterRoot.setChildren(children.toArray(emptyChildren));
 	}
 
 	private void createProjectItems(final ServersViewContent parent,
