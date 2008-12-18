@@ -22,8 +22,10 @@ import org.eclipse.swt.widgets.Text;
 import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.images.CommonImages;
+import com.surelogic.sierra.client.eclipse.actions.SynchronizeBugLinkServerAction;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
 import com.surelogic.sierra.client.eclipse.model.SierraServerManager;
+import com.surelogic.sierra.client.eclipse.preferences.ServerFailureReport;
 import com.surelogic.sierra.tool.message.ServerInfoReply;
 import com.surelogic.sierra.tool.message.ServerInfoRequest;
 import com.surelogic.sierra.tool.message.ServerInfoService;
@@ -60,6 +62,7 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 	private Mediator f_mediator;
 
 	private boolean f_validateServer = true;
+	private boolean f_syncServer = true;
 	private boolean f_serverValidated = true;
 
 	/**
@@ -237,17 +240,15 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 		}
 		passwordText.setEchoChar('\u25CF');
 
-		final Button validateButton = new Button(panel, SWT.CHECK);
-		validateButton.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false,
-				false, 2, 1));
-		validateButton.setText("Validate connection on finish");
-		validateButton.setSelection(f_validateServer);
-
-		final Button savePasswordButton = new Button(panel, SWT.CHECK);
-		savePasswordButton.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER,
-				false, false, 2, 1));
-		savePasswordButton.setText("Save Password");
-		savePasswordButton.setSelection(f_savePassword);
+		final Button validateButton = makeCheckButton(panel, "Validate connection on finish", f_validateServer);		
+		final Button syncButton = makeCheckButton(panel, "Synchronize BugLink data on finish", f_syncServer);
+		syncButton.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event event) {
+				f_syncServer = syncButton.getSelection();
+			}
+		});
+		
+		final Button savePasswordButton = makeCheckButton(panel, "Save Password", f_savePassword);
 		savePasswordButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
 				f_savePassword = savePasswordButton.getSelection();
@@ -282,6 +283,14 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 		return contents;
 	}
 
+	private static Button makeCheckButton(Composite panel, String msg, boolean defaultVal) {
+		final Button button = new Button(panel, SWT.CHECK);
+		button.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 2, 1));
+		button.setText(msg);
+		button.setSelection(defaultVal);
+		return button;
+	}
+	
 	@Override
 	protected Control createContents(Composite parent) {
 		final Control contents = super.createContents(parent);
@@ -483,6 +492,11 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 				 * notify all observers of server information.
 				 */
 				server.getManager().notifyObservers();
+			}			
+			if (dialog.f_syncServer) {
+				final SynchronizeBugLinkServerAction sync = 
+					new SynchronizeBugLinkServerAction(ServerFailureReport.SHOW_DIALOG, true);
+				sync.run(server);
 			}
 		}
 	}
