@@ -67,7 +67,8 @@ public final class ClientFindingManager extends FindingManager {
 	private final PreparedStatement selectOldestScanByProject;
 	private final PreparedStatement selectLocalMerge;
 	private final PreparedStatement findLocalAudits;
-	private final PreparedStatement updateLocalAudits;
+	private final PreparedStatement selectUnrevisionedAudits;
+	private final PreparedStatement updateUnrevisionedAudit;
 	private final PreparedStatement selectFindingFindingType;
 
 	private ClientFindingManager(final Connection conn) throws SQLException {
@@ -299,8 +300,10 @@ public final class ClientFindingManager extends FindingManager {
 						+ " F.IS_READ = 'Y' AND A.REVISION IS NULL AND"
 						+ " F.ID = A.FINDING_ID AND F.PROJECT_ID = ?"
 						+ " ORDER BY A.FINDING_ID");
-		updateLocalAudits = conn
-				.prepareStatement("UPDATE SIERRA_AUDIT SET REVISION = ?, USER_ID = ? WHERE FINDING_ID IN (SELECT ID FROM FINDING WHERE PROJECT_ID IN (SELECT ID FROM PROJECT WHERE NAME = ?)) AND REVISION IS NULL");
+		selectUnrevisionedAudits = conn
+				.prepareStatement("SELECT SA.ID FROM SIERRA_AUDIT SA, FINDING F, PROJECT P WHERE P.NAME = ? AND F.PROJECT_ID = P.ID AND SA.FINDING_ID = F.ID AND SA.REVISION IS NULL");
+		updateUnrevisionedAudit = conn
+				.prepareStatement("UPDATE SIERRA_AUDIT SET REVISION = ?, USER_ID = ? WHERE ID = ?");
 		selectLocalMerge = conn
 				.prepareStatement("SELECT F.SUMMARY,F.IMPORTANCE,LM.PACKAGE_NAME,LM.CLASS_NAME,LM.HASH,FT.UUID,LM.REVISION"
 						+ "   FROM LOCATION_MATCH LM, FINDING F, FINDING_TYPE FT"
@@ -1055,10 +1058,17 @@ public final class ClientFindingManager extends FindingManager {
 			final String user, final long commitRevision,
 			final SLProgressMonitor monitor) throws SQLException {
 		final long userId = getUserId(user);
-		updateLocalAudits.setLong(1, commitRevision);
-		updateLocalAudits.setLong(2, userId);
-		updateLocalAudits.setString(3, projectName);
-		updateLocalAudits.execute();
+		selectUnrevisionedAudits.setString(1, projectName);
+		final ResultSet set = selectUnrevisionedAudits.executeQuery();
+		try {
+			while (set.next()) {
+				updateUnrevisionedAudit.setLong(1, commitRevision);
+				updateUnrevisionedAudit.setLong(2, userId);
+				updateUnrevisionedAudit.setLong(3, set.getLong(1));
+			}
+		} finally {
+			set.close();
+		}
 	}
 
 }
