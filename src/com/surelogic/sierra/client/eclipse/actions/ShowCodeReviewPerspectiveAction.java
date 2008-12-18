@@ -6,7 +6,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 
 import com.surelogic.common.eclipse.ViewUtility;
-import com.surelogic.sierra.client.eclipse.perspectives.CodeReview;
+import com.surelogic.sierra.client.eclipse.perspectives.CodeReviewPerspective;
 
 public final class ShowCodeReviewPerspectiveAction implements IWorkbenchWindowActionDelegate {
 
@@ -19,7 +19,7 @@ public final class ShowCodeReviewPerspectiveAction implements IWorkbenchWindowAc
 	}
 
 	public void run(IAction action) {
-		ViewUtility.showPerspective(CodeReview.class.getName());
+		ViewUtility.showPerspective(CodeReviewPerspective.class.getName());
 	}
 
 	public void selectionChanged(IAction action, ISelection selection) {

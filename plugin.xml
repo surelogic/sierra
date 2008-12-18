@@ -307,14 +307,14 @@
 	<extension point="org.eclipse.ui.perspectives">
 		<perspective name="Code Review"
 			icon="platform:/plugin/com.surelogic.common/src/com/surelogic/common/images/sierra_logo.gif"
-			class="com.surelogic.sierra.client.eclipse.perspectives.CodeReview"
-			id="com.surelogic.sierra.client.eclipse.perspectives.CodeReview">
+			class="com.surelogic.sierra.client.eclipse.perspectives.CodeReviewPerspective"
+			id="com.surelogic.sierra.client.eclipse.perspectives.CodeReviewPerspective">
 		</perspective>
 	</extension>
 
 	<extension point="org.eclipse.ui.perspectiveExtensions">
 		<perspectiveExtension
-			targetID="com.surelogic.sierra.client.eclipse.perspectives.CodeReview">
+			targetID="com.surelogic.sierra.client.eclipse.perspectives.CodeReviewPerspective">
 			<perspectiveShortcut id="org.eclipse.jdt.ui.JavaPerspective">
 			</perspectiveShortcut>
 			<viewShortcut
@@ -338,7 +338,7 @@
 				id="com.surelogic.sierra.client.eclipse.views.FindingDetailsView">
 			</viewShortcut>
 			<perspectiveShortcut
-				id="com.surelogic.sierra.client.eclipse.perspectives.CodeReview">
+				id="com.surelogic.sierra.client.eclipse.perspectives.CodeReviewPerspective">
 			</perspectiveShortcut>
 		</perspectiveExtension>
 	</extension>

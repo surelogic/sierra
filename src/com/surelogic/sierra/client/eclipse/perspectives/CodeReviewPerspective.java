@@ -14,7 +14,7 @@ import com.surelogic.sierra.client.eclipse.views.selection.FindingsSelectionView
 /**
  * Defines the Sierra Explorer perspective within the workbench.
  */
-public final class CodeReview implements IPerspectiveFactory {
+public final class CodeReviewPerspective implements IPerspectiveFactory {
 
 	public void createInitialLayout(IPageLayout layout) {
 		final String localTeamServer = "com.surelogic.sierra.eclipse.teamserver.views.TeamServerView";
