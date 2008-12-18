@@ -153,7 +153,7 @@
 				class="com.surelogic.sierra.client.eclipse.actions.SynchronizeAllProjectsAction"
 				id="com.surelogic.sierra.client.eclipse.actions.SynchronizeAllProjectsAction"
 				icon="platform:/plugin/com.surelogic.common/src/com/surelogic/common/images/sierra_sync.gif"
-				label="Synchronize All Server Data" menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/server"
+				label="Synchronize All Connected Projects" menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/server"
 				helpContextId="menu-synchronize-all-connected-projects">
 			</action>
 			<action
@@ -285,7 +285,7 @@
 			class="com.surelogic.sierra.client.eclipse.views.SierraServersView"
 			id="com.surelogic.sierra.client.eclipse.views.SierraServersView"
 			icon="platform:/plugin/com.surelogic.common/src/com/surelogic/common/images/sierra_server.gif"
-			name="Sierra Servers">
+			name="Team Servers">
 		</view>
 
 		<view category="com.surelogic.sierra.client.eclipse"
@@ -321,18 +321,10 @@
 				id="com.surelogic.sierra.client.eclipse.views.selection.FindingsSelectionView">
 			</viewShortcut>
 			<viewShortcut
-				id="com.surelogic.sierra.client.eclipse.views.FindingsDetailsView">
+				id="com.surelogic.sierra.client.eclipse.views.FindingDetailsView">
 			</viewShortcut>
 			<viewShortcut
 				id="com.surelogic.sierra.client.eclipse.views.SierraServersView">
-			</viewShortcut>
-			<viewShortcut
-				id="com.surelogic.sierra.client.eclipse.views.SierraServersView_Orig">
-			</viewShortcut>
-			<viewShortcut
-				id="com.surelogic.sierra.client.eclipse.views.ProjectStatusView">
-			</viewShortcut>
-			<viewShortcut id="com.surelogic.sierra.client.eclipse.AdHocQueryView">
 			</viewShortcut>
 		</perspectiveExtension>
 	</extension>
@@ -343,7 +335,7 @@
 				id="com.surelogic.sierra.client.eclipse.views.selection.FindingsSelectionView">
 			</viewShortcut>
 			<viewShortcut
-				id="com.surelogic.sierra.client.eclipse.views.FindingsDetailsView">
+				id="com.surelogic.sierra.client.eclipse.views.FindingDetailsView">
 			</viewShortcut>
 			<perspectiveShortcut
 				id="com.surelogic.sierra.client.eclipse.perspectives.CodeReview">
