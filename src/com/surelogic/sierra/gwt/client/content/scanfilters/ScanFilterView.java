@@ -110,7 +110,7 @@ public class ScanFilterView extends BasicPanel {
 
 			if (importancePanels.getWidgetCount() == 0) {
 				importancePanels.add(StyleHelper.add(new Label(
-						"No categories or findings in this Scan Filter."),
+						"No categories or finding types in this Scan Filter."),
 						Style.ITALICS));
 			}
 		} else {
@@ -180,7 +180,7 @@ public class ScanFilterView extends BasicPanel {
 
 		public FilterPanel(final boolean categories) {
 			super();
-			setTitle(categories ? "Categories" : "Findings");
+			setTitle(categories ? "Categories" : "Finding Types");
 			setSubsectionStyle(true);
 		}
 

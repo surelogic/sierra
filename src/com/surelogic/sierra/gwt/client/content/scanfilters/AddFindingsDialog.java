@@ -13,7 +13,7 @@ import com.surelogic.sierra.gwt.client.data.cache.CategoryCache;
 public class AddFindingsDialog extends FindingSelectionDialog {
 
 	public AddFindingsDialog() {
-		super("Select Findings");
+		super("Select Finding Types");
 	}
 
 	public void update(final Set<ScanFilterEntry> excludeCategories,

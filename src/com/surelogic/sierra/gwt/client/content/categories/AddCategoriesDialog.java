@@ -11,7 +11,7 @@ import com.surelogic.sierra.gwt.client.data.cache.CategoryCache;
 public class AddCategoriesDialog extends FindingSelectionDialog {
 
 	public AddCategoriesDialog() {
-		super("Select Categories and/or Findings");
+		super("Select Categories and/or Finding Types");
 	}
 
 	public void update(final CategoryCache categories,

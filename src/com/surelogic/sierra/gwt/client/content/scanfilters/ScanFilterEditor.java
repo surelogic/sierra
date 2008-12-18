@@ -33,7 +33,7 @@ public class ScanFilterEditor extends BasicPanel {
 	private final ScanFilterPanel categoryFilters = new ScanFilterPanel(
 			"Categories");
 	private final ScanFilterPanel findingFilters = new ScanFilterPanel(
-			"Findings");
+			"Finding Types");
 	private ScanFilter selection;
 	private StatusBox status;
 
@@ -49,7 +49,7 @@ public class ScanFilterEditor extends BasicPanel {
 		panel.add(categoryFilters);
 
 		findingFilters.initialize();
-		findingFilters.addAction("Add Finding", new ClickListener() {
+		findingFilters.addAction("Add Finding Type", new ClickListener() {
 
 			public void onClick(final Widget sender) {
 				promptForFindings();

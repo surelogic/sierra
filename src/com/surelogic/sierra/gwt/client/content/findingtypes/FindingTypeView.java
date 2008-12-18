@@ -22,9 +22,9 @@ import com.surelogic.sierra.gwt.client.util.LangUtil;
 public class FindingTypeView extends BasicPanel {
 	private final HTML description = new HTML();
 	private final CategoryList categoriesIncluding = new CategoryList(
-			"Categories Including This Type of Finding");
+			"Categories That Include This Finding Type");
 	private final CategoryList categoriesExcluding = new CategoryList(
-			"Categories Excluding This Type of Finding");
+			"Categories That Exclude This Finding Type");
 	private final ScanFilterList scanFilters = new ScanFilterList();
 	private final ArtifactTypeList artifactTypes = new ArtifactTypeList();
 	private final VerticalPanel chart = new VerticalPanel();
@@ -125,7 +125,7 @@ public class FindingTypeView extends BasicPanel {
 	private class ScanFilterList extends ListPanel<ScanFilterInfo> {
 
 		public ScanFilterList() {
-			super("Scan Filters That Use This Type of Finding");
+			super("Scan Filters That Use This Finding Type");
 		}
 
 		@Override
@@ -149,7 +149,7 @@ public class FindingTypeView extends BasicPanel {
 
 		@Override
 		protected void onInitialize(final VerticalPanel contentPanel) {
-			setTitle("Tools Reporting This Type of Finding");
+			setTitle("Tools That Report This Finding Type");
 			setSubsectionStyle(true);
 		}
 
