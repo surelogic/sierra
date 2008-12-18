@@ -781,7 +781,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 					// try {
 					for (final ProjectStatus ps : status) {
 						if ((f_manager == null) || (ps == null)) {
-							LOG.severe("Null project status");
+							//LOG.severe("Null project status");
 							continue;
 						}
 						if (!f_manager.isConnected(ps.name)) {
