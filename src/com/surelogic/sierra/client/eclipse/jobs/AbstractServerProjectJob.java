@@ -29,7 +29,9 @@ public abstract class AbstractServerProjectJob extends DatabaseJob {
 			SierraServer server, String project, ServerFailureReport method) {
 		super(family, name);
 		joinJob = family;
-		joinJob.add(this);
+		if (family != null) {
+			joinJob.add(this);
+		}
 		f_server = server;
 		f_projectName = project;
 		f_method = method;

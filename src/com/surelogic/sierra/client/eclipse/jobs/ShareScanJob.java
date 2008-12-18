@@ -91,7 +91,7 @@ public class ShareScanJob extends AbstractServerProjectJob {
 			}
 			return new TreeSet<String>(timeseries);
 		} catch (SierraServiceClientException e) {
-			if (joinJob.troubleshoot(f_server)) {
+			if (joinJob != null && joinJob.troubleshoot(f_server)) {
 				troubleshoot = getTroubleshootConnection(f_method, e);
 
 				// We had a recoverable error. Rollback, run the appropriate

@@ -85,7 +85,7 @@ public class SynchronizeJob extends AbstractServerProjectJob {
 			throws SQLException {
 		TroubleshootConnection troubleshoot;
 		try {
-			if (syncType.syncBugLink() && joinJob.process(f_server)) {
+			if (syncType.syncBugLink() && joinJob != null && joinJob.process(f_server)) {
 				final SierraServerLocation loc = f_server.getServer();
 				final Query q = new ConnectionQuery(conn);
 				SettingQueries.retrieveCategories(loc,
@@ -109,7 +109,7 @@ public class SynchronizeJob extends AbstractServerProjectJob {
 				return Status.OK_STATUS;
 			}
 		} catch (final ServerMismatchException e) {
-			if (joinJob.troubleshoot(f_server)) {
+			if (joinJob != null && joinJob.troubleshoot(f_server)) {
 				troubleshoot = new TroubleshootWrongServer(f_method, f_server,
 						f_projectName);
 				conn.rollback();
@@ -121,7 +121,7 @@ public class SynchronizeJob extends AbstractServerProjectJob {
 			}
 			return fail(e);
 		} catch (final SierraServiceClientException e) {
-			if (joinJob.troubleshoot(f_server)) {
+			if (joinJob != null && joinJob.troubleshoot(f_server)) {
 				troubleshoot = getTroubleshootConnection(f_method, e);
 				conn.rollback();
 				troubleshoot.fix();
