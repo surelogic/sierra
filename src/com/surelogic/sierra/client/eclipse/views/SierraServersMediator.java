@@ -322,14 +322,14 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 			}
 		};
 		// view.addToActionBar(f_serverUpdateAction);
-		f_buglinkSyncAction = new ActionListener("Synchronize All BugLink Data",
+		f_buglinkSyncAction = new ActionListener("Synchronize BugLink Data",
 		"Synchronize BugLink servers") {
 			@Override
 			public void run() {
 				asyncSyncWithServer(ServerSyncType.BUGLINK);
 			}
 		};
-		f_serverSyncAction = new ActionListener("Synchronize All Server Data",
+		f_serverSyncAction = new ActionListener("Synchronize Server Data",
 				"Synchronize servers and connected projects") {
 			@Override
 			public void run() {
