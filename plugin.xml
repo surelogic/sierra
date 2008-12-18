@@ -17,7 +17,7 @@
 
 	<extension point="org.eclipse.ui.perspectiveExtensions">
 		<perspectiveExtension
-			targetID="com.surelogic.sierra.client.eclipse.perspectives.CodeReview">
+			targetID="com.surelogic.sierra.client.eclipse.perspectives.CodeReviewPerspective">
 			<viewShortcut
 				id="com.surelogic.sierra.eclipse.teamserver.views.TeamServerView">
 			</viewShortcut>
