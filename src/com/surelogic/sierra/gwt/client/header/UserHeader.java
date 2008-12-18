@@ -42,8 +42,8 @@ public final class UserHeader extends AuthenticatedHeader {
 	protected void addTabs() {
 		addTab(OverviewContent.getInstance(), "welcome");
 		addTabSpacer();
-		addTab(CategoriesContent.getInstance(), "buglink");
 		addTab(FindingTypesContent.getInstance(), "buglink");
+		addTab(CategoriesContent.getInstance(), "buglink");
 		addTab(ScanFiltersContent.getInstance(), "buglink");
 		addTabSpacer();
 		addTab(ProjectsContent.getInstance(), "team");
