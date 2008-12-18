@@ -47,6 +47,8 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
@@ -527,27 +529,41 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 
 		final Listener connectAction = 
 			new ServerActionListener("No server to connect to, or no project to connect") {
-			private List<String> collectProjects() {
-				ProjectStatusCollector<String> projects = new ProjectStatusCollector<String>() {
-					@Override String getSelectedInfo(ProjectStatus s) {
-						return s.name;
+			boolean f_syncAfterConnect = true;
+			
+			private List<IJavaProject> collectProjects() {
+				ProjectStatusCollector<IJavaProject> projects = new ProjectStatusCollector<IJavaProject>() {
+					@Override IJavaProject getSelectedInfo(ProjectStatus s) {
+						return s.project;
 					}
 				};
 				return projects.collectSelectedProjects((IStructuredSelection) f_statusTree.getSelection());
 			}
-			private void doConnect(final SierraServer server, List<String> projects) {
-				for (String projectName : projects) {
-					if (f_manager.isConnected(projectName)) {
+			private void doConnect(final SierraServer server, List<IJavaProject> projects) {
+				for (IJavaProject project : projects) {
+					if (f_manager.isConnected(project.getElementName())) {
 						continue;
 					}
-					f_manager.connect(projectName, server);
+					f_manager.connect(project.getElementName(), server);
 				}
 			}			
 			@Override
 			protected void handleEventOnServer(final SierraServer server) {
-				List<String> projects = collectProjects();
+				List<IJavaProject> projects = collectProjects();
 				if (!projects.isEmpty()) {
+					boolean syncAfterConnect = true;
+					final MessageDialog dialog = 
+						new MessageDialog(f_statusTree.getTree().getShell(),
+							              "Synchronize Project(s) on Connect", null,
+							              "Do you want to synchronize the newly connected projects?", 
+							               MessageDialog.QUESTION,
+							               new String[] { "Yes", "No" }, 0);
+					syncAfterConnect = dialog.open() == 0;
 					doConnect(server, projects);
+					
+					if (syncAfterConnect) {
+						new SynchronizeProjectAction().run(projects);
+					}
 					return;
 				}
 				final ConnectProjectsDialog dialog = new ConnectProjectsDialog(
@@ -557,12 +573,26 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 
 			@Override
 			protected void handleEventWithoutServer() {
-				List<String> projects = collectProjects();
+				List<IJavaProject> projects = collectProjects();
 				if (projects.isEmpty()) {
 					super.handleEventWithoutServer();
 				} else {
 					ServerSelectionDialog dialog = new ServerSelectionDialog(
-							f_statusTree.getTree().getShell(), projects.get(0));
+							f_statusTree.getTree().getShell(), projects.get(0).getElementName()) {
+						@Override
+						protected void addToEntryPanel(Composite entryPanel) {
+							super.addToEntryPanel(entryPanel);
+							
+							final Button syncToggle = new Button(entryPanel, SWT.CHECK);
+							syncToggle.setText("Synchronize newly connected projects on finish");
+							syncToggle.setSelection(true);
+							syncToggle.addListener(SWT.Selection, new Listener() {
+								public void handleEvent(Event event) {
+									f_syncAfterConnect = syncToggle.getSelection();
+								}
+							});
+						}
+					};
 					dialog.setUseForAllUnconnectedProjects(true);
 					if (dialog.open() == Window.CANCEL) {
 						return;
@@ -572,6 +602,10 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 						return;
 					}
 					doConnect(server, projects);
+					
+					if (f_syncAfterConnect) {
+						new SynchronizeProjectAction().run(projects);
+					}
 				}
 			}
 		};

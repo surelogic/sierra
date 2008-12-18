@@ -1,8 +1,11 @@
 package com.surelogic.sierra.client.eclipse.dialogs;
 
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
@@ -23,6 +26,7 @@ import org.eclipse.swt.widgets.TableItem;
 import com.surelogic.common.eclipse.JDTUtility;
 import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.common.images.CommonImages;
+import com.surelogic.sierra.client.eclipse.actions.SynchronizeProjectAction;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
 import com.surelogic.sierra.client.eclipse.model.SierraServerManager;
 
@@ -33,7 +37,7 @@ public final class ConnectProjectsDialog extends Dialog {
 
 	private final SierraServer f_server = f_manager.getFocus();
 
-	private final List<String> f_unconnectedProjects;
+	private final List<IJavaProject> f_unconnectedProjects;
 
 	private Mediator f_mediator = null;
 
@@ -43,10 +47,20 @@ public final class ConnectProjectsDialog extends Dialog {
 		if (f_server == null)
 			throw new IllegalStateException(
 					"server of focus must be non-null (bug)");
-		List<String> projectNames = JDTUtility.getJavaProjectNames();
-		projectNames.removeAll(f_manager.getConnectedProjects());
-		Collections.sort(projectNames);
-		f_unconnectedProjects = projectNames;
+		List<IJavaProject> projects = JDTUtility.getJavaProjects();
+		Iterator<IJavaProject> it = projects.iterator();
+		while (it.hasNext()) {
+			if (f_manager.isConnected(it.next().getElementName())) {
+				it.remove();
+			}
+		}
+		Collections.sort(projects, new Comparator<IJavaProject>() {
+			public int compare(IJavaProject o1, IJavaProject o2) {				
+				return o1.getElementName().compareTo(o2.getElementName());
+			}
+			
+		});
+		f_unconnectedProjects = projects;
 	}
 
 	@Override
@@ -70,9 +84,9 @@ public final class ConnectProjectsDialog extends Dialog {
 
 		final Table projectList = new Table(projectGroup, SWT.CHECK);
 
-		for (String projectName : f_unconnectedProjects) {
+		for (IJavaProject p : f_unconnectedProjects) {
 			TableItem item = new TableItem(projectList, SWT.NONE);
-			item.setText(projectName);
+			item.setText(p.getElementName());
 			item.setImage(SLImages.getImage(CommonImages.IMG_PROJECT));
 		}
 
@@ -81,8 +95,14 @@ public final class ConnectProjectsDialog extends Dialog {
 				+ f_server.getLabel() + "'");
 		exportAllToggle.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false,
 				false));
+		
+		final Button syncToggle = new Button(panel, SWT.CHECK);
+		syncToggle.setText("Synchronize newly connected projects on finish");
+		syncToggle.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false,
+				false));
+		syncToggle.setSelection(true);
 
-		f_mediator = new Mediator(exportAllToggle, projectGroup, projectList);
+		f_mediator = new Mediator(exportAllToggle, syncToggle, projectGroup, projectList);
 		f_mediator.init();
 
 		return panel;
@@ -111,14 +131,17 @@ public final class ConnectProjectsDialog extends Dialog {
 
 		private final Button f_exportAllToggle;
 
+		private final Button f_syncToggle;
+		
 		private final Group f_projectGroup;
 
 		private final Table f_queryTable;
 
 		private boolean f_connectAll;
 
-		Mediator(Button exportAllToggle, Group projectGroup, Table queryTable) {
+		Mediator(Button exportAllToggle, Button syncToggle, Group projectGroup, Table queryTable) {
 			f_exportAllToggle = exportAllToggle;
+			f_syncToggle = syncToggle;
 			f_connectAll = f_exportAllToggle.getSelection();
 			f_projectGroup = projectGroup;
 			f_queryTable = queryTable;
@@ -153,8 +176,12 @@ public final class ConnectProjectsDialog extends Dialog {
 					}
 				}
 			}
-			for (String projectName : f_unconnectedProjects) {
-				f_manager.connect(projectName, f_server);
+			for (IJavaProject p : f_unconnectedProjects) {
+				f_manager.connect(p.getElementName(), f_server);
+			}
+			
+			if (f_syncToggle.getSelection()) {
+				new SynchronizeProjectAction().run(f_unconnectedProjects);
 			}
 		}
 	}

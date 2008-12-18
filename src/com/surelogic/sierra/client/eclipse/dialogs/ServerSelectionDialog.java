@@ -3,7 +3,7 @@ package com.surelogic.sierra.client.eclipse.dialogs;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
 
-public final class ServerSelectionDialog extends AbstractServerSelectionDialog {
+public class ServerSelectionDialog extends AbstractServerSelectionDialog {
 	private boolean f_useForAllUnconnectedProjects = false;
 
 	public boolean useForAllUnconnectedProjects() {
