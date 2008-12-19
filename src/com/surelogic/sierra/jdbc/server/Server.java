@@ -438,12 +438,16 @@ public class Server {
 	 * @param name
 	 * @throws SQLException
 	 */
-	public void setName(final String name) throws SQLException {
+	public void setName(final String name, final long revision)
+			throws SQLException {
 		if (name == null) {
 			throw new IllegalArgumentException("Name may not be null.");
 		}
 		setSiteSetting("Name", name);
 		final Query q = new ConnectionQuery(conn);
+		final String uid = getUid();
+		q.prepared("ServerLocations.deleteIdentity").call(uid);
+		q.prepared("ServerLocations.insertIdentity").call(uid, name, revision);
 		final ScanFilters sf = new ScanFilters(q);
 		final ScanFilterDO filter = sf.getDefaultScanFilter();
 		if (q.prepared("Definitions.getDefinitionServer",

@@ -14,6 +14,7 @@ import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.jdbc.server.ConnectionFactory;
 import com.surelogic.sierra.jdbc.settings.ServerLocations;
 import com.surelogic.sierra.jdbc.settings.SettingQueries;
+import com.surelogic.sierra.tool.message.ServerInfoReply;
 import com.surelogic.sierra.tool.message.ServerInfoRequest;
 import com.surelogic.sierra.tool.message.ServerInfoServiceClient;
 import com.surelogic.sierra.tool.message.SierraServerLocation;
@@ -43,18 +44,14 @@ public class BugLinkServletContextListener implements ServletContextListener {
 										"Updating scan filters and categories from "
 												+ locations + " at "
 												+ new Date());
-								final Map<SierraServerLocation, String> validServers = new HashMap<SierraServerLocation, String>();
+								final Map<SierraServerLocation, ServerInfoReply> validServers = new HashMap<SierraServerLocation, ServerInfoReply>();
 								for (final SierraServerLocation location : locations) {
 									try {
-										validServers
-												.put(
-														location,
-														ServerInfoServiceClient
-																.create(
-																		location)
-																.getServerInfo(
-																		new ServerInfoRequest())
-																.getUid());
+										final ServerInfoReply reply = ServerInfoServiceClient
+												.create(location)
+												.getServerInfo(
+														new ServerInfoRequest());
+										validServers.put(location, reply);
 									} catch (final SierraServiceClientException e) {
 										SLLogger.getLogger().log(Level.INFO,
 												e.getMessage(), e);
