@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 import com.surelogic.common.jdbc.DBQuery;
 import com.surelogic.common.jdbc.LongIdHandler;
 import com.surelogic.common.jdbc.NullDBQuery;
+import com.surelogic.common.jdbc.NullResultHandler;
 import com.surelogic.common.jdbc.Nulls;
 import com.surelogic.common.jdbc.Query;
 import com.surelogic.common.jdbc.Queryable;
@@ -17,6 +18,8 @@ import com.surelogic.common.jdbc.Result;
 import com.surelogic.common.jdbc.ResultHandler;
 import com.surelogic.common.jdbc.Row;
 import com.surelogic.common.jdbc.StringRowHandler;
+import com.surelogic.sierra.tool.message.ServerIdentity;
+import com.surelogic.sierra.tool.message.ServerInfoReply;
 import com.surelogic.sierra.tool.message.SierraServerLocation;
 
 public final class ServerLocations {
@@ -67,15 +70,40 @@ public final class ServerLocations {
 	 * @return
 	 */
 	public static DBQuery<Void> updateServerLocationInfo(
-			final Map<SierraServerLocation, String> locations) {
+			final Map<SierraServerLocation, ServerInfoReply> locations) {
 		return new DBQuery<Void>() {
 			public Void perform(final Query q) {
 				final Queryable<Void> updateUuid = q
 						.prepared("ServerLocations.updateUuid");
-				for (final Entry<SierraServerLocation, String> entry : locations
+				for (final Entry<SierraServerLocation, ServerInfoReply> entry : locations
 						.entrySet()) {
-					updateUuid
-							.call(entry.getValue(), entry.getKey().getLabel());
+					updateUuid.call(entry.getValue().getUid(), entry.getKey()
+							.getLabel());
+					final Queryable<Void> delete = q
+							.prepared("ServerLocations.deleteIdentity");
+					final Queryable<Void> insert = q
+							.prepared("ServerLocations.insertIdentity");
+					for (final ServerIdentity id : entry.getValue()
+							.getServers()) {
+						q.prepared("ServerLocations.selectIdentityRevision",
+								new NullResultHandler() {
+									@Override
+									protected void doHandle(final Result result) {
+										for (final Row r : result) {
+											// We don't want to do anything if
+											// we
+											// already have a higher revision
+											final long revision = r.nextLong();
+											if (revision <= id.getRevision()) {
+												return;
+											}
+										}
+										delete.call(id.getServer());
+										insert.call(id.getServer(), id
+												.getName(), id.getRevision());
+									}
+								}).call(id.getServer());
+					}
 				}
 				return null;
 			}
@@ -139,4 +167,5 @@ public final class ServerLocations {
 			}
 		};
 	}
+
 }
