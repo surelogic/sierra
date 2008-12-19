@@ -4,9 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.surelogic.sierra.gwt.client.content.ContentComposite;
@@ -63,11 +62,13 @@ public class CategoryView extends BasicPanel {
 			ownerGrid.setVisible(false);
 		} else {
 			ownerGrid.setVisible(true);
-			final Anchor ownerLink = Anchor.wrap(DOM.createAnchor());
-			ownerLink.setText(cat.getOwnerLabel() == null ? "Unknown" : cat
+			final StringBuilder linkHtml = new StringBuilder();
+			linkHtml.append("<a href=\"").append(cat.getOwnerURL()).append(
+					"\">");
+			linkHtml.append(cat.getOwnerLabel() == null ? "Unknown" : cat
 					.getOwnerLabel());
-			ownerLink.setHref(cat.getOwnerURL());
-			ownerGrid.setWidget(0, 2, ownerLink);
+			linkHtml.append("</a>");
+			ownerGrid.setWidget(0, 2, new HTML(linkHtml.toString()));
 		}
 
 		final String catInfo = cat == null ? "" : cat.getInfo();
