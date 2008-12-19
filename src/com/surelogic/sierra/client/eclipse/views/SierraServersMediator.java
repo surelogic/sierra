@@ -143,7 +143,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 	/**
 	 * This should only be changed in the UI thread
 	 */
-	private List<ScanFilterDO> localFilters = Collections.emptyList();
+	private Map<String, List<ScanFilter>> localFilters = Collections.emptyMap();
 
 	/**
 	 * This should only be changed in the UI thread
@@ -1543,7 +1543,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 			final Scans sm = new Scans(q);
 			final List<ProjectStatus> projects = new ArrayList<ProjectStatus>();
 			final Map<SierraServer, ServerUpdateStatus> serverUpdates;
-			final List<ScanFilterDO> filters;
+			final Map<String, List<ScanFilter>> filters;
 			synchronized (responseMap) {
 				for (final IJavaProject jp : JDTUtility.getJavaProjects()) {
 					final String name = jp.getElementName();
@@ -1600,7 +1600,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 
 	public void updateContentsInUI(final List<ProjectStatus> projects,
 			final Map<SierraServer, ServerUpdateStatus> serverUpdates,
-			final List<ScanFilterDO> filters) {
+			final Map<String, List<ScanFilter>> filters) {
 		// No need to synchronize since only updated/viewed in UI thread?
 		this.projects = projects;
 		this.serverUpdates = serverUpdates;
@@ -1878,7 +1878,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 			if (update.isChanged(f)) {
 				filter = createLabel(filterRoot, children, delta + f.getName(),
 						ChangeStatus.REMOTE);
-				filter.setData(f);
+				//filter.setData(f);
 			} else if (showFiltersOnServer) {
 				filter = createLabel(filterRoot, children, f.getName(),
 						ChangeStatus.NONE);				
@@ -1921,10 +1921,13 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 		content.add(filterRoot);
 
 		List<ServersViewContent> children = new ArrayList<ServersViewContent>();
-		for(ScanFilterDO f : localFilters) {
-			ServersViewContent filter = createLabel(filterRoot, children, f.getName(),
-							                        ChangeStatus.NONE);
-			filter.setData(f);			
+		for(Map.Entry<String, List<ScanFilter>> e : localFilters.entrySet()) {
+			final String server = e.getKey();
+			for(ScanFilter f : e.getValue()) {
+				final String name = f.getName()+" ("+server+")";
+				ServersViewContent filter = createLabel(filterRoot, children, name, ChangeStatus.NONE);
+				filter.setData(f);			
+			}
 		}
 		filterRoot.setText("Known Scan Filters");
 		filterRoot.setChildren(children.toArray(emptyChildren));
