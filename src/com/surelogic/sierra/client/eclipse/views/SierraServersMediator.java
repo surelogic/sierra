@@ -1070,6 +1070,8 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 					add(projects, (ProjectStatus) item.getData());
 				} else if (item.getData() instanceof SierraServer) {
 					collectProjects(projects, item, true);
+				} else if (item.getText().endsWith(CONNECTED_PROJECTS)) {
+					collectProjects(projects, item, false);
 				} else if ("Unconnected".equals(item.getText())) {
 					collectProjects(projects, item, false);
 				} else {
