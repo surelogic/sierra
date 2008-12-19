@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DockPanel;
+import com.google.gwt.user.client.ui.PopupListener;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -25,6 +27,9 @@ public class CategoriesContent extends
 	private static final CategoriesContent instance = new CategoriesContent();
 	private final CategoryView categoryView = new CategoryView();
 	private final CategoryEditor categoryEditor = new CategoryEditor();
+	private Widget cloneAction;
+	private Widget editAction;
+	private Widget deleteAction;
 
 	public static CategoriesContent getInstance() {
 		return instance;
@@ -43,13 +48,19 @@ public class CategoriesContent extends
 		addAction(new CreateCategoryForm());
 
 		categoryView.initialize();
-		categoryView.addAction("Edit", new ClickListener() {
+		cloneAction = categoryView.addAction("Clone", new ClickListener() {
+
+			public void onClick(final Widget sender) {
+				promptCloneCategory(categoryView.getCategory());
+			}
+		});
+		editAction = categoryView.addAction("Edit", new ClickListener() {
 
 			public void onClick(final Widget sender) {
 				setCategory(categoryView.getCategory(), true);
 			}
 		});
-		categoryView.addAction("Delete", new ClickListener() {
+		deleteAction = categoryView.addAction("Delete", new ClickListener() {
 
 			public void onClick(final Widget sender) {
 				deleteCategory(categoryView.getCategory());
@@ -110,7 +121,10 @@ public class CategoriesContent extends
 			}
 		} else {
 			categoryView.setCategory(cat);
-			categoryView.setActionsVisible((cat != null) && cat.isLocal());
+			categoryView.setActionVisible(cloneAction, cat != null);
+			final boolean isLocal = cat == null ? false : cat.isLocal();
+			categoryView.setActionVisible(editAction, isLocal);
+			categoryView.setActionVisible(deleteAction, isLocal);
 			if (selectionPanel.getWidgetIndex(categoryView) == -1) {
 				selectionPanel.clear();
 				selectionPanel.add(categoryView);
@@ -118,13 +132,60 @@ public class CategoriesContent extends
 		}
 	}
 
+	private void promptCloneCategory(final Category cat) {
+		final CategoryNameDialog dialog = new CategoryNameDialog();
+		dialog.setName(cat.getName() + " Copy");
+		dialog.addPopupListener(new PopupListener() {
+
+			public void onPopupClosed(final PopupPanel sender,
+					final boolean autoClosed) {
+				final Status s = dialog.getStatus();
+				if (s != null && s.isSuccess()) {
+					cloneCategory(dialog.getName(), cat);
+				}
+			}
+		});
+		dialog.center();
+	}
+
+	private void cloneCategory(final String newName, final Category cat) {
+		ServiceHelper.getSettingsService().cloneCategory(newName, cat,
+				new ResultCallback<String>() {
+
+					@Override
+					protected void doFailure(final String message,
+							final String result) {
+						Window.alert("Category cloning failed: " + message);
+					}
+
+					@Override
+					protected void doSuccess(final String message,
+							final String result) {
+						getCache().refresh();
+						Context.current().setUuid(result).submit();
+					}
+
+				});
+	}
+
 	private void deleteCategory(final Category cat) {
+		final CategoryCache cache = getCache();
+		final int currentItemIndex = cache.getItemIndex(cat);
+		final int catCount = cache.getItemCount();
+		int nextItemIndex = currentItemIndex + 1;
+		if (nextItemIndex >= catCount) {
+			nextItemIndex = catCount - 1;
+		}
+		final String nextUuid = nextItemIndex < 0 ? "" : cache.getItem(
+				nextItemIndex).getUuid();
+
 		ServiceHelper.getSettingsService().deleteCategory(cat.getUuid(),
 				new StatusCallback() {
 
 					@Override
 					protected void doStatus(final Status result) {
-						getCache().refresh();
+						cache.refresh();
+						Context.current().setUuid(nextUuid).submit();
 					}
 				});
 	}

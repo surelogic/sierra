@@ -30,6 +30,9 @@ public interface SettingsServiceAsync {
 
 	void updateCategory(Category c, AsyncCallback<Status> callback);
 
+	void cloneCategory(String newName, Category source,
+			AsyncCallback<Result<String>> callback);
+
 	void deleteCategory(String uuid, AsyncCallback<Status> callback);
 
 	void getScanFilters(AsyncCallback<List<ScanFilter>> callback);
@@ -65,4 +68,5 @@ public interface SettingsServiceAsync {
 
 	void saveDashboardSettings(DashboardSettings settings,
 			AsyncCallback<Status> callback);
+
 }

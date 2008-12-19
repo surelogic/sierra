@@ -71,6 +71,17 @@ public interface SettingsService extends RemoteService {
 	Status updateCategory(Category c);
 
 	/**
+	 * Creates a new category, copying all fields from the source category.
+	 * 
+	 * @param newName
+	 *            the name of the new category copy
+	 * @param source
+	 *            the category to clone
+	 * @return the new category's uuid on success, or a failure status
+	 */
+	Result<String> cloneCategory(String newName, Category source);
+
+	/**
 	 * Delete the category w/ the given uuid
 	 * 
 	 * @param uuid
