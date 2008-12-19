@@ -17,7 +17,7 @@ extends AbstractDatabaseObserver {
 		f_observers.remove(o);
 	}
 
-	public final void notifyObservers() {
+	public void notifyObservers() {
 		for (L o : f_observers) {
 			notifyObserver(o);
 		}

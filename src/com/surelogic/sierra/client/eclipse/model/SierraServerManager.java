@@ -73,13 +73,21 @@ public final class SierraServerManager extends
 	 *            a server label.
 	 * @return the server with the passed label.
 	 */
-	public synchronized SierraServer getOrCreate(final String label) {
+	public SierraServer getOrCreate(final String label) {
 		if (label == null) {
 			throw new IllegalArgumentException("label must be non-null");
 		}
-		SierraServer server = f_labelToServer.get(label);
-		if (server == null) {
-			server = new SierraServer(this, label);
+		boolean created = false;
+		SierraServer server;
+		
+		synchronized (this) {
+			server = f_labelToServer.get(label);
+			if (server == null) {
+				server = new SierraServer(this, label);
+				created = true;
+			}
+		}
+		if (created) {
 			notifyObservers();
 		}
 		return server;
@@ -123,29 +131,31 @@ public final class SierraServerManager extends
 				SierraServerLocation.DEFAULT_PATH, "", "");
 	}
 
-	public synchronized void delete(SierraServer server) {
-		if (server.getManager() != this) {
-			SLLogger.getLogger().log(
-					Level.WARNING,
-					"A server can only be deleted from its associated manager : "
-							+ server);
-			return;
-		}
-		if (f_focus == server) {
-			f_focus = null;
-		}
-		for (final Iterator<Map.Entry<String, SierraServer>> i = f_labelToServer
-				.entrySet().iterator(); i.hasNext();) {
-			final Map.Entry<String, SierraServer> entry = i.next();
-			if (entry.getValue() == server) {
-				i.remove();
+	public void delete(SierraServer server) {
+		synchronized (this) {
+			if (server.getManager() != this) {
+				SLLogger.getLogger().log(
+						Level.WARNING,
+						"A server can only be deleted from its associated manager : "
+						+ server);
+				return;
 			}
-		}
-		for (final Iterator<Map.Entry<String, SierraServer>> j = f_projectNameToServer
-				.entrySet().iterator(); j.hasNext();) {
-			final Map.Entry<String, SierraServer> entry = j.next();
-			if (entry.getValue() == server) {
-				j.remove();
+			if (f_focus == server) {
+				f_focus = null;
+			}
+			for (final Iterator<Map.Entry<String, SierraServer>> i = f_labelToServer
+					.entrySet().iterator(); i.hasNext();) {
+				final Map.Entry<String, SierraServer> entry = i.next();
+				if (entry.getValue() == server) {
+					i.remove();
+				}
+			}
+			for (final Iterator<Map.Entry<String, SierraServer>> j = f_projectNameToServer
+					.entrySet().iterator(); j.hasNext();) {
+				final Map.Entry<String, SierraServer> entry = j.next();
+				if (entry.getValue() == server) {
+					j.remove();
+				}
 			}
 		}
 		notifyObservers();
@@ -302,7 +312,7 @@ public final class SierraServerManager extends
 		o.notify(this);
 	}
 
-	public void save() {
+	public synchronized void save() {
 		SierraServerPersistence.save(this);
 	}
 
@@ -319,5 +329,11 @@ public final class SierraServerManager extends
 			return null;
 		}
 		return f_labelToServer.get(label);
+	}
+	
+	@Override
+	public void notifyObservers() {
+		save();
+		super.notifyObservers();
 	}
 }
