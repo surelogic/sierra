@@ -33,9 +33,10 @@ public class SynchronizeJob extends AbstractServerProjectJob {
 	private final boolean force;
 	private final ServerSyncType syncType;
 
-	public SynchronizeJob(ServerProjectGroupJob family, String projectName,
-			SierraServer server, ServerSyncType sync, boolean force,
-			ServerFailureReport method) {
+	public SynchronizeJob(final ServerProjectGroupJob family,
+			final String projectName, final SierraServer server,
+			final ServerSyncType sync, final boolean force,
+			final ServerFailureReport method) {
 		super(
 				family,
 				sync.equals(ServerSyncType.BUGLINK) ? "Synchronizing BugLink data for server '"
@@ -48,7 +49,7 @@ public class SynchronizeJob extends AbstractServerProjectJob {
 	}
 
 	@Override
-	protected IStatus run(IProgressMonitor monitor) {
+	protected IStatus run(final IProgressMonitor monitor) {
 		final int threshold = PreferenceConstants
 				.getServerInteractionRetryThreshold();
 		final int numProblems = f_server.getProblemCount()
@@ -81,13 +82,15 @@ public class SynchronizeJob extends AbstractServerProjectJob {
 		return status;
 	}
 
-	private IStatus synchronize(Connection conn, SLProgressMonitor slMonitor)
-			throws SQLException {
+	private IStatus synchronize(final Connection conn,
+			final SLProgressMonitor slMonitor) throws SQLException {
 		TroubleshootConnection troubleshoot;
 		try {
-			if (syncType.syncBugLink() && joinJob != null && joinJob.process(f_server)) {
+			final Query q = new ConnectionQuery(conn);
+			SettingQueries.updateServerInfo(f_server.getServer()).perform(q);
+			if (syncType.syncBugLink() && joinJob != null
+					&& joinJob.process(f_server)) {
 				final SierraServerLocation loc = f_server.getServer();
-				final Query q = new ConnectionQuery(conn);
 				SettingQueries.retrieveCategories(loc,
 						SettingQueries.categoryRequest().perform(q)).perform(q);
 				SettingQueries.retrieveScanFilters(loc,
@@ -134,7 +137,7 @@ public class SynchronizeJob extends AbstractServerProjectJob {
 		}
 	}
 
-	private IStatus fail(Exception e) {
+	private IStatus fail(final Exception e) {
 		final String msg = I18N.err(51, f_projectName, f_server);
 		SLLogger.getLogger().log(Level.WARNING, msg, e);
 		return Status.CANCEL_STATUS;
