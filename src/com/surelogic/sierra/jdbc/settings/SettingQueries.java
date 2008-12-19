@@ -16,8 +16,10 @@ import java.util.logging.Level;
 
 import com.surelogic.common.jdbc.DBQuery;
 import com.surelogic.common.jdbc.NullDBQuery;
+import com.surelogic.common.jdbc.NullRowHandler;
 import com.surelogic.common.jdbc.Query;
 import com.surelogic.common.jdbc.Queryable;
+import com.surelogic.common.jdbc.Row;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.jdbc.tool.FindingTypeDO;
 import com.surelogic.sierra.jdbc.tool.FindingTypes;
@@ -214,15 +216,42 @@ public class SettingQueries {
 	}
 
 	/**
-	 * Returns a list of the scan filters that are currently available locally.
+	 * Returns the scan filters that are available locally, keyed by server
+	 * label.
 	 * 
 	 * @return
 	 */
-	public static final DBQuery<List<ScanFilterDO>> getLocalScanFilters() {
-		return new DBQuery<List<ScanFilterDO>>() {
-			public List<ScanFilterDO> perform(final Query q) {
+	public static final DBQuery<Map<String, List<ScanFilter>>> getLocalScanFilters() {
+		return new DBQuery<Map<String, List<ScanFilter>>>() {
+			public Map<String, List<ScanFilter>> perform(final Query q) {
+				final Map<String, List<ScanFilter>> m = new HashMap<String, List<ScanFilter>>();
 				final ScanFilters filters = new ScanFilters(q);
-				return filters.listScanFilters();
+				final List<ScanFilterDO> sfs = filters.listScanFilters();
+				final Map<String, ScanFilterDO> dos = new HashMap<String, ScanFilterDO>(
+						sfs.size());
+				for (final ScanFilterDO sf : sfs) {
+					dos.put(sf.getUid(), sf);
+				}
+				q.prepared("ServerLocations.serverScanFilters",
+						new NullRowHandler() {
+							String label;
+							List<ScanFilter> sfs;
+
+							@Override
+							protected void doHandle(final Row r) {
+								String l = r.nextString();
+								final String serverUuid = r.nextString();
+								final String uuid = r.nextString();
+								if (!l.equals(label)) {
+									l = label;
+									sfs = new ArrayList<ScanFilter>();
+									m.put(l, sfs);
+								}
+								sfs.add(ScanFilters.convert(dos.get(uuid),
+										serverUuid));
+							}
+						}).call();
+				return m;
 			}
 		};
 	}
