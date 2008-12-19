@@ -79,11 +79,14 @@ public final class SierraServerManager extends
 		}
 		boolean created = false;
 		SierraServer server;
-		
+
 		synchronized (this) {
 			server = f_labelToServer.get(label);
 			if (server == null) {
 				server = new SierraServer(this, label);
+				server.setPassword(BUGLINK_PASS);
+				server.setUser(BUGLINK_USER);
+				server.setSavePassword(true);
 				created = true;
 			}
 		}
@@ -94,6 +97,8 @@ public final class SierraServerManager extends
 	}
 
 	static public final String BUGLINK_ORG = "buglink.org";
+	static public final String BUGLINK_USER = "buglink-user";
+	static public final String BUGLINK_PASS = "bl!uzer";
 
 	public boolean isThereABugLinkOrg() {
 		return exists(BUGLINK_ORG);
@@ -131,13 +136,13 @@ public final class SierraServerManager extends
 				SierraServerLocation.DEFAULT_PATH, "", "");
 	}
 
-	public void delete(SierraServer server) {
+	public void delete(final SierraServer server) {
 		synchronized (this) {
 			if (server.getManager() != this) {
 				SLLogger.getLogger().log(
 						Level.WARNING,
 						"A server can only be deleted from its associated manager : "
-						+ server);
+								+ server);
 				return;
 			}
 			if (f_focus == server) {
@@ -161,7 +166,7 @@ public final class SierraServerManager extends
 		notifyObservers();
 	}
 
-	public synchronized void delete(String label) {
+	public synchronized void delete(final String label) {
 		final SierraServer server = f_labelToServer.get(label);
 		if (server != null) {
 			delete(server);
@@ -244,8 +249,8 @@ public final class SierraServerManager extends
 			throw new IllegalArgumentException("server must be non-null");
 		}
 		if (f_focus != server) {
-		  f_focus = server;
-		  notifyObservers();
+			f_focus = server;
+			notifyObservers();
 		}
 	}
 
@@ -260,11 +265,11 @@ public final class SierraServerManager extends
 
 	private final Map<String, SierraServer> f_projectNameToServer = new HashMap<String, SierraServer>();
 
-	public boolean isConnected(String projectName) {
+	public boolean isConnected(final String projectName) {
 		return f_projectNameToServer.containsKey(projectName);
 	}
 
-	public void connect(String projectName, SierraServer server) {
+	public void connect(final String projectName, final SierraServer server) {
 		if (projectName == null) {
 			throw new IllegalArgumentException("project name must be non-null.");
 		}
@@ -276,17 +281,17 @@ public final class SierraServerManager extends
 
 	}
 
-	public void disconnect(String projectName) {
+	public void disconnect(final String projectName) {
 		if (f_projectNameToServer.remove(projectName) != null) {
 			notifyObservers();
 		}
 	}
 
-	public SierraServer getServer(String projectName) {
+	public SierraServer getServer(final String projectName) {
 		return f_projectNameToServer.get(projectName);
 	}
 
-	public List<String> getProjectsConnectedTo(SierraServer server) {
+	public List<String> getProjectsConnectedTo(final SierraServer server) {
 		final List<String> projects = new ArrayList<String>();
 		for (final Map.Entry<String, SierraServer> entry : f_projectNameToServer
 				.entrySet()) {
@@ -308,7 +313,7 @@ public final class SierraServerManager extends
 	 * Notifies all registered {@link ISierraServerObserver} objects.
 	 */
 	@Override
-	protected void notifyObserver(ISierraServerObserver o) {
+	protected void notifyObserver(final ISierraServerObserver o) {
 		o.notify(this);
 	}
 
@@ -324,13 +329,13 @@ public final class SierraServerManager extends
 		getOrCreateBugLinkOrg();
 	}
 
-	public synchronized SierraServer getServerByLabel(String label) {
+	public synchronized SierraServer getServerByLabel(final String label) {
 		if (label == null) {
 			return null;
 		}
 		return f_labelToServer.get(label);
 	}
-	
+
 	@Override
 	public void notifyObservers() {
 		save();
