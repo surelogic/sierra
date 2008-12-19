@@ -2089,7 +2089,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 					+ server.getLabel());
 			problems.setServerStatus(ServerStatus.WARNING);
 		}
-		if (ps.numProjectProblems > 0) {
+		if (server != null && ps.numProjectProblems > 0) {
 			final ServersViewContent problems = new ServersViewContent(root,
 					SLImages.getImage(CommonImages.IMG_WARNING));
 			contents.add(problems);
