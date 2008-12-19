@@ -8,6 +8,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class ServerInfoReply {
 
+	private List<ServerIdentity> servers;
+
 	private List<Services> services;
 
 	private String uid;
@@ -19,7 +21,7 @@ public class ServerInfoReply {
 		return services;
 	}
 
-	public void setServices(List<Services> s) {
+	public void setServices(final List<Services> s) {
 		services = s;
 	}
 
@@ -27,8 +29,19 @@ public class ServerInfoReply {
 		return uid;
 	}
 
-	public void setUid(String uid) {
+	public void setUid(final String uid) {
 		this.uid = uid;
+	}
+
+	public List<ServerIdentity> getServers() {
+		if (servers == null) {
+			servers = new ArrayList<ServerIdentity>();
+		}
+		return servers;
+	}
+
+	public void setServers(final List<ServerIdentity> servers) {
+		this.servers = servers;
 	}
 
 }
