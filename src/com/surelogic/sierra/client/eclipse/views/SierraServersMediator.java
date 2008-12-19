@@ -125,6 +125,8 @@ import com.surelogic.sierra.tool.message.SyncTrailResponse;
 
 public final class SierraServersMediator extends AbstractSierraViewMediator
 		implements ISierraServerObserver, IProjectsObserver {
+	private static final boolean showFiltersOnServer = false;
+	
 	static final String SCAN_FILTERS = "Scan Filters";
 
 	static final String CATEGORIES = "Categories";
@@ -1856,7 +1858,9 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 		}
 		final int num = update == null ? 0 : update.getNumUpdatedScanFilters();
 		final boolean changed = num > 0;
-				
+		if (!(changed || showFiltersOnServer)) {
+			return null;
+		}
 		final ServersViewContent root = new ServersViewContent(serverNode,
 					SLImages.getImage(CommonImages.IMG_FILTER));
 		root.setText(changed ? delta + SCAN_FILTERS : SCAN_FILTERS);
@@ -1874,11 +1878,12 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 			if (update.isChanged(f)) {
 				filter = createLabel(filterRoot, children, delta + f.getName(),
 						ChangeStatus.REMOTE);
-			} else {
-				filter = createLabel(filterRoot, children, f.getName(),
-						ChangeStatus.NONE);
 				filter.setData(f);
-			}
+			} else if (showFiltersOnServer) {
+				filter = createLabel(filterRoot, children, f.getName(),
+						ChangeStatus.NONE);				
+				filter.setData(f);
+			}	
 		}
 		filterRoot.setChildren(children.toArray(emptyChildren));
 		return root;
