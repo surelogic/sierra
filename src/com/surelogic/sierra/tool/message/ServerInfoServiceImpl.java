@@ -7,6 +7,8 @@ import java.util.List;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 
+import com.surelogic.common.jdbc.DBQuery;
+import com.surelogic.common.jdbc.Query;
 import com.surelogic.sierra.jdbc.server.ConnectionFactory;
 import com.surelogic.sierra.jdbc.server.Server;
 import com.surelogic.sierra.jdbc.server.ServerTransaction;
@@ -42,6 +44,14 @@ public class ServerInfoServiceImpl extends SRPCServlet implements
 							return server.getUid();
 						}
 					}));
+			reply.getServers().addAll(
+					ConnectionFactory.getInstance().withReadOnly(
+							new DBQuery<List<ServerIdentity>>() {
+								public List<ServerIdentity> perform(
+										final Query q) {
+									return null;
+								}
+							}));
 		}
 	}
 
