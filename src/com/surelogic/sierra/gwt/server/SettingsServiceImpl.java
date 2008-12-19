@@ -301,6 +301,35 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 				});
 	}
 
+	public Result<String> cloneCategory(final String newName,
+			final Category source) {
+		return ConnectionFactory.getInstance().withUserTransaction(
+				new UserQuery<Result<String>>() {
+					public Result<String> perform(final Query q,
+							final Server s, final User u) {
+						final Categories sets = new Categories(q);
+						final long revision = s.nextRevision();
+						final CategoryDO set = sets.createCategory(newName,
+								source.getInfo(), revision);
+						final Set<String> catParentUuids = set.getParents();
+						for (final Category parent : source.getParents()) {
+							catParentUuids.add(parent.getUuid());
+						}
+						final Set<CategoryEntryDO> doEntries = set.getFilters();
+						for (final FindingTypeFilter entry : source
+								.getEntries()) {
+							doEntries.add(new CategoryEntryDO(entry.getUuid(),
+									entry.isFiltered()));
+						}
+						sets.updateCategory(set, revision);
+						q.prepared("Definitions.insertDefinition").call(
+								set.getUid(), s.getUid());
+						return Result.success("Category clone " + newName
+								+ " created.", set.getUid());
+					}
+				});
+	}
+
 	public Status deleteCategory(final String uuid) {
 		return ConnectionFactory.getInstance().withUserTransaction(
 				new UserQuery<Status>() {
