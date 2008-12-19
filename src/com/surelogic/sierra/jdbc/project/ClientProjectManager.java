@@ -12,10 +12,8 @@ import com.surelogic.common.jdbc.JDBCUtils;
 import com.surelogic.common.jobs.SLProgressMonitor;
 import com.surelogic.sierra.jdbc.finding.ClientFindingManager;
 import com.surelogic.sierra.jdbc.record.ProjectRecord;
-import com.surelogic.sierra.jdbc.settings.ServerLocations;
+import com.surelogic.sierra.jdbc.settings.SettingQueries;
 import com.surelogic.sierra.tool.message.ServerInfoReply;
-import com.surelogic.sierra.tool.message.ServerInfoRequest;
-import com.surelogic.sierra.tool.message.ServerInfoServiceClient;
 import com.surelogic.sierra.tool.message.ServerMismatchException;
 import com.surelogic.sierra.tool.message.SierraServerLocation;
 import com.surelogic.sierra.tool.message.SierraService;
@@ -88,15 +86,11 @@ public final class ClientProjectManager extends ProjectManager {
 			if (set.next()) {
 				serverUid = set.getString(1);
 			} else {
-				final ServerInfoReply reply = ServerInfoServiceClient.create(
-						server).getServerInfo(new ServerInfoRequest());
 				// TODO we should maybe just get the info here, and not actually
 				// update.
-				ServerLocations.updateServerLocationInfo(
-						Collections.singletonMap(server, reply)).perform(
-						new ConnectionQuery(conn));
-				serverUid = ServerInfoServiceClient.create(server)
-						.getServerInfo(new ServerInfoRequest()).getUid();
+				final ServerInfoReply reply = SettingQueries.updateServerInfo(
+						server).perform(new ConnectionQuery(conn));
+				serverUid = reply.getUid();
 				insertServerUid.setLong(1, p.getId());
 				insertServerUid.setString(2, serverUid);
 				insertServerUid.execute();

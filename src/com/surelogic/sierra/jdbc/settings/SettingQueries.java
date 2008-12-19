@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -31,6 +32,9 @@ import com.surelogic.sierra.tool.message.ListCategoryResponse;
 import com.surelogic.sierra.tool.message.ListScanFilterRequest;
 import com.surelogic.sierra.tool.message.ListScanFilterResponse;
 import com.surelogic.sierra.tool.message.ScanFilter;
+import com.surelogic.sierra.tool.message.ServerInfoReply;
+import com.surelogic.sierra.tool.message.ServerInfoRequest;
+import com.surelogic.sierra.tool.message.ServerInfoServiceClient;
 import com.surelogic.sierra.tool.message.SierraServerLocation;
 
 /**
@@ -450,5 +454,19 @@ public class SettingQueries {
 							+ DEFAULT_FILTER_SET_FILE, e);
 		}
 		return types;
+	}
+
+	public static DBQuery<ServerInfoReply> updateServerInfo(
+			final SierraServerLocation server) {
+		final ServerInfoReply reply = ServerInfoServiceClient.create(server)
+				.getServerInfo(new ServerInfoRequest());
+		return new DBQuery<ServerInfoReply>() {
+			public ServerInfoReply perform(final Query q) {
+				ServerLocations.updateServerLocationInfo(
+						Collections.singletonMap(server, reply)).perform(q);
+				return reply;
+			}
+		};
+
 	}
 }
