@@ -9,6 +9,8 @@ import javax.servlet.ServletException;
 
 import com.surelogic.common.jdbc.DBQuery;
 import com.surelogic.common.jdbc.Query;
+import com.surelogic.common.jdbc.Row;
+import com.surelogic.common.jdbc.RowHandler;
 import com.surelogic.sierra.jdbc.server.ConnectionFactory;
 import com.surelogic.sierra.jdbc.server.Server;
 import com.surelogic.sierra.jdbc.server.ServerTransaction;
@@ -21,9 +23,26 @@ public class ServerInfoServiceImpl extends SRPCServlet implements
 	private transient final ServerInfoReply reply = new ServerInfoReply();
 
 	public ServerInfoReply getServerInfo(final ServerInfoRequest request) {
-		synchronized (reply) {
-			return reply;
-		}
+		/*
+		 * Copy info from the reply we stored, and add the servers to it.
+		 */
+		final ServerInfoReply reply = new ServerInfoReply();
+		reply.setServices(this.reply.getServices());
+		reply.setServers(ConnectionFactory.getInstance().withReadOnly(
+				new DBQuery<List<ServerIdentity>>() {
+					public List<ServerIdentity> perform(final Query q) {
+						return q.prepared("ServerLocations.listIdentities",
+								new RowHandler<ServerIdentity>() {
+									public ServerIdentity handle(final Row r) {
+										return new ServerIdentity(r
+												.nextString(), r.nextString(),
+												r.nextLong());
+									}
+								}).call();
+					}
+				}));
+		reply.setUid(this.reply.getUid());
+		return reply;
 	}
 
 	@Override
@@ -44,14 +63,7 @@ public class ServerInfoServiceImpl extends SRPCServlet implements
 							return server.getUid();
 						}
 					}));
-			reply.getServers().addAll(
-					ConnectionFactory.getInstance().withReadOnly(
-							new DBQuery<List<ServerIdentity>>() {
-								public List<ServerIdentity> perform(
-										final Query q) {
-									return null;
-								}
-							}));
+
 		}
 	}
 
