@@ -1446,13 +1446,14 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 				handler.queryForProjects(f_manager);
 				handler.queryServers(f_manager);
 
-				com.surelogic.sierra.jdbc.project.Projects projects = new com.surelogic.sierra.jdbc.project.Projects(
-						c);
+				com.surelogic.sierra.jdbc.project.Projects projects = 
+					new com.surelogic.sierra.jdbc.project.Projects(c);
 				ScanFilters filters = new ScanFilters(c);
+				// FIX to include server's label
 				for (ProjectDO p : projects.listProjects()) {
-					// Update to use scan filter's name, not uid
+					// Update to use scan filter's name, not uid										
 					ScanFilterDO filter = filters.getScanFilter(p
-							.getScanFilter());
+							.getScanFilter());				
 					p.setScanFilter(filter.getName());
 					projectMap.put(p.getName(), p);
 				}
