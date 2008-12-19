@@ -50,7 +50,7 @@ public class ManageServerServiceImpl extends SierraServiceServlet implements
 		return performAdmin(false, new UserTransaction<ServerInfo>() {
 			public ServerInfo perform(final Connection conn,
 					final Server server, final User user) throws SQLException {
-				server.setName(name);
+				server.setName(name, server.nextRevision());
 				return readServerInfo(server);
 			}
 		});
