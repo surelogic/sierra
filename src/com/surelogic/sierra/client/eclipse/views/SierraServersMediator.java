@@ -1453,8 +1453,10 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 				for (ProjectDO p : projects.listProjects()) {
 					// Update to use scan filter's name, not uid										
 					ScanFilterDO filter = filters.getScanFilter(p
-							.getScanFilter());				
-					p.setScanFilter(filter.getName());
+							.getScanFilter());			
+					if (filter != null) {
+						p.setScanFilter(filter.getName());
+					}
 					projectMap.put(p.getName(), p);
 				}
 			}
