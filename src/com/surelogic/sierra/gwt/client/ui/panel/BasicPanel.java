@@ -116,18 +116,19 @@ public abstract class BasicPanel extends Composite {
 		actionPanel.setVisible(visible);
 	}
 
-	public final void addAction(final Widget w) {
+	public final Widget addAction(final Widget w) {
 		actionPanel.add(w);
 		w.addStyleName("sl-Section-actionpanel-item");
 		updateHeader();
+		return w;
 	}
 
-	public final void addAction(final String text,
+	public final Widget addAction(final String text,
 			final ClickListener clickListener) {
 		final Label action = StyleHelper.add(new Label(text, false),
 				Style.CLICKABLE);
 		action.addClickListener(clickListener);
-		addAction(action);
+		return addAction(action);
 	}
 
 	public final void removeAction(final Widget w) {
