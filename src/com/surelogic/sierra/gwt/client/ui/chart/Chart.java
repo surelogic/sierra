@@ -64,7 +64,7 @@ public final class Chart extends Composite {
 						@Override
 						protected void doFailure(final String message,
 								final ImageMapData result) {
-							loadFailed(message);
+							setErrorMessage(message);
 						}
 
 						@Override
@@ -77,6 +77,14 @@ public final class Chart extends Composite {
 		}
 	}
 
+	public void setErrorMessage(final String message) {
+		rootPanel.clear();
+		rootPanel.add(new Label("Unable To Load Chart"));
+		if (message != null && !"".equals(message)) {
+			rootPanel.add(new Label(message));
+		}
+	}
+
 	private void loadChart(final Ticket ticket, final ImageMapData mapData) {
 		final String chartId = ticket.getUUID();
 		final String url = "chart/png?ticket=" + chartId;
@@ -86,7 +94,7 @@ public final class Chart extends Composite {
 		chartImg.addLoadListener(new LoadListener() {
 
 			public void onError(final Widget sender) {
-				loadFailed(null);
+				setErrorMessage(null);
 			}
 
 			public void onLoad(final Widget sender) {
@@ -95,14 +103,6 @@ public final class Chart extends Composite {
 		});
 
 		rootPanel.insert(chartImg, 0);
-	}
-
-	private void loadFailed(final String message) {
-		rootPanel.clear();
-		rootPanel.add(new Label("Unable To Load Chart"));
-		if (message != null && !"".equals(message)) {
-			rootPanel.add(new Label(message));
-		}
 	}
 
 }

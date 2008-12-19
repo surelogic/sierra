@@ -67,7 +67,7 @@ public final class ChartBuilder {
 					@Override
 					protected void doFailure(final String message,
 							final Ticket result) {
-						// TODO
+						chart.setErrorMessage(message);
 					}
 
 					@Override
