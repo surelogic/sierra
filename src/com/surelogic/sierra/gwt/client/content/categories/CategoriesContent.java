@@ -27,7 +27,7 @@ public class CategoriesContent extends
 	private static final CategoriesContent instance = new CategoriesContent();
 	private final CategoryView categoryView = new CategoryView();
 	private final CategoryEditor categoryEditor = new CategoryEditor();
-	private Widget cloneAction;
+	private Widget duplicateAction;
 	private Widget editAction;
 	private Widget deleteAction;
 
@@ -48,12 +48,13 @@ public class CategoriesContent extends
 		addAction(new CreateCategoryForm());
 
 		categoryView.initialize();
-		cloneAction = categoryView.addAction("Clone", new ClickListener() {
+		duplicateAction = categoryView.addAction("Duplicate",
+				new ClickListener() {
 
-			public void onClick(final Widget sender) {
-				promptCloneCategory(categoryView.getCategory());
-			}
-		});
+					public void onClick(final Widget sender) {
+						promptDuplicateCategory(categoryView.getCategory());
+					}
+				});
 		editAction = categoryView.addAction("Edit", new ClickListener() {
 
 			public void onClick(final Widget sender) {
@@ -121,7 +122,7 @@ public class CategoriesContent extends
 			}
 		} else {
 			categoryView.setCategory(cat);
-			categoryView.setActionVisible(cloneAction, cat != null);
+			categoryView.setActionVisible(duplicateAction, cat != null);
 			final boolean isLocal = cat == null ? false : cat.isLocal();
 			categoryView.setActionVisible(editAction, isLocal);
 			categoryView.setActionVisible(deleteAction, isLocal);
@@ -132,7 +133,7 @@ public class CategoriesContent extends
 		}
 	}
 
-	private void promptCloneCategory(final Category cat) {
+	private void promptDuplicateCategory(final Category cat) {
 		final CategoryNameDialog dialog = new CategoryNameDialog();
 		dialog.setName(cat.getName() + " Copy");
 		dialog.addPopupListener(new PopupListener() {
@@ -141,21 +142,21 @@ public class CategoriesContent extends
 					final boolean autoClosed) {
 				final Status s = dialog.getStatus();
 				if (s != null && s.isSuccess()) {
-					cloneCategory(dialog.getName(), cat);
+					duplicateCategory(dialog.getName(), cat);
 				}
 			}
 		});
 		dialog.center();
 	}
 
-	private void cloneCategory(final String newName, final Category cat) {
-		ServiceHelper.getSettingsService().cloneCategory(newName, cat,
+	private void duplicateCategory(final String newName, final Category cat) {
+		ServiceHelper.getSettingsService().duplicateCategory(newName, cat,
 				new ResultCallback<String>() {
 
 					@Override
 					protected void doFailure(final String message,
 							final String result) {
-						Window.alert("Category cloning failed: " + message);
+						Window.alert("Category duplication failed: " + message);
 					}
 
 					@Override

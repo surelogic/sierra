@@ -30,7 +30,7 @@ public interface SettingsServiceAsync {
 
 	void updateCategory(Category c, AsyncCallback<Status> callback);
 
-	void cloneCategory(String newName, Category source,
+	void duplicateCategory(String newName, Category source,
 			AsyncCallback<Result<String>> callback);
 
 	void deleteCategory(String uuid, AsyncCallback<Status> callback);

@@ -76,10 +76,10 @@ public interface SettingsService extends RemoteService {
 	 * @param newName
 	 *            the name of the new category copy
 	 * @param source
-	 *            the category to clone
+	 *            the category to duplicate
 	 * @return the new category's uuid on success, or a failure status
 	 */
-	Result<String> cloneCategory(String newName, Category source);
+	Result<String> duplicateCategory(String newName, Category source);
 
 	/**
 	 * Delete the category w/ the given uuid
