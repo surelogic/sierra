@@ -301,7 +301,7 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 				});
 	}
 
-	public Result<String> cloneCategory(final String newName,
+	public Result<String> duplicateCategory(final String newName,
 			final Category source) {
 		return ConnectionFactory.getInstance().withUserTransaction(
 				new UserQuery<Result<String>>() {
@@ -324,7 +324,7 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 						sets.updateCategory(set, revision);
 						q.prepared("Definitions.insertDefinition").call(
 								set.getUid(), s.getUid());
-						return Result.success("Category clone " + newName
+						return Result.success("Category duplicate " + newName
 								+ " created.", set.getUid());
 					}
 				});
