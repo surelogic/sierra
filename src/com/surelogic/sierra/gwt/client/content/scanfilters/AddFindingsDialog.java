@@ -40,6 +40,7 @@ public class AddFindingsDialog extends FindingSelectionDialog {
 								addCategory(cat, excludedFindingUuids);
 							}
 						}
+						refreshUI();
 					}
 
 				});

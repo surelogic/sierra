@@ -29,6 +29,7 @@ public class AddCategoriesDialog extends FindingSelectionDialog {
 		for (final Category cat : categories) {
 			addCategory(cat, excludedFindingUuids);
 		}
+		refreshUI();
 	}
 
 }
