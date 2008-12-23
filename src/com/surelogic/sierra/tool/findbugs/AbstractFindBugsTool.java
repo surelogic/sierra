@@ -20,9 +20,29 @@ import edu.umd.cs.findbugs.config.UserPreferences;
 public abstract class AbstractFindBugsTool extends AbstractTool {
 	final String fbDir;
 
+	static <T> Iterable<T> iterable(final Iterator<T> it) {
+		return new Iterable<T>() {
+			public Iterator<T> iterator() {
+				return it;
+			}			
+		};
+	}
+	
 	protected AbstractFindBugsTool(String version, String fbDir, boolean debug) {
 		super("FindBugs", version, "FindBugs (TM)", "", debug);
 		this.fbDir = fbDir;
+		/* Code to get meta-data from FindBugs
+		for(Plugin plugin : iterable(DetectorFactoryCollection.instance().pluginIterator())) {
+			System.out.println(plugin.getPluginId());
+			for(BugCode code : iterable(plugin.bugCodeIterator())) {				
+			}
+			for(BugPattern pattern : iterable(plugin.bugPatternIterator())) {
+			}
+			for(DetectorFactory factory : iterable(plugin.detectorFactoryIterator())) {
+				// Actual detector
+			}
+		}
+		*/
 	}
 
 	protected IToolInstance create(String name, final ArtifactGenerator generator,
