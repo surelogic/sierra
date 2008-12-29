@@ -70,6 +70,7 @@ public class FindingSelectionDialog extends FormDialog {
 		categoryTree.setHeight("425px");
 
 		final ScrollPanel categoryScroller = new ScrollPanel(categoryTree);
+		categoryScroller.addStyleName("outlined-widget");
 		categoryScroller.setSize("100%", "auto");
 		contentTable.setWidget(1, 0, categoryScroller);
 

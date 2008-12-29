@@ -11,6 +11,7 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.Context;
+import com.surelogic.sierra.gwt.client.ContextManager;
 import com.surelogic.sierra.gwt.client.content.ListContentComposite;
 import com.surelogic.sierra.gwt.client.data.Category;
 import com.surelogic.sierra.gwt.client.data.Status;
@@ -73,12 +74,14 @@ public class CategoriesContent extends
 		categoryEditor.addAction("Save", new ClickListener() {
 
 			public void onClick(final Widget sender) {
+				ContextManager.unlockContext();
 				cache.save(categoryEditor.getUpdatedCategory());
 			}
 		});
 		categoryEditor.addAction("Cancel", new ClickListener() {
 
 			public void onClick(final Widget sender) {
+				ContextManager.unlockContext();
 				setCategory(cache.getItem(categoryEditor.getCategory()
 						.getUuid()), false);
 			}
@@ -120,6 +123,8 @@ public class CategoriesContent extends
 				selectionPanel.clear();
 				selectionPanel.add(categoryEditor);
 			}
+			ContextManager
+					.lockContext("Your category changes are not saved and will be lost. Continue?");
 		} else {
 			categoryView.setCategory(cat);
 			categoryView.setActionVisible(duplicateAction, cat != null);

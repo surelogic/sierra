@@ -51,6 +51,10 @@ img {
 	border: 1px solid black;
 }
 
+.outlined-widget {
+	border: 1px solid #001166;
+}
+
 .logo {
 	margin: 4px;
 }
@@ -504,7 +508,7 @@ img {
 
 /* SL FormDialog */
 .sl-FormDialog-buttonpanel {
-	border-top: 1px solid #000000;
+	border-top: 1px solid #666699;
 	border-left: none;
 	border-right: none;
 	border-bottom: none;

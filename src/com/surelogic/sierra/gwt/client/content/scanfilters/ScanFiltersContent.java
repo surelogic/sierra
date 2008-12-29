@@ -8,6 +8,7 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.Context;
+import com.surelogic.sierra.gwt.client.ContextManager;
 import com.surelogic.sierra.gwt.client.content.ListContentComposite;
 import com.surelogic.sierra.gwt.client.data.ScanFilter;
 import com.surelogic.sierra.gwt.client.data.Status;
@@ -107,6 +108,7 @@ public class ScanFiltersContent extends
 		editor.addAction("Save", new ClickListener() {
 
 			public void onClick(final Widget sender) {
+				ContextManager.unlockContext();
 				cache.save(editor.getUpdatedScanFilter());
 			}
 
@@ -114,6 +116,7 @@ public class ScanFiltersContent extends
 		editor.addAction("Cancel", new ClickListener() {
 
 			public void onClick(final Widget sender) {
+				ContextManager.unlockContext();
 				setScanFilter(cache.getItem(editor.getSelection().getUuid()),
 						false);
 			}
@@ -174,6 +177,8 @@ public class ScanFiltersContent extends
 				selectionPanel.clear();
 				selectionPanel.add(editor);
 			}
+			ContextManager
+					.lockContext("Your scan filter changes are not saved and will be lost. Continue?");
 		} else {
 			viewer.setSelection(filter);
 			viewer.setActionVisible(setDefaultAction,

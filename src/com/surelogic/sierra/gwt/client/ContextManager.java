@@ -5,10 +5,16 @@ import java.util.List;
 
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.HistoryListener;
+import com.google.gwt.user.client.ui.PopupListener;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.surelogic.sierra.gwt.client.content.ContentComposite;
+import com.surelogic.sierra.gwt.client.data.Status;
+import com.surelogic.sierra.gwt.client.ui.dialog.MessageDialog;
 
 public final class ContextManager {
 	private static List<ContextListener> contextListeners = new ArrayList<ContextListener>();
+	private static Context lockedContext;
+	private static String lockedMessage;
 
 	private ContextManager() {
 		// Not instantiable
@@ -58,10 +64,56 @@ public final class ContextManager {
 		contextListeners.remove(listener);
 	}
 
+	/**
+	 * Locks the browser context so that it will not change unless the user
+	 * clicks OK when prompted.
+	 * 
+	 * @param message
+	 *            the text displayed to the user when confirming the context
+	 *            unlock
+	 * @see #unlockContext()
+	 */
+	public static void lockContext(final String message) {
+		lockedContext = getContext();
+		lockedMessage = message;
+	}
+
+	/**
+	 * Unlocks the browser context, allow browser navigation without a
+	 * confirmation prompt.
+	 * 
+	 * @see #lockContext(String)
+	 */
+	public static void unlockContext() {
+		lockedContext = null;
+		lockedMessage = null;
+	}
+
 	private static void notifyContextListeners() {
 		final Context context = getContext();
-		for (final ContextListener listener : contextListeners) {
-			listener.onChange(context);
+		if (lockedContext != null) {
+			if (!lockedContext.equals(context)) {
+				final MessageDialog dlg = new MessageDialog("Warning", null,
+						lockedMessage);
+				dlg.addPopupListener(new PopupListener() {
+
+					public void onPopupClosed(final PopupPanel sender,
+							final boolean autoClosed) {
+						final Status s = dlg.getStatus();
+						if (s != null && s.isSuccess()) {
+							unlockContext();
+							setContext(context);
+						} else {
+							setContext(lockedContext);
+						}
+					}
+				});
+				dlg.center();
+			}
+		} else {
+			for (final ContextListener listener : contextListeners) {
+				listener.onChange(context);
+			}
 		}
 	}
 
