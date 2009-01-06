@@ -1223,7 +1223,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 				final Job group = lastSyncGroup.get();
 				if ((group == null) || (group.getResult() != null)) {
 					final SynchronizeAllProjectsAction sync = new SynchronizeAllProjectsAction(
-							ServerSyncType.ALL, PreferenceConstants
+							type, PreferenceConstants
 									.getServerFailureReporting(), false);
 					sync.run(null);
 					lastSyncGroup.set(sync.getGroup());
