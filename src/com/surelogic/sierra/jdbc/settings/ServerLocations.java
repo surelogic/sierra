@@ -11,6 +11,7 @@ import com.surelogic.common.jdbc.DBQuery;
 import com.surelogic.common.jdbc.LongIdHandler;
 import com.surelogic.common.jdbc.NullDBQuery;
 import com.surelogic.common.jdbc.NullResultHandler;
+import com.surelogic.common.jdbc.NullRowHandler;
 import com.surelogic.common.jdbc.Nulls;
 import com.surelogic.common.jdbc.Query;
 import com.surelogic.common.jdbc.Queryable;
@@ -35,6 +36,16 @@ public final class ServerLocations {
 		return new NullDBQuery() {
 			@Override
 			public void doPerform(final Query q) {
+				// First we get the locations so that we can preserver any uuid
+				// associations that match up by label
+				final Map<String, String> uuids = new HashMap<String, String>();
+				q.statement("ServerLocations.selectUuidsByLabel",
+						new NullRowHandler() {
+							@Override
+							protected void doHandle(final Row r) {
+								uuids.put(r.nextString(), r.nextString());
+							}
+						}).call();
 				q.statement("ServerLocations.deleteLocations").call();
 				q.statement("ServerLocations.deleteProjects").call();
 				final Queryable<Void> insertServerProject = q
@@ -58,6 +69,11 @@ public final class ServerLocations {
 					for (final String project : locEntry.getValue()) {
 						insertServerProject.call(id, project);
 					}
+				}
+				final Queryable<Void> updateUuid = q
+						.prepared("ServerLocations.updateUuid");
+				for (final Entry<String, String> e : uuids.entrySet()) {
+					updateUuid.call(e.getValue(), e.getKey());
 				}
 			}
 		};
@@ -91,10 +107,9 @@ public final class ServerLocations {
 									protected void doHandle(final Result result) {
 										for (final Row r : result) {
 											// We don't want to do anything if
-											// we
-											// already have a higher revision
-											final long revision = r.nextLong();
-											if (revision <= id.getRevision()) {
+											// we already have a higher revision
+											if (r.nextLong() <= id
+													.getRevision()) {
 												return;
 											}
 										}
