@@ -125,7 +125,7 @@ import com.surelogic.sierra.tool.message.SyncTrailResponse;
 
 public final class SierraServersMediator extends AbstractSierraViewMediator
 		implements ISierraServerObserver, IProjectsObserver {
-	private static final boolean showFiltersOnServer = false;
+	private static final boolean showFiltersOnServer = true;
 	
 	static final String SCAN_FILTERS = "Scan Filters";
 
@@ -1885,7 +1885,9 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 	private ServersViewContent createScanFilters(
 			final ServersViewContent serverNode, final SierraServer server) {
 		final ServerUpdateStatus update = serverUpdates.get(server);
-		if (update == null || update.getNumScanFilters() == 0) {
+		final List<ScanFilter> filters = localFilters.get(server.getLabel());
+		if ((update == null || update.getNumScanFilters() == 0) && 
+			(!showFiltersOnServer || filters == null || filters.isEmpty())) {
 			return null;
 		}
 		final int num = update == null ? 0 : update.getNumUpdatedScanFilters();
@@ -1897,7 +1899,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 					SLImages.getImage(CommonImages.IMG_FILTER));
 		root.setText(changed ? delta + SCAN_FILTERS : SCAN_FILTERS);
 		
-		final ServersViewContent filterRoot;
+		final ServersViewContent filterRoot;				
 		if (changed) {
 			filterRoot = createLabel(root, delta+num+" scan filter"+s(num)+" to update",
 					ChangeStatus.REMOTE);			
@@ -1905,9 +1907,9 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 			filterRoot = root;
 		}		
 		List<ServersViewContent> children = new ArrayList<ServersViewContent>();
-		for (ScanFilter f : update.getScanFilters()) {
+		for (ScanFilter f : update != null ? update.getScanFilters() : filters) {
 			ServersViewContent filter;
-			if (update.isChanged(f)) {
+			if (update != null && update.isChanged(f)) {
 				filter = createLabel(filterRoot, children, delta + f.getName(),
 						ChangeStatus.REMOTE);
 				//filter.setData(f);
@@ -1947,6 +1949,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 		}
 	}
 
+	@SuppressWarnings("unused")
 	private void createLocalScanFilterItems(final List<ServersViewContent> content) {
 		ServersViewContent filterRoot = 
 			new ServersViewContent(null, SLImages.getImage(CommonImages.IMG_FILTER));
