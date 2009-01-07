@@ -1773,14 +1773,41 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 			final ServersViewContent serverNode = createServerItem(label);
 			content.add(serverNode);
 		}
+		createUnknownServers(content);
 		createUnassociatedProjectItems(content);
 		/*
 		 * if (focused != null) { f_statusTree.setSelection(focused); }
 		 */
-		createLocalScanFilterItems(content);
+		//createLocalScanFilterItems(content);
 		return content.toArray(emptyChildren);
 	}
 
+	private void createUnknownServers(List<ServersViewContent> content) {
+	    for(Map.Entry<String, List<ScanFilter>> e : localFilters.entrySet()) {
+	        final String label = e.getKey();
+	        final SierraServer server = f_manager.getServerByLabel(label);
+	        if (server != null) {
+	            // Already known, so already handled elsewhere
+	            continue;
+	        }	        
+	        final List<ScanFilter> filters = e.getValue();
+	        if (filters.isEmpty()) {
+	            continue;
+	        }
+	        ServersViewContent serverRoot = 
+	            new ServersViewContent(null, SLImages.getImage(CommonImages.IMG_SIERRA_SERVER_GRAY));	        
+	        List<ServersViewContent> children = new ArrayList<ServersViewContent>();	   
+	        for(ScanFilter f : e.getValue()) {
+	            final String name = f.getName();
+	            ServersViewContent filter = createLabel(serverRoot, children, name, ChangeStatus.NONE);
+	            filter.setData(f);          
+	        }	        	        
+	        serverRoot.setText(label);
+	        serverRoot.setChildren(children.toArray(emptyChildren));
+	        serverRoot.setData(filters);
+	    }
+	}
+	
 	private ServersViewContent createServerItem(final String label) {
 		final SierraServer server = f_manager.getServerByLabel(label);
 		final List<ServersViewContent> serverContent = new ArrayList<ServersViewContent>();
