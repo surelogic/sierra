@@ -243,11 +243,11 @@ public class SettingQueries {
 
 							@Override
 							protected void doHandle(final Row r) {
-								String l = r.nextString();
+								final String l = r.nextString();
 								final String serverUuid = r.nextString();
 								final String uuid = r.nextString();
 								if (!l.equals(label)) {
-									l = label;
+									label = l;
 									sfs = new ArrayList<ScanFilter>();
 									m.put(l, sfs);
 								}
