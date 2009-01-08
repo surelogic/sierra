@@ -30,7 +30,7 @@ public class Scan {
 		return config;
 	}
 
-	public void setConfig(Config config) {
+	public void setConfig(final Config config) {
 		this.config = config;
 	}
 
@@ -38,7 +38,7 @@ public class Scan {
 		return toolOutput;
 	}
 
-	public void setToolOutput(ToolOutput toolOutput) {
+	public void setToolOutput(final ToolOutput toolOutput) {
 		this.toolOutput = toolOutput;
 	}
 
@@ -46,7 +46,7 @@ public class Scan {
 		return uid;
 	}
 
-	public void setUid(String uid) {
+	public void setUid(final String uid) {
 		this.uid = uid;
 	}
 
@@ -54,7 +54,7 @@ public class Scan {
 		return version;
 	}
 
-	public void setVersion(String version) {
+	public void setVersion(final String version) {
 		this.version = version;
 	}
 
@@ -71,34 +71,45 @@ public class Scan {
 	}
 
 	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
+	public boolean equals(final Object obj) {
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		final Scan other = (Scan) obj;
 		if (config == null) {
-			if (other.config != null)
+			if (other.config != null) {
 				return false;
-		} else if (!config.equals(other.config))
+			}
+		} else if (!config.equals(other.config)) {
 			return false;
+		}
 		if (toolOutput == null) {
-			if (other.toolOutput != null)
+			if (other.toolOutput != null) {
 				return false;
-		} else if (!toolOutput.equals(other.toolOutput))
+			}
+		} else if (!toolOutput.equals(other.toolOutput)) {
 			return false;
+		}
 		if (uid == null) {
-			if (other.uid != null)
+			if (other.uid != null) {
 				return false;
-		} else if (!uid.equals(other.uid))
+			}
+		} else if (!uid.equals(other.uid)) {
 			return false;
+		}
 		if (version == null) {
-			if (other.version != null)
+			if (other.version != null) {
 				return false;
-		} else if (!version.equals(other.version))
+			}
+		} else if (!version.equals(other.version)) {
 			return false;
+		}
 		return true;
 	}
 
