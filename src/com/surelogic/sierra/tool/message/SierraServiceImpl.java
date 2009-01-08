@@ -28,9 +28,9 @@ import com.surelogic.sierra.jdbc.server.ConnectionFactory;
 import com.surelogic.sierra.jdbc.server.Server;
 import com.surelogic.sierra.jdbc.server.ServerTransaction;
 import com.surelogic.sierra.jdbc.server.UserTransaction;
+import com.surelogic.sierra.jdbc.settings.ScanFilterView;
 import com.surelogic.sierra.jdbc.settings.SettingQueries;
 import com.surelogic.sierra.jdbc.timeseries.TimeseriesManager;
-import com.surelogic.sierra.jdbc.tool.FindingFilter;
 import com.surelogic.sierra.jdbc.user.User;
 
 /**
@@ -71,7 +71,7 @@ public class SierraServiceImpl extends SecureServiceServlet implements
 									.getProject();
 							final ScanManager manager = ScanManager
 									.getInstance(conn);
-							final FindingFilter filter = SettingQueries
+							final ScanFilterView filter = SettingQueries
 									.scanFilterForProject(project).perform(
 											new ConnectionQuery(conn));
 							final ScanGenerator generator = manager
@@ -79,6 +79,7 @@ public class SierraServiceImpl extends SecureServiceServlet implements
 							generator.timeseries(timeseries).user(
 									user.getName());
 							MessageWarehouse.readScan(scan, generator);
+							SettingQueries.recordScanFilter(filter, uid);
 							ConnectionFactory.getInstance()
 									.delayUserTransaction(
 											new UserTransaction<Void>() {
