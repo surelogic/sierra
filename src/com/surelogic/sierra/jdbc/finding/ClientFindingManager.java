@@ -1065,6 +1065,7 @@ public final class ClientFindingManager extends FindingManager {
 				updateUnrevisionedAudit.setLong(1, commitRevision);
 				updateUnrevisionedAudit.setLong(2, userId);
 				updateUnrevisionedAudit.setLong(3, set.getLong(1));
+				updateUnrevisionedAudit.execute();
 			}
 		} finally {
 			set.close();
