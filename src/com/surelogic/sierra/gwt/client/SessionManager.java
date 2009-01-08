@@ -108,7 +108,7 @@ public final class SessionManager {
 
 	/**
 	 * Ends the current user session. This method attempts to notify the server
-	 * of the logout, and will refresh the web site context when a result is
+	 * of the logout, and will navigate to the login page when a result is
 	 * received or the server can not be contacted.
 	 * 
 	 * @param errorMessage
