@@ -13,6 +13,7 @@ import com.surelogic.common.jdbc.Query;
 import com.surelogic.common.jdbc.Queryable;
 import com.surelogic.common.jdbc.Row;
 import com.surelogic.common.jdbc.RowHandler;
+import com.surelogic.common.jdbc.SingleRowHandler;
 import com.surelogic.common.jdbc.StringResultHandler;
 import com.surelogic.common.jdbc.StringRowHandler;
 import com.surelogic.sierra.jdbc.RevisionException;
@@ -243,6 +244,55 @@ public class ScanFilters {
 		return getScanFilter(new Projects(q).getProjectFilter(project));
 	}
 
+	/**
+	 * Get the scan filter associated with a given scan. This will most likely
+	 * not be the current version of the scan filter, but will instead by what
+	 * the scan filter looked like when the scan was wrong. In addition, if the
+	 * scan filter was defined in terms of categories, that has been changed to
+	 * reflect the actual finding types contained when the scan was run.
+	 * 
+	 * @param scan
+	 * @return
+	 */
+	public ScanFilterDO getScanFilterByScan(final String scan) {
+		if (scan == null) {
+			throw new IllegalArgumentException("Scan may not be null.");
+		}
+		return q.prepared("Scans.selectSettingsEntry",
+				SingleRowHandler.from(new RowHandler<ScanFilterDO>() {
+					public ScanFilterDO handle(final Row r) {
+						final ScanFilterDO settings = new ScanFilterDO();
+						settings.setUid(r.nextString());
+						settings.setName(r.nextString());
+						settings.setRevision(r.nextLong());
+						settings.getFilterTypes().addAll(
+								q.prepared("Scans.selectSettingFilters",
+										new FilterHandler()).call(scan));
+						return settings;
+					}
+				})).call(scan);
+
+	}
+
+	/**
+	 * Write the scan filter out to the given scan. The {@link ScanFilterDO}
+	 * object passed in MAY NOT have category filters.
+	 * 
+	 * @param filter
+	 * @param scan
+	 */
+	public void writeScanFilterToScan(final ScanFilterDO filter,
+			final String scan) {
+		q.prepared("Scans.insertSettingsEntry").call(scan, filter.getUid(),
+				filter.getName(), filter.getRevision());
+		final Queryable<Void> insert = q.prepared("Scans.insertSettingFilter");
+		for (final TypeFilterDO type : filter.getFilterTypes()) {
+			insert.call(scan, type.getFindingType(),
+					type.getImportance() == null ? Nulls.INT : type
+							.getImportance().ordinal(), false);
+		}
+	}
+
 	private static class FilterSetHandler implements
 			RowHandler<CategoryFilterDO> {
 
@@ -326,4 +376,5 @@ public class ScanFilters {
 		}
 		q.prepared("ScanFilters.updateDefault").call(scanFilterUuid);
 	}
+
 }

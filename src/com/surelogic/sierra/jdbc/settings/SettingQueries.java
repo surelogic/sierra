@@ -13,6 +13,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 
 import com.surelogic.common.jdbc.DBQuery;
@@ -27,6 +28,7 @@ import com.surelogic.sierra.jdbc.tool.FindingTypes;
 import com.surelogic.sierra.tool.message.BugLinkServiceClient;
 import com.surelogic.sierra.tool.message.CreateScanFilterRequest;
 import com.surelogic.sierra.tool.message.FilterSet;
+import com.surelogic.sierra.tool.message.Importance;
 import com.surelogic.sierra.tool.message.ListCategoryRequest;
 import com.surelogic.sierra.tool.message.ListCategoryResponse;
 import com.surelogic.sierra.tool.message.ListScanFilterRequest;
@@ -285,7 +287,8 @@ public class SettingQueries {
 
 	/**
 	 * Generates a filter to be used when when filtering artifacts from a scan
-	 * and assigning importance to findings during a scan publish action.
+	 * and assigning importance to findings during a scan publish action. Attach
+	 * it to the given scan.
 	 * 
 	 * @param projectName
 	 * @return
@@ -298,6 +301,36 @@ public class SettingQueries {
 				final ScanFilterDO sf = filters
 						.getScanFilterByProject(projectName);
 				return scanFilterView(q, sf);
+			}
+		};
+	}
+
+	/**
+	 * Record the scan filter used to generate a particular scan.
+	 * 
+	 * @param projectName
+	 * @return
+	 */
+	public static DBQuery<ScanFilterView> recordScanFilter(
+			final ScanFilterView filter, final String scanUuid) {
+		if (filter == null || scanUuid == null) {
+			throw new IllegalArgumentException("Arguments may not be null.");
+		}
+		return new DBQuery<ScanFilterView>() {
+			public ScanFilterView perform(final Query q) {
+				final ScanFilterDO normFilter = new ScanFilterDO();
+				normFilter.setName(filter.getName());
+				normFilter.setUid(filter.getUuid());
+				normFilter.setRevision(filter.getRevision());
+				final Set<TypeFilterDO> filters = normFilter.getFilterTypes();
+				for (final Entry<String, Importance> e : filter
+						.getIncludedFindingTypesAndImportances().entrySet()) {
+					filters.add(new TypeFilterDO(e.getKey(), e.getValue(),
+							false));
+				}
+				final ScanFilters sf = new ScanFilters(q);
+				sf.writeScanFilterToScan(normFilter, scanUuid);
+				return filter;
 			}
 		};
 	}
@@ -469,4 +502,5 @@ public class SettingQueries {
 		};
 
 	}
+
 }

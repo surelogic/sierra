@@ -26,8 +26,9 @@ public class ScanFilterView implements FindingFilter {
 	private final Set<Long> allowed;
 	private final Map<Long, Importance> importances;
 
-	ScanFilterView(ScanFilterDO filter, Map<String, FindingTypeDO> types,
-			Map<String, CategoryGraph> categories) {
+	ScanFilterView(final ScanFilterDO filter,
+			final Map<String, FindingTypeDO> types,
+			final Map<String, CategoryGraph> categories) {
 		this.filter = filter;
 		this.types = types;
 		this.categories = categories;
@@ -69,6 +70,23 @@ public class ScanFilterView implements FindingFilter {
 		}
 	}
 
+	public String getName() {
+		return filter.getName();
+	}
+
+	public String getUuid() {
+		return filter.getUid();
+	}
+
+	public long getRevision() {
+		return filter.getRevision();
+	}
+
+	/**
+	 * Return the set of finding types that are allowed by this scan filter.
+	 * 
+	 * @return a set of finding type uuid's
+	 */
 	public Set<String> getIncludedFindingTypes() {
 		final Set<String> set = new HashSet<String>(types.size());
 		for (final CategoryFilterDO cat : filter.getCategories()) {
@@ -84,12 +102,45 @@ public class ScanFilterView implements FindingFilter {
 		return set;
 	}
 
-	public boolean accept(Long artifactTypeId) {
+	/**
+	 * Returns a map of all finding types allowed by this scan filter, as well
+	 * as their importances. The value will be <code>null</code> if no
+	 * importance is specified explicitly.
+	 * 
+	 * @return
+	 */
+	public Map<String, Importance> getIncludedFindingTypesAndImportances() {
+		final Map<String, Importance> map = new HashMap<String, Importance>(
+				types.size());
+		for (final CategoryFilterDO cat : filter.getCategories()) {
+			for (final String ft : categories.get(cat.getUid())
+					.getFindingTypes()) {
+				map.put(ft, cat.getImportance());
+			}
+		}
+		for (final TypeFilterDO type : filter.getFilterTypes()) {
+			if (type.isFiltered()) {
+				map.remove(type.getFindingType());
+			} else {
+				map.put(type.getFindingType(), type.getImportance());
+			}
+		}
+		return map;
+	}
+
+	/**
+	 * Whether or not an artifact type is allowed by this filter.
+	 */
+	public boolean accept(final Long artifactTypeId) {
 		return allowed.contains(artifactTypeId);
 	}
 
-	public Importance calculateImportance(Long findingTypeId,
-			Priority priority, Severity severity) {
+	/**
+	 * Calculate the importance of a finding based on finding type as well as
+	 * artifact priority and severity
+	 */
+	public Importance calculateImportance(final Long findingTypeId,
+			final Priority priority, final Severity severity) {
 		Importance i = importances.get(findingTypeId);
 		if (i == null) {
 			Integer val = ((int) (((float) (severity.ordinal() + priority
