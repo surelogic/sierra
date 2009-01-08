@@ -11,12 +11,14 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.surelogic.common.jdbc.ConnectionQuery;
+import com.surelogic.common.jdbc.Query;
 import com.surelogic.common.jobs.SLProgressMonitor;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.jdbc.finding.ClientFindingManager;
 import com.surelogic.sierra.jdbc.scan.ScanManager;
 import com.surelogic.sierra.jdbc.scan.ScanPersistenceException;
+import com.surelogic.sierra.jdbc.settings.ScanFilterView;
 import com.surelogic.sierra.jdbc.settings.SettingQueries;
 import com.surelogic.sierra.jdbc.tool.FindingFilter;
 import com.surelogic.sierra.tool.message.MessageWarehouse;
@@ -67,18 +69,19 @@ public final class ScanDocumentUtility {
 			final Map<String, List<String>> compilations)
 			throws ScanPersistenceException {
 		final Parser p = new Parser() {
-			public String parse(File scanDocument, ScanManager sMan,
-					FindingFilter filter, Set<Long> findingIds,
-					SLProgressMonitor monitor) throws ScanPersistenceException {
+			public String parse(final File scanDocument,
+					final ScanManager sMan, final FindingFilter filter,
+					final Set<Long> findingIds, final SLProgressMonitor monitor)
+					throws ScanPersistenceException {
 				final ScanGenerator gen = sMan.getPartialScanGenerator(
 						projectName, filter, compilations, findingIds);
 				return MessageWarehouse.getInstance().parseScanDocument(
 						scanDocument, gen, monitor);
 			}
 
-			public void updateOverview(ClientFindingManager fm, String uid,
-					FindingFilter filter, Set<Long> findingIds,
-					SLProgressMonitor monitor) {
+			public void updateOverview(final ClientFindingManager fm,
+					final String uid, final FindingFilter filter,
+					final Set<Long> findingIds, final SLProgressMonitor monitor) {
 				fm.updateScanFindings(projectName, uid, compilations, filter,
 						findingIds, monitor);
 			}
@@ -167,18 +170,20 @@ public final class ScanDocumentUtility {
 		Throwable exc = null;
 		try {
 			final Connection conn = Data.getInstance().transactionConnection();
+			final Query q = new ConnectionQuery(conn);
 			try {
 				final ScanManager sMan = ScanManager.getInstance(conn);
 				if (projectName != null) {
 					sMan.deleteOldestScan(projectName, monitor);
 				}
 				conn.commit();
-				final FindingFilter filter = SettingQueries
+				final ScanFilterView filter = SettingQueries
 						.scanFilterForProject(projectName).perform(
 								new ConnectionQuery(conn));
 				final ScanGenerator gen = sMan.getScanGenerator(filter);
 				final String uid = MessageWarehouse.getInstance()
 						.parseScanDocument(scanDocument, gen, monitor);
+				SettingQueries.recordScanFilter(filter, uid).perform(q);
 				conn.commit();
 				final ClientFindingManager fm = ClientFindingManager
 						.getInstance(conn);
