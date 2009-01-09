@@ -270,12 +270,12 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 
 		@Override
 		public final void run() {
-			for(ScanFilterDO f : collectScanFilters()) {
+			for(ScanFilter f : collectScanFilters()) {
 				handleEventOnFilter(f);
 			}
 		}
 		
-		protected abstract void handleEventOnFilter(final ScanFilterDO filter);
+		protected abstract void handleEventOnFilter(final ScanFilter filter);
 	}
 
 	private abstract class IJavaProjectsActionListener extends
@@ -659,7 +659,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 						SWT.Selection,
 						new ScanFilterActionListener("Overwrite local scan filter") {
 							@Override
-							protected void handleEventOnFilter(final ScanFilterDO f) {
+							protected void handleEventOnFilter(final ScanFilter f) {
 								final String msg = "Do you want to overwrite your local scan filter with"
 										+ " the scan filter '" + f.getName() + "'?";
 								final MessageDialog dialog = new MessageDialog(
@@ -799,7 +799,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 				}
 				f_serverPropertiesItem.setEnabled(onlyServer);
 
-				final List<ScanFilterDO> filters = collectScanFilters();
+				final List<ScanFilter> filters = collectScanFilters();
 				final boolean onlyScanFilter = filters.size() == 1;
 				f_getResultFilters.setEnabled(onlyScanFilter);
 
@@ -953,19 +953,19 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 		protected abstract long getDelay(); // In msec
 	}
 
-	private List<ScanFilterDO> collectScanFilters() {
+	private List<ScanFilter> collectScanFilters() {
 		final IStructuredSelection si = (IStructuredSelection) f_statusTree
 				.getSelection();
 		if (si.size() == 0) {
 			return Collections.emptyList();
 		}
-		final List<ScanFilterDO> filters = new ArrayList<ScanFilterDO>();
+		final List<ScanFilter> filters = new ArrayList<ScanFilter>();
 		@SuppressWarnings("unchecked")
 		final Iterator it = si.iterator();
 		while (it.hasNext()) {
 			final ServersViewContent item = (ServersViewContent) it.next();
-			if (item.getData() instanceof ScanFilterDO) {
-				filters.add((ScanFilterDO) item.getData());
+			if (item.getData() instanceof ScanFilter) {
+				filters.add((ScanFilter) item.getData());
 			}
 		}
 		return filters;

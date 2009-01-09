@@ -13,14 +13,14 @@ import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.jdbc.DBQuery;
 import com.surelogic.common.jobs.SLProgressMonitor;
 import com.surelogic.sierra.client.eclipse.Data;
-import com.surelogic.sierra.jdbc.settings.ScanFilterDO;
 import com.surelogic.sierra.jdbc.settings.SettingQueries;
+import com.surelogic.sierra.tool.message.ScanFilter;
 
 public final class OverwriteLocalScanFilterJob extends DatabaseJob {
 	private static final int ERROR_NUM = 48; // FIX
-	private final ScanFilterDO f_filter;
+	private final ScanFilter f_filter;
 	
-	public OverwriteLocalScanFilterJob(ScanFilterDO f) {
+	public OverwriteLocalScanFilterJob(ScanFilter f) {
 		super("Overwriting local scan filter with filter '"+f.getName()+"'");
 		f_filter = f;	
 	}
