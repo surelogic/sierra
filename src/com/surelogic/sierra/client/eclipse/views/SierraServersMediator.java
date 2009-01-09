@@ -111,6 +111,7 @@ import com.surelogic.sierra.jdbc.project.ProjectDO;
 import com.surelogic.sierra.jdbc.scan.ScanInfo;
 import com.surelogic.sierra.jdbc.scan.Scans;
 import com.surelogic.sierra.jdbc.settings.ScanFilterDO;
+import com.surelogic.sierra.jdbc.settings.ScanFilterView;
 import com.surelogic.sierra.jdbc.settings.ScanFilters;
 import com.surelogic.sierra.jdbc.settings.ServerScanFilterInfo;
 import com.surelogic.sierra.jdbc.settings.SettingQueries;
@@ -785,7 +786,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 					onlyBugLink = focus.isBugLink();
 				} else {
 					onlyTeamServer = onlyBugLink = false;
-				}
+				}			
 				f_duplicateServerAction.setEnabled(onlyServer);
 				f_deleteServerAction.setEnabled(onlyServer);
 				f_openInBrowserAction.setEnabled(onlyServer);
@@ -1585,9 +1586,10 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 					final File scan = NewScan.getScanDocumentFile(name);
 					final ScanInfo info = sm.getLatestScanInfo(name);
 					final ProjectDO dbInfo = projectMap.get(name);
+					final ScanFilterView filter = SettingQueries.scanFilterForProject(name).perform(q);
 					final ProjectStatus s = new ProjectStatus(jp, scan, info,
 							findings, responses, numServerProblems,
-							numProjectProblems, dbInfo);
+							numProjectProblems, dbInfo, filter);
 					projects.add(s);
 				}
 				serverUpdates = new HashMap<SierraServer, ServerUpdateStatus>(
@@ -2138,7 +2140,8 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 					+ s(ps.numProjectProblems) + " getting server info from "
 					+ server.getLabel());
 			problems.setServerStatus(ServerStatus.WARNING);
-		}
+		}		
+		/*
 		if (ps.localDBInfo != null) {
 			final ServersViewContent scanFilter = new ServersViewContent(root,
 					SLImages.getImage(CommonImages.IMG_FILTER));
@@ -2146,6 +2149,15 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 			scanFilter
 					.setText("Scan filter: " + ps.localDBInfo.getScanFilter());
 			scanFilter.setData(ps.localDBInfo);
+		}
+		*/
+		if (ps.filter != null) {
+			final ServersViewContent scanFilter = new ServersViewContent(root,
+					SLImages.getImage(CommonImages.IMG_FILTER));
+			contents.add(scanFilter);
+			scanFilter
+					.setText("Scan filter: " + ps.filter.getName());
+			scanFilter.setData(ps.filter);
 		}
 		if (ps.serverData == null) {
 			if (server != null) {

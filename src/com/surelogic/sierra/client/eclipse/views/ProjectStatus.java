@@ -11,6 +11,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import com.surelogic.sierra.jdbc.finding.FindingAudits;
 import com.surelogic.sierra.jdbc.project.ProjectDO;
 import com.surelogic.sierra.jdbc.scan.ScanInfo;
+import com.surelogic.sierra.jdbc.settings.ScanFilterView;
 import com.surelogic.sierra.tool.message.Audit;
 import com.surelogic.sierra.tool.message.SyncTrailResponse;
 
@@ -33,16 +34,17 @@ class ProjectStatus {
 	final int numProjectProblems;
 	final int numServerProblems;
 	final ProjectDO localDBInfo;
+	final ScanFilterView filter;
 	
 	public ProjectStatus(IJavaProject jp) {
-		this(jp, null, null, Collections.<FindingAudits>emptyList(), null, 0, 0, null);
+		this(jp, null, null, Collections.<FindingAudits>emptyList(), null, 0, 0, null, null);
 	}
 	
 	public ProjectStatus(IJavaProject jp, File scan, ScanInfo info, 
 			             List<FindingAudits> findings,
 			             List<SyncTrailResponse> responses, 
 			             int numServerProblems, int numProjectProblems,
-			             ProjectDO dbInfo) {
+			             ProjectDO dbInfo, ScanFilterView filter) {
 		project = jp;
 		name = jp.getElementName();
 		scanDoc = scan;
@@ -52,6 +54,7 @@ class ProjectStatus {
 		this.numServerProblems = numServerProblems;
 		this.numProjectProblems = numProjectProblems;
 		localDBInfo = dbInfo;
+		this.filter = filter;
 		
 		// Preprocess local data
 		int newAudits = 0;
