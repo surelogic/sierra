@@ -1006,7 +1006,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 			} else {
 				// System.out.println("Got a non-server selection:
 				// "+item.getText());
-				final SierraServer s = inServer(item.getParent());
+				final SierraServer s = inServer(item);
 				if (s != null) {
 					if (servers.indirect.contains(s)) {
 						continue;
@@ -1022,13 +1022,24 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 
 	private SierraServer inServer(ServersViewContent item) {
 		while (item != null) {
-			if (item.getData() instanceof ProjectStatus) {
+			Object data = item.getData();
+			if (data instanceof ProjectStatus) {
 				// Inside of a project, not a server
 				return null;
 			}
-			if (item.getData() instanceof SierraServer) {
+			if (data instanceof ScanFilter) {
+				// Not a server
+				return null;
+			}
+			if (data instanceof SierraServer) {
 				return (SierraServer) item.getData();
 			}
+			/*
+			if (data == null && SCAN_FILTERS.equals(item.getText())) {
+				// Not a server
+				return null; 
+			}
+			*/
 			item = item.getParent();
 		}
 		return null;
