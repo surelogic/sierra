@@ -7,6 +7,7 @@ public enum ServerInteractionSetting {
 			return "Never";
 		}
 	},
+	/*
 	CHECK {
 		@Override
 		public String getLabel() {
@@ -17,6 +18,7 @@ public enum ServerInteractionSetting {
 			return true;
 		}
 	},
+	*/
 	PERIODIC {
 		@Override
 		public String getLabel() {
