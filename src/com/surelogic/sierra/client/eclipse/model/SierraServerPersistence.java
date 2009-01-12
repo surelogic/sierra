@@ -45,6 +45,7 @@ public final class SierraServerPersistence {
 	private static final String USER = "user";
 	private static final String VERSION = "version";
 	private static final String IS_FOCUS = "is-focus";
+	private static final String AUTO_SYNC = "auto-sync";
 
 	// fields needed for caching the password
 	private static final String AUTH_SCHEME = "";
@@ -81,6 +82,7 @@ public final class SierraServerPersistence {
 							.getPassword());
 				}
 			}
+			// FIX to save auto-sync bit somewhere
 			Data.getInstance().withTransaction(
 					ServerLocations.saveQuery(locMap));
 			if (map != null) {
@@ -148,6 +150,8 @@ public final class SierraServerPersistence {
 			}
 			Entities.addAttribute(SERVER_TYPE, sb.toString(), b);
 		}
+		Entities.addAttribute(AUTO_SYNC, Boolean.toString(server.autoSync()), b);
+		
 		if (save) {
 			Entities.addAttribute(SAVE_PASSWORD, Boolean.toString(server
 					.savePassword()), b);

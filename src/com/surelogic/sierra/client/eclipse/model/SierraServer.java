@@ -147,6 +147,16 @@ public final class SierraServer {
 		f_savePassword = savePassword;
 	}
 
+	private boolean f_autoSync = false;
+
+	public boolean autoSync() {
+		return f_autoSync;
+	}
+
+	public void setAutoSync(boolean autoSync) {
+		f_autoSync = autoSync;
+	}
+	
 	/**
 	 * Not persisted, only used during an Eclipse session.
 	 */

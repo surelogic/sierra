@@ -186,6 +186,7 @@ public final class SierraServerManager extends
 			newServer.setPassword(server.getPassword());
 			newServer.setPort(server.getPort());
 			newServer.setSavePassword(server.savePassword());
+			newServer.setAutoSync(server.autoSync());
 			newServer.setSecure(server.isSecure());
 			newServer.setUser(server.getUser());
 			setFocus(newServer);
