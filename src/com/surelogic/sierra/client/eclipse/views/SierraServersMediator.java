@@ -179,6 +179,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 	private final ActionListener f_buglinkSyncAction;
 	private final ActionListener f_serverSyncAction;
 	private final ActionListener f_serverUpdateAction;
+	private final ActionListener f_toggleAutoSyncAction;
 	private final ActionListener f_newServerAction;
 	private final ActionListener f_duplicateServerAction;
 	private final ActionListener f_deleteServerAction;
@@ -321,6 +322,16 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 		f_statusTree.setLabelProvider(new LabelProvider());
 
 		f_contextMenu = contextMenu;
+		f_toggleAutoSyncAction = new ServerActionListener("Toggle Auto-sync",
+				"Toggle whether the server(s) automatically synchronize",
+				"No server to toggle") {
+			@Override
+			protected void handleEventOnServer(final SierraServer server) {
+				server.setAutoSync(!server.autoSync());
+				server.getManager().notifyObservers();
+			}
+		};		
+		
 		f_serverUpdateAction = new ActionListener("Get Latest Server Info",
 				"Get the latest information about changes on the servers") {
 			@Override
@@ -496,8 +507,9 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 		};
 		f_view.addToViewMenu(serverInteractionAction);
 		f_view.addToViewMenu(f_serverSyncAction);
-		f_view.addToViewMenu(f_buglinkSyncAction);
-		f_view.addToViewMenu(f_serverUpdateAction);
+		//f_view.addToViewMenu(f_buglinkSyncAction);
+		//f_view.addToViewMenu(f_serverUpdateAction);
+		f_view.addToViewMenu(f_toggleAutoSyncAction);
 		f_view.addToViewMenu(new Separator());
 
 		final ServerStatusSort sort = PreferenceConstants.getServerStatusSort();
@@ -839,6 +851,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 			}
 		});
 
+		/*
 		final AutoJob doServerAutoUpdate = new AutoJob("Server auto-update",
 				lastServerUpdateTime) {
 			@Override
@@ -859,6 +872,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 			}
 		};
 		doServerAutoUpdate.schedule(doServerAutoUpdate.getDelay());
+        */
 
 		final AutoJob doServerAutoSync = new AutoJob("Server auto-sync",
 				SynchronizeAllProjectsAction.getLastSyncTime()) {
@@ -876,7 +890,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 
 			@Override
 			protected void run() {
-				asyncSyncWithServer(ServerSyncType.ALL);
+				asyncSyncWithServer(ServerSyncType.BY_SERVER_SETTINGS);
 			}
 		};
 		doServerAutoSync.schedule(doServerAutoSync.getDelay());
