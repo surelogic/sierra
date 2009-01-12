@@ -44,10 +44,18 @@ public class ServerInteractionPreferencePage extends PreferencePage implements
 		GridLayout grid = new GridLayout();
 		panel.setLayout(grid);
 
+		final ServerInteractionSetting[] settings = ServerInteractionSetting.values();
+		final String[][] settingDescs = new String[settings.length][];
+		for(int i=0; i<settings.length; i++) {
+			settingDescs[i] = new String[2];
+			settingDescs[i][0] = settings[i].getLabel();
+			settingDescs[i][1] = settings[i].toString();
+		}
 		f_serverInteractionSetting = new RadioGroupFieldEditor(
 				PreferenceConstants.P_SERVER_INTERACTION_SETTING,
 				"Automatically synchronize your audits",
-				1,
+				1, settingDescs,
+				/*
 				new String[][] {
 						{ ServerInteractionSetting.NEVER.getLabel(),
 								ServerInteractionSetting.NEVER.toString() },
@@ -57,6 +65,7 @@ public class ServerInteractionPreferencePage extends PreferencePage implements
 								ServerInteractionSetting.PERIODIC.toString() },
 						{ ServerInteractionSetting.THRESHOLD.getLabel(),
 								ServerInteractionSetting.THRESHOLD.toString() } },
+				*/
 				panel);
 		f_serverInteractionSetting.setPage(this);
 		f_serverInteractionSetting.setPreferenceStore(getPreferenceStore());
