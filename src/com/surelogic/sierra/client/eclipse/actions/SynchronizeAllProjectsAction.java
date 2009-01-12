@@ -70,6 +70,9 @@ public class SynchronizeAllProjectsAction implements
 				final SierraServer server = manager.getServer(projectName);
 				unconnectedServers.remove(server);
 
+				if (f_syncType.syncByServerSettings() && !server.autoSync()) {
+					continue;
+				}
 				final ServerActionOnAProject serverAction = new ServerActionOnAProject() {
 					public void run(String projectName, SierraServer server,
 							Shell shell) {
