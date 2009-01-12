@@ -24,7 +24,6 @@ import com.surelogic.sierra.gwt.SierraServiceServlet;
 import com.surelogic.sierra.gwt.client.data.Category;
 import com.surelogic.sierra.gwt.client.data.FindingType;
 import com.surelogic.sierra.gwt.client.data.FindingTypeFilter;
-import com.surelogic.sierra.gwt.client.data.ImportanceView;
 import com.surelogic.sierra.gwt.client.data.Project;
 import com.surelogic.sierra.gwt.client.data.ReportSettings;
 import com.surelogic.sierra.gwt.client.data.Result;
@@ -61,10 +60,9 @@ import com.surelogic.sierra.jdbc.tool.ArtifactTypeDO;
 import com.surelogic.sierra.jdbc.tool.FindingTypeDO;
 import com.surelogic.sierra.jdbc.tool.FindingTypes;
 import com.surelogic.sierra.jdbc.user.User;
-import com.surelogic.sierra.tool.message.Importance;
 import com.surelogic.sierra.tool.message.SierraServerLocation;
 
-public class SettingsServiceImpl extends SierraServiceServlet implements
+public final class SettingsServiceImpl extends SierraServiceServlet implements
 		SettingsService {
 	private static final long serialVersionUID = 6781260512153199775L;
 
@@ -111,7 +109,7 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 							prj.setUuid(projectDO.getUuid());
 							prj.setName(projectDO.getName());
 							final String sfUuid = projectDO.getScanFilter();
-							prj.setScanFilter(getFilter(filters
+							prj.setScanFilter(ServiceUtil.getFilter(filters
 									.getScanFilter(sfUuid), types, cats));
 							result.add(prj);
 						}
@@ -449,7 +447,7 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 						final List<ScanFilter> list = new ArrayList<ScanFilter>();
 						for (final ScanFilterDO fDO : new ScanFilters(q)
 								.listScanFilters()) {
-							final ScanFilter filter = getFilter(fDO, ft, fs);
+							final ScanFilter filter = ServiceUtil.getFilter(fDO, ft, fs);
 							filter.setLocal(serverUID.equals(definitionServer
 									.call(filter.getUuid())));
 							list.add(filter);
@@ -459,44 +457,13 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 				});
 	}
 
-	protected ScanFilter getFilter(final ScanFilterDO fDO,
-			final FindingTypes ft, final Categories cs) {
-		final ScanFilter f = new ScanFilter();
-		f.setName(fDO.getName());
-		f.setRevision(fDO.getRevision());
-		f.setUuid(fDO.getUid());
-		Set<ScanFilterEntry> filters = f.getCategories();
-		for (final CategoryFilterDO c : fDO.getCategories()) {
-			final ScanFilterEntry e = new ScanFilterEntry();
-			e.setCategory(true);
-			e.setImportance(view(c.getImportance()));
-			final CategoryDO catDO = cs.getCategory(c.getUid());
-			e.setName(catDO.getName());
-			e.setShortMessage(catDO.getInfo());
-			e.setUuid(c.getUid());
-			filters.add(e);
-		}
-		filters = f.getTypes();
-		for (final TypeFilterDO t : fDO.getFilterTypes()) {
-			final ScanFilterEntry e = new ScanFilterEntry();
-			e.setCategory(false);
-			e.setImportance(view(t.getImportance()));
-			final FindingTypeDO tDO = ft.getFindingType(t.getFindingType());
-			e.setName(tDO.getName());
-			e.setShortMessage(tDO.getShortMessage());
-			e.setUuid(tDO.getUid());
-			filters.add(e);
-		}
-		return f;
-	}
-
 	public ScanFilter createScanFilter(final String name) {
 		return ConnectionFactory.getInstance().withUserTransaction(
 				new UserQuery<ScanFilter>() {
 					public ScanFilter perform(final Query q, final Server s,
 							final User u) {
 						final ScanFilters filters = new ScanFilters(q);
-						final ScanFilter f = getFilter(filters
+						final ScanFilter f = ServiceUtil.getFilter(filters
 								.createScanFilter(name, s.nextRevision()),
 								new FindingTypes(q), new Categories(q));
 						f.setLocal(true);
@@ -516,13 +483,13 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 		final Set<TypeFilterDO> types = fDO.getFilterTypes();
 		for (final ScanFilterEntry e : f.getCategories()) {
 			final CategoryFilterDO c = new CategoryFilterDO();
-			c.setImportance(importance(e.getImportance()));
+			c.setImportance(ServiceUtil.importance(e.getImportance()));
 			c.setUid(e.getUuid());
 			cats.add(c);
 		}
 		for (final ScanFilterEntry e : f.getTypes()) {
 			final TypeFilterDO t = new TypeFilterDO();
-			t.setImportance(importance(e.getImportance()));
+			t.setImportance(ServiceUtil.importance(e.getImportance()));
 			t.setFiltered(false);
 			t.setFindingType(e.getUuid());
 			types.add(t);
@@ -601,7 +568,7 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 					public ScanFilter perform(final Query q, final Server s,
 							final User u) {
 						final ScanFilters filters = new ScanFilters(q);
-						return getFilter(filters.getDefaultScanFilter(),
+						return ServiceUtil.getFilter(filters.getDefaultScanFilter(),
 								new FindingTypes(q), new Categories(q));
 					}
 				});
@@ -617,43 +584,6 @@ public class SettingsServiceImpl extends SierraServiceServlet implements
 						return Status.success("Default scan filter saved.");
 					}
 				});
-	}
-
-	private static Importance importance(final ImportanceView i) {
-		if (i == null) {
-			return null;
-		}
-		if (i == ImportanceView.CRITICAL) {
-			return Importance.CRITICAL;
-		} else if (i == ImportanceView.HIGH) {
-			return Importance.HIGH;
-		} else if (i == ImportanceView.IRRELEVANT) {
-			return Importance.IRRELEVANT;
-		} else if (i == ImportanceView.LOW) {
-			return Importance.LOW;
-		} else if (i == ImportanceView.MEDIUM) {
-			return Importance.MEDIUM;
-		}
-		throw new IllegalStateException();
-	}
-
-	private static ImportanceView view(final Importance i) {
-		if (i == null) {
-			return null;
-		}
-		switch (i) {
-		case CRITICAL:
-			return ImportanceView.CRITICAL;
-		case HIGH:
-			return ImportanceView.HIGH;
-		case IRRELEVANT:
-			return ImportanceView.IRRELEVANT;
-		case LOW:
-			return ImportanceView.LOW;
-		case MEDIUM:
-			return ImportanceView.MEDIUM;
-		}
-		throw new IllegalStateException();
 	}
 
 	@SuppressWarnings("unchecked")

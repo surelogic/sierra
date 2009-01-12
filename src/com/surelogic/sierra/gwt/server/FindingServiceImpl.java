@@ -29,6 +29,9 @@ import com.surelogic.sierra.jdbc.server.ConnectionFactory;
 import com.surelogic.sierra.jdbc.server.NullUserTransaction;
 import com.surelogic.sierra.jdbc.server.Server;
 import com.surelogic.sierra.jdbc.server.UserQuery;
+import com.surelogic.sierra.jdbc.settings.Categories;
+import com.surelogic.sierra.jdbc.settings.ScanFilters;
+import com.surelogic.sierra.jdbc.tool.FindingTypes;
 import com.surelogic.sierra.jdbc.user.User;
 import com.surelogic.sierra.tool.message.AuditEvent;
 import com.surelogic.sierra.tool.message.Importance;
@@ -281,6 +284,11 @@ public class FindingServiceImpl extends SierraServiceServlet implements
 						clazzes.add(clazz);
 					}
 				}).call(uuid);
+				final ScanFilters s = new ScanFilters(query);
+				final Categories c = new Categories(query);
+				final FindingTypes ft = new FindingTypes(query);
+				d.setFilter(ServiceUtil.getFilter(s.getScanFilterByScan(uuid),
+						ft, c));
 				return d;
 			}
 			return null;

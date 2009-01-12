@@ -1,5 +1,7 @@
 package com.surelogic.sierra.gwt.server;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -88,6 +90,15 @@ public class ManageServerServiceImpl extends SierraServiceServlet implements
 
 	private ServerInfo readServerInfo(final Server server) throws SQLException {
 		final ServerInfo info = new ServerInfo();
+		InetAddress a;
+		try {
+			a = InetAddress.getLocalHost();
+			if (a != null) {
+				info.setHostName(a.getHostName());
+			}
+		} catch (final UnknownHostException e1) {
+			// Do nothing
+		}
 		info.setSiteName(server.getName());
 		info.setProductVersion(Server.getSoftwareVersion());
 		info.setAvailableVersion(server.getAvailableSchemaVersion());
