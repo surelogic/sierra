@@ -9,6 +9,7 @@ import com.surelogic.sierra.gwt.client.ContextManager;
 import com.surelogic.sierra.gwt.client.SessionManager;
 import com.surelogic.sierra.gwt.client.content.login.LoginContent;
 import com.surelogic.sierra.gwt.client.content.overview.OverviewContent;
+import com.surelogic.sierra.gwt.client.content.settings.OneTimeSettingsForm;
 
 public class ContentPane extends Composite implements ContextListener {
 	private final DockPanel rootPanel = new DockPanel();
@@ -30,6 +31,8 @@ public class ContentPane extends Composite implements ContextListener {
 		ContentComposite content;
 		if (!SessionManager.isLoggedIn()) {
 			content = LoginContent.getInstance();
+		} else if (SessionManager.getUser().showServerConfig()) {
+			content = new OneTimeSettingsForm();
 		} else {
 			content = context.getContent();
 			if (content == null) {

@@ -19,10 +19,11 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.Context;
 import com.surelogic.sierra.gwt.client.ContextManager;
-import com.surelogic.sierra.gwt.client.SessionManager;
 import com.surelogic.sierra.gwt.client.SessionListener;
+import com.surelogic.sierra.gwt.client.SessionManager;
 import com.surelogic.sierra.gwt.client.content.ContentComposite;
 import com.surelogic.sierra.gwt.client.content.overview.OverviewContent;
+import com.surelogic.sierra.gwt.client.content.settings.SettingsContent;
 import com.surelogic.sierra.gwt.client.data.UserAccount;
 import com.surelogic.sierra.gwt.client.ui.ImageHelper;
 
@@ -66,7 +67,11 @@ public final class LoginContent extends ContentComposite {
 				resetLoginAttempt();
 				errorMessage.setText("");
 				if (ContextManager.isContent(LoginContent.getInstance())) {
-					OverviewContent.getInstance().show();
+					if (user.isAdministrator() && user.getServerName() == null) {
+						SettingsContent.getInstance().show();
+					} else {
+						OverviewContent.getInstance().show();
+					}
 				}
 			}
 

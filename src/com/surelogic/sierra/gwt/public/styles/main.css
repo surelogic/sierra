@@ -194,6 +194,16 @@ img {
 	color: #FF3333;
 }
 
+/* One-time server configuration form */
+.one-time-form {
+	border: 2px groove;
+	padding: 10px;
+	position: absolute;
+	top: 40%;
+	left: 35%;
+	width: 30%;
+}
+
 /* Class for items that can be clicked */
 .clickable {
 	color: #005596;

@@ -65,4 +65,7 @@ public final class UserAccount implements Serializable {
 		this.serverName = serverName;
 	}
 
+	public boolean showServerConfig() {
+		return isAdministrator && serverName == null;
+	}
 }

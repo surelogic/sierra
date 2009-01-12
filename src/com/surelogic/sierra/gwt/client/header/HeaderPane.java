@@ -7,8 +7,8 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.surelogic.sierra.gwt.client.Context;
 import com.surelogic.sierra.gwt.client.ContextListener;
 import com.surelogic.sierra.gwt.client.ContextManager;
-import com.surelogic.sierra.gwt.client.SessionManager;
 import com.surelogic.sierra.gwt.client.SessionListener;
+import com.surelogic.sierra.gwt.client.SessionManager;
 import com.surelogic.sierra.gwt.client.content.ContentRegistry;
 import com.surelogic.sierra.gwt.client.data.UserAccount;
 
@@ -72,7 +72,7 @@ public final class HeaderPane extends Composite {
 		Window.setTitle(windowTitle.toString());
 
 		HeaderComposite newHeader = null;
-		if (user == null) {
+		if (user == null || user.showServerConfig()) {
 			newHeader = GuestHeader.getInstance();
 		} else if (context != null) {
 			newHeader = ContentRegistry.getContentHeader(context.getContent());

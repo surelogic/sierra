@@ -5,11 +5,20 @@ import java.io.Serializable;
 public class ServerInfo implements Serializable {
 	private static final long serialVersionUID = -934601985763096364L;
 
+	private String hostName;
 	private String siteName;
 	private String productVersion;
 	private String currentVersion;
 	private String availableVersion;
 	private EmailInfo email;
+
+	public String getHostName() {
+		return hostName;
+	}
+
+	public void setHostName(final String hostName) {
+		this.hostName = hostName;
+	}
 
 	public String getSiteName() {
 		return siteName;

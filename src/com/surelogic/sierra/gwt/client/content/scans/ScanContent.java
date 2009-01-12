@@ -14,6 +14,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.Context;
 import com.surelogic.sierra.gwt.client.content.ContentComposite;
 import com.surelogic.sierra.gwt.client.content.projects.ProjectsContent;
+import com.surelogic.sierra.gwt.client.content.scanfilters.ScanFilterView;
 import com.surelogic.sierra.gwt.client.data.ImportanceView;
 import com.surelogic.sierra.gwt.client.data.ReportSettings;
 import com.surelogic.sierra.gwt.client.data.ScanDetail;
@@ -53,7 +54,7 @@ public class ScanContent extends ContentComposite {
 		private VerticalPanel optionsPanel;
 		private VerticalPanel chartPanel;
 		private VerticalPanel detailPanel;
-
+		private ScanFilterView filterView;
 		private MultipleImportanceChoice imp;
 		private PackageChoice pak;
 		private CategoryChoice cat;
@@ -65,6 +66,8 @@ public class ScanContent extends ContentComposite {
 			optionsPanel = new VerticalPanel();
 			chartPanel = new VerticalPanel();
 			detailPanel = new VerticalPanel();
+			filterView = new ScanFilterView();
+			filterView.initialize();
 			final HorizontalPanel panel = new HorizontalPanel();
 			panel.add(optionsPanel);
 			final VerticalPanel vPanel = new VerticalPanel();
@@ -72,6 +75,7 @@ public class ScanContent extends ContentComposite {
 			vPanel.add(chartPanel);
 			panel.add(vPanel);
 			contentPanel.add(panel);
+			contentPanel.add(filterView);
 		}
 
 		public void setScan(final String uuid) {
@@ -118,6 +122,7 @@ public class ScanContent extends ContentComposite {
 												showFindings();
 											}
 										}));
+								filterView.setSelection(result.getFilter());
 								showFindings();
 							}
 						}

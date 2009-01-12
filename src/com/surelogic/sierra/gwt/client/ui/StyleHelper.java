@@ -10,7 +10,7 @@ import com.google.gwt.user.client.ui.Widget;
 public final class StyleHelper {
 	public static enum Style {
 		ITALICS("font-italic"), GRAY("font-gray"), STRONG("font-strong"), CLICKABLE(
-				"clickable");
+				"clickable"), ERROR("error");
 
 		private final String id;
 

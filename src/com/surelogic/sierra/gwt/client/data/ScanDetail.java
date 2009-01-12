@@ -27,6 +27,8 @@ public class ScanDetail implements Serializable {
 	private String packages;
 	private String classes;
 
+	private ScanFilter filter;
+
 	private Map<String, List<String>> compilations;
 
 	public String getLinesOfCode() {
@@ -98,6 +100,14 @@ public class ScanDetail implements Serializable {
 
 	public void setClasses(final String classes) {
 		this.classes = classes;
+	}
+
+	public ScanFilter getFilter() {
+		return filter;
+	}
+
+	public void setFilter(final ScanFilter filter) {
+		this.filter = filter;
 	}
 
 }

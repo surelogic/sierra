@@ -64,31 +64,36 @@ public final class SessionManager {
 		// make the login RPC call
 		final SessionServiceAsync sessionService = ServiceHelper
 				.getSessionService();
-		sessionService.login(username, password,
-				new ResultCallback<UserAccount>() {
+		sessionService.login(username, password, new LoginCallback());
+	}
 
-					@Override
-					public void doFailure(final String message,
-							final UserAccount result) {
-						// login failed
-						userAccount = null;
-						for (final SessionListener listener : sessionListeners) {
-							listener.onLoginFailure(message);
-						}
-						ContextManager.refreshContext();
-					}
+	public static void refreshUser() {
+		final SessionServiceAsync sessionService = ServiceHelper
+				.getSessionService();
+		sessionService.getUserAccount(new LoginCallback());
+	}
 
-					@Override
-					public void doSuccess(final String message,
-							final UserAccount result) {
-						// login succeeded
-						userAccount = result;
-						for (final SessionListener listener : sessionListeners) {
-							listener.onLogin(userAccount);
-						}
-						ContextManager.refreshContext();
-					}
-				});
+	private static class LoginCallback extends ResultCallback<UserAccount> {
+
+		@Override
+		public void doFailure(final String message, final UserAccount result) {
+			// login failed
+			userAccount = null;
+			for (final SessionListener listener : sessionListeners) {
+				listener.onLoginFailure(message);
+			}
+			ContextManager.refreshContext();
+		}
+
+		@Override
+		public void doSuccess(final String message, final UserAccount result) {
+			// login succeeded
+			userAccount = result;
+			for (final SessionListener listener : sessionListeners) {
+				listener.onLogin(userAccount);
+			}
+			ContextManager.refreshContext();
+		}
 	}
 
 	/**
@@ -184,4 +189,5 @@ public final class SessionManager {
 	private SessionManager() {
 		// not instantiable
 	}
+
 }
