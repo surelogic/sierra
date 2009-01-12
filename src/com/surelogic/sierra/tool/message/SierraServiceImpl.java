@@ -79,7 +79,8 @@ public class SierraServiceImpl extends SecureServiceServlet implements
 							generator.timeseries(timeseries).user(
 									user.getName());
 							MessageWarehouse.readScan(scan, generator);
-							SettingQueries.recordScanFilter(filter, uid);
+							SettingQueries.recordScanFilter(filter, uid)
+									.perform(new ConnectionQuery(conn));
 							ConnectionFactory.getInstance()
 									.delayUserTransaction(
 											new UserTransaction<Void>() {
