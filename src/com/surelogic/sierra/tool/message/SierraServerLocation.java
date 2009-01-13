@@ -21,16 +21,18 @@ public class SierraServerLocation {
 	private final String f_contextPath;
 	private final String f_user;
 	private final String f_password;
+	private final boolean f_autoSync;
 
 	public SierraServerLocation(final String host, final boolean secure,
 			final int port, final String contextPath, final String user,
 			final String password) {
-		this(UNLABELED_SERVER, host, secure, port, contextPath, user, password);
+		this(UNLABELED_SERVER, host, secure, port, contextPath, user, password,
+				false);
 	}
 
 	public SierraServerLocation(final String label, final String host,
 			final boolean secure, final int port, final String contextPath,
-			final String user, final String pass) {
+			final String user, final String pass, final boolean autoSync) {
 		f_host = host;
 		f_secure = secure;
 		f_port = port;
@@ -38,6 +40,7 @@ public class SierraServerLocation {
 		f_password = pass;
 		f_label = label;
 		f_contextPath = contextPath;
+		f_autoSync = autoSync;
 	}
 
 	public SierraServerLocation(final String server, final String user,
@@ -75,6 +78,7 @@ public class SierraServerLocation {
 		f_user = user;
 		f_password = pass;
 		f_label = UNLABELED_SERVER;
+		f_autoSync = false;
 	}
 
 	public String getLabel() {
@@ -107,6 +111,10 @@ public class SierraServerLocation {
 
 	public String getPass() {
 		return f_password;
+	}
+
+	public boolean isAutoSync() {
+		return f_autoSync;
 	}
 
 	/**
