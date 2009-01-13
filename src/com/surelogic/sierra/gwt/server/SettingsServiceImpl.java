@@ -447,7 +447,8 @@ public final class SettingsServiceImpl extends SierraServiceServlet implements
 						final List<ScanFilter> list = new ArrayList<ScanFilter>();
 						for (final ScanFilterDO fDO : new ScanFilters(q)
 								.listScanFilters()) {
-							final ScanFilter filter = ServiceUtil.getFilter(fDO, ft, fs);
+							final ScanFilter filter = ServiceUtil.getFilter(
+									fDO, ft, fs);
 							filter.setLocal(serverUID.equals(definitionServer
 									.call(filter.getUuid())));
 							list.add(filter);
@@ -568,8 +569,9 @@ public final class SettingsServiceImpl extends SierraServiceServlet implements
 					public ScanFilter perform(final Query q, final Server s,
 							final User u) {
 						final ScanFilters filters = new ScanFilters(q);
-						return ServiceUtil.getFilter(filters.getDefaultScanFilter(),
-								new FindingTypes(q), new Categories(q));
+						return ServiceUtil.getFilter(filters
+								.getDefaultScanFilter(), new FindingTypes(q),
+								new Categories(q));
 					}
 				});
 	}
@@ -636,11 +638,12 @@ public final class SettingsServiceImpl extends SierraServiceServlet implements
 					public Status perform(final Query q) {
 						final Map<SierraServerLocation, Collection<String>> servers = ServerLocations
 								.fetchQuery(null).perform(q);
+						// TODO is autosync meaningful on the server?
 						final SierraServerLocation l = new SierraServerLocation(
 								loc.getLabel(), loc.getHost(), loc
 										.getProtocol() == Protocol.HTTPS, loc
 										.getPort(), loc.getContext(), loc
-										.getUser(), loc.getPass());
+										.getUser(), loc.getPass(), true);
 						Collection<String> projects = servers.get(l);
 						if (projects == null) {
 							projects = Collections.emptyList();
