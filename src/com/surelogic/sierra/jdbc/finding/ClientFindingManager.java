@@ -8,6 +8,7 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -766,6 +767,9 @@ public final class ClientFindingManager extends FindingManager {
 				final ResultSet oldestScanSet = selectOldestScanByProject
 						.executeQuery();
 				try {
+					if (monitor.isCanceled()) {
+						return;
+					}
 					if (oldestScanSet.next()) {
 						final long oldestScanId = oldestScanSet.getLong(1);
 						populateFindingOverviewFixedFindings.setString(1,
@@ -940,6 +944,10 @@ public final class ClientFindingManager extends FindingManager {
 		final MatchRecord.PK id = new MatchRecord.PK();
 		match.setId(id);
 		for (final SyncTrailResponse trail : trails) {
+			if (monitor.isCanceled()) {
+				return;
+			}
+			
 			final String findingUid = trail.getFinding();
 			final Merge merge = trail.getMerge();
 			final Match m = merge.getMatch();
