@@ -54,8 +54,8 @@ public class Server_0000 implements SchemaAction {
 		st = c.createStatement();
 		try {
 			st
-					.execute("INSERT INTO SERVER_LOCATION (LABEL,PROTOCOL,HOST,PORT,CONTEXT_PATH,SERVER_USER,PASSWORD) "
-							+ " VALUES ('BugLink','http','buglink.org',13376,'/sl/','buglink-user','bl!uzer')");
+					.execute("INSERT INTO SERVER_LOCATION (LABEL,PROTOCOL,HOST,PORT,CONTEXT_PATH,SERVER_USER,PASSWORD,AUTOSYNC) "
+							+ " VALUES ('BugLink','http','buglink.org',13376,'/sl/','buglink-user','bl!uzer','Y')");
 		} finally {
 			st.close();
 		}
