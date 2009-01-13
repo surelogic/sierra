@@ -164,10 +164,12 @@ public final class ServerLocations {
 											final String contextPath = r
 													.nextString();
 											final String user = r.nextString();
+											final String dbPass = r
+													.nextString();
 											String password = passMap.get(user
 													+ "@" + host);
 											if (password == null) {
-												password = r.nextString();
+												password = dbPass;
 											}
 											final boolean autoSync = r
 													.nextBoolean();
