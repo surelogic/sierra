@@ -7,10 +7,10 @@ import java.util.logging.Level;
 
 import com.surelogic.common.base64.Base64;
 import com.surelogic.common.logging.SLLogger;
-import com.surelogic.sierra.tool.message.ServerInfoServiceClient;
 import com.surelogic.sierra.tool.message.ServerInfoReply;
 import com.surelogic.sierra.tool.message.ServerInfoRequest;
 import com.surelogic.sierra.tool.message.ServerInfoService;
+import com.surelogic.sierra.tool.message.ServerInfoServiceClient;
 import com.surelogic.sierra.tool.message.Services;
 import com.surelogic.sierra.tool.message.SierraServerLocation;
 
@@ -39,7 +39,7 @@ public final class SierraServer {
 		return f_label;
 	}
 
-	public boolean setLabel(String label) {
+	public boolean setLabel(final String label) {
 		if ((label == null) || label.equals(f_label)) {
 			return false;
 		}
@@ -48,7 +48,7 @@ public final class SierraServer {
 		return true;
 	}
 
-	private void setLabel_internal(String label) {
+	private void setLabel_internal(final String label) {
 		synchronized (f_manager) {
 			// overwrite semantics, i.e., no check if the new name is in use
 			f_manager.f_labelToServer.remove(f_label);
@@ -83,7 +83,7 @@ public final class SierraServer {
 		return f_secure ? "https" : "http";
 	}
 
-	public void setSecure(boolean secure) {
+	public void setSecure(final boolean secure) {
 		f_secure = secure;
 	}
 
@@ -93,7 +93,7 @@ public final class SierraServer {
 		return f_host;
 	}
 
-	public void setHost(String host) {
+	public void setHost(final String host) {
 		f_host = host;
 	}
 
@@ -103,7 +103,7 @@ public final class SierraServer {
 		return f_port;
 	}
 
-	public void setPort(int port) {
+	public void setPort(final int port) {
 		f_port = port;
 	}
 
@@ -113,7 +113,7 @@ public final class SierraServer {
 		return f_contextPath;
 	}
 
-	public void setContextPath(String contextPath) {
+	public void setContextPath(final String contextPath) {
 		f_contextPath = contextPath;
 	}
 
@@ -123,7 +123,7 @@ public final class SierraServer {
 		return f_user;
 	}
 
-	public void setUser(String user) {
+	public void setUser(final String user) {
 		f_user = user;
 	}
 
@@ -133,7 +133,7 @@ public final class SierraServer {
 		return f_password;
 	}
 
-	public void setPassword(String password) {
+	public void setPassword(final String password) {
 		f_password = password;
 	}
 
@@ -143,7 +143,7 @@ public final class SierraServer {
 		return f_savePassword;
 	}
 
-	public void setSavePassword(boolean savePassword) {
+	public void setSavePassword(final boolean savePassword) {
 		f_savePassword = savePassword;
 	}
 
@@ -153,10 +153,10 @@ public final class SierraServer {
 		return f_autoSync;
 	}
 
-	public void setAutoSync(boolean autoSync) {
+	public void setAutoSync(final boolean autoSync) {
 		f_autoSync = autoSync;
 	}
-	
+
 	/**
 	 * Not persisted, only used during an Eclipse session.
 	 */
@@ -212,15 +212,15 @@ public final class SierraServer {
 
 	public SierraServerLocation getServer() {
 		return new SierraServerLocation(f_label, f_host, f_secure, f_port,
-				f_contextPath, f_user, f_password);
+				f_contextPath, f_user, f_password, f_autoSync);
 	}
 
 	/**
 	 * @param serverReply
 	 * @return true if changed
 	 */
-	public synchronized boolean setServer(SierraServerLocation loc,
-			ServerInfoReply serverReply) {
+	public synchronized boolean setServer(final SierraServerLocation loc,
+			final ServerInfoReply serverReply) {
 		final boolean changedInfo = !gotServerInfo && serverReply != null;
 		final boolean changed = differs(f_label, loc.getLabel())
 				|| differs(f_host, loc.getHost())
@@ -241,7 +241,7 @@ public final class SierraServer {
 		return changed;
 	}
 
-	private static boolean differs(String s1, String s2) {
+	private static boolean differs(final String s1, final String s2) {
 		if (s1 == s2) {
 			return false;
 		}
@@ -275,7 +275,7 @@ public final class SierraServer {
 		updateServerInfo(false);
 	}
 
-	public synchronized boolean updateServerInfo(boolean force) {
+	public synchronized boolean updateServerInfo(final boolean force) {
 		if (gotServerInfo && !force) {
 			return true;
 		}
@@ -314,7 +314,7 @@ public final class SierraServer {
 		return isTeamServer;
 	}
 
-	synchronized void setServerType(boolean team, boolean bug) {
+	synchronized void setServerType(final boolean team, final boolean bug) {
 		isTeamServer = team;
 		isBugLink = bug;
 		gotServerInfo = true;

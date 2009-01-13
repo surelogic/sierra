@@ -133,7 +133,7 @@ public final class SierraServerManager extends
 		final String label = newUniqueLabel("server");
 		return new SierraServerLocation(label, "", false,
 				SierraServerLocation.DEFAULT_PORT,
-				SierraServerLocation.DEFAULT_PATH, "", "");
+				SierraServerLocation.DEFAULT_PATH, "", "", false);
 	}
 
 	public void delete(final SierraServer server) {
