@@ -101,7 +101,6 @@ import com.surelogic.sierra.client.eclipse.model.SierraServer;
 import com.surelogic.sierra.client.eclipse.model.SierraServerManager;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
 import com.surelogic.sierra.client.eclipse.preferences.ServerFailureReport;
-import com.surelogic.sierra.client.eclipse.preferences.ServerInteractionSetting;
 import com.surelogic.sierra.client.eclipse.wizards.ServerExportWizard;
 import com.surelogic.sierra.client.eclipse.wizards.ServerImportWizard;
 import com.surelogic.sierra.jdbc.finding.ClientFindingManager;
@@ -878,8 +877,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 				SynchronizeAllProjectsAction.getLastSyncTime()) {
 			@Override
 			protected boolean isEnabled() {
-				return PreferenceConstants.getServerInteractionSetting()
-						.doServerAutoSync();
+				return true;
 			}
 
 			@Override
@@ -895,37 +893,37 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 		};
 		doServerAutoSync.schedule(doServerAutoSync.getDelay());
 
-		final IPreferenceStore store = Activator.getDefault()
-				.getPreferenceStore();
-		store.addPropertyChangeListener(new IPropertyChangeListener() {
-			public void propertyChange(final PropertyChangeEvent event) {
-				if (event.getProperty() == PreferenceConstants.P_SERVER_INTERACTION_SETTING) {
-					if (event.getNewValue() != event.getOldValue()) {
-						final ServerInteractionSetting s = ServerInteractionSetting
-								.valueOf((String) event.getNewValue());
-						final Job job = new DatabaseJob(
-								"Switching server interaction") {
-							@Override
-							protected IStatus run(final IProgressMonitor monitor) {
-								synchronized (responseMap) {
-									if (s.useAuditThreshold()
-											&& checkAutoSyncTrigger(projects)) {
-										asyncSyncWithServer(ServerSyncType.BY_SERVER_SETTINGS);
-									} else if (s.doServerAutoSync()) {
-										asyncSyncWithServer(ServerSyncType.BY_SERVER_SETTINGS);
-									} else if (s.doServerAutoUpdate()) {
-										asyncUpdateServerInfo();
-									}
-								}
-								return Status.OK_STATUS;
-							}
-						};
-						job.schedule();
-					}
-				}
-			}
-
-		});
+//		final IPreferenceStore store = Activator.getDefault()
+//				.getPreferenceStore();
+//		store.addPropertyChangeListener(new IPropertyChangeListener() {
+//			public void propertyChange(final PropertyChangeEvent event) {
+//				if (event.getProperty() == PreferenceConstants.P_SERVER_INTERACTION_SETTING) {
+//					if (event.getNewValue() != event.getOldValue()) {
+//						final ServerInteractionSetting s = ServerInteractionSetting
+//								.valueOf((String) event.getNewValue());
+//						final Job job = new DatabaseJob(
+//								"Switching server interaction") {
+//							@Override
+//							protected IStatus run(final IProgressMonitor monitor) {
+//								synchronized (responseMap) {
+//									if (s.useAuditThreshold()
+//											&& checkAutoSyncTrigger(projects)) {
+//										asyncSyncWithServer(ServerSyncType.BY_SERVER_SETTINGS);
+//									} else if (s.doServerAutoSync()) {
+//										asyncSyncWithServer(ServerSyncType.BY_SERVER_SETTINGS);
+//									} else if (s.doServerAutoUpdate()) {
+//										asyncUpdateServerInfo();
+//									}
+//								}
+//								return Status.OK_STATUS;
+//							}
+//						};
+//						job.schedule();
+//					}
+//				}
+//			}
+//
+//		});
 	}
 
 	private abstract class AutoJob extends Job {
@@ -1676,10 +1674,10 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 	 * @return true if triggered an auto-sync
 	 */
 	private boolean checkAutoSyncTrigger(final List<ProjectStatus> projects) {
-		if (!PreferenceConstants.getServerInteractionSetting()
-				.useAuditThreshold()) {
-			return false;
-		}
+//		if (!PreferenceConstants.getServerInteractionSetting()
+//				.useAuditThreshold()) {
+//			return false;
+//		}
 		final int auditThreshold = PreferenceConstants
 				.getServerInteractionAuditThreshold();
 		if (auditThreshold > 0) {

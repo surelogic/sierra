@@ -175,27 +175,6 @@ public class PreferenceConstants {
 	}
 
 	/**
-	 * Setting to control automatic synchronization with connected servers.
-	 */
-	public static final String P_SERVER_INTERACTION_SETTING = "com.surelogic.sierra.server-interaction-setting";
-
-	public static ServerInteractionSetting getServerInteractionSetting() {
-		if (Activator.getDefault() == null) {
-			return ServerInteractionSetting.NEVER;
-		}
-		final String resultString = Activator.getDefault()
-				.getPluginPreferences().getString(P_SERVER_INTERACTION_SETTING);
-		final ServerInteractionSetting result = ServerInteractionSetting
-				.valueOf(resultString);
-		return result;
-	}
-
-	public static void setServerInteractionSetting(ServerInteractionSetting s) {
-		Activator.getDefault().getPluginPreferences().setValue(
-				P_SERVER_INTERACTION_SETTING, s.toString());
-	}
-
-	/**
 	 * Period in minutes of automatic server interaction.
 	 */
 	public static final String P_SERVER_INTERACTION_PERIOD_IN_MINUTES = "com.surelogic.common.eclipse.server-interaction-period-in-minutes";

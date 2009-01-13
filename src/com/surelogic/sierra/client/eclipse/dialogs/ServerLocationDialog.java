@@ -37,18 +37,11 @@ import com.surelogic.sierra.tool.message.SierraServerLocation;
  * information for a Sierra server.
  */
 public final class ServerLocationDialog extends TitleAreaDialog {
-	private static final int RETRY = 2;
 
-	public static final String NEW_TITLE = "New Sierra Team Server Location";
-	public static final String EDIT_TITLE = "Edit Sierra Team Server Location";
+	private static final int RETRY = 2;
 
 	private static final int CONTENTS_WIDTH_HINT = 350;
 
-	static final String SAVE_PW_WARNING = "Saved secret data is stored on your computer in a format that's difficult, but not impossible, for an intruder to read.";
-
-	private static final String TITLE = "Enter Sierra Team Server Location Information";
-	private static final String INFO_MSG = "Define the information for the Sierra team server you want to interact with.";
-	private static final String VALIDATE_MSG = "Please check the information below.  We could not contact the Sierra team server.";
 	private static final int INFO_WIDTH_HINT = 70;
 
 	private SierraServerLocation f_server;
@@ -113,7 +106,7 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 		panel.setLayoutData(data);
 
 		final Label label = new Label(panel, SWT.RIGHT);
-		label.setText("Label:");
+		label.setText(I18N.msg("sierra.dialog.serverlocation.label"));
 		label.setLayoutData(new GridData(SWT.RIGHT));
 		final Text labelText = new Text(panel, SWT.SINGLE | SWT.BORDER);
 		labelText.setText(f_server.getLabel());
@@ -138,7 +131,7 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 
 		/* Location group */
 		final Group locGroup = new Group(panel, SWT.NONE);
-		locGroup.setText("Location");
+		locGroup.setText(I18N.msg("sierra.dialog.serverlocation.location"));
 		locGroup.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, 2,
 				1));
 		gridLayout = new GridLayout();
@@ -146,7 +139,7 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 		locGroup.setLayout(gridLayout);
 
 		final Label hostLabel = new Label(locGroup, SWT.RIGHT);
-		hostLabel.setText("Host:");
+		hostLabel.setText(I18N.msg("sierra.dialog.serverlocation.host"));
 		data = new GridData(SWT.RIGHT);
 		data.widthHint = INFO_WIDTH_HINT;
 		hostLabel.setLayoutData(data);
@@ -155,7 +148,7 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 		hostText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		final Label portLabel = new Label(locGroup, SWT.RIGHT);
-		portLabel.setText("Port:");
+		portLabel.setText(I18N.msg("sierra.dialog.serverlocation.port"));
 		data = new GridData(SWT.RIGHT);
 		data.widthHint = INFO_WIDTH_HINT;
 		portLabel.setLayoutData(data);
@@ -179,7 +172,8 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 		});
 
 		final Label contextPathLabel = new Label(locGroup, SWT.RIGHT);
-		contextPathLabel.setText("Context:");
+		contextPathLabel.setText(I18N
+				.msg("sierra.dialog.serverlocation.context"));
 		data = new GridData(SWT.RIGHT);
 		data.widthHint = INFO_WIDTH_HINT;
 		contextPathLabel.setLayoutData(data);
@@ -188,7 +182,7 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 		contextPathText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		final Label protLabel = new Label(locGroup, SWT.RIGHT);
-		protLabel.setText("Protocol:");
+		protLabel.setText(I18N.msg("sierra.dialog.serverlocation.protocol"));
 		data = new GridData(SWT.RIGHT);
 		data.widthHint = INFO_WIDTH_HINT;
 		protLabel.setLayoutData(data);
@@ -196,9 +190,9 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 		final FillLayout fill = new FillLayout(SWT.HORIZONTAL);
 		radio.setLayout(fill);
 		final Button http = new Button(radio, SWT.RADIO);
-		http.setText("http");
+		http.setText(I18N.msg("sierra.dialog.serverlocation.protocol.http"));
 		final Button https = new Button(radio, SWT.RADIO);
-		https.setText("https");
+		https.setText(I18N.msg("sierra.dialog.serverlocation.protocol.https"));
 		if (f_isSecure) {
 			https.setSelection(true);
 		} else {
@@ -214,7 +208,8 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 
 		/* Authorization group */
 		final Group authGroup = new Group(panel, SWT.NONE);
-		authGroup.setText("Authentication");
+		authGroup.setText(I18N
+				.msg("sierra.dialog.serverlocation.authentication"));
 		authGroup.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, 2,
 				1));
 		gridLayout = new GridLayout();
@@ -222,7 +217,8 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 		authGroup.setLayout(gridLayout);
 
 		final Label userLabel = new Label(authGroup, SWT.RIGHT);
-		userLabel.setText("User:");
+		userLabel.setText(I18N
+				.msg("sierra.dialog.serverlocation.authentication.user"));
 		data = new GridData(SWT.RIGHT);
 		data.widthHint = INFO_WIDTH_HINT;
 		userLabel.setLayoutData(data);
@@ -231,7 +227,8 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 		userText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		final Label passwordLabel = new Label(authGroup, SWT.RIGHT);
-		passwordLabel.setText("Password:");
+		passwordLabel.setText(I18N
+				.msg("sierra.dialog.serverlocation.authentication.password"));
 		data = new GridData(SWT.RIGHT);
 		data.widthHint = INFO_WIDTH_HINT;
 		passwordLabel.setLayoutData(data);
@@ -244,20 +241,22 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 		}
 		passwordText.setEchoChar('\u25CF');
 
-		final Button savePasswordButton = makeCheckButton(panel,
-				"Save Password", f_savePassword);
-		final Button validateButton = makeCheckButton(panel,
-				"Validate connection on finish", f_validateServer);
-		final Button syncButton = makeCheckButton(panel,
-				"Synchronize BugLink data on finish", f_syncServer);
+		final Button savePasswordButton = makeCheckButton(panel, I18N
+				.msg("sierra.dialog.serverlocation.savePassword"),
+				f_savePassword);
+		final Button validateButton = makeCheckButton(panel, I18N
+				.msg("sierra.dialog.serverlocation.validateOnFinish"),
+				f_validateServer);
+		final Button syncButton = makeCheckButton(panel, I18N
+				.msg("sierra.dialog.serverlocation.synchBugLink"), f_syncServer);
 		syncButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(final Event event) {
 				f_syncServer = syncButton.getSelection();
 			}
 		});
 
-		final Button autoSyncButton = makeCheckButton(panel,
-				"Enable auto-sync", f_autoSync);
+		final Button autoSyncButton = makeCheckButton(panel, I18N
+				.msg("sierra.dialog.serverlocation.enableAutoSync"), f_autoSync);
 		autoSyncButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(final Event event) {
 				f_autoSync = autoSyncButton.getSelection();
@@ -283,11 +282,10 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 
 		final Label saveWarning = new Label(warning, SWT.WRAP);
 		data = new GridData(SWT.FILL, SWT.TOP, true, false, 1, 1);
-		// data.widthHint = 100;
 		saveWarning.setLayoutData(data);
-		saveWarning.setText(SAVE_PW_WARNING);
+		saveWarning.setText(I18N.msg("sierra.dialog.savePasswordWarning"));
 
-		setTitle(TITLE);
+		setTitle(I18N.msg("sierra.dialog.serverlocation.title"));
 
 		f_mediator = new Mediator(labelText, hostText, portText,
 				contextPathText, userText, passwordText, validateButton);
@@ -323,10 +321,6 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 		f_mediator.okPressed();
 		super.okPressed();
 	}
-
-	/*
-	 * public SierraServer getServer() { return f_server; }
-	 */
 
 	private final class Mediator {
 		private final SierraServerManager f_manager = SierraServerManager
@@ -409,10 +403,13 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 			}
 
 			if (showInfo) {
-				setMessage(INFO_MSG, IMessageProvider.INFORMATION);
+				setMessage(I18N.msg("sierra.dialog.serverlocation.msg.info"),
+						IMessageProvider.INFORMATION);
 			}
 			if (!f_serverValidated) {
-				setMessage(VALIDATE_MSG, IMessageProvider.WARNING);
+				setMessage(I18N
+						.msg("sierra.dialog.serverlocation.msg.validate"),
+						IMessageProvider.WARNING);
 			}
 
 			getButton(IDialogConstants.OK_ID).setEnabled(valid);
@@ -424,7 +421,6 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 							.parseInt(f_portText.getText().trim()),
 					f_contextPathText.getText().trim(), f_userText.getText()
 							.trim(), f_passwordText.getText(), f_autoSync);
-			// f_server.setSavePassword(f_savePassword);
 			f_validateServer = f_validateButton.getSelection();
 		}
 	}
@@ -468,8 +464,9 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 	// since we manually notify observers
 	public static void newServer(final Shell shell) {
 		final SierraServerManager manager = SierraServerManager.getInstance();
+		final String title = I18N.msg("sierra.dialog.serverlocation.newTitle");
 		final ServerLocationDialog dialog = editServer(shell, manager
-				.createLocation(), ServerLocationDialog.NEW_TITLE, true, false);
+				.createLocation(), title, true, false);
 		if (dialog != null) {
 			final SierraServer newServer = manager.create();
 			updateServer(dialog, newServer);
@@ -477,9 +474,9 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 	}
 
 	public static void editServer(final Shell shell, final SierraServer server) {
+		final String title = I18N.msg("sierra.dialog.serverlocation.editTitle");
 		final ServerLocationDialog dialog = editServer(shell, server
-				.getServer(), ServerLocationDialog.EDIT_TITLE, server
-				.savePassword(), server.autoSync());
+				.getServer(), title, server.savePassword(), server.autoSync());
 		updateServer(dialog, server);
 	}
 

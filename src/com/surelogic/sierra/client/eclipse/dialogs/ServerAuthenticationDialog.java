@@ -15,6 +15,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 import com.surelogic.common.eclipse.SLImages;
+import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.images.CommonImages;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
 
@@ -133,7 +134,7 @@ public final class ServerAuthenticationDialog extends Dialog {
 		data = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
 		data.widthHint = 300;
 		saveWarning.setLayoutData(data);
-		saveWarning.setText(ServerLocationDialog.SAVE_PW_WARNING);
+		saveWarning.setText(I18N.msg("sierra.dialog.savePasswordWarning"));
 
 		return panel;
 	}
