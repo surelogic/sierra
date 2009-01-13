@@ -2,8 +2,6 @@ package com.surelogic.sierra.client.eclipse;
 
 import java.io.File;
 
-import org.eclipse.core.runtime.IPath;
-
 import com.surelogic.common.derby.DerbyConnection;
 import com.surelogic.common.jdbc.DBConnection;
 import com.surelogic.common.jdbc.SchemaData;
