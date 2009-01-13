@@ -1685,7 +1685,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 			int audits = 0;
 			for (final ProjectStatus ps : projects) {
 				SierraServer server = manager.getServer(ps.name);
-				if (server.autoSync()) {
+				if (server != null && server.autoSync()) {
 					audits += ps.numLocalAudits + ps.numServerAudits;
 				}
 			}
