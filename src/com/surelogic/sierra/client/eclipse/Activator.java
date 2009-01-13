@@ -23,6 +23,7 @@ import com.surelogic.sierra.client.eclipse.model.Projects;
 import com.surelogic.sierra.client.eclipse.model.SierraServerManager;
 import com.surelogic.sierra.client.eclipse.model.selection.SelectionManager;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
+import com.surelogic.sierra.client.eclipse.views.SierraServersAutoSync;
 import com.surelogic.sierra.client.eclipse.views.adhoc.AdHocDataSource;
 
 /**
@@ -80,6 +81,8 @@ public final class Activator extends AbstractUIPlugin {
 			handler.addMarkerListener();
 			getDefault().getPluginPreferences().addPropertyChangeListener(
 					handler);
+			
+			SierraServersAutoSync.start();
 		} catch (final FutureDatabaseException e) {
 			/*
 			 * The database schema version is too new, we need to delete it to
@@ -110,6 +113,7 @@ public final class Activator extends AbstractUIPlugin {
 	@Override
 	public void stop(final BundleContext context) throws Exception {
 		try {
+			SierraServersAutoSync.stop();
 			AdHocDataSource.getInstance().dispose();
 			if (f_databaseInSync.get()) {
 				SierraServerManager.getInstance().save();

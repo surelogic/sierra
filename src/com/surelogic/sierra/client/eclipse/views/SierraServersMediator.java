@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 
 import org.eclipse.core.resources.IProject;
@@ -28,10 +27,7 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceDialog;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ILabelDecorator;
@@ -57,14 +53,12 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.browser.IWebBrowser;
 import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
 import org.eclipse.ui.dialogs.PreferencesUtil;
-import org.eclipse.ui.progress.UIJob;
 
 import com.surelogic.common.eclipse.ImageImageDescriptor;
 import com.surelogic.common.eclipse.JDTUtility;
 import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.common.eclipse.WorkspaceUtility;
 import com.surelogic.common.eclipse.jobs.DatabaseJob;
-import com.surelogic.common.eclipse.jobs.SLUIJob;
 import com.surelogic.common.eclipse.logging.SLEclipseStatusUtility;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.images.CommonImages;
@@ -73,7 +67,6 @@ import com.surelogic.common.jdbc.Query;
 import com.surelogic.common.jobs.NullSLProgressMonitor;
 import com.surelogic.common.jobs.SLProgressMonitor;
 import com.surelogic.common.logging.SLLogger;
-import com.surelogic.sierra.client.eclipse.Activator;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.actions.NewScan;
 import com.surelogic.sierra.client.eclipse.actions.PreferencesAction;
@@ -92,7 +85,6 @@ import com.surelogic.sierra.client.eclipse.jobs.AbstractServerProjectJob;
 import com.surelogic.sierra.client.eclipse.jobs.DeleteProjectDataJob;
 import com.surelogic.sierra.client.eclipse.jobs.OverwriteLocalScanFilterJob;
 import com.surelogic.sierra.client.eclipse.jobs.SendScanFiltersJob;
-import com.surelogic.sierra.client.eclipse.jobs.ServerProjectGroupJob;
 import com.surelogic.sierra.client.eclipse.model.IProjectsObserver;
 import com.surelogic.sierra.client.eclipse.model.ISierraServerObserver;
 import com.surelogic.sierra.client.eclipse.model.Projects;
@@ -166,18 +158,10 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 	 */
 	private final Map<SierraServer, ServerUpdateStatus> serverResponseMap = new HashMap<SierraServer, ServerUpdateStatus>();
 
-	private final AtomicLong lastServerUpdateTime = new AtomicLong(System
-			.currentTimeMillis());
-
-	private final AtomicReference<ServerProjectGroupJob> lastSyncGroup = new AtomicReference<ServerProjectGroupJob>();
-
-	private final AtomicReference<Job> lastUpdateJob = new AtomicReference<Job>();
-
 	private final TreeViewer f_statusTree;
 	private final Menu f_contextMenu;
 	private final ActionListener f_buglinkSyncAction;
 	private final ActionListener f_serverSyncAction;
-	private final ActionListener f_serverUpdateAction;
 	private final ActionListener f_toggleAutoSyncAction;
 	private final ActionListener f_newServerAction;
 	private final ActionListener f_duplicateServerAction;
@@ -331,26 +315,18 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 			}
 		};		
 		
-		f_serverUpdateAction = new ActionListener("Get Latest Server Info",
-				"Get the latest information about changes on the servers") {
-			@Override
-			public void run() {
-				asyncUpdateServerInfo();
-			}
-		};
-		// view.addToActionBar(f_serverUpdateAction);
 		f_buglinkSyncAction = new ActionListener("Synchronize All BugLink Data",
 		"Synchronize BugLink servers") {
 			@Override
 			public void run() {
-				asyncSyncWithServer(ServerSyncType.BUGLINK);
+				SierraServersAutoSync.asyncSyncWithServer(ServerSyncType.BUGLINK);
 			}
 		};
 		f_serverSyncAction = new ActionListener("Synchronize All Connected Projects",
 				"Synchronize servers and connected projects") {
 			@Override
 			public void run() {
-				asyncSyncWithServer(ServerSyncType.ALL);
+				SierraServersAutoSync.asyncSyncWithServer(ServerSyncType.ALL);
 			}
 		};
 		/*
@@ -762,8 +738,6 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 								.getData();
 						new NewScan().scan(ps.project);
 					}
-				} else if (item.getData() == NO_SERVER_DATA) {
-					asyncUpdateServerInfo();
 				}
 			}
 
@@ -873,26 +847,6 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 		doServerAutoUpdate.schedule(doServerAutoUpdate.getDelay());
         */
 
-		final AutoJob doServerAutoSync = new AutoJob("Server auto-sync",
-				SynchronizeAllProjectsAction.getLastSyncTime()) {
-			@Override
-			protected boolean isEnabled() {
-				return true;
-			}
-
-			@Override
-			protected long getDelay() {
-				return PreferenceConstants
-						.getServerInteractionPeriodInMinutes() * 60000;
-			}
-
-			@Override
-			protected void run() {
-				asyncSyncWithServer(ServerSyncType.BY_SERVER_SETTINGS);
-			}
-		};
-		doServerAutoSync.schedule(doServerAutoSync.getDelay());
-
 //		final IPreferenceStore store = Activator.getDefault()
 //				.getPreferenceStore();
 //		store.addPropertyChangeListener(new IPropertyChangeListener() {
@@ -924,46 +878,6 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 //			}
 //
 //		});
-	}
-
-	private abstract class AutoJob extends Job {
-		final AtomicLong lastTime;
-
-		public AutoJob(final String name, final AtomicLong last) {
-			super(name);
-			setSystem(true);
-			lastTime = last;
-		}
-
-		protected long computeGap() {
-			final long now = System.currentTimeMillis();
-			final long next = lastTime.get() + getDelay();
-			return next - now;
-		}
-
-		@Override
-		protected IStatus run(final IProgressMonitor monitor) {
-			if (isEnabled()) {
-
-				final long gap = computeGap();
-				if (gap > 0) {
-					System.out.println("Wait a bit longer: " + gap);
-					schedule(gap);
-					return Status.OK_STATUS;
-				}
-				// No need to wait ...
-				run();
-			}
-			schedule(getDelay());
-
-			return Status.OK_STATUS;
-		}
-
-		protected abstract void run();
-
-		protected abstract boolean isEnabled();
-
-		protected abstract long getDelay(); // In msec
 	}
 
 	private List<ScanFilter> collectScanFilters() {
@@ -1243,30 +1157,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 		asyncUpdateContents();
 	}
 
-	void asyncSyncWithServer(final ServerSyncType type) {
-		final long now = System.currentTimeMillis();
-		lastServerUpdateTime.set(now); // Sync >> update
-		System.out.println("Sync at: " + now);
-
-		final UIJob job = new SLUIJob() {
-			@Override
-			public IStatus runInUIThread(final IProgressMonitor monitor) {
-				final Job group = lastSyncGroup.get();
-				if ((group == null) || (group.getResult() != null)) {
-					final SynchronizeAllProjectsAction sync = new SynchronizeAllProjectsAction(
-							type, PreferenceConstants
-									.getServerFailureReporting(), false);
-					sync.run(null);
-					lastSyncGroup.set(sync.getGroup());
-				} else {
-					System.out.println("Last sync is still running");
-				}
-				return Status.OK_STATUS;
-			}
-		};
-		job.schedule();
-	}
-
+	/*
 	void asyncUpdateServerInfo() {
 		final long now = System.currentTimeMillis();
 		lastServerUpdateTime.set(now);
@@ -1295,6 +1186,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 			job.schedule();
 		}
 	}
+    */
 
 	private void asyncUpdateContents() {
 		asyncUpdateContentsForUI(new IViewUpdater() {
@@ -1691,7 +1583,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 			}
 			// FIX should this be per-project?
 			if (audits > auditThreshold) {
-				asyncSyncWithServer(ServerSyncType.BY_SERVER_SETTINGS);
+				SierraServersAutoSync.asyncSyncWithServer(ServerSyncType.BY_SERVER_SETTINGS);
 				return true;
 			}
 		}
