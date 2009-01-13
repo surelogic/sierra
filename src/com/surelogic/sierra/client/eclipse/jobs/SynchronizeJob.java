@@ -1,7 +1,6 @@
 package com.surelogic.sierra.client.eclipse.jobs;
 
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.logging.Level;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -11,7 +10,9 @@ import org.eclipse.core.runtime.Status;
 import com.surelogic.common.eclipse.jobs.SLProgressMonitorWrapper;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.jdbc.ConnectionQuery;
+import com.surelogic.common.jdbc.DBTransaction;
 import com.surelogic.common.jdbc.Query;
+import com.surelogic.common.jdbc.TransactionException;
 import com.surelogic.common.jobs.SLProgressMonitor;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;
@@ -60,32 +61,48 @@ public class SynchronizeJob extends AbstractServerProjectJob {
 		final SLProgressMonitor slMonitor = new SLProgressMonitorWrapper(
 				monitor, getName());
 		slMonitor.begin(6);
-		IStatus status = null;
 		try {
-			final Connection conn = Data.getInstance().transactionConnection();
-			try {
-				status = synchronize(conn, slMonitor);
-			} catch (final Throwable e) {
-				status = createWarningStatus(51, e);
-				conn.rollback();
-			} finally {
-				conn.close();
-			}
-		} catch (final SQLException e1) {
-			if (status == null) {
-				status = createWarningStatus(51, e1);
-			}
+			return synchronize(new SyncTransaction(slMonitor), slMonitor);
+		} catch (final Throwable e) {
+			return createWarningStatus(51, e);
 		}
-		if (status == null) {
-			status = Status.OK_STATUS;
-		}
-		return status;
 	}
 
-	private IStatus synchronize(final Connection conn,
-			final SLProgressMonitor slMonitor) throws SQLException {
-		TroubleshootConnection troubleshoot;
+	private IStatus synchronize(final DBTransaction<IStatus> sync,
+			final SLProgressMonitor slMonitor) {
 		try {
+			return Data.getInstance().withTransaction(sync);
+		} catch (final TransactionException e) {
+			final Throwable cause = e.getCause();
+			TroubleshootConnection troubleshoot = null;
+			if (joinJob != null && joinJob.troubleshoot(f_server)) {
+				if (cause instanceof ServerMismatchException) {
+					troubleshoot = new TroubleshootWrongServer(f_method,
+							f_server, f_projectName);
+				} else if (cause instanceof SierraServiceClientException) {
+					troubleshoot = getTroubleshootConnection(f_method,
+							(SierraServiceClientException) cause);
+				}
+				if (troubleshoot != null && troubleshoot.retry()) {
+					troubleshoot.fix();
+					if (troubleshoot.retry()) {
+						return synchronize(sync, slMonitor);
+					}
+				}
+			}
+			joinJob.fail(f_server);
+			return fail(e);
+		}
+	}
+
+	private class SyncTransaction implements DBTransaction<IStatus> {
+		private final SLProgressMonitor slMonitor;
+
+		SyncTransaction(final SLProgressMonitor slMonitor) {
+			this.slMonitor = slMonitor;
+		}
+
+		public IStatus perform(final Connection conn) throws Exception {
 			final Query q = new ConnectionQuery(conn);
 			SettingQueries.updateServerInfo(f_server.getServer()).perform(q);
 			if (syncType.syncBugLink() && joinJob != null
@@ -107,33 +124,9 @@ public class SynchronizeJob extends AbstractServerProjectJob {
 				conn.rollback();
 				return Status.CANCEL_STATUS;
 			} else {
-				conn.commit();
 				DatabaseHub.getInstance().notifyServerSynchronized();
 				return Status.OK_STATUS;
 			}
-		} catch (final ServerMismatchException e) {
-			if (joinJob != null && joinJob.troubleshoot(f_server)) {
-				troubleshoot = new TroubleshootWrongServer(f_method, f_server,
-						f_projectName);
-				conn.rollback();
-				troubleshoot.fix();
-				if (troubleshoot.retry()) {
-					return synchronize(conn, slMonitor);
-				}
-				joinJob.fail(f_server);
-			}
-			return fail(e);
-		} catch (final SierraServiceClientException e) {
-			if (joinJob != null && joinJob.troubleshoot(f_server)) {
-				troubleshoot = getTroubleshootConnection(f_method, e);
-				conn.rollback();
-				troubleshoot.fix();
-				if (troubleshoot.retry()) {
-					return synchronize(conn, slMonitor);
-				}
-				joinJob.fail(f_server);
-			}
-			return fail(e);
 		}
 	}
 
