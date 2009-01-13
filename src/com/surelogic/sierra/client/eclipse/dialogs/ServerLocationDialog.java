@@ -56,8 +56,7 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 	private Mediator f_mediator;
 
 	private boolean f_validateServer = true;
-	private boolean f_syncServer = true;
-	private boolean f_serverValidated = true;
+	private boolean f_connectionToServerHasBeenValidated = false;
 
 	/**
 	 * Constructs a new dialog to allow the user to enter or edit the location
@@ -244,25 +243,6 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 		final Button savePasswordButton = makeCheckButton(panel, I18N
 				.msg("sierra.dialog.serverlocation.savePassword"),
 				f_savePassword);
-		final Button validateButton = makeCheckButton(panel, I18N
-				.msg("sierra.dialog.serverlocation.validateOnFinish"),
-				f_validateServer);
-		final Button syncButton = makeCheckButton(panel, I18N
-				.msg("sierra.dialog.serverlocation.synchBugLink"), f_syncServer);
-		syncButton.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(final Event event) {
-				f_syncServer = syncButton.getSelection();
-			}
-		});
-
-		final Button autoSyncButton = makeCheckButton(panel, I18N
-				.msg("sierra.dialog.serverlocation.enableAutoSync"), f_autoSync);
-		autoSyncButton.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(final Event event) {
-				f_autoSync = autoSyncButton.getSelection();
-			}
-		});
-
 		savePasswordButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(final Event event) {
 				f_savePassword = savePasswordButton.getSelection();
@@ -284,6 +264,23 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 		data = new GridData(SWT.FILL, SWT.TOP, true, false, 1, 1);
 		saveWarning.setLayoutData(data);
 		saveWarning.setText(I18N.msg("sierra.dialog.savePasswordWarning"));
+
+		final Button validateButton = makeCheckButton(panel, I18N
+				.msg("sierra.dialog.serverlocation.validateOnFinish"),
+				f_validateServer);
+		validateButton.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(final Event event) {
+				f_validateServer = validateButton.getSelection();
+			}
+		});
+
+		final Button autoSyncButton = makeCheckButton(panel, I18N
+				.msg("sierra.dialog.serverlocation.enableAutoSync"), f_autoSync);
+		autoSyncButton.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(final Event event) {
+				f_autoSync = autoSyncButton.getSelection();
+			}
+		});
 
 		setTitle(I18N.msg("sierra.dialog.serverlocation.title"));
 
@@ -406,7 +403,7 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 				setMessage(I18N.msg("sierra.dialog.serverlocation.msg.info"),
 						IMessageProvider.INFORMATION);
 			}
-			if (!f_serverValidated) {
+			if (!f_connectionToServerHasBeenValidated) {
 				setMessage(I18N
 						.msg("sierra.dialog.serverlocation.msg.validate"),
 						IMessageProvider.WARNING);
@@ -421,7 +418,6 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 							.parseInt(f_portText.getText().trim()),
 					f_contextPathText.getText().trim(), f_userText.getText()
 							.trim(), f_passwordText.getText(), f_autoSync);
-			f_validateServer = f_validateButton.getSelection();
 		}
 	}
 
@@ -438,7 +434,6 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 		f_serverReply = null;
 
 		if (!f_validateServer) {
-			f_serverValidated = true;
 			return Window.OK;
 		}
 
@@ -448,20 +443,18 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 			f_serverReply = ss.getServerInfo(new ServerInfoRequest());
 			uid = f_serverReply.getUid();
 			if (uid == null) {
-				f_serverValidated = false;
+				f_connectionToServerHasBeenValidated = false;
 				return RETRY;
 			} else {
-				f_serverValidated = true;
+				f_connectionToServerHasBeenValidated = true;
 				return Window.OK;
 			}
 		} catch (final Exception e) {
-			f_serverValidated = false;
+			f_connectionToServerHasBeenValidated = false;
 			return RETRY;
 		}
 	}
 
-	// FIX change back to using SierraServer directly,
-	// since we manually notify observers
 	public static void newServer(final Shell shell) {
 		final SierraServerManager manager = SierraServerManager.getInstance();
 		final String title = I18N.msg("sierra.dialog.serverlocation.newTitle");
@@ -512,7 +505,11 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 				 */
 				server.getManager().notifyObservers();
 			}
-			if (dialog.f_syncServer) {
+			/*
+			 * If we were able to validate this server connection then we do an
+			 * automatic BugLink synchronize with it.
+			 */
+			if (dialog.f_connectionToServerHasBeenValidated) {
 				final SynchronizeBugLinkServerAction sync = new SynchronizeBugLinkServerAction(
 						ServerFailureReport.SHOW_DIALOG, true);
 				sync.run(server);
