@@ -15,10 +15,10 @@ import com.surelogic.sierra.tool.message.SierraServerLocation;
 
 public class CategoryUtil {
 
-	public static void main(String[] args) {
+	public static void main(final String[] args) {
 		final SierraServerLocation buglink = new SierraServerLocation(
 				"buglink", "buglink.org", false, 13376, "/sl/", "admin",
-				"fluid!sl!ftw");
+				"fluid!sl!ftw", false);
 		writeCategories(
 				buglink,
 				new File(
@@ -27,7 +27,8 @@ public class CategoryUtil {
 								+ "src/com/surelogic/sierra/jdbc/settings/buglink-categories.xml"));
 	}
 
-	public static void writeCategories(SierraServerLocation buglink, File file) {
+	public static void writeCategories(final SierraServerLocation buglink,
+			final File file) {
 		try {
 			if (!file.exists()) {
 				file.createNewFile();

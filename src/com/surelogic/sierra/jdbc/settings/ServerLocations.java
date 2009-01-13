@@ -65,7 +65,7 @@ public final class ServerLocations {
 									.getContextPath(),
 							l.getUser() == null ? Nulls.STRING : l.getUser(), l
 									.getPass() == null ? Nulls.STRING : l
-									.getPass());
+									.getPass(), l.isAutoSync());
 					for (final String project : locEntry.getValue()) {
 						insertServerProject.call(id, project);
 					}
@@ -169,11 +169,13 @@ public final class ServerLocations {
 											if (password == null) {
 												password = r.nextString();
 											}
+											final boolean autoSync = r
+													.nextBoolean();
 											final SierraServerLocation loc = new SierraServerLocation(
 													label, host, "https"
 															.equals(protocol),
 													port, contextPath, user,
-													password);
+													password, autoSync);
 											map.put(loc, projects.call(id));
 										}
 										return map;
