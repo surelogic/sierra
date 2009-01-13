@@ -93,6 +93,8 @@ class ServersViewContent implements IServerActionFilter {
 					return server.isBugLink();
 				} else if (TEAM_SERVER_TYPE.equals(value)) {
 					return server.isTeamServer();
+				} else if (AUTO_SYNC.equals(value)) {
+					return server.autoSync();
 				}
 			} else if (BUGLINK_TYPE.equals(value)) {
 				return text.endsWith(SierraServersMediator.SCAN_FILTERS)
@@ -100,7 +102,7 @@ class ServersViewContent implements IServerActionFilter {
 			} else if (TEAM_SERVER_TYPE.equals(value)) {
 				return text.endsWith(SierraServersMediator.CONNECTED_PROJECTS);
 			}
-		}
+		}		
 		return false;
 	}
 }

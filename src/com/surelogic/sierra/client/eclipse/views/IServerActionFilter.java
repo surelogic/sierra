@@ -13,4 +13,5 @@ public interface IServerActionFilter extends IActionFilter {
   String SERVER_TYPE_ATTR = "ServerType";
   String BUGLINK_TYPE = "BUGLINK";
   String TEAM_SERVER_TYPE = "TEAM_SERVER";
+  String AUTO_SYNC = "AUTO_SYNC";
 }

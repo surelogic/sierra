@@ -555,5 +555,16 @@
 				</and>
 			</enablement>
 		</decorator>
+		<decorator id="com.surelogic.sierra.client.content.autosync.decorator"
+			label="SureLogic Server Autosync Decorator" state="true" lightweight="true"
+			icon="lib/icons/server_autosync_decr.gif" location="TOP_LEFT">
+			<enablement>
+				<and>
+					<objectClass
+						name="com.surelogic.sierra.client.eclipse.views.ServersViewContent" />
+					<objectState name="ServerType" value="AUTO_SYNC" />
+				</and>
+			</enablement>
+		</decorator>
 	</extension>
 </plugin>
