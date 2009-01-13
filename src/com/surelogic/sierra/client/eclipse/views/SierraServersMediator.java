@@ -910,9 +910,9 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 								synchronized (responseMap) {
 									if (s.useAuditThreshold()
 											&& checkAutoSyncTrigger(projects)) {
-										asyncSyncWithServer(ServerSyncType.ALL);
+										asyncSyncWithServer(ServerSyncType.BY_SERVER_SETTINGS);
 									} else if (s.doServerAutoSync()) {
-										asyncSyncWithServer(ServerSyncType.ALL);
+										asyncSyncWithServer(ServerSyncType.BY_SERVER_SETTINGS);
 									} else if (s.doServerAutoUpdate()) {
 										asyncUpdateServerInfo();
 									}
@@ -1119,8 +1119,15 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 				if (parent.getChildren().length == 0) {
 					return; // No children
 				}
-				// CONNECTED_PROJECTS (if a server)
-				projectItems = parent.getChildren()[0];
+				// look for CONNECTED_PROJECTS (if a server)
+				ServersViewContent temp = parent.getChildren()[0];
+				for(ServersViewContent c : parent.getChildren()) {
+					if (c.getText().endsWith(CONNECTED_PROJECTS)) {
+						temp = c;
+						break;
+					}
+				}				
+				projectItems = temp;
 			} else {
 				projectItems = parent;
 			}
@@ -1676,13 +1683,17 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 		final int auditThreshold = PreferenceConstants
 				.getServerInteractionAuditThreshold();
 		if (auditThreshold > 0) {
+			SierraServerManager manager = SierraServerManager.getInstance();
 			int audits = 0;
 			for (final ProjectStatus ps : projects) {
-				audits += ps.numLocalAudits + ps.numServerAudits;
+				SierraServer server = manager.getServer(ps.name);
+				if (server.autoSync()) {
+					audits += ps.numLocalAudits + ps.numServerAudits;
+				}
 			}
 			// FIX should this be per-project?
 			if (audits > auditThreshold) {
-				asyncSyncWithServer(ServerSyncType.ALL);
+				asyncSyncWithServer(ServerSyncType.BY_SERVER_SETTINGS);
 				return true;
 			}
 		}
