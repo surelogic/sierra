@@ -31,23 +31,45 @@ import com.surelogic.sierra.tool.message.ServerMismatchException;
 import com.surelogic.sierra.tool.message.SierraServerLocation;
 import com.surelogic.sierra.tool.message.SierraServiceClientException;
 
+/**
+ * This job explicitly adds the {@link DatabaseAccessRule} to run like a
+ * database job.
+ */
 public class SynchronizeJob extends AbstractServerProjectJob {
-	private final boolean force;
-	private final ServerSyncType syncType;
+	private final boolean f_force;
+	private final ServerSyncType f_syncType;
 
+	/**
+	 * Constructs a job.
+	 * 
+	 * @param family
+	 *            the job family, may be {@code null}.
+	 * @param projectName
+	 *            the name of a project being synchronized, may be {@code null}
+	 *            if just a BugLink synchronize with the server.
+	 * @param server
+	 *            the non-null server to contact.
+	 * @param syncType
+	 *            the non-null {@link ServerSyncType}.
+	 * @param force
+	 *            when {@code true} it causes the synchronize to be attempted
+	 *            even if too many failures have occurred in the past.
+	 * @param method
+	 *            the method to report problems that the job encounters.
+	 */
 	public SynchronizeJob(final ServerProjectGroupJob family,
 			final String projectName, final SierraServer server,
-			final ServerSyncType sync, final boolean force,
+			final ServerSyncType syncType, final boolean force,
 			final ServerFailureReport method) {
 		super(
 				family,
-				sync.equals(ServerSyncType.BUGLINK) ? "Synchronizing BugLink data for server '"
+				syncType.equals(ServerSyncType.BUGLINK) ? "Synchronizing BugLink data for server '"
 						+ server.getLabel() + "'"
 						: "Synchronizing Sierra data for project '"
 								+ projectName + "'", server, projectName,
 				method);
-		this.force = force;
-		syncType = sync;
+		f_force = force;
+		f_syncType = syncType;
 		setRule(DatabaseAccessRule.getInstance());
 	}
 
@@ -57,7 +79,7 @@ public class SynchronizeJob extends AbstractServerProjectJob {
 				.getServerInteractionRetryThreshold();
 		final int numProblems = f_server.getProblemCount()
 				+ Projects.getInstance().getProblemCount(f_projectName);
-		if (!force && (numProblems > threshold)) {
+		if (!f_force && (numProblems > threshold)) {
 			return Status.CANCEL_STATUS;
 		}
 		final SLProgressMonitor slMonitor = new SLProgressMonitorWrapper(
@@ -107,7 +129,7 @@ public class SynchronizeJob extends AbstractServerProjectJob {
 		public IStatus perform(final Connection conn) throws Exception {
 			final Query q = new ConnectionQuery(conn);
 			SettingQueries.updateServerInfo(f_server.getServer()).perform(q);
-			if (syncType.syncBugLink() && joinJob != null
+			if (f_syncType.syncBugLink() && joinJob != null
 					&& joinJob.process(f_server)) {
 				final SierraServerLocation loc = f_server.getServer();
 				SettingQueries.retrieveCategories(loc,
@@ -117,7 +139,7 @@ public class SynchronizeJob extends AbstractServerProjectJob {
 						q);
 				slMonitor.worked(1);
 			}
-			if (syncType.syncProjects()) {
+			if (f_syncType.syncProjects()) {
 				ClientProjectManager.getInstance(conn).synchronizeProject(
 						f_server.getServer(), f_projectName, slMonitor);
 			}
