@@ -197,6 +197,7 @@ public final class SierraServerPersistence {
 				s.setPort(loc.getPort());
 				s.setSecure(loc.isSecure());
 				s.setUser(loc.getUser());
+				s.setAutoSync(loc.isAutoSync());
 				for (final String project : locEntry.getValue()) {
 					manager.connect(project, s);
 				}
