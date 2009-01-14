@@ -11,7 +11,6 @@ import com.surelogic.common.jdbc.DBQuery;
 import com.surelogic.common.jdbc.LongIdHandler;
 import com.surelogic.common.jdbc.NullDBQuery;
 import com.surelogic.common.jdbc.NullResultHandler;
-import com.surelogic.common.jdbc.NullRowHandler;
 import com.surelogic.common.jdbc.Nulls;
 import com.surelogic.common.jdbc.Query;
 import com.surelogic.common.jdbc.Queryable;
@@ -21,6 +20,7 @@ import com.surelogic.common.jdbc.Row;
 import com.surelogic.common.jdbc.StringRowHandler;
 import com.surelogic.sierra.tool.message.ServerIdentity;
 import com.surelogic.sierra.tool.message.ServerInfoReply;
+import com.surelogic.sierra.tool.message.Services;
 import com.surelogic.sierra.tool.message.SierraServerLocation;
 
 public final class ServerLocations {
@@ -36,16 +36,6 @@ public final class ServerLocations {
 		return new NullDBQuery() {
 			@Override
 			public void doPerform(final Query q) {
-				// First we get the locations so that we can preserver any uuid
-				// associations that match up by label
-				final Map<String, String> uuids = new HashMap<String, String>();
-				q.statement("ServerLocations.selectUuidsByLabel",
-						new NullRowHandler() {
-							@Override
-							protected void doHandle(final Row r) {
-								uuids.put(r.nextString(), r.nextString());
-							}
-						}).call();
 				q.statement("ServerLocations.deleteLocations").call();
 				q.statement("ServerLocations.deleteProjects").call();
 				final Queryable<Void> insertServerProject = q
@@ -65,15 +55,11 @@ public final class ServerLocations {
 									.getContextPath(),
 							l.getUser() == null ? Nulls.STRING : l.getUser(), l
 									.getPass() == null ? Nulls.STRING : l
-									.getPass(), l.isAutoSync());
+									.getPass(), l.isAutoSync(), Nulls.coerce(l
+									.getUuid()), l.isTeamServer());
 					for (final String project : locEntry.getValue()) {
 						insertServerProject.call(id, project);
 					}
-				}
-				final Queryable<Void> updateUuid = q
-						.prepared("ServerLocations.updateUuid");
-				for (final Entry<String, String> e : uuids.entrySet()) {
-					updateUuid.call(e.getValue(), e.getKey());
 				}
 			}
 		};
@@ -93,7 +79,9 @@ public final class ServerLocations {
 						.prepared("ServerLocations.updateUuid");
 				for (final Entry<SierraServerLocation, ServerInfoReply> entry : locations
 						.entrySet()) {
-					updateUuid.call(entry.getValue().getUid(), entry.getKey()
+					final ServerInfoReply reply = entry.getValue();
+					updateUuid.call(reply.getUid(), reply.getServices()
+							.contains(Services.TEAMSERVER), entry.getKey()
 							.getLabel());
 					final Queryable<Void> delete = q
 							.prepared("ServerLocations.deleteIdentity");
@@ -173,11 +161,15 @@ public final class ServerLocations {
 											}
 											final boolean autoSync = r
 													.nextBoolean();
+											final String uuid = r.nextString();
+											final boolean teamServer = r
+													.nextBoolean();
 											final SierraServerLocation loc = new SierraServerLocation(
 													label, host, "https"
 															.equals(protocol),
 													port, contextPath, user,
-													password, autoSync);
+													password, autoSync, uuid,
+													teamServer);
 											map.put(loc, projects.call(id));
 										}
 										return map;

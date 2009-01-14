@@ -6,6 +6,7 @@ import com.surelogic.common.jdbc.Query;
 import com.surelogic.common.jdbc.Row;
 import com.surelogic.common.jdbc.RowHandler;
 import com.surelogic.common.jdbc.SingleRowHandler;
+import com.surelogic.common.jdbc.StringRowHandler;
 
 /**
  * This class implements data access logic for scans in the database.
@@ -46,6 +47,11 @@ public final class Scans {
 	public ScanInfo getLatestScanInfo(final String project) {
 		return q.prepared("Scans.latestProjectScan",
 				SingleRowHandler.from(new ScanInfoHandler())).call(project);
+	}
+
+	public List<String> unfinishedScans() {
+		return q.prepared("Scans.unfinishedScans", new StringRowHandler())
+				.call();
 	}
 
 	private static class ScanInfoHandler implements RowHandler<ScanInfo> {
