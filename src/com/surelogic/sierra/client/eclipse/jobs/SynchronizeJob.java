@@ -7,6 +7,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
+import com.surelogic.common.eclipse.jobs.DatabaseAccessRule;
 import com.surelogic.common.eclipse.jobs.SLProgressMonitorWrapper;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.jdbc.ConnectionQuery;
@@ -47,6 +48,7 @@ public class SynchronizeJob extends AbstractServerProjectJob {
 				method);
 		this.force = force;
 		syncType = sync;
+		setRule(DatabaseAccessRule.getInstance());
 	}
 
 	@Override

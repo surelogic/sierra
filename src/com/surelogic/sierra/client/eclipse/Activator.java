@@ -18,6 +18,7 @@ import com.surelogic.common.eclipse.logging.SLEclipseStatusUtility;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.jdbc.FutureDatabaseException;
 import com.surelogic.sierra.client.eclipse.actions.MarkersHandler;
+import com.surelogic.sierra.client.eclipse.jobs.DeleteUnfinishedScans;
 import com.surelogic.sierra.client.eclipse.model.BuglinkData;
 import com.surelogic.sierra.client.eclipse.model.Projects;
 import com.surelogic.sierra.client.eclipse.model.SierraServerManager;
@@ -81,8 +82,9 @@ public final class Activator extends AbstractUIPlugin {
 			handler.addMarkerListener();
 			getDefault().getPluginPreferences().addPropertyChangeListener(
 					handler);
-			
+
 			SierraServersAutoSync.start();
+			new DeleteUnfinishedScans().schedule();
 		} catch (final FutureDatabaseException e) {
 			/*
 			 * The database schema version is too new, we need to delete it to

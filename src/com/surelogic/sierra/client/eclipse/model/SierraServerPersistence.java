@@ -82,7 +82,6 @@ public final class SierraServerPersistence {
 							.getPassword());
 				}
 			}
-			// FIX to save auto-sync bit somewhere
 			Data.getInstance().withTransaction(
 					ServerLocations.saveQuery(locMap));
 			if (map != null) {
@@ -150,8 +149,9 @@ public final class SierraServerPersistence {
 			}
 			Entities.addAttribute(SERVER_TYPE, sb.toString(), b);
 		}
-		Entities.addAttribute(AUTO_SYNC, Boolean.toString(server.autoSync()), b);
-		
+		Entities
+				.addAttribute(AUTO_SYNC, Boolean.toString(server.autoSync()), b);
+
 		if (save) {
 			Entities.addAttribute(SAVE_PASSWORD, Boolean.toString(server
 					.savePassword()), b);

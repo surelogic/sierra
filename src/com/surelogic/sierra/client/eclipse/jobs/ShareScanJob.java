@@ -13,6 +13,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
 import com.surelogic.common.eclipse.jobs.SLProgressMonitorWrapper;
+import com.surelogic.common.eclipse.jobs.ShareScanRule;
 import com.surelogic.common.eclipse.logging.SLEclipseStatusUtility;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.jobs.SLProgressMonitor;
@@ -31,22 +32,25 @@ import com.surelogic.sierra.tool.message.TimeseriesRequest;
 public class ShareScanJob extends AbstractServerProjectJob {
 	private final File f_scanFile;
 
-	public ShareScanJob(ServerProjectGroupJob family, String projectName,
-			SierraServer server, File scanFile, ServerFailureReport method) {
+	public ShareScanJob(final ServerProjectGroupJob family,
+			final String projectName, final SierraServer server,
+			final File scanFile, final ServerFailureReport method) {
 		super(family, "Sharing scan of project '" + projectName + "'", server,
 				projectName, method);
 		f_scanFile = scanFile;
+		setRule(ShareScanRule.getInstance());
 	}
 
 	@Override
-	protected IStatus run(IProgressMonitor monitor) {
+	protected IStatus run(final IProgressMonitor monitor) {
 		final String msg = "Sharing scan of project " + f_projectName + " to "
 				+ f_server.getLabel() + ".";
-		SLProgressMonitor slMonitor = new SLProgressMonitorWrapper(monitor, msg);
+		final SLProgressMonitor slMonitor = new SLProgressMonitorWrapper(
+				monitor, msg);
 		slMonitor.begin(5);
 		try {
-			Scan scan = MessageWarehouse.getInstance().fetchScan(f_scanFile,
-					true);
+			final Scan scan = MessageWarehouse.getInstance().fetchScan(
+					f_scanFile, true);
 			if (monitor.isCanceled()) {
 				return Status.CANCEL_STATUS;
 			} else {
@@ -58,7 +62,7 @@ public class ShareScanJob extends AbstractServerProjectJob {
 				if (slMonitor.isCanceled()) {
 					return null;
 				} else {
-					TimeseriesPromptFromJob prompt = new TimeseriesPromptFromJob(
+					final TimeseriesPromptFromJob prompt = new TimeseriesPromptFromJob(
 							timeseries, f_projectName, f_server.getLabel());
 					prompt.open();
 					if (prompt.isCanceled()) {
@@ -75,12 +79,13 @@ public class ShareScanJob extends AbstractServerProjectJob {
 						new ArrayList<String>(timeseries));
 				return publishRun(scan, slMonitor);
 			}
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			return createErrorStatus(50, e);
 		}
 	}
 
-	private Set<String> getTimeseriesOnTheServer(SLProgressMonitor slMonitor) {
+	private Set<String> getTimeseriesOnTheServer(
+			final SLProgressMonitor slMonitor) {
 		TroubleshootConnection troubleshoot;
 		try {
 			List<String> timeseries = SierraServiceClient.create(
@@ -90,7 +95,7 @@ public class ShareScanJob extends AbstractServerProjectJob {
 				timeseries = Collections.emptyList();
 			}
 			return new TreeSet<String>(timeseries);
-		} catch (SierraServiceClientException e) {
+		} catch (final SierraServiceClientException e) {
 			if (joinJob != null && joinJob.troubleshoot(f_server)) {
 				troubleshoot = getTroubleshootConnection(f_method, e);
 
@@ -108,13 +113,14 @@ public class ShareScanJob extends AbstractServerProjectJob {
 
 	}
 
-	private IStatus publishRun(Scan scan, SLProgressMonitor slMonitor) {
+	private IStatus publishRun(final Scan scan,
+			final SLProgressMonitor slMonitor) {
 		TroubleshootConnection troubleshoot;
 		try {
 			SierraServiceClient.create(f_server.getServer()).publishRun(scan);
 			f_server.markAsConnected();
 			return Status.OK_STATUS;
-		} catch (SierraServiceClientException e) {
+		} catch (final SierraServiceClientException e) {
 			troubleshoot = getTroubleshootConnection(f_method, e);
 
 			// We had a recoverable error. Rollback, run the appropriate
@@ -127,15 +133,17 @@ public class ShareScanJob extends AbstractServerProjectJob {
 						I18N.err(87, f_projectName, f_server), e);
 				return Status.CANCEL_STATUS;
 			}
-		} catch (ScanVersionException e) {
+		} catch (final ScanVersionException e) {
 			final int errNo = 88;
 			String scanVersion = scan.getVersion();
-			if (scanVersion == null)
+			if (scanVersion == null) {
 				scanVersion = "(none)";
+			}
 			final String msg = I18N.err(errNo, scanVersion, f_projectName,
 					f_server);
 			// SLLogger.getLogger().log(Level.SEVERE, msg, e);
-			IStatus s = SLEclipseStatusUtility.createErrorStatus(errNo, msg);
+			final IStatus s = SLEclipseStatusUtility.createErrorStatus(errNo,
+					msg);
 			showErrorDialog(msg, e, "Error while publishing run", s);
 			return s;
 		}

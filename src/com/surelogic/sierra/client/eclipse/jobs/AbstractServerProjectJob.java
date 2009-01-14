@@ -8,26 +8,28 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 
 import com.surelogic.common.eclipse.dialogs.ErrorDialogUtility;
-import com.surelogic.common.eclipse.jobs.DatabaseJob;
 import com.surelogic.common.eclipse.jobs.SLUIJob;
 import com.surelogic.common.eclipse.logging.SLEclipseStatusUtility;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.logging.SLLogger;
-import com.surelogic.sierra.client.eclipse.actions.*;
+import com.surelogic.sierra.client.eclipse.actions.TroubleshootConnection;
+import com.surelogic.sierra.client.eclipse.actions.TroubleshootNoSuchServer;
+import com.surelogic.sierra.client.eclipse.actions.TroubleshootWrongAuthentication;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
 import com.surelogic.sierra.client.eclipse.preferences.ServerFailureReport;
 import com.surelogic.sierra.tool.message.InvalidLoginException;
 import com.surelogic.sierra.tool.message.SierraServiceClientException;
 
-public abstract class AbstractServerProjectJob extends DatabaseJob {
+public abstract class AbstractServerProjectJob extends Job {
 	protected final SierraServer f_server;
 	protected final String f_projectName;
 	protected final ServerProjectGroupJob joinJob;
 	protected final ServerFailureReport f_method;
 
-	public AbstractServerProjectJob(ServerProjectGroupJob family, String name,
-			SierraServer server, String project, ServerFailureReport method) {
-		super(family, name);
+	public AbstractServerProjectJob(final ServerProjectGroupJob family,
+			final String name, final SierraServer server, final String project,
+			final ServerFailureReport method) {
+		super(name);
 		joinJob = family;
 		if (family != null) {
 			joinJob.add(this);
@@ -38,8 +40,8 @@ public abstract class AbstractServerProjectJob extends DatabaseJob {
 	}
 
 	public static final TroubleshootConnection getTroubleshootConnection(
-			ServerFailureReport method, SierraServer s, String proj,
-			SierraServiceClientException e) {
+			final ServerFailureReport method, final SierraServer s,
+			final String proj, final SierraServiceClientException e) {
 		if (e instanceof InvalidLoginException) {
 			return new TroubleshootWrongAuthentication(method, s, proj);
 		} else {
@@ -48,32 +50,36 @@ public abstract class AbstractServerProjectJob extends DatabaseJob {
 	}
 
 	protected final TroubleshootConnection getTroubleshootConnection(
-			ServerFailureReport method, SierraServiceClientException e) {
+			final ServerFailureReport method,
+			final SierraServiceClientException e) {
 		return getTroubleshootConnection(method, f_server, f_projectName, e);
 	}
 
-	protected final IStatus createWarningStatus(final int errNo, Throwable t) {
+	protected final IStatus createWarningStatus(final int errNo,
+			final Throwable t) {
 		final String msg = I18N.err(errNo, f_projectName, f_server);
-		final IStatus s = SLEclipseStatusUtility.createWarningStatus(errNo, msg, t);
+		final IStatus s = SLEclipseStatusUtility.createWarningStatus(errNo,
+				msg, t);
 		final String title = "Problem while " + getName();
 		showErrorDialog(msg, t, title, s);
 		return s;
 	}
 
-	protected final IStatus createErrorStatus(final int errNo, Throwable t) {
+	protected final IStatus createErrorStatus(final int errNo, final Throwable t) {
 		final String msg = I18N.err(errNo, f_projectName, f_server);
-		final IStatus s = SLEclipseStatusUtility.createErrorStatus(errNo, msg, t);
+		final IStatus s = SLEclipseStatusUtility.createErrorStatus(errNo, msg,
+				t);
 		final String title = "Error while " + getName();
 		showErrorDialog(msg, t, title, s);
 		return s;
 	}
 
-	public void showErrorDialog(final String msg, Throwable t,
+	public void showErrorDialog(final String msg, final Throwable t,
 			final String title, final IStatus s) {
 		SLLogger.getLogger().log(Level.INFO, msg, t);
-		Job job = new SLUIJob() {
+		final Job job = new SLUIJob() {
 			@Override
-			public IStatus runInUIThread(IProgressMonitor monitor) {
+			public IStatus runInUIThread(final IProgressMonitor monitor) {
 				// Note this will be automatically logged by Eclipse
 				// when the original job returns
 				ErrorDialogUtility.open(null, title, s, false);
