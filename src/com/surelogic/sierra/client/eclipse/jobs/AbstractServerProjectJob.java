@@ -20,12 +20,33 @@ import com.surelogic.sierra.client.eclipse.preferences.ServerFailureReport;
 import com.surelogic.sierra.tool.message.InvalidLoginException;
 import com.surelogic.sierra.tool.message.SierraServiceClientException;
 
+/**
+ * Abstract base class for jobs that interact with a team server, and optionally
+ * a project connected to that team server.
+ */
 public abstract class AbstractServerProjectJob extends Job {
+
 	protected final SierraServer f_server;
 	protected final String f_projectName;
 	protected final ServerProjectGroupJob joinJob;
 	protected final ServerFailureReport f_method;
 
+	/**
+	 * Construct a job.
+	 * 
+	 * @param family
+	 *            the job family, may be {@code null}.
+	 * @param name
+	 *            the non-null name of the job.
+	 * @param server
+	 *            the non-null server to contact.
+	 * @param project
+	 *            the project name that this job is working with, may be {@code
+	 *            null}.
+	 * @param method
+	 *            the method to report problems that the job encounters, may be
+	 *            {@code null}.
+	 */
 	public AbstractServerProjectJob(final ServerProjectGroupJob family,
 			final String name, final SierraServer server, final String project,
 			final ServerFailureReport method) {
@@ -35,7 +56,7 @@ public abstract class AbstractServerProjectJob extends Job {
 			joinJob.add(this);
 		}
 		f_server = server;
-		f_projectName = project;
+		f_projectName = project == null ? "(none)" : project;
 		f_method = method;
 	}
 
@@ -85,7 +106,6 @@ public abstract class AbstractServerProjectJob extends Job {
 				ErrorDialogUtility.open(null, title, s, false);
 				return Status.OK_STATUS;
 			}
-
 		};
 		job.schedule();
 	}

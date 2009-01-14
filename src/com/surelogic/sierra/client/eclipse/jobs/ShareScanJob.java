@@ -30,6 +30,7 @@ import com.surelogic.sierra.tool.message.SierraServiceClientException;
 import com.surelogic.sierra.tool.message.TimeseriesRequest;
 
 public class ShareScanJob extends AbstractServerProjectJob {
+
 	private final File f_scanFile;
 
 	public ShareScanJob(final ServerProjectGroupJob family,
@@ -37,6 +38,8 @@ public class ShareScanJob extends AbstractServerProjectJob {
 			final File scanFile, final ServerFailureReport method) {
 		super(family, "Sharing scan of project '" + projectName + "'", server,
 				projectName, method);
+		if (scanFile == null)
+			throw new IllegalArgumentException(I18N.err(44, "scanFile"));
 		f_scanFile = scanFile;
 		setRule(ShareScanRule.getInstance());
 	}
