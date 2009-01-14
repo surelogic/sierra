@@ -1,5 +1,6 @@
 package com.surelogic.sierra.client.eclipse.dialogs;
 
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IMessageProvider;
@@ -20,16 +21,12 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 import com.surelogic.common.eclipse.SLImages;
+import com.surelogic.common.eclipse.SWTUtility;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.images.CommonImages;
-import com.surelogic.sierra.client.eclipse.actions.SynchronizeBugLinkServerAction;
+import com.surelogic.sierra.client.eclipse.jobs.ValidateServerLocationJob;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
 import com.surelogic.sierra.client.eclipse.model.SierraServerManager;
-import com.surelogic.sierra.client.eclipse.preferences.ServerFailureReport;
-import com.surelogic.sierra.tool.message.ServerInfoReply;
-import com.surelogic.sierra.tool.message.ServerInfoRequest;
-import com.surelogic.sierra.tool.message.ServerInfoService;
-import com.surelogic.sierra.tool.message.ServerInfoServiceClient;
 import com.surelogic.sierra.tool.message.SierraServerLocation;
 
 /**
@@ -38,25 +35,70 @@ import com.surelogic.sierra.tool.message.SierraServerLocation;
  */
 public final class ServerLocationDialog extends TitleAreaDialog {
 
-	private static final int RETRY = 2;
+	/**
+	 * Method to create a new team server location and open a dialog to allow
+	 * the user to edit its connection information.
+	 * 
+	 * @param shell
+	 *            the shell to use, may be {@code null} in which case
+	 *            {@link SWTUtility#getShell()} is used.
+	 */
+	public static void newServer(Shell shell) {
+		if (shell == null)
+			shell = SWTUtility.getShell();
+
+		final SierraServerManager manager = SierraServerManager.getInstance();
+		final String title = I18N.msg("sierra.dialog.serverlocation.newTitle");
+		final ServerLocationDialog dialog = new ServerLocationDialog(shell,
+				manager.createLocation(), title, true, false);
+		if (dialog.open() == Window.OK) {
+			final SierraServer server = manager.create();
+			final SierraServerLocation location = dialog.f_server;
+			final Job job = new ValidateServerLocationJob(server, location,
+					dialog.f_savePassword, dialog.f_validateServer,
+					dialog.f_autoSync);
+			job.schedule();
+		}
+	}
+
+	/**
+	 * Method to open a dialog to allow the user to edit the passed team server
+	 * connection information.
+	 * 
+	 * @param shell
+	 *            the shell to use, may be {@code null} in which case
+	 *            {@link SWTUtility#getShell()} is used.
+	 * @param server
+	 *            the non-null team server location to edit.
+	 */
+	public static void editServer(final Shell shell, final SierraServer server) {
+		final String title = I18N.msg("sierra.dialog.serverlocation.editTitle");
+		final ServerLocationDialog dialog = new ServerLocationDialog(shell,
+				server.getServer(), title, server.savePassword(), server
+						.autoSync());
+		if (dialog.open() == Window.OK) {
+			final SierraServerLocation location = dialog.f_server;
+			final Job job = new ValidateServerLocationJob(server, location,
+					dialog.f_savePassword, dialog.f_validateServer,
+					dialog.f_autoSync);
+			job.schedule();
+		}
+	}
 
 	private static final int CONTENTS_WIDTH_HINT = 350;
 
 	private static final int INFO_WIDTH_HINT = 70;
 
 	private SierraServerLocation f_server;
-	private ServerInfoReply f_serverReply;
 
 	private final String f_title;
 
 	private boolean f_isSecure;
 	private boolean f_savePassword;
 	private boolean f_autoSync;
+	private boolean f_validateServer = true;
 
 	private Mediator f_mediator;
-
-	private boolean f_validateServer = true;
-	private boolean f_connectionToServerHasBeenValidated = false;
 
 	/**
 	 * Constructs a new dialog to allow the user to enter or edit the location
@@ -285,7 +327,7 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 		setTitle(I18N.msg("sierra.dialog.serverlocation.title"));
 
 		f_mediator = new Mediator(labelText, hostText, portText,
-				contextPathText, userText, passwordText, validateButton);
+				contextPathText, userText, passwordText);
 		f_mediator.init();
 
 		Dialog.applyDialogFont(panel);
@@ -315,11 +357,13 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 
 	@Override
 	protected void okPressed() {
-		f_mediator.okPressed();
+		if (f_mediator != null)
+			f_mediator.okPressed();
 		super.okPressed();
 	}
 
 	private final class Mediator {
+
 		private final SierraServerManager f_manager = SierraServerManager
 				.getInstance();
 
@@ -329,19 +373,16 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 		private final Text f_contextPathText;
 		private final Text f_userText;
 		private final Text f_passwordText;
-		private final Button f_validateButton;
 
 		Mediator(final Text labelText, final Text hostText,
 				final Text portText, final Text contextPathText,
-				final Text userText, final Text passwordText,
-				final Button validateButton) {
+				final Text userText, final Text passwordText) {
 			f_labelText = labelText;
 			f_hostText = hostText;
 			f_portText = portText;
 			f_contextPathText = contextPathText;
 			f_userText = userText;
 			f_passwordText = passwordText;
-			f_validateButton = validateButton;
 		}
 
 		void init() {
@@ -356,7 +397,6 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 			f_contextPathText.addListener(SWT.Modify, checkContentsListener);
 			f_userText.addListener(SWT.Modify, checkContentsListener);
 			f_labelText.addListener(SWT.Modify, checkContentsListener);
-			f_validateButton.addListener(SWT.Selection, checkContentsListener);
 		}
 
 		void checkDialogContents() {
@@ -403,11 +443,6 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 				setMessage(I18N.msg("sierra.dialog.serverlocation.msg.info"),
 						IMessageProvider.INFORMATION);
 			}
-			if (!f_connectionToServerHasBeenValidated) {
-				setMessage(I18N
-						.msg("sierra.dialog.serverlocation.msg.validate"),
-						IMessageProvider.WARNING);
-			}
 
 			getButton(IDialogConstants.OK_ID).setEnabled(valid);
 		}
@@ -418,102 +453,6 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 							.parseInt(f_portText.getText().trim()),
 					f_contextPathText.getText().trim(), f_userText.getText()
 							.trim(), f_passwordText.getText(), f_autoSync);
-		}
-	}
-
-	@Override
-	public int open() {
-		final int rv = super.open();
-		if (rv == Window.OK) {
-			return validateServer();
-		}
-		return rv;
-	}
-
-	private int validateServer() {
-		f_serverReply = null;
-
-		if (!f_validateServer) {
-			return Window.OK;
-		}
-
-		final ServerInfoService ss = ServerInfoServiceClient.create(f_server);
-		String uid = null;
-		try {
-			f_serverReply = ss.getServerInfo(new ServerInfoRequest());
-			uid = f_serverReply.getUid();
-			if (uid == null) {
-				f_connectionToServerHasBeenValidated = false;
-				return RETRY;
-			} else {
-				f_connectionToServerHasBeenValidated = true;
-				return Window.OK;
-			}
-		} catch (final Exception e) {
-			f_connectionToServerHasBeenValidated = false;
-			return RETRY;
-		}
-	}
-
-	public static void newServer(final Shell shell) {
-		final SierraServerManager manager = SierraServerManager.getInstance();
-		final String title = I18N.msg("sierra.dialog.serverlocation.newTitle");
-		final ServerLocationDialog dialog = editServer(shell, manager
-				.createLocation(), title, true, false);
-		if (dialog != null) {
-			final SierraServer newServer = manager.create();
-			updateServer(dialog, newServer);
-		}
-	}
-
-	public static void editServer(final Shell shell, final SierraServer server) {
-		final String title = I18N.msg("sierra.dialog.serverlocation.editTitle");
-		final ServerLocationDialog dialog = editServer(shell, server
-				.getServer(), title, server.savePassword(), server.autoSync());
-		updateServer(dialog, server);
-	}
-
-	private static ServerLocationDialog editServer(final Shell shell,
-			final SierraServerLocation loc, final String title,
-			final boolean savePassword, final boolean autoSync) {
-		final ServerLocationDialog dialog = new ServerLocationDialog(shell,
-				loc, title, savePassword, autoSync);
-		int rv = RETRY;
-		while (rv == RETRY) {
-			rv = dialog.open();
-		}
-		return rv == Window.OK ? dialog : null;
-	}
-
-	private static void updateServer(final ServerLocationDialog dialog,
-			final SierraServer server) {
-		if (dialog != null) {
-			boolean changed = server.setServer(dialog.f_server,
-					dialog.f_serverReply);
-			changed = changed
-					|| (server.savePassword() != dialog.f_savePassword);
-
-			server.setSavePassword(dialog.f_savePassword);
-
-			changed = changed || (server.autoSync() != dialog.f_autoSync);
-			server.setAutoSync(dialog.f_autoSync);
-
-			if (changed) {
-				/*
-				 * Because we probably changed something about the server,
-				 * notify all observers of server information.
-				 */
-				server.getManager().notifyObservers();
-			}
-			/*
-			 * If we were able to validate this server connection then we do an
-			 * automatic BugLink synchronize with it.
-			 */
-			if (dialog.f_connectionToServerHasBeenValidated) {
-				final SynchronizeBugLinkServerAction sync = new SynchronizeBugLinkServerAction(
-						ServerFailureReport.SHOW_DIALOG, true);
-				sync.run(server);
-			}
 		}
 	}
 }

@@ -33,6 +33,12 @@ public final class SierraServer {
 		}
 	}
 
+	private String f_uuid = "";
+
+	public String getUuid() {
+		return f_uuid;
+	}
+
 	private String f_label = "";
 
 	public String getLabel() {
@@ -216,25 +222,33 @@ public final class SierraServer {
 	}
 
 	/**
+	 * Sets the information about this object from the passed server location
+	 * object.
+	 * 
+	 * @param location
+	 *            the server location object to extract data from.
 	 * @param serverReply
-	 * @return true if changed
+	 *            the reply from the server, may be {@code null} if one is not
+	 *            available.
+	 * @return {@true} if this was changed, {@code false} otherwise.
 	 */
-	public synchronized boolean setServer(final SierraServerLocation loc,
+	public synchronized boolean setServer(final SierraServerLocation location,
 			final ServerInfoReply serverReply) {
 		final boolean changedInfo = !gotServerInfo && serverReply != null;
-		final boolean changed = differs(f_label, loc.getLabel())
-				|| differs(f_host, loc.getHost())
-				|| (f_secure != loc.isSecure()) || (f_port != loc.getPort())
-				|| differs(f_contextPath, loc.getContextPath())
-				|| differs(f_user, loc.getUser())
-				|| differs(f_password, loc.getPass()) || changedInfo;
-		setLabel_internal(loc.getLabel());
-		f_host = loc.getHost();
-		f_secure = loc.isSecure();
-		f_port = loc.getPort();
-		f_contextPath = loc.getContextPath();
-		f_user = loc.getUser();
-		f_password = loc.getPass();
+		final boolean changed = differs(f_label, location.getLabel())
+				|| differs(f_host, location.getHost())
+				|| (f_secure != location.isSecure())
+				|| (f_port != location.getPort())
+				|| differs(f_contextPath, location.getContextPath())
+				|| differs(f_user, location.getUser())
+				|| differs(f_password, location.getPass()) || changedInfo;
+		setLabel_internal(location.getLabel());
+		f_host = location.getHost();
+		f_secure = location.isSecure();
+		f_port = location.getPort();
+		f_contextPath = location.getContextPath();
+		f_user = location.getUser();
+		f_password = location.getPass();
 		if (changedInfo) {
 			updateServerInfo(serverReply);
 		}

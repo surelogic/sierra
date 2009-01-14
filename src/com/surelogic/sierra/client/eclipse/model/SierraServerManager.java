@@ -129,6 +129,11 @@ public final class SierraServerManager extends
 		return query;
 	}
 
+	/**
+	 * Creates a new {@link SierraServerLocation} for editing.
+	 * 
+	 * @return a new server location object.
+	 */
 	public SierraServerLocation createLocation() {
 		final String label = newUniqueLabel("server");
 		return new SierraServerLocation(label, "", false,
@@ -136,6 +141,12 @@ public final class SierraServerManager extends
 				SierraServerLocation.DEFAULT_PATH, "", "", false);
 	}
 
+	/**
+	 * Deletes the passed server from the set of server managed by this.
+	 * 
+	 * @param server
+	 *            the server to delete.
+	 */
 	public void delete(final SierraServer server) {
 		synchronized (this) {
 			if (server.getManager() != this) {
@@ -166,6 +177,13 @@ public final class SierraServerManager extends
 		notifyObservers();
 	}
 
+	/**
+	 * Deletes the server identified by the passed label from this server if it
+	 * exists.
+	 * 
+	 * @param label
+	 *            of the server to delete.
+	 */
 	public synchronized void delete(final String label) {
 		final SierraServer server = f_labelToServer.get(label);
 		if (server != null) {
