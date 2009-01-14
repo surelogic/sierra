@@ -170,7 +170,7 @@ public class SierraServerLocation {
 	public String toString() {
 		final StringBuilder b = new StringBuilder();
 		b.append("'").append(getLabel()).append("' is ");
-		b.append(getProtocol()).append("://");
+		b.append(getProtocol()).append(":/");
 		b.append(getHost()).append(":").append(getPort()).append(
 				getContextPath());
 		b.append("/user=\"").append(getUser()).append("\" ");
