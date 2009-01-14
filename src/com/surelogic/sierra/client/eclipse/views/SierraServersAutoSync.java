@@ -55,7 +55,7 @@ public class SierraServersAutoSync {
 	
 	public static synchronized void stop() {
 		if (f_doServerAutoSync != null) {	
-			f_doServerAutoSync.cancel();
+			f_doServerAutoSync.stop();
 			f_doServerAutoSync = null;
 		}
 	}
@@ -97,9 +97,9 @@ public class SierraServersAutoSync {
 			return enabled;
 		}
 
-		@Override
-		protected void canceling() {
+		public void stop() {		
 			enabled = false;
+			super.cancel();
 		}
 		
 		// In msec
