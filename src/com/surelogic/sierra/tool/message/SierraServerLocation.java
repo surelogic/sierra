@@ -22,12 +22,37 @@ public class SierraServerLocation {
 	private final String f_user;
 	private final String f_password;
 	private final boolean f_autoSync;
+	private final boolean f_teamServer;
+	private final String f_uuid;
 
-	public SierraServerLocation(final String host, final boolean secure,
-			final int port, final String contextPath, final String user,
-			final String password) {
-		this(UNLABELED_SERVER, host, secure, port, contextPath, user, password,
-				false);
+	public SierraServerLocation(final SierraServerLocation loc,
+			final String uuid, final boolean isTeamServer) {
+		f_label = loc.f_label;
+		f_secure = loc.f_secure;
+		f_host = loc.f_host;
+		f_port = loc.f_port;
+		f_contextPath = loc.f_contextPath;
+		f_user = loc.f_user;
+		f_password = loc.f_password;
+		f_autoSync = loc.f_autoSync;
+		f_teamServer = isTeamServer;
+		f_uuid = uuid;
+	}
+
+	public SierraServerLocation(final String label, final String host,
+			final boolean secure, final int port, final String contextPath,
+			final String user, final String pass, final boolean autoSync,
+			final String uuid, final boolean isTeamServer) {
+		f_host = host;
+		f_secure = secure;
+		f_port = port;
+		f_user = user;
+		f_password = pass;
+		f_label = label;
+		f_contextPath = contextPath;
+		f_autoSync = autoSync;
+		f_teamServer = isTeamServer;
+		f_uuid = uuid;
 	}
 
 	public SierraServerLocation(final String label, final String host,
@@ -41,6 +66,8 @@ public class SierraServerLocation {
 		f_label = label;
 		f_contextPath = contextPath;
 		f_autoSync = autoSync;
+		f_teamServer = false;
+		f_uuid = null;
 	}
 
 	public SierraServerLocation(final String server, final String user,
@@ -79,6 +106,8 @@ public class SierraServerLocation {
 		f_password = pass;
 		f_label = UNLABELED_SERVER;
 		f_autoSync = false;
+		f_teamServer = false;
+		f_uuid = null;
 	}
 
 	public String getLabel() {
@@ -115,6 +144,14 @@ public class SierraServerLocation {
 
 	public boolean isAutoSync() {
 		return f_autoSync;
+	}
+
+	public boolean isTeamServer() {
+		return f_teamServer;
+	}
+
+	public String getUuid() {
+		return f_uuid;
 	}
 
 	/**
