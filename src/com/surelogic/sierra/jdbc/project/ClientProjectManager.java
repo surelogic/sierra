@@ -129,7 +129,11 @@ public final class ClientProjectManager extends ProjectManager {
 					.getUser(), reply.getCommitRevision(), monitor);
 			findingManager.updateLocalFindings(projectName, reply.getTrails(),
 					monitor);
+			if (monitor.isCanceled()) {
+				return Collections.emptyList();
+			}
 			monitor.worked(1);
+			
 			// Update settings
 			// TODO
 			monitor.subTask("Checking for updated settings for project "
