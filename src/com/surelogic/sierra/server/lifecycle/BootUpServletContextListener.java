@@ -14,6 +14,7 @@ import com.surelogic.common.FileUtility;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.jdbc.SchemaUtility;
 import com.surelogic.common.logging.SLLogger;
+import com.surelogic.sierra.jdbc.scan.ScanQueries;
 import com.surelogic.sierra.jdbc.server.ConnectionFactory;
 import com.surelogic.sierra.jdbc.server.Server;
 import com.surelogic.sierra.jdbc.server.ServerTransaction;
@@ -112,6 +113,8 @@ public class BootUpServletContextListener implements ServletContextListener {
 						return null;
 					}
 				});
+		ConnectionFactory.getInstance().withTransaction(
+				ScanQueries.deleteUnfinishedScans(null));
 		SLLogger.getLogger().log(
 				Level.INFO,
 				"Derby booted with derby.storage.pageSize="
