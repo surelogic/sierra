@@ -3,17 +3,16 @@ package com.surelogic.sierra.tool.message;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+/**
+ * Represents the information about a connection to a team server. This class is
+ * immutable.
+ */
 public class SierraServerLocation {
-	public static final String DEFAULT_PATH = "/sl/";
-	public static final int DEFAULT_PORT = 13376;
-	private static final String UNLABELED_SERVER = "unlabeled server";
-	public static final SierraServerLocation DEFAULT = new SierraServerLocation(
-			"localhost:13376", null, null);
 
-	/**
-	 * A client label for this server location, or <tt>unknown</tt> if not a
-	 * client connection, e.g., in the Ant task.
-	 */
+	public static final String DEFAULT_PATH = "/sl/";
+
+	public static final int DEFAULT_PORT = 13376;
+
 	private final String f_label;
 	private final boolean f_secure;
 	private final String f_host;
@@ -25,24 +24,23 @@ public class SierraServerLocation {
 	private final boolean f_teamServer;
 	private final String f_uuid;
 
-	public SierraServerLocation(final SierraServerLocation loc,
+	public SierraServerLocation(final SierraServerLocation from,
 			final String uuid, final boolean isTeamServer) {
-		f_label = loc.f_label;
-		f_secure = loc.f_secure;
-		f_host = loc.f_host;
-		f_port = loc.f_port;
-		f_contextPath = loc.f_contextPath;
-		f_user = loc.f_user;
-		f_password = loc.f_password;
-		f_autoSync = loc.f_autoSync;
-		f_teamServer = isTeamServer;
-		f_uuid = uuid;
+		this(from.f_label, from.f_host, from.f_secure, from.f_port,
+				from.f_contextPath, from.f_user, from.f_password,
+				from.f_autoSync, uuid, isTeamServer);
 	}
 
-	public SierraServerLocation(final String label, final String host,
-			final boolean secure, final int port, final String contextPath,
-			final String user, final String pass, final boolean autoSync,
-			final String uuid, final boolean isTeamServer) {
+	public SierraServerLocation(String label, String host, boolean secure,
+			int port, String contextPath, String user, String pass,
+			boolean autoSync) {
+		this(label, host, secure, port, contextPath, user, pass, autoSync,
+				null, false);
+	}
+
+	public SierraServerLocation(String label, String host, boolean secure,
+			int port, String contextPath, String user, String pass,
+			boolean autoSync, String uuid, boolean isTeamServer) {
 		f_host = host;
 		f_secure = secure;
 		f_port = port;
@@ -55,116 +53,126 @@ public class SierraServerLocation {
 		f_uuid = uuid;
 	}
 
-	public SierraServerLocation(final String label, final String host,
-			final boolean secure, final int port, final String contextPath,
-			final String user, final String pass, final boolean autoSync) {
-		f_host = host;
-		f_secure = secure;
-		f_port = port;
-		f_user = user;
-		f_password = pass;
-		f_label = label;
-		f_contextPath = contextPath;
-		f_autoSync = autoSync;
-		f_teamServer = false;
-		f_uuid = null;
-	}
-
-	public SierraServerLocation(final String server, final String user,
-			final String pass) {
-		URL url;
-		try {
-			url = new URL(server);
-		} catch (final MalformedURLException e) {
-			url = null;
-		}
-		if (url != null) {
-			f_port = url.getPort();
-			if ((url.getPath() == null) || "".equals(url.getPath())) {
-				f_contextPath = "/sl/";
-			} else {
-				f_contextPath = url.getPath();
-			}
-			f_host = url.getHost();
-			f_secure = "https".equals(url.getProtocol());
-		} else {
-			/*
-			 * TODO: fix this to set the protocol properly
-			 */
-			final String[] strArr = server.split(":");
-			if (strArr.length > 1) {
-				final String strPort = strArr[1];
-				f_port = Integer.parseInt(strPort);
-			} else {
-				f_port = DEFAULT_PORT;
-			}
-			f_contextPath = "/";
-			f_host = strArr[0];
-			f_secure = false;
-		}
-		f_user = user;
-		f_password = pass;
-		f_label = UNLABELED_SERVER;
-		f_autoSync = false;
-		f_teamServer = false;
-		f_uuid = null;
-	}
-
+	/**
+	 * Gets the label for this server.
+	 * 
+	 * @return the label for this server.
+	 */
 	public String getLabel() {
 		return f_label;
 	}
 
+	/**
+	 * Gets if this server uses a secure connection protocol (<tt>https</tt>).
+	 * 
+	 * @return {@code true} if this server uses a secure connection protocol,
+	 *         {@code false} otherwise.
+	 */
 	public boolean isSecure() {
 		return f_secure;
 	}
 
+	/**
+	 * Gets the protocol, either <tt>http</tt> or <tt>https</tt>, to this
+	 * server.
+	 * 
+	 * @return the protocol, either <tt>http</tt> or <tt>https</tt>, to this
+	 *         server.
+	 */
 	public String getProtocol() {
 		return f_secure ? "https" : "http";
 	}
 
+	/**
+	 * Gets the host name to this server.
+	 * 
+	 * @return the host name to this server.
+	 */
 	public String getHost() {
 		return f_host;
 	}
 
+	/**
+	 * Gets the port to this server.
+	 * 
+	 * @return the port to this server.
+	 */
 	public int getPort() {
 		return f_port;
 	}
 
+	/**
+	 * Gets the context path used for creating URLs to this server.
+	 * 
+	 * @return the context path used for creating URLs to this server.
+	 */
 	public String getContextPath() {
 		return f_contextPath;
 	}
 
+	/**
+	 * Gets the saved user name, or {@code null} if the user name is not saved.
+	 * 
+	 * @return the saved user name, or {@code null} if the user name is not
+	 *         saved.
+	 */
 	public String getUser() {
 		return f_user;
 	}
 
+	/**
+	 * Gets the saved password, or {@code null} if the password is not saved.
+	 * 
+	 * @return the saved password, or {@code null} if the password is not saved.
+	 */
 	public String getPass() {
 		return f_password;
 	}
 
+	/**
+	 * Gets if this server is intended to be automatically synchronized
+	 * 
+	 * @return {@code true} if this server is intended to be automatically
+	 *         synchronized, {@code false} otherwise.
+	 */
 	public boolean isAutoSync() {
 		return f_autoSync;
 	}
 
+	/**
+	 * Gets if this server acts as a team server, meaning projects can be
+	 * connected to it. If this information hasn't been queried from the server
+	 * then this method will return {@code false}.
+	 * 
+	 * @return {@code true} if this server acts as a team server, {@code false}
+	 *         otherwise.
+	 */
 	public boolean isTeamServer() {
 		return f_teamServer;
 	}
 
+	/**
+	 * Gets the UUID of this server, or {@code null} if it hasn't been queried
+	 * from the server.
+	 * 
+	 * @return the UUID of this server, or {@code null} if it hasn't been
+	 *         queried from the server.
+	 */
 	public String getUuid() {
 		return f_uuid;
 	}
 
 	/**
-	 * Create a url that points to the appropriate service. All services should
-	 * be hosted under the context root "/sierra", and have a name that is valid
-	 * w/in a url string.
+	 * Create a URL that points to the appropriate service of this server. All
+	 * services should be hosted under the context root "/sierra", and have a
+	 * name that is valid w/in a URL string.
 	 * 
 	 * @param serviceName
-	 * @return
+	 *            a service name.
+	 * @return a URL that points to the appropriate service.
 	 */
 	public URL createServiceURL(final String serviceName) {
 		final String host = getHost() + ":" + getPort();
-
 		try {
 			return new URL((f_secure ? "https://" : "http://") + host
 					+ f_contextPath + "services/" + serviceName);
@@ -173,34 +181,19 @@ public class SierraServerLocation {
 		}
 	}
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((f_label == null) ? 0 : f_label.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(final Object obj) {
-		if (this == obj) {
-			return true;
+	/**
+	 * Create a URL to the root of this server.
+	 * 
+	 * @return a URL to the root of this server.
+	 */
+	public URL createHomeURL() {
+		final String host = getHost() + ":" + getPort();
+		try {
+			return new URL((f_secure ? "https://" : "http://") + host
+					+ f_contextPath);
+		} catch (final MalformedURLException e) {
+			throw new IllegalStateException(e);
 		}
-		if (obj == null) {
-			return false;
-		}
-		if (getClass() != obj.getClass()) {
-			return false;
-		}
-		final SierraServerLocation other = (SierraServerLocation) obj;
-		if (f_label == null) {
-			if (other.f_label != null) {
-				return false;
-			}
-		} else if (!f_label.equals(other.f_label)) {
-			return false;
-		}
-		return true;
 	}
 
 	@Override
@@ -210,21 +203,8 @@ public class SierraServerLocation {
 		b.append(getProtocol()).append(":/");
 		b.append(getHost()).append(":").append(getPort()).append(
 				getContextPath());
-		b.append("/user=\"").append(getUser()).append("\" ");
-		b.append(" password=\"").append(
-				getPass() == null ? "" : getPass().replaceAll(".", "*"))
-				.append("\"");
+		b.append("/user=\"").append(getUser()).append("\"");
 
 		return b.toString();
-	}
-
-	public URL createHomeURL() {
-		final String host = getHost() + ":" + getPort();
-		try {
-			return new URL((f_secure ? "https://" : "http://") + host
-					+ f_contextPath);
-		} catch (final MalformedURLException e) {
-			throw new IllegalStateException(e);
-		}
 	}
 }

@@ -13,11 +13,6 @@ import com.surelogic.sierra.message.srpc.SRPCClient;
  */
 public class BugLinkServiceClient {
 
-	public static BugLinkService create() {
-		return SRPCClient.createClient(SierraServerLocation.DEFAULT,
-				BugLinkService.class, true);
-	}
-
 	public static BugLinkService create(final SierraServerLocation location) {
 		return SRPCClient.createClient(location, BugLinkService.class, true);
 	}
