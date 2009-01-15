@@ -355,7 +355,8 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 				"No server to duplicate") {
 			@Override
 			protected void handleEventOnServer(final ConnectedServer server) {
-				f_manager.duplicate();
+				// FIX no duplicate?
+				// f_manager.duplicate();
 			}
 		};
 		f_duplicateServerAction.setEnabled(false);
@@ -1192,6 +1193,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 				}
 			}
 		});
+		/*
 		final Job infoJob = new Job("Getting server info") {
 			@Override
 			protected IStatus run(final IProgressMonitor monitor) {
@@ -1210,6 +1212,8 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 		};
 		infoJob.setSystem(true);
 		infoJob.schedule();
+		*/
+		
 		final Job job = new DatabaseJob("Updating project status") {
 			@Override
 			protected IStatus run(final IProgressMonitor monitor) {
@@ -1688,12 +1692,8 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 
 	private ServersViewContent[] createServerItems() {
 		final List<ServersViewContent> content = new ArrayList<ServersViewContent>();
-		/*
-		 * final ConnectedServer focus = f_manager.getFocus(); TreeItem focused =
-		 * null;
-		 */
-		for (final String label : f_manager.getLabels()) {
-			final ServersViewContent serverNode = createServerItem(label);
+		for (final ConnectedServer server : f_manager.getServers()) {
+			final ServersViewContent serverNode = createServerItem(server);
 			content.add(serverNode);
 		}
 		createUnknownServers(content);
@@ -1707,8 +1707,8 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 
 	private void createUnknownServers(List<ServersViewContent> content) {
 	    for(Map.Entry<String, List<ScanFilter>> e : localFilters.entrySet()) {
-	        final String label = e.getKey();
-	        final ConnectedServer server = f_manager.getServerByLabel(label);
+	        final String label = e.getKey();	        
+	        final ConnectedServer server = f_manager.getServerById(id);
 	        if (server != null) {
 	            // Already known, so already handled elsewhere
 	            continue;
@@ -1731,8 +1731,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 	    }
 	}
 	
-	private ServersViewContent createServerItem(final String label) {
-		final ConnectedServer server = f_manager.getServerByLabel(label);
+	private ServersViewContent createServerItem(final ConnectedServer server) {
 		final List<ServersViewContent> serverContent = new ArrayList<ServersViewContent>();
 
 		final ServersViewContent serverNode = new ServersViewContent(null,
@@ -1764,7 +1763,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 
 		serverNode.setChildren(serverContent.toArray(emptyChildren));
 		final ChangeStatus status3 = serverNode.getChangeStatus();
-		serverNode.setText(status3.getLabel() + label + " ["
+		serverNode.setText(status3.getLabel() + server + " ["
 				+ server.toURLWithContextPath() + ']');
 		return serverNode;
 	}
