@@ -177,7 +177,8 @@ public final class ServerAuthenticationDialog extends Dialog {
 	public static void promptPasswordIfNecessary(final String projectName,
 			final ConnectedServer server, final Shell shell,
 			final ServerActionOnAProject action) {
-		if (!server.getLocation().isSavePassword() && !server.usedToConnectToAServer()) {
+		if (!server.getLocation().isSavePassword() && 
+		    !ConnectedServerManager.getInstance().getStats(server).usedToConnectToAServer()) {
 			ServerAuthenticationDialog dialog = new ServerAuthenticationDialog(
 					shell, server);
 			if (dialog.open() == Window.CANCEL) {
@@ -186,7 +187,7 @@ public final class ServerAuthenticationDialog extends Dialog {
 				 */
 				return;
 			}
-			server.setUsed(); // for this Eclipse session
+			ConnectedServerManager.getInstance().getStats(server).setUsed(); // for this Eclipse session
 		}
 		action.run(projectName, server, shell);
 	}

@@ -9,6 +9,7 @@ import com.surelogic.sierra.jdbc.settings.ConnectedServer;
 public class ConnectedServerStats {
 	public final String f_serverId;
 	private int f_problemCount;
+	private boolean usedDuringThisSession = false;
 	
 	ConnectedServerStats(ConnectedServer server) {
 		f_serverId = server.getUuid();
@@ -24,5 +25,13 @@ public class ConnectedServerStats {
 
 	public void encounteredProblem() {
 		f_problemCount++;
+	}
+
+	public boolean usedToConnectToAServer() {
+		return usedDuringThisSession;
+	}
+
+	public void setUsed() {
+		usedDuringThisSession = true;
 	}
 }
