@@ -256,12 +256,12 @@ public final class ConnectedServerManager extends
 	}
 
 	private synchronized void save() {
-		SierraServerPersistence.save(this);
+		// SierraServerPersistence.save(this);
 	}
 
 	private void load() {
 		try {
-			SierraServerPersistence.load(this);
+			// SierraServerPersistence.load(this);
 		} catch (Exception e) {
 			SLLogger.getLogger().log(Level.SEVERE,
 					"Failure loading connected server data", e);
@@ -270,6 +270,9 @@ public final class ConnectedServerManager extends
 
 	@Override
 	public void notifyObservers() {
+		/*
+		 * First save all changes to the database.
+		 */
 		save();
 		super.notifyObservers();
 	}
