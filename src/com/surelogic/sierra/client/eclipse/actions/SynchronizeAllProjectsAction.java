@@ -15,9 +15,9 @@ import com.surelogic.sierra.client.eclipse.dialogs.ServerAuthenticationDialog.Se
 import com.surelogic.sierra.client.eclipse.jobs.ServerProjectGroupJob;
 import com.surelogic.sierra.client.eclipse.jobs.SynchronizeJob;
 import com.surelogic.sierra.client.eclipse.model.ServerSyncType;
-import com.surelogic.sierra.client.eclipse.model.SierraServer;
 import com.surelogic.sierra.client.eclipse.model.ConnectedServerManager;
 import com.surelogic.sierra.client.eclipse.preferences.ServerFailureReport;
+import com.surelogic.sierra.jdbc.settings.ConnectedServer;
 
 public class SynchronizeAllProjectsAction implements
 		IWorkbenchWindowActionDelegate {
@@ -64,17 +64,17 @@ public class SynchronizeAllProjectsAction implements
 
 		setTime();
 
-		final Set<SierraServer> unconnectedServers = manager.getServers();
+		final Set<ConnectedServer> unconnectedServers = manager.getServers();
 		if (f_syncType.syncProjects()) {
 			for (String projectName : manager.getConnectedProjects()) {
-				final SierraServer server = manager.getServer(projectName);
+				final ConnectedServer server = manager.getServer(projectName);
 				unconnectedServers.remove(server);
 
-				if (f_syncType.syncByServerSettings() && !server.autoSync()) {
+				if (f_syncType.syncByServerSettings() && !server.getLocation().isAutoSync()) {
 					continue;
 				}
 				final ServerActionOnAProject serverAction = new ServerActionOnAProject() {
-					public void run(String projectName, SierraServer server,
+					public void run(String projectName, ConnectedServer server,
 							Shell shell) {
 						final SynchronizeJob job = new SynchronizeJob(joinJob,
 								projectName, server, f_syncType, force,
@@ -86,9 +86,9 @@ public class SynchronizeAllProjectsAction implements
 			}
 		}
 		if (f_syncType.syncBugLink()) {
-			for (SierraServer server : unconnectedServers) {
+			for (ConnectedServer server : unconnectedServers) {
 				final ServerActionOnAProject serverAction = new ServerActionOnAProject() {
-					public void run(String projectName, SierraServer server,
+					public void run(String projectName, ConnectedServer server,
 							Shell shell) {
 						final SynchronizeJob job = new SynchronizeJob(joinJob,
 								null, server, ServerSyncType.BUGLINK, force,
@@ -103,7 +103,7 @@ public class SynchronizeAllProjectsAction implements
 		joinJob.schedule();
 	}
 
-	private void promptAndSchedule(String projectName, SierraServer server,
+	private void promptAndSchedule(String projectName, ConnectedServer server,
 			ServerActionOnAProject serverAction) {
 		ServerAuthenticationDialog.promptPasswordIfNecessary(projectName,
 				server, SWTUtility.getShell(), serverAction);

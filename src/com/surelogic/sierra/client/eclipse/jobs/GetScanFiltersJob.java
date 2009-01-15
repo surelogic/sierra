@@ -18,18 +18,18 @@ import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.actions.TroubleshootConnection;
 import com.surelogic.sierra.client.eclipse.actions.TroubleshootNoSuchServer;
 import com.surelogic.sierra.client.eclipse.actions.TroubleshootWrongAuthentication;
-import com.surelogic.sierra.client.eclipse.model.SierraServer;
 import com.surelogic.sierra.client.eclipse.preferences.ServerFailureReport;
+import com.surelogic.sierra.jdbc.settings.ConnectedServer;
 import com.surelogic.sierra.jdbc.settings.SettingQueries;
 import com.surelogic.sierra.tool.message.InvalidLoginException;
 import com.surelogic.sierra.tool.message.SierraServiceClientException;
 
 public class GetScanFiltersJob extends DatabaseJob {
 	private final ServerFailureReport f_method;
-	private final SierraServer f_server;
+	private final ConnectedServer f_server;
 
-	public GetScanFiltersJob(ServerFailureReport method, SierraServer server) {
-		super("Getting scan filter settings from " + server.getLabel());
+	public GetScanFiltersJob(ServerFailureReport method, ConnectedServer server) {
+		super("Getting scan filter settings from " + server.getName());
 		f_server = server;
 		f_method = method;
 	}
@@ -57,7 +57,7 @@ public class GetScanFiltersJob extends DatabaseJob {
 			throws SQLException {
 		try {
 			final DBQuery<?> query = SettingQueries.retrieveScanFilters(
-					f_server.getServer(), Data.getInstance().withReadOnly(
+					f_server.getLocation(), Data.getInstance().withReadOnly(
 							SettingQueries.scanFilterRequest()));
 			f_server.markAsConnected();
 			Data.getInstance().withTransaction(query);

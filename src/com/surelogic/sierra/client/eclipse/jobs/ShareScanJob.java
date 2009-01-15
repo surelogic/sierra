@@ -20,8 +20,8 @@ import com.surelogic.common.jobs.SLProgressMonitor;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.actions.TimeseriesPromptFromJob;
 import com.surelogic.sierra.client.eclipse.actions.TroubleshootConnection;
-import com.surelogic.sierra.client.eclipse.model.SierraServer;
 import com.surelogic.sierra.client.eclipse.preferences.ServerFailureReport;
+import com.surelogic.sierra.jdbc.settings.ConnectedServer;
 import com.surelogic.sierra.tool.message.MessageWarehouse;
 import com.surelogic.sierra.tool.message.Scan;
 import com.surelogic.sierra.tool.message.ScanVersionException;
@@ -34,7 +34,7 @@ public class ShareScanJob extends AbstractServerProjectJob {
 	private final File f_scanFile;
 
 	public ShareScanJob(final ServerProjectGroupJob family,
-			final String projectName, final SierraServer server,
+			final String projectName, final ConnectedServer server,
 			final File scanFile, final ServerFailureReport method) {
 		super(family, "Sharing scan of project '" + projectName + "'", server,
 				projectName, method);
@@ -47,7 +47,7 @@ public class ShareScanJob extends AbstractServerProjectJob {
 	@Override
 	protected IStatus run(final IProgressMonitor monitor) {
 		final String msg = "Sharing scan of project " + f_projectName + " to "
-				+ f_server.getLabel() + ".";
+				+ f_server.getName() + ".";
 		final SLProgressMonitor slMonitor = new SLProgressMonitorWrapper(
 				monitor, msg);
 		slMonitor.begin(5);
@@ -66,7 +66,7 @@ public class ShareScanJob extends AbstractServerProjectJob {
 					return null;
 				} else {
 					final TimeseriesPromptFromJob prompt = new TimeseriesPromptFromJob(
-							timeseries, f_projectName, f_server.getLabel());
+							timeseries, f_projectName, f_server.getName());
 					prompt.open();
 					if (prompt.isCanceled()) {
 						slMonitor.setCanceled(true);
@@ -92,7 +92,7 @@ public class ShareScanJob extends AbstractServerProjectJob {
 		TroubleshootConnection troubleshoot;
 		try {
 			List<String> timeseries = SierraServiceClient.create(
-					f_server.getServer())
+					f_server.getLocation())
 					.getTimeseries(new TimeseriesRequest()).getTimeseries();
 			if (timeseries == null) {
 				timeseries = Collections.emptyList();
@@ -120,7 +120,7 @@ public class ShareScanJob extends AbstractServerProjectJob {
 			final SLProgressMonitor slMonitor) {
 		TroubleshootConnection troubleshoot;
 		try {
-			SierraServiceClient.create(f_server.getServer()).publishRun(scan);
+			SierraServiceClient.create(f_server.getLocation()).publishRun(scan);
 			f_server.markAsConnected();
 			return Status.OK_STATUS;
 		} catch (final SierraServiceClientException e) {
