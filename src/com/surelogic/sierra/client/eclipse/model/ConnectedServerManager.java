@@ -1,5 +1,7 @@
 package com.surelogic.sierra.client.eclipse.model;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -12,12 +14,17 @@ import java.util.Set;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Platform;
+
 import com.surelogic.common.ILifecycle;
 import com.surelogic.common.i18n.I18N;
+import com.surelogic.common.jdbc.TransactionException;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.jdbc.settings.ConnectedServer;
 import com.surelogic.sierra.jdbc.settings.ServerLocations;
+import com.surelogic.sierra.tool.message.ServerLocation;
 
 /**
  * Manages the set of connected servers.
@@ -262,12 +269,47 @@ public final class ConnectedServerManager extends
 		return projects;
 	}
 
-	private synchronized void save() {
-		final Map<ConnectedServer, Collection<String>> map = new HashMap<ConnectedServer, Collection<String>>();
-		for (final ConnectedServer s : getServers()) {
-			map.put(s, getProjectsConnectedTo(s));
+	// fields needed for caching the password
+	private static final String AUTH_SCHEME = "";
+	private static final URL FAKE_URL;
+	static {
+		final String urlString = "http://com.surelogic.sierra";
+		URL temp = null;
+		try {
+			temp = new URL(urlString);
+		} catch (final MalformedURLException e) {
+			SLLogger.getLogger().log(Level.SEVERE, I18N.err(41, urlString), e);
 		}
-		Data.getInstance().withTransaction(ServerLocations.saveQuery(map));
+		FAKE_URL = temp;
+	}
+
+	private synchronized void save() {
+		final Map<ConnectedServer, Collection<String>> servers = new HashMap<ConnectedServer, Collection<String>>();
+		Map<String, String> map = Platform.getAuthorizationInfo(FAKE_URL, "",
+				AUTH_SCHEME);
+		if (map == null) {
+			map = new java.util.HashMap<String, String>();
+		}
+		for (final ConnectedServer s : getServers()) {
+			servers.put(s, getProjectsConnectedTo(s));
+			final ServerLocation l = s.getLocation();
+			if (l.getUser() != null && l.getPass() != null) {
+				map.put(l.getUser(), l.getPass());
+			}
+		}
+		try {
+			if (map != null) {
+				Platform.addAuthorizationInfo(FAKE_URL, "", AUTH_SCHEME, map);
+			}
+			Data.getInstance().withTransaction(
+					ServerLocations.saveQuery(servers, false));
+		} catch (final TransactionException e) {
+			SLLogger.getLogger().log(Level.SEVERE,
+					I18N.err(38, "Team Servers", "database"), e);
+		} catch (final CoreException e) {
+			SLLogger.getLogger().log(Level.SEVERE, I18N.err(42), e);
+		}
+
 	}
 
 	private void load() {
