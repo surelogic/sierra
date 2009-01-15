@@ -24,16 +24,15 @@ import com.surelogic.sierra.gwt.SierraServiceServlet;
 import com.surelogic.sierra.gwt.client.data.Category;
 import com.surelogic.sierra.gwt.client.data.FindingType;
 import com.surelogic.sierra.gwt.client.data.FindingTypeFilter;
+import com.surelogic.sierra.gwt.client.data.PortalServerLocation;
 import com.surelogic.sierra.gwt.client.data.Project;
 import com.surelogic.sierra.gwt.client.data.ReportSettings;
 import com.surelogic.sierra.gwt.client.data.Result;
 import com.surelogic.sierra.gwt.client.data.ScanFilter;
 import com.surelogic.sierra.gwt.client.data.ScanFilterEntry;
-import com.surelogic.sierra.gwt.client.data.ServerLocation;
 import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.data.FindingType.ArtifactTypeInfo;
 import com.surelogic.sierra.gwt.client.data.Report.OutputType;
-import com.surelogic.sierra.gwt.client.data.ServerLocation.Protocol;
 import com.surelogic.sierra.gwt.client.data.cache.ReportCache;
 import com.surelogic.sierra.gwt.client.data.dashboard.DashboardSettings;
 import com.surelogic.sierra.gwt.client.data.dashboard.ReportWidget;
@@ -589,19 +588,20 @@ public final class SettingsServiceImpl extends SierraServiceServlet implements
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<ServerLocation> listServerLocations() {
-		final List<ServerLocation> servers = new ArrayList<com.surelogic.sierra.gwt.client.data.ServerLocation>();
+	public List<PortalServerLocation> listServerLocations() {
+		final List<PortalServerLocation> servers = new ArrayList<PortalServerLocation>();
 		for (final ServerLocation l : ConnectionFactory
 				.getInstance()
 				.withReadOnly(ServerLocations.fetchQuery(Collections.EMPTY_MAP))
 				.keySet()) {
-			final ServerLocation s = new ServerLocation();
+			final PortalServerLocation s = new PortalServerLocation();
 			s.setContext(l.getContextPath());
 			s.setHost(l.getHost());
 			s.setLabel(l.getLabel());
 			s.setPass(l.getPass());
 			s.setPort(l.getPort());
-			s.setProtocol(ServerLocation.Protocol.fromValue(l.getProtocol()));
+			s.setProtocol(PortalServerLocation.Protocol.fromValue(l
+					.getProtocol()));
 			s.setUser(l.getUser());
 			servers.add(s);
 		}
@@ -639,9 +639,9 @@ public final class SettingsServiceImpl extends SierraServiceServlet implements
 						final Map<ServerLocation, Collection<String>> servers = ServerLocations
 								.fetchQuery(null).perform(q);
 						// TODO is autosync meaningful on the server?
-						final ServerLocation l = new ServerLocation(
-								loc.getLabel(), loc.getHost(), loc
-										.getProtocol() == Protocol.HTTPS, loc
+						final ServerLocation l = new ServerLocation(loc
+								.getLabel(), loc.getHost(),
+								loc.getProtocol() == Protocol.HTTPS, loc
 										.getPort(), loc.getContext(), loc
 										.getUser(), loc.getPass(), true);
 						Collection<String> projects = servers.get(l);
