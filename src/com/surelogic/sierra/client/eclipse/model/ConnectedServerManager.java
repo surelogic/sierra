@@ -28,6 +28,10 @@ import com.surelogic.sierra.tool.message.ServerLocation;
 
 /**
  * Manages the set of connected servers.
+ * <p>
+ * This class persists to the database and is saved to the database each time
+ * something is changed. It listens to database changes to detect when it should
+ * load or re-load data.
  */
 public final class ConnectedServerManager extends
 		DatabaseObservable<ISierraServerObserver> implements ILifecycle {
@@ -358,7 +362,10 @@ public final class ConnectedServerManager extends
 		}
 	}
 
-	private void load() {
+	/**
+	 * @return {@code} if any changes were made, {@code false} otherwise.
+	 */
+	private boolean load() {
 		final Map<String, String> passwords = Platform.getAuthorizationInfo(
 				FAKE_URL, "", AUTH_SCHEME);
 		try {
@@ -385,6 +392,8 @@ public final class ConnectedServerManager extends
 				SLLogger.getLogger().log(Level.SEVERE, I18N.err(42), e);
 			}
 		}
+		// TODO change this to check for real if something changed.
+		return true;
 	}
 
 	@Override
@@ -392,6 +401,8 @@ public final class ConnectedServerManager extends
 		/*
 		 * First save all changes to the database.
 		 */
+		// TODO we might want to make this save an option...if we just loaded we
+		// don't need to save.
 		save();
 		super.notifyObservers();
 	}
@@ -399,5 +410,14 @@ public final class ConnectedServerManager extends
 	@Override
 	protected void notifyThisObserver(final ISierraServerObserver o) {
 		o.notify(this);
+	}
+
+	@Override
+	public void serverSynchronized() {
+		/*
+		 * This could have updated the information we care about.
+		 */
+		if (load())
+			notifyObservers();
 	}
 }
