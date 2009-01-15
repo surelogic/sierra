@@ -90,6 +90,13 @@ public final class ServerLocations {
 		};
 	}
 
+	/**
+	 * Update the server identities in this database to reflect the given data.
+	 * If we have data about a server from a later revision, we will keep it.
+	 * 
+	 * @param ids
+	 * @return
+	 */
 	public static NullDBQuery updateServerIdentities(
 			final List<ServerIdentity> ids) {
 		return new NullDBQuery() {
