@@ -74,8 +74,7 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 	public static void editServer(final Shell shell, final ConnectedServer server) {
 		final String title = I18N.msg("sierra.dialog.serverlocation.editTitle");
 		final ServerLocationDialog dialog = new ServerLocationDialog(shell,
-				server.getServer(), title, server.savePassword(), server
-						.autoSync());
+				server.getLocation(), title);
 		if (dialog.open() == Window.OK) {
 			final ServerLocation location = dialog.f_server;
 			final Job job = new ValidateServerLocationJob(server, location,
@@ -124,7 +123,12 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 		f_savePassword = savePassword;
 		f_autoSync = autoSync;
 	}
-
+	
+	private ServerLocationDialog(final Shell parentShell,
+			final ServerLocation server, final String title) {
+		this(parentShell, server, title, server.isSavePassword(), server.isAutoSync());
+	}
+		
 	@Override
 	protected void configureShell(final Shell newShell) {
 		super.configureShell(newShell);
