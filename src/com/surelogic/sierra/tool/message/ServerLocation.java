@@ -23,6 +23,7 @@ public class ServerLocation {
 	private final String f_user;
 	private final String f_password;
 	private final boolean f_autoSync;
+	private final boolean f_savePassword;
 
 	/**
 	 * Constructs a server location object.
@@ -49,19 +50,24 @@ public class ServerLocation {
 	 * @throws IllegalArgumentException
 	 *             if <tt>host</tt> or <tt>contextPath</tt> are {@code null}.
 	 */
-	public ServerLocation(String host, boolean secure, int port,
-			String contextPath, String user, String pass, boolean autoSync) {
-		if (host == null)
+	public ServerLocation(final String host, final boolean secure,
+			final int port, final String contextPath, final String user,
+			final String pass, final boolean autoSync,
+			final boolean savePassword) {
+		if (host == null) {
 			throw new IllegalArgumentException(I18N.err(44, "host"));
+		}
 		f_host = host;
 		f_secure = secure;
 		f_port = port;
 		f_user = user;
 		f_password = pass;
-		if (contextPath == null)
+		if (contextPath == null) {
 			throw new IllegalArgumentException(I18N.err(44, "contextPath"));
+		}
 		f_contextPath = contextPath;
 		f_autoSync = autoSync;
+		f_savePassword = savePassword;
 	}
 
 	/**
@@ -72,7 +78,7 @@ public class ServerLocation {
 	 */
 	public ServerLocation() {
 		this(ServerLocation.DEFAULT_HOST, false, ServerLocation.DEFAULT_PORT,
-				ServerLocation.DEFAULT_CONTEXT_PATH, null, null, false);
+				ServerLocation.DEFAULT_CONTEXT_PATH, null, null, false, false);
 	}
 
 	/**
@@ -153,6 +159,15 @@ public class ServerLocation {
 	}
 
 	/**
+	 * Whether or not the password for this server location should be saved.
+	 * 
+	 * @return
+	 */
+	public boolean isSavePassword() {
+		return f_savePassword;
+	}
+
+	/**
 	 * Create a URL that points to the appropriate service of this server. All
 	 * services should be hosted under the context root "/sierra", and have a
 	 * name that is valid w/in a URL string.
@@ -208,46 +223,65 @@ public class ServerLocation {
 		result = prime * result
 				+ ((f_password == null) ? 0 : f_password.hashCode());
 		result = prime * result + f_port;
+		result = prime * result + (f_savePassword ? 1231 : 1237);
 		result = prime * result + (f_secure ? 1231 : 1237);
 		result = prime * result + ((f_user == null) ? 0 : f_user.hashCode());
 		return result;
 	}
 
 	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
+	public boolean equals(final Object obj) {
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
-		ServerLocation other = (ServerLocation) obj;
-		if (f_autoSync != other.f_autoSync)
+		}
+		final ServerLocation other = (ServerLocation) obj;
+		if (f_autoSync != other.f_autoSync) {
 			return false;
+		}
 		if (f_contextPath == null) {
-			if (other.f_contextPath != null)
+			if (other.f_contextPath != null) {
 				return false;
-		} else if (!f_contextPath.equals(other.f_contextPath))
+			}
+		} else if (!f_contextPath.equals(other.f_contextPath)) {
 			return false;
+		}
 		if (f_host == null) {
-			if (other.f_host != null)
+			if (other.f_host != null) {
 				return false;
-		} else if (!f_host.equals(other.f_host))
+			}
+		} else if (!f_host.equals(other.f_host)) {
 			return false;
+		}
 		if (f_password == null) {
-			if (other.f_password != null)
+			if (other.f_password != null) {
 				return false;
-		} else if (!f_password.equals(other.f_password))
+			}
+		} else if (!f_password.equals(other.f_password)) {
 			return false;
-		if (f_port != other.f_port)
+		}
+		if (f_port != other.f_port) {
 			return false;
-		if (f_secure != other.f_secure)
+		}
+		if (f_savePassword != other.f_savePassword) {
 			return false;
+		}
+		if (f_secure != other.f_secure) {
+			return false;
+		}
 		if (f_user == null) {
-			if (other.f_user != null)
+			if (other.f_user != null) {
 				return false;
-		} else if (!f_user.equals(other.f_user))
+			}
+		} else if (!f_user.equals(other.f_user)) {
 			return false;
+		}
 		return true;
 	}
+
 }
