@@ -52,9 +52,11 @@ import com.surelogic.sierra.jdbc.settings.Categories;
 import com.surelogic.sierra.jdbc.settings.CategoryDO;
 import com.surelogic.sierra.jdbc.settings.CategoryEntryDO;
 import com.surelogic.sierra.jdbc.settings.CategoryFilterDO;
+import com.surelogic.sierra.jdbc.settings.ConnectedServer;
 import com.surelogic.sierra.jdbc.settings.ScanFilterDO;
 import com.surelogic.sierra.jdbc.settings.ScanFilters;
 import com.surelogic.sierra.jdbc.settings.ServerLocations;
+import com.surelogic.sierra.jdbc.settings.SettingQueries;
 import com.surelogic.sierra.jdbc.settings.TypeFilterDO;
 import com.surelogic.sierra.jdbc.tool.ArtifactTypeDO;
 import com.surelogic.sierra.jdbc.tool.FindingTypeDO;
@@ -132,10 +134,10 @@ public final class SettingsServiceImpl extends SierraServiceServlet implements
 						 * Get the server locations that we know about, keyed by
 						 * label
 						 */
-						final Map<String, ServerLocation> locations = new HashMap<String, ServerLocation>();
-						for (final ServerLocation location : ServerLocations
+						final Map<String, ConnectedServer> servers = new HashMap<String, ConnectedServer>();
+						for (final ConnectedServer s : ServerLocations
 								.fetchQuery(null).perform(q).keySet()) {
-							locations.put(location.getLabel(), location);
+							servers.put(s.getUuid(), s);
 						}
 						/*
 						 * Retrieves the server uuid and label for the category
@@ -161,11 +163,12 @@ public final class SettingsServiceImpl extends SierraServiceServlet implements
 									&& serverUID.equals(owningServer[0]));
 							if (owningServer != null) {
 								set.setOwnerLabel(owningServer[1]);
-								final ServerLocation owner = locations
+								final ConnectedServer owner = servers
 										.get(owningServer[1]);
 								if (owner != null) {
 									final StringBuilder urlBuf = new StringBuilder(
-											owner.createHomeURL().toString());
+											owner.getLocation().createHomeURL()
+													.toString());
 									urlBuf.append("#categories/uuid=");
 									urlBuf.append(detail.getUid());
 									set.setOwnerURL(urlBuf.toString());
@@ -591,43 +594,44 @@ public final class SettingsServiceImpl extends SierraServiceServlet implements
 	@SuppressWarnings("unchecked")
 	public List<PortalServerLocation> listServerLocations() {
 		final List<PortalServerLocation> servers = new ArrayList<PortalServerLocation>();
-		for (final ServerLocation l : ConnectionFactory
+		for (final ConnectedServer cs : ConnectionFactory
 				.getInstance()
 				.withReadOnly(ServerLocations.fetchQuery(Collections.EMPTY_MAP))
 				.keySet()) {
 			final PortalServerLocation s = new PortalServerLocation();
+			final ServerLocation l = cs.getLocation();
 			s.setContext(l.getContextPath());
 			s.setHost(l.getHost());
-			s.setLabel(l.getLabel());
 			s.setPass(l.getPass());
 			s.setPort(l.getPort());
 			s.setProtocol(PortalServerLocation.Protocol.fromValue(l
 					.getProtocol()));
 			s.setUser(l.getUser());
+			s.setLabel(cs.getName());
 			servers.add(s);
 		}
 		return servers;
 	}
 
-	public Status deleteServerLocation(final String label) {
+	public Status deleteServerLocation(final String name) {
 		return ConnectionFactory.getInstance().withTransaction(
 				new DBQuery<Status>() {
 
 					public Status perform(final Query q) {
-						final Map<ServerLocation, Collection<String>> servers = ServerLocations
+						final Map<ConnectedServer, Collection<String>> servers = ServerLocations
 								.fetchQuery(null).perform(q);
-						ServerLocation loc = null;
-						for (final ServerLocation l : servers.keySet()) {
-							if (l.getLabel().equals(label)) {
-								loc = l;
+						ConnectedServer server = null;
+						for (final ConnectedServer s : servers.keySet()) {
+							if (s.getName().equals(name)) {
+								server = s;
 								break;
 							}
 						}
-						if (loc != null) {
-							servers.remove(loc);
+						if (server != null) {
+							servers.remove(server);
 						}
 						ServerLocations.saveQuery(servers).doPerform(q);
-						return Status.success(label + " deleted.");
+						return Status.success(name + " deleted.");
 					}
 				});
 	}
@@ -637,7 +641,7 @@ public final class SettingsServiceImpl extends SierraServiceServlet implements
 				new DBQuery<Status>() {
 
 					public Status perform(final Query q) {
-						final Map<ServerLocation, Collection<String>> servers = ServerLocations
+						final Map<ConnectedServer, Collection<String>> servers = ServerLocations
 								.fetchQuery(null).perform(q);
 						// TODO is autosync meaningful on the server?
 						final ServerLocation l = new ServerLocation(loc
@@ -645,12 +649,15 @@ public final class SettingsServiceImpl extends SierraServiceServlet implements
 								loc.getProtocol() == Protocol.HTTPS, loc
 										.getPort(), loc.getContext(), loc
 										.getUser(), loc.getPass(), true);
+						final ConnectedServer s = ConnectionFactory
+								.getInstance().withTransaction(
+										SettingQueries
+												.checkAndSaveServerLocation(l));
 						Collection<String> projects = servers.get(l);
 						if (projects == null) {
 							projects = Collections.emptyList();
 						}
-						servers.remove(l);
-						servers.put(l, projects);
+						servers.put(s, projects);
 						ServerLocations.saveQuery(servers).doPerform(q);
 						return Status.success(loc.getLabel() + " updated.");
 					}
