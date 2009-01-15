@@ -203,6 +203,23 @@ public final class ConnectedServerManager extends
 	}
 
 	/**
+	 * 
+	 * @param server
+	 * @param user
+	 * @param pass
+	 */
+	public void changeAuthorizationFor(final ConnectedServer server,
+			final String user, final String pass, final boolean savePassword) {
+		synchronized (this) {
+			f_servers.remove(server);
+			final ConnectedServer newServer = new ConnectedServer(server, user,
+					pass, savePassword);
+			f_servers.add(newServer);
+		}
+
+	}
+
+	/**
 	 * The project to server connections managed by this model.
 	 * <p>
 	 * Access to this map is protected by a lock on {@code this}.
