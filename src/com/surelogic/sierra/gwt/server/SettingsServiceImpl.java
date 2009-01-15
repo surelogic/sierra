@@ -630,7 +630,7 @@ public final class SettingsServiceImpl extends SierraServiceServlet implements
 						if (server != null) {
 							servers.remove(server);
 						}
-						ServerLocations.saveQuery(servers).doPerform(q);
+						ServerLocations.saveQuery(servers, true).doPerform(q);
 						return Status.success(name + " deleted.");
 					}
 				});
@@ -648,17 +648,18 @@ public final class SettingsServiceImpl extends SierraServiceServlet implements
 								.getHost(),
 								loc.getProtocol() == Protocol.HTTPS, loc
 										.getPort(), loc.getContext(), loc
-										.getUser(), loc.getPass(), true);
+										.getUser(), loc.getPass(), true, true);
 						final ConnectedServer s = ConnectionFactory
 								.getInstance().withTransaction(
 										SettingQueries
-												.checkAndSaveServerLocation(l));
+												.checkAndSaveServerLocation(l,
+														true));
 						Collection<String> projects = servers.get(l);
 						if (projects == null) {
 							projects = Collections.emptyList();
 						}
 						servers.put(s, projects);
-						ServerLocations.saveQuery(servers).doPerform(q);
+						ServerLocations.saveQuery(servers, true).doPerform(q);
 						return Status.success(loc.getLabel() + " updated.");
 					}
 				});
