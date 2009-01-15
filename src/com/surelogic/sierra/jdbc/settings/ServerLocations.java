@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.jdbc.DBQuery;
-import com.surelogic.common.jdbc.LongIdHandler;
 import com.surelogic.common.jdbc.NullDBQuery;
 import com.surelogic.common.jdbc.NullResultHandler;
 import com.surelogic.common.jdbc.Nulls;
@@ -19,8 +19,6 @@ import com.surelogic.common.jdbc.ResultHandler;
 import com.surelogic.common.jdbc.Row;
 import com.surelogic.common.jdbc.StringRowHandler;
 import com.surelogic.sierra.tool.message.ServerIdentity;
-import com.surelogic.sierra.tool.message.ServerInfoReply;
-import com.surelogic.sierra.tool.message.Services;
 import com.surelogic.sierra.tool.message.ServerLocation;
 
 /**
@@ -32,6 +30,28 @@ import com.surelogic.sierra.tool.message.ServerLocation;
  */
 public final class ServerLocations {
 	/**
+	 * Save a single connected server to the database. This call will fail if a
+	 * server w/ the same uuid is already saved to the database.
+	 * 
+	 * @param cs
+	 * @return
+	 */
+	public static NullDBQuery saveServerLocation(final ConnectedServer s) {
+		return new NullDBQuery() {
+
+			@Override
+			public void doPerform(final Query q) {
+				final ServerLocation l = s.getLocation();
+				q.prepared("ServerLocations.insertLocation").call(s.getUuid(),
+						l.getProtocol(), Nulls.coerce(l.getHost()),
+						l.getPort(), Nulls.coerce(l.getContextPath()),
+						Nulls.coerce(l.getUser()), Nulls.coerce(l.getPass()),
+						l.isAutoSync(), s.isTeamServer());
+			}
+		};
+	}
+
+	/**
 	 * Store the provided list of server locations and their associated
 	 * projects.
 	 * 
@@ -40,7 +60,7 @@ public final class ServerLocations {
 	 * @return
 	 */
 	public static NullDBQuery saveQuery(
-			final Map<ServerLocation, Collection<String>> locations) {
+			final Map<ConnectedServer, Collection<String>> locations) {
 		return new NullDBQuery() {
 			@Override
 			public void doPerform(final Query q) {
@@ -48,86 +68,55 @@ public final class ServerLocations {
 				q.statement("ServerLocations.deleteProjects").call();
 				final Queryable<Void> insertServerProject = q
 						.prepared("ServerLocations.insertServerProject");
-				final Queryable<Long> insertLocation = q.prepared(
-						"ServerLocations.insertLocation", new LongIdHandler());
-				for (final Entry<ServerLocation, Collection<String>> locEntry : locations
+				final Queryable<Void> insertLocation = q
+						.prepared("ServerLocations.insertLocation");
+				for (final Entry<ConnectedServer, Collection<String>> locEntry : locations
 						.entrySet()) {
-					final ServerLocation l = locEntry.getKey();
-					if (l.getLabel() == null) {
-						throw new IllegalArgumentException();
+					final ConnectedServer s = locEntry.getKey();
+					final ServerLocation l = s.getLocation();
+					if (s.getUuid() == null) {
+						throw new IllegalArgumentException(I18N.err(44, "uuid"));
 					}
-					final long id = insertLocation.call(l.getLabel(), l
-							.getProtocol(), Nulls.coerce(l.getHost()), l
-							.getPort(), Nulls.coerce(l.getContextPath()), Nulls
-							.coerce(l.getUser()), Nulls.coerce(l.getPass()), l
-							.isAutoSync(), Nulls.coerce(l.getUuid()), l
-							.isTeamServer());
+					insertLocation.call(s.getUuid(), l.getProtocol(), Nulls
+							.coerce(l.getHost()), l.getPort(), Nulls.coerce(l
+							.getContextPath()), Nulls.coerce(l.getUser()),
+							Nulls.coerce(l.getPass()), l.isAutoSync(), s
+									.isTeamServer());
 					for (final String project : locEntry.getValue()) {
-						insertServerProject.call(id, project);
+						insertServerProject.call(s.getUuid(), project);
 					}
 				}
 			}
 		};
 	}
 
-	/**
-	 * Update the server location informations for a single server based on it's
-	 * reply.
-	 * 
-	 * @param loc
-	 * @param reply
-	 * @return
-	 */
-	public static DBQuery<Void> updateServerLocationInfo(
-			final SierraServerLocation loc, final ServerInfoReply reply) {
-		return updateServerLocationInfo(Collections.singletonMap(loc, reply));
-	}
-
-	/**
-	 * Update the information for the given set of locations based on their
-	 * replies.
-	 * 
-	 * @param locations
-	 * @return
-	 */
-	public static DBQuery<Void> updateServerLocationInfo(
-			final Map<ServerLocation, ServerInfoReply> locations) {
-		return new DBQuery<Void>() {
-			public Void perform(final Query q) {
-				final Queryable<Void> updateUuid = q
-						.prepared("ServerLocations.updateUuid");
-				for (final Entry<ServerLocation, ServerInfoReply> entry : locations
-						.entrySet()) {
-					final ServerInfoReply reply = entry.getValue();
-					updateUuid.call(reply.getUid(), reply.getServices()
-							.contains(Services.TEAMSERVER), entry.getKey()
-							.getLabel());
+	public static NullDBQuery updateServerIdentities(
+			final List<ServerIdentity> ids) {
+		return new NullDBQuery() {
+			@Override
+			public void doPerform(final Query q) {
+				for (final ServerIdentity id : ids) {
 					final Queryable<Void> delete = q
 							.prepared("ServerLocations.deleteIdentity");
 					final Queryable<Void> insert = q
 							.prepared("ServerLocations.insertIdentity");
-					for (final ServerIdentity id : entry.getValue()
-							.getServers()) {
-						q.prepared("ServerLocations.selectIdentityRevision",
-								new NullResultHandler() {
-									@Override
-									protected void doHandle(final Result result) {
-										for (final Row r : result) {
-											// We don't want to do anything if
-											// we already have a higher revision
-											if (r.nextLong() <= id
-													.getRevision()) {
-												return;
-											}
+					q.prepared("ServerLocations.selectIdentityRevision",
+							new NullResultHandler() {
+								@Override
+								protected void doHandle(final Result result) {
+									for (final Row r : result) {
+										// We don't want to do anything if
+										// we already have a higher revision
+										if (r.nextLong() <= id.getRevision()) {
+											return;
 										}
-										delete.call(id.getServer());
-										insert.call(id.getServer(), id
-												.getName(), id.getRevision());
 									}
-								}).call(id.getServer());
-					}
+									delete.call(id.getServer());
+									insert.call(id.getServer(), id.getName(),
+											id.getRevision());
+								}
+							}).call(id.getServer());
 				}
-				return null;
 			}
 		};
 	}
@@ -141,13 +130,13 @@ public final class ServerLocations {
 	 *            null}
 	 * @return
 	 */
-	public static DBQuery<Map<ServerLocation, Collection<String>>> fetchQuery(
+	public static DBQuery<Map<ConnectedServer, Collection<String>>> fetchQuery(
 			final Map<String, String> passwords) {
 		final Map<String, String> empty = Collections.emptyMap();
 		final Map<String, String> passMap = passwords == null ? empty
 				: passwords;
-		return new DBQuery<Map<ServerLocation, Collection<String>>>() {
-			public Map<ServerLocation, Collection<String>> perform(
+		return new DBQuery<Map<ConnectedServer, Collection<String>>>() {
+			public Map<ConnectedServer, Collection<String>> perform(
 					final Query q) {
 				final Queryable<List<String>> projects = q.prepared(
 						"ServerLocations.listServerProjects",
@@ -155,15 +144,15 @@ public final class ServerLocations {
 				return q
 						.statement(
 								"ServerLocations.listLocations",
-								new ResultHandler<Map<ServerLocation, Collection<String>>>() {
-									public Map<ServerLocation, Collection<String>> handle(
+								new ResultHandler<Map<ConnectedServer, Collection<String>>>() {
+									public Map<ConnectedServer, Collection<String>> handle(
 											final Result result) {
-										final Map<ServerLocation, Collection<String>> map = new HashMap<ServerLocation, Collection<String>>();
+										final Map<ConnectedServer, Collection<String>> map = new HashMap<ConnectedServer, Collection<String>>();
 										// ID,LABEL,PROTOCOL,HOST,PORT,
 										// CONTEXT_PATH,SERVER_USER
 										for (final Row r : result) {
-											final long id = r.nextLong();
-											final String label = r.nextString();
+											final String uuid = r.nextString();
+											final String name = r.nextString();
 											final String protocol = r
 													.nextString();
 											final String host = r.nextString();
@@ -180,16 +169,16 @@ public final class ServerLocations {
 											}
 											final boolean autoSync = r
 													.nextBoolean();
-											final String uuid = r.nextString();
 											final boolean teamServer = r
 													.nextBoolean();
 											final ServerLocation loc = new ServerLocation(
-													label, host, "https"
+													host, "https"
 															.equals(protocol),
 													port, contextPath, user,
-													password, autoSync, uuid,
-													teamServer);
-											map.put(loc, projects.call(id));
+													password, autoSync);
+											final ConnectedServer s = new ConnectedServer(
+													uuid, name, teamServer, loc);
+											map.put(s, projects.call(uuid));
 										}
 										return map;
 									}
@@ -197,5 +186,4 @@ public final class ServerLocations {
 			}
 		};
 	}
-
 }

@@ -37,6 +37,7 @@ import com.surelogic.sierra.tool.message.ServerInfoReply;
 import com.surelogic.sierra.tool.message.ServerInfoRequest;
 import com.surelogic.sierra.tool.message.ServerInfoServiceClient;
 import com.surelogic.sierra.tool.message.ServerLocation;
+import com.surelogic.sierra.tool.message.Services;
 
 /**
  * This class represents implementations of the client-side behavior of the bug
@@ -177,8 +178,8 @@ public class SettingQueries {
 	}
 
 	private static final DBQuery<ServerScanFilterInfo> getScanFilters(
-			final ServerLocation loc,
-			final ListScanFilterRequest request, final boolean update) {
+			final ServerLocation loc, final ListScanFilterRequest request,
+			final boolean update) {
 		final ListScanFilterResponse response = BugLinkServiceClient
 				.create(loc).listScanFilters(request);
 		final Set<ScanFilter> changed = new HashSet<ScanFilter>();
@@ -488,18 +489,28 @@ public class SettingQueries {
 		return types;
 	}
 
-	public static DBQuery<ServerInfoReply> updateServerInfo(
+	/**
+	 * Makes a call to the specified server, and saves the location and
+	 * corresponding server information into the database.
+	 * 
+	 * @param server
+	 * @return the reply from the server
+	 */
+	public static DBQuery<ConnectedServer> checkAndSaveServerLocation(
 			final ServerLocation server) {
 		final ServerInfoReply reply = ServerInfoServiceClient.create(server)
 				.getServerInfo(new ServerInfoRequest());
-		return new DBQuery<ServerInfoReply>() {
-			public ServerInfoReply perform(final Query q) {
-				ServerLocations.updateServerLocationInfo(server, reply)
+		return new DBQuery<ConnectedServer>() {
+			public ConnectedServer perform(final Query q) {
+				ServerLocations.updateServerIdentities(reply.getServers())
 						.perform(q);
-				return reply;
+				final ConnectedServer s = new ConnectedServer(reply.getUid(),
+						reply.getName(), reply.getServices().contains(
+								Services.TEAMSERVER), server);
+				ServerLocations.saveServerLocation(s);
+				return s;
 			}
 		};
 
 	}
-
 }

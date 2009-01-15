@@ -7,15 +7,12 @@ import java.sql.SQLException;
 import java.util.Collections;
 import java.util.List;
 
-import com.surelogic.common.jdbc.ConnectionQuery;
 import com.surelogic.common.jdbc.JDBCUtils;
 import com.surelogic.common.jobs.SLProgressMonitor;
 import com.surelogic.sierra.jdbc.finding.ClientFindingManager;
 import com.surelogic.sierra.jdbc.record.ProjectRecord;
-import com.surelogic.sierra.jdbc.settings.SettingQueries;
-import com.surelogic.sierra.tool.message.ServerInfoReply;
+import com.surelogic.sierra.jdbc.settings.ConnectedServer;
 import com.surelogic.sierra.tool.message.ServerMismatchException;
-import com.surelogic.sierra.tool.message.ServerLocation;
 import com.surelogic.sierra.tool.message.SierraService;
 import com.surelogic.sierra.tool.message.SierraServiceClient;
 import com.surelogic.sierra.tool.message.SyncRequest;
@@ -51,24 +48,25 @@ public final class ClientProjectManager extends ProjectManager {
 		return findingManager;
 	}
 
-	public void synchronizeProject(final ServerLocation server,
+	public void synchronizeProject(final ConnectedServer server,
 			final String projectName, final SLProgressMonitor monitor)
 			throws ServerMismatchException, SQLException {
 		synchronizeProjectWithServer(server, projectName, monitor, false);
 	}
 
 	public List<SyncTrailResponse> getProjectUpdates(
-			final ServerLocation server, final String projectName,
+			final ConnectedServer server, final String projectName,
 			final SLProgressMonitor monitor) throws ServerMismatchException,
 			SQLException {
 		return synchronizeProjectWithServer(server, projectName, monitor, true);
 	}
 
 	private List<SyncTrailResponse> synchronizeProjectWithServer(
-			final ServerLocation server, final String projectName,
+			final ConnectedServer server, final String projectName,
 			final SLProgressMonitor monitor, final boolean serverGet)
 			throws ServerMismatchException, SQLException {
-		final SierraService service = SierraServiceClient.create(server);
+		final SierraService service = SierraServiceClient.create(server
+				.getLocation());
 
 		// Look up project. If it doesn't exist, create it and relate it to the
 		// server.
@@ -86,11 +84,8 @@ public final class ClientProjectManager extends ProjectManager {
 			if (set.next()) {
 				serverUid = set.getString(1);
 			} else {
-				// TODO we should maybe just get the info here, and not actually
-				// update.
-				final ServerInfoReply reply = SettingQueries.updateServerInfo(
-						server).perform(new ConnectionQuery(conn));
-				serverUid = reply.getUid();
+				// TODO Is this still the place we should be doing this?
+				serverUid = server.getUuid();
 				insertServerUid.setLong(1, p.getId());
 				insertServerUid.setString(2, serverUid);
 				insertServerUid.execute();
@@ -119,21 +114,22 @@ public final class ClientProjectManager extends ProjectManager {
 		if (monitor.isCanceled()) {
 			return Collections.emptyList();
 		}
-		monitor.worked(1);		
-		
+		monitor.worked(1);
+
 		new Projects(conn).updateProjectFilter(projectName, reply
 				.getScanFilter());
 		if (!serverGet) {
 			monitor.subTask("Writing remote updates into local database.");
 			findingManager.updateLocalAuditRevision(projectName, server
-					.getUser(), reply.getCommitRevision(), monitor);
+					.getLocation().getUser(), reply.getCommitRevision(),
+					monitor);
 			findingManager.updateLocalFindings(projectName, reply.getTrails(),
 					monitor);
 			if (monitor.isCanceled()) {
 				return Collections.emptyList();
 			}
 			monitor.worked(1);
-			
+
 			// Update settings
 			// TODO
 			monitor.subTask("Checking for updated settings for project "

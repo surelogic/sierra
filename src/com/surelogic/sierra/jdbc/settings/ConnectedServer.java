@@ -35,17 +35,20 @@ public class ConnectedServer {
 	 *             if <tt>uuid</tt>, <tt>name</tt> or <tt>location</tt> are
 	 *             {@code null}.
 	 */
-	public ConnectedServer(String uuid, String name, boolean isTeamServer,
-			ServerLocation location) {
-		if (uuid == null)
+	public ConnectedServer(final String uuid, final String name,
+			final boolean isTeamServer, final ServerLocation location) {
+		if (uuid == null) {
 			throw new IllegalArgumentException(I18N.err(44, "uuid"));
+		}
 		f_uuid = uuid;
-		if (name == null)
+		if (name == null) {
 			throw new IllegalArgumentException(I18N.err(44, "name"));
+		}
 		f_name = name;
 		f_isTeamServer = isTeamServer;
-		if (location == null)
+		if (location == null) {
 			throw new IllegalArgumentException(I18N.err(44, "location"));
+		}
 		f_location = location;
 	}
 
@@ -85,5 +88,10 @@ public class ConnectedServer {
 	 */
 	public boolean isTeamServer() {
 		return f_isTeamServer;
+	}
+
+	@Override
+	public String toString() {
+		return "Uuid: " + f_uuid + "Location: " + f_location;
 	}
 }
