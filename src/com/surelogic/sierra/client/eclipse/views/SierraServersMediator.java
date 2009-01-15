@@ -111,7 +111,7 @@ import com.surelogic.sierra.tool.message.ListCategoryResponse;
 import com.surelogic.sierra.tool.message.ListScanFilterRequest;
 import com.surelogic.sierra.tool.message.ScanFilter;
 import com.surelogic.sierra.tool.message.ServerMismatchException;
-import com.surelogic.sierra.tool.message.SierraServerLocation;
+import com.surelogic.sierra.tool.message.ServerLocation;
 import com.surelogic.sierra.tool.message.SierraServiceClientException;
 import com.surelogic.sierra.tool.message.SyncTrailResponse;
 
@@ -1321,7 +1321,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 						.getServerFailureReporting();
 				TroubleshootConnection tc;
 				try {
-					final SierraServerLocation loc = server.getServer();
+					final ServerLocation loc = server.getServer();
 					if (!onlyServer) {
 						responses = cpm.getProjectUpdates(loc, name, monitor);
 					}
@@ -1401,7 +1401,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 	}
 
 	private ServerUpdateStatus checkForBugLinkUpdates(final Connection c,
-			ServerUpdateStatus serverResponse, final SierraServerLocation loc) {
+			ServerUpdateStatus serverResponse, final ServerLocation loc) {
 		// See if we need to pick up BugLink data
 		if (serverResponse == null) {
 			final Query q = new ConnectionQuery(c);
