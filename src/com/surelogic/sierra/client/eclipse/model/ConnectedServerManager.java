@@ -220,7 +220,7 @@ public final class ConnectedServerManager extends
 		final ConnectedServer newServer;
 		synchronized (this) {
 			f_servers.remove(server);
-			newServer = new ConnectedServer(server, user, pass, savePassword);
+			newServer = server.changeAuthorization(user, pass, savePassword);
 			f_servers.add(newServer);
 		}
 		notifyObservers();
@@ -237,9 +237,16 @@ public final class ConnectedServerManager extends
 	 *            {@code true} if the the client should automatically
 	 *            synchronize with this server, {@code false} if not.
 	 */
-	public void setAutoSyncFor(final ConnectedServer server,
+	public ConnectedServer setAutoSyncFor(final ConnectedServer server,
 			final boolean autoSync) {
-		// TODO
+		final ConnectedServer newServer;
+		synchronized (this) {
+			f_servers.remove(server);
+			newServer = server.changeAutoSync(autoSync);
+			f_servers.add(newServer);
+		}
+		notifyObservers();
+		return newServer;
 	}
 
 	/**
