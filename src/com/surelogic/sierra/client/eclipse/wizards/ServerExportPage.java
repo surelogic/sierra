@@ -11,12 +11,12 @@ import org.eclipse.swt.widgets.*;
 
 import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.common.images.CommonImages;
-import com.surelogic.sierra.client.eclipse.model.SierraServer;
 import com.surelogic.sierra.client.eclipse.model.ConnectedServerManager;
 import com.surelogic.sierra.client.eclipse.model.SierraServerPersistence;
+import com.surelogic.sierra.jdbc.settings.ConnectedServer;
 
-public class ServerExportPage extends AbstractExportWizardPage<SierraServer> {
-	private final List<SierraServer> f_SelectedSierraServers = f_selections;
+public class ServerExportPage extends AbstractExportWizardPage<ConnectedServer> {
+	private final List<ConnectedServer> f_SelectedSierraServers = f_selections;
 
 	public ServerExportPage() {
 		super("SierraServerExportWizardPage", "Sierra Team Server location"); //$NON-NLS-1$
@@ -31,12 +31,12 @@ public class ServerExportPage extends AbstractExportWizardPage<SierraServer> {
 	public void createControl(Composite parent) {
     setupControl(parent, "Select the Sierra Team Server locations to export:",
         new SierraServerContentProvider(), new SierraServerLabelProvider(),
-        SierraServer.class, "sierra-team-server-locations.xml");
+        ConnectedServer.class, "sierra-team-server-locations.xml");
 	}
 
   @Override
 	protected void initializeTable() {
-		Set<SierraServer> servers = ConnectedServerManager.getInstance()
+		Set<ConnectedServer> servers = ConnectedServerManager.getInstance()
 				.getServers();
 
 		f_TableViewer.setInput(servers);
@@ -77,16 +77,16 @@ public class ServerExportPage extends AbstractExportWizardPage<SierraServer> {
 	private static class SierraServerLabelProvider implements ILabelProvider {
 
 		public Image getImage(Object element) {
-			if (element instanceof SierraServer) {
+			if (element instanceof ConnectedServer) {
 				return SLImages.getImage(CommonImages.IMG_SIERRA_SERVER);
 			}
 			return null;
 		}
 
 		public String getText(Object element) {
-			if (element instanceof SierraServer) {
-				SierraServer holder = (SierraServer) element;
-				return holder.getLabel();
+			if (element instanceof ConnectedServer) {
+				ConnectedServer holder = (ConnectedServer) element;
+				return holder.getName();
 			}
 			return null;
 		}

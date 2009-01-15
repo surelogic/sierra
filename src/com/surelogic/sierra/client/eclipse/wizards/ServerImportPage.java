@@ -32,6 +32,7 @@ import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.model.ImportPageServerHolder;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
 import com.surelogic.sierra.client.eclipse.model.ConnectedServerManager;
+import com.surelogic.sierra.jdbc.settings.ConnectedServer;
 
 /**
  * The server import page.
@@ -104,7 +105,7 @@ public class ServerImportPage extends AbstractImportWizardPage {
 		for (TableItem ti : items) {
 
 			if (ti.getChecked()) {
-				SierraServer server = manager.create();
+				ConnectedServer server = manager.create();
 				if (ti.getData() instanceof ImportPageServerHolder) {
 					ImportPageServerHolder holder = (ImportPageServerHolder) ti
 							.getData();
@@ -310,11 +311,11 @@ public class ServerImportPage extends AbstractImportWizardPage {
 				throw new IllegalStateException();
 			}
 
-			Set<SierraServer> existingServers = ConnectedServerManager
+			Set<ConnectedServer> existingServers = ConnectedServerManager
 					.getInstance().getServers();
 			Set<String> serverLabels = new HashSet<String>();
-			for (SierraServer s : existingServers) {
-				serverLabels.add(s.getLabel());
+			for (ConnectedServer s : existingServers) {
+				serverLabels.add(s.getName());
 			}
 
 			// Load new servers
