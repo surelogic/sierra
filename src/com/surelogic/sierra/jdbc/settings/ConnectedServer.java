@@ -131,6 +131,57 @@ public class ConnectedServer {
 	}
 
 	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (f_isTeamServer ? 1231 : 1237);
+		result = prime * result
+				+ ((f_location == null) ? 0 : f_location.hashCode());
+		result = prime * result + ((f_name == null) ? 0 : f_name.hashCode());
+		result = prime * result + ((f_uuid == null) ? 0 : f_uuid.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(final Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		final ConnectedServer other = (ConnectedServer) obj;
+		if (f_isTeamServer != other.f_isTeamServer) {
+			return false;
+		}
+		if (f_location == null) {
+			if (other.f_location != null) {
+				return false;
+			}
+		} else if (!f_location.equals(other.f_location)) {
+			return false;
+		}
+		if (f_name == null) {
+			if (other.f_name != null) {
+				return false;
+			}
+		} else if (!f_name.equals(other.f_name)) {
+			return false;
+		}
+		if (f_uuid == null) {
+			if (other.f_uuid != null) {
+				return false;
+			}
+		} else if (!f_uuid.equals(other.f_uuid)) {
+			return false;
+		}
+		return true;
+	}
+
+	@Override
 	public String toString() {
 		return "Uuid: " + f_uuid + "Location: " + f_location;
 	}
