@@ -333,8 +333,8 @@ public final class ConnectedServerManager extends
 		for (final ConnectedServer s : getServers()) {
 			servers.put(s, getProjectsConnectedTo(s));
 			final ServerLocation l = s.getLocation();
-			if (l.getUser() != null && l.getPass() != null) {
-				map.put(l.getUser(), l.getPass());
+			if (l.isSavePassword() && l.getPass() != null) {
+				map.put(l.getUser() + "@" + l.getHost(), l.getPass());
 			}
 		}
 		try {
@@ -353,10 +353,12 @@ public final class ConnectedServerManager extends
 	}
 
 	private void load() {
+		final Map<String, String> passwords = Platform.getAuthorizationInfo(
+				FAKE_URL, "", AUTH_SCHEME);
 		try {
 			final Map<ConnectedServer, Collection<String>> map = Data
 					.getInstance().withReadOnly(
-							ServerLocations.fetchQuery(null));
+							ServerLocations.fetchQuery(passwords));
 			f_projectNameToServer.clear();
 			f_servers.clear();
 			for (final Entry<ConnectedServer, Collection<String>> entry : map
@@ -364,12 +366,18 @@ public final class ConnectedServerManager extends
 				final ConnectedServer s = entry.getKey();
 				f_servers.add(s);
 				for (final String project : entry.getValue()) {
-					f_projectNameToServer.put(project, s);
+					connect(project, s);
 				}
 			}
 		} catch (final Exception e) {
 			SLLogger.getLogger().log(Level.SEVERE,
 					"Failure loading connected server data", e);
+		} finally {
+			try {
+				Platform.flushAuthorizationInfo(FAKE_URL, "", AUTH_SCHEME);
+			} catch (final CoreException e) {
+				SLLogger.getLogger().log(Level.SEVERE, I18N.err(42), e);
+			}
 		}
 	}
 
