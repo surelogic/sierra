@@ -14,6 +14,8 @@ public class ServerInfoReply {
 
 	private String uid;
 
+	private String name;
+
 	public List<Services> getServices() {
 		if (services == null) {
 			services = new ArrayList<Services>();
@@ -31,6 +33,14 @@ public class ServerInfoReply {
 
 	public void setUid(final String uid) {
 		this.uid = uid;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(final String name) {
+		this.name = name;
 	}
 
 	public List<ServerIdentity> getServers() {
