@@ -305,7 +305,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 				"No server to toggle") {
 			@Override
 			protected void handleEventOnServer(final ConnectedServer server) {
-				server.setAutoSync(!server.autoSync());
+				ConnectedServerManager.getInstance().setAutoSyncFor(server, !server.getLocation().isAutoSync());
 				ConnectedServerManager.getInstance().notifyObservers();
 			}
 		};		
