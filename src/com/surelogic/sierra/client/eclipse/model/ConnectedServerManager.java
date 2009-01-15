@@ -334,6 +334,7 @@ public final class ConnectedServerManager extends
 		FAKE_URL = temp;
 	}
 
+	@SuppressWarnings( { "deprecation", "unchecked" })
 	private synchronized void save() {
 		final Map<ConnectedServer, Collection<String>> servers = new HashMap<ConnectedServer, Collection<String>>();
 		Map<String, String> map = Platform.getAuthorizationInfo(FAKE_URL, "",
