@@ -13,7 +13,7 @@ import com.surelogic.sierra.message.srpc.SRPCClient;
  */
 public class SierraServiceClient {
 
-	public static SierraService create(SierraServerLocation location) {
+	public static SierraService create(ServerLocation location) {
 		return SRPCClient.createClient(location, SierraService.class, true);
 	}
 }

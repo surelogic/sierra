@@ -11,7 +11,7 @@ import com.surelogic.sierra.message.srpc.SRPCClient;
  */
 public class SupportServiceClient {
 
-	public static SupportService create(final SierraServerLocation location) {
+	public static SupportService create(final ServerLocation location) {
 		return SRPCClient.createClient(location, SupportService.class, true);
 	}
 }

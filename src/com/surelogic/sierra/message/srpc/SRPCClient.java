@@ -23,7 +23,7 @@ import org.apache.commons.httpclient.methods.PostMethod;
 
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.tool.message.InvalidLoginException;
-import com.surelogic.sierra.tool.message.SierraServerLocation;
+import com.surelogic.sierra.tool.message.ServerLocation;
 import com.surelogic.sierra.tool.message.SierraServiceClientException;
 
 /**
@@ -41,7 +41,7 @@ public final class SRPCClient implements InvocationHandler {
 	private final Set<Method> methods;
 
 	private SRPCClient(Method[] methods, Encoding codec,
-			SierraServerLocation location, String service) {
+			ServerLocation location, String service) {
 		client = new HttpClient();
 		final String user = location.getUser();
 		if (user != null) {
@@ -114,7 +114,7 @@ public final class SRPCClient implements InvocationHandler {
 	 * @param clazz
 	 * @return
 	 */
-	public static <T> T createClient(SierraServerLocation location,
+	public static <T> T createClient(ServerLocation location,
 			Class<T> clazz, boolean compressed) throws SRPCException {
 		if (!Service.class.isAssignableFrom(clazz)) {
 			throw new IllegalArgumentException(
