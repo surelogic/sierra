@@ -23,17 +23,6 @@ public class ServerLocation {
 	private final boolean f_autoSync;
 
 	/**
-	 * Copy constructor.
-	 * 
-	 * @param from
-	 *            a server location object.
-	 */
-	public ServerLocation(ServerLocation from) {
-		this(from.f_host, from.f_secure, from.f_port, from.f_contextPath,
-				from.f_user, from.f_password, from.f_autoSync);
-	}
-
-	/**
 	 * Constructs a server location object.
 	 * 
 	 * @param host
