@@ -43,12 +43,16 @@ public final class ServerLocations {
 			@Override
 			public void doPerform(final Query q) {
 				final ServerLocation l = s.getLocation();
-				q.prepared("ServerLocations.insertLocation").call(s.getUuid(),
-						l.getProtocol(), Nulls.coerce(l.getHost()),
-						l.getPort(), Nulls.coerce(l.getContextPath()),
-						Nulls.coerce(savePassword ? l.getUser() : null),
-						Nulls.coerce(savePassword ? l.getPass() : null),
-						l.isAutoSync(), l.isSavePassword(), s.isTeamServer());
+				q.prepared("ServerLocations.insertLocation").call(
+						s.getUuid(),
+						l.getProtocol(),
+						Nulls.coerce(l.getHost()),
+						l.getPort(),
+						Nulls.coerce(l.getContextPath()),
+						Nulls.coerce(l.getUser()),
+						Nulls.coerce(savePassword && l.isSavePassword() ? l
+								.getPass() : null), l.isAutoSync(),
+						l.isSavePassword(), s.isTeamServer());
 			}
 		};
 	}
@@ -82,10 +86,10 @@ public final class ServerLocations {
 					}
 					insertLocation.call(s.getUuid(), l.getProtocol(), Nulls
 							.coerce(l.getHost()), l.getPort(), Nulls.coerce(l
-							.getContextPath()), Nulls.coerce(savePassword ? l
-							.getUser() : null), Nulls.coerce(savePassword ? l
-							.getPass() : null), l.isAutoSync(), l
-							.isSavePassword(), s.isTeamServer());
+							.getContextPath()), Nulls.coerce(l.getUser()),
+							Nulls.coerce(savePassword && l.isSavePassword() ? l
+									.getPass() : null), l.isAutoSync(), l
+									.isSavePassword(), s.isTeamServer());
 					for (final String project : locEntry.getValue()) {
 						insertServerProject.call(s.getUuid(), project);
 					}
