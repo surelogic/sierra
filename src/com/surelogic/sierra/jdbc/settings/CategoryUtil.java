@@ -17,7 +17,7 @@ public class CategoryUtil {
 
 	public static void main(final String[] args) {
 		final ServerLocation buglink = new ServerLocation("buglink.org", false,
-				13376, "/sl/", "admin", "fluid!sl!ftw", false, true);
+				13376, "/sl/", "admin", "fluid!sl!ftw", true, false);
 		writeCategories(
 				buglink,
 				new File(

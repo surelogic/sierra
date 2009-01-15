@@ -196,8 +196,8 @@ public final class ServerLocations {
 													host, "https"
 															.equals(protocol),
 													port, contextPath, user,
-													password, autoSync,
-													savePass);
+													password, savePass,
+													autoSync);
 											final ConnectedServer s = new ConnectedServer(
 													uuid, name, teamServer, loc);
 											map.put(s, projects.call(uuid));
