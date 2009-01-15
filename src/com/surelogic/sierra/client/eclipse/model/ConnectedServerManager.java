@@ -365,6 +365,7 @@ public final class ConnectedServerManager extends
 	/**
 	 * @return {@code} if any changes were made, {@code false} otherwise.
 	 */
+	@SuppressWarnings( { "deprecation", "unchecked" })
 	private boolean load() {
 		final Map<String, String> passwords = Platform.getAuthorizationInfo(
 				FAKE_URL, "", AUTH_SCHEME);
@@ -372,6 +373,9 @@ public final class ConnectedServerManager extends
 			final Map<ConnectedServer, Collection<String>> map = Data
 					.getInstance().withReadOnly(
 							ServerLocations.fetchQuery(passwords));
+			final Set<ConnectedServer> servers = new HashSet<ConnectedServer>(
+					f_servers);
+			final Map<String, ConnectedServer> projects = new HashMap<String, ConnectedServer>();
 			f_projectNameToServer.clear();
 			f_servers.clear();
 			for (final Entry<ConnectedServer, Collection<String>> entry : map
@@ -382,6 +386,30 @@ public final class ConnectedServerManager extends
 					connect(project, s);
 				}
 			}
+			// Check to see if anything has changed.
+			// Do we still have the same connected servers?
+			if (!servers.equals(map.keySet())) {
+				return true;
+			}
+			// Are all of the new project associations the same as old project
+			// associations?
+			for (final ConnectedServer s : servers) {
+				for (final String project : map.get(s)) {
+					if (!projects.get(project).equals(s)) {
+						return true;
+					}
+				}
+			}
+			// Are all of the old project associations the same as new project
+			// associations?
+			for (final Entry<String, ConnectedServer> entry : projects
+					.entrySet()) {
+				if (!map.get(entry.getValue()).contains(entry.getKey())) {
+					return true;
+				}
+			}
+			return false;
+
 		} catch (final Exception e) {
 			SLLogger.getLogger().log(Level.SEVERE,
 					"Failure loading connected server data", e);
@@ -417,7 +445,8 @@ public final class ConnectedServerManager extends
 		/*
 		 * This could have updated the information we care about.
 		 */
-		if (load())
+		if (load()) {
 			notifyObservers();
+		}
 	}
 }
