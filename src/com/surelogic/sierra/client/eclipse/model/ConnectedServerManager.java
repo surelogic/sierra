@@ -1,6 +1,7 @@
 package com.surelogic.sierra.client.eclipse.model;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -8,12 +9,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 
 import com.surelogic.common.ILifecycle;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.logging.SLLogger;
+import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.jdbc.settings.ConnectedServer;
+import com.surelogic.sierra.jdbc.settings.ServerLocations;
 
 /**
  * Manages the set of connected servers.
@@ -143,7 +147,7 @@ public final class ConnectedServerManager extends
 	public String[] getNames() {
 		final List<String> names = new ArrayList<String>();
 		synchronized (this) {
-			for (ConnectedServer server : f_servers) {
+			for (final ConnectedServer server : f_servers) {
 				names.add(server.getName());
 			}
 		}
@@ -175,8 +179,9 @@ public final class ConnectedServerManager extends
 				notify = true;
 			}
 		}
-		if (notify)
+		if (notify) {
 			notifyObservers();
+		}
 	}
 
 	/**
@@ -214,8 +219,9 @@ public final class ConnectedServerManager extends
 		synchronized (this) {
 			notify = server != f_projectNameToServer.put(projectName, server);
 		}
-		if (notify)
+		if (notify) {
 			notifyObservers();
+		}
 	}
 
 	public void disconnect(final String projectName) {
@@ -223,8 +229,9 @@ public final class ConnectedServerManager extends
 		synchronized (this) {
 			notify = null != f_projectNameToServer.remove(projectName);
 		}
-		if (notify)
+		if (notify) {
 			notifyObservers();
+		}
 	}
 
 	public ConnectedServer getServer(final String projectName) {
@@ -256,13 +263,29 @@ public final class ConnectedServerManager extends
 	}
 
 	private synchronized void save() {
-		// SierraServerPersistence.save(this);
+		final Map<ConnectedServer, Collection<String>> map = new HashMap<ConnectedServer, Collection<String>>();
+		for (final ConnectedServer s : getServers()) {
+			map.put(s, getProjectsConnectedTo(s));
+		}
+		Data.getInstance().withTransaction(ServerLocations.saveQuery(map));
 	}
 
 	private void load() {
 		try {
-			// SierraServerPersistence.load(this);
-		} catch (Exception e) {
+			final Map<ConnectedServer, Collection<String>> map = Data
+					.getInstance().withReadOnly(
+							ServerLocations.fetchQuery(null));
+			f_projectNameToServer.clear();
+			f_servers.clear();
+			for (final Entry<ConnectedServer, Collection<String>> entry : map
+					.entrySet()) {
+				final ConnectedServer s = entry.getKey();
+				f_servers.add(s);
+				for (final String project : entry.getValue()) {
+					f_projectNameToServer.put(project, s);
+				}
+			}
+		} catch (final Exception e) {
 			SLLogger.getLogger().log(Level.SEVERE,
 					"Failure loading connected server data", e);
 		}
