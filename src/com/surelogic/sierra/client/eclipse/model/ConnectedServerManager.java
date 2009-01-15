@@ -203,10 +203,17 @@ public final class ConnectedServerManager extends
 	}
 
 	/**
+	 * This method changes the authorization information for a specified server.
 	 * 
 	 * @param server
+	 *            the server to change.
 	 * @param user
+	 *            the new user name.
 	 * @param pass
+	 *            the new password.
+	 * @param savePassword
+	 *            {@code true} if the password should persist longer than this
+	 *            session, {@code false} if not.
 	 */
 	public void changeAuthorizationFor(final ConnectedServer server,
 			final String user, final String pass, final boolean savePassword) {
@@ -216,7 +223,22 @@ public final class ConnectedServerManager extends
 					pass, savePassword);
 			f_servers.add(newServer);
 		}
+		notifyObservers();
+	}
 
+	/**
+	 * This method changes the setting for automatic synchronization for a
+	 * specified server.
+	 * 
+	 * @param server
+	 *            the server to change.
+	 * @param autoSync
+	 *            {@code true} if the the client should automatically
+	 *            synchronize with this server, {@code false} if not.
+	 */
+	public void setAutoSyncFor(final ConnectedServer server,
+			final boolean autoSync) {
+		// TODO
 	}
 
 	/**
