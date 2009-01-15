@@ -215,15 +215,16 @@ public final class ConnectedServerManager extends
 	 *            {@code true} if the password should persist longer than this
 	 *            session, {@code false} if not.
 	 */
-	public void changeAuthorizationFor(final ConnectedServer server,
+	public ConnectedServer changeAuthorizationFor(final ConnectedServer server,
 			final String user, final String pass, final boolean savePassword) {
+		final ConnectedServer newServer;
 		synchronized (this) {
 			f_servers.remove(server);
-			final ConnectedServer newServer = new ConnectedServer(server, user,
-					pass, savePassword);
+			newServer = new ConnectedServer(server, user, pass, savePassword);
 			f_servers.add(newServer);
 		}
 		notifyObservers();
+		return newServer;
 	}
 
 	/**

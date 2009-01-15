@@ -17,6 +17,7 @@ import org.eclipse.swt.widgets.Text;
 import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.images.CommonImages;
+import com.surelogic.sierra.client.eclipse.model.ConnectedServerManager;
 import com.surelogic.sierra.jdbc.settings.ConnectedServer;
 
 /**
@@ -24,7 +25,7 @@ import com.surelogic.sierra.jdbc.settings.ConnectedServer;
  */
 public final class ServerAuthenticationDialog extends Dialog {
 
-	private final ConnectedServer f_server;
+	private ConnectedServer f_server;
 
 	private Text f_userText;
 	private Text f_passwordText;
@@ -77,7 +78,7 @@ public final class ServerAuthenticationDialog extends Dialog {
 		data.heightHint = 20;
 		directions.setLayoutData(data);
 		directions.setText("Enter your authentication for '"
-				+ f_server.getLabel() + "'");
+				+ f_server.getName() + "'");
 
 		final Label serverImg = new Label(entryPanel, SWT.NONE);
 		serverImg.setImage(SLImages.getImage(CommonImages.IMG_SIERRA_SERVER));
@@ -85,8 +86,8 @@ public final class ServerAuthenticationDialog extends Dialog {
 		data.heightHint = 25;
 		serverImg.setLayoutData(data);
 		final Label serverlabel = new Label(entryPanel, SWT.NONE);
-		serverlabel.setText(f_server.getProtocol() + "://" + f_server.getHost()
-				+ " on port " + f_server.getPort());
+		serverlabel.setText(f_server.getLocation().getProtocol() + "://" + f_server.getLocation().getHost()
+				+ " on port " + f_server.getLocation().getPort());
 		serverlabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false,
 				true));
 
@@ -97,7 +98,7 @@ public final class ServerAuthenticationDialog extends Dialog {
 		f_userText = new Text(entryPanel, SWT.SINGLE | SWT.BORDER);
 		f_userText
 				.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, true));
-		f_userText.setText(f_server.getUser());
+		f_userText.setText(f_server.getLocation().getUser());
 
 		final Label passwordLabel = new Label(entryPanel, SWT.NONE);
 		passwordLabel.setText("Password:");
@@ -141,9 +142,8 @@ public final class ServerAuthenticationDialog extends Dialog {
 
 	@Override
 	protected void okPressed() {
-		f_server.setUser(f_userText.getText());
-		f_server.setPassword(f_passwordText.getText());
-		f_server.setSavePassword(f_savePassword);
+		f_server = ConnectedServerManager.getInstance()
+		           .changeAuthorizationFor(f_server, f_userText.getText(), f_passwordText.getText(), f_savePassword);
 		super.okPressed();
 	}
 
@@ -175,9 +175,9 @@ public final class ServerAuthenticationDialog extends Dialog {
 	 *            the action to invoke on the project and the server.
 	 */
 	public static void promptPasswordIfNecessary(final String projectName,
-			final SierraServer server, final Shell shell,
+			final ConnectedServer server, final Shell shell,
 			final ServerActionOnAProject action) {
-		if (!server.savePassword() && !server.usedToConnectToAServer()) {
+		if (!server.getLocation().isSavePassword() && !server.usedToConnectToAServer()) {
 			ServerAuthenticationDialog dialog = new ServerAuthenticationDialog(
 					shell, server);
 			if (dialog.open() == Window.CANCEL) {
