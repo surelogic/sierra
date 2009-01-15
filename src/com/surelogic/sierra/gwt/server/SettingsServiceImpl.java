@@ -60,7 +60,7 @@ import com.surelogic.sierra.jdbc.tool.ArtifactTypeDO;
 import com.surelogic.sierra.jdbc.tool.FindingTypeDO;
 import com.surelogic.sierra.jdbc.tool.FindingTypes;
 import com.surelogic.sierra.jdbc.user.User;
-import com.surelogic.sierra.tool.message.SierraServerLocation;
+import com.surelogic.sierra.tool.message.ServerLocation;
 
 public final class SettingsServiceImpl extends SierraServiceServlet implements
 		SettingsService {
@@ -132,8 +132,8 @@ public final class SettingsServiceImpl extends SierraServiceServlet implements
 						 * Get the server locations that we know about, keyed by
 						 * label
 						 */
-						final Map<String, SierraServerLocation> locations = new HashMap<String, SierraServerLocation>();
-						for (final SierraServerLocation location : ServerLocations
+						final Map<String, ServerLocation> locations = new HashMap<String, ServerLocation>();
+						for (final ServerLocation location : ServerLocations
 								.fetchQuery(null).perform(q).keySet()) {
 							locations.put(location.getLabel(), location);
 						}
@@ -161,7 +161,7 @@ public final class SettingsServiceImpl extends SierraServiceServlet implements
 									&& serverUID.equals(owningServer[0]));
 							if (owningServer != null) {
 								set.setOwnerLabel(owningServer[1]);
-								final SierraServerLocation owner = locations
+								final ServerLocation owner = locations
 										.get(owningServer[1]);
 								if (owner != null) {
 									final StringBuilder urlBuf = new StringBuilder(
@@ -591,7 +591,7 @@ public final class SettingsServiceImpl extends SierraServiceServlet implements
 	@SuppressWarnings("unchecked")
 	public List<ServerLocation> listServerLocations() {
 		final List<ServerLocation> servers = new ArrayList<com.surelogic.sierra.gwt.client.data.ServerLocation>();
-		for (final SierraServerLocation l : ConnectionFactory
+		for (final ServerLocation l : ConnectionFactory
 				.getInstance()
 				.withReadOnly(ServerLocations.fetchQuery(Collections.EMPTY_MAP))
 				.keySet()) {
@@ -613,10 +613,10 @@ public final class SettingsServiceImpl extends SierraServiceServlet implements
 				new DBQuery<Status>() {
 
 					public Status perform(final Query q) {
-						final Map<SierraServerLocation, Collection<String>> servers = ServerLocations
+						final Map<ServerLocation, Collection<String>> servers = ServerLocations
 								.fetchQuery(null).perform(q);
-						SierraServerLocation loc = null;
-						for (final SierraServerLocation l : servers.keySet()) {
+						ServerLocation loc = null;
+						for (final ServerLocation l : servers.keySet()) {
 							if (l.getLabel().equals(label)) {
 								loc = l;
 								break;
@@ -636,10 +636,10 @@ public final class SettingsServiceImpl extends SierraServiceServlet implements
 				new DBQuery<Status>() {
 
 					public Status perform(final Query q) {
-						final Map<SierraServerLocation, Collection<String>> servers = ServerLocations
+						final Map<ServerLocation, Collection<String>> servers = ServerLocations
 								.fetchQuery(null).perform(q);
 						// TODO is autosync meaningful on the server?
-						final SierraServerLocation l = new SierraServerLocation(
+						final ServerLocation l = new ServerLocation(
 								loc.getLabel(), loc.getHost(), loc
 										.getProtocol() == Protocol.HTTPS, loc
 										.getPort(), loc.getContext(), loc
