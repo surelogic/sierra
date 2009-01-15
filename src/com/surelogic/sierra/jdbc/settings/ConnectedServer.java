@@ -52,10 +52,44 @@ public class ConnectedServer {
 		f_location = location;
 	}
 
-	public ConnectedServer(final ConnectedServer from, final String user,
+	/**
+	 * Creates a new server with changed authorization information.
+	 * <p>
+	 * Do not call this method if you are working with this object through a
+	 * server manager.
+	 * 
+	 * @param user
+	 *            a saved user name to use with this server, or {@code null} is
+	 *            the user name is not saved.
+	 * @param pass
+	 *            a saved password to use with this server, or {@code null} is
+	 *            the password is not saved.
+	 * @param savePassword
+	 *            {{@code true} if the password should persist longer than this
+	 *            session, {@code false} if not.
+	 * @return a new server.
+	 */
+	public ConnectedServer changeAuthorization(final String user,
 			final String pass, final boolean savePassword) {
-		this(from.f_uuid, from.f_name, from.f_isTeamServer, from.getLocation()
-				.changeAuthorization(user, pass, savePassword));
+		return new ConnectedServer(f_uuid, f_name, f_isTeamServer,
+				getLocation().changeAuthorization(user, pass, savePassword));
+	}
+
+	/**
+	 * Creates a new server with a changed automatic synchronization flag.
+	 * <p>
+	 * Do not call this method if you are working with this object through a
+	 * server manager.
+	 * 
+	 * @param autoSync
+	 *            {@code true} if the the client should automatically
+	 *            synchronize with this server, {@code false} if not.
+	 * 
+	 * @return a new server.
+	 */
+	public ConnectedServer changeAutoSync(final boolean autoSync) {
+		return new ConnectedServer(f_uuid, f_name, f_isTeamServer,
+				getLocation().changeAutoSync(autoSync));
 	}
 
 	/**
