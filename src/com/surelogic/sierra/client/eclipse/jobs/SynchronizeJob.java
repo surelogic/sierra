@@ -22,10 +22,10 @@ import com.surelogic.sierra.client.eclipse.actions.TroubleshootWrongServer;
 import com.surelogic.sierra.client.eclipse.model.DatabaseHub;
 import com.surelogic.sierra.client.eclipse.model.Projects;
 import com.surelogic.sierra.client.eclipse.model.ServerSyncType;
-import com.surelogic.sierra.client.eclipse.model.SierraServer;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
 import com.surelogic.sierra.client.eclipse.preferences.ServerFailureReport;
 import com.surelogic.sierra.jdbc.project.ClientProjectManager;
+import com.surelogic.sierra.jdbc.settings.ConnectedServer;
 import com.surelogic.sierra.jdbc.settings.SettingQueries;
 import com.surelogic.sierra.tool.message.ServerMismatchException;
 import com.surelogic.sierra.tool.message.ServerLocation;
@@ -58,13 +58,13 @@ public class SynchronizeJob extends AbstractServerProjectJob {
 	 *            the method to report problems that the job encounters.
 	 */
 	public SynchronizeJob(final ServerProjectGroupJob family,
-			final String projectName, final SierraServer server,
+			final String projectName, final ConnectedServer server,
 			final ServerSyncType syncType, final boolean force,
 			final ServerFailureReport method) {
 		super(
 				family,
 				syncType.equals(ServerSyncType.BUGLINK) ? "Synchronizing BugLink data for server '"
-						+ server.getLabel() + "'"
+						+ server.getName() + "'"
 						: "Synchronizing Sierra data for project '"
 								+ projectName + "'", server, projectName,
 				method);
@@ -128,10 +128,10 @@ public class SynchronizeJob extends AbstractServerProjectJob {
 
 		public IStatus perform(final Connection conn) throws Exception {
 			final Query q = new ConnectionQuery(conn);
-			SettingQueries.updateServerInfo(f_server.getServer()).perform(q);
+			SettingQueries.updateServerInfo(f_server.getLocation()).perform(q);
 			if (f_syncType.syncBugLink() && joinJob != null
 					&& joinJob.process(f_server)) {
-				final ServerLocation loc = f_server.getServer();
+				final ServerLocation loc = f_server.getLocation();
 				SettingQueries.retrieveCategories(loc,
 						SettingQueries.categoryRequest().perform(q)).perform(q);
 				SettingQueries.retrieveScanFilters(loc,
@@ -141,7 +141,7 @@ public class SynchronizeJob extends AbstractServerProjectJob {
 			}
 			if (f_syncType.syncProjects()) {
 				ClientProjectManager.getInstance(conn).synchronizeProject(
-						f_server.getServer(), f_projectName, slMonitor);
+						f_server, f_projectName, slMonitor);
 			}
 			f_server.markAsConnected();
 			if (slMonitor.isCanceled()) {

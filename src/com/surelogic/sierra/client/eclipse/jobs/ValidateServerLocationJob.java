@@ -3,13 +3,10 @@ package com.surelogic.sierra.client.eclipse.jobs;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.window.Window;
 
-import com.surelogic.sierra.client.eclipse.actions.SynchronizeBugLinkServerAction;
-import com.surelogic.sierra.client.eclipse.dialogs.ServerLocationDialog;
 import com.surelogic.sierra.client.eclipse.model.ServerSyncType;
-import com.surelogic.sierra.client.eclipse.model.SierraServer;
 import com.surelogic.sierra.client.eclipse.preferences.ServerFailureReport;
+import com.surelogic.sierra.jdbc.settings.ConnectedServer;
 import com.surelogic.sierra.tool.message.ServerInfoReply;
 import com.surelogic.sierra.tool.message.ServerInfoRequest;
 import com.surelogic.sierra.tool.message.ServerInfoService;
@@ -29,10 +26,10 @@ public class ValidateServerLocationJob extends AbstractServerProjectJob {
 	 * @param server
 	 *            the non-null server to contact.
 	 */
-	public ValidateServerLocationJob(SierraServer server,
+	public ValidateServerLocationJob(ConnectedServer server,
 			ServerLocation location, boolean savePassword,
 			boolean validate, boolean autoSync) {
-		super(null, "Validating conection to " + server.getLabel(), server,
+		super(null, "Validating conection to " + server.getName(), server,
 				null, ServerFailureReport.SHOW_DIALOG);
 	}
 
@@ -76,7 +73,7 @@ public class ValidateServerLocationJob extends AbstractServerProjectJob {
 			/*
 			 * First we validate our connection to the team server.
 			 */
-			final ServerLocation server = f_server.getServer();
+			final ServerLocation server = f_server.getLocation();
 
 			boolean success = false; // assume the worst
 			final ServerInfoService ss = ServerInfoServiceClient.create(server);

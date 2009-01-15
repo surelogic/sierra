@@ -25,8 +25,8 @@ import com.surelogic.common.eclipse.SWTUtility;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.images.CommonImages;
 import com.surelogic.sierra.client.eclipse.jobs.ValidateServerLocationJob;
-import com.surelogic.sierra.client.eclipse.model.SierraServer;
 import com.surelogic.sierra.client.eclipse.model.ConnectedServerManager;
+import com.surelogic.sierra.jdbc.settings.ConnectedServer;
 import com.surelogic.sierra.tool.message.ServerLocation;
 
 /**
@@ -52,7 +52,7 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 		final ServerLocationDialog dialog = new ServerLocationDialog(shell,
 				manager.createLocation(), title, true, false);
 		if (dialog.open() == Window.OK) {
-			final SierraServer server = manager.create();
+			final ConnectedServer server = manager.create();
 			final ServerLocation location = dialog.f_server;
 			final Job job = new ValidateServerLocationJob(server, location,
 					dialog.f_savePassword, dialog.f_validateServer,
@@ -71,7 +71,7 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 	 * @param server
 	 *            the non-null team server location to edit.
 	 */
-	public static void editServer(final Shell shell, final SierraServer server) {
+	public static void editServer(final Shell shell, final ConnectedServer server) {
 		final String title = I18N.msg("sierra.dialog.serverlocation.editTitle");
 		final ServerLocationDialog dialog = new ServerLocationDialog(shell,
 				server.getServer(), title, server.savePassword(), server
@@ -150,7 +150,7 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 		label.setText(I18N.msg("sierra.dialog.serverlocation.label"));
 		label.setLayoutData(new GridData(SWT.RIGHT));
 		final Text labelText = new Text(panel, SWT.SINGLE | SWT.BORDER);
-		labelText.setText(f_server.getLabel());
+		labelText.setText(f_server.getName());
 		labelText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		labelText.addListener(SWT.Verify, new Listener() {
 			public void handleEvent(final Event event) {
