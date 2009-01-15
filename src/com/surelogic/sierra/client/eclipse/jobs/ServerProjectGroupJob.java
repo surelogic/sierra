@@ -14,7 +14,7 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 
-import com.surelogic.sierra.client.eclipse.model.SierraServer;
+import com.surelogic.sierra.jdbc.settings.ConnectedServer;
 
 /**
  * A Job designed to coordinate AbstractServerProjectJobs
@@ -22,16 +22,16 @@ import com.surelogic.sierra.client.eclipse.model.SierraServer;
  * @author Edwin
  */
 public class ServerProjectGroupJob extends Job {
-  public static final SierraServer[] NO_SERVERS = new SierraServer[0];
+  public static final ConnectedServer[] NO_SERVERS = new ConnectedServer[0];
   
   private final List<AbstractServerProjectJob> jobs = new ArrayList<AbstractServerProjectJob>();
-  private final Set<SierraServer> okServers, serversToProcess;
+  private final Set<ConnectedServer> okServers, serversToProcess;
   
-  public ServerProjectGroupJob(Set<SierraServer> servers) {
+  public ServerProjectGroupJob(Set<ConnectedServer> servers) {
     super("Waiting for synchronize jobs");
     setSystem(true);
     okServers = servers;
-    serversToProcess = new HashSet<SierraServer>(servers);
+    serversToProcess = new HashSet<ConnectedServer>(servers);
   }
 
   void add(AbstractServerProjectJob j) {
@@ -57,25 +57,25 @@ public class ServerProjectGroupJob extends Job {
     return Status.OK_STATUS;
   }
 
-  public boolean process(SierraServer server) {
+  public boolean process(ConnectedServer server) {
 	  return serversToProcess.contains(server);	  
   }
   
-  public void doneProcessing(SierraServer server) {
+  public void doneProcessing(ConnectedServer server) {
 	  serversToProcess.remove(server);
   }
   
   /**
    * @return true if we should bother trying to troubleshoot
    */
-  public boolean troubleshoot(SierraServer server) {
+  public boolean troubleshoot(ConnectedServer server) {
       return okServers.contains(server);
   }
   
   /**
    * Mark the server as failed
    */
-  public void fail(SierraServer server) {
+  public void fail(ConnectedServer server) {
 	  okServers.remove(server);
 	  doneProcessing(server);
   }

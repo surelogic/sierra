@@ -8,6 +8,7 @@ import com.surelogic.sierra.client.eclipse.jobs.ServerProjectGroupJob;
 import com.surelogic.sierra.client.eclipse.jobs.SynchronizeJob;
 import com.surelogic.sierra.client.eclipse.model.*;
 import com.surelogic.sierra.client.eclipse.preferences.ServerFailureReport;
+import com.surelogic.sierra.jdbc.settings.ConnectedServer;
 
 public class SynchronizeProjectAction extends
 		AbstractWebServiceMenuAction {
@@ -21,7 +22,7 @@ public class SynchronizeProjectAction extends
 	
 	@Override
 	void runServerAction(ServerProjectGroupJob family, String projectName,
-			SierraServer server, Shell shell) {
+			ConnectedServer server, Shell shell) {
 		final SynchronizeJob job = new SynchronizeJob(family, projectName,
 				server, ServerSyncType.ALL, true, ServerFailureReport.SHOW_DIALOG);
 		job.schedule();

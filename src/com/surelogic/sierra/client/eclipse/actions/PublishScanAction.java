@@ -13,12 +13,13 @@ import com.surelogic.sierra.client.eclipse.jobs.ServerProjectGroupJob;
 import com.surelogic.sierra.client.eclipse.jobs.ShareScanJob;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
 import com.surelogic.sierra.client.eclipse.preferences.ServerFailureReport;
+import com.surelogic.sierra.jdbc.settings.ConnectedServer;
 import com.surelogic.sierra.tool.SierraToolConstants;
 
 public class PublishScanAction extends AbstractWebServiceMenuAction {
 	@Override
 	void runServerAction(final ServerProjectGroupJob family,
-			String projectName, SierraServer server, Shell shell) {
+			String projectName, ConnectedServer server, Shell shell) {
 		final String scanFileName = projectName
 				+ SierraToolConstants.PARSED_FILE_SUFFIX;
 		final File scanFile = new File(FileUtility.getSierraDataDirectory(),

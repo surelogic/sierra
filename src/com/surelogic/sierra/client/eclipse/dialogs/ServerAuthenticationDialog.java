@@ -17,14 +17,14 @@ import org.eclipse.swt.widgets.Text;
 import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.images.CommonImages;
-import com.surelogic.sierra.client.eclipse.model.SierraServer;
+import com.surelogic.sierra.jdbc.settings.ConnectedServer;
 
 /**
  * Dialog to prompt the user for a user name and password to a Sierra server.
  */
 public final class ServerAuthenticationDialog extends Dialog {
 
-	private final SierraServer f_server;
+	private final ConnectedServer f_server;
 
 	private Text f_userText;
 	private Text f_passwordText;
@@ -40,7 +40,7 @@ public final class ServerAuthenticationDialog extends Dialog {
 	 * @param server
 	 *            the information about the Sierra server.
 	 */
-	public ServerAuthenticationDialog(Shell parentShell, SierraServer server) {
+	public ServerAuthenticationDialog(Shell parentShell, ConnectedServer server) {
 		super(parentShell);
 		assert server != null;
 		f_server = server;
@@ -147,7 +147,7 @@ public final class ServerAuthenticationDialog extends Dialog {
 		super.okPressed();
 	}
 
-	public SierraServer getServer() {
+	public ConnectedServer getServer() {
 		return f_server;
 	}
 
@@ -157,7 +157,7 @@ public final class ServerAuthenticationDialog extends Dialog {
 	 * . Should be implemented by clients of that method.
 	 */
 	public interface ServerActionOnAProject {
-		void run(final String projectName, final SierraServer server,
+		void run(final String projectName, final ConnectedServer server,
 				final Shell shell);
 	}
 

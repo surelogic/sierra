@@ -17,9 +17,9 @@ import com.surelogic.sierra.client.eclipse.dialogs.ServerLocationDialog;
 import com.surelogic.sierra.client.eclipse.dialogs.ServerSelectionDialog;
 import com.surelogic.sierra.client.eclipse.dialogs.ServerAuthenticationDialog.ServerActionOnAProject;
 import com.surelogic.sierra.client.eclipse.jobs.ServerProjectGroupJob;
-import com.surelogic.sierra.client.eclipse.model.SierraServer;
-import com.surelogic.sierra.client.eclipse.model.ConnectedServerManager;
+import com.surelogic.sierra.client.eclipse.model.*;
 import com.surelogic.sierra.client.eclipse.views.SierraServersView;
+import com.surelogic.sierra.jdbc.settings.ConnectedServer;
 
 public abstract class AbstractWebServiceMenuAction extends
 		AbstractProjectSelectedMenuAction {
@@ -29,13 +29,13 @@ public abstract class AbstractWebServiceMenuAction extends
 			List<String> projectNames) {
 
 		final ConnectedServerManager manager = ConnectedServerManager.getInstance();
-		SierraServer unconnectedProjectsServer = null;
+		ConnectedServer unconnectedProjectsServer = null;
 		final Shell shell = PlatformUI.getWorkbench()
 				.getActiveWorkbenchWindow().getShell();
 		final ServerProjectGroupJob family = 
 			new ServerProjectGroupJob(manager.getServers());
 		final ServerActionOnAProject serverAction = new ServerActionOnAProject() {
-			public void run(String projectName, SierraServer server, Shell shell) {
+			public void run(String projectName, ConnectedServer server, Shell shell) {
 				runServerAction(family, projectName, server, shell);
 			}
 		};
@@ -49,7 +49,7 @@ public abstract class AbstractWebServiceMenuAction extends
 				/*
 				 * Yes, start the job.
 				 */
-				final SierraServer server = manager.getServer(projectName);
+				final ConnectedServer server = manager.getServer(projectName);
 				ServerAuthenticationDialog.promptPasswordIfNecessary(
 						projectName, server, shell, serverAction);
 			} else {
@@ -103,6 +103,6 @@ public abstract class AbstractWebServiceMenuAction extends
 	}
 	
 	abstract void runServerAction(final ServerProjectGroupJob family,
-			final String projectName, final SierraServer server,
+			final String projectName, final ConnectedServer server,
 			final Shell shell);
 }
