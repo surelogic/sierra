@@ -21,7 +21,7 @@ import com.surelogic.common.jdbc.StringRowHandler;
 import com.surelogic.sierra.tool.message.ServerIdentity;
 import com.surelogic.sierra.tool.message.ServerInfoReply;
 import com.surelogic.sierra.tool.message.Services;
-import com.surelogic.sierra.tool.message.SierraServerLocation;
+import com.surelogic.sierra.tool.message.ServerLocation;
 
 /**
  * This class implements storage and retrieval of server locations from the
@@ -40,7 +40,7 @@ public final class ServerLocations {
 	 * @return
 	 */
 	public static NullDBQuery saveQuery(
-			final Map<SierraServerLocation, Collection<String>> locations) {
+			final Map<ServerLocation, Collection<String>> locations) {
 		return new NullDBQuery() {
 			@Override
 			public void doPerform(final Query q) {
@@ -50,9 +50,9 @@ public final class ServerLocations {
 						.prepared("ServerLocations.insertServerProject");
 				final Queryable<Long> insertLocation = q.prepared(
 						"ServerLocations.insertLocation", new LongIdHandler());
-				for (final Entry<SierraServerLocation, Collection<String>> locEntry : locations
+				for (final Entry<ServerLocation, Collection<String>> locEntry : locations
 						.entrySet()) {
-					final SierraServerLocation l = locEntry.getKey();
+					final ServerLocation l = locEntry.getKey();
 					if (l.getLabel() == null) {
 						throw new IllegalArgumentException();
 					}
@@ -91,12 +91,12 @@ public final class ServerLocations {
 	 * @return
 	 */
 	public static DBQuery<Void> updateServerLocationInfo(
-			final Map<SierraServerLocation, ServerInfoReply> locations) {
+			final Map<ServerLocation, ServerInfoReply> locations) {
 		return new DBQuery<Void>() {
 			public Void perform(final Query q) {
 				final Queryable<Void> updateUuid = q
 						.prepared("ServerLocations.updateUuid");
-				for (final Entry<SierraServerLocation, ServerInfoReply> entry : locations
+				for (final Entry<ServerLocation, ServerInfoReply> entry : locations
 						.entrySet()) {
 					final ServerInfoReply reply = entry.getValue();
 					updateUuid.call(reply.getUid(), reply.getServices()
@@ -141,13 +141,13 @@ public final class ServerLocations {
 	 *            null}
 	 * @return
 	 */
-	public static DBQuery<Map<SierraServerLocation, Collection<String>>> fetchQuery(
+	public static DBQuery<Map<ServerLocation, Collection<String>>> fetchQuery(
 			final Map<String, String> passwords) {
 		final Map<String, String> empty = Collections.emptyMap();
 		final Map<String, String> passMap = passwords == null ? empty
 				: passwords;
-		return new DBQuery<Map<SierraServerLocation, Collection<String>>>() {
-			public Map<SierraServerLocation, Collection<String>> perform(
+		return new DBQuery<Map<ServerLocation, Collection<String>>>() {
+			public Map<ServerLocation, Collection<String>> perform(
 					final Query q) {
 				final Queryable<List<String>> projects = q.prepared(
 						"ServerLocations.listServerProjects",
@@ -155,10 +155,10 @@ public final class ServerLocations {
 				return q
 						.statement(
 								"ServerLocations.listLocations",
-								new ResultHandler<Map<SierraServerLocation, Collection<String>>>() {
-									public Map<SierraServerLocation, Collection<String>> handle(
+								new ResultHandler<Map<ServerLocation, Collection<String>>>() {
+									public Map<ServerLocation, Collection<String>> handle(
 											final Result result) {
-										final Map<SierraServerLocation, Collection<String>> map = new HashMap<SierraServerLocation, Collection<String>>();
+										final Map<ServerLocation, Collection<String>> map = new HashMap<ServerLocation, Collection<String>>();
 										// ID,LABEL,PROTOCOL,HOST,PORT,
 										// CONTEXT_PATH,SERVER_USER
 										for (final Row r : result) {
@@ -183,7 +183,7 @@ public final class ServerLocations {
 											final String uuid = r.nextString();
 											final boolean teamServer = r
 													.nextBoolean();
-											final SierraServerLocation loc = new SierraServerLocation(
+											final ServerLocation loc = new ServerLocation(
 													label, host, "https"
 															.equals(protocol),
 													port, contextPath, user,

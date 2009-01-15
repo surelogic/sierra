@@ -36,7 +36,7 @@ import com.surelogic.sierra.tool.message.ScanFilter;
 import com.surelogic.sierra.tool.message.ServerInfoReply;
 import com.surelogic.sierra.tool.message.ServerInfoRequest;
 import com.surelogic.sierra.tool.message.ServerInfoServiceClient;
-import com.surelogic.sierra.tool.message.SierraServerLocation;
+import com.surelogic.sierra.tool.message.ServerLocation;
 
 /**
  * This class represents implementations of the client-side behavior of the bug
@@ -87,7 +87,7 @@ public class SettingQueries {
 	 * @return
 	 */
 	public static final DBQuery<ListCategoryResponse> retrieveCategories(
-			final SierraServerLocation loc, final ListCategoryRequest request) {
+			final ServerLocation loc, final ListCategoryRequest request) {
 		final ListCategoryResponse response = BugLinkServiceClient.create(loc)
 				.listCategories(request);
 		return updateCategories(response, true);
@@ -100,7 +100,7 @@ public class SettingQueries {
 	 * local copy will not be returned.
 	 */
 	public static final DBQuery<ListCategoryResponse> getNewCategories(
-			final SierraServerLocation loc, final ListCategoryRequest request) {
+			final ServerLocation loc, final ListCategoryRequest request) {
 		final ListCategoryResponse response = BugLinkServiceClient.create(loc)
 				.listCategories(request);
 		return updateCategories(response, false);
@@ -167,17 +167,17 @@ public class SettingQueries {
 	}
 
 	public static final DBQuery<ServerScanFilterInfo> retrieveScanFilters(
-			final SierraServerLocation loc, final ListScanFilterRequest request) {
+			final ServerLocation loc, final ListScanFilterRequest request) {
 		return getScanFilters(loc, request, true);
 	}
 
 	public static final DBQuery<ServerScanFilterInfo> getNewScanFilters(
-			final SierraServerLocation loc, final ListScanFilterRequest request) {
+			final ServerLocation loc, final ListScanFilterRequest request) {
 		return getScanFilters(loc, request, false);
 	}
 
 	private static final DBQuery<ServerScanFilterInfo> getScanFilters(
-			final SierraServerLocation loc,
+			final ServerLocation loc,
 			final ListScanFilterRequest request, final boolean update) {
 		final ListScanFilterResponse response = BugLinkServiceClient
 				.create(loc).listScanFilters(request);
@@ -343,7 +343,7 @@ public class SettingQueries {
 	 * @return
 	 */
 	public static NullDBQuery copyDefaultScanFilterToServer(
-			final SierraServerLocation loc, final String name) {
+			final ServerLocation loc, final String name) {
 		return new NullDBQuery() {
 			@Override
 			public void doPerform(final Query q) {
@@ -489,7 +489,7 @@ public class SettingQueries {
 	}
 
 	public static DBQuery<ServerInfoReply> updateServerInfo(
-			final SierraServerLocation server) {
+			final ServerLocation server) {
 		final ServerInfoReply reply = ServerInfoServiceClient.create(server)
 				.getServerInfo(new ServerInfoRequest());
 		return new DBQuery<ServerInfoReply>() {

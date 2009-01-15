@@ -15,7 +15,7 @@ import com.surelogic.sierra.jdbc.record.ProjectRecord;
 import com.surelogic.sierra.jdbc.settings.SettingQueries;
 import com.surelogic.sierra.tool.message.ServerInfoReply;
 import com.surelogic.sierra.tool.message.ServerMismatchException;
-import com.surelogic.sierra.tool.message.SierraServerLocation;
+import com.surelogic.sierra.tool.message.ServerLocation;
 import com.surelogic.sierra.tool.message.SierraService;
 import com.surelogic.sierra.tool.message.SierraServiceClient;
 import com.surelogic.sierra.tool.message.SyncRequest;
@@ -51,21 +51,21 @@ public final class ClientProjectManager extends ProjectManager {
 		return findingManager;
 	}
 
-	public void synchronizeProject(final SierraServerLocation server,
+	public void synchronizeProject(final ServerLocation server,
 			final String projectName, final SLProgressMonitor monitor)
 			throws ServerMismatchException, SQLException {
 		synchronizeProjectWithServer(server, projectName, monitor, false);
 	}
 
 	public List<SyncTrailResponse> getProjectUpdates(
-			final SierraServerLocation server, final String projectName,
+			final ServerLocation server, final String projectName,
 			final SLProgressMonitor monitor) throws ServerMismatchException,
 			SQLException {
 		return synchronizeProjectWithServer(server, projectName, monitor, true);
 	}
 
 	private List<SyncTrailResponse> synchronizeProjectWithServer(
-			final SierraServerLocation server, final String projectName,
+			final ServerLocation server, final String projectName,
 			final SLProgressMonitor monitor, final boolean serverGet)
 			throws ServerMismatchException, SQLException {
 		final SierraService service = SierraServiceClient.create(server);
