@@ -12,7 +12,8 @@ import com.surelogic.common.i18n.I18N;
  */
 public class ServerLocation {
 
-	public static final String DEFAULT_PATH = "/sl/";
+	public static final String DEFAULT_HOST = "localhost";
+	public static final String DEFAULT_CONTEXT_PATH = "/sl/";
 	public static final int DEFAULT_PORT = 13376;
 
 	private final boolean f_secure;
@@ -61,6 +62,17 @@ public class ServerLocation {
 			throw new IllegalArgumentException(I18N.err(44, "contextPath"));
 		f_contextPath = contextPath;
 		f_autoSync = autoSync;
+	}
+
+	/**
+	 * Constructs a new default server location.
+	 * <p>
+	 * This constructor is useful in the user interface at times, but because
+	 * this is an immutable class is rarely useful in other contexts.
+	 */
+	public ServerLocation() {
+		this(ServerLocation.DEFAULT_HOST, false, ServerLocation.DEFAULT_PORT,
+				ServerLocation.DEFAULT_CONTEXT_PATH, null, null, false);
 	}
 
 	/**
