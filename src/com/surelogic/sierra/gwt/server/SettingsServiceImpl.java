@@ -32,6 +32,7 @@ import com.surelogic.sierra.gwt.client.data.ScanFilter;
 import com.surelogic.sierra.gwt.client.data.ScanFilterEntry;
 import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.data.FindingType.ArtifactTypeInfo;
+import com.surelogic.sierra.gwt.client.data.PortalServerLocation.Protocol;
 import com.surelogic.sierra.gwt.client.data.Report.OutputType;
 import com.surelogic.sierra.gwt.client.data.cache.ReportCache;
 import com.surelogic.sierra.gwt.client.data.dashboard.DashboardSettings;
@@ -631,7 +632,7 @@ public final class SettingsServiceImpl extends SierraServiceServlet implements
 				});
 	}
 
-	public Status saveServerLocation(final ServerLocation loc) {
+	public Status saveServerLocation(final PortalServerLocation loc) {
 		return ConnectionFactory.getInstance().withTransaction(
 				new DBQuery<Status>() {
 
@@ -640,7 +641,7 @@ public final class SettingsServiceImpl extends SierraServiceServlet implements
 								.fetchQuery(null).perform(q);
 						// TODO is autosync meaningful on the server?
 						final ServerLocation l = new ServerLocation(loc
-								.getLabel(), loc.getHost(),
+								.getHost(),
 								loc.getProtocol() == Protocol.HTTPS, loc
 										.getPort(), loc.getContext(), loc
 										.getUser(), loc.getPass(), true);
