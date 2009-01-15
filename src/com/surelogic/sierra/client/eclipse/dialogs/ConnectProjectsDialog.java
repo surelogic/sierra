@@ -28,11 +28,11 @@ import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.common.images.CommonImages;
 import com.surelogic.sierra.client.eclipse.actions.SynchronizeProjectAction;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
-import com.surelogic.sierra.client.eclipse.model.SierraServerManager;
+import com.surelogic.sierra.client.eclipse.model.ConnectedServerManager;
 
 public final class ConnectProjectsDialog extends Dialog {
 
-	private final SierraServerManager f_manager = SierraServerManager
+	private final ConnectedServerManager f_manager = ConnectedServerManager
 			.getInstance();
 
 	private final SierraServer f_server = f_manager.getFocus();

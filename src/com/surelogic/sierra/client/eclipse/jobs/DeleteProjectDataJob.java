@@ -28,7 +28,7 @@ import com.surelogic.common.jobs.SLProgressMonitor;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.model.DatabaseHub;
-import com.surelogic.sierra.client.eclipse.model.SierraServerManager;
+import com.surelogic.sierra.client.eclipse.model.ConnectedServerManager;
 import com.surelogic.sierra.jdbc.project.ClientProjectManager;
 import com.surelogic.sierra.tool.SierraToolConstants;
 
@@ -123,7 +123,7 @@ public final class DeleteProjectDataJob implements IRunnableWithProgress {
 						conn.rollback();
 						throw e;
 					}
-					SierraServerManager.getInstance().disconnect(projectName);
+					ConnectedServerManager.getInstance().disconnect(projectName);
 					DatabaseHub.getInstance().notifyProjectDeleted();
 				}
 			} catch (Exception e) {

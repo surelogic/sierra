@@ -18,7 +18,7 @@ import com.surelogic.sierra.client.eclipse.dialogs.ServerSelectionDialog;
 import com.surelogic.sierra.client.eclipse.dialogs.ServerAuthenticationDialog.ServerActionOnAProject;
 import com.surelogic.sierra.client.eclipse.jobs.ServerProjectGroupJob;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
-import com.surelogic.sierra.client.eclipse.model.SierraServerManager;
+import com.surelogic.sierra.client.eclipse.model.ConnectedServerManager;
 import com.surelogic.sierra.client.eclipse.views.SierraServersView;
 
 public abstract class AbstractWebServiceMenuAction extends
@@ -28,7 +28,7 @@ public abstract class AbstractWebServiceMenuAction extends
 	protected void run(List<IJavaProject> selectedProjects,
 			List<String> projectNames) {
 
-		final SierraServerManager manager = SierraServerManager.getInstance();
+		final ConnectedServerManager manager = ConnectedServerManager.getInstance();
 		SierraServer unconnectedProjectsServer = null;
 		final Shell shell = PlatformUI.getWorkbench()
 				.getActiveWorkbenchWindow().getShell();

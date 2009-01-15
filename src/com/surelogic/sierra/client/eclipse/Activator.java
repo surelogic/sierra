@@ -21,7 +21,7 @@ import com.surelogic.sierra.client.eclipse.actions.MarkersHandler;
 import com.surelogic.sierra.client.eclipse.jobs.DeleteUnfinishedScans;
 import com.surelogic.sierra.client.eclipse.model.BuglinkData;
 import com.surelogic.sierra.client.eclipse.model.Projects;
-import com.surelogic.sierra.client.eclipse.model.SierraServerManager;
+import com.surelogic.sierra.client.eclipse.model.ConnectedServerManager;
 import com.surelogic.sierra.client.eclipse.model.selection.SelectionManager;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
 import com.surelogic.sierra.client.eclipse.views.SierraServersAutoSync;
@@ -71,7 +71,7 @@ public final class Activator extends AbstractUIPlugin {
 			// startup the database and ensure its schema is up to date
 			System.setProperty("derby.stream.error.file", getDerbyLogFile());
 			// load up persisted sierra servers
-			SierraServerManager.getInstance().init();
+			ConnectedServerManager.getInstance().init();
 			// load up persisted sierra selections
 			SelectionManager.getInstance().load(getSelectionSaveFile());
 			// start observing data changes
@@ -118,7 +118,7 @@ public final class Activator extends AbstractUIPlugin {
 			SierraServersAutoSync.stop();
 			AdHocDataSource.getInstance().dispose();
 			if (f_databaseInSync.get()) {
-				SierraServerManager.getInstance().dispose();
+				ConnectedServerManager.getInstance().dispose();
 				SelectionManager.getInstance().save(getSelectionSaveFile());
 			}
 			f_plugin = null;

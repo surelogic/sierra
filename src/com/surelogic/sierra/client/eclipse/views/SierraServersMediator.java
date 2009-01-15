@@ -90,7 +90,7 @@ import com.surelogic.sierra.client.eclipse.model.ISierraServerObserver;
 import com.surelogic.sierra.client.eclipse.model.Projects;
 import com.surelogic.sierra.client.eclipse.model.ServerSyncType;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
-import com.surelogic.sierra.client.eclipse.model.SierraServerManager;
+import com.surelogic.sierra.client.eclipse.model.ConnectedServerManager;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
 import com.surelogic.sierra.client.eclipse.preferences.ServerFailureReport;
 import com.surelogic.sierra.client.eclipse.wizards.ServerExportWizard;
@@ -276,7 +276,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 
 		@Override
 		protected final void handleEventOnServer(final SierraServer server) {
-			final SierraServerManager manager = server.getManager();
+			final ConnectedServerManager manager = server.getManager();
 			run(server, manager.getProjectsConnectedTo(server));
 		}
 
@@ -284,7 +284,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 				List<String> projectNames);
 	}
 
-	private final SierraServerManager f_manager = SierraServerManager
+	private final ConnectedServerManager f_manager = ConnectedServerManager
 			.getInstance();
 
 	public SierraServersMediator(final SierraServersView view,
@@ -1099,7 +1099,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 		// f_statusTree.setFocus();
 	}
 
-	public void notify(final SierraServerManager manager) {
+	public void notify(final ConnectedServerManager manager) {
 		asyncUpdateContents();
 	}
 
@@ -1202,7 +1202,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 			protected IStatus run(final IProgressMonitor monitor) {
 				final int threshold = PreferenceConstants
 						.getServerInteractionRetryThreshold();
-				final SierraServerManager mgr = SierraServerManager
+				final ConnectedServerManager mgr = ConnectedServerManager
 						.getInstance();
 				for (final SierraServer s : mgr.getServers()) {
 					if (s.getProblemCount() <= threshold) {
@@ -1271,7 +1271,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 			serverResponse = serverResponseMap.get(server);
 		}
 
-		void queryForProjects(SierraServerManager manager) {
+		void queryForProjects(ConnectedServerManager manager) {
 			final int threshold = PreferenceConstants
 					.getServerInteractionRetryThreshold();
 			for (final IJavaProject jp : JDTUtility.getJavaProjects()) {
@@ -1290,7 +1290,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 			}
 		}
 
-		void queryServers(SierraServerManager manager) {
+		void queryServers(ConnectedServerManager manager) {
 			for (SierraServer server : manager.getServers()) {
 				if (connectedServers.contains(server)) {
 					return; // Already handled
@@ -1573,7 +1573,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 		final int auditThreshold = PreferenceConstants
 				.getServerInteractionAuditThreshold();
 		if (auditThreshold > 0) {
-			SierraServerManager manager = SierraServerManager.getInstance();
+			ConnectedServerManager manager = ConnectedServerManager.getInstance();
 			int audits = 0;
 			for (final ProjectStatus ps : projects) {
 				SierraServer server = manager.getServer(ps.name);

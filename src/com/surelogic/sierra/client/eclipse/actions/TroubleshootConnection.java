@@ -10,7 +10,7 @@ import com.surelogic.common.eclipse.dialogs.ErrorDialogUtility;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.model.Projects;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
-import com.surelogic.sierra.client.eclipse.model.SierraServerManager;
+import com.surelogic.sierra.client.eclipse.model.ConnectedServerManager;
 import com.surelogic.sierra.client.eclipse.preferences.ServerFailureReport;
 
 public abstract class TroubleshootConnection {
@@ -93,7 +93,7 @@ public abstract class TroubleshootConnection {
 
 		if (failServer()) {
 			f_server.encounteredProblem();
-			SierraServerManager.getInstance().notifyObservers();
+			ConnectedServerManager.getInstance().notifyObservers();
 		} else {
 			// Notifies observers by itself
 			Projects.getInstance().encounteredProblem(f_projectName);

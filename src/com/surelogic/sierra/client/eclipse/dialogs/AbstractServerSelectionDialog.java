@@ -21,11 +21,11 @@ import com.surelogic.common.eclipse.logging.SLEclipseStatusUtility;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.images.CommonImages;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
-import com.surelogic.sierra.client.eclipse.model.SierraServerManager;
+import com.surelogic.sierra.client.eclipse.model.ConnectedServerManager;
 
 public abstract class AbstractServerSelectionDialog extends Dialog {
 
-	private final SierraServerManager f_manager = SierraServerManager
+	private final ConnectedServerManager f_manager = ConnectedServerManager
 			.getInstance();
 
 	private Table f_serverTable;

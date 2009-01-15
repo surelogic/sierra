@@ -12,7 +12,7 @@ import org.eclipse.swt.widgets.*;
 import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.common.images.CommonImages;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
-import com.surelogic.sierra.client.eclipse.model.SierraServerManager;
+import com.surelogic.sierra.client.eclipse.model.ConnectedServerManager;
 import com.surelogic.sierra.client.eclipse.model.SierraServerPersistence;
 
 public class ServerExportPage extends AbstractExportWizardPage<SierraServer> {
@@ -36,7 +36,7 @@ public class ServerExportPage extends AbstractExportWizardPage<SierraServer> {
 
   @Override
 	protected void initializeTable() {
-		Set<SierraServer> servers = SierraServerManager.getInstance()
+		Set<SierraServer> servers = ConnectedServerManager.getInstance()
 				.getServers();
 
 		f_TableViewer.setInput(servers);
@@ -48,7 +48,7 @@ public class ServerExportPage extends AbstractExportWizardPage<SierraServer> {
 	}
 
 	public boolean exportServers() {
-		SierraServerPersistence.export(SierraServerManager.getInstance(),
+		SierraServerPersistence.export(ConnectedServerManager.getInstance(),
 				f_SelectedSierraServers, new File(f_exportFilenameText
 						.getText()));
 		return true;

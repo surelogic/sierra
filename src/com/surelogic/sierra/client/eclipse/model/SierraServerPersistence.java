@@ -63,7 +63,7 @@ public final class SierraServerPersistence {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static void save(final SierraServerManager manager) {
+	public static void save(final ConnectedServerManager manager) {
 		try {
 			Map<String, String> map = Platform.getAuthorizationInfo(FAKE_URL,
 					"", AUTH_SCHEME);
@@ -95,7 +95,7 @@ public final class SierraServerPersistence {
 		}
 	}
 
-	public static void export(final SierraServerManager manager,
+	public static void export(final ConnectedServerManager manager,
 			final List<SierraServer> serversToExport, final File file) {
 		try {
 			final PrintWriter pw = new PrintWriter(new FileWriter(file));
@@ -177,7 +177,7 @@ public final class SierraServerPersistence {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static void load(final SierraServerManager manager) throws Exception {
+	public static void load(final ConnectedServerManager manager) throws Exception {
 		final Map<String, String> passwords = Platform.getAuthorizationInfo(
 				FAKE_URL, "", AUTH_SCHEME);
 		try {
@@ -215,11 +215,11 @@ public final class SierraServerPersistence {
 	 */
 	static class SaveFileReader extends DefaultHandler {
 
-		private final SierraServerManager f_manager;
+		private final ConnectedServerManager f_manager;
 		private final Map<String, String> f_map;
 
 		@SuppressWarnings("unchecked")
-		SaveFileReader(final SierraServerManager manager) {
+		SaveFileReader(final ConnectedServerManager manager) {
 			f_manager = manager;
 			f_map = Platform.getAuthorizationInfo(FAKE_URL, "", AUTH_SCHEME);
 		}

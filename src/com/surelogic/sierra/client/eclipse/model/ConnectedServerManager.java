@@ -18,16 +18,16 @@ import com.surelogic.sierra.jdbc.settings.ConnectedServer;
 /**
  * Manages the set of connected servers.
  */
-public final class SierraServerManager extends
+public final class ConnectedServerManager extends
 		DatabaseObservable<ISierraServerObserver> implements ILifecycle {
 
-	public static final SierraServerManager INSTANCE = new SierraServerManager();
+	public static final ConnectedServerManager INSTANCE = new ConnectedServerManager();
 
-	public static SierraServerManager getInstance() {
+	public static ConnectedServerManager getInstance() {
 		return INSTANCE;
 	}
 
-	private SierraServerManager() {
+	private ConnectedServerManager() {
 		// singleton
 	}
 

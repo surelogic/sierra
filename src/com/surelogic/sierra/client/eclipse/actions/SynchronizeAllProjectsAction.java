@@ -16,7 +16,7 @@ import com.surelogic.sierra.client.eclipse.jobs.ServerProjectGroupJob;
 import com.surelogic.sierra.client.eclipse.jobs.SynchronizeJob;
 import com.surelogic.sierra.client.eclipse.model.ServerSyncType;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
-import com.surelogic.sierra.client.eclipse.model.SierraServerManager;
+import com.surelogic.sierra.client.eclipse.model.ConnectedServerManager;
 import com.surelogic.sierra.client.eclipse.preferences.ServerFailureReport;
 
 public class SynchronizeAllProjectsAction implements
@@ -58,7 +58,7 @@ public class SynchronizeAllProjectsAction implements
 	}
 
 	public void run(IAction action) {
-		final SierraServerManager manager = SierraServerManager.getInstance();
+		final ConnectedServerManager manager = ConnectedServerManager.getInstance();
 		final ServerProjectGroupJob joinJob = new ServerProjectGroupJob(manager
 				.getServers());
 

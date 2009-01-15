@@ -13,7 +13,7 @@ public class SynchronizeProjectAction extends
 		AbstractWebServiceMenuAction {
 	@Override
 	void runningOnProjects(List<String> projectNames) {
-		Set<String> connected = SierraServerManager.getInstance().getConnectedProjects();
+		Set<String> connected = ConnectedServerManager.getInstance().getConnectedProjects();
 		if (projectNames.containsAll(connected)) {
 			SynchronizeAllProjectsAction.setTime();
 		}

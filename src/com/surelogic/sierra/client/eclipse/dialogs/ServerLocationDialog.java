@@ -26,7 +26,7 @@ import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.images.CommonImages;
 import com.surelogic.sierra.client.eclipse.jobs.ValidateServerLocationJob;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
-import com.surelogic.sierra.client.eclipse.model.SierraServerManager;
+import com.surelogic.sierra.client.eclipse.model.ConnectedServerManager;
 import com.surelogic.sierra.tool.message.ServerLocation;
 
 /**
@@ -47,7 +47,7 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 		if (shell == null)
 			shell = SWTUtility.getShell();
 
-		final SierraServerManager manager = SierraServerManager.getInstance();
+		final ConnectedServerManager manager = ConnectedServerManager.getInstance();
 		final String title = I18N.msg("sierra.dialog.serverlocation.newTitle");
 		final ServerLocationDialog dialog = new ServerLocationDialog(shell,
 				manager.createLocation(), title, true, false);
@@ -364,7 +364,7 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 
 	private final class Mediator {
 
-		private final SierraServerManager f_manager = SierraServerManager
+		private final ConnectedServerManager f_manager = ConnectedServerManager
 				.getInstance();
 
 		private final Text f_labelText;

@@ -25,7 +25,7 @@ import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.actions.SynchronizeProjectDialogAction;
 import com.surelogic.sierra.client.eclipse.model.Projects;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
-import com.surelogic.sierra.client.eclipse.model.SierraServerManager;
+import com.surelogic.sierra.client.eclipse.model.ConnectedServerManager;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
 import com.surelogic.sierra.jdbc.finding.SynchOverview;
 
@@ -144,7 +144,7 @@ public final class SynchronizeMediator extends AbstractSierraViewMediator {
 			}
 			final TableItem item = new TableItem(f_syncTable, SWT.NONE);
 			final String projectName = so.getProject();
-			final SierraServer server = SierraServerManager.getInstance()
+			final SierraServer server = ConnectedServerManager.getInstance()
 					.getServer(projectName);
 			final String serverName;
 			if (server != null) {

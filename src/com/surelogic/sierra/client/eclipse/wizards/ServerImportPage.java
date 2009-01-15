@@ -31,7 +31,7 @@ import com.surelogic.common.images.CommonImages;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.model.ImportPageServerHolder;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
-import com.surelogic.sierra.client.eclipse.model.SierraServerManager;
+import com.surelogic.sierra.client.eclipse.model.ConnectedServerManager;
 
 /**
  * The server import page.
@@ -100,7 +100,7 @@ public class ServerImportPage extends AbstractImportWizardPage {
 
 		TableItem[] items = f_transfersTable.getItems();
 
-		SierraServerManager manager = SierraServerManager.getInstance();
+		ConnectedServerManager manager = ConnectedServerManager.getInstance();
 		for (TableItem ti : items) {
 
 			if (ti.getChecked()) {
@@ -310,7 +310,7 @@ public class ServerImportPage extends AbstractImportWizardPage {
 				throw new IllegalStateException();
 			}
 
-			Set<SierraServer> existingServers = SierraServerManager
+			Set<SierraServer> existingServers = ConnectedServerManager
 					.getInstance().getServers();
 			Set<String> serverLabels = new HashSet<String>();
 			for (SierraServer s : existingServers) {
