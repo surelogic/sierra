@@ -15,8 +15,8 @@ import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.actions.TroubleshootConnection;
 import com.surelogic.sierra.client.eclipse.actions.TroubleshootNoSuchServer;
 import com.surelogic.sierra.client.eclipse.actions.TroubleshootWrongAuthentication;
-import com.surelogic.sierra.client.eclipse.model.SierraServer;
 import com.surelogic.sierra.client.eclipse.preferences.ServerFailureReport;
+import com.surelogic.sierra.jdbc.settings.ConnectedServer;
 import com.surelogic.sierra.tool.message.InvalidLoginException;
 import com.surelogic.sierra.tool.message.SierraServiceClientException;
 
@@ -26,7 +26,7 @@ import com.surelogic.sierra.tool.message.SierraServiceClientException;
  */
 public abstract class AbstractServerProjectJob extends Job {
 
-	protected final SierraServer f_server;
+	protected final ConnectedServer f_server;
 	protected final String f_projectName;
 	protected final ServerProjectGroupJob joinJob;
 	protected final ServerFailureReport f_method;
@@ -48,7 +48,7 @@ public abstract class AbstractServerProjectJob extends Job {
 	 *            {@code null}.
 	 */
 	public AbstractServerProjectJob(final ServerProjectGroupJob family,
-			final String name, final SierraServer server, final String project,
+			final String name, final ConnectedServer server, final String project,
 			final ServerFailureReport method) {
 		super(name);
 		joinJob = family;
@@ -61,7 +61,7 @@ public abstract class AbstractServerProjectJob extends Job {
 	}
 
 	public static final TroubleshootConnection getTroubleshootConnection(
-			final ServerFailureReport method, final SierraServer s,
+			final ServerFailureReport method, final ConnectedServer s,
 			final String proj, final SierraServiceClientException e) {
 		if (e instanceof InvalidLoginException) {
 			return new TroubleshootWrongAuthentication(method, s, proj);

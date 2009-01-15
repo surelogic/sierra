@@ -27,15 +27,15 @@ import com.surelogic.common.eclipse.JDTUtility;
 import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.common.images.CommonImages;
 import com.surelogic.sierra.client.eclipse.actions.SynchronizeProjectAction;
-import com.surelogic.sierra.client.eclipse.model.SierraServer;
 import com.surelogic.sierra.client.eclipse.model.ConnectedServerManager;
+import com.surelogic.sierra.jdbc.settings.ConnectedServer;
 
 public final class ConnectProjectsDialog extends Dialog {
 
 	private final ConnectedServerManager f_manager = ConnectedServerManager
 			.getInstance();
 
-	private final SierraServer f_server = f_manager.getFocus();
+	private final ConnectedServer f_server = f_manager.getFocus();
 
 	private final List<IJavaProject> f_unconnectedProjects;
 
@@ -73,7 +73,7 @@ public final class ConnectProjectsDialog extends Dialog {
 		GridData data = new GridData(SWT.FILL, SWT.DEFAULT, true, false);
 		l.setLayoutData(data);
 		l.setText("Select projects to connect the Sierra server '"
-				+ f_server.getLabel() + "':");
+				+ f_server.getName() + "':");
 
 		final Group projectGroup = new Group(panel, SWT.NONE);
 		data = new GridData(SWT.FILL, SWT.FILL, true, true);
@@ -92,7 +92,7 @@ public final class ConnectProjectsDialog extends Dialog {
 
 		final Button exportAllToggle = new Button(panel, SWT.CHECK);
 		exportAllToggle.setText("Connect all projects to '"
-				+ f_server.getLabel() + "'");
+				+ f_server.getName() + "'");
 		exportAllToggle.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false,
 				false));
 		

@@ -66,7 +66,7 @@ public abstract class AbstractWebServiceMenuAction extends
 					return;
 				}
 
-				final SierraServer server;
+				final ConnectedServer server;
 				if (unconnectedProjectsServer == null) {
 					/*
 					 * Select a server to connect this project to.

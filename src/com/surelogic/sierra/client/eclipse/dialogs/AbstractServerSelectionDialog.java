@@ -20,8 +20,8 @@ import com.surelogic.common.eclipse.dialogs.ErrorDialogUtility;
 import com.surelogic.common.eclipse.logging.SLEclipseStatusUtility;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.images.CommonImages;
-import com.surelogic.sierra.client.eclipse.model.SierraServer;
 import com.surelogic.sierra.client.eclipse.model.ConnectedServerManager;
+import com.surelogic.sierra.jdbc.settings.ConnectedServer;
 
 public abstract class AbstractServerSelectionDialog extends Dialog {
 
@@ -30,11 +30,11 @@ public abstract class AbstractServerSelectionDialog extends Dialog {
 
 	private Table f_serverTable;
 
-	private SierraServer f_server = null;
+	private ConnectedServer f_server = null;
 
 	private final String label;
 
-	public final SierraServer getServer() {
+	public final ConnectedServer getServer() {
 		return f_server;
 	}
 
@@ -75,10 +75,10 @@ public abstract class AbstractServerSelectionDialog extends Dialog {
 		f_serverTable = new Table(entryPanel, SWT.FULL_SELECTION);
 		f_serverTable.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		SierraServer last = null
-;		for (SierraServer server : f_manager.getTeamServers()) {
+		ConnectedServer last = null
+;		for (ConnectedServer server : f_manager.getTeamServers()) {
 			TableItem item = new TableItem(f_serverTable, SWT.NONE);
-			item.setText(server.getLabel());
+			item.setText(server.getName());
 			item.setImage(SLImages.getImage(CommonImages.IMG_SIERRA_SERVER));
 			item.setData(server);
 			last = server;
@@ -96,7 +96,7 @@ public abstract class AbstractServerSelectionDialog extends Dialog {
 				final TableItem[] sa = f_serverTable.getSelection();
 				if (sa.length > 0) {
 					final TableItem selection = sa[0];
-					f_server = (SierraServer) selection.getData();
+					f_server = (ConnectedServer) selection.getData();
 				}
 				setOKState();
 			}
