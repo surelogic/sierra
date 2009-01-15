@@ -86,6 +86,9 @@ public class ServerLocation {
 
 	/**
 	 * Creates a new server location with changed authorization information.
+	 * <p>
+	 * Do not call this method if you are working with this object through a
+	 * server manager.
 	 * 
 	 * @param user
 	 *            a saved user name to use with this server, or {@code null} is
@@ -100,13 +103,16 @@ public class ServerLocation {
 	 */
 	public ServerLocation changeAuthorization(final String user,
 			final String pass, final boolean savePassword) {
-		return new ServerLocation(this.f_host, this.f_secure, this.f_port,
-				this.f_contextPath, user, pass, savePassword, this.f_autoSync);
+		return new ServerLocation(f_host, f_secure, f_port, f_contextPath,
+				user, pass, savePassword, f_autoSync);
 	}
 
 	/**
 	 * Creates a new server location with a changed automatic synchronization
 	 * flag.
+	 * <p>
+	 * Do not call this method if you are working with this object through a
+	 * server manager.
 	 * 
 	 * @param autoSync
 	 *            {@code true} if the the client should automatically
@@ -115,9 +121,8 @@ public class ServerLocation {
 	 * @return a new server location.
 	 */
 	public ServerLocation changeAutoSync(final boolean autoSync) {
-		return new ServerLocation(this.f_host, this.f_secure, this.f_port,
-				this.f_contextPath, this.f_user, this.f_pass,
-				this.f_savePassword, autoSync);
+		return new ServerLocation(f_host, f_secure, f_port, f_contextPath,
+				f_user, f_pass, f_savePassword, autoSync);
 	}
 
 	/**
@@ -260,8 +265,7 @@ public class ServerLocation {
 		result = prime * result
 				+ ((f_contextPath == null) ? 0 : f_contextPath.hashCode());
 		result = prime * result + ((f_host == null) ? 0 : f_host.hashCode());
-		result = prime * result
-				+ ((f_pass == null) ? 0 : f_pass.hashCode());
+		result = prime * result + ((f_pass == null) ? 0 : f_pass.hashCode());
 		result = prime * result + f_port;
 		result = prime * result + (f_savePassword ? 1231 : 1237);
 		result = prime * result + (f_secure ? 1231 : 1237);
