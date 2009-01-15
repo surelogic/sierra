@@ -17,7 +17,7 @@ import com.surelogic.sierra.jdbc.settings.SettingQueries;
 import com.surelogic.sierra.tool.message.ServerInfoReply;
 import com.surelogic.sierra.tool.message.ServerInfoRequest;
 import com.surelogic.sierra.tool.message.ServerInfoServiceClient;
-import com.surelogic.sierra.tool.message.SierraServerLocation;
+import com.surelogic.sierra.tool.message.ServerLocation;
 import com.surelogic.sierra.tool.message.SierraServiceClientException;
 
 public class BugLinkServletContextListener implements ServletContextListener {
@@ -35,7 +35,7 @@ public class BugLinkServletContextListener implements ServletContextListener {
 					.scheduleWithFixedDelay(new Runnable() {
 						public void run() {
 							try {
-								final Set<SierraServerLocation> locations = ConnectionFactory
+								final Set<ServerLocation> locations = ConnectionFactory
 										.getInstance().withReadOnly(
 												ServerLocations
 														.fetchQuery(null))
@@ -44,8 +44,8 @@ public class BugLinkServletContextListener implements ServletContextListener {
 										"Updating scan filters and categories from "
 												+ locations + " at "
 												+ new Date());
-								final Map<SierraServerLocation, ServerInfoReply> validServers = new HashMap<SierraServerLocation, ServerInfoReply>();
-								for (final SierraServerLocation location : locations) {
+								final Map<ServerLocation, ServerInfoReply> validServers = new HashMap<ServerLocation, ServerInfoReply>();
+								for (final ServerLocation location : locations) {
 									try {
 										final ServerInfoReply reply = ServerInfoServiceClient
 												.create(location)
@@ -62,7 +62,7 @@ public class BugLinkServletContextListener implements ServletContextListener {
 										.withTransaction(
 												ServerLocations
 														.updateServerLocationInfo(validServers));
-								for (final SierraServerLocation location : validServers
+								for (final ServerLocation location : validServers
 										.keySet()) {
 									ConnectionFactory
 											.getInstance()
