@@ -34,6 +34,8 @@ public final class ServerLocations {
 	 * server w/ the same uuid is already saved to the database.
 	 * 
 	 * @param cs
+	 * @param savePassword
+	 *            whether or not we are storing passwords in the database
 	 * @return
 	 */
 	public static NullDBQuery saveServerLocation(final ConnectedServer s,
@@ -63,6 +65,8 @@ public final class ServerLocations {
 	 * 
 	 * @param locations
 	 *            a map of server locations, and the projects connected to them
+	 * @param savePassword
+	 *            whether or not we are storing passwords in the database
 	 * @return
 	 */
 	public static NullDBQuery saveQuery(
