@@ -71,7 +71,21 @@ public final class ServerLocations {
 	}
 
 	/**
-	 * Update the information
+	 * Update the server location informations for a single server based on it's
+	 * reply.
+	 * 
+	 * @param loc
+	 * @param reply
+	 * @return
+	 */
+	public static DBQuery<Void> updateServerLocationInfo(
+			final SierraServerLocation loc, final ServerInfoReply reply) {
+		return updateServerLocationInfo(Collections.singletonMap(loc, reply));
+	}
+
+	/**
+	 * Update the information for the given set of locations based on their
+	 * replies.
 	 * 
 	 * @param locations
 	 * @return

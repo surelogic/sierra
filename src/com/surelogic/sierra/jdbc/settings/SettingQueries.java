@@ -6,7 +6,6 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -495,8 +494,8 @@ public class SettingQueries {
 				.getServerInfo(new ServerInfoRequest());
 		return new DBQuery<ServerInfoReply>() {
 			public ServerInfoReply perform(final Query q) {
-				ServerLocations.updateServerLocationInfo(
-						Collections.singletonMap(server, reply)).perform(q);
+				ServerLocations.updateServerLocationInfo(server, reply)
+						.perform(q);
 				return reply;
 			}
 		};
