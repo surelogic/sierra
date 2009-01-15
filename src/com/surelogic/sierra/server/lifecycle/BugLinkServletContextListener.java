@@ -1,9 +1,9 @@
 package com.surelogic.sierra.server.lifecycle;
 
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.Iterator;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
@@ -12,6 +12,7 @@ import javax.servlet.ServletContextListener;
 
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.jdbc.server.ConnectionFactory;
+import com.surelogic.sierra.jdbc.settings.ConnectedServer;
 import com.surelogic.sierra.jdbc.settings.ServerLocations;
 import com.surelogic.sierra.jdbc.settings.SettingQueries;
 import com.surelogic.sierra.tool.message.ServerInfoReply;
@@ -35,35 +36,39 @@ public class BugLinkServletContextListener implements ServletContextListener {
 					.scheduleWithFixedDelay(new Runnable() {
 						public void run() {
 							try {
-								final Set<ServerLocation> locations = ConnectionFactory
-										.getInstance().withReadOnly(
-												ServerLocations
-														.fetchQuery(null))
-										.keySet();
-								SLLogger.getLogger().info(
-										"Updating scan filters and categories from "
-												+ locations + " at "
-												+ new Date());
-								final Map<ServerLocation, ServerInfoReply> validServers = new HashMap<ServerLocation, ServerInfoReply>();
-								for (final ServerLocation location : locations) {
+								final List<ConnectedServer> servers = new ArrayList<ConnectedServer>(
+										ConnectionFactory
+												.getInstance()
+												.withReadOnly(
+														ServerLocations
+																.fetchQuery(null))
+												.keySet());
+								SLLogger.getLogger()
+										.info(
+												"Updating scan filters and categories from "
+														+ servers + " at "
+														+ new Date());
+								ConnectedServer server;
+								for (final Iterator<ConnectedServer> i = servers
+										.iterator(); i.hasNext();) {
 									try {
+										server = i.next();
 										final ServerInfoReply reply = ServerInfoServiceClient
-												.create(location)
+												.create(server.getLocation())
 												.getServerInfo(
 														new ServerInfoRequest());
-										validServers.put(location, reply);
+										ServerLocations
+												.updateServerIdentities(reply
+														.getServers());
 									} catch (final SierraServiceClientException e) {
 										SLLogger.getLogger().log(Level.INFO,
 												e.getMessage(), e);
+										i.remove();
 									}
 								}
-								ConnectionFactory
-										.getInstance()
-										.withTransaction(
-												ServerLocations
-														.updateServerLocationInfo(validServers));
-								for (final ServerLocation location : validServers
-										.keySet()) {
+								for (final ConnectedServer s : servers) {
+									final ServerLocation location = s
+											.getLocation();
 									ConnectionFactory
 											.getInstance()
 											.withTransaction(

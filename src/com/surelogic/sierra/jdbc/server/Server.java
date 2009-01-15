@@ -142,7 +142,16 @@ public class Server {
 				final ResultSet set = st.getGeneratedKeys();
 				try {
 					set.next();
-					return set.getLong(1);
+					final long revision = set.getLong(1);
+					final PreparedStatement st1 = conn
+							.prepareStatement("UPDATE SERVER_IDENTITY SET REVISION = ? WHERE UUID = (SELECT UUID FROM SERVER)");
+					try {
+						st1.setLong(1, revision);
+						st1.execute();
+					} finally {
+						st1.close();
+					}
+					return revision;
 				} finally {
 					set.close();
 				}
