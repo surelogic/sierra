@@ -11,9 +11,13 @@ import java.util.Set;
 import java.util.logging.Level;
 
 import com.surelogic.common.ILifecycle;
+import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.logging.SLLogger;
-import com.surelogic.sierra.tool.message.ServerLocation;
+import com.surelogic.sierra.jdbc.settings.ConnectedServer;
 
+/**
+ * Manages the set of connected servers.
+ */
 public final class SierraServerManager extends
 		DatabaseObservable<ISierraServerObserver> implements ILifecycle {
 
@@ -28,8 +32,8 @@ public final class SierraServerManager extends
 	}
 
 	public void init() {
+		load();
 		DatabaseHub.getInstance().addObserver(this);
-
 	}
 
 	public void dispose() {
@@ -37,37 +41,42 @@ public final class SierraServerManager extends
 	}
 
 	/**
-	 * Maps servers by their label.
+	 * The servers managed by this model.
+	 * <p>
+	 * Access to this list is protected by a lock on {@code this}.
 	 */
-	final Map<String, SierraServer> f_labelToServer = new HashMap<String, SierraServer>();
+	private final List<ConnectedServer> f_servers = new ArrayList<ConnectedServer>();
+
+	public boolean isEmpty() {
+		synchronized (this) {
+			return f_servers.isEmpty();
+		}
+	}
 
 	/**
-	 * Checks if a given label is the label for an existing server.
+	 * Gets the set of servers managed by this model.
 	 * 
-	 * @param label
-	 *            a server label.
-	 * @return <code>true</code> if the label is used for an existing server,
-	 *         <code>false</code> otherwise.
+	 * @return a set of servers.
 	 */
-	public synchronized boolean exists(final String label) {
-		return f_labelToServer.containsKey(label);
-	}
-
-	public synchronized boolean isEmpty() {
-		return f_labelToServer.isEmpty();
-	}
-
-	public synchronized Set<SierraServer> getServers() {
-		final Set<SierraServer> servers = new HashSet<SierraServer>(
-				f_labelToServer.values());
+	public Set<ConnectedServer> getServers() {
+		final Set<ConnectedServer> servers;
+		synchronized (this) {
+			servers = new HashSet<ConnectedServer>(f_servers);
+		}
 		return servers;
 	}
 
-	public Set<SierraServer> getTeamServers() {
-		final Set<SierraServer> servers = getServers();
-		for (final Iterator<SierraServer> iterator = servers.iterator(); iterator
+	/**
+	 * Gets the set of connected servers that can act as team servers managed by
+	 * this model.
+	 * 
+	 * @return a set of team servers.
+	 */
+	public Set<ConnectedServer> getTeamServers() {
+		final Set<ConnectedServer> servers = getServers();
+		for (final Iterator<ConnectedServer> iterator = servers.iterator(); iterator
 				.hasNext();) {
-			final SierraServer sierraServer = iterator.next();
+			final ConnectedServer sierraServer = iterator.next();
 			if (!sierraServer.isTeamServer()) {
 				iterator.remove();
 			}
@@ -75,110 +84,47 @@ public final class SierraServerManager extends
 		return servers;
 	}
 
-	/**
-	 * Gets the server with the passed label. If the server does not exist then
-	 * it is created.
-	 * 
-	 * @param label
-	 *            a server label.
-	 * @return the server with the passed label.
-	 */
-	public SierraServer getOrCreate(final String label) {
-		if (label == null) {
-			throw new IllegalArgumentException("label must be non-null");
-		}
-		boolean created = false;
-		SierraServer server;
-
-		synchronized (this) {
-			server = f_labelToServer.get(label);
-			if (server == null) {
-				server = new SierraServer(this, label);
-				server.setPassword(BUGLINK_PASS);
-				server.setUser(BUGLINK_USER);
-				server.setSavePassword(true);
-				created = true;
-			}
-		}
-		if (created) {
-			notifyObservers();
-		}
-		return server;
-	}
-
-	static public final String BUGLINK_ORG = "buglink.org";
-	static public final String BUGLINK_USER = "buglink-user";
-	static public final String BUGLINK_PASS = "bl!uzer";
-
-	public boolean isThereABugLinkOrg() {
-		return exists(BUGLINK_ORG);
-	}
-
-	public void createBugLinkOrg() {
-		final SierraServer server = getOrCreate(BUGLINK_ORG);
-		server.setHost("buglink.org");
-	}
-
-	public SierraServer getOrCreateBugLinkOrg() {
-		if (!isThereABugLinkOrg()) {
-			createBugLinkOrg();
-		}
-		return getOrCreate(BUGLINK_ORG);
-	}
+	// static public final String BUGLINK_ORG = "buglink.org";
+	// static public final String BUGLINK_USER = "buglink-user";
+	// static public final String BUGLINK_PASS = "bl!uzer";
+	//
+	// public boolean isThereABugLinkOrg() {
+	// return exists(BUGLINK_ORG);
+	// }
+	//
+	// public void createBugLinkOrg() {
+	// final SierraServer server = getOrCreate(BUGLINK_ORG);
+	// server.setHost("buglink.org");
+	// }
+	//
+	// public SierraServer getOrCreateBugLinkOrg() {
+	// if (!isThereABugLinkOrg()) {
+	// createBugLinkOrg();
+	// }
+	// return getOrCreate(BUGLINK_ORG);
+	// }
 
 	/**
-	 * Creates a server with a unique label. The new server is set as the focus
-	 * server.
-	 * 
-	 * @return the new server.
-	 */
-	public SierraServer create() {
-		final String label = newUniqueLabel("server");
-		final SierraServer query = new SierraServer(this, label);
-		setFocus(query);
-		return query;
-	}
-
-	/**
-	 * Creates a new {@link ServerLocation} for editing.
-	 * 
-	 * @return a new server location object.
-	 */
-	public ServerLocation createLocation() {
-		final String label = newUniqueLabel("server");
-		return new ServerLocation(label, "", false,
-				ServerLocation.DEFAULT_PORT, ServerLocation.DEFAULT_PATH, "",
-				"", false);
-	}
-
-	/**
-	 * Deletes the passed server from the set of server managed by this.
+	 * Deletes the passed server from the set of servers managed by this model.
 	 * 
 	 * @param server
 	 *            the server to delete.
 	 */
-	public void delete(final SierraServer server) {
+	public void delete(final ConnectedServer server) {
 		synchronized (this) {
-			if (server.getManager() != this) {
-				SLLogger.getLogger().log(
-						Level.WARNING,
-						"A server can only be deleted from its associated manager : "
-								+ server);
-				return;
-			}
 			if (f_focus == server) {
 				f_focus = null;
 			}
-			for (final Iterator<Map.Entry<String, SierraServer>> i = f_labelToServer
-					.entrySet().iterator(); i.hasNext();) {
-				final Map.Entry<String, SierraServer> entry = i.next();
-				if (entry.getValue() == server) {
+			for (final Iterator<ConnectedServer> i = f_servers.iterator(); i
+					.hasNext();) {
+				final ConnectedServer entry = i.next();
+				if (entry == server) {
 					i.remove();
 				}
 			}
-			for (final Iterator<Map.Entry<String, SierraServer>> j = f_projectNameToServer
+			for (final Iterator<Map.Entry<String, ConnectedServer>> j = f_projectNameToServer
 					.entrySet().iterator(); j.hasNext();) {
-				final Map.Entry<String, SierraServer> entry = j.next();
+				final Map.Entry<String, ConnectedServer> entry = j.next();
 				if (entry.getValue() == server) {
 					j.remove();
 				}
@@ -188,84 +134,29 @@ public final class SierraServerManager extends
 	}
 
 	/**
-	 * Deletes the server identified by the passed label from this server if it
-	 * exists.
-	 * 
-	 * @param label
-	 *            of the server to delete.
-	 */
-	public synchronized void delete(final String label) {
-		final SierraServer server = f_labelToServer.get(label);
-		if (server != null) {
-			delete(server);
-		}
-	}
-
-	/**
-	 * Creates a duplicate of the current focus server with a new unique label.
-	 * The new server becomes the focus of this model.
-	 */
-	public void duplicate() {
-		final SierraServer server = getFocus();
-		if (server != null) {
-			final String label = newUniqueLabel(server.getLabel());
-			final SierraServer newServer = new SierraServer(this, label);
-			newServer.setHost(server.getHost());
-			newServer.setPassword(server.getPassword());
-			newServer.setPort(server.getPort());
-			newServer.setSavePassword(server.savePassword());
-			newServer.setAutoSync(server.autoSync());
-			newServer.setSecure(server.isSecure());
-			newServer.setUser(server.getUser());
-			setFocus(newServer);
-		}
-	}
-
-	/**
-	 * Creates a unique server label. For example, given a prefix of
-	 * <code>"server"</code>, it could return <code>"server (1)"</code>.
-	 * 
-	 * @param prefix
-	 *            non-null prefix for the label.
-	 * @return a unique server label.
-	 */
-	private String newUniqueLabel(String prefix) {
-		// strip off any previous number, e.g., (1)
-		if (prefix.endsWith(")")) {
-			final int index = prefix.lastIndexOf('(');
-			if ((index != -1) && (index > 1)) {
-				if (prefix.charAt(index - 1) == ' ') {
-					prefix = prefix.substring(0, index - 1);
-				}
-			}
-		}
-		// create a new label
-		int id = 1;
-		String label;
-		do {
-			label = prefix + " (" + id++ + ")";
-		} while (exists(label));
-		return label;
-	}
-
-	/**
-	 * Gets the list of server labels managed by this model in alphabetical
+	 * Gets the list of server names managed by this model in alphabetical
 	 * order. The array returned is a copy so mutations to the array will not
 	 * affect this model.
 	 * 
-	 * @return the ordered list of server labels.
+	 * @return the ordered list of server names.
 	 */
-	public synchronized String[] getLabels() {
-		final List<String> labels = new ArrayList<String>(f_labelToServer
-				.keySet());
-		Collections.sort(labels);
-		return labels.toArray(new String[labels.size()]);
+	public String[] getNames() {
+		final List<String> names = new ArrayList<String>();
+		synchronized (this) {
+			for (ConnectedServer server : f_servers) {
+				names.add(server.getName());
+			}
+		}
+		Collections.sort(names);
+		return names.toArray(new String[names.size()]);
 	}
 
 	/**
 	 * Defines a server which is the current focus of this model.
+	 * <p>
+	 * Access to this field is protected by a lock on {@code this}.
 	 */
-	private SierraServer f_focus;
+	private ConnectedServer f_focus;
 
 	/**
 	 * Sets the passed server as the current focus of this model.
@@ -273,14 +164,19 @@ public final class SierraServerManager extends
 	 * @param server
 	 *            the non-null server to be the focus of this model.
 	 */
-	public void setFocus(final SierraServer server) {
+	public void setFocus(final ConnectedServer server) {
 		if (server == null) {
-			throw new IllegalArgumentException("server must be non-null");
+			throw new IllegalArgumentException(I18N.err(44, "server"));
 		}
-		if (f_focus != server) {
-			f_focus = server;
+		boolean notify = false;
+		synchronized (this) {
+			if (f_focus != server) {
+				f_focus = server;
+				notify = true;
+			}
+		}
+		if (notify)
 			notifyObservers();
-		}
 	}
 
 	/**
@@ -288,44 +184,63 @@ public final class SierraServerManager extends
 	 * 
 	 * @return the server which is the current focus of this model.
 	 */
-	public SierraServer getFocus() {
-		return f_focus;
+	public ConnectedServer getFocus() {
+		synchronized (this) {
+			return f_focus;
+		}
 	}
 
-	private final Map<String, SierraServer> f_projectNameToServer = new HashMap<String, SierraServer>();
+	/**
+	 * The project to server connections managed by this model.
+	 * <p>
+	 * Access to this map is protected by a lock on {@code this}.
+	 */
+	private final Map<String, ConnectedServer> f_projectNameToServer = new HashMap<String, ConnectedServer>();
 
 	public boolean isConnected(final String projectName) {
-		return f_projectNameToServer.containsKey(projectName);
+		synchronized (this) {
+			return f_projectNameToServer.containsKey(projectName);
+		}
 	}
 
-	public void connect(final String projectName, final SierraServer server) {
+	public void connect(final String projectName, final ConnectedServer server) {
 		if (projectName == null) {
-			throw new IllegalArgumentException("project name must be non-null.");
+			throw new IllegalArgumentException(I18N.err(44, "projectName"));
 		}
 		if (server == null) {
-			throw new IllegalArgumentException("server must be non-null.");
+			throw new IllegalArgumentException(I18N.err(44, "server"));
 		}
-		f_projectNameToServer.put(projectName, server);
-		notifyObservers();
-
+		final boolean notify;
+		synchronized (this) {
+			notify = server != f_projectNameToServer.put(projectName, server);
+		}
+		if (notify)
+			notifyObservers();
 	}
 
 	public void disconnect(final String projectName) {
-		if (f_projectNameToServer.remove(projectName) != null) {
+		final boolean notify;
+		synchronized (this) {
+			notify = null != f_projectNameToServer.remove(projectName);
+		}
+		if (notify)
 			notifyObservers();
+	}
+
+	public ConnectedServer getServer(final String projectName) {
+		synchronized (this) {
+			return f_projectNameToServer.get(projectName);
 		}
 	}
 
-	public SierraServer getServer(final String projectName) {
-		return f_projectNameToServer.get(projectName);
-	}
-
-	public List<String> getProjectsConnectedTo(final SierraServer server) {
+	public List<String> getProjectsConnectedTo(final ConnectedServer server) {
 		final List<String> projects = new ArrayList<String>();
-		for (final Map.Entry<String, SierraServer> entry : f_projectNameToServer
-				.entrySet()) {
-			if (entry.getValue() == server) {
-				projects.add(entry.getKey());
+		synchronized (this) {
+			for (final Map.Entry<String, ConnectedServer> entry : f_projectNameToServer
+					.entrySet()) {
+				if (entry.getValue() == server) {
+					projects.add(entry.getKey());
+				}
 			}
 		}
 		Collections.sort(projects);
@@ -333,36 +248,24 @@ public final class SierraServerManager extends
 	}
 
 	public Set<String> getConnectedProjects() {
-		final Set<String> projects = new HashSet<String>(f_projectNameToServer
-				.keySet());
+		final Set<String> projects;
+		synchronized (this) {
+			projects = new HashSet<String>(f_projectNameToServer.keySet());
+		}
 		return projects;
 	}
 
-	/**
-	 * Notifies all registered {@link ISierraServerObserver} objects.
-	 */
-	@Override
-	protected void notifyObserver(final ISierraServerObserver o) {
-		o.notify(this);
-	}
-
-	public synchronized void save() {
+	private synchronized void save() {
 		SierraServerPersistence.save(this);
 	}
 
-	public void load() throws Exception {
-		SierraServerPersistence.load(this);
-		/*
-		 * Add BugLink server if necessary
-		 */
-		getOrCreateBugLinkOrg();
-	}
-
-	public synchronized SierraServer getServerByLabel(final String label) {
-		if (label == null) {
-			return null;
+	private void load() {
+		try {
+			SierraServerPersistence.load(this);
+		} catch (Exception e) {
+			SLLogger.getLogger().log(Level.SEVERE,
+					"Failure loading connected server data", e);
 		}
-		return f_labelToServer.get(label);
 	}
 
 	@Override
@@ -371,4 +274,8 @@ public final class SierraServerManager extends
 		super.notifyObservers();
 	}
 
+	@Override
+	protected void notifyThisObserver(final ISierraServerObserver o) {
+		o.notify(this);
+	}
 }

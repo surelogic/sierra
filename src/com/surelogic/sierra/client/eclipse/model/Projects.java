@@ -41,7 +41,7 @@ public final class Projects extends DatabaseObservable<IProjectsObserver> {
 	}
 
 	@Override
-	protected void notifyObserver(final IProjectsObserver o) {
+	protected void notifyThisObserver(final IProjectsObserver o) {
 		o.notify(this);
 	}
 

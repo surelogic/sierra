@@ -27,9 +27,9 @@ public abstract class DatabaseObservable<L> extends AbstractDatabaseObserver {
 
 	public void notifyObservers() {
 		for (L o : f_observers) {
-			notifyObserver(o);
+			notifyThisObserver(o);
 		}
 	}
 
-	protected abstract void notifyObserver(L o);
+	protected abstract void notifyThisObserver(L o);
 }

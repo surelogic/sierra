@@ -48,7 +48,7 @@ public final class BuglinkData extends DatabaseObservable<IBuglinkDataObserver> 
 	}
 
 	@Override
-	protected void notifyObserver(IBuglinkDataObserver o) {
+	protected void notifyThisObserver(IBuglinkDataObserver o) {
 		o.notify(this);
 	}
 
