@@ -3,6 +3,14 @@ package com.surelogic.sierra.jdbc.settings;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.sierra.tool.message.ServerLocation;
 
+/**
+ * This class represents a connected server in the Sierra client or server
+ * model. This includes a location of the server (network information
+ * primarily), a UUID, a human-friendly name, and a flat indicating if the
+ * server can act as a team server (i.e., projects can be connected to it).
+ * <p>
+ * This class is immutable.
+ */
 public class ConnectedServer {
 
 	private final String f_uuid;
