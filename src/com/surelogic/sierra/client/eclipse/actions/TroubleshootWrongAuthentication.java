@@ -7,14 +7,14 @@ import org.eclipse.ui.PlatformUI;
 import com.surelogic.common.eclipse.SWTUtility;
 import com.surelogic.common.eclipse.logging.SLEclipseStatusUtility;
 import com.surelogic.sierra.client.eclipse.dialogs.ServerAuthenticationDialog;
-import com.surelogic.sierra.client.eclipse.model.SierraServer;
 import com.surelogic.sierra.client.eclipse.preferences.ServerFailureReport;
+import com.surelogic.sierra.jdbc.settings.ConnectedServer;
 
 public final class TroubleshootWrongAuthentication extends
 		TroubleshootConnection {
 
 	public TroubleshootWrongAuthentication(final ServerFailureReport method,
-			SierraServer server, String projectName) {
+			ConnectedServer server, String projectName) {
 		super(method, server, projectName);
 	}
 
@@ -29,7 +29,7 @@ public final class TroubleshootWrongAuthentication extends
 	protected IStatus createStatus() {
 		return SLEclipseStatusUtility
 				.createInfoStatus("Unable to authenticate to "
-						+ f_server.getLabel());
+						+ f_server.getName());
 	}
 
 	@Override

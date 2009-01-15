@@ -3,13 +3,13 @@ package com.surelogic.sierra.client.eclipse.actions;
 import org.eclipse.core.runtime.IStatus;
 import com.surelogic.common.eclipse.logging.SLEclipseStatusUtility;
 import com.surelogic.common.i18n.I18N;
-import com.surelogic.sierra.client.eclipse.model.SierraServer;
 import com.surelogic.sierra.client.eclipse.preferences.ServerFailureReport;
+import com.surelogic.sierra.jdbc.settings.ConnectedServer;
 
 public final class TroubleshootNoSuchServer extends TroubleshootConnection {
 
 	public TroubleshootNoSuchServer(final ServerFailureReport method,
-			                        SierraServer server, String projectName) {
+			                        ConnectedServer server, String projectName) {
 		super(method, server, projectName);
 	}
 	@Override
@@ -18,7 +18,7 @@ public final class TroubleshootNoSuchServer extends TroubleshootConnection {
 	}
 	@Override
 	protected IStatus createStatus() {
-		final String sl = f_server.getLabel();
+		final String sl = f_server.getName();
 		final int errNo = 23;
 		final String msg = I18N.err(errNo, sl, sl, sl, sl, sl, sl);
 		final IStatus reason = SLEclipseStatusUtility.createWarningStatus(errNo, msg);

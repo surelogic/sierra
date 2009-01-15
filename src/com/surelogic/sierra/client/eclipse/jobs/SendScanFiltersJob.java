@@ -18,8 +18,8 @@ import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.actions.TroubleshootConnection;
 import com.surelogic.sierra.client.eclipse.actions.TroubleshootNoSuchServer;
 import com.surelogic.sierra.client.eclipse.actions.TroubleshootWrongAuthentication;
-import com.surelogic.sierra.client.eclipse.model.SierraServer;
 import com.surelogic.sierra.client.eclipse.preferences.ServerFailureReport;
+import com.surelogic.sierra.jdbc.settings.ConnectedServer;
 import com.surelogic.sierra.jdbc.settings.SettingQueries;
 import com.surelogic.sierra.tool.message.InvalidLoginException;
 import com.surelogic.sierra.tool.message.SierraServiceClientException;
@@ -27,12 +27,12 @@ import com.surelogic.sierra.tool.message.SierraServiceClientException;
 public final class SendScanFiltersJob extends DatabaseJob {
 	public static final boolean ENABLED = true;
 	private final ServerFailureReport f_method;
-	private final SierraServer f_server;
+	private final ConnectedServer f_server;
 	private final String f_name;
 
 	public SendScanFiltersJob(final ServerFailureReport method,
-			final SierraServer server, final String name) {
-		super("Sending local scan filter settings to " + server.getLabel());
+			final ConnectedServer server, final String name) {
+		super("Sending local scan filter settings to " + server.getName());
 		f_server = server;
 		f_name = name;
 		f_method = method;
@@ -77,8 +77,7 @@ public final class SendScanFiltersJob extends DatabaseJob {
 			final SLProgressMonitor slMonitor) throws SQLException {
 		try {
 			Data.getInstance().withReadOnly(
-					SettingQueries.copyDefaultScanFilterToServer(f_server
-							.getServer(), f_name));
+					SettingQueries.copyDefaultScanFilterToServer(f_server.getLocation(), f_name));
 			f_server.markAsConnected();
 		} catch (final SierraServiceClientException e) {
 			TroubleshootConnection troubleshoot;

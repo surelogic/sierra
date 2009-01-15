@@ -9,14 +9,14 @@ import com.surelogic.common.eclipse.BalloonUtility;
 import com.surelogic.common.eclipse.dialogs.ErrorDialogUtility;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.model.Projects;
-import com.surelogic.sierra.client.eclipse.model.SierraServer;
 import com.surelogic.sierra.client.eclipse.model.ConnectedServerManager;
 import com.surelogic.sierra.client.eclipse.preferences.ServerFailureReport;
+import com.surelogic.sierra.jdbc.settings.ConnectedServer;
 
 public abstract class TroubleshootConnection {
 
 	protected final ServerFailureReport f_method;
-	protected final SierraServer f_server;
+	protected final ConnectedServer f_server;
 	protected final String f_projectName;
 	protected IStatus f_status;
 
@@ -30,7 +30,7 @@ public abstract class TroubleshootConnection {
 	 *            is unknown.
 	 */
 	protected TroubleshootConnection(final ServerFailureReport method,
-			final SierraServer server, final String projectName) {
+			final ConnectedServer server, final String projectName) {
 		f_method = method;
 
 		if (server == null)
@@ -42,7 +42,7 @@ public abstract class TroubleshootConnection {
 			f_projectName = "(unknown)";
 	}
 
-	public final SierraServer getServer() {
+	public final ConnectedServer getServer() {
 		return f_server;
 	}
 
