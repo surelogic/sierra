@@ -292,6 +292,15 @@ public final class ConnectedServerManager extends
 		}
 	}
 
+	public synchronized ConnectedServer getServerById(final String id) {
+		for(ConnectedServer server : f_servers) {
+			if (server.getUuid().equals(id)) {
+				return server;
+			}
+		}
+		return null;
+	}
+	
 	public ConnectedServer getServer(final String projectName) {
 		synchronized (this) {
 			return f_projectNameToServer.get(projectName);
