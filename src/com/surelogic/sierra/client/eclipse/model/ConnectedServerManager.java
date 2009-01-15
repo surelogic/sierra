@@ -320,6 +320,24 @@ public final class ConnectedServerManager extends
 		return projects;
 	}
 
+	/**
+	 * From id to stats
+	 */
+	private Map<String,ConnectedServerStats> f_serverStats = 
+		new HashMap<String,ConnectedServerStats>();
+	
+	/**
+	 * @return non-null
+	 */
+	public synchronized ConnectedServerStats getStats(ConnectedServer server) {
+		ConnectedServerStats stats = f_serverStats.get(server.getUuid());
+		if (stats == null) {
+			stats = new ConnectedServerStats(server);
+			f_serverStats.put(server.getUuid(), stats);
+		}
+		return stats;
+	}
+	
 	// fields needed for caching the password
 	private static final String AUTH_SCHEME = "";
 	private static final URL FAKE_URL;

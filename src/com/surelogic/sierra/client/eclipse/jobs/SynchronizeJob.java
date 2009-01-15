@@ -19,6 +19,7 @@ import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.actions.TroubleshootConnection;
 import com.surelogic.sierra.client.eclipse.actions.TroubleshootWrongServer;
+import com.surelogic.sierra.client.eclipse.model.ConnectedServerManager;
 import com.surelogic.sierra.client.eclipse.model.DatabaseHub;
 import com.surelogic.sierra.client.eclipse.model.Projects;
 import com.surelogic.sierra.client.eclipse.model.ServerSyncType;
@@ -77,7 +78,8 @@ public class SynchronizeJob extends AbstractServerProjectJob {
 	protected IStatus run(final IProgressMonitor monitor) {
 		final int threshold = PreferenceConstants
 				.getServerInteractionRetryThreshold();
-		final int numProblems = f_server.getProblemCount()
+		final int numProblems = 
+			ConnectedServerManager.getInstance().getStats(f_server).getProblemCount()
 				+ Projects.getInstance().getProblemCount(f_projectName);
 		if (!f_force && (numProblems > threshold)) {
 			return Status.CANCEL_STATUS;
@@ -143,7 +145,7 @@ public class SynchronizeJob extends AbstractServerProjectJob {
 				ClientProjectManager.getInstance(conn).synchronizeProject(
 						f_server, f_projectName, slMonitor);
 			}
-			f_server.markAsConnected();
+			ConnectedServerManager.getInstance().getStats(f_server).markAsConnected();
 			if (slMonitor.isCanceled()) {
 				conn.rollback();
 				return Status.CANCEL_STATUS;

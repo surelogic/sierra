@@ -1200,7 +1200,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 				final ConnectedServerManager mgr = ConnectedServerManager
 						.getInstance();
 				for (final ConnectedServer s : mgr.getServers()) {
-					if (s.getProblemCount() <= threshold) {
+					if (mgr.getStats(s).getProblemCount() <= threshold) {
 						s.updateServerInfo();
 					}
 				}
@@ -1236,7 +1236,8 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 		}
 		final int threshold = PreferenceConstants
 				.getServerInteractionRetryThreshold();
-		final int numServerProbs = server.getProblemCount();
+		final int numServerProbs = 
+			ConnectedServerManager.getInstance().getStats(server).getProblemCount();
 		if (numServerProbs > threshold) {
 			failedServers = markAsFailedServer(failedServers, server);
 			return true;
@@ -1343,7 +1344,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 			}
 			if (serverResponse != null) {
 				serverResponseMap.put(server, serverResponse);
-				server.markAsConnected();
+				ConnectedServerManager.getInstance().getStats(server).markAsConnected();
 			}
 		}
 	}
@@ -1439,7 +1440,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 	private void handleServerSuccess(final ConnectedServer server,
 			final String project) {
 		// Contact was successful, so reset counts
-		server.markAsConnected();
+		ConnectedServerManager.getInstance().getStats(server).markAsConnected();
 		Projects.getInstance().markAsConnected(project);
 	}
 
@@ -1481,8 +1482,8 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 					final List<SyncTrailResponse> responses = responseMap
 							.get(name);
 					final ConnectedServer server = f_manager.getServer(name);
-					final int numServerProblems = server == null ? -1 : server
-							.getProblemCount();
+					final int numServerProblems = server == null ? -1 : 
+						ConnectedServerManager.getInstance().getStats(server).getProblemCount();
 					final int numProjectProblems = Projects.getInstance()
 							.getProblemCount(name);
 

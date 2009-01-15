@@ -18,6 +18,7 @@ import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.actions.TroubleshootConnection;
 import com.surelogic.sierra.client.eclipse.actions.TroubleshootNoSuchServer;
 import com.surelogic.sierra.client.eclipse.actions.TroubleshootWrongAuthentication;
+import com.surelogic.sierra.client.eclipse.model.ConnectedServerManager;
 import com.surelogic.sierra.client.eclipse.preferences.ServerFailureReport;
 import com.surelogic.sierra.jdbc.settings.ConnectedServer;
 import com.surelogic.sierra.jdbc.settings.SettingQueries;
@@ -78,7 +79,7 @@ public final class SendScanFiltersJob extends DatabaseJob {
 		try {
 			Data.getInstance().withReadOnly(
 					SettingQueries.copyDefaultScanFilterToServer(f_server.getLocation(), f_name));
-			f_server.markAsConnected();
+			ConnectedServerManager.getInstance().getStats(f_server).markAsConnected();
 		} catch (final SierraServiceClientException e) {
 			TroubleshootConnection troubleshoot;
 			if (e instanceof InvalidLoginException) {

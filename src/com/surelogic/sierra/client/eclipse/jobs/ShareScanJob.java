@@ -20,6 +20,7 @@ import com.surelogic.common.jobs.SLProgressMonitor;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.actions.TimeseriesPromptFromJob;
 import com.surelogic.sierra.client.eclipse.actions.TroubleshootConnection;
+import com.surelogic.sierra.client.eclipse.model.ConnectedServerManager;
 import com.surelogic.sierra.client.eclipse.preferences.ServerFailureReport;
 import com.surelogic.sierra.jdbc.settings.ConnectedServer;
 import com.surelogic.sierra.tool.message.MessageWarehouse;
@@ -121,7 +122,7 @@ public class ShareScanJob extends AbstractServerProjectJob {
 		TroubleshootConnection troubleshoot;
 		try {
 			SierraServiceClient.create(f_server.getLocation()).publishRun(scan);
-			f_server.markAsConnected();
+			ConnectedServerManager.getInstance().getStats(f_server).markAsConnected();
 			return Status.OK_STATUS;
 		} catch (final SierraServiceClientException e) {
 			troubleshoot = getTroubleshootConnection(f_method, e);

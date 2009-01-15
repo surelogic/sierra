@@ -18,6 +18,7 @@ import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.actions.TroubleshootConnection;
 import com.surelogic.sierra.client.eclipse.actions.TroubleshootNoSuchServer;
 import com.surelogic.sierra.client.eclipse.actions.TroubleshootWrongAuthentication;
+import com.surelogic.sierra.client.eclipse.model.ConnectedServerManager;
 import com.surelogic.sierra.client.eclipse.preferences.ServerFailureReport;
 import com.surelogic.sierra.jdbc.settings.ConnectedServer;
 import com.surelogic.sierra.jdbc.settings.SettingQueries;
@@ -60,7 +61,7 @@ public final class GetCategoriesJob extends DatabaseJob {
 					.getLocation(), Data.getInstance().withReadOnly(
 					SettingQueries.categoryRequest()));
 			Data.getInstance().withTransaction(query);
-			f_server.markAsConnected();
+			ConnectedServerManager.getInstance().getStats(f_server).markAsConnected();
 		} catch (final SierraServiceClientException e) {
 			TroubleshootConnection troubleshoot;
 			if (e instanceof InvalidLoginException) {

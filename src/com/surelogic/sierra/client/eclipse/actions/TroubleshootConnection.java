@@ -92,7 +92,7 @@ public abstract class TroubleshootConnection {
 		}
 
 		if (failServer()) {
-			f_server.encounteredProblem();
+			ConnectedServerManager.getInstance().getStats(f_server).encounteredProblem();
 			ConnectedServerManager.getInstance().notifyObservers();
 		} else {
 			// Notifies observers by itself
