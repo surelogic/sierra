@@ -11,14 +11,13 @@ import javax.xml.bind.Marshaller;
 import com.surelogic.sierra.tool.message.BugLinkServiceClient;
 import com.surelogic.sierra.tool.message.ListCategoryRequest;
 import com.surelogic.sierra.tool.message.ListCategoryResponse;
-import com.surelogic.sierra.tool.message.SierraServerLocation;
+import com.surelogic.sierra.tool.message.ServerLocation;
 
 public class CategoryUtil {
 
 	public static void main(final String[] args) {
-		final SierraServerLocation buglink = new SierraServerLocation(
-				"buglink", "buglink.org", false, 13376, "/sl/", "admin",
-				"fluid!sl!ftw", false);
+		final ServerLocation buglink = new ServerLocation("buglink.org", false,
+				13376, "/sl/", "admin", "fluid!sl!ftw", false);
 		writeCategories(
 				buglink,
 				new File(
@@ -27,7 +26,7 @@ public class CategoryUtil {
 								+ "src/com/surelogic/sierra/jdbc/settings/buglink-categories.xml"));
 	}
 
-	public static void writeCategories(final SierraServerLocation buglink,
+	public static void writeCategories(final ServerLocation buglink,
 			final File file) {
 		try {
 			if (!file.exists()) {
