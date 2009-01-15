@@ -21,7 +21,7 @@ public class ServerLocation {
 	private final int f_port;
 	private final String f_contextPath;
 	private final String f_user;
-	private final String f_password;
+	private final String f_pass;
 	private final boolean f_autoSync;
 	private final boolean f_savePassword;
 
@@ -43,6 +43,9 @@ public class ServerLocation {
 	 * @param pass
 	 *            a saved password to use with this server, or {@code null} is
 	 *            the password is not saved.
+	 * @param savePassword
+	 *            {@code true} if the password should persist longer than this
+	 *            session, {@code false} if not.
 	 * @param autoSync
 	 *            {@code true} if the the client should automatically
 	 *            synchronize with this server, {@code false} if not.
@@ -52,8 +55,8 @@ public class ServerLocation {
 	 */
 	public ServerLocation(final String host, final boolean secure,
 			final int port, final String contextPath, final String user,
-			final String pass, final boolean autoSync,
-			final boolean savePassword) {
+			final String pass, final boolean savePassword,
+			final boolean autoSync) {
 		if (host == null) {
 			throw new IllegalArgumentException(I18N.err(44, "host"));
 		}
@@ -61,13 +64,13 @@ public class ServerLocation {
 		f_secure = secure;
 		f_port = port;
 		f_user = user;
-		f_password = pass;
+		f_pass = pass;
 		if (contextPath == null) {
 			throw new IllegalArgumentException(I18N.err(44, "contextPath"));
 		}
 		f_contextPath = contextPath;
-		f_autoSync = autoSync;
 		f_savePassword = savePassword;
+		f_autoSync = autoSync;
 	}
 
 	/**
@@ -79,6 +82,42 @@ public class ServerLocation {
 	public ServerLocation() {
 		this(ServerLocation.DEFAULT_HOST, false, ServerLocation.DEFAULT_PORT,
 				ServerLocation.DEFAULT_CONTEXT_PATH, null, null, false, false);
+	}
+
+	/**
+	 * Creates a new server location with changed authorization information.
+	 * 
+	 * @param user
+	 *            a saved user name to use with this server, or {@code null} is
+	 *            the user name is not saved.
+	 * @param pass
+	 *            a saved password to use with this server, or {@code null} is
+	 *            the password is not saved.
+	 * @param savePassword
+	 *            {{@code true} if the password should persist longer than this
+	 *            session, {@code false} if not.
+	 * @return a new server location.
+	 */
+	public ServerLocation changeAuthorization(final String user,
+			final String pass, final boolean savePassword) {
+		return new ServerLocation(this.f_host, this.f_secure, this.f_port,
+				this.f_contextPath, user, pass, savePassword, this.f_autoSync);
+	}
+
+	/**
+	 * Creates a new server location with a changed automatic synchronization
+	 * flag.
+	 * 
+	 * @param autoSync
+	 *            {@code true} if the the client should automatically
+	 *            synchronize with this server, {@code false} if not.
+	 * 
+	 * @return a new server location.
+	 */
+	public ServerLocation changeAutoSync(final boolean autoSync) {
+		return new ServerLocation(this.f_host, this.f_secure, this.f_port,
+				this.f_contextPath, this.f_user, this.f_pass,
+				this.f_savePassword, autoSync);
 	}
 
 	/**
@@ -145,7 +184,7 @@ public class ServerLocation {
 	 * @return the saved password, or {@code null} if the password is not saved.
 	 */
 	public String getPass() {
-		return f_password;
+		return f_pass;
 	}
 
 	/**
@@ -161,7 +200,8 @@ public class ServerLocation {
 	/**
 	 * Whether or not the password for this server location should be saved.
 	 * 
-	 * @return
+	 * @return {@code true} if the password should persist longer than this
+	 *         session, {@code false} if not.
 	 */
 	public boolean isSavePassword() {
 		return f_savePassword;
@@ -221,7 +261,7 @@ public class ServerLocation {
 				+ ((f_contextPath == null) ? 0 : f_contextPath.hashCode());
 		result = prime * result + ((f_host == null) ? 0 : f_host.hashCode());
 		result = prime * result
-				+ ((f_password == null) ? 0 : f_password.hashCode());
+				+ ((f_pass == null) ? 0 : f_pass.hashCode());
 		result = prime * result + f_port;
 		result = prime * result + (f_savePassword ? 1231 : 1237);
 		result = prime * result + (f_secure ? 1231 : 1237);
@@ -258,11 +298,11 @@ public class ServerLocation {
 		} else if (!f_host.equals(other.f_host)) {
 			return false;
 		}
-		if (f_password == null) {
-			if (other.f_password != null) {
+		if (f_pass == null) {
+			if (other.f_pass != null) {
 				return false;
 			}
-		} else if (!f_password.equals(other.f_password)) {
+		} else if (!f_pass.equals(other.f_pass)) {
 			return false;
 		}
 		if (f_port != other.f_port) {
@@ -283,5 +323,4 @@ public class ServerLocation {
 		}
 		return true;
 	}
-
 }
