@@ -356,7 +356,6 @@ public final class ConnectedServerManager extends
 		} catch (final CoreException e) {
 			SLLogger.getLogger().log(Level.SEVERE, I18N.err(42), e);
 		}
-
 	}
 
 	private void load() {
