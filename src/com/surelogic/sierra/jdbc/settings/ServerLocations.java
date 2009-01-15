@@ -23,9 +23,17 @@ import com.surelogic.sierra.tool.message.ServerInfoReply;
 import com.surelogic.sierra.tool.message.Services;
 import com.surelogic.sierra.tool.message.SierraServerLocation;
 
+/**
+ * This class implements storage and retrieval of server locations from the
+ * database.
+ * 
+ * @author nathan
+ * 
+ */
 public final class ServerLocations {
 	/**
-	 * Store the provided list of server locations. Passwords will not be saved.
+	 * Store the provided list of server locations and their associated
+	 * projects.
 	 * 
 	 * @param locations
 	 *            a map of server locations, and the projects connected to them
@@ -49,14 +57,11 @@ public final class ServerLocations {
 						throw new IllegalArgumentException();
 					}
 					final long id = insertLocation.call(l.getLabel(), l
-							.getProtocol(), l.getHost() == null ? Nulls.STRING
-							: l.getHost(), l.getPort(),
-							l.getContextPath() == null ? Nulls.STRING : l
-									.getContextPath(),
-							l.getUser() == null ? Nulls.STRING : l.getUser(), l
-									.getPass() == null ? Nulls.STRING : l
-									.getPass(), l.isAutoSync(), Nulls.coerce(l
-									.getUuid()), l.isTeamServer());
+							.getProtocol(), Nulls.coerce(l.getHost()), l
+							.getPort(), Nulls.coerce(l.getContextPath()), Nulls
+							.coerce(l.getUser()), Nulls.coerce(l.getPass()), l
+							.isAutoSync(), Nulls.coerce(l.getUuid()), l
+							.isTeamServer());
 					for (final String project : locEntry.getValue()) {
 						insertServerProject.call(id, project);
 					}
