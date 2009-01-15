@@ -52,6 +52,12 @@ public class ConnectedServer {
 		f_location = location;
 	}
 
+	public ConnectedServer(final ConnectedServer from, final String user,
+			final String pass, final boolean savePassword) {
+		this(from.f_uuid, from.f_name, from.f_isTeamServer, new ServerLocation(
+				from.f_location, user, pass, savePassword));
+	}
+
 	/**
 	 * Gets the UUID of this server.
 	 * 
