@@ -1,5 +1,8 @@
 package com.surelogic.sierra.client.eclipse.model;
 
+/**
+ * A trivial, take no action, implementation of an {@link IDatabaseObserver}.
+ */
 public abstract class AbstractDatabaseObserver implements IDatabaseObserver {
 
 	public void changed() {

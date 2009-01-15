@@ -14,7 +14,7 @@ import com.surelogic.sierra.tool.message.ServerInfoReply;
 import com.surelogic.sierra.tool.message.ServerInfoRequest;
 import com.surelogic.sierra.tool.message.ServerInfoService;
 import com.surelogic.sierra.tool.message.ServerInfoServiceClient;
-import com.surelogic.sierra.tool.message.SierraServerLocation;
+import com.surelogic.sierra.tool.message.ServerLocation;
 
 /**
  * Updates information about a team server and, typically, (but not always)
@@ -30,7 +30,7 @@ public class ValidateServerLocationJob extends AbstractServerProjectJob {
 	 *            the non-null server to contact.
 	 */
 	public ValidateServerLocationJob(SierraServer server,
-			SierraServerLocation location, boolean savePassword,
+			ServerLocation location, boolean savePassword,
 			boolean validate, boolean autoSync) {
 		super(null, "Validating conection to " + server.getLabel(), server,
 				null, ServerFailureReport.SHOW_DIALOG);
@@ -76,7 +76,7 @@ public class ValidateServerLocationJob extends AbstractServerProjectJob {
 			/*
 			 * First we validate our connection to the team server.
 			 */
-			final SierraServerLocation server = f_server.getServer();
+			final ServerLocation server = f_server.getServer();
 
 			boolean success = false; // assume the worst
 			final ServerInfoService ss = ServerInfoServiceClient.create(server);

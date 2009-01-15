@@ -27,7 +27,7 @@ import com.surelogic.common.xml.XMLConstants;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.jdbc.settings.ServerLocations;
 import com.surelogic.sierra.tool.message.Services;
-import com.surelogic.sierra.tool.message.SierraServerLocation;
+import com.surelogic.sierra.tool.message.ServerLocation;
 
 public final class SierraServerPersistence {
 
@@ -67,7 +67,7 @@ public final class SierraServerPersistence {
 		try {
 			Map<String, String> map = Platform.getAuthorizationInfo(FAKE_URL,
 					"", AUTH_SCHEME);
-			final Map<SierraServerLocation, Collection<String>> locMap = new HashMap<SierraServerLocation, Collection<String>>();
+			final Map<ServerLocation, Collection<String>> locMap = new HashMap<ServerLocation, Collection<String>>();
 			for (final SierraServer server : manager.getServers()) {
 				locMap.put(server.getServer(), manager
 						.getProjectsConnectedTo(server));
@@ -181,10 +181,10 @@ public final class SierraServerPersistence {
 		final Map<String, String> passwords = Platform.getAuthorizationInfo(
 				FAKE_URL, "", AUTH_SCHEME);
 		try {
-			for (final Entry<SierraServerLocation, Collection<String>> locEntry : Data
+			for (final Entry<ServerLocation, Collection<String>> locEntry : Data
 					.getInstance().withReadOnly(
 							ServerLocations.fetchQuery(passwords)).entrySet()) {
-				final SierraServerLocation loc = locEntry.getKey();
+				final ServerLocation loc = locEntry.getKey();
 				final SierraServer s = manager.getOrCreate(loc.getLabel());
 				s.setContextPath(loc.getContextPath());
 				s.setHost(loc.getHost());

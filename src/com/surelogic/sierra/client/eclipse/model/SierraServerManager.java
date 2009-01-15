@@ -10,11 +10,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 
+import com.surelogic.common.ILifecycle;
 import com.surelogic.common.logging.SLLogger;
-import com.surelogic.sierra.tool.message.SierraServerLocation;
+import com.surelogic.sierra.tool.message.ServerLocation;
 
 public final class SierraServerManager extends
-		DatabaseObservable<ISierraServerObserver> {
+		DatabaseObservable<ISierraServerObserver> implements ILifecycle {
 
 	public static final SierraServerManager INSTANCE = new SierraServerManager();
 
@@ -24,6 +25,15 @@ public final class SierraServerManager extends
 
 	private SierraServerManager() {
 		// singleton
+	}
+
+	public void init() {
+		DatabaseHub.getInstance().addObserver(this);
+
+	}
+
+	public void dispose() {
+		DatabaseHub.getInstance().removeObserver(this);
 	}
 
 	/**
@@ -130,15 +140,15 @@ public final class SierraServerManager extends
 	}
 
 	/**
-	 * Creates a new {@link SierraServerLocation} for editing.
+	 * Creates a new {@link ServerLocation} for editing.
 	 * 
 	 * @return a new server location object.
 	 */
-	public SierraServerLocation createLocation() {
+	public ServerLocation createLocation() {
 		final String label = newUniqueLabel("server");
-		return new SierraServerLocation(label, "", false,
-				SierraServerLocation.DEFAULT_PORT,
-				SierraServerLocation.DEFAULT_PATH, "", "", false);
+		return new ServerLocation(label, "", false,
+				ServerLocation.DEFAULT_PORT, ServerLocation.DEFAULT_PATH, "",
+				"", false);
 	}
 
 	/**
@@ -360,4 +370,5 @@ public final class SierraServerManager extends
 		save();
 		super.notifyObservers();
 	}
+
 }

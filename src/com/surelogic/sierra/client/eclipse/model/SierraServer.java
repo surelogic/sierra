@@ -12,7 +12,7 @@ import com.surelogic.sierra.tool.message.ServerInfoRequest;
 import com.surelogic.sierra.tool.message.ServerInfoService;
 import com.surelogic.sierra.tool.message.ServerInfoServiceClient;
 import com.surelogic.sierra.tool.message.Services;
-import com.surelogic.sierra.tool.message.SierraServerLocation;
+import com.surelogic.sierra.tool.message.ServerLocation;
 
 public final class SierraServer {
 
@@ -20,6 +20,37 @@ public final class SierraServer {
 
 	public SierraServerManager getManager() {
 		return f_manager;
+	}
+
+	/**
+	 * Requires a lock on {@code this} when mutated.
+	 */
+	private ServerLocation f_location;
+
+	/**
+	 * Returns the server location object associated with this. This object is
+	 * immutable and contains a lot of information about.
+	 * 
+	 * @return a server location object.
+	 */
+	public ServerLocation getLocation() {
+		synchronized (this) {
+			return f_location;
+		}
+	}
+
+	/**
+	 * Replaces the server location object associated with this. Server location
+	 * objects are immutable, so when we change something about this object's
+	 * server location we change our reference.
+	 * 
+	 * @param location
+	 *            a server location object.
+	 */
+	private void setLocation(final ServerLocation location) {
+		synchronized (this) {
+			f_location = location;
+		}
 	}
 
 	public SierraServer(final SierraServerManager manager, final String label) {
@@ -33,17 +64,6 @@ public final class SierraServer {
 		}
 	}
 
-	private String f_uuid = "";
-
-	public String getUuid() {
-		return f_uuid;
-	}
-
-	private String f_label = "";
-
-	public String getLabel() {
-		return f_label;
-	}
 
 	public boolean setLabel(final String label) {
 		if ((label == null) || label.equals(f_label)) {
@@ -63,12 +83,6 @@ public final class SierraServer {
 		}
 	}
 
-	private boolean f_secure = false;
-
-	public boolean isSecure() {
-		return f_secure;
-	}
-
 	/**
 	 * Is this server the current focus of its model.
 	 * 
@@ -83,84 +97,6 @@ public final class SierraServer {
 
 	public void setFocus() {
 		f_manager.setFocus(this);
-	}
-
-	public String getProtocol() {
-		return f_secure ? "https" : "http";
-	}
-
-	public void setSecure(final boolean secure) {
-		f_secure = secure;
-	}
-
-	private String f_host = "";
-
-	public String getHost() {
-		return f_host;
-	}
-
-	public void setHost(final String host) {
-		f_host = host;
-	}
-
-	private int f_port = SierraServerLocation.DEFAULT_PORT;
-
-	public int getPort() {
-		return f_port;
-	}
-
-	public void setPort(final int port) {
-		f_port = port;
-	}
-
-	private String f_contextPath = SierraServerLocation.DEFAULT_PATH;
-
-	public String getContextPath() {
-		return f_contextPath;
-	}
-
-	public void setContextPath(final String contextPath) {
-		f_contextPath = contextPath;
-	}
-
-	private String f_user = "";
-
-	public String getUser() {
-		return f_user;
-	}
-
-	public void setUser(final String user) {
-		f_user = user;
-	}
-
-	private String f_password = "";
-
-	public String getPassword() {
-		return f_password;
-	}
-
-	public void setPassword(final String password) {
-		f_password = password;
-	}
-
-	private boolean f_savePassword = false;
-
-	public boolean savePassword() {
-		return f_savePassword;
-	}
-
-	public void setSavePassword(final boolean savePassword) {
-		f_savePassword = savePassword;
-	}
-
-	private boolean f_autoSync = false;
-
-	public boolean autoSync() {
-		return f_autoSync;
-	}
-
-	public void setAutoSync(final boolean autoSync) {
-		f_autoSync = autoSync;
 	}
 
 	/**
@@ -216,8 +152,8 @@ public final class SierraServer {
 		return b.toString();
 	}
 
-	public SierraServerLocation getServer() {
-		return new SierraServerLocation(f_label, f_host, f_secure, f_port,
+	public ServerLocation getServer() {
+		return new ServerLocation(f_label, f_host, f_secure, f_port,
 				f_contextPath, f_user, f_password, f_autoSync);
 	}
 
@@ -232,7 +168,7 @@ public final class SierraServer {
 	 *            available.
 	 * @return {@true} if this was changed, {@code false} otherwise.
 	 */
-	public synchronized boolean setServer(final SierraServerLocation location,
+	public synchronized boolean setServer(final ServerLocation location,
 			final ServerInfoReply serverReply) {
 		final boolean changedInfo = !gotServerInfo && serverReply != null;
 		final boolean changed = differs(f_label, location.getLabel())

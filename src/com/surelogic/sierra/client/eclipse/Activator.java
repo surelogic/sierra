@@ -71,7 +71,7 @@ public final class Activator extends AbstractUIPlugin {
 			// startup the database and ensure its schema is up to date
 			System.setProperty("derby.stream.error.file", getDerbyLogFile());
 			// load up persisted sierra servers
-			SierraServerManager.getInstance().load();
+			SierraServerManager.getInstance().init();
 			// load up persisted sierra selections
 			SelectionManager.getInstance().load(getSelectionSaveFile());
 			// start observing data changes
@@ -118,7 +118,7 @@ public final class Activator extends AbstractUIPlugin {
 			SierraServersAutoSync.stop();
 			AdHocDataSource.getInstance().dispose();
 			if (f_databaseInSync.get()) {
-				SierraServerManager.getInstance().save();
+				SierraServerManager.getInstance().dispose();
 				SelectionManager.getInstance().save(getSelectionSaveFile());
 			}
 			f_plugin = null;

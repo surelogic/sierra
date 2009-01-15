@@ -28,7 +28,7 @@ import com.surelogic.sierra.client.eclipse.preferences.ServerFailureReport;
 import com.surelogic.sierra.jdbc.project.ClientProjectManager;
 import com.surelogic.sierra.jdbc.settings.SettingQueries;
 import com.surelogic.sierra.tool.message.ServerMismatchException;
-import com.surelogic.sierra.tool.message.SierraServerLocation;
+import com.surelogic.sierra.tool.message.ServerLocation;
 import com.surelogic.sierra.tool.message.SierraServiceClientException;
 
 /**
@@ -131,7 +131,7 @@ public class SynchronizeJob extends AbstractServerProjectJob {
 			SettingQueries.updateServerInfo(f_server.getServer()).perform(q);
 			if (f_syncType.syncBugLink() && joinJob != null
 					&& joinJob.process(f_server)) {
-				final SierraServerLocation loc = f_server.getServer();
+				final ServerLocation loc = f_server.getServer();
 				SettingQueries.retrieveCategories(loc,
 						SettingQueries.categoryRequest().perform(q)).perform(q);
 				SettingQueries.retrieveScanFilters(loc,

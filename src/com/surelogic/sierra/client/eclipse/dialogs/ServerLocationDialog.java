@@ -27,7 +27,7 @@ import com.surelogic.common.images.CommonImages;
 import com.surelogic.sierra.client.eclipse.jobs.ValidateServerLocationJob;
 import com.surelogic.sierra.client.eclipse.model.SierraServer;
 import com.surelogic.sierra.client.eclipse.model.SierraServerManager;
-import com.surelogic.sierra.tool.message.SierraServerLocation;
+import com.surelogic.sierra.tool.message.ServerLocation;
 
 /**
  * Dialog to allow the user to enter or edit the location and authentication
@@ -53,7 +53,7 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 				manager.createLocation(), title, true, false);
 		if (dialog.open() == Window.OK) {
 			final SierraServer server = manager.create();
-			final SierraServerLocation location = dialog.f_server;
+			final ServerLocation location = dialog.f_server;
 			final Job job = new ValidateServerLocationJob(server, location,
 					dialog.f_savePassword, dialog.f_validateServer,
 					dialog.f_autoSync);
@@ -77,7 +77,7 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 				server.getServer(), title, server.savePassword(), server
 						.autoSync());
 		if (dialog.open() == Window.OK) {
-			final SierraServerLocation location = dialog.f_server;
+			final ServerLocation location = dialog.f_server;
 			final Job job = new ValidateServerLocationJob(server, location,
 					dialog.f_savePassword, dialog.f_validateServer,
 					dialog.f_autoSync);
@@ -89,7 +89,7 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 
 	private static final int INFO_WIDTH_HINT = 70;
 
-	private SierraServerLocation f_server;
+	private ServerLocation f_server;
 
 	private final String f_title;
 
@@ -113,7 +113,7 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 	 * @param autoSync
 	 */
 	private ServerLocationDialog(final Shell parentShell,
-			final SierraServerLocation server, final String title,
+			final ServerLocation server, final String title,
 			final boolean savePassword, final boolean autoSync) {
 		super(parentShell);
 		setShellStyle(getShellStyle() | SWT.RESIZE | SWT.MAX);
@@ -448,7 +448,7 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 		}
 
 		public void okPressed() {
-			f_server = new SierraServerLocation(f_labelText.getText().trim(),
+			f_server = new ServerLocation(f_labelText.getText().trim(),
 					f_hostText.getText().trim(), f_isSecure, Integer
 							.parseInt(f_portText.getText().trim()),
 					f_contextPathText.getText().trim(), f_userText.getText()
