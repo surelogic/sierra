@@ -85,12 +85,7 @@ import com.surelogic.sierra.client.eclipse.jobs.AbstractServerProjectJob;
 import com.surelogic.sierra.client.eclipse.jobs.DeleteProjectDataJob;
 import com.surelogic.sierra.client.eclipse.jobs.OverwriteLocalScanFilterJob;
 import com.surelogic.sierra.client.eclipse.jobs.SendScanFiltersJob;
-import com.surelogic.sierra.client.eclipse.model.IProjectsObserver;
-import com.surelogic.sierra.client.eclipse.model.ISierraServerObserver;
-import com.surelogic.sierra.client.eclipse.model.Projects;
-import com.surelogic.sierra.client.eclipse.model.ServerSyncType;
-import com.surelogic.sierra.client.eclipse.model.SierraServer;
-import com.surelogic.sierra.client.eclipse.model.ConnectedServerManager;
+import com.surelogic.sierra.client.eclipse.model.*;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
 import com.surelogic.sierra.client.eclipse.preferences.ServerFailureReport;
 import com.surelogic.sierra.client.eclipse.wizards.ServerExportWizard;
@@ -101,6 +96,7 @@ import com.surelogic.sierra.jdbc.project.ClientProjectManager;
 import com.surelogic.sierra.jdbc.project.ProjectDO;
 import com.surelogic.sierra.jdbc.scan.ScanInfo;
 import com.surelogic.sierra.jdbc.scan.Scans;
+import com.surelogic.sierra.jdbc.settings.ConnectedServer;
 import com.surelogic.sierra.jdbc.settings.ScanFilterDO;
 import com.surelogic.sierra.jdbc.settings.ScanFilterView;
 import com.surelogic.sierra.jdbc.settings.ScanFilters;
@@ -140,7 +136,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 	/**
 	 * This should only be changed in the UI thread
 	 */
-	private Map<SierraServer, ServerUpdateStatus> serverUpdates = Collections
+	private Map<ConnectedServer, ServerUpdateStatus> serverUpdates = Collections
 			.emptyMap();
 
 	/**
@@ -156,7 +152,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 	/**
 	 * Used in a similar way as responseMap
 	 */
-	private final Map<SierraServer, ServerUpdateStatus> serverResponseMap = new HashMap<SierraServer, ServerUpdateStatus>();
+	private final Map<ConnectedServer, ServerUpdateStatus> serverResponseMap = new HashMap<ConnectedServer, ServerUpdateStatus>();
 
 	private final TreeViewer f_statusTree;
 	private final Menu f_contextMenu;
@@ -223,12 +219,12 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 
 		@Override
 		public final void run() {
-			final List<SierraServer> servers = collectServers().indirect;
+			final List<ConnectedServer> servers = collectServers().indirect;
 			if (servers.size() == 1) {
 				handleEventOnServer(servers.get(0));
 				/*
 			}
-			final SierraServer server = f_manager.getFocus();
+			final ConnectedServer server = f_manager.getFocus();
 			if (server != null) {
 				handleEventOnServer(server);
 				*/
@@ -237,7 +233,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 			}
 		}
 
-		protected void handleEventOnServer(final SierraServer server) {
+		protected void handleEventOnServer(final ConnectedServer server) {
 			// Do nothing
 		}
 
@@ -275,12 +271,12 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 		}
 
 		@Override
-		protected final void handleEventOnServer(final SierraServer server) {
+		protected final void handleEventOnServer(final ConnectedServer server) {
 			final ConnectedServerManager manager = server.getManager();
 			run(server, manager.getProjectsConnectedTo(server));
 		}
 
-		protected abstract void run(SierraServer server,
+		protected abstract void run(ConnectedServer server,
 				List<String> projectNames);
 	}
 
@@ -309,7 +305,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 				"Toggle whether the server(s) automatically synchronize",
 				"No server to toggle") {
 			@Override
-			protected void handleEventOnServer(final SierraServer server) {
+			protected void handleEventOnServer(final ConnectedServer server) {
 				server.setAutoSync(!server.autoSync());
 				server.getManager().notifyObservers();
 			}
@@ -348,7 +344,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 				"Open the selected team server in a Web browser",
 				"No server to browse") {
 			@Override
-			protected void handleEventOnServer(final SierraServer server) {
+			protected void handleEventOnServer(final ConnectedServer server) {
 				openInBrowser(server);
 			}
 		};
@@ -359,7 +355,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 				"Duplicates the selected team server location",
 				"No server to duplicate") {
 			@Override
-			protected void handleEventOnServer(final SierraServer server) {
+			protected void handleEventOnServer(final ConnectedServer server) {
 				f_manager.duplicate();
 			}
 		};
@@ -370,7 +366,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 				"Deletes the selected team server location",
 				"No server to delete") {
 			@Override
-			protected void run(final SierraServer server,
+			protected void run(final ConnectedServer server,
 					final List<String> projectNames) {
 				final String serverName = server.getLabel();
 				final String msg;
@@ -531,7 +527,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 				};
 				return projects.collectSelectedProjects((IStructuredSelection) f_statusTree.getSelection());
 			}
-			private void doConnect(final SierraServer server, List<IJavaProject> projects) {
+			private void doConnect(final ConnectedServer server, List<IJavaProject> projects) {
 				for (IJavaProject project : projects) {
 					if (f_manager.isConnected(project.getElementName())) {
 						continue;
@@ -540,7 +536,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 				}
 			}			
 			@Override
-			protected void handleEventOnServer(final SierraServer server) {
+			protected void handleEventOnServer(final ConnectedServer server) {
 				List<IJavaProject> projects = collectProjects();
 				if (!projects.isEmpty()) {
 					boolean syncAfterConnect = true;
@@ -589,7 +585,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 					if (dialog.open() == Window.CANCEL) {
 						return;
 					}
-					SierraServer server = dialog.getServer();
+					ConnectedServer server = dialog.getServer();
 					if (!dialog.confirmNonnullServer()) {
 						return;
 					}
@@ -621,7 +617,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 
 							@Override
 							protected void handleEventOnServer(
-									final SierraServer server) {
+									final ConnectedServer server) {
 								final String msg = "What do you want to call your scan filter "
 										+ "on the Sierra server '"
 										+ server.getLabel() + "'";
@@ -671,7 +667,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 				new ServerActionListener(
 						"Edit server pressed with no server focus.") {
 					@Override
-					protected void handleEventOnServer(final SierraServer server) {
+					protected void handleEventOnServer(final ConnectedServer server) {
 						ServerLocationDialog.editServer(f_statusTree.getTree()
 								.getShell(), server);
 					}
@@ -746,10 +742,10 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 				.addSelectionChangedListener(new ISelectionChangedListener() {
 					public void selectionChanged(
 							final SelectionChangedEvent event) {
-						final List<SierraServer> servers = collectServers().indirect;
+						final List<ConnectedServer> servers = collectServers().indirect;
 						final boolean onlyServer = servers.size() == 1;
 						if (onlyServer) {
-							final SierraServer focus = servers.get(0);
+							final ConnectedServer focus = servers.get(0);
 							if (f_manager.getFocus() != focus) {
 								f_manager.setFocus(servers.get(0));
 							}
@@ -766,7 +762,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 				final boolean onlyTeamServer;
 				final boolean onlyBugLink;
 				if (onlyServer) {
-					final SierraServer focus = servers.indirect.get(0);
+					final ConnectedServer focus = servers.indirect.get(0);
 					onlyTeamServer = focus.isTeamServer();
 					onlyBugLink = focus.isBugLink();
 				} else {
@@ -899,13 +895,13 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 	}
 
 	private static class SelectedServers {
-		final List<SierraServer> direct; 
-		final List<SierraServer> indirect;
+		final List<ConnectedServer> direct; 
+		final List<ConnectedServer> indirect;
 		
 		SelectedServers(boolean allocate) {
 			if (allocate) {
-				direct = new ArrayList<SierraServer>();
-				indirect = new ArrayList<SierraServer>();
+				direct = new ArrayList<ConnectedServer>();
+				indirect = new ArrayList<ConnectedServer>();
 			} else {
 				direct = indirect = Collections.emptyList();
 			}
@@ -923,8 +919,8 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 		final Iterator it = si.iterator();
 		while (it.hasNext()) {
 			final ServersViewContent item = (ServersViewContent) it.next();
-			if (item.getData() instanceof SierraServer) {
-				SierraServer s = (SierraServer) item.getData();
+			if (item.getData() instanceof ConnectedServer) {
+				ConnectedServer s = (ConnectedServer) item.getData();
 				if (servers.indirect.contains(s)) {
 					continue;
 				}
@@ -933,7 +929,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 			} else {
 				// System.out.println("Got a non-server selection:
 				// "+item.getText());
-				final SierraServer s = inServer(item);
+				final ConnectedServer s = inServer(item);
 				if (s != null) {
 					if (servers.indirect.contains(s)) {
 						continue;
@@ -947,7 +943,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 		return servers;
 	}
 
-	private SierraServer inServer(ServersViewContent item) {
+	private ConnectedServer inServer(ServersViewContent item) {
 		while (item != null) {
 			Object data = item.getData();
 			if (data instanceof ProjectStatus) {
@@ -958,8 +954,8 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 				// Not a server
 				return null;
 			}
-			if (data instanceof SierraServer) {
-				return (SierraServer) item.getData();
+			if (data instanceof ConnectedServer) {
+				return (ConnectedServer) item.getData();
 			}
 			/*
 			if (data == null && SCAN_FILTERS.equals(item.getText())) {
@@ -1006,7 +1002,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 				final ServersViewContent item = (ServersViewContent) it.next();
 				if (item.getData() instanceof ProjectStatus) {
 					add(projects, (ProjectStatus) item.getData());
-				} else if (item.getData() instanceof SierraServer) {
+				} else if (item.getData() instanceof ConnectedServer) {
 					collectProjects(projects, item, true);
 				} else if (item.getText().endsWith(CONNECTED_PROJECTS)) {
 					collectProjects(projects, item, false);
@@ -1115,7 +1111,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 	 * true; }
 	 */
 
-	private static void openInBrowser(final SierraServer server) {
+	private static void openInBrowser(final ConnectedServer server) {
 		if (server == null) {
 			return;
 		}
@@ -1204,7 +1200,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 						.getServerInteractionRetryThreshold();
 				final ConnectedServerManager mgr = ConnectedServerManager
 						.getInstance();
-				for (final SierraServer s : mgr.getServers()) {
+				for (final ConnectedServer s : mgr.getServers()) {
 					if (s.getProblemCount() <= threshold) {
 						s.updateServerInfo();
 					}
@@ -1234,8 +1230,8 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 		job.schedule();
 	}
 
-	private static boolean isFailedServer(Set<SierraServer> failedServers,
-			SierraServer server, int numProblems) {
+	private static boolean isFailedServer(Set<ConnectedServer> failedServers,
+			ConnectedServer server, int numProblems) {
 		if ((failedServers != null) && failedServers.contains(server)) {
 			return true;
 		}
@@ -1255,8 +1251,8 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 	private class ServerHandler {
 		final Connection c;
 		final ClientProjectManager cpm;
-		Set<SierraServer> failedServers = null;
-		Set<SierraServer> connectedServers = new HashSet<SierraServer>();
+		Set<ConnectedServer> failedServers = null;
+		Set<ConnectedServer> connectedServers = new HashSet<ConnectedServer>();
 
 		List<SyncTrailResponse> responses;
 		ServerUpdateStatus serverResponse;
@@ -1266,7 +1262,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 			this.cpm = cpm;
 		}
 
-		private void init(SierraServer server) {
+		private void init(ConnectedServer server) {
 			responses = null;
 			serverResponse = serverResponseMap.get(server);
 		}
@@ -1284,14 +1280,14 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 				}
 
 				// Check for new remote audits
-				final SierraServer server = manager.getServer(name);
+				final ConnectedServer server = manager.getServer(name);
 				init(server);
 				queryServerForProject(server, name, numProblems);
 			}
 		}
 
 		void queryServers(ConnectedServerManager manager) {
-			for (SierraServer server : manager.getServers()) {
+			for (ConnectedServer server : manager.getServers()) {
 				if (connectedServers.contains(server)) {
 					return; // Already handled
 				}
@@ -1300,12 +1296,12 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 			}
 		}
 
-		void queryServerForProject(SierraServer server, String name,
+		void queryServerForProject(ConnectedServer server, String name,
 				int numProblems) {
 			queryServer(server, name, numProblems, false);
 		}
 
-		void queryServer(SierraServer server, String name, int numProblems,
+		void queryServer(ConnectedServer server, String name, int numProblems,
 				boolean onlyServer) {
 			if (server != null) {
 				connectedServers.add(server);
@@ -1419,8 +1415,8 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 		return serverResponse;
 	}
 
-	private Set<SierraServer> handleServerProblem(
-			Set<SierraServer> failedServers, final SierraServer server,
+	private Set<ConnectedServer> handleServerProblem(
+			Set<ConnectedServer> failedServers, final ConnectedServer server,
 			final TroubleshootConnection tc, final Exception e) {
 		if (handleServerProblem(tc, e)) {
 			failedServers = markAsFailedServer(failedServers, server);
@@ -1428,10 +1424,10 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 		return failedServers;
 	}
 
-	private static Set<SierraServer> markAsFailedServer(
-			Set<SierraServer> failedServers, final SierraServer server) {
+	private static Set<ConnectedServer> markAsFailedServer(
+			Set<ConnectedServer> failedServers, final ConnectedServer server) {
 		if (failedServers == null) {
-			failedServers = new HashSet<SierraServer>();
+			failedServers = new HashSet<ConnectedServer>();
 		}
 		failedServers.add(server);
 		return failedServers;
@@ -1442,7 +1438,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 	 * 
 	 * @param project
 	 */
-	private void handleServerSuccess(final SierraServer server,
+	private void handleServerSuccess(final ConnectedServer server,
 			final String project) {
 		// Contact was successful, so reset counts
 		server.markAsConnected();
@@ -1470,7 +1466,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 			final Query q = new ConnectionQuery(c);
 			final Scans sm = new Scans(q);
 			final List<ProjectStatus> projects = new ArrayList<ProjectStatus>();
-			final Map<SierraServer, ServerUpdateStatus> serverUpdates;
+			final Map<ConnectedServer, ServerUpdateStatus> serverUpdates;
 			final Map<String, List<ScanFilter>> filters;
 			synchronized (responseMap) {
 				for (final IJavaProject jp : JDTUtility.getJavaProjects()) {
@@ -1486,7 +1482,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 					// Check for new remote audits
 					final List<SyncTrailResponse> responses = responseMap
 							.get(name);
-					final SierraServer server = f_manager.getServer(name);
+					final ConnectedServer server = f_manager.getServer(name);
 					final int numServerProblems = server == null ? -1 : server
 							.getProblemCount();
 					final int numProjectProblems = Projects.getInstance()
@@ -1503,7 +1499,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 							numProjectProblems, dbInfo, filter);
 					projects.add(s);
 				}
-				serverUpdates = new HashMap<SierraServer, ServerUpdateStatus>(
+				serverUpdates = new HashMap<ConnectedServer, ServerUpdateStatus>(
 						serverResponseMap);
 				filters = SettingQueries.getLocalScanFilters().perform(q);
 			}
@@ -1528,7 +1524,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 	}
 
 	public void updateContentsInUI(final List<ProjectStatus> projects,
-			final Map<SierraServer, ServerUpdateStatus> serverUpdates,
+			final Map<ConnectedServer, ServerUpdateStatus> serverUpdates,
 			final Map<String, List<ScanFilter>> filters) {
 		// No need to synchronize since only updated/viewed in UI thread?
 		this.projects = projects;
@@ -1540,7 +1536,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 		 * 
 		 * f_statusTree.setRedraw(false);
 		 */
-		final List<SierraServer> servers = collectServers().indirect;
+		final List<ConnectedServer> servers = collectServers().indirect;
 		final boolean onlyServer = servers.size() == 1;
 		f_duplicateServerAction.setEnabled(onlyServer);
 		f_deleteServerAction.setEnabled(onlyServer);
@@ -1576,7 +1572,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 			ConnectedServerManager manager = ConnectedServerManager.getInstance();
 			int audits = 0;
 			for (final ProjectStatus ps : projects) {
-				SierraServer server = manager.getServer(ps.name);
+				ConnectedServer server = manager.getServer(ps.name);
 				if (server != null && server.autoSync()) {
 					audits += ps.numLocalAudits + ps.numServerAudits;
 				}
@@ -1694,7 +1690,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 	private ServersViewContent[] createServerItems() {
 		final List<ServersViewContent> content = new ArrayList<ServersViewContent>();
 		/*
-		 * final SierraServer focus = f_manager.getFocus(); TreeItem focused =
+		 * final ConnectedServer focus = f_manager.getFocus(); TreeItem focused =
 		 * null;
 		 */
 		for (final String label : f_manager.getLabels()) {
@@ -1713,7 +1709,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 	private void createUnknownServers(List<ServersViewContent> content) {
 	    for(Map.Entry<String, List<ScanFilter>> e : localFilters.entrySet()) {
 	        final String label = e.getKey();
-	        final SierraServer server = f_manager.getServerByLabel(label);
+	        final ConnectedServer server = f_manager.getServerByLabel(label);
 	        if (server != null) {
 	            // Already known, so already handled elsewhere
 	            continue;
@@ -1737,7 +1733,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 	}
 	
 	private ServersViewContent createServerItem(final String label) {
-		final SierraServer server = f_manager.getServerByLabel(label);
+		final ConnectedServer server = f_manager.getServerByLabel(label);
 		final List<ServersViewContent> serverContent = new ArrayList<ServersViewContent>();
 
 		final ServersViewContent serverNode = new ServersViewContent(null,
@@ -1777,7 +1773,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 	private static final String delta = ChangeStatus.REMOTE.getLabel();
 
 	private ServersViewContent createCategories(
-			final ServersViewContent serverNode, final SierraServer server) {
+			final ServersViewContent serverNode, final ConnectedServer server) {
 		final ServerUpdateStatus update = serverUpdates.get(server);
 		final int numCategories = update == null ? 0 : update
 				.getNumUpdatedFilterSets();
@@ -1811,7 +1807,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 	}
 
 	private ServersViewContent createScanFilters(
-			final ServersViewContent serverNode, final SierraServer server) {
+			final ServersViewContent serverNode, final ConnectedServer server) {
 		final ServerUpdateStatus update = serverUpdates.get(server);
 		final List<ScanFilter> filters = localFilters.get(server.getLabel());
 		if ((update == null || update.getNumScanFilters() == 0) && 
@@ -1857,7 +1853,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 		ServersViewContent parent = null;
 
 		for (final ProjectStatus ps : projects) {
-			final SierraServer server = f_manager.getServer(ps.name);
+			final ConnectedServer server = f_manager.getServer(ps.name);
 			if (server == null) {
 				if (parent == null) {
 					parent = new ServersViewContent(null, SLImages
@@ -1897,7 +1893,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 	}
 
 	private void createProjectItems(final ServersViewContent parent,
-			final SierraServer server) {
+			final ConnectedServer server) {
 		final List<ServersViewContent> content = new ArrayList<ServersViewContent>();
 
 		for (final String projectName : f_manager
@@ -1980,7 +1976,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 	}
 
 	private ServersViewContent createProjectItem(
-			final ServersViewContent parent, final SierraServer server,
+			final ServersViewContent parent, final ConnectedServer server,
 			final String projectName) {
 		final ServersViewContent root = new ServersViewContent(parent, SLImages
 				.getImage(CommonImages.IMG_PROJECT));
@@ -1989,7 +1985,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 	}
 
 	private void initProjectItem(final ServersViewContent root,
-			final SierraServer server, final ProjectStatus ps) {
+			final ConnectedServer server, final ProjectStatus ps) {
 		final List<ServersViewContent> contents = new ArrayList<ServersViewContent>();
 		final SimpleDateFormat dateFormat = new SimpleDateFormat(
 				"yyyy/MM/dd 'at' HH:mm:ss");
@@ -2194,7 +2190,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 				.size()];
 		int i = 0;
 		for (final ProjectStatus ps : projects) {
-			final SierraServer server = f_manager.getServer(ps.name);
+			final ConnectedServer server = f_manager.getServer(ps.name);
 			content[i] = new ServersViewContent(null, SLImages
 					.getImage(CommonImages.IMG_PROJECT));
 			initProjectItem(content[i], server, ps);

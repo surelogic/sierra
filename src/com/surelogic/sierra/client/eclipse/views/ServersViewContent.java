@@ -4,9 +4,9 @@ import org.eclipse.swt.graphics.Image;
 
 import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.common.images.CommonImages;
-import com.surelogic.sierra.client.eclipse.model.SierraServer;
 import com.surelogic.sierra.client.eclipse.views.SierraServersMediator.ChangeStatus;
 import com.surelogic.sierra.client.eclipse.views.SierraServersMediator.ServerStatus;
+import com.surelogic.sierra.jdbc.settings.ConnectedServer;
 
 class ServersViewContent implements IServerActionFilter {
 	final ServersViewContent parent;
@@ -87,14 +87,14 @@ class ServersViewContent implements IServerActionFilter {
 						.equals(SLImages.getImage(CommonImages.IMG_WARNING));
 			}
 		} else if (SERVER_TYPE_ATTR.equals(name)) {
-			if (data instanceof SierraServer) {
-				SierraServer server = (SierraServer) data;
+			if (data instanceof ConnectedServer) {
+				ConnectedServer server = (ConnectedServer) data;
 				if (BUGLINK_TYPE.equals(value)) {
-					return server.isBugLink();
+					return true; 
 				} else if (TEAM_SERVER_TYPE.equals(value)) {
 					return server.isTeamServer();
 				} else if (AUTO_SYNC.equals(value)) {
-					return server.autoSync();
+					return server.getLocation().isAutoSync();
 				}
 			} else if (BUGLINK_TYPE.equals(value)) {
 				return text.endsWith(SierraServersMediator.SCAN_FILTERS)

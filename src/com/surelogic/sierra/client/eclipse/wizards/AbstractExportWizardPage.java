@@ -15,7 +15,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 
-import com.surelogic.sierra.client.eclipse.model.SierraServer;
+import com.surelogic.sierra.jdbc.settings.ConnectedServer;
 
 public abstract class AbstractExportWizardPage<T> extends WizardPage {
   protected CheckboxTableViewer f_TableViewer;
@@ -103,7 +103,7 @@ public abstract class AbstractExportWizardPage<T> extends WizardPage {
       @Override
       public void widgetSelected(SelectionEvent e) {
         for (int i = 0; i < f_TableViewer.getTable().getItemCount(); i++) {
-          if (f_TableViewer.getElementAt(i) instanceof SierraServer) {
+          if (f_TableViewer.getElementAt(i) instanceof ConnectedServer) {
             @SuppressWarnings("unchecked")
             T holder = (T) f_TableViewer
                 .getElementAt(i);
