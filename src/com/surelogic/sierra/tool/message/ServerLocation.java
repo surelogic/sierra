@@ -6,8 +6,9 @@ import java.net.URL;
 import com.surelogic.common.i18n.I18N;
 
 /**
- * Represents the information about a connection to a Sierra server. This class
- * is immutable.
+ * Represents the information about a connection to a Sierra server.
+ * <p>
+ * This class is immutable.
  */
 public class ServerLocation {
 
