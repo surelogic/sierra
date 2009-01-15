@@ -36,7 +36,8 @@ public final class ServerLocations {
 	 * @param cs
 	 * @return
 	 */
-	public static NullDBQuery saveServerLocation(final ConnectedServer s) {
+	public static NullDBQuery saveServerLocation(final ConnectedServer s,
+			final boolean savePassword) {
 		return new NullDBQuery() {
 
 			@Override
@@ -45,7 +46,8 @@ public final class ServerLocations {
 				q.prepared("ServerLocations.insertLocation").call(s.getUuid(),
 						l.getProtocol(), Nulls.coerce(l.getHost()),
 						l.getPort(), Nulls.coerce(l.getContextPath()),
-						Nulls.coerce(l.getUser()), Nulls.coerce(l.getPass()),
+						Nulls.coerce(savePassword ? l.getUser() : null),
+						Nulls.coerce(savePassword ? l.getPass() : null),
 						l.isAutoSync(), s.isTeamServer());
 			}
 		};
@@ -60,7 +62,8 @@ public final class ServerLocations {
 	 * @return
 	 */
 	public static NullDBQuery saveQuery(
-			final Map<ConnectedServer, Collection<String>> locations) {
+			final Map<ConnectedServer, Collection<String>> locations,
+			final boolean savePassword) {
 		return new NullDBQuery() {
 			@Override
 			public void doPerform(final Query q) {
@@ -79,9 +82,10 @@ public final class ServerLocations {
 					}
 					insertLocation.call(s.getUuid(), l.getProtocol(), Nulls
 							.coerce(l.getHost()), l.getPort(), Nulls.coerce(l
-							.getContextPath()), Nulls.coerce(l.getUser()),
-							Nulls.coerce(l.getPass()), l.isAutoSync(), s
-									.isTeamServer());
+							.getContextPath()), Nulls.coerce(savePassword ? l
+							.getUser() : null), Nulls.coerce(savePassword ? l
+							.getPass() : null), l.isAutoSync(), s
+							.isTeamServer());
 					for (final String project : locEntry.getValue()) {
 						insertServerProject.call(s.getUuid(), project);
 					}

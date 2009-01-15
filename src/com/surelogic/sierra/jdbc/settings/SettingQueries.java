@@ -497,7 +497,7 @@ public class SettingQueries {
 	 * @return the reply from the server
 	 */
 	public static DBQuery<ConnectedServer> checkAndSaveServerLocation(
-			final ServerLocation server) {
+			final ServerLocation server, final boolean savePassword) {
 		final ServerInfoReply reply = ServerInfoServiceClient.create(server)
 				.getServerInfo(new ServerInfoRequest());
 		return new DBQuery<ConnectedServer>() {
