@@ -7,8 +7,7 @@ import java.util.List;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 
-import com.surelogic.common.jdbc.DBQuery;
-import com.surelogic.common.jdbc.Query;
+import com.surelogic.common.jdbc.ConnectionQuery;
 import com.surelogic.common.jdbc.Row;
 import com.surelogic.common.jdbc.RowHandler;
 import com.surelogic.sierra.jdbc.server.ConnectionFactory;
@@ -29,9 +28,12 @@ public class ServerInfoServiceImpl extends SRPCServlet implements
 		final ServerInfoReply reply = new ServerInfoReply();
 		reply.setServices(this.reply.getServices());
 		reply.setServers(ConnectionFactory.getInstance().withReadOnly(
-				new DBQuery<List<ServerIdentity>>() {
-					public List<ServerIdentity> perform(final Query q) {
-						return q.prepared("ServerLocations.listIdentities",
+				new ServerTransaction<List<ServerIdentity>>() {
+					public List<ServerIdentity> perform(final Connection conn,
+							final Server s) throws SQLException {
+						reply.setName(s.getName());
+						return new ConnectionQuery(conn).prepared(
+								"ServerLocations.listIdentities",
 								new RowHandler<ServerIdentity>() {
 									public ServerIdentity handle(final Row r) {
 										return new ServerIdentity(r
