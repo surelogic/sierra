@@ -6,8 +6,8 @@ import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.surelogic.sierra.gwt.client.data.ServerLocation;
-import com.surelogic.sierra.gwt.client.data.ServerLocation.Protocol;
+import com.surelogic.sierra.gwt.client.data.PortalServerLocation;
+import com.surelogic.sierra.gwt.client.data.PortalServerLocation.Protocol;
 import com.surelogic.sierra.gwt.client.ui.panel.BasicPanel;
 
 public class ServerLocationView extends BasicPanel {
@@ -46,8 +46,8 @@ public class ServerLocationView extends BasicPanel {
 		contentPanel.add(g);
 	}
 
-	public ServerLocation getSelection() {
-		final ServerLocation l = new ServerLocation();
+	public PortalServerLocation getSelection() {
+		final PortalServerLocation l = new PortalServerLocation();
 		l.setContext(context.getText());
 		l.setHost(host.getText());
 		l.setLabel(label.getText());
@@ -65,7 +65,7 @@ public class ServerLocationView extends BasicPanel {
 		return l;
 	}
 
-	public void setSelection(final ServerLocation item) {
+	public void setSelection(final PortalServerLocation item) {
 		label.setText(item.getLabel());
 		host.setText(item.getHost());
 		port.setText(Integer.toString(item.getPort()));

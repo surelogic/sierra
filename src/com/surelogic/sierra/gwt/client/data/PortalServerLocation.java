@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import com.surelogic.sierra.gwt.client.data.cache.Cacheable;
 
-public class ServerLocation implements Cacheable, Serializable {
+public class PortalServerLocation implements Cacheable, Serializable {
 
 	/**
 	 * 
@@ -35,7 +35,7 @@ public class ServerLocation implements Cacheable, Serializable {
 	private String user;
 	private String pass;
 
-	public ServerLocation() {
+	public PortalServerLocation() {
 		port = 13376;
 		protocol = Protocol.HTTP;
 	}
@@ -46,13 +46,13 @@ public class ServerLocation implements Cacheable, Serializable {
 	 * 
 	 * @param label
 	 */
-	public ServerLocation(final String label) {
+	public PortalServerLocation(final String label) {
 		this.label = label;
 		port = 13376;
 		protocol = Protocol.HTTP;
 	}
 
-	public ServerLocation(final String label, final Protocol protocol,
+	public PortalServerLocation(final String label, final Protocol protocol,
 			final String host, final int port, final String context,
 			final String user, final String pass) {
 		this.label = label;
@@ -124,8 +124,8 @@ public class ServerLocation implements Cacheable, Serializable {
 		return label;
 	}
 
-	public ServerLocation copy(final ServerLocation orig) {
-		final ServerLocation l = new ServerLocation();
+	public PortalServerLocation copy(final PortalServerLocation orig) {
+		final PortalServerLocation l = new PortalServerLocation();
 		l.context = orig.context;
 		l.host = orig.host;
 		l.label = orig.label;

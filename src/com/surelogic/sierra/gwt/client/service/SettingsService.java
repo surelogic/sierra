@@ -9,7 +9,7 @@ import com.surelogic.sierra.gwt.client.data.Project;
 import com.surelogic.sierra.gwt.client.data.ReportSettings;
 import com.surelogic.sierra.gwt.client.data.Result;
 import com.surelogic.sierra.gwt.client.data.ScanFilter;
-import com.surelogic.sierra.gwt.client.data.ServerLocation;
+import com.surelogic.sierra.gwt.client.data.PortalServerLocation;
 import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.data.dashboard.DashboardSettings;
 
@@ -150,7 +150,7 @@ public interface SettingsService extends RemoteService {
 	 * 
 	 * @return
 	 */
-	List<ServerLocation> listServerLocations();
+	List<PortalServerLocation> listServerLocations();
 
 	/**
 	 * Delete the server location corresponding to this label.
@@ -166,7 +166,7 @@ public interface SettingsService extends RemoteService {
 	 * @param loc
 	 * @return
 	 */
-	Status saveServerLocation(ServerLocation loc);
+	Status saveServerLocation(PortalServerLocation loc);
 
 	/**
 	 * Return a list of the report settings available to the user.
