@@ -11,7 +11,6 @@ import com.surelogic.common.eclipse.logging.SLEclipseStatusUtility;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.sierra.client.eclipse.jobs.ServerProjectGroupJob;
 import com.surelogic.sierra.client.eclipse.jobs.ShareScanJob;
-import com.surelogic.sierra.client.eclipse.model.SierraServer;
 import com.surelogic.sierra.client.eclipse.preferences.ServerFailureReport;
 import com.surelogic.sierra.jdbc.settings.ConnectedServer;
 import com.surelogic.sierra.tool.SierraToolConstants;
@@ -30,7 +29,7 @@ public class PublishScanAction extends AbstractWebServiceMenuAction {
 			job.schedule();
 		} else {
 			final int errNo = 21;
-			final String msg = I18N.err(errNo, projectName, server.getLabel(),
+			final String msg = I18N.err(errNo, projectName, server.getName(),
 					projectName, FileUtility.getSierraDataDirectory()
 							.getAbsolutePath(), File.separator, projectName,
 					projectName);

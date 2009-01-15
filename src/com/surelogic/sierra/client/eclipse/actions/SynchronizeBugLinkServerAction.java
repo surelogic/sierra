@@ -9,11 +9,12 @@ import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import com.surelogic.sierra.client.eclipse.jobs.SynchronizeJob;
 import com.surelogic.sierra.client.eclipse.model.*;
 import com.surelogic.sierra.client.eclipse.preferences.ServerFailureReport;
+import com.surelogic.sierra.jdbc.settings.ConnectedServer;
 
 public class SynchronizeBugLinkServerAction implements IWorkbenchWindowActionDelegate {
 	private final boolean force;
 	private final ServerFailureReport f_method;
-	private SierraServer f_server;
+	private ConnectedServer f_server;
 	
 	public SynchronizeBugLinkServerAction(ServerFailureReport method, boolean force) {
 		f_method = method;
@@ -39,7 +40,7 @@ public class SynchronizeBugLinkServerAction implements IWorkbenchWindowActionDel
 		// FIX what to do?
 	}
 	
-	public void run(SierraServer server) {
+	public void run(ConnectedServer server) {
 		f_server = server;
 		run((IAction) null);
 	}

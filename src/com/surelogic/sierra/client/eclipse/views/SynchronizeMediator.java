@@ -24,10 +24,10 @@ import com.surelogic.common.jdbc.NullDBTransaction;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.actions.SynchronizeProjectDialogAction;
 import com.surelogic.sierra.client.eclipse.model.Projects;
-import com.surelogic.sierra.client.eclipse.model.SierraServer;
 import com.surelogic.sierra.client.eclipse.model.ConnectedServerManager;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
 import com.surelogic.sierra.jdbc.finding.SynchOverview;
+import com.surelogic.sierra.jdbc.settings.ConnectedServer;
 
 public final class SynchronizeMediator extends AbstractSierraViewMediator {
 
@@ -144,11 +144,11 @@ public final class SynchronizeMediator extends AbstractSierraViewMediator {
 			}
 			final TableItem item = new TableItem(f_syncTable, SWT.NONE);
 			final String projectName = so.getProject();
-			final SierraServer server = ConnectedServerManager.getInstance()
+			final ConnectedServer server = ConnectedServerManager.getInstance()
 					.getServer(projectName);
 			final String serverName;
 			if (server != null) {
-				serverName = server.getLabel();
+				serverName = server.getName();
 			} else {
 				serverName = "(unknown)";
 			}
