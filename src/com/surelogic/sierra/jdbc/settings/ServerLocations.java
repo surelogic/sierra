@@ -48,7 +48,7 @@ public final class ServerLocations {
 						l.getPort(), Nulls.coerce(l.getContextPath()),
 						Nulls.coerce(savePassword ? l.getUser() : null),
 						Nulls.coerce(savePassword ? l.getPass() : null),
-						l.isAutoSync(), s.isTeamServer());
+						l.isAutoSync(), l.isSavePassword(), s.isTeamServer());
 			}
 		};
 	}
@@ -84,8 +84,8 @@ public final class ServerLocations {
 							.coerce(l.getHost()), l.getPort(), Nulls.coerce(l
 							.getContextPath()), Nulls.coerce(savePassword ? l
 							.getUser() : null), Nulls.coerce(savePassword ? l
-							.getPass() : null), l.isAutoSync(), s
-							.isTeamServer());
+							.getPass() : null), l.isAutoSync(), l
+							.isSavePassword(), s.isTeamServer());
 					for (final String project : locEntry.getValue()) {
 						insertServerProject.call(s.getUuid(), project);
 					}
@@ -180,13 +180,16 @@ public final class ServerLocations {
 											}
 											final boolean autoSync = r
 													.nextBoolean();
+											final boolean savePass = r
+													.nextBoolean();
 											final boolean teamServer = r
 													.nextBoolean();
 											final ServerLocation loc = new ServerLocation(
 													host, "https"
 															.equals(protocol),
 													port, contextPath, user,
-													password, autoSync);
+													password, autoSync,
+													savePass);
 											final ConnectedServer s = new ConnectedServer(
 													uuid, name, teamServer, loc);
 											map.put(s, projects.call(uuid));

@@ -507,7 +507,7 @@ public class SettingQueries {
 				final ConnectedServer s = new ConnectedServer(reply.getUid(),
 						reply.getName(), reply.getServices().contains(
 								Services.TEAMSERVER), server);
-				ServerLocations.saveServerLocation(s);
+				ServerLocations.saveServerLocation(s, savePassword);
 				return s;
 			}
 		};
