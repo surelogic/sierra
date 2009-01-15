@@ -272,8 +272,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 
 		@Override
 		protected final void handleEventOnServer(final ConnectedServer server) {
-			final ConnectedServerManager manager = server.getManager();
-			run(server, manager.getProjectsConnectedTo(server));
+			run(server, ConnectedServerManager.getInstance().getProjectsConnectedTo(server));
 		}
 
 		protected abstract void run(ConnectedServer server,
@@ -307,7 +306,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 			@Override
 			protected void handleEventOnServer(final ConnectedServer server) {
 				server.setAutoSync(!server.autoSync());
-				server.getManager().notifyObservers();
+				ConnectedServerManager.getInstance().notifyObservers();
 			}
 		};		
 		
@@ -368,7 +367,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 			@Override
 			protected void run(final ConnectedServer server,
 					final List<String> projectNames) {
-				final String serverName = server.getLabel();
+				final String serverName = server.getName();
 				final String msg;
 				if (projectNames.isEmpty()) {
 					msg = I18N.msg("sierra.eclipse.serverDeleteWarning",
@@ -620,7 +619,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 									final ConnectedServer server) {
 								final String msg = "What do you want to call your scan filter "
 										+ "on the Sierra server '"
-										+ server.getLabel() + "'";
+										+ server.getName() + "'";
 								final PromptForFilterNameDialog dialog = new PromptForFilterNameDialog(
 										f_statusTree.getTree().getShell(), msg);
 								if (dialog.open() == 0) {
@@ -764,7 +763,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 				if (onlyServer) {
 					final ConnectedServer focus = servers.indirect.get(0);
 					onlyTeamServer = focus.isTeamServer();
-					onlyBugLink = focus.isBugLink();
+					onlyBugLink = focus != null;
 				} else {
 					onlyTeamServer = onlyBugLink = false;
 				}			
@@ -1115,7 +1114,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 		if (server == null) {
 			return;
 		}
-		final String name = "Sierra Server '" + server.getLabel() + "'";
+		final String name = "Sierra Server '" + server.getName() + "'";
 
 		try {
 			final IWebBrowser browser = PlatformUI.getWorkbench()
@@ -1123,8 +1122,8 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 							IWorkbenchBrowserSupport.LOCATION_BAR
 									| IWorkbenchBrowserSupport.NAVIGATION_BAR
 									| IWorkbenchBrowserSupport.STATUS,
-							server.getLabel(), name, name);
-			final URL url = server.toAuthorizedURL();
+							server.getName(), name, name);
+			final URL url = server.getLocation().toAuthorizedURL();
 			browser.openURL(url);
 		} catch (final Exception e) {
 			SLLogger.getLogger().log(Level.SEVERE, I18N.err(26), e);
@@ -1317,12 +1316,11 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 						.getServerFailureReporting();
 				TroubleshootConnection tc;
 				try {
-					final ServerLocation loc = server.getServer();
+					final ServerLocation loc = server.getLocation();
 					if (!onlyServer) {
-						responses = cpm.getProjectUpdates(loc, name, monitor);
+						responses = cpm.getProjectUpdates(server, name, monitor);
 					}
-					serverResponse = checkForBugLinkUpdates(c, serverResponse,
-							loc);
+					serverResponse = checkForBugLinkUpdates(c, serverResponse, loc);
 				} catch (final ServerMismatchException e) {
 					tc = new TroubleshootWrongServer(method, server, name);
 					failedServers = handleServerProblem(failedServers, server,
@@ -1573,7 +1571,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 			int audits = 0;
 			for (final ProjectStatus ps : projects) {
 				ConnectedServer server = manager.getServer(ps.name);
-				if (server != null && server.autoSync()) {
+				if (server != null && server.getLocation().isAutoSync()) {
 					audits += ps.numLocalAudits + ps.numServerAudits;
 				}
 			}
@@ -1809,7 +1807,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 	private ServersViewContent createScanFilters(
 			final ServersViewContent serverNode, final ConnectedServer server) {
 		final ServerUpdateStatus update = serverUpdates.get(server);
-		final List<ScanFilter> filters = localFilters.get(server.getLabel());
+		final List<ScanFilter> filters = localFilters.get(server.getName());
 		if ((update == null || update.getNumScanFilters() == 0) && 
 			(!showFiltersOnServer || filters == null || filters.isEmpty())) {
 			return null;
@@ -1980,7 +1978,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 			final String projectName) {
 		final ServersViewContent root = new ServersViewContent(parent, SLImages
 				.getImage(CommonImages.IMG_PROJECT));
-		root.setText(projectName + " [" + server.getLabel() + ']');
+		root.setText(projectName + " [" + server.getName() + ']');
 		return root;
 	}
 
@@ -2040,7 +2038,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 			contents.add(problems);
 			problems.setText(ps.numServerProblems + " consecutive failure"
 					+ s(ps.numServerProblems) + " connecting to "
-					+ server.getLabel());
+					+ server.getName());
 			problems.setServerStatus(ServerStatus.WARNING);
 		}
 		if (server != null && ps.numProjectProblems > 0) {
@@ -2049,7 +2047,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 			contents.add(problems);
 			problems.setText(ps.numProjectProblems + " consecutive failure"
 					+ s(ps.numProjectProblems) + " getting server info from "
-					+ server.getLabel());
+					+ server.getName());
 			problems.setServerStatus(ServerStatus.WARNING);
 		}		
 		/*
@@ -2096,7 +2094,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 		root.setChildren(contents.toArray(emptyChildren));
 		final String label = root.getChangeStatus().getLabel();
 		if (server != null) {
-			root.setText(label + ps.name + " [" + server.getLabel() + ']');
+			root.setText(label + ps.name + " [" + server.getName() + ']');
 		} else {
 			root.setText(label + ps.name);
 		}
