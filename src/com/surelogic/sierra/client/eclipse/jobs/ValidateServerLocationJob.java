@@ -26,11 +26,10 @@ public class ValidateServerLocationJob extends AbstractServerProjectJob {
 	 * @param server
 	 *            the non-null server to contact.
 	 */
-	public ValidateServerLocationJob(ConnectedServer server,
-			ServerLocation location, boolean savePassword,
-			boolean validate, boolean autoSync) {
-		super(null, "Validating conection to " + server.getName(), server,
-				null, ServerFailureReport.SHOW_DIALOG);
+	public ValidateServerLocationJob(ServerLocation location,
+			boolean savePassword, boolean autoSync) {
+		super(null, "Validating conection to " + location.getHost(),
+				null /* TODO */, null, ServerFailureReport.SHOW_DIALOG);
 	}
 
 	// static void updateServer(final ServerLocationDialog dialog,

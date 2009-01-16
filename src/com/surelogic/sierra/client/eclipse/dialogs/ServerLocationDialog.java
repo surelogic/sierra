@@ -47,16 +47,13 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 		if (shell == null)
 			shell = SWTUtility.getShell();
 
-		final ConnectedServerManager manager = ConnectedServerManager.getInstance();
 		final String title = I18N.msg("sierra.dialog.serverlocation.newTitle");
 		final ServerLocationDialog dialog = new ServerLocationDialog(shell,
 				new ServerLocation(), title, true, false);
 		if (dialog.open() == Window.OK) {
-			final ConnectedServer server = manager.create();
-			final ServerLocation location = dialog.f_server;
-			final Job job = new ValidateServerLocationJob(server, location,
-					dialog.f_savePassword, dialog.f_validateServer,
-					dialog.f_autoSync);
+			final ServerLocation location = dialog.f_location;
+			final Job job = new ValidateServerLocationJob(location,
+					dialog.f_savePassword, dialog.f_autoSync);
 			job.schedule();
 		}
 	}
@@ -71,27 +68,24 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 	 * @param server
 	 *            the non-null team server location to edit.
 	 */
-	public static void editServer(final Shell shell, final ConnectedServer server) {
+	public static void editServer(final Shell shell,
+			final ConnectedServer server) {
 		final String title = I18N.msg("sierra.dialog.serverlocation.editTitle");
 		final ServerLocationDialog dialog = new ServerLocationDialog(shell,
 				server.getLocation(), title);
 		if (dialog.open() == Window.OK) {
-			final ServerLocation location = dialog.f_server;
-			final Job job = new ValidateServerLocationJob(server, location,
-					dialog.f_savePassword, dialog.f_validateServer,
-					dialog.f_autoSync);
+			final ServerLocation location = dialog.f_location;
+			final Job job = new ValidateServerLocationJob(location,
+					dialog.f_savePassword, dialog.f_autoSync);
 			job.schedule();
 		}
 	}
 
 	private static final int CONTENTS_WIDTH_HINT = 350;
-
 	private static final int INFO_WIDTH_HINT = 70;
 
-	private ServerLocation f_server;
-
+	private ServerLocation f_location;
 	private final String f_title;
-
 	private boolean f_isSecure;
 	private boolean f_savePassword;
 	private boolean f_autoSync;
@@ -105,30 +99,31 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 	 * 
 	 * @param parentShell
 	 *            a shell.
-	 * @param server
-	 *            the information about the Sierra server.
+	 * @param location
+	 *            the location information about a Sierra server.
 	 * @param title
 	 *            the title to use for this dialog.
 	 * @param autoSync
 	 */
 	private ServerLocationDialog(final Shell parentShell,
-			final ServerLocation server, final String title,
+			final ServerLocation location, final String title,
 			final boolean savePassword, final boolean autoSync) {
 		super(parentShell);
 		setShellStyle(getShellStyle() | SWT.RESIZE | SWT.MAX);
-		assert server != null;
-		f_server = server;
+		assert location != null;
+		f_location = location;
 		f_title = title;
-		f_isSecure = f_server.isSecure();
+		f_isSecure = f_location.isSecure();
 		f_savePassword = savePassword;
 		f_autoSync = autoSync;
 	}
-	
+
 	private ServerLocationDialog(final Shell parentShell,
 			final ServerLocation server, final String title) {
-		this(parentShell, server, title, server.isSavePassword(), server.isAutoSync());
+		this(parentShell, server, title, server.isSavePassword(), server
+				.isAutoSync());
 	}
-		
+
 	@Override
 	protected void configureShell(final Shell newShell) {
 		super.configureShell(newShell);
@@ -165,7 +160,7 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 		data.widthHint = INFO_WIDTH_HINT;
 		hostLabel.setLayoutData(data);
 		final Text hostText = new Text(locGroup, SWT.SINGLE | SWT.BORDER);
-		hostText.setText(f_server.getHost());
+		hostText.setText(f_location.getHost());
 		hostText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		final Label portLabel = new Label(locGroup, SWT.RIGHT);
@@ -174,7 +169,7 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 		data.widthHint = INFO_WIDTH_HINT;
 		portLabel.setLayoutData(data);
 		final Text portText = new Text(locGroup, SWT.SINGLE | SWT.BORDER);
-		portText.setText(Integer.toString(f_server.getPort()));
+		portText.setText(Integer.toString(f_location.getPort()));
 		portText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		portText.addListener(SWT.Verify, new Listener() {
 			public void handleEvent(final Event event) {
@@ -199,7 +194,7 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 		data.widthHint = INFO_WIDTH_HINT;
 		contextPathLabel.setLayoutData(data);
 		final Text contextPathText = new Text(locGroup, SWT.SINGLE | SWT.BORDER);
-		contextPathText.setText(f_server.getContextPath());
+		contextPathText.setText(f_location.getContextPath());
 		contextPathText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		final Label protLabel = new Label(locGroup, SWT.RIGHT);
@@ -244,7 +239,7 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 		data.widthHint = INFO_WIDTH_HINT;
 		userLabel.setLayoutData(data);
 		final Text userText = new Text(authGroup, SWT.SINGLE | SWT.BORDER);
-		userText.setText(f_server.getUser());
+		userText.setText(f_location.getUser());
 		userText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		final Label passwordLabel = new Label(authGroup, SWT.RIGHT);
@@ -255,10 +250,10 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 		passwordLabel.setLayoutData(data);
 		final Text passwordText = new Text(authGroup, SWT.SINGLE | SWT.BORDER);
 		passwordText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		if (f_server.getPass() == null) {
+		if (f_location.getPass() == null) {
 			passwordText.setText("");
 		} else {
-			passwordText.setText(f_server.getPass());
+			passwordText.setText(f_location.getPass());
 		}
 		passwordText.setEchoChar('\u25CF');
 
@@ -306,8 +301,8 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 
 		setTitle(I18N.msg("sierra.dialog.serverlocation.title"));
 
-		f_mediator = new Mediator(hostText, portText,
-				contextPathText, userText, passwordText);
+		f_mediator = new Mediator(hostText, portText, contextPathText,
+				userText, passwordText);
 		f_mediator.init();
 
 		Dialog.applyDialogFont(panel);
@@ -353,9 +348,9 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 		private final Text f_userText;
 		private final Text f_passwordText;
 
-		Mediator(final Text hostText,
-				final Text portText, final Text contextPathText,
-				final Text userText, final Text passwordText) {
+		Mediator(final Text hostText, final Text portText,
+				final Text contextPathText, final Text userText,
+				final Text passwordText) {
 			f_hostText = hostText;
 			f_portText = portText;
 			f_contextPathText = contextPathText;
@@ -413,10 +408,11 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 		}
 
 		public void okPressed() {
-			f_server = new ServerLocation(f_hostText.getText().trim(), f_isSecure, Integer
-							.parseInt(f_portText.getText().trim()),
+			f_location = new ServerLocation(f_hostText.getText().trim(),
+					f_isSecure, Integer.parseInt(f_portText.getText().trim()),
 					f_contextPathText.getText().trim(), f_userText.getText()
-							.trim(), f_passwordText.getText(), f_savePassword, f_autoSync);
+							.trim(), f_passwordText.getText(), f_savePassword,
+					f_autoSync);
 		}
 	}
 }
