@@ -6,7 +6,6 @@ import org.eclipse.core.runtime.Status;
 
 import com.surelogic.sierra.client.eclipse.model.ServerSyncType;
 import com.surelogic.sierra.client.eclipse.preferences.ServerFailureReport;
-import com.surelogic.sierra.jdbc.settings.ConnectedServer;
 import com.surelogic.sierra.tool.message.ServerInfoReply;
 import com.surelogic.sierra.tool.message.ServerInfoRequest;
 import com.surelogic.sierra.tool.message.ServerInfoService;
@@ -72,7 +71,7 @@ public class ValidateServerLocationJob extends AbstractServerProjectJob {
 			/*
 			 * First we validate our connection to the team server.
 			 */
-			final ServerLocation server = f_server.getLocation();
+			final ServerLocation server = getServer().getLocation();
 
 			boolean success = false; // assume the worst
 			final ServerInfoService ss = ServerInfoServiceClient.create(server);
@@ -93,7 +92,7 @@ public class ValidateServerLocationJob extends AbstractServerProjectJob {
 				 * information with it.
 				 */
 				final SynchronizeJob job = new SynchronizeJob(null, null,
-						f_server, ServerSyncType.BUGLINK, true, f_method);
+						getServer(), ServerSyncType.BUGLINK, true, f_method);
 				job.schedule();
 			} else {
 				/*

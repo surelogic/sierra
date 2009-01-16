@@ -13,20 +13,36 @@ import com.surelogic.common.eclipse.logging.SLEclipseStatusUtility;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.actions.TroubleshootConnection;
-import com.surelogic.sierra.client.eclipse.actions.TroubleshootNoSuchServer;
-import com.surelogic.sierra.client.eclipse.actions.TroubleshootWrongAuthentication;
+import com.surelogic.sierra.client.eclipse.model.ConnectedServerManager;
 import com.surelogic.sierra.client.eclipse.preferences.ServerFailureReport;
 import com.surelogic.sierra.jdbc.settings.ConnectedServer;
-import com.surelogic.sierra.tool.message.InvalidLoginException;
 import com.surelogic.sierra.tool.message.SierraServiceClientException;
 
 /**
  * Abstract base class for jobs that interact with a team server, and optionally
  * a project connected to that team server.
  */
-public abstract class AbstractServerProjectJob extends Job {
+public abstract class AbstractServerProjectJob extends AbstractServerJob {
 
-	protected final ConnectedServer f_server;
+	private ConnectedServer f_server;
+
+	protected ConnectedServer getServer() {
+		return f_server;
+	}
+
+	protected void changeAuthorization(final String user, final String pass,
+			final boolean savePassword) {
+		if (user == null)
+			throw new IllegalArgumentException(I18N.err(44, "user"));
+		if (pass == null)
+			throw new IllegalArgumentException(I18N.err(44, "pass"));
+		/*
+		 * Tell the manager about this update
+		 */
+		f_server = ConnectedServerManager.getInstance().changeAuthorizationFor(
+				f_server, user, pass, savePassword);
+	}
+
 	protected final String f_projectName;
 	protected final ServerProjectGroupJob joinJob;
 	protected final ServerFailureReport f_method;
@@ -48,8 +64,8 @@ public abstract class AbstractServerProjectJob extends Job {
 	 *            {@code null}.
 	 */
 	public AbstractServerProjectJob(final ServerProjectGroupJob family,
-			final String name, final ConnectedServer server, final String project,
-			final ServerFailureReport method) {
+			final String name, final ConnectedServer server,
+			final String project, final ServerFailureReport method) {
 		super(name);
 		joinJob = family;
 		if (family != null) {
@@ -60,20 +76,10 @@ public abstract class AbstractServerProjectJob extends Job {
 		f_method = method;
 	}
 
-	public static final TroubleshootConnection getTroubleshootConnection(
-			final ServerFailureReport method, final ConnectedServer s,
-			final String proj, final SierraServiceClientException e) {
-		if (e instanceof InvalidLoginException) {
-			return new TroubleshootWrongAuthentication(method, s, proj);
-		} else {
-			return new TroubleshootNoSuchServer(method, s, proj);
-		}
-	}
-
 	protected final TroubleshootConnection getTroubleshootConnection(
 			final ServerFailureReport method,
 			final SierraServiceClientException e) {
-		return getTroubleshootConnection(method, f_server, f_projectName, e);
+		return getTroubleshootConnection(method, f_server.getLocation(), e);
 	}
 
 	protected final IStatus createWarningStatus(final int errNo,

@@ -23,11 +23,12 @@ import com.surelogic.sierra.client.eclipse.preferences.ServerFailureReport;
 import com.surelogic.sierra.jdbc.settings.ConnectedServer;
 import com.surelogic.sierra.jdbc.settings.SettingQueries;
 import com.surelogic.sierra.tool.message.InvalidLoginException;
+import com.surelogic.sierra.tool.message.ServerLocation;
 import com.surelogic.sierra.tool.message.SierraServiceClientException;
 
 public class GetScanFiltersJob extends DatabaseJob {
 	private final ServerFailureReport f_method;
-	private final ConnectedServer f_server;
+	private ConnectedServer f_server;
 
 	public GetScanFiltersJob(ServerFailureReport method, ConnectedServer server) {
 		super("Getting scan filter settings from " + server.getName());
@@ -60,21 +61,25 @@ public class GetScanFiltersJob extends DatabaseJob {
 			final DBQuery<?> query = SettingQueries.retrieveScanFilters(
 					f_server.getLocation(), Data.getInstance().withReadOnly(
 							SettingQueries.scanFilterRequest()));
-			ConnectedServerManager.getInstance().getStats(f_server).markAsConnected();
+			ConnectedServerManager.getInstance().getStats(f_server)
+					.markAsConnected();
 			Data.getInstance().withTransaction(query);
 		} catch (final SierraServiceClientException e) {
 			TroubleshootConnection troubleshoot;
 			if (e instanceof InvalidLoginException) {
 				troubleshoot = new TroubleshootWrongAuthentication(f_method,
-						f_server, null);
+						f_server.getLocation());
 			} else {
-				troubleshoot = new TroubleshootNoSuchServer(f_method, f_server,
-						null);
+				troubleshoot = new TroubleshootNoSuchServer(f_method, f_server
+						.getLocation());
 			}
 			// We had a recoverable error. Rollback, run the appropriate
 			// troubleshoot, and try again.
-			troubleshoot.fix();
+			final ServerLocation fixed = troubleshoot.fix();
 			if (troubleshoot.retry()) {
+				f_server = ConnectedServerManager.getInstance()
+						.changeAuthorizationFor(f_server, fixed.getUser(),
+								fixed.getPass(), fixed.isSavePassword());
 				return getResultFilters(slMonitor);
 			} else {
 				final int errNo = 48;

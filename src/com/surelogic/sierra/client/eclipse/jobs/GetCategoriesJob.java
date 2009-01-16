@@ -23,11 +23,12 @@ import com.surelogic.sierra.client.eclipse.preferences.ServerFailureReport;
 import com.surelogic.sierra.jdbc.settings.ConnectedServer;
 import com.surelogic.sierra.jdbc.settings.SettingQueries;
 import com.surelogic.sierra.tool.message.InvalidLoginException;
+import com.surelogic.sierra.tool.message.ServerLocation;
 import com.surelogic.sierra.tool.message.SierraServiceClientException;
 
 public final class GetCategoriesJob extends DatabaseJob {
 	private final ServerFailureReport f_method;
-	private final ConnectedServer f_server;
+	private ConnectedServer f_server;
 
 	public GetCategoriesJob(ServerFailureReport method, ConnectedServer server) {
 		super("Getting categories from " + server.getName());
@@ -61,20 +62,24 @@ public final class GetCategoriesJob extends DatabaseJob {
 					.getLocation(), Data.getInstance().withReadOnly(
 					SettingQueries.categoryRequest()));
 			Data.getInstance().withTransaction(query);
-			ConnectedServerManager.getInstance().getStats(f_server).markAsConnected();
+			ConnectedServerManager.getInstance().getStats(f_server)
+					.markAsConnected();
 		} catch (final SierraServiceClientException e) {
 			TroubleshootConnection troubleshoot;
 			if (e instanceof InvalidLoginException) {
 				troubleshoot = new TroubleshootWrongAuthentication(f_method,
-						f_server, null);
+						f_server.getLocation());
 			} else {
-				troubleshoot = new TroubleshootNoSuchServer(f_method, f_server,
-						null);
+				troubleshoot = new TroubleshootNoSuchServer(f_method, f_server
+						.getLocation());
 			}
 			// We had a recoverable error. Rollback, run the appropriate
 			// troubleshoot, and try again.
-			troubleshoot.fix();
+			final ServerLocation fixed = troubleshoot.fix();
 			if (troubleshoot.retry()) {
+				f_server = ConnectedServerManager.getInstance()
+						.changeAuthorizationFor(f_server, fixed.getUser(),
+								fixed.getPass(), fixed.isSavePassword());
 				return getResultFilters(slMonitor);
 			} else {
 				final int errNo = 48;

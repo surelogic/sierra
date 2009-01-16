@@ -26,6 +26,7 @@ import com.surelogic.sierra.jdbc.settings.ConnectedServer;
 import com.surelogic.sierra.tool.message.MessageWarehouse;
 import com.surelogic.sierra.tool.message.Scan;
 import com.surelogic.sierra.tool.message.ScanVersionException;
+import com.surelogic.sierra.tool.message.ServerLocation;
 import com.surelogic.sierra.tool.message.SierraServiceClient;
 import com.surelogic.sierra.tool.message.SierraServiceClientException;
 import com.surelogic.sierra.tool.message.TimeseriesRequest;
@@ -48,7 +49,7 @@ public class ShareScanJob extends AbstractServerProjectJob {
 	@Override
 	protected IStatus run(final IProgressMonitor monitor) {
 		final String msg = "Sharing scan of project " + f_projectName + " to "
-				+ f_server.getName() + ".";
+				+ getServer().getName() + ".";
 		final SLProgressMonitor slMonitor = new SLProgressMonitorWrapper(
 				monitor, msg);
 		slMonitor.begin(5);
@@ -67,7 +68,7 @@ public class ShareScanJob extends AbstractServerProjectJob {
 					return null;
 				} else {
 					final TimeseriesPromptFromJob prompt = new TimeseriesPromptFromJob(
-							timeseries, f_projectName, f_server.getName());
+							timeseries, f_projectName, getServer().getName());
 					prompt.open();
 					if (prompt.isCanceled()) {
 						slMonitor.setCanceled(true);
@@ -93,25 +94,31 @@ public class ShareScanJob extends AbstractServerProjectJob {
 		TroubleshootConnection troubleshoot;
 		try {
 			List<String> timeseries = SierraServiceClient.create(
-					f_server.getLocation())
-					.getTimeseries(new TimeseriesRequest()).getTimeseries();
+					getServer().getLocation()).getTimeseries(
+					new TimeseriesRequest()).getTimeseries();
 			if (timeseries == null) {
 				timeseries = Collections.emptyList();
 			}
 			return new TreeSet<String>(timeseries);
 		} catch (final SierraServiceClientException e) {
-			if (joinJob != null && joinJob.troubleshoot(f_server)) {
+			if (joinJob != null && joinJob.troubleshoot(getServer())) {
 				troubleshoot = getTroubleshootConnection(f_method, e);
 
 				// We had a recoverable error. Rollback, run the appropriate
 				// troubleshoot, and try again.
-				troubleshoot.fix();
+				ServerLocation fixed = troubleshoot.fix();
 				if (troubleshoot.retry()) {
+					/*
+					 * First update our server information.
+					 */
+					changeAuthorization(fixed.getUser(), fixed.getPass(), fixed
+							.isSavePassword());
 					return getTimeseriesOnTheServer(slMonitor);
 				}
-				joinJob.fail(f_server);
+				joinJob.fail(getServer());
 			}
-			SLLogger.getLogger().log(Level.WARNING, I18N.err(89, f_server), e);
+			SLLogger.getLogger().log(Level.WARNING, I18N.err(89, getServer()),
+					e);
 			return null;
 		}
 
@@ -121,20 +128,27 @@ public class ShareScanJob extends AbstractServerProjectJob {
 			final SLProgressMonitor slMonitor) {
 		TroubleshootConnection troubleshoot;
 		try {
-			SierraServiceClient.create(f_server.getLocation()).publishRun(scan);
-			ConnectedServerManager.getInstance().getStats(f_server).markAsConnected();
+			SierraServiceClient.create(getServer().getLocation()).publishRun(
+					scan);
+			ConnectedServerManager.getInstance().getStats(getServer())
+					.markAsConnected();
 			return Status.OK_STATUS;
 		} catch (final SierraServiceClientException e) {
 			troubleshoot = getTroubleshootConnection(f_method, e);
 
 			// We had a recoverable error. Rollback, run the appropriate
 			// troubleshoot, and try again.
-			troubleshoot.fix();
+			ServerLocation fixed = troubleshoot.fix();
 			if (troubleshoot.retry()) {
+				/*
+				 * First update our server information.
+				 */
+				changeAuthorization(fixed.getUser(), fixed.getPass(), fixed
+						.isSavePassword());
 				return publishRun(scan, slMonitor);
 			} else {
 				SLLogger.getLogger().log(Level.WARNING,
-						I18N.err(87, f_projectName, f_server), e);
+						I18N.err(87, f_projectName, getServer()), e);
 				return Status.CANCEL_STATUS;
 			}
 		} catch (final ScanVersionException e) {
@@ -144,7 +158,7 @@ public class ShareScanJob extends AbstractServerProjectJob {
 				scanVersion = "(none)";
 			}
 			final String msg = I18N.err(errNo, scanVersion, f_projectName,
-					f_server);
+					getServer());
 			// SLLogger.getLogger().log(Level.SEVERE, msg, e);
 			final IStatus s = SLEclipseStatusUtility.createErrorStatus(errNo,
 					msg);

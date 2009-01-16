@@ -79,7 +79,7 @@ public class SynchronizeJob extends AbstractServerProjectJob {
 		final int threshold = PreferenceConstants
 				.getServerInteractionRetryThreshold();
 		final int numProblems = ConnectedServerManager.getInstance().getStats(
-				f_server).getProblemCount()
+				getServer()).getProblemCount()
 				+ Projects.getInstance().getProblemCount(f_projectName);
 		if (!f_force && (numProblems > threshold)) {
 			return Status.CANCEL_STATUS;
@@ -101,22 +101,27 @@ public class SynchronizeJob extends AbstractServerProjectJob {
 		} catch (final TransactionException e) {
 			final Throwable cause = e.getCause();
 			TroubleshootConnection troubleshoot = null;
-			if (joinJob != null && joinJob.troubleshoot(f_server)) {
+			if (joinJob != null && joinJob.troubleshoot(getServer())) {
 				if (cause instanceof ServerMismatchException) {
 					troubleshoot = new TroubleshootWrongServer(f_method,
-							f_server, f_projectName);
+							getServer().getLocation(), f_projectName);
 				} else if (cause instanceof SierraServiceClientException) {
 					troubleshoot = getTroubleshootConnection(f_method,
 							(SierraServiceClientException) cause);
 				}
 				if (troubleshoot != null && troubleshoot.retry()) {
-					troubleshoot.fix();
+					ServerLocation fixed = troubleshoot.fix();
 					if (troubleshoot.retry()) {
+						/*
+						 * First update our server information.
+						 */
+						changeAuthorization(fixed.getUser(), fixed.getPass(),
+								fixed.isSavePassword());
 						return synchronize(sync, slMonitor);
 					}
 				}
 			}
-			joinJob.fail(f_server);
+			joinJob.fail(getServer());
 			return fail(e);
 		}
 	}
@@ -130,10 +135,11 @@ public class SynchronizeJob extends AbstractServerProjectJob {
 
 		public IStatus perform(final Connection conn) throws Exception {
 			final Query q = new ConnectionQuery(conn);
-			SettingQueries.updateServerInfo(f_server.getLocation()).perform(q);
+			SettingQueries.updateServerInfo(getServer().getLocation()).perform(
+					q);
 			if (f_syncType.syncBugLink() && joinJob != null
-					&& joinJob.process(f_server)) {
-				final ServerLocation loc = f_server.getLocation();
+					&& joinJob.process(getServer())) {
+				final ServerLocation loc = getServer().getLocation();
 				SettingQueries.retrieveCategories(loc,
 						SettingQueries.categoryRequest().perform(q)).perform(q);
 				SettingQueries.retrieveScanFilters(loc,
@@ -143,9 +149,9 @@ public class SynchronizeJob extends AbstractServerProjectJob {
 			}
 			if (f_syncType.syncProjects()) {
 				ClientProjectManager.getInstance(conn).synchronizeProject(
-						f_server, f_projectName, slMonitor);
+						getServer(), f_projectName, slMonitor);
 			}
-			ConnectedServerManager.getInstance().getStats(f_server)
+			ConnectedServerManager.getInstance().getStats(getServer())
 					.markAsConnected();
 			if (slMonitor.isCanceled()) {
 				conn.rollback();
@@ -158,7 +164,7 @@ public class SynchronizeJob extends AbstractServerProjectJob {
 	}
 
 	private IStatus fail(final Exception e) {
-		final String msg = I18N.err(51, f_projectName, f_server);
+		final String msg = I18N.err(51, f_projectName, getServer());
 		SLLogger.getLogger().log(Level.WARNING, msg, e);
 		return Status.CANCEL_STATUS;
 	}

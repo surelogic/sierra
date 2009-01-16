@@ -23,12 +23,13 @@ import com.surelogic.sierra.client.eclipse.preferences.ServerFailureReport;
 import com.surelogic.sierra.jdbc.settings.ConnectedServer;
 import com.surelogic.sierra.jdbc.settings.SettingQueries;
 import com.surelogic.sierra.tool.message.InvalidLoginException;
+import com.surelogic.sierra.tool.message.ServerLocation;
 import com.surelogic.sierra.tool.message.SierraServiceClientException;
 
 public final class SendScanFiltersJob extends DatabaseJob {
 	public static final boolean ENABLED = true;
 	private final ServerFailureReport f_method;
-	private final ConnectedServer f_server;
+	private ConnectedServer f_server;
 	private final String f_name;
 
 	public SendScanFiltersJob(final ServerFailureReport method,
@@ -78,21 +79,26 @@ public final class SendScanFiltersJob extends DatabaseJob {
 			final SLProgressMonitor slMonitor) throws SQLException {
 		try {
 			Data.getInstance().withReadOnly(
-					SettingQueries.copyDefaultScanFilterToServer(f_server.getLocation(), f_name));
-			ConnectedServerManager.getInstance().getStats(f_server).markAsConnected();
+					SettingQueries.copyDefaultScanFilterToServer(f_server
+							.getLocation(), f_name));
+			ConnectedServerManager.getInstance().getStats(f_server)
+					.markAsConnected();
 		} catch (final SierraServiceClientException e) {
 			TroubleshootConnection troubleshoot;
 			if (e instanceof InvalidLoginException) {
 				troubleshoot = new TroubleshootWrongAuthentication(f_method,
-						f_server, null);
+						f_server.getLocation());
 			} else {
-				troubleshoot = new TroubleshootNoSuchServer(f_method, f_server,
-						null);
+				troubleshoot = new TroubleshootNoSuchServer(f_method, f_server
+						.getLocation());
 			}
 			// We had a recoverable error. Rollback, run the appropriate
 			// troubleshoot, and try again.
-			troubleshoot.fix();
+			final ServerLocation fixed = troubleshoot.fix();
 			if (troubleshoot.retry()) {
+				f_server = ConnectedServerManager.getInstance()
+						.changeAuthorizationFor(f_server, fixed.getUser(),
+								fixed.getPass(), fixed.isSavePassword());
 				return sendResultFilters(conn, slMonitor);
 			} else {
 				final int errNo = 49;

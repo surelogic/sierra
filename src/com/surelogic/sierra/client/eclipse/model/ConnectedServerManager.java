@@ -238,6 +238,7 @@ public final class ConnectedServerManager extends
 	 * @param savePassword
 	 *            {@code true} if the password should persist longer than this
 	 *            session, {@code false} if not.
+	 * @return the new server.
 	 */
 	public ConnectedServer changeAuthorizationFor(final ConnectedServer server,
 			final String user, final String pass, final boolean savePassword) {
@@ -260,6 +261,7 @@ public final class ConnectedServerManager extends
 	 * @param autoSync
 	 *            {@code true} if the the client should automatically
 	 *            synchronize with this server, {@code false} if not.
+	 * @return the new server.
 	 */
 	public ConnectedServer setAutoSyncFor(final ConnectedServer server,
 			final boolean autoSync) {
@@ -271,6 +273,25 @@ public final class ConnectedServerManager extends
 		}
 		saveAndNotifyObservers();
 		return newServer;
+	}
+
+	/**
+	 * Changes out the server object with another, updated, server object.
+	 * 
+	 * @param from
+	 *            the old server object.
+	 * @param to
+	 *            the new server object.
+	 * @return the new server.
+	 */
+	public ConnectedServer changeServer(final ConnectedServer from,
+			final ConnectedServer to) {
+		synchronized (this) {
+			f_servers.remove(from);
+			f_servers.add(to);
+		}
+		saveAndNotifyObservers();
+		return to;
 	}
 
 	/**
