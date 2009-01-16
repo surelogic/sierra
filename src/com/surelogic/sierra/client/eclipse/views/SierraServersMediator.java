@@ -14,7 +14,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Level;
 
 import org.eclipse.core.resources.IProject;
@@ -40,7 +39,6 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.Window;
-import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Button;
@@ -72,7 +70,6 @@ import com.surelogic.sierra.client.eclipse.actions.NewScan;
 import com.surelogic.sierra.client.eclipse.actions.PreferencesAction;
 import com.surelogic.sierra.client.eclipse.actions.PublishScanAction;
 import com.surelogic.sierra.client.eclipse.actions.ScanChangedProjectsAction;
-import com.surelogic.sierra.client.eclipse.actions.SynchronizeAllProjectsAction;
 import com.surelogic.sierra.client.eclipse.actions.SynchronizeProjectAction;
 import com.surelogic.sierra.client.eclipse.actions.TroubleshootConnection;
 import com.surelogic.sierra.client.eclipse.actions.TroubleshootException;
@@ -81,11 +78,15 @@ import com.surelogic.sierra.client.eclipse.dialogs.ConnectProjectsDialog;
 import com.surelogic.sierra.client.eclipse.dialogs.PromptForFilterNameDialog;
 import com.surelogic.sierra.client.eclipse.dialogs.ServerLocationDialog;
 import com.surelogic.sierra.client.eclipse.dialogs.ServerSelectionDialog;
-import com.surelogic.sierra.client.eclipse.jobs.AbstractServerProjectJob;
+import com.surelogic.sierra.client.eclipse.jobs.AbstractServerJob;
 import com.surelogic.sierra.client.eclipse.jobs.DeleteProjectDataJob;
 import com.surelogic.sierra.client.eclipse.jobs.OverwriteLocalScanFilterJob;
 import com.surelogic.sierra.client.eclipse.jobs.SendScanFiltersJob;
-import com.surelogic.sierra.client.eclipse.model.*;
+import com.surelogic.sierra.client.eclipse.model.ConnectedServerManager;
+import com.surelogic.sierra.client.eclipse.model.IProjectsObserver;
+import com.surelogic.sierra.client.eclipse.model.ISierraServerObserver;
+import com.surelogic.sierra.client.eclipse.model.Projects;
+import com.surelogic.sierra.client.eclipse.model.ServerSyncType;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
 import com.surelogic.sierra.client.eclipse.preferences.ServerFailureReport;
 import com.surelogic.sierra.jdbc.finding.ClientFindingManager;
@@ -104,15 +105,15 @@ import com.surelogic.sierra.tool.message.FilterSet;
 import com.surelogic.sierra.tool.message.ListCategoryResponse;
 import com.surelogic.sierra.tool.message.ListScanFilterRequest;
 import com.surelogic.sierra.tool.message.ScanFilter;
-import com.surelogic.sierra.tool.message.ServerMismatchException;
 import com.surelogic.sierra.tool.message.ServerLocation;
+import com.surelogic.sierra.tool.message.ServerMismatchException;
 import com.surelogic.sierra.tool.message.SierraServiceClientException;
 import com.surelogic.sierra.tool.message.SyncTrailResponse;
 
 public final class SierraServersMediator extends AbstractSierraViewMediator
 		implements ISierraServerObserver, IProjectsObserver {
 	private static final boolean showFiltersOnServer = true;
-	
+
 	static final String SCAN_FILTERS = "Scan Filters";
 
 	static final String CATEGORIES = "Categories";
@@ -125,7 +126,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 	 * This should only be changed in the UI thread
 	 */
 	private List<ProjectStatus> projects = Collections.emptyList();
-	
+
 	/**
 	 * This should only be changed in the UI thread
 	 */
@@ -221,11 +222,9 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 			if (servers.size() == 1) {
 				handleEventOnServer(servers.get(0));
 				/*
-			}
-			final ConnectedServer server = f_manager.getFocus();
-			if (server != null) {
-				handleEventOnServer(server);
-				*/
+				 * } final ConnectedServer server = f_manager.getFocus(); if
+				 * (server != null) { handleEventOnServer(server);
+				 */
 			} else {
 				handleEventWithoutServer();
 			}
@@ -249,11 +248,11 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 
 		@Override
 		public final void run() {
-			for(ScanFilter f : collectScanFilters()) {
+			for (ScanFilter f : collectScanFilters()) {
 				handleEventOnFilter(f);
 			}
 		}
-		
+
 		protected abstract void handleEventOnFilter(final ScanFilter filter);
 	}
 
@@ -270,7 +269,8 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 
 		@Override
 		protected final void handleEventOnServer(final ConnectedServer server) {
-			run(server, ConnectedServerManager.getInstance().getProjectsConnectedTo(server));
+			run(server, ConnectedServerManager.getInstance()
+					.getProjectsConnectedTo(server));
 		}
 
 		protected abstract void run(ConnectedServer server,
@@ -303,19 +303,22 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 				"No server to toggle") {
 			@Override
 			protected void handleEventOnServer(final ConnectedServer server) {
-				ConnectedServerManager.getInstance().setAutoSyncFor(server, !server.getLocation().isAutoSync());
+				ConnectedServerManager.getInstance().setAutoSyncFor(server,
+						!server.getLocation().isAutoSync());
 				ConnectedServerManager.getInstance().notifyObservers();
 			}
-		};		
-		
-		f_buglinkSyncAction = new ActionListener("Synchronize All BugLink Data",
-		"Synchronize BugLink servers") {
+		};
+
+		f_buglinkSyncAction = new ActionListener(
+				"Synchronize All BugLink Data", "Synchronize BugLink servers") {
 			@Override
 			public void run() {
-				SierraServersAutoSync.asyncSyncWithServer(ServerSyncType.BUGLINK);
+				SierraServersAutoSync
+						.asyncSyncWithServer(ServerSyncType.BUGLINK);
 			}
 		};
-		f_serverSyncAction = new ActionListener("Synchronize All Connected Projects",
+		f_serverSyncAction = new ActionListener(
+				"Synchronize All Connected Projects",
 				"Synchronize servers and connected projects") {
 			@Override
 			public void run() {
@@ -450,8 +453,8 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 		};
 		f_view.addToViewMenu(serverInteractionAction);
 		f_view.addToViewMenu(f_serverSyncAction);
-		//f_view.addToViewMenu(f_buglinkSyncAction);
-		//f_view.addToViewMenu(f_serverUpdateAction);
+		// f_view.addToViewMenu(f_buglinkSyncAction);
+		// f_view.addToViewMenu(f_serverUpdateAction);
 		f_view.addToViewMenu(f_toggleAutoSyncAction);
 		f_view.addToViewMenu(new Separator());
 
@@ -487,40 +490,47 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 				f_duplicateServerAction);
 		f_deleteServerItem.addListener(SWT.Selection, f_deleteServerAction);
 
-		final Listener connectAction = 
-			new ServerActionListener("No server to connect to, or no project to connect") {
+		final Listener connectAction = new ServerActionListener(
+				"No server to connect to, or no project to connect") {
 			boolean f_syncAfterConnect = true;
-			
+
 			private List<IJavaProject> collectProjects() {
 				ProjectStatusCollector<IJavaProject> projects = new ProjectStatusCollector<IJavaProject>() {
-					@Override IJavaProject getSelectedInfo(ProjectStatus s) {
+					@Override
+					IJavaProject getSelectedInfo(ProjectStatus s) {
 						return s.project;
 					}
 				};
-				return projects.collectSelectedProjects((IStructuredSelection) f_statusTree.getSelection());
+				return projects
+						.collectSelectedProjects((IStructuredSelection) f_statusTree
+								.getSelection());
 			}
-			private void doConnect(final ConnectedServer server, List<IJavaProject> projects) {
+
+			private void doConnect(final ConnectedServer server,
+					List<IJavaProject> projects) {
 				for (IJavaProject project : projects) {
 					if (f_manager.isConnected(project.getElementName())) {
 						continue;
 					}
 					f_manager.connect(project.getElementName(), server);
 				}
-			}			
+			}
+
 			@Override
 			protected void handleEventOnServer(final ConnectedServer server) {
 				List<IJavaProject> projects = collectProjects();
 				if (!projects.isEmpty()) {
 					boolean syncAfterConnect = true;
-					final MessageDialog dialog = 
-						new MessageDialog(f_statusTree.getTree().getShell(),
-							              "Synchronize Project(s) on Connect", null,
-							              "Do you want to synchronize the newly connected projects?", 
-							               MessageDialog.QUESTION,
-							               new String[] { "Yes", "No" }, 0);
+					final MessageDialog dialog = new MessageDialog(
+							f_statusTree.getTree().getShell(),
+							"Synchronize Project(s) on Connect",
+							null,
+							"Do you want to synchronize the newly connected projects?",
+							MessageDialog.QUESTION,
+							new String[] { "Yes", "No" }, 0);
 					syncAfterConnect = dialog.open() == 0;
 					doConnect(server, projects);
-					
+
 					if (syncAfterConnect) {
 						new SynchronizeProjectAction().run(projects);
 					}
@@ -538,19 +548,24 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 					super.handleEventWithoutServer();
 				} else {
 					ServerSelectionDialog dialog = new ServerSelectionDialog(
-							f_statusTree.getTree().getShell(), projects.get(0).getElementName()) {
+							f_statusTree.getTree().getShell(), projects.get(0)
+									.getElementName()) {
 						@Override
 						protected void addToEntryPanel(Composite entryPanel) {
 							super.addToEntryPanel(entryPanel);
-							
-							final Button syncToggle = new Button(entryPanel, SWT.CHECK);
-							syncToggle.setText("Synchronize newly connected projects on finish");
+
+							final Button syncToggle = new Button(entryPanel,
+									SWT.CHECK);
+							syncToggle
+									.setText("Synchronize newly connected projects on finish");
 							syncToggle.setSelection(true);
-							syncToggle.addListener(SWT.Selection, new Listener() {
-								public void handleEvent(Event event) {
-									f_syncAfterConnect = syncToggle.getSelection();
-								}
-							});
+							syncToggle.addListener(SWT.Selection,
+									new Listener() {
+										public void handleEvent(Event event) {
+											f_syncAfterConnect = syncToggle
+													.getSelection();
+										}
+									});
 						}
 					};
 					dialog.setUseForAllUnconnectedProjects(true);
@@ -562,7 +577,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 						return;
 					}
 					doConnect(server, projects);
-					
+
 					if (f_syncAfterConnect) {
 						new SynchronizeProjectAction().run(projects);
 					}
@@ -610,36 +625,35 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 							}
 						});
 
-		f_getResultFilters
-				.addListener(
-						SWT.Selection,
-						new ScanFilterActionListener("Overwrite local scan filter") {
-							@Override
-							protected void handleEventOnFilter(final ScanFilter f) {
-								final String msg = "Do you want to overwrite your local scan filter with"
-										+ " the scan filter '" + f.getName() + "'?";
-								final MessageDialog dialog = new MessageDialog(
-										f_statusTree.getTree().getShell(),
-										"Overwrite Local Scan Filter", null,
-										msg, MessageDialog.QUESTION,
-										new String[] { "Yes", "No" }, 0);
-								if (dialog.open() == 0) {
-									/*
-									 * Yes was selected, so get the result
-									 * filters from the server.
-									 */
+		f_getResultFilters.addListener(SWT.Selection,
+				new ScanFilterActionListener("Overwrite local scan filter") {
+					@Override
+					protected void handleEventOnFilter(final ScanFilter f) {
+						final String msg = "Do you want to overwrite your local scan filter with"
+								+ " the scan filter '" + f.getName() + "'?";
+						final MessageDialog dialog = new MessageDialog(
+								f_statusTree.getTree().getShell(),
+								"Overwrite Local Scan Filter", null, msg,
+								MessageDialog.QUESTION, new String[] { "Yes",
+										"No" }, 0);
+						if (dialog.open() == 0) {
+							/*
+							 * Yes was selected, so get the result filters from
+							 * the server.
+							 */
 
-									final Job job = new OverwriteLocalScanFilterJob(f);
-									job.schedule();
-								}
-							}
-						});
+							final Job job = new OverwriteLocalScanFilterJob(f);
+							job.schedule();
+						}
+					}
+				});
 
 		f_serverPropertiesItem.addListener(SWT.Selection,
 				new ServerActionListener(
 						"Edit server pressed with no server focus.") {
 					@Override
-					protected void handleEventOnServer(final ConnectedServer server) {
+					protected void handleEventOnServer(
+							final ConnectedServer server) {
 						ServerLocationDialog.editServer(f_statusTree.getTree()
 								.getShell(), server);
 					}
@@ -739,7 +753,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 					onlyBugLink = focus != null;
 				} else {
 					onlyTeamServer = onlyBugLink = false;
-				}			
+				}
 				f_duplicateServerAction.setEnabled(onlyServer);
 				f_deleteServerAction.setEnabled(onlyServer);
 				f_openInBrowserAction.setEnabled(onlyServer);
@@ -765,7 +779,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 					// try {
 					for (final ProjectStatus ps : status) {
 						if ((f_manager == null) || (ps == null)) {
-							//LOG.severe("Null project status");
+							// LOG.severe("Null project status");
 							continue;
 						}
 						if (!f_manager.isConnected(ps.name)) {
@@ -782,8 +796,10 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 					 * } catch (Throwable t) { t.printStackTrace(); }
 					 */
 				}
-				f_serverConnectItem.setEnabled((onlyTeamServer && !servers.direct.isEmpty()) || 
-						                       (someProjects && !allConnected));
+				f_serverConnectItem
+						.setEnabled((onlyTeamServer && !servers.direct
+								.isEmpty())
+								|| (someProjects && !allConnected));
 				f_scanProjectItem.setEnabled(someProjects);
 				f_rescanProjectItem.setEnabled(someProjects);
 				f_synchConnectedProjects.setEnabled(someProjects);
@@ -793,59 +809,52 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 		});
 
 		/*
-		final AutoJob doServerAutoUpdate = new AutoJob("Server auto-update",
-				lastServerUpdateTime) {
-			@Override
-			protected boolean isEnabled() {
-				return PreferenceConstants.getServerInteractionSetting()
-						.doServerAutoUpdate();
-			}
+		 * final AutoJob doServerAutoUpdate = new AutoJob("Server auto-update",
+		 * lastServerUpdateTime) {
+		 * 
+		 * @Override protected boolean isEnabled() { return
+		 * PreferenceConstants.getServerInteractionSetting()
+		 * .doServerAutoUpdate(); }
+		 * 
+		 * @Override protected long getDelay() { return PreferenceConstants
+		 * .getServerInteractionPeriodInMinutes() 60000; }
+		 * 
+		 * @Override protected void run() { asyncUpdateServerInfo(); } };
+		 * doServerAutoUpdate.schedule(doServerAutoUpdate.getDelay());
+		 */
 
-			@Override
-			protected long getDelay() {
-				return PreferenceConstants
-						.getServerInteractionPeriodInMinutes() * 60000;
-			}
-
-			@Override
-			protected void run() {
-				asyncUpdateServerInfo();
-			}
-		};
-		doServerAutoUpdate.schedule(doServerAutoUpdate.getDelay());
-        */
-
-//		final IPreferenceStore store = Activator.getDefault()
-//				.getPreferenceStore();
-//		store.addPropertyChangeListener(new IPropertyChangeListener() {
-//			public void propertyChange(final PropertyChangeEvent event) {
-//				if (event.getProperty() == PreferenceConstants.P_SERVER_INTERACTION_SETTING) {
-//					if (event.getNewValue() != event.getOldValue()) {
-//						final ServerInteractionSetting s = ServerInteractionSetting
-//								.valueOf((String) event.getNewValue());
-//						final Job job = new DatabaseJob(
-//								"Switching server interaction") {
-//							@Override
-//							protected IStatus run(final IProgressMonitor monitor) {
-//								synchronized (responseMap) {
-//									if (s.useAuditThreshold()
-//											&& checkAutoSyncTrigger(projects)) {
-//										asyncSyncWithServer(ServerSyncType.BY_SERVER_SETTINGS);
-//									} else if (s.doServerAutoSync()) {
-//										asyncSyncWithServer(ServerSyncType.BY_SERVER_SETTINGS);
-//									} else if (s.doServerAutoUpdate()) {
-//										asyncUpdateServerInfo();
-//									}
-//								}
-//								return Status.OK_STATUS;
-//							}
-//						};
-//						job.schedule();
-//					}
-//				}
-//			}
-//
-//		});
+		// final IPreferenceStore store = Activator.getDefault()
+		// .getPreferenceStore();
+		// store.addPropertyChangeListener(new IPropertyChangeListener() {
+		// public void propertyChange(final PropertyChangeEvent event) {
+		// if (event.getProperty() ==
+		// PreferenceConstants.P_SERVER_INTERACTION_SETTING) {
+		// if (event.getNewValue() != event.getOldValue()) {
+		// final ServerInteractionSetting s = ServerInteractionSetting
+		// .valueOf((String) event.getNewValue());
+		// final Job job = new DatabaseJob(
+		// "Switching server interaction") {
+		// @Override
+		// protected IStatus run(final IProgressMonitor monitor) {
+		// synchronized (responseMap) {
+		// if (s.useAuditThreshold()
+		// && checkAutoSyncTrigger(projects)) {
+		// asyncSyncWithServer(ServerSyncType.BY_SERVER_SETTINGS);
+		// } else if (s.doServerAutoSync()) {
+		// asyncSyncWithServer(ServerSyncType.BY_SERVER_SETTINGS);
+		// } else if (s.doServerAutoUpdate()) {
+		// asyncUpdateServerInfo();
+		// }
+		// }
+		// return Status.OK_STATUS;
+		// }
+		// };
+		// job.schedule();
+		// }
+		// }
+		// }
+		//
+		// });
 	}
 
 	private List<ScanFilter> collectScanFilters() {
@@ -867,9 +876,9 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 	}
 
 	private static class SelectedServers {
-		final List<ConnectedServer> direct; 
+		final List<ConnectedServer> direct;
 		final List<ConnectedServer> indirect;
-		
+
 		SelectedServers(boolean allocate) {
 			if (allocate) {
 				direct = new ArrayList<ConnectedServer>();
@@ -879,7 +888,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 			}
 		}
 	}
-	
+
 	SelectedServers collectServers() {
 		final IStructuredSelection si = (IStructuredSelection) f_statusTree
 				.getSelection();
@@ -930,11 +939,9 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 				return (ConnectedServer) item.getData();
 			}
 			/*
-			if (data == null && SCAN_FILTERS.equals(item.getText())) {
-				// Not a server
-				return null; 
-			}
-			*/
+			 * if (data == null && SCAN_FILTERS.equals(item.getText())) { // Not
+			 * a server return null; }
+			 */
 			item = item.getParent();
 		}
 		return null;
@@ -982,7 +989,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 					collectProjects(projects, item, false);
 				} else {
 					final ProjectStatus status = inProject(item.getParent());
-					if (status != null) {						
+					if (status != null) {
 						add(projects, status);
 						continue;
 					}
@@ -1001,12 +1008,12 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 				}
 				// look for CONNECTED_PROJECTS (if a server)
 				ServersViewContent temp = parent.getChildren()[0];
-				for(ServersViewContent c : parent.getChildren()) {
+				for (ServersViewContent c : parent.getChildren()) {
 					if (c.getText().endsWith(CONNECTED_PROJECTS)) {
 						temp = c;
 						break;
 					}
-				}				
+				}
 				projectItems = temp;
 			} else {
 				projectItems = parent;
@@ -1126,35 +1133,22 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 	}
 
 	/*
-	void asyncUpdateServerInfo() {
-		final long now = System.currentTimeMillis();
-		lastServerUpdateTime.set(now);
-		System.out.println("Update at: " + now);
-
-		final Job lastJob = lastUpdateJob.get();
-		if ((lastJob == null) || (lastJob.getResult() != null)) {
-			final Job job = new DatabaseJob("Updating server status") {
-				@Override
-				protected IStatus run(final IProgressMonitor monitor) {
-					monitor.beginTask("Updating server info",
-							IProgressMonitor.UNKNOWN);
-					try {
-						updateServerInfo();
-					} catch (final Exception e) {
-						final int errNo = 58; // FIX
-						final String msg = I18N.err(errNo);
-						return SLEclipseStatusUtility.createErrorStatus(errNo,
-								msg, e);
-					}
-					monitor.done();
-					return Status.OK_STATUS;
-				}
-			};
-			lastUpdateJob.set(job);
-			job.schedule();
-		}
-	}
-    */
+	 * void asyncUpdateServerInfo() { final long now =
+	 * System.currentTimeMillis(); lastServerUpdateTime.set(now);
+	 * System.out.println("Update at: " + now);
+	 * 
+	 * final Job lastJob = lastUpdateJob.get(); if ((lastJob == null) ||
+	 * (lastJob.getResult() != null)) { final Job job = new
+	 * DatabaseJob("Updating server status") {
+	 * 
+	 * @Override protected IStatus run(final IProgressMonitor monitor) {
+	 * monitor.beginTask("Updating server info", IProgressMonitor.UNKNOWN); try
+	 * { updateServerInfo(); } catch (final Exception e) { final int errNo = 58;
+	 * // FIX final String msg = I18N.err(errNo); return
+	 * SLEclipseStatusUtility.createErrorStatus(errNo, msg, e); }
+	 * monitor.done(); return Status.OK_STATUS; } }; lastUpdateJob.set(job);
+	 * job.schedule(); } }
+	 */
 
 	private void asyncUpdateContents() {
 		asyncUpdateContentsForUI(new IViewUpdater() {
@@ -1166,26 +1160,19 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 			}
 		});
 		/*
-		final Job infoJob = new Job("Getting server info") {
-			@Override
-			protected IStatus run(final IProgressMonitor monitor) {
-				final int threshold = PreferenceConstants
-						.getServerInteractionRetryThreshold();
-				final ConnectedServerManager mgr = ConnectedServerManager
-						.getInstance();
-				for (final ConnectedServer s : mgr.getServers()) {
-					if (mgr.getStats(s).getProblemCount() <= threshold) {
-						s.updateServerInfo();
-					}
-				}
-				return Status.OK_STATUS;
-			}
+		 * final Job infoJob = new Job("Getting server info") {
+		 * 
+		 * @Override protected IStatus run(final IProgressMonitor monitor) {
+		 * final int threshold = PreferenceConstants
+		 * .getServerInteractionRetryThreshold(); final ConnectedServerManager
+		 * mgr = ConnectedServerManager .getInstance(); for (final
+		 * ConnectedServer s : mgr.getServers()) { if
+		 * (mgr.getStats(s).getProblemCount() <= threshold) {
+		 * s.updateServerInfo(); } } return Status.OK_STATUS; }
+		 * 
+		 * }; infoJob.setSystem(true); infoJob.schedule();
+		 */
 
-		};
-		infoJob.setSystem(true);
-		infoJob.schedule();
-		*/
-		
 		final Job job = new DatabaseJob("Updating project status") {
 			@Override
 			protected IStatus run(final IProgressMonitor monitor) {
@@ -1212,8 +1199,8 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 		}
 		final int threshold = PreferenceConstants
 				.getServerInteractionRetryThreshold();
-		final int numServerProbs = 
-			ConnectedServerManager.getInstance().getStats(server).getProblemCount();
+		final int numServerProbs = ConnectedServerManager.getInstance()
+				.getStats(server).getProblemCount();
 		if (numServerProbs > threshold) {
 			failedServers = markAsFailedServer(failedServers, server);
 			return true;
@@ -1295,21 +1282,24 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 				try {
 					final ServerLocation loc = server.getLocation();
 					if (!onlyServer) {
-						responses = cpm.getProjectUpdates(server, name, monitor);
+						responses = cpm
+								.getProjectUpdates(server, name, monitor);
 					}
-					serverResponse = checkForBugLinkUpdates(c, serverResponse, loc);
+					serverResponse = checkForBugLinkUpdates(c, serverResponse,
+							loc);
 				} catch (final ServerMismatchException e) {
-					tc = new TroubleshootWrongServer(method, server, name);
+					tc = new TroubleshootWrongServer(method, server
+							.getLocation(), name);
 					failedServers = handleServerProblem(failedServers, server,
 							tc, e);
 				} catch (final SierraServiceClientException e) {
-					tc = AbstractServerProjectJob.getTroubleshootConnection(
-							method, server, name, e);
+					tc = AbstractServerJob.getTroubleshootConnection(method,
+							server.getLocation(), e);
 					failedServers = handleServerProblem(failedServers, server,
 							tc, e);
 				} catch (final Exception e) {
-					tc = new TroubleshootException(method, server, name, e,
-							e instanceof SQLException);
+					tc = new TroubleshootException(method,
+							server.getLocation(), e, e instanceof SQLException);
 					failedServers = handleServerProblem(failedServers, server,
 							tc, e);
 				}
@@ -1320,7 +1310,8 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 			}
 			if (serverResponse != null) {
 				serverResponseMap.put(server, serverResponse);
-				ConnectedServerManager.getInstance().getStats(server).markAsConnected();
+				ConnectedServerManager.getInstance().getStats(server)
+						.markAsConnected();
 			}
 		}
 	}
@@ -1340,14 +1331,14 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 				handler.queryForProjects(f_manager);
 				handler.queryServers(f_manager);
 
-				com.surelogic.sierra.jdbc.project.Projects projects = 
-					new com.surelogic.sierra.jdbc.project.Projects(c);
+				com.surelogic.sierra.jdbc.project.Projects projects = new com.surelogic.sierra.jdbc.project.Projects(
+						c);
 				ScanFilters filters = new ScanFilters(c);
 				// FIX to include server's label
 				for (ProjectDO p : projects.listProjects()) {
-					// Update to use scan filter's name, not uid										
+					// Update to use scan filter's name, not uid
 					ScanFilterDO filter = filters.getScanFilter(p
-							.getScanFilter());			
+							.getScanFilter());
 					if (filter != null) {
 						p.setScanFilter(filter.getName());
 					}
@@ -1428,7 +1419,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 	private boolean handleServerProblem(final TroubleshootConnection tc,
 			final Exception e) {
 		tc.fix();
-		return tc.failServer();
+		return tc.isServerConsideredBad();
 	}
 
 	private void updateContents() throws Exception {
@@ -1458,8 +1449,9 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 					final List<SyncTrailResponse> responses = responseMap
 							.get(name);
 					final ConnectedServer server = f_manager.getServer(name);
-					final int numServerProblems = server == null ? -1 : 
-						ConnectedServerManager.getInstance().getStats(server).getProblemCount();
+					final int numServerProblems = server == null ? -1
+							: ConnectedServerManager.getInstance().getStats(
+									server).getProblemCount();
 					final int numProjectProblems = Projects.getInstance()
 							.getProblemCount(name);
 
@@ -1468,7 +1460,8 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 					final File scan = NewScan.getScanDocumentFile(name);
 					final ScanInfo info = sm.getLatestScanInfo(name);
 					final ProjectDO dbInfo = projectMap.get(name);
-					final ScanFilterView filter = SettingQueries.scanFilterForProject(name).perform(q);
+					final ScanFilterView filter = SettingQueries
+							.scanFilterForProject(name).perform(q);
 					final ProjectStatus s = new ProjectStatus(jp, scan, info,
 							findings, responses, numServerProblems,
 							numProjectProblems, dbInfo, filter);
@@ -1537,14 +1530,15 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 	 * @return true if triggered an auto-sync
 	 */
 	private boolean checkAutoSyncTrigger(final List<ProjectStatus> projects) {
-//		if (!PreferenceConstants.getServerInteractionSetting()
-//				.useAuditThreshold()) {
-//			return false;
-//		}
+		// if (!PreferenceConstants.getServerInteractionSetting()
+		// .useAuditThreshold()) {
+		// return false;
+		// }
 		final int auditThreshold = PreferenceConstants
 				.getServerInteractionAuditThreshold();
 		if (auditThreshold > 0) {
-			ConnectedServerManager manager = ConnectedServerManager.getInstance();
+			ConnectedServerManager manager = ConnectedServerManager
+					.getInstance();
 			int audits = 0;
 			for (final ProjectStatus ps : projects) {
 				ConnectedServer server = manager.getServer(ps.name);
@@ -1554,7 +1548,8 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 			}
 			// FIX should this be per-project?
 			if (audits > auditThreshold) {
-				SierraServersAutoSync.asyncSyncWithServer(ServerSyncType.BY_SERVER_SETTINGS);
+				SierraServersAutoSync
+						.asyncSyncWithServer(ServerSyncType.BY_SERVER_SETTINGS);
 				return true;
 			}
 		}
@@ -1673,36 +1668,37 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 		/*
 		 * if (focused != null) { f_statusTree.setSelection(focused); }
 		 */
-		//createLocalScanFilterItems(content);
+		// createLocalScanFilterItems(content);
 		return content.toArray(emptyChildren);
 	}
 
 	private void createUnknownServers(List<ServersViewContent> content) {
-	    for(Map.Entry<String, List<ScanFilter>> e : localFilters.entrySet()) {
-	        final String label = e.getKey();	        
-	        final ConnectedServer server = f_manager.getServerByUuid(label);
-	        if (server != null) {
-	            // Already known, so already handled elsewhere
-	            continue;
-	        }	        
-	        final List<ScanFilter> filters = e.getValue();
-	        if (filters.isEmpty()) {
-	            continue;
-	        }
-	        ServersViewContent serverRoot = 
-	            new ServersViewContent(null, SLImages.getImage(CommonImages.IMG_SIERRA_SERVER_GRAY));	        
-	        List<ServersViewContent> children = new ArrayList<ServersViewContent>();	   
-	        for(ScanFilter f : e.getValue()) {
-	            final String name = f.getName();
-	            ServersViewContent filter = createLabel(serverRoot, children, name, ChangeStatus.NONE);
-	            filter.setData(f);          
-	        }	        	        
-	        serverRoot.setText(label);
-	        serverRoot.setChildren(children.toArray(emptyChildren));
-	        serverRoot.setData(filters);
-	    }
+		for (Map.Entry<String, List<ScanFilter>> e : localFilters.entrySet()) {
+			final String label = e.getKey();
+			final ConnectedServer server = f_manager.getServerByUuid(label);
+			if (server != null) {
+				// Already known, so already handled elsewhere
+				continue;
+			}
+			final List<ScanFilter> filters = e.getValue();
+			if (filters.isEmpty()) {
+				continue;
+			}
+			ServersViewContent serverRoot = new ServersViewContent(null,
+					SLImages.getImage(CommonImages.IMG_SIERRA_SERVER_GRAY));
+			List<ServersViewContent> children = new ArrayList<ServersViewContent>();
+			for (ScanFilter f : e.getValue()) {
+				final String name = f.getName();
+				ServersViewContent filter = createLabel(serverRoot, children,
+						name, ChangeStatus.NONE);
+				filter.setData(f);
+			}
+			serverRoot.setText(label);
+			serverRoot.setChildren(children.toArray(emptyChildren));
+			serverRoot.setData(filters);
+		}
 	}
-	
+
 	private ServersViewContent createServerItem(final ConnectedServer server) {
 		final List<ServersViewContent> serverContent = new ArrayList<ServersViewContent>();
 
@@ -1780,8 +1776,9 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 			final ServersViewContent serverNode, final ConnectedServer server) {
 		final ServerUpdateStatus update = serverUpdates.get(server);
 		final List<ScanFilter> filters = localFilters.get(server.getName());
-		if ((update == null || update.getNumScanFilters() == 0) && 
-			(!showFiltersOnServer || filters == null || filters.isEmpty())) {
+		if ((update == null || update.getNumScanFilters() == 0)
+				&& (!showFiltersOnServer || filters == null || filters
+						.isEmpty())) {
 			return null;
 		}
 		final int num = update == null ? 0 : update.getNumUpdatedScanFilters();
@@ -1790,28 +1787,28 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 			return null;
 		}
 		final ServersViewContent root = new ServersViewContent(serverNode,
-					SLImages.getImage(CommonImages.IMG_FILTER));
+				SLImages.getImage(CommonImages.IMG_FILTER));
 		root.setText(changed ? delta + SCAN_FILTERS : SCAN_FILTERS);
-		
-		final ServersViewContent filterRoot;				
+
+		final ServersViewContent filterRoot;
 		if (changed) {
-			filterRoot = createLabel(root, delta+num+" scan filter"+s(num)+" to update",
-					ChangeStatus.REMOTE);			
+			filterRoot = createLabel(root, delta + num + " scan filter"
+					+ s(num) + " to update", ChangeStatus.REMOTE);
 		} else {
 			filterRoot = root;
-		}		
+		}
 		List<ServersViewContent> children = new ArrayList<ServersViewContent>();
 		for (ScanFilter f : update != null ? update.getScanFilters() : filters) {
 			ServersViewContent filter;
 			if (update != null && update.isChanged(f)) {
 				filter = createLabel(filterRoot, children, delta + f.getName(),
 						ChangeStatus.REMOTE);
-				//filter.setData(f);
+				// filter.setData(f);
 			} else if (showFiltersOnServer) {
 				filter = createLabel(filterRoot, children, f.getName(),
-						ChangeStatus.NONE);				
+						ChangeStatus.NONE);
 				filter.setData(f);
-			}	
+			}
 		}
 		filterRoot.setChildren(children.toArray(emptyChildren));
 		return root;
@@ -1844,18 +1841,20 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 	}
 
 	@SuppressWarnings("unused")
-	private void createLocalScanFilterItems(final List<ServersViewContent> content) {
-		ServersViewContent filterRoot = 
-			new ServersViewContent(null, SLImages.getImage(CommonImages.IMG_FILTER));
+	private void createLocalScanFilterItems(
+			final List<ServersViewContent> content) {
+		ServersViewContent filterRoot = new ServersViewContent(null, SLImages
+				.getImage(CommonImages.IMG_FILTER));
 		content.add(filterRoot);
 
 		List<ServersViewContent> children = new ArrayList<ServersViewContent>();
-		for(Map.Entry<String, List<ScanFilter>> e : localFilters.entrySet()) {
+		for (Map.Entry<String, List<ScanFilter>> e : localFilters.entrySet()) {
 			final String server = e.getKey();
-			for(ScanFilter f : e.getValue()) {
-				final String name = f.getName()+" ("+server+")";
-				ServersViewContent filter = createLabel(filterRoot, children, name, ChangeStatus.NONE);
-				filter.setData(f);			
+			for (ScanFilter f : e.getValue()) {
+				final String name = f.getName() + " (" + server + ")";
+				ServersViewContent filter = createLabel(filterRoot, children,
+						name, ChangeStatus.NONE);
+				filter.setData(f);
 			}
 		}
 		filterRoot.setText("Known Scan Filters");
@@ -2021,23 +2020,20 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 					+ s(ps.numProjectProblems) + " getting server info from "
 					+ server.getName());
 			problems.setServerStatus(ServerStatus.WARNING);
-		}		
-		/*
-		if (ps.localDBInfo != null) {
-			final ServersViewContent scanFilter = new ServersViewContent(root,
-					SLImages.getImage(CommonImages.IMG_FILTER));
-			contents.add(scanFilter);
-			scanFilter
-					.setText("Scan filter: " + ps.localDBInfo.getScanFilter());
-			scanFilter.setData(ps.localDBInfo);
 		}
-		*/
+		/*
+		 * if (ps.localDBInfo != null) { final ServersViewContent scanFilter =
+		 * new ServersViewContent(root,
+		 * SLImages.getImage(CommonImages.IMG_FILTER));
+		 * contents.add(scanFilter); scanFilter .setText("Scan filter: " +
+		 * ps.localDBInfo.getScanFilter()); scanFilter.setData(ps.localDBInfo);
+		 * }
+		 */
 		if (ps.filter != null) {
 			final ServersViewContent scanFilter = new ServersViewContent(root,
 					SLImages.getImage(CommonImages.IMG_FILTER));
 			contents.add(scanFilter);
-			scanFilter
-					.setText("Scan filter: " + ps.filter.getName());
+			scanFilter.setText("Scan filter: " + ps.filter.getName());
 			scanFilter.setData(ps.filter);
 		}
 		if (ps.serverData == null) {
