@@ -1096,7 +1096,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 									| IWorkbenchBrowserSupport.NAVIGATION_BAR
 									| IWorkbenchBrowserSupport.STATUS,
 							server.getName(), name, name);
-			final URL url = server.getLocation().toAuthorizedURL();
+			final URL url = server.getLocation().createHomeURL();
 			browser.openURL(url);
 		} catch (final Exception e) {
 			SLLogger.getLogger().log(Level.SEVERE, I18N.err(26), e);
@@ -1680,7 +1680,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 	private void createUnknownServers(List<ServersViewContent> content) {
 	    for(Map.Entry<String, List<ScanFilter>> e : localFilters.entrySet()) {
 	        final String label = e.getKey();	        
-	        final ConnectedServer server = f_manager.getServerByUuid(id);
+	        final ConnectedServer server = f_manager.getServerByUuid(label);
 	        if (server != null) {
 	            // Already known, so already handled elsewhere
 	            continue;
@@ -1736,7 +1736,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 		serverNode.setChildren(serverContent.toArray(emptyChildren));
 		final ChangeStatus status3 = serverNode.getChangeStatus();
 		serverNode.setText(status3.getLabel() + server + " ["
-				+ server.toURLWithContextPath() + ']');
+				+ server.getLocation().createHomeURL() + ']');
 		return serverNode;
 	}
 
