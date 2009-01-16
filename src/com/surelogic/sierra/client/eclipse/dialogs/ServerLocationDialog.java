@@ -50,7 +50,7 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 		final ConnectedServerManager manager = ConnectedServerManager.getInstance();
 		final String title = I18N.msg("sierra.dialog.serverlocation.newTitle");
 		final ServerLocationDialog dialog = new ServerLocationDialog(shell,
-				manager.createLocation(), title, true, false);
+				new ServerLocation(), title, true, false);
 		if (dialog.open() == Window.OK) {
 			final ConnectedServer server = manager.create();
 			final ServerLocation location = dialog.f_server;
@@ -149,30 +149,6 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 		GridData data = new GridData(SWT.FILL, SWT.FILL, true, false);
 		data.widthHint = CONTENTS_WIDTH_HINT;
 		panel.setLayoutData(data);
-
-		final Label label = new Label(panel, SWT.RIGHT);
-		label.setText(I18N.msg("sierra.dialog.serverlocation.label"));
-		label.setLayoutData(new GridData(SWT.RIGHT));
-		final Text labelText = new Text(panel, SWT.SINGLE | SWT.BORDER);
-		labelText.setText(f_server.getName());
-		labelText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		labelText.addListener(SWT.Verify, new Listener() {
-			public void handleEvent(final Event event) {
-				final String text = event.text;
-				final char[] chars = new char[text.length()];
-				text.getChars(0, chars.length, chars, 0);
-				for (final char c : chars) {
-					final boolean number = ('0' <= c) && (c <= '9');
-					final boolean alpha = ('A' <= c) && (c <= 'z');
-					final boolean spec = (c == '?') || (c == ' ') || (c == '(')
-							|| (c == ')') || (c == '.');
-					if (!(number || alpha || spec)) {
-						event.doit = false;
-						return;
-					}
-				}
-			}
-		});
 
 		/* Location group */
 		final Group locGroup = new Group(panel, SWT.NONE);
@@ -330,7 +306,7 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 
 		setTitle(I18N.msg("sierra.dialog.serverlocation.title"));
 
-		f_mediator = new Mediator(labelText, hostText, portText,
+		f_mediator = new Mediator(hostText, portText,
 				contextPathText, userText, passwordText);
 		f_mediator.init();
 
@@ -371,17 +347,15 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 		private final ConnectedServerManager f_manager = ConnectedServerManager
 				.getInstance();
 
-		private final Text f_labelText;
 		private final Text f_hostText;
 		private final Text f_portText;
 		private final Text f_contextPathText;
 		private final Text f_userText;
 		private final Text f_passwordText;
 
-		Mediator(final Text labelText, final Text hostText,
+		Mediator(final Text hostText,
 				final Text portText, final Text contextPathText,
 				final Text userText, final Text passwordText) {
-			f_labelText = labelText;
 			f_hostText = hostText;
 			f_portText = portText;
 			f_contextPathText = contextPathText;
@@ -395,12 +369,10 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 					checkDialogContents();
 				}
 			};
-			f_labelText.addListener(SWT.Modify, checkContentsListener);
 			f_hostText.addListener(SWT.Modify, checkContentsListener);
 			f_portText.addListener(SWT.Modify, checkContentsListener);
 			f_contextPathText.addListener(SWT.Modify, checkContentsListener);
 			f_userText.addListener(SWT.Modify, checkContentsListener);
-			f_labelText.addListener(SWT.Modify, checkContentsListener);
 		}
 
 		void checkDialogContents() {
@@ -432,17 +404,6 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 						IMessageProvider.ERROR);
 			}
 
-			final String labelText = f_labelText.getText().trim();
-			if ("".equals(labelText)) {
-				valid = false;
-			} else if (!f_server.getLabel().equals(labelText)
-					&& f_manager.exists(labelText)) {
-				valid = false;
-				showInfo = false;
-				setMessage(I18N.msg("sierra.eclipse.badServerLocationLabel",
-						labelText), IMessageProvider.ERROR);
-			}
-
 			if (showInfo) {
 				setMessage(I18N.msg("sierra.dialog.serverlocation.msg.info"),
 						IMessageProvider.INFORMATION);
@@ -452,11 +413,10 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 		}
 
 		public void okPressed() {
-			f_server = new ServerLocation(f_labelText.getText().trim(),
-					f_hostText.getText().trim(), f_isSecure, Integer
+			f_server = new ServerLocation(f_hostText.getText().trim(), f_isSecure, Integer
 							.parseInt(f_portText.getText().trim()),
 					f_contextPathText.getText().trim(), f_userText.getText()
-							.trim(), f_passwordText.getText(), f_autoSync);
+							.trim(), f_passwordText.getText(), f_savePassword, f_autoSync);
 		}
 	}
 }
