@@ -37,7 +37,7 @@ public final class ServerManagementContent extends
 		serverView.initialize();
 		serverView.addAction("New", new ClickListener() {
 			public void onClick(final Widget sender) {
-				serverView.setSelection(new PortalServerLocation());
+				Context.current().setUuid("new").submit();
 			}
 		});
 		serverView.addAction("Save", new ClickListener() {
@@ -89,6 +89,15 @@ public final class ServerManagementContent extends
 	@Override
 	protected void onSelectionChanged(final PortalServerLocation item) {
 		serverView.setSelection(item);
+	}
+
+	@Override
+	protected void onUpdate(final Context context) {
+		if ("new".equals(context.getUuid())) {
+			serverView.setSelection(new PortalServerLocation());
+		} else {
+			super.onUpdate(context);
+		}
 	}
 
 }
