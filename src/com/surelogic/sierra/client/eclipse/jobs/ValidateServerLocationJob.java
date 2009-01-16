@@ -4,12 +4,10 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
-import com.surelogic.common.jdbc.TransactionException;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.actions.TroubleshootConnection;
 import com.surelogic.sierra.client.eclipse.model.ServerSyncType;
 import com.surelogic.sierra.client.eclipse.preferences.ServerFailureReport;
-import com.surelogic.sierra.jdbc.settings.InvalidServerException;
 import com.surelogic.sierra.jdbc.settings.SettingQueries;
 import com.surelogic.sierra.tool.message.ServerLocation;
 import com.surelogic.sierra.tool.message.SierraServiceClientException;
@@ -41,23 +39,20 @@ public class ValidateServerLocationJob extends AbstractServerProjectJob {
 	private IStatus validate(final ServerLocation loc,
 			final boolean savePassword) {
 		try {
-			Data.getInstance().withTransaction(
+			f_server = Data.getInstance().withTransaction(
 					SettingQueries
 							.checkAndSaveServerLocation(loc, savePassword));
 			return Status.OK_STATUS;
 		} catch (final SierraServiceClientException e) {
 			final TroubleshootConnection c = getTroubleshootConnection(
-					f_method, e);
+					f_method, f_loc, e);
 			final ServerLocation updLoc = c.fix();
 			if (c.retry()) {
-				validate(updLoc, savePassword);
-			}
-		} catch (final TransactionException e) {
-			if (e.getCause() instanceof InvalidServerException) {
-				// FIXME
+				return validate(updLoc, savePassword);
+			} else {
+				throw e;
 			}
 		}
-		return null;
 	}
 
 	@Override
@@ -75,6 +70,8 @@ public class ValidateServerLocationJob extends AbstractServerProjectJob {
 				job.schedule();
 			}
 			return status;
+		} catch (final Exception e) {
+			return createErrorStatus(51, e);
 		} finally {
 			monitor.done();
 		}

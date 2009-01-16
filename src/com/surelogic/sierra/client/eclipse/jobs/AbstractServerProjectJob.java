@@ -24,7 +24,7 @@ import com.surelogic.sierra.tool.message.SierraServiceClientException;
  */
 public abstract class AbstractServerProjectJob extends AbstractServerJob {
 
-	private ConnectedServer f_server;
+	protected ConnectedServer f_server;
 
 	protected ConnectedServer getServer() {
 		return f_server;
@@ -32,10 +32,12 @@ public abstract class AbstractServerProjectJob extends AbstractServerJob {
 
 	protected void changeAuthorization(final String user, final String pass,
 			final boolean savePassword) {
-		if (user == null)
+		if (user == null) {
 			throw new IllegalArgumentException(I18N.err(44, "user"));
-		if (pass == null)
+		}
+		if (pass == null) {
 			throw new IllegalArgumentException(I18N.err(44, "pass"));
+		}
 		/*
 		 * Tell the manager about this update
 		 */
