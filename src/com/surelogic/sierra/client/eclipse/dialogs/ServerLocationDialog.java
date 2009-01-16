@@ -355,15 +355,15 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 			boolean valid = true;
 			boolean showInfo = true;
 
-			if (f_hostText.getText().equals("")) {
+			if ("".equals(f_hostText.getText())) {
 				valid = false;
 			}
 
-			if (f_portText.getText().equals("")) {
+			if ("".equals(f_portText.getText())) {
 				valid = false;
 			}
 
-			if (f_userText.getText().equals("")) {
+			if ("".equals(f_userText.getText())) {
 				valid = false;
 			}
 
