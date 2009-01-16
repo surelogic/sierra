@@ -6,6 +6,7 @@ import org.eclipse.core.runtime.Status;
 
 import com.surelogic.sierra.client.eclipse.model.ServerSyncType;
 import com.surelogic.sierra.client.eclipse.preferences.ServerFailureReport;
+import com.surelogic.sierra.jdbc.settings.ConnectedServer;
 import com.surelogic.sierra.tool.message.ServerInfoReply;
 import com.surelogic.sierra.tool.message.ServerInfoRequest;
 import com.surelogic.sierra.tool.message.ServerInfoService;
@@ -28,7 +29,8 @@ public class ValidateServerLocationJob extends AbstractServerProjectJob {
 	public ValidateServerLocationJob(ServerLocation location,
 			boolean savePassword, boolean autoSync) {
 		super(null, "Validating conection to " + location.getHost(),
-				null /* TODO */, null, ServerFailureReport.SHOW_DIALOG);
+			  new ConnectedServer("unknown", "unknown", false, location), 
+			  null, ServerFailureReport.SHOW_DIALOG);
 	}
 
 	// static void updateServer(final ServerLocationDialog dialog,
