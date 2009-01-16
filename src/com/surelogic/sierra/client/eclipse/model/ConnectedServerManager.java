@@ -83,7 +83,7 @@ public final class ConnectedServerManager extends
 
 	/**
 	 * Looks for a server managed by this model by its UUID, {@code null} is
-	 * returned if no server with that UUID can be found.
+	 * returned if no server with the passed UUID can be found.
 	 * 
 	 * @param uuid
 	 *            the UUID of the desired server.
@@ -94,6 +94,26 @@ public final class ConnectedServerManager extends
 			final Set<ConnectedServer> servers = getServers();
 			for (ConnectedServer server : servers) {
 				if (server.getUuid().equals(uuid)) {
+					return server;
+				}
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Looks for a server managed by this model by its location, {@code null} is
+	 * returned if no server with the passed location can be found.
+	 * 
+	 * @param location
+	 *            a server location.
+	 * @return a server or {@code null} if none can be found.
+	 */
+	public ConnectedServer getServerByLocation(final ServerLocation location) {
+		if (location != null) {
+			final Set<ConnectedServer> servers = getServers();
+			for (ConnectedServer server : servers) {
+				if (server.getLocation().equals(location)) {
 					return server;
 				}
 			}

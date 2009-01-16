@@ -1,24 +1,20 @@
 package com.surelogic.sierra.client.eclipse.actions;
 
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.jface.window.Window;
 import org.eclipse.ui.PlatformUI;
 
-import com.surelogic.common.eclipse.SWTUtility;
 import com.surelogic.common.eclipse.logging.SLEclipseStatusUtility;
 import com.surelogic.sierra.client.eclipse.dialogs.ServerAuthenticationDialog;
 import com.surelogic.sierra.client.eclipse.preferences.ServerFailureReport;
-import com.surelogic.sierra.jdbc.settings.ConnectedServer;
+import com.surelogic.sierra.tool.message.ServerLocation;
 
 public final class TroubleshootWrongAuthentication extends
 		TroubleshootConnection {
 
 	public TroubleshootWrongAuthentication(final ServerFailureReport method,
-			ConnectedServer server, String projectName) {
-		super(method, server, projectName);
+			ServerLocation location) {
+		super(method, location);
 	}
-
-	private int f_dialogResult;
 
 	@Override
 	protected String getLabel() {
@@ -29,23 +25,23 @@ public final class TroubleshootWrongAuthentication extends
 	protected IStatus createStatus() {
 		return SLEclipseStatusUtility
 				.createInfoStatus("Unable to authenticate to "
-						+ f_server.getName());
+						+ getLocation().createHomeURL().toString());
 	}
 
+	private ServerLocation f_modifiedLocation = null;
+
 	@Override
-	protected void showDialog() {
+	protected ServerLocation showDialog() {
 		PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
 			public void run() {
-				ServerAuthenticationDialog dialog = new ServerAuthenticationDialog(
-						SWTUtility.getShell(), f_server);
-				f_dialogResult = dialog.open();
+				f_modifiedLocation = ServerAuthenticationDialog.open(null,
+						getLocation());
 			}
 		});
-		setRetry(f_dialogResult != Window.CANCEL);
-	}
-
-	@Override
-	public boolean failServer() {
-		return false;
+		if (f_modifiedLocation == null)
+			f_modifiedLocation = getLocation();
+		final boolean modified = getLocation() != f_modifiedLocation;
+		setRetry(!modified);
+		return f_modifiedLocation;
 	}
 }

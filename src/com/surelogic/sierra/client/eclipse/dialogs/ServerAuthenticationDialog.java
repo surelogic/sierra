@@ -15,17 +15,51 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 import com.surelogic.common.eclipse.SLImages;
+import com.surelogic.common.eclipse.SWTUtility;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.images.CommonImages;
-import com.surelogic.sierra.client.eclipse.model.ConnectedServerManager;
-import com.surelogic.sierra.jdbc.settings.ConnectedServer;
+import com.surelogic.sierra.tool.message.ServerLocation;
 
 /**
  * Dialog to prompt the user for a user name and password to a Sierra server.
  */
 public final class ServerAuthenticationDialog extends Dialog {
 
-	private ConnectedServer f_server;
+	/**
+	 * Prompts the user for authentication based upon the passed location and
+	 * returns the new location object.
+	 * <p>
+	 * Clients must take appropriate action with the new location object.
+	 * 
+	 * @param parentShell
+	 *            a shell.
+	 * @param location
+	 *            the server location object to prompt for authentication
+	 *            information.
+	 * @return a new server location object that reflects the changes made by
+	 *         the user. If the returned object is the same object that was
+	 *         passed via <tt>location</tt> then the user canceled the dialog.
+	 */
+	public static ServerLocation open(Shell parentShell, ServerLocation location) {
+		if (location == null)
+			throw new IllegalArgumentException(I18N.err(44, "location"));
+		if (parentShell == null)
+			parentShell = SWTUtility.getShell();
+
+		final ServerAuthenticationDialog dialog = new ServerAuthenticationDialog(
+				parentShell, location);
+
+		if (dialog.open() == Window.OK) {
+			return dialog.getMutatedLocation();
+		} else {
+			return location;
+		}
+	}
+
+	/**
+	 * This field is mutated when OK is pressed.
+	 */
+	private ServerLocation f_location;
 
 	private Text f_userText;
 	private Text f_passwordText;
@@ -33,18 +67,28 @@ public final class ServerAuthenticationDialog extends Dialog {
 	private Button f_savePasswordButton;
 
 	/**
+	 * Gets the changes made to the location by this dialog. Changes are only
+	 * made to the location if the user pressed OK.
+	 * 
+	 * @return the changes made to the location by this dialog.
+	 */
+	private ServerLocation getMutatedLocation() {
+		return f_location;
+	}
+
+	/**
 	 * Constructs a new dialog to prompt the user for a user name and password
 	 * for a particular Sierra server.
 	 * 
 	 * @param parentShell
 	 *            a shell.
-	 * @param server
-	 *            the information about the Sierra server.
+	 * @param location
+	 *            the location information about a Sierra server.
 	 */
-	public ServerAuthenticationDialog(Shell parentShell, ConnectedServer server) {
+	public ServerAuthenticationDialog(Shell parentShell, ServerLocation location) {
 		super(parentShell);
-		assert server != null;
-		f_server = server;
+		assert location != null;
+		f_location = location;
 	}
 
 	@Override
@@ -77,8 +121,7 @@ public final class ServerAuthenticationDialog extends Dialog {
 		GridData data = new GridData(SWT.LEFT, SWT.CENTER, false, false, 2, 1);
 		data.heightHint = 20;
 		directions.setLayoutData(data);
-		directions.setText("Enter your authentication for '"
-				+ f_server.getName() + "'");
+		directions.setText("Enter your authentication for");
 
 		final Label serverImg = new Label(entryPanel, SWT.NONE);
 		serverImg.setImage(SLImages.getImage(CommonImages.IMG_SIERRA_SERVER));
@@ -86,8 +129,7 @@ public final class ServerAuthenticationDialog extends Dialog {
 		data.heightHint = 25;
 		serverImg.setLayoutData(data);
 		final Label serverlabel = new Label(entryPanel, SWT.NONE);
-		serverlabel.setText(f_server.getLocation().getProtocol() + "://" + f_server.getLocation().getHost()
-				+ " on port " + f_server.getLocation().getPort());
+		serverlabel.setText(f_location.createHomeURL().toString());
 		serverlabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false,
 				true));
 
@@ -98,7 +140,7 @@ public final class ServerAuthenticationDialog extends Dialog {
 		f_userText = new Text(entryPanel, SWT.SINGLE | SWT.BORDER);
 		f_userText
 				.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, true));
-		f_userText.setText(f_server.getLocation().getUser());
+		f_userText.setText(f_location.getUserOrEmptyString());
 
 		final Label passwordLabel = new Label(entryPanel, SWT.NONE);
 		passwordLabel.setText("Password:");
@@ -142,53 +184,8 @@ public final class ServerAuthenticationDialog extends Dialog {
 
 	@Override
 	protected void okPressed() {
-		f_server = ConnectedServerManager.getInstance()
-		           .changeAuthorizationFor(f_server, f_userText.getText(), f_passwordText.getText(), f_savePassword);
+		f_location = f_location.changeAuthorization(f_userText.getText(),
+				f_passwordText.getText(), f_savePassword);
 		super.okPressed();
-	}
-
-	public ConnectedServer getServer() {
-		return f_server;
-	}
-
-	/**
-	 * The <tt>run</tt> method is called from
-	 * {@link #promptPasswordIfNecessary(String, SierraServer, Shell, ServerActionOnAProject)}
-	 * . Should be implemented by clients of that method.
-	 */
-	public interface ServerActionOnAProject {
-		void run(final String projectName, final ConnectedServer server,
-				final Shell shell);
-	}
-
-	/**
-	 * Utility routine to prompt for a password if required by the server. If
-	 * the password was entered then the passed action is run.
-	 * 
-	 * @param projectName
-	 *            the project to invoke the action on.
-	 * @param server
-	 *            the server to check if a password needs to be entered.
-	 * @param shell
-	 *            the shell.
-	 * @param action
-	 *            the action to invoke on the project and the server.
-	 */
-	public static void promptPasswordIfNecessary(final String projectName,
-			final ConnectedServer server, final Shell shell,
-			final ServerActionOnAProject action) {
-		if (!server.getLocation().isSavePassword() && 
-		    !ConnectedServerManager.getInstance().getStats(server).usedToConnectToAServer()) {
-			ServerAuthenticationDialog dialog = new ServerAuthenticationDialog(
-					shell, server);
-			if (dialog.open() == Window.CANCEL) {
-				/*
-				 * Just stop, don't try to run the job.
-				 */
-				return;
-			}
-			ConnectedServerManager.getInstance().getStats(server).setUsed(); // for this Eclipse session
-		}
-		action.run(projectName, server, shell);
 	}
 }

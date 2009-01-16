@@ -8,49 +8,37 @@ import org.eclipse.ui.PlatformUI;
 import com.surelogic.common.eclipse.BalloonUtility;
 import com.surelogic.common.eclipse.dialogs.ErrorDialogUtility;
 import com.surelogic.common.logging.SLLogger;
-import com.surelogic.sierra.client.eclipse.model.Projects;
-import com.surelogic.sierra.client.eclipse.model.ConnectedServerManager;
 import com.surelogic.sierra.client.eclipse.preferences.ServerFailureReport;
-import com.surelogic.sierra.jdbc.settings.ConnectedServer;
+import com.surelogic.sierra.tool.message.ServerLocation;
 
 public abstract class TroubleshootConnection {
 
-	protected final ServerFailureReport f_method;
-	protected final ConnectedServer f_server;
-	protected final String f_projectName;
-	protected IStatus f_status;
+	private final ServerFailureReport f_strategy;
+	private final ServerLocation f_location;
+	private IStatus f_status;
+	private boolean f_retry = true;
 
 	/**
-	 * Constructs this object.
+	 * Constructs a instance to troubleshoot the passed server location via the
+	 * passed method.
 	 * 
-	 * @param server
-	 *            the mutable server configuration to be fixed.
-	 * @param projectName
-	 *            the project name, or <code>null</code> if no project or it
-	 *            is unknown.
+	 * @param strategy
+	 *            the strategy used to troubleshoot the passed server location.
+	 * @param location
+	 *            the server location to troubleshoot.
 	 */
-	protected TroubleshootConnection(final ServerFailureReport method,
-			final ConnectedServer server, final String projectName) {
-		f_method = method;
-
-		if (server == null)
+	protected TroubleshootConnection(final ServerFailureReport strategy,
+			final ServerLocation location) {
+		f_strategy = strategy == null ? ServerFailureReport.SHOW_DIALOG
+				: strategy;
+		if (location == null)
 			throw new IllegalStateException("server must be non-null");
-		f_server = server;
-		if (projectName != null)
-			f_projectName = projectName;
-		else
-			f_projectName = "(unknown)";
+		f_location = location;
 	}
 
-	public final ConnectedServer getServer() {
-		return f_server;
+	public final ServerLocation getLocation() {
+		return f_location;
 	}
-
-	public final String getProjectName() {
-		return f_projectName;
-	}
-
-	private boolean f_retry = true;
 
 	protected void setRetry(boolean retry) {
 		f_retry = retry;
@@ -68,44 +56,51 @@ public abstract class TroubleshootConnection {
 	}
 
 	/**
-	 * Tries to fix the server location and authentication data passed in to the
-	 * constructor of this object.
-	 * <p>
-	 * Subclasses must override to take the appropriate UI actions to mutate the
-	 * server object.
+	 * Indicates if the server location should be considered bad. This is the
+	 * same as invoking {@code !}{@link #retry()}.
+	 * 
+	 * @return {@code true} if the server location should be considered bad,
+	 *         {@code false} otherwise.
 	 */
-	public final void fix() {
+	public final boolean isServerConsideredBad() {
+		return !f_retry;
+	}
+
+	/**
+	 * Tries to troubleshoot the passed server location and return a new (and
+	 * hopefully fixed) server location object.
+	 * 
+	 * @return a new server location object that reflects the changes made by
+	 *         the user. If the returned object is the same object that was
+	 *         passed via <tt>location</tt> then nothing was done.
+	 */
+	public final ServerLocation fix() {
+		ServerLocation result = f_location;
 		f_status = createStatus();
-		switch (f_method) {
+		switch (f_strategy) {
 		default:
 		case SHOW_BALLOON:
 			showBalloon();
 			setRetry(false);
 			break;
 		case SHOW_DIALOG:
-			showDialog();
+			result = showDialog();
 			break;
 		case IGNORE:
 			SLLogger.getLogger().log(Level.WARNING, f_status.getMessage(),
 					f_status.getException());
 			setRetry(false);
 		}
-
-		if (failServer()) {
-			ConnectedServerManager.getInstance().getStats(f_server).encounteredProblem();
-			ConnectedServerManager.getInstance().notifyObservers();
-		} else {
-			// Notifies observers by itself
-			Projects.getInstance().encounteredProblem(f_projectName);
-		}
+		return result;
 	}
 
-	protected void showDialog() {
-		PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+	protected ServerLocation showDialog() {
+		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 			public void run() {
 				ErrorDialogUtility.open(null, getLabel(), f_status);
 			}
 		});
+		return f_location;
 	}
 
 	private void showBalloon() {
@@ -114,14 +109,17 @@ public abstract class TroubleshootConnection {
 		BalloonUtility.showMessage(getLabel(), f_status.getMessage());
 	}
 
+	/**
+	 * Gets a status for error reporting.
+	 * 
+	 * @return a status for error reporting.
+	 */
 	protected abstract IStatus createStatus();
 
-	protected abstract String getLabel();
-
 	/**
-	 * @return true if the server should be considered failed
+	 * Gets a label, or short description, for error reporting.
+	 * 
+	 * @return a label, or short description, for error reporting.
 	 */
-	public boolean failServer() {
-		return !f_retry;
-	}
+	protected abstract String getLabel();
 }
