@@ -88,8 +88,6 @@ import com.surelogic.sierra.client.eclipse.jobs.SendScanFiltersJob;
 import com.surelogic.sierra.client.eclipse.model.*;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
 import com.surelogic.sierra.client.eclipse.preferences.ServerFailureReport;
-import com.surelogic.sierra.client.eclipse.wizards.ServerExportWizard;
-import com.surelogic.sierra.client.eclipse.wizards.ServerImportWizard;
 import com.surelogic.sierra.jdbc.finding.ClientFindingManager;
 import com.surelogic.sierra.jdbc.finding.FindingAudits;
 import com.surelogic.sierra.jdbc.project.ClientProjectManager;
@@ -439,32 +437,6 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 	@Override
 	public void init() {
 		// Actions in reverse order
-		final Action importAction = new Action("Import Locations...") {
-			@Override
-			public void run() {
-				final ServerImportWizard wizard = new ServerImportWizard();
-				wizard.init(PlatformUI.getWorkbench(), null);
-				final WizardDialog dialog = new WizardDialog(PlatformUI
-						.getWorkbench().getActiveWorkbenchWindow().getShell(),
-						wizard);
-				dialog.open();
-			}
-		};
-		f_view.addToViewMenu(importAction);
-		final Action exportAction = new Action("Export Locations...") {
-			@Override
-			public void run() {
-				final ServerExportWizard wizard = new ServerExportWizard();
-				wizard.init(PlatformUI.getWorkbench(), null);
-				final WizardDialog dialog = new WizardDialog(PlatformUI
-						.getWorkbench().getActiveWorkbenchWindow().getShell(),
-						wizard);
-				dialog.open();
-			}
-		};
-		f_view.addToViewMenu(exportAction);
-		f_view.addToViewMenu(new Separator());
-
 		final Action serverInteractionAction = new Action(
 				"Server Interaction Preferences ...", IAction.AS_PUSH_BUTTON) {
 			@Override
