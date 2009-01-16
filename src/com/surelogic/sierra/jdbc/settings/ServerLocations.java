@@ -36,6 +36,9 @@ public final class ServerLocations {
 	 * @param cs
 	 * @param savePassword
 	 *            whether or not we are storing passwords in the database
+	 * @throws InvalidServerException
+	 *             if a connected server with the same uuid is already stored in
+	 *             the database
 	 * @return
 	 */
 	public static NullDBQuery saveServerLocation(final ConnectedServer s,
@@ -45,6 +48,18 @@ public final class ServerLocations {
 			@Override
 			public void doPerform(final Query q) {
 				final ServerLocation l = s.getLocation();
+				if (q.prepared("ServerLocations.checkLocation",
+						new ResultHandler<Boolean>() {
+							public Boolean handle(final Result result) {
+								if (result.iterator().hasNext()) {
+									return true;
+								}
+								return false;
+							}
+						}).call(s.getUuid())) {
+					throw new InvalidServerException(I18N.err(158, l
+							.createHomeURL().toString()));
+				}
 				q.prepared("ServerLocations.insertLocation").call(
 						s.getUuid(),
 						l.getProtocol(),

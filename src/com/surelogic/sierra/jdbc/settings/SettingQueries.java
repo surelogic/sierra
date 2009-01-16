@@ -38,6 +38,7 @@ import com.surelogic.sierra.tool.message.ServerInfoRequest;
 import com.surelogic.sierra.tool.message.ServerInfoServiceClient;
 import com.surelogic.sierra.tool.message.ServerLocation;
 import com.surelogic.sierra.tool.message.Services;
+import com.surelogic.sierra.tool.message.SierraServiceClientException;
 
 /**
  * This class represents implementations of the client-side behavior of the bug
@@ -490,10 +491,56 @@ public class SettingQueries {
 	}
 
 	/**
+	 * Update the connection information on an existing server location. The
+	 * name may not be changed, and the uuid must match an existing connected
+	 * server stored in the database.
+	 * 
+	 * @param cs
+	 * @param savePassword
+	 * @return
+	 */
+	public static NullDBQuery updateServerLocation(final ConnectedServer cs,
+			final boolean savePassword) {
+		return new NullDBQuery() {
+
+			@Override
+			public void doPerform(final Query q) {
+				final ServerLocation l = cs.getLocation();
+				final Map<ConnectedServer, Collection<String>> servers = ServerLocations
+						.fetchQuery(null).perform(q);
+				final Map<ConnectedServer, Collection<String>> newServers = new HashMap<ConnectedServer, Collection<String>>(
+						servers.size());
+				for (final Entry<ConnectedServer, Collection<String>> entry : servers
+						.entrySet()) {
+					boolean found = false;
+					final ConnectedServer cs1 = entry.getKey();
+					if (cs1.getUuid().equals(cs.getUuid())) {
+						found = true;
+						new ConnectedServer(cs1.getUuid(), cs1.getName(), cs1
+								.isTeamServer(), l);
+						newServers.put(cs, entry.getValue());
+					} else {
+						newServers.put(cs1, entry.getValue());
+					}
+					if (!found) {
+						throw new IllegalArgumentException(
+								"No server matching this uuid exists in the database.");
+					}
+				}
+				ServerLocations.saveQuery(newServers, true).doPerform(q);
+			}
+		};
+	}
+
+	/**
 	 * Makes a call to the specified server, and saves the location and
-	 * corresponding server information into the database.
+	 * corresponding server information into the database. If the transaction
+	 * fails, the cause will be an {@link InvalidServerException} if we already
+	 * have a connection that points to this server in the database.
 	 * 
 	 * @param server
+	 * @throws SierraServiceClientException
+	 *             if the server cannot be validated
 	 * @return the reply from the server
 	 */
 	public static DBQuery<ConnectedServer> checkAndSaveServerLocation(
