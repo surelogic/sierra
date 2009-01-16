@@ -355,26 +355,10 @@
 				A wizard to export saved finding searches
 			</description>
 		</wizard>
-		<wizard category="sierra.export.category" name="Team Server Locations"
-			class="com.surelogic.sierra.client.eclipse.wizards.ServerExportWizard"
-			id="server.export.file.wizard"
-			icon="platform:/plugin/com.surelogic.common/src/com/surelogic/common/images/sierra_server.gif">
-			<description>
-				A wizard to export Sierra Team Server locations
-			</description>
-		</wizard>
 	</extension>
 
 	<extension id="sierraimportwizards" point="org.eclipse.ui.importWizards">
 		<category name="Sierra" id="sierra.import.category" />
-		<wizard category="sierra.import.category" name="Team Server Locations"
-			class="com.surelogic.sierra.client.eclipse.wizards.ServerImportWizard"
-			id="server.import.file.wizard"
-			icon="platform:/plugin/com.surelogic.common/src/com/surelogic/common/images/sierra_server.gif">
-			<description>
-				A wizard to import Sierra Team Server locations
-			</description>
-		</wizard>
 		<wizard category="sierra.import.category" name="Finding Searches"
 			class="com.surelogic.sierra.client.eclipse.wizards.FindingSearchImportWizard"
 			id="finding.search.import.file.wizard"
