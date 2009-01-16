@@ -20,6 +20,7 @@ import com.surelogic.common.jdbc.Row;
 import com.surelogic.common.jdbc.RowHandler;
 import com.surelogic.common.jdbc.SingleRowHandler;
 import com.surelogic.common.jdbc.StringResultHandler;
+import com.surelogic.common.jdbc.TransactionException;
 import com.surelogic.sierra.gwt.SierraServiceServlet;
 import com.surelogic.sierra.gwt.client.data.Category;
 import com.surelogic.sierra.gwt.client.data.FindingType;
@@ -598,22 +599,18 @@ public final class SettingsServiceImpl extends SierraServiceServlet implements
 				.getInstance()
 				.withReadOnly(ServerLocations.fetchQuery(Collections.EMPTY_MAP))
 				.keySet()) {
-			final PortalServerLocation s = new PortalServerLocation();
 			final ServerLocation l = cs.getLocation();
-			s.setContext(l.getContextPath());
-			s.setHost(l.getHost());
-			s.setPass(l.getPass());
-			s.setPort(l.getPort());
-			s.setProtocol(PortalServerLocation.Protocol.fromValue(l
-					.getProtocol()));
-			s.setUser(l.getUser());
-			s.setLabel(cs.getName());
+			final PortalServerLocation s = new PortalServerLocation(cs
+					.getName(), cs.getUuid(), PortalServerLocation.Protocol
+					.fromValue(l.getProtocol()), l.getHost(), l.getPort(), l
+					.getContextPath(), l.getUser(), l.getPass(), cs
+					.isTeamServer());
 			servers.add(s);
 		}
 		return servers;
 	}
 
-	public Status deleteServerLocation(final String name) {
+	public Status deleteServerLocation(final String uuid) {
 		return ConnectionFactory.getInstance().withTransaction(
 				new DBQuery<Status>() {
 
@@ -622,7 +619,7 @@ public final class SettingsServiceImpl extends SierraServiceServlet implements
 								.fetchQuery(null).perform(q);
 						ConnectedServer server = null;
 						for (final ConnectedServer s : servers.keySet()) {
-							if (s.getName().equals(name)) {
+							if (s.getUuid().equals(uuid)) {
 								server = s;
 								break;
 							}
@@ -631,39 +628,33 @@ public final class SettingsServiceImpl extends SierraServiceServlet implements
 							servers.remove(server);
 						}
 						ServerLocations.saveQuery(servers, true).doPerform(q);
-						return Status.success(name + " deleted.");
+						return Status.success((server == null ? "Server"
+								: server.getName())
+								+ " deleted.");
 					}
 				});
 	}
 
 	public Status saveServerLocation(final PortalServerLocation loc) {
-		return ConnectionFactory.getInstance().withTransaction(
-				new DBQuery<Status>() {
-
-					public Status perform(final Query q) {
-						final Map<ConnectedServer, Collection<String>> servers = ServerLocations
-								.fetchQuery(null).perform(q);
-						// TODO is autosync meaningful on the server?
-						final ServerLocation l = new ServerLocation(loc
-								.getHost(),
-								loc.getProtocol() == Protocol.HTTPS, loc
-										.getPort(), loc.getContext(), loc
-										.getUser(), loc.getPass(), true, true);
-						final ConnectedServer s = ConnectionFactory
-								.getInstance().withTransaction(
-										SettingQueries
-												.checkAndSaveServerLocation(l,
-														true));
-						Collection<String> projects = servers.get(l);
-						if (projects == null) {
-							projects = Collections.emptyList();
-						}
-						servers.put(s, projects);
-						ServerLocations.saveQuery(servers, true).doPerform(q);
-						return Status.success(loc.getLabel() + " updated.");
-					}
-				});
-
+		final ServerLocation l = new ServerLocation(loc.getHost(), loc
+				.getProtocol() == Protocol.HTTPS, loc.getPort(), loc
+				.getContext(), loc.getUser(), loc.getPass(), true, true);
+		ConnectedServer cs;
+		if (loc.getUuid() == null) {
+			// This is a new server location
+			try {
+				cs = ConnectionFactory.getInstance().withTransaction(
+						SettingQueries.checkAndSaveServerLocation(l, true));
+			} catch (final TransactionException e) {
+				return Status.failure(e.getCause().getMessage());
+			}
+		} else {
+			cs = new ConnectedServer(loc.getUuid(), loc.getName(), loc
+					.isTeamServer(), l);
+			ConnectionFactory.getInstance().withTransaction(
+					SettingQueries.updateServerLocation(cs, true));
+		}
+		return Status.success(cs.getName() + " saved.");
 	}
 
 	public Status saveProjectFilter(final String project,
