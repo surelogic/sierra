@@ -2,6 +2,7 @@ package com.surelogic.sierra.gwt.client.content.servermgmt;
 
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.TextBox;
@@ -14,7 +15,7 @@ public class ServerLocationView extends BasicPanel {
 
 	private Grid g;
 
-	private final TextBox label = new TextBox();
+	private final Label name = new Label();
 	private final TextBox host = new TextBox();
 	private final TextBox port = new TextBox();
 	private final TextBox context = new TextBox();
@@ -23,11 +24,13 @@ public class ServerLocationView extends BasicPanel {
 	private final TextBox user = new TextBox();
 	private final PasswordTextBox password = new PasswordTextBox();
 
+	private PortalServerLocation selection;
+
 	@Override
 	protected void onInitialize(final VerticalPanel contentPanel) {
 		g = new Grid(7, 2);
-		g.setText(0, 0, "Label");
-		g.setWidget(0, 1, label);
+		g.setText(0, 0, "Name");
+		g.setWidget(0, 1, name);
 		g.setText(1, 0, "Host");
 		g.setWidget(1, 1, host);
 		g.setText(2, 0, "Port");
@@ -47,10 +50,9 @@ public class ServerLocationView extends BasicPanel {
 	}
 
 	public PortalServerLocation getSelection() {
-		final PortalServerLocation l = new PortalServerLocation();
+		final PortalServerLocation l = selection;
 		l.setContext(context.getText());
 		l.setHost(host.getText());
-		l.setLabel(label.getText());
 		l.setPass(password.getText());
 		final String portStr = port.getText();
 		if ((portStr != null) && (portStr.length() > 0)) {
@@ -66,7 +68,8 @@ public class ServerLocationView extends BasicPanel {
 	}
 
 	public void setSelection(final PortalServerLocation item) {
-		label.setText(item.getLabel());
+		selection = item;
+		name.setText(item.getName());
 		host.setText(item.getHost());
 		port.setText(Integer.toString(item.getPort()));
 		context.setText(item.getContext());

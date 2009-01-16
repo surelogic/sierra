@@ -5,11 +5,11 @@ import java.util.List;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.surelogic.sierra.gwt.client.data.Category;
 import com.surelogic.sierra.gwt.client.data.FindingType;
+import com.surelogic.sierra.gwt.client.data.PortalServerLocation;
 import com.surelogic.sierra.gwt.client.data.Project;
 import com.surelogic.sierra.gwt.client.data.ReportSettings;
 import com.surelogic.sierra.gwt.client.data.Result;
 import com.surelogic.sierra.gwt.client.data.ScanFilter;
-import com.surelogic.sierra.gwt.client.data.PortalServerLocation;
 import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.data.dashboard.DashboardSettings;
 
@@ -153,11 +153,11 @@ public interface SettingsService extends RemoteService {
 	List<PortalServerLocation> listServerLocations();
 
 	/**
-	 * Delete the server location corresponding to this label.
+	 * Delete the server location corresponding to this uuid.
 	 * 
 	 * @return
 	 */
-	Status deleteServerLocation(String label);
+	Status deleteServerLocation(String uuid);
 
 	/**
 	 * Update a new server location with the given information. The label must

@@ -27,35 +27,24 @@ public class PortalServerLocation implements Cacheable, Serializable {
 		}
 	}
 
-	private String label;
+	private String name;
+	private String uuid;
 	private Protocol protocol;
 	private String host;
 	private int port;
 	private String context;
 	private String user;
 	private String pass;
+	private boolean teamServer;
 
 	public PortalServerLocation() {
 		port = 13376;
 		protocol = Protocol.HTTP;
 	}
 
-	/**
-	 * Create a server location with the given label. Other properties will be
-	 * initialized to their default values.
-	 * 
-	 * @param label
-	 */
-	public PortalServerLocation(final String label) {
-		this.label = label;
-		port = 13376;
-		protocol = Protocol.HTTP;
-	}
-
-	public PortalServerLocation(final String label, final Protocol protocol,
-			final String host, final int port, final String context,
-			final String user, final String pass) {
-		this.label = label;
+	public PortalServerLocation(final Protocol protocol, final String host,
+			final int port, final String context, final String user,
+			final String pass) {
 		this.protocol = protocol;
 		this.host = host;
 		this.port = port;
@@ -64,12 +53,18 @@ public class PortalServerLocation implements Cacheable, Serializable {
 		this.pass = pass;
 	}
 
-	public String getLabel() {
-		return label;
+	public PortalServerLocation(final String name, final String uuid,
+			final Protocol protocol, final String host, final int port,
+			final String context, final String user, final String pass,
+			final boolean teamServer) {
+		this(protocol, host, port, context, user, pass);
+		this.name = name;
+		this.uuid = uuid;
+		this.teamServer = teamServer;
 	}
 
-	public void setLabel(final String label) {
-		this.label = label;
+	public String getName() {
+		return name;
 	}
 
 	public Protocol getProtocol() {
@@ -121,19 +116,15 @@ public class PortalServerLocation implements Cacheable, Serializable {
 	}
 
 	public String getUuid() {
-		return label;
+		return uuid;
 	}
 
-	public PortalServerLocation copy(final PortalServerLocation orig) {
-		final PortalServerLocation l = new PortalServerLocation();
-		l.context = orig.context;
-		l.host = orig.host;
-		l.label = orig.label;
-		l.pass = orig.pass;
-		l.port = orig.port;
-		l.protocol = orig.protocol;
-		l.user = orig.user;
-		return l;
+	public boolean isTeamServer() {
+		return teamServer;
+	}
+
+	public void setTeamServer(final boolean teamServer) {
+		this.teamServer = teamServer;
 	}
 
 }
