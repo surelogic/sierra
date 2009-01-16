@@ -145,7 +145,7 @@ public final class ConnectedServerManager extends
 				}
 			}
 		}
-		notifyObservers();
+		saveAndNotifyObservers();
 	}
 
 	/**
@@ -191,7 +191,7 @@ public final class ConnectedServerManager extends
 			}
 		}
 		if (notify) {
-			notifyObservers();
+			saveAndNotifyObservers();
 		}
 	}
 
@@ -227,7 +227,7 @@ public final class ConnectedServerManager extends
 			newServer = server.changeAuthorization(user, pass, savePassword);
 			f_servers.add(newServer);
 		}
-		notifyObservers();
+		saveAndNotifyObservers();
 		return newServer;
 	}
 
@@ -249,7 +249,7 @@ public final class ConnectedServerManager extends
 			newServer = server.changeAutoSync(autoSync);
 			f_servers.add(newServer);
 		}
-		notifyObservers();
+		saveAndNotifyObservers();
 		return newServer;
 	}
 
@@ -278,7 +278,7 @@ public final class ConnectedServerManager extends
 			notify = server != f_projectNameToServer.put(projectName, server);
 		}
 		if (notify) {
-			notifyObservers();
+			saveAndNotifyObservers();
 		}
 	}
 
@@ -288,7 +288,7 @@ public final class ConnectedServerManager extends
 			notify = null != f_projectNameToServer.remove(projectName);
 		}
 		if (notify) {
-			notifyObservers();
+			saveAndNotifyObservers();
 		}
 	}
 
@@ -457,15 +457,16 @@ public final class ConnectedServerManager extends
 		return true;
 	}
 
-	@Override
-	public void notifyObservers() {
-		/*
-		 * First save all changes to the database.
-		 */
-		// TODO we might want to make this save an option...if we just loaded we
-		// don't need to save.
+	/**
+	 * A method that saves the servers managed by this model to the database and
+	 * then notifies observers of this model that something has changed.
+	 * <p>
+	 * Never call this method holding a lock on {@code this} as we are calling
+	 * foreign code.
+	 */
+	private void saveAndNotifyObservers() {
 		save();
-		super.notifyObservers();
+		notifyObservers();
 	}
 
 	@Override
@@ -479,6 +480,7 @@ public final class ConnectedServerManager extends
 		 * This could have updated the information we care about.
 		 */
 		if (load()) {
+			// We don't need to save because we just loaded :-)
 			notifyObservers();
 		}
 	}
