@@ -25,7 +25,6 @@ import com.surelogic.common.eclipse.SWTUtility;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.images.CommonImages;
 import com.surelogic.sierra.client.eclipse.jobs.ValidateServerLocationJob;
-import com.surelogic.sierra.client.eclipse.model.ConnectedServerManager;
 import com.surelogic.sierra.jdbc.settings.ConnectedServer;
 import com.surelogic.sierra.tool.message.ServerLocation;
 
@@ -89,7 +88,6 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 	private boolean f_isSecure;
 	private boolean f_savePassword;
 	private boolean f_autoSync;
-	private boolean f_validateServer = true;
 
 	private Mediator f_mediator;
 
@@ -239,7 +237,7 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 		data.widthHint = INFO_WIDTH_HINT;
 		userLabel.setLayoutData(data);
 		final Text userText = new Text(authGroup, SWT.SINGLE | SWT.BORDER);
-		userText.setText(f_location.getUser());
+		userText.setText(f_location.getUserOrEmptyString());
 		userText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		final Label passwordLabel = new Label(authGroup, SWT.RIGHT);
@@ -250,11 +248,7 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 		passwordLabel.setLayoutData(data);
 		final Text passwordText = new Text(authGroup, SWT.SINGLE | SWT.BORDER);
 		passwordText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		if (f_location.getPass() == null) {
-			passwordText.setText("");
-		} else {
-			passwordText.setText(f_location.getPass());
-		}
+		passwordText.setText(f_location.getPassOrEmptyString());
 		passwordText.setEchoChar('\u25CF');
 
 		final Button savePasswordButton = makeCheckButton(panel, I18N
@@ -281,15 +275,6 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 		data = new GridData(SWT.FILL, SWT.TOP, true, false, 1, 1);
 		saveWarning.setLayoutData(data);
 		saveWarning.setText(I18N.msg("sierra.dialog.savePasswordWarning"));
-
-		final Button validateButton = makeCheckButton(panel, I18N
-				.msg("sierra.dialog.serverlocation.validateOnFinish"),
-				f_validateServer);
-		validateButton.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(final Event event) {
-				f_validateServer = validateButton.getSelection();
-			}
-		});
 
 		final Button autoSyncButton = makeCheckButton(panel, I18N
 				.msg("sierra.dialog.serverlocation.enableAutoSync"), f_autoSync);
@@ -338,10 +323,6 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 	}
 
 	private final class Mediator {
-
-		private final ConnectedServerManager f_manager = ConnectedServerManager
-				.getInstance();
-
 		private final Text f_hostText;
 		private final Text f_portText;
 		private final Text f_contextPathText;
