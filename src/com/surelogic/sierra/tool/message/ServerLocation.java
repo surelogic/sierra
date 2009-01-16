@@ -184,12 +184,34 @@ public class ServerLocation {
 	}
 
 	/**
+	 * Gets the saved user name, or the empty string if the user name is not
+	 * saved.
+	 * 
+	 * @return the saved user name, or the empty string if the user name is not
+	 *         saved.
+	 */
+	public String getUserOrEmptyString() {
+		return f_user == null ? "" : f_user;
+	}
+
+	/**
 	 * Gets the saved password, or {@code null} if the password is not saved.
 	 * 
 	 * @return the saved password, or {@code null} if the password is not saved.
 	 */
 	public String getPass() {
 		return f_pass;
+	}
+
+	/**
+	 * Gets the saved password, or the empty string if the password is not
+	 * saved.
+	 * 
+	 * @return the saved password, or the empty string if the password is not
+	 *         saved.
+	 */
+	public String getPassOrEmptyString() {
+		return f_pass == null ? "" : f_pass;
 	}
 
 	/**
