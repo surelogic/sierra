@@ -1680,7 +1680,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 	private void createUnknownServers(List<ServersViewContent> content) {
 	    for(Map.Entry<String, List<ScanFilter>> e : localFilters.entrySet()) {
 	        final String label = e.getKey();	        
-	        final ConnectedServer server = f_manager.getServerById(id);
+	        final ConnectedServer server = f_manager.getServerByUuid(id);
 	        if (server != null) {
 	            // Already known, so already handled elsewhere
 	            continue;

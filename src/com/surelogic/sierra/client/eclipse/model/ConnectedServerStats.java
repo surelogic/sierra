@@ -3,14 +3,19 @@ package com.surelogic.sierra.client.eclipse.model;
 import com.surelogic.sierra.jdbc.settings.ConnectedServer;
 
 /**
- * Connection statistics for a given server
+ * This class track connection statistics between the client and a server within
+ * a single Eclipse session. It is not persisted. The server it is associated
+ * with is tracked by its associated {@link ConnectedServerManager}.
+ * 
+ * @see ConnectedServerManager#getStats(ConnectedServer)
+ * 
  * @author Edwin.Chan
  */
 public class ConnectedServerStats {
 	public final String f_serverId;
 	private int f_problemCount;
 	private boolean usedDuringThisSession = false;
-	
+
 	ConnectedServerStats(ConnectedServer server) {
 		f_serverId = server.getUuid();
 	}

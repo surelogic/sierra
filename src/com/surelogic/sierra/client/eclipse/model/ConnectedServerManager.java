@@ -82,6 +82,26 @@ public final class ConnectedServerManager extends
 	}
 
 	/**
+	 * Looks for a server managed by this model by its UUID, {@code null} is
+	 * returned if no server with that UUID can be found.
+	 * 
+	 * @param uuid
+	 *            the UUID of the desired server.
+	 * @return a server or {@code null} if none can be found.
+	 */
+	public ConnectedServer getServerByUuid(final String uuid) {
+		if (uuid != null) {
+			final Set<ConnectedServer> servers = getServers();
+			for (ConnectedServer server : servers) {
+				if (server.getUuid().equals(uuid)) {
+					return server;
+				}
+			}
+		}
+		return null;
+	}
+
+	/**
 	 * Gets the set of connected servers that can act as team servers managed by
 	 * this model.
 	 * 
@@ -98,26 +118,6 @@ public final class ConnectedServerManager extends
 		}
 		return servers;
 	}
-
-	// static public final String BUGLINK_ORG = "buglink.org";
-	// static public final String BUGLINK_USER = "buglink-user";
-	// static public final String BUGLINK_PASS = "bl!uzer";
-	//
-	// public boolean isThereABugLinkOrg() {
-	// return exists(BUGLINK_ORG);
-	// }
-	//
-	// public void createBugLinkOrg() {
-	// final SierraServer server = getOrCreate(BUGLINK_ORG);
-	// server.setHost("buglink.org");
-	// }
-	//
-	// public SierraServer getOrCreateBugLinkOrg() {
-	// if (!isThereABugLinkOrg()) {
-	// createBugLinkOrg();
-	// }
-	// return getOrCreate(BUGLINK_ORG);
-	// }
 
 	/**
 	 * Deletes the passed server from the set of servers managed by this model.
@@ -292,15 +292,6 @@ public final class ConnectedServerManager extends
 		}
 	}
 
-	public synchronized ConnectedServer getServerById(final String id) {
-		for(ConnectedServer server : f_servers) {
-			if (server.getUuid().equals(id)) {
-				return server;
-			}
-		}
-		return null;
-	}
-	
 	public ConnectedServer getServer(final String projectName) {
 		synchronized (this) {
 			return f_projectNameToServer.get(projectName);
@@ -330,24 +321,38 @@ public final class ConnectedServerManager extends
 	}
 
 	/**
-	 * From id to stats
+	 * Track connection statistics between the client and a server within a
+	 * single Eclipse session. The server is identified by a UUID.
+	 * <p>
+	 * Access to this map is protected by a lock on {@code this}.
 	 */
-	private Map<String,ConnectedServerStats> f_serverStats = 
-		new HashMap<String,ConnectedServerStats>();
-	
+	private final Map<String, ConnectedServerStats> f_uuidToServerStats = new HashMap<String, ConnectedServerStats>();
+
 	/**
-	 * @return non-null
+	 * Gets (or creates) the connection statistics between the client and a
+	 * server within a this Eclipse session.
+	 * 
+	 * @return the non-null connection statistics between the client and a
+	 *         server within a this Eclipse session.
 	 */
-	public synchronized ConnectedServerStats getStats(ConnectedServer server) {
-		ConnectedServerStats stats = f_serverStats.get(server.getUuid());
-		if (stats == null) {
-			stats = new ConnectedServerStats(server);
-			f_serverStats.put(server.getUuid(), stats);
+	public ConnectedServerStats getStats(ConnectedServer server) {
+		if (server == null)
+			throw new IllegalArgumentException(I18N.err(44, "server"));
+		final String uuid = server.getUuid();
+		ConnectedServerStats stats;
+		synchronized (this) {
+			stats = f_uuidToServerStats.get(uuid);
+			if (stats == null) {
+				stats = new ConnectedServerStats(server);
+				f_uuidToServerStats.put(uuid, stats);
+			}
 		}
 		return stats;
 	}
-	
-	// fields needed for caching the password
+
+	/*
+	 * Fields needed for caching the password
+	 */
 	private static final String AUTH_SCHEME = "";
 	private static final URL FAKE_URL;
 	static {
