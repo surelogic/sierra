@@ -10,12 +10,10 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 
 import com.surelogic.common.eclipse.SWTUtility;
-import com.surelogic.sierra.client.eclipse.dialogs.ServerAuthenticationDialog;
-import com.surelogic.sierra.client.eclipse.dialogs.ServerAuthenticationDialog.ServerActionOnAProject;
 import com.surelogic.sierra.client.eclipse.jobs.ServerProjectGroupJob;
 import com.surelogic.sierra.client.eclipse.jobs.SynchronizeJob;
-import com.surelogic.sierra.client.eclipse.model.ServerSyncType;
 import com.surelogic.sierra.client.eclipse.model.ConnectedServerManager;
+import com.surelogic.sierra.client.eclipse.model.ServerSyncType;
 import com.surelogic.sierra.client.eclipse.preferences.ServerFailureReport;
 import com.surelogic.sierra.jdbc.settings.ConnectedServer;
 
@@ -58,7 +56,8 @@ public class SynchronizeAllProjectsAction implements
 	}
 
 	public void run(IAction action) {
-		final ConnectedServerManager manager = ConnectedServerManager.getInstance();
+		final ConnectedServerManager manager = ConnectedServerManager
+				.getInstance();
 		final ServerProjectGroupJob joinJob = new ServerProjectGroupJob(manager
 				.getServers());
 
@@ -70,10 +69,12 @@ public class SynchronizeAllProjectsAction implements
 				final ConnectedServer server = manager.getServer(projectName);
 				unconnectedServers.remove(server);
 
-				if (f_syncType.syncByServerSettings() && !server.getLocation().isAutoSync()) {
+				if (f_syncType.syncByServerSettings()
+						&& !server.getLocation().isAutoSync()) {
 					continue;
 				}
 				final ServerActionOnAProject serverAction = new ServerActionOnAProject() {
+					@Override
 					public void run(String projectName, ConnectedServer server,
 							Shell shell) {
 						final SynchronizeJob job = new SynchronizeJob(joinJob,
@@ -88,6 +89,7 @@ public class SynchronizeAllProjectsAction implements
 		if (f_syncType.syncBugLink()) {
 			for (ConnectedServer server : unconnectedServers) {
 				final ServerActionOnAProject serverAction = new ServerActionOnAProject() {
+					@Override
 					public void run(String projectName, ConnectedServer server,
 							Shell shell) {
 						final SynchronizeJob job = new SynchronizeJob(joinJob,
@@ -105,8 +107,8 @@ public class SynchronizeAllProjectsAction implements
 
 	private void promptAndSchedule(String projectName, ConnectedServer server,
 			ServerActionOnAProject serverAction) {
-		ServerAuthenticationDialog.promptPasswordIfNecessary(projectName,
-				server, SWTUtility.getShell(), serverAction);
+		ServerActionOnAProject.promptPasswordIfNecessary(projectName, server,
+				SWTUtility.getShell(), serverAction);
 	}
 
 	public void selectionChanged(IAction action, ISelection selection) {

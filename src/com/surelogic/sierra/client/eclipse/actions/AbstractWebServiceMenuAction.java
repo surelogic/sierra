@@ -12,12 +12,10 @@ import com.surelogic.common.eclipse.ViewUtility;
 import com.surelogic.common.eclipse.dialogs.ErrorDialogUtility;
 import com.surelogic.common.eclipse.logging.SLEclipseStatusUtility;
 import com.surelogic.common.i18n.I18N;
-import com.surelogic.sierra.client.eclipse.dialogs.ServerAuthenticationDialog;
 import com.surelogic.sierra.client.eclipse.dialogs.ServerLocationDialog;
 import com.surelogic.sierra.client.eclipse.dialogs.ServerSelectionDialog;
-import com.surelogic.sierra.client.eclipse.dialogs.ServerAuthenticationDialog.ServerActionOnAProject;
 import com.surelogic.sierra.client.eclipse.jobs.ServerProjectGroupJob;
-import com.surelogic.sierra.client.eclipse.model.*;
+import com.surelogic.sierra.client.eclipse.model.ConnectedServerManager;
 import com.surelogic.sierra.client.eclipse.views.SierraServersView;
 import com.surelogic.sierra.jdbc.settings.ConnectedServer;
 
@@ -28,14 +26,17 @@ public abstract class AbstractWebServiceMenuAction extends
 	protected void run(List<IJavaProject> selectedProjects,
 			List<String> projectNames) {
 
-		final ConnectedServerManager manager = ConnectedServerManager.getInstance();
+		final ConnectedServerManager manager = ConnectedServerManager
+				.getInstance();
 		ConnectedServer unconnectedProjectsServer = null;
 		final Shell shell = PlatformUI.getWorkbench()
 				.getActiveWorkbenchWindow().getShell();
-		final ServerProjectGroupJob family = 
-			new ServerProjectGroupJob(manager.getServers());
+		final ServerProjectGroupJob family = new ServerProjectGroupJob(manager
+				.getServers());
 		final ServerActionOnAProject serverAction = new ServerActionOnAProject() {
-			public void run(String projectName, ConnectedServer server, Shell shell) {
+			@Override
+			public void run(String projectName, ConnectedServer server,
+					Shell shell) {
 				runServerAction(family, projectName, server, shell);
 			}
 		};
@@ -50,8 +51,8 @@ public abstract class AbstractWebServiceMenuAction extends
 				 * Yes, start the job.
 				 */
 				final ConnectedServer server = manager.getServer(projectName);
-				ServerAuthenticationDialog.promptPasswordIfNecessary(
-						projectName, server, shell, serverAction);
+				ServerActionOnAProject.promptPasswordIfNecessary(projectName,
+						server, shell, serverAction);
 			} else {
 				/*
 				 * Are any servers defined?
@@ -59,7 +60,8 @@ public abstract class AbstractWebServiceMenuAction extends
 				if (manager.isEmpty()) {
 					final int errNo = 17;
 					final String msg = I18N.err(errNo);
-					final IStatus reason = SLEclipseStatusUtility.createErrorStatus(17, msg);
+					final IStatus reason = SLEclipseStatusUtility
+							.createErrorStatus(17, msg);
 					ErrorDialogUtility.open(shell, "No Sierra Servers", reason);
 					ViewUtility.showView(SierraServersView.ID);
 					ServerLocationDialog.newServer(shell);
@@ -91,8 +93,8 @@ public abstract class AbstractWebServiceMenuAction extends
 
 				manager.connect(projectName, server);
 
-				ServerAuthenticationDialog.promptPasswordIfNecessary(
-						projectName, server, shell, serverAction);
+				ServerActionOnAProject.promptPasswordIfNecessary(projectName,
+						server, shell, serverAction);
 			}
 		}
 		family.schedule();
@@ -101,7 +103,7 @@ public abstract class AbstractWebServiceMenuAction extends
 	void runningOnProjects(List<String> projectNames) {
 		// Nothing to do
 	}
-	
+
 	abstract void runServerAction(final ServerProjectGroupJob family,
 			final String projectName, final ConnectedServer server,
 			final Shell shell);
