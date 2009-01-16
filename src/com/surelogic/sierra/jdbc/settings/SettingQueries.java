@@ -513,4 +513,10 @@ public class SettingQueries {
 		};
 
 	}
+
+	public static NullDBQuery updateServerInfo(final ServerLocation location) {
+		final ServerInfoReply reply = ServerInfoServiceClient.create(location)
+				.getServerInfo(new ServerInfoRequest());
+		return ServerLocations.updateServerIdentities(reply.getServers());
+	}
 }
