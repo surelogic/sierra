@@ -156,7 +156,6 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 	private final ActionListener f_serverSyncAction;
 	private final ActionListener f_toggleAutoSyncAction;
 	private final ActionListener f_newServerAction;
-	private final ActionListener f_duplicateServerAction;
 	private final ActionListener f_deleteServerAction;
 	private final ActionListener f_openInBrowserAction;
 	
@@ -343,17 +342,6 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 			@Override
 			protected void handleEventOnServer(final ConnectedServer server) {
 				openInBrowser(server);
-			}
-		};
-
-		f_duplicateServerAction = new ServerActionListener(SLImages
-				.getImage(CommonImages.IMG_EDIT_COPY),
-				"Duplicates the selected team server location",
-				"No server to duplicate") {
-			@Override
-			protected void handleEventOnServer(final ConnectedServer server) {
-				// FIX no duplicate?
-				// f_manager.duplicate();
 			}
 		};
 
@@ -691,7 +679,6 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 			SendScanFiltersJob.ENABLED && onlyBugLink && onlyServer;
 		final boolean enableConnect = onlyTeamServer && !servers.direct.isEmpty();
 		if (onlyServer) {
-			addAlwaysOnMenuItems(contextMenu);
 			addServerMenuItems(contextMenu, syncType, enableConnect, enableSendFilters);
 			return;
 		}
@@ -728,7 +715,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 			addProjectMenuItems(contextMenu, allHasScans, allConnected);
 			return;
 		}
-		addAlwaysOnMenuItems(contextMenu);
+		addNothingSelected_MenuItems(contextMenu);
 	}
 
 	private List<ScanFilter> collectScanFilters() {
@@ -782,7 +769,8 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 				servers.direct.add(s);
 				servers.indirect.add(s);
 			} else {
-				if (item.getText().endsWith(CONNECTED_PROJECTS)) {
+				if (item.getText().endsWith(CONNECTED_PROJECTS) ||
+				    item.getText().endsWith(SCAN_FILTERS)) {
 					return new SelectedServers(false);
 				}
 				// System.out.println("Got a non-server selection:
@@ -1381,14 +1369,8 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 		this.serverUpdates = serverUpdates;
 		this.localFilters = filters;
 
-		/*
-		 * if (f_statusTree.isDisposed()) return;
-		 * 
-		 * f_statusTree.setRedraw(false);
-		 */
 		final List<ConnectedServer> servers = collectServers().indirect;
 		final boolean onlyServer = servers.size() == 1;
-		f_duplicateServerAction.setEnabled(onlyServer);
 		f_deleteServerAction.setEnabled(onlyServer);
 		f_openInBrowserAction.setEnabled(onlyServer);
 
@@ -1396,15 +1378,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 		f_statusTree.setInput(input);
 		f_statusTree.getTree().getParent().layout();
 		f_statusTree.expandToLevel(3);
-		/*
-		 * for(TreeItem item : f_statusTree.getItems()) {
-		 * item.setExpanded(true); if (byServer) { for(TreeItem item2 :
-		 * item.getItems()) { if (item2.getText().endsWith("Connected
-		 * Projects")) { item2.setExpanded(true); // Expand projects
-		 * for(TreeItem item3 : item2.getItems()) { item3.setExpanded(true); } }
-		 * } } }
-		 */
-		// f_statusTree.setRedraw(true);
+
 		checkAutoSyncTrigger(projects);
 	}
 
@@ -2055,7 +2029,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 
 	static final ServersViewContent[] emptyChildren = new ServersViewContent[0];
 
-	void addAlwaysOnMenuItems(Menu contextMenu) {
+	void addNothingSelected_MenuItems(Menu contextMenu) {
 		final MenuItem newServerItem = AbstractSierraView.createMenuItem(contextMenu, "New...",
 				SLImages.getImage(CommonImages.IMG_EDIT_NEW));
 		newServerItem.addListener(SWT.Selection, f_newServerAction);
@@ -2067,15 +2041,10 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 		final MenuItem browseServerItem = AbstractSierraView.createMenuItem(contextMenu, "Browse",
 				SLImages.getImage(CommonImages.IMG_SIERRA_SERVER));
 
-		final MenuItem duplicateServerItem = AbstractSierraView.createMenuItem(contextMenu,
-				"Duplicate", SLImages.getImage(CommonImages.IMG_EDIT_COPY));
-
 		final MenuItem deleteServerItem = AbstractSierraView.createMenuItem(contextMenu, "Delete",
 				SLImages.getImage(CommonImages.IMG_EDIT_DELETE));
 
 		browseServerItem.addListener(SWT.Selection, f_openInBrowserAction);
-		duplicateServerItem.addListener(SWT.Selection,
-				f_duplicateServerAction);
 		deleteServerItem.addListener(SWT.Selection, f_deleteServerAction);
 		
 		new MenuItem(contextMenu, SWT.SEPARATOR);
