@@ -22,6 +22,7 @@ import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.jdbc.TransactionException;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;
+import com.surelogic.sierra.client.eclipse.jobs.LoadConnectedServersJob;
 import com.surelogic.sierra.client.eclipse.jobs.SynchronizeJob;
 import com.surelogic.sierra.client.eclipse.preferences.ServerFailureReport;
 import com.surelogic.sierra.jdbc.settings.ConnectedServer;
@@ -445,21 +446,24 @@ public final class ConnectedServerManager extends
 	}
 
 	/**
-	 * @return {@code} if any changes were made, {@code false} otherwise.
+	 * Updated the manager to reflect the given map of servers to their related
+	 * projects. If the given map is different from the current manager state,
+	 * observers are notified appropriately. This method is a callback method
+	 * for {@link LoadConnectedServersJob}
+	 * 
+	 * @param map
+	 *            a map of connected servers to the complete collection of their
+	 *            associated projects.
 	 */
-	@SuppressWarnings( { "deprecation", "unchecked" })
-	private boolean load() {
-		final Map<String, String> passwords = Platform.getAuthorizationInfo(
-				FAKE_URL, "", AUTH_SCHEME);
-		try {
-			final Map<ConnectedServer, Collection<String>> map = Data
-					.getInstance().withReadOnly(
-							ServerLocations.fetchQuery(passwords));
+	public void updateConnectedServers(
+			final Map<ConnectedServer, Collection<String>> map) {
+		synchronized (f_servers) {
 			final Set<ConnectedServer> servers = new HashSet<ConnectedServer>(
 					f_servers);
 			final Map<String, ConnectedServer> projects = new HashMap<String, ConnectedServer>();
 			f_projectNameToServer.clear();
 			f_servers.clear();
+			boolean updated = false;
 			for (final Entry<ConnectedServer, Collection<String>> entry : map
 					.entrySet()) {
 				final ConnectedServer s = entry.getKey();
@@ -468,10 +472,11 @@ public final class ConnectedServerManager extends
 					connect(project, s);
 				}
 			}
+
 			// Check to see if anything has changed.
 			// Do we still have the same connected servers?
 			if (!servers.equals(map.keySet())) {
-				return true;
+				updated = true;
 			}
 			// Are all of the new project associations the same as old project
 			// associations?
@@ -480,7 +485,7 @@ public final class ConnectedServerManager extends
 				for (final String project : projs) {
 					final ConnectedServer last = projects.get(project);
 					if (last != s && !last.equals(s)) {
-						return true;
+						updated = true;
 					}
 				}
 			}
@@ -489,11 +494,25 @@ public final class ConnectedServerManager extends
 			for (final Entry<String, ConnectedServer> entry : projects
 					.entrySet()) {
 				if (!map.get(entry.getValue()).contains(entry.getKey())) {
-					return true;
+					updated = true;
 				}
 			}
-			return false;
+			if (updated) {
+				notifyObservers();
+			}
+		}
+	}
 
+	/**
+	 * Trigger a load job so that we can get updated connected server
+	 * information.
+	 */
+	@SuppressWarnings( { "deprecation", "unchecked" })
+	private void load() {
+		final Map<String, String> passwords = Platform.getAuthorizationInfo(
+				FAKE_URL, "", AUTH_SCHEME);
+		try {
+			new LoadConnectedServersJob(passwords).schedule();
 		} catch (final Exception e) {
 			SLLogger.getLogger().log(Level.SEVERE,
 					"Failure loading connected server data", e);
@@ -504,8 +523,6 @@ public final class ConnectedServerManager extends
 				SLLogger.getLogger().log(Level.SEVERE, I18N.err(42), e);
 			}
 		}
-		// TODO change this to check for real if something changed.
-		return true;
 	}
 
 	/**
@@ -527,12 +544,6 @@ public final class ConnectedServerManager extends
 
 	@Override
 	public void serverSynchronized() {
-		/*
-		 * This could have updated the information we care about.
-		 */
-		if (load()) {
-			// We don't need to save because we just loaded :-)
-			notifyObservers();
-		}
+		load();
 	}
 }

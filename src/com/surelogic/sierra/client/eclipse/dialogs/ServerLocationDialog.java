@@ -43,8 +43,9 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 	 *            {@link SWTUtility#getShell()} is used.
 	 */
 	public static void newServer(Shell shell) {
-		if (shell == null)
+		if (shell == null) {
 			shell = SWTUtility.getShell();
+		}
 
 		final String title = I18N.msg("sierra.dialog.serverlocation.newTitle");
 		final ServerLocationDialog dialog = new ServerLocationDialog(shell,
@@ -74,6 +75,7 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 				server.getLocation(), title);
 		if (dialog.open() == Window.OK) {
 			final ServerLocation location = dialog.f_location;
+			// FIXME
 			final Job job = new ValidateServerLocationJob(location,
 					dialog.f_savePassword, dialog.f_autoSync);
 			job.schedule();
@@ -317,8 +319,9 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 
 	@Override
 	protected void okPressed() {
-		if (f_mediator != null)
+		if (f_mediator != null) {
 			f_mediator.okPressed();
+		}
 		super.okPressed();
 	}
 

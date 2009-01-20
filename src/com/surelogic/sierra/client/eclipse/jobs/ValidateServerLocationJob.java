@@ -4,11 +4,19 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
+import com.surelogic.common.eclipse.jobs.DatabaseJob;
+import com.surelogic.common.eclipse.logging.SLEclipseStatusUtility;
+import com.surelogic.common.jdbc.TransactionException;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.actions.TroubleshootConnection;
+import com.surelogic.sierra.client.eclipse.actions.TroubleshootNoSuchServer;
+import com.surelogic.sierra.client.eclipse.actions.TroubleshootWrongAuthentication;
 import com.surelogic.sierra.client.eclipse.model.ServerSyncType;
 import com.surelogic.sierra.client.eclipse.preferences.ServerFailureReport;
+import com.surelogic.sierra.jdbc.settings.ConnectedServer;
+import com.surelogic.sierra.jdbc.settings.InvalidServerException;
 import com.surelogic.sierra.jdbc.settings.SettingQueries;
+import com.surelogic.sierra.tool.message.InvalidLoginException;
 import com.surelogic.sierra.tool.message.ServerLocation;
 import com.surelogic.sierra.tool.message.SierraServiceClientException;
 
@@ -17,7 +25,7 @@ import com.surelogic.sierra.tool.message.SierraServiceClientException;
  * validates that the client can talk to a particular team server and
  * synchronizes data.
  */
-public class ValidateServerLocationJob extends AbstractServerProjectJob {
+public class ValidateServerLocationJob extends DatabaseJob {
 
 	private final ServerLocation f_loc;
 	private final boolean f_savePass;
@@ -30,22 +38,26 @@ public class ValidateServerLocationJob extends AbstractServerProjectJob {
 	 */
 	public ValidateServerLocationJob(final ServerLocation location,
 			final boolean savePassword, final boolean autoSync) {
-		super(null, "Validating connection to " + location.getHost(),
-				null /* TODO */, null, ServerFailureReport.SHOW_DIALOG);
+		super("Validating connection to " + location.getHost());
 		f_loc = location;
 		f_savePass = savePassword;
 	}
 
-	private IStatus validate(final ServerLocation loc,
+	private ConnectedServer validate(final ServerLocation loc,
 			final boolean savePassword) {
 		try {
-			f_server = Data.getInstance().withTransaction(
+			return Data.getInstance().withTransaction(
 					SettingQueries
 							.checkAndSaveServerLocation(loc, savePassword));
-			return Status.OK_STATUS;
 		} catch (final SierraServiceClientException e) {
-			final TroubleshootConnection c = getTroubleshootConnection(
-					f_strategy, f_loc, e);
+			TroubleshootConnection c;
+			if (e instanceof InvalidLoginException) {
+				c = new TroubleshootWrongAuthentication(
+						ServerFailureReport.SHOW_DIALOG, loc);
+			} else {
+				c = new TroubleshootNoSuchServer(
+						ServerFailureReport.SHOW_DIALOG, loc);
+			}
 			final ServerLocation updLoc = c.fix();
 			if (c.retry()) {
 				return validate(updLoc, savePassword);
@@ -59,19 +71,26 @@ public class ValidateServerLocationJob extends AbstractServerProjectJob {
 	protected IStatus run(final IProgressMonitor monitor) {
 		monitor.beginTask("Trying to connect...", IProgressMonitor.UNKNOWN);
 		try {
-			final IStatus status = validate(f_loc, f_savePass);
-			if (status == Status.OK_STATUS) {
+			final ConnectedServer server = validate(f_loc, f_savePass);
+			if (server != null) {
 				/*
 				 * We can talk to this team server. Next, we synchronize BugLink
 				 * information with it.
 				 */
 				final SynchronizeJob job = new SynchronizeJob(null, null,
-						getServer(), ServerSyncType.BUGLINK, true, f_strategy);
+						server, ServerSyncType.BUGLINK, true,
+						ServerFailureReport.SHOW_BALLOON);
 				job.schedule();
 			}
-			return status;
+			return Status.OK_STATUS;
 		} catch (final Exception e) {
-			return createErrorStatus(51, e);
+			if (e instanceof TransactionException
+					&& e.getCause() instanceof InvalidServerException) {
+				return SLEclipseStatusUtility.createErrorStatus(158, e
+						.getCause().getMessage());
+			} else {
+				return SLEclipseStatusUtility.createErrorStatus(159, e);
+			}
 		} finally {
 			monitor.done();
 		}
