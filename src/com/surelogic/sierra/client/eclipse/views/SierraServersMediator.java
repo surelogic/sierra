@@ -2082,7 +2082,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 		
 		if (syncType.areAllSame()) {
 			final MenuItem toggleAutosyncItem = new MenuItem(contextMenu, SWT.CHECK);
-			toggleAutosyncItem.setText("Toggle Auto-sync");
+			toggleAutosyncItem.setText("Use Automatic Synchronization");
 			toggleAutosyncItem.addListener(SWT.Selection, f_toggleAutoSyncAction);
 			toggleAutosyncItem.setSelection(syncType == AutoSyncType.ON);
 		}
