@@ -26,7 +26,6 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
@@ -51,7 +50,6 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.browser.IWebBrowser;
 import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
-import org.eclipse.ui.dialogs.PreferencesUtil;
 
 import com.surelogic.common.eclipse.ImageImageDescriptor;
 import com.surelogic.common.eclipse.JDTUtility;
@@ -68,7 +66,6 @@ import com.surelogic.common.jobs.SLProgressMonitor;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.actions.NewScan;
-import com.surelogic.sierra.client.eclipse.actions.PreferencesAction;
 import com.surelogic.sierra.client.eclipse.actions.PublishScanAction;
 import com.surelogic.sierra.client.eclipse.actions.ScanChangedProjectsAction;
 import com.surelogic.sierra.client.eclipse.actions.SynchronizeProjectAction;
@@ -157,7 +154,6 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 	private final Map<ConnectedServer, ServerUpdateStatus> serverResponseMap = new HashMap<ConnectedServer, ServerUpdateStatus>();
 
 	private final TreeViewer f_statusTree;
-	private final Menu f_contextMenu;
 	private final ActionListener f_buglinkSyncAction;
 	private final ActionListener f_serverSyncAction;
 	private final ActionListener f_toggleAutoSyncAction;
@@ -165,25 +161,21 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 	private final ActionListener f_duplicateServerAction;
 	private final ActionListener f_deleteServerAction;
 	private final ActionListener f_openInBrowserAction;
-	private final MenuItem f_newServerItem;
-	private final MenuItem f_browseServerItem;
-	private final MenuItem f_duplicateServerItem;
-	private final MenuItem f_deleteServerItem;
-	private final MenuItem f_serverConnectItem;
-	private final MenuItem f_synchConnectedProjects;
-	private final MenuItem f_sendResultFilters;
-	private final MenuItem f_getResultFilters;
-	private final MenuItem f_serverPropertiesItem;
-	private final MenuItem f_scanProjectItem;
-	private final MenuItem f_rescanProjectItem;
-	private final MenuItem f_publishScansItem;
-	private final MenuItem f_disconnectProjectItem;
+	
+	private final Listener f_serverConnectAction;
+	private final Listener f_synchConnectedProjectsAction;
+	private final Listener f_sendResultFiltersAction;
+	private final Listener f_getResultFiltersAction;
+	private final Listener f_serverPropertiesAction;
+	private final Listener f_scanProjectAction;
+	private final Listener f_rescanProjectAction;
+	private final Listener f_publishScansAction;
+	private final Listener f_disconnectProjectAction;    
 
 	private abstract class ActionListener extends Action implements Listener {
 		ActionListener(final String text, final String tooltip) {
 			super(text, IAction.AS_PUSH_BUTTON);
 			setToolTipText(tooltip);
-
 		}
 
 		ActionListener(final Image image, final String tooltip) {
@@ -284,23 +276,21 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 			.getInstance();
 
 	public SierraServersMediator(final SierraServersView view,
-			final TreeViewer statusTree, final Menu contextMenu,
-			final MenuItem newServerItem, final MenuItem browseServerItem,
-			final MenuItem duplicateServerItem,
-			final MenuItem deleteServerItem, final MenuItem serverConnectItem,
-			final MenuItem synchConnectedProjects,
-			final MenuItem sendResultFilters, final MenuItem getResultFilters,
-			final MenuItem serverPropertiesItem,
-			final MenuItem scanProjectItem, final MenuItem rescanProjectItem,
-			final MenuItem publishScansItem,
-			final MenuItem disconnectProjectItem) {
+			final TreeViewer statusTree) {
 		super(view);
 
 		f_statusTree = statusTree;
+		f_statusTree.getTree().addListener(SWT.MenuDetect, new Listener() {
+			public void handleEvent(Event event) {
+				Menu contextMenu = new Menu(statusTree.getTree().getShell(), SWT.POP_UP);
+				setupContextMenu(contextMenu);
+				statusTree.getTree().setMenu(contextMenu);
+			}
+		});
+		
 		f_statusTree.setContentProvider(new ContentProvider());
 		f_statusTree.setLabelProvider(new LabelProvider());
 
-		f_contextMenu = contextMenu;
 		f_toggleAutoSyncAction = new ServerActionListener("Toggle Auto-sync",
 				"Toggle whether the server(s) automatically synchronize",
 				"No server to toggle") {
@@ -357,7 +347,6 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 				openInBrowser(server);
 			}
 		};
-		f_openInBrowserAction.setEnabled(false);
 
 		f_duplicateServerAction = new ServerActionListener(SLImages
 				.getImage(CommonImages.IMG_EDIT_COPY),
@@ -369,7 +358,6 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 				// f_manager.duplicate();
 			}
 		};
-		f_duplicateServerAction.setEnabled(false);
 
 		f_deleteServerAction = new IJavaProjectsActionListener(SLImages
 				.getImage(CommonImages.IMG_EDIT_DELETE),
@@ -400,94 +388,15 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 				}
 			}
 		};
-
-		f_deleteServerAction.setEnabled(false);
-
-		/*
-		 * ActionListener registerAction = new
-		 * ActionListener(SLImages.getImage(CommonImages.IMG_SIERRA_LOGO),
-		 * "Register your copy of SLIC") { @Override public void run() {
-		 * SierraServerLocation loc = f_manager.getFocus().getServer();
-		 * Registration r = RegistrationClient.create(loc);
-		 * ProductRegistrationInfo info = new ProductRegistrationInfo();
-		 * info.setName("SLIC"); info.setVersion("2.2");
-		 * info.setFirstName("Edwin"); info.setLastName("Chan");
-		 * 
-		 * RegistrationResponse rr = r.register(info);
-		 * System.out.println(rr.getMessage()); BalloonUtility.showMessage("A
-		 * message from SureLogic", rr.getMessage()); } };
-		 * view.addToActionBar(registerAction);
-		 */
-		f_newServerItem = newServerItem;
-		f_browseServerItem = browseServerItem;
-		f_duplicateServerItem = duplicateServerItem;
-		f_deleteServerItem = deleteServerItem;
-		f_serverConnectItem = serverConnectItem;
-		f_synchConnectedProjects = synchConnectedProjects;
-		f_sendResultFilters = sendResultFilters;
-		f_getResultFilters = getResultFilters;
-		f_serverPropertiesItem = serverPropertiesItem;
-		f_scanProjectItem = scanProjectItem;
-		f_rescanProjectItem = rescanProjectItem;
-		f_publishScansItem = publishScansItem;
-		f_disconnectProjectItem = disconnectProjectItem;
-	}
-
-	public String getHelpId() {
-		return "com.surelogic.sierra.client.eclipse.view-team-servers";
-	}
-
-	public String getNoDataI18N() {
-		return "sierra.eclipse.noDataSierraServers";
-	}
-
-	@Override
-	public Listener getNoDataListener() {
-		return f_newServerAction;
-	}
-
-	@Override
-	public void init() {
-		// Actions in reverse order
-		f_view.addToViewMenu(f_serverSyncAction);
-		// f_view.addToViewMenu(f_buglinkSyncAction);
-		// f_view.addToViewMenu(f_serverUpdateAction);
-		f_view.addToViewMenu(f_toggleAutoSyncAction);
-		f_view.addToViewMenu(new Separator());
-
-		final ServerStatusSort sort = PreferenceConstants.getServerStatusSort();
-		final Action sortByServerAction = new Action("Show by Team Server",
-				IAction.AS_RADIO_BUTTON) {
+		
+		f_synchConnectedProjectsAction = new ProjectsActionListener() {
 			@Override
-			public void run() {
-				setSortByServer(isChecked());
+			protected void run(final List<IJavaProject> projects) {
+				new SynchronizeProjectAction().run(projects);
 			}
 		};
-		final Action sortByProjectAction = new Action("Show by Project",
-				IAction.AS_RADIO_BUTTON) {
-			@Override
-			public void run() {
-				setSortByServer(!isChecked());
-			}
-		};
-		sortByServerAction.setChecked(ServerStatusSort.BY_SERVER == sort);
-		sortByProjectAction.setChecked(ServerStatusSort.BY_PROJECT == sort);
-		f_view.addToViewMenu(sortByProjectAction);
-		f_view.addToViewMenu(sortByServerAction);
-
-		super.init();
-		f_manager.addObserver(this);
-		notify(f_manager);
-
-		// f_serverList.addListener(SWT.MouseDoubleClick, openInBrowserAction);
-
-		f_newServerItem.addListener(SWT.Selection, f_newServerAction);
-		f_browseServerItem.addListener(SWT.Selection, f_openInBrowserAction);
-		f_duplicateServerItem.addListener(SWT.Selection,
-				f_duplicateServerAction);
-		f_deleteServerItem.addListener(SWT.Selection, f_deleteServerAction);
-
-		final Listener connectAction = new ServerActionListener(
+		
+		f_serverConnectAction = new ServerActionListener(
 				"No server to connect to, or no project to connect") {
 			boolean f_syncAfterConnect = true;
 
@@ -581,114 +490,142 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 				}
 			}
 		};
+		
+		f_sendResultFiltersAction = 
+			new ServerActionListener("Send local scan filter  pressed with no server focus.") {
 
-		f_serverConnectItem.addListener(SWT.Selection, connectAction);
-
-		f_synchConnectedProjects.addListener(SWT.Selection,
-				new ProjectsActionListener() {
-					@Override
-					protected void run(final List<IJavaProject> projects) {
-						new SynchronizeProjectAction().run(projects);
+			@Override
+			protected void handleEventOnServer(
+					final ConnectedServer server) {
+				final String msg = "What do you want to call your scan filter "
+					+ "on the Sierra server '"
+					+ server.getName() + "'";
+				final PromptForFilterNameDialog dialog = new PromptForFilterNameDialog(
+						f_statusTree.getTree().getShell(), msg);
+				if (dialog.open() == 0) {
+					/*
+					 * Yes was selected, so send the local scan
+					 * filters to the server.
+					 */
+					if (SendScanFiltersJob.ENABLED) {
+						final Job job = new SendScanFiltersJob(
+								ServerFailureReport.SHOW_DIALOG,
+								server, dialog.getText());
+						job.schedule();
 					}
+				}
+			}
+		};
 
-				});
+		f_getResultFiltersAction =
+			new ScanFilterActionListener("Overwrite local scan filter") {
+			@Override
+			protected void handleEventOnFilter(final ScanFilter f) {
+				final String msg = "Do you want to overwrite your local scan filter with"
+					+ " the scan filter '" + f.getName() + "'?";
+				final MessageDialog dialog = new MessageDialog(
+						f_statusTree.getTree().getShell(),
+						"Overwrite Local Scan Filter", null, msg,
+						MessageDialog.QUESTION, new String[] { "Yes",
+						"No" }, 0);
+				if (dialog.open() == 0) {
+					/*
+					 * Yes was selected, so get the result filters from
+					 * the server.
+					 */
 
-		f_sendResultFilters
-				.addListener(
-						SWT.Selection,
-						new ServerActionListener(
-								"Send local scan filter  pressed with no server focus.") {
+					final Job job = new OverwriteLocalScanFilterJob(f);
+					job.schedule();
+				}
+			}
+		};
 
-							@Override
-							protected void handleEventOnServer(
-									final ConnectedServer server) {
-								final String msg = "What do you want to call your scan filter "
-										+ "on the Sierra server '"
-										+ server.getName() + "'";
-								final PromptForFilterNameDialog dialog = new PromptForFilterNameDialog(
-										f_statusTree.getTree().getShell(), msg);
-								if (dialog.open() == 0) {
-									/*
-									 * Yes was selected, so send the local scan
-									 * filters to the server.
-									 */
-									if (SendScanFiltersJob.ENABLED) {
-										final Job job = new SendScanFiltersJob(
-												ServerFailureReport.SHOW_DIALOG,
-												server, dialog.getText());
-										job.schedule();
-									}
-								}
-							}
-						});
+		f_serverPropertiesAction = 
+			new ServerActionListener("Edit server pressed with no server focus.") {
+			@Override
+			protected void handleEventOnServer(
+					final ConnectedServer server) {
+				ServerLocationDialog.editServer(f_statusTree.getTree()
+						.getShell(), server);
+			}
+		};
 
-		f_getResultFilters.addListener(SWT.Selection,
-				new ScanFilterActionListener("Overwrite local scan filter") {
-					@Override
-					protected void handleEventOnFilter(final ScanFilter f) {
-						final String msg = "Do you want to overwrite your local scan filter with"
-								+ " the scan filter '" + f.getName() + "'?";
-						final MessageDialog dialog = new MessageDialog(
-								f_statusTree.getTree().getShell(),
-								"Overwrite Local Scan Filter", null, msg,
-								MessageDialog.QUESTION, new String[] { "Yes",
-										"No" }, 0);
-						if (dialog.open() == 0) {
-							/*
-							 * Yes was selected, so get the result filters from
-							 * the server.
-							 */
+		f_scanProjectAction = new ProjectsActionListener() {
+			@Override
+			protected void run(final List<IJavaProject> projects) {
+				new NewScan().scan(projects);
+			}
+		};
+		f_rescanProjectAction = new ProjectsActionListener() {
+			@Override
+			protected void run(final List<IJavaProject> projects) {
+				new ScanChangedProjectsAction().run(projects);
+			}
+		};
+		f_publishScansAction = new ProjectsActionListener() {
+			@Override
+			protected void run(final List<IJavaProject> projects) {
+				// FIX check for projects w/o scans?
+				new PublishScanAction().run(projects);
+			}
+		};
+		f_disconnectProjectAction = new ProjectsActionListener() {
+			@Override
+			protected void run(final List<IJavaProject> projects) {
+				final List<String> projectNames = new ArrayList<String>();
+				for (final IJavaProject p : projects) {
+					projectNames.add(p.getElementName());
+				}
+				DeleteProjectDataJob.utility(projectNames, null, true);
+			}
+		};
+	}
 
-							final Job job = new OverwriteLocalScanFilterJob(f);
-							job.schedule();
-						}
-					}
-				});
+	public String getHelpId() {
+		return "com.surelogic.sierra.client.eclipse.view-team-servers";
+	}
 
-		f_serverPropertiesItem.addListener(SWT.Selection,
-				new ServerActionListener(
-						"Edit server pressed with no server focus.") {
-					@Override
-					protected void handleEventOnServer(
-							final ConnectedServer server) {
-						ServerLocationDialog.editServer(f_statusTree.getTree()
-								.getShell(), server);
-					}
-				});
+	public String getNoDataI18N() {
+		return "sierra.eclipse.noDataSierraServers";
+	}
 
-		f_scanProjectItem.addListener(SWT.Selection,
-				new ProjectsActionListener() {
-					@Override
-					protected void run(final List<IJavaProject> projects) {
-						new NewScan().scan(projects);
-					}
-				});
-		f_rescanProjectItem.addListener(SWT.Selection,
-				new ProjectsActionListener() {
-					@Override
-					protected void run(final List<IJavaProject> projects) {
-						new ScanChangedProjectsAction().run(projects);
-					}
-				});
-		f_publishScansItem.addListener(SWT.Selection,
-				new ProjectsActionListener() {
-					@Override
-					protected void run(final List<IJavaProject> projects) {
-						// FIX check for projects w/o scans?
-						new PublishScanAction().run(projects);
-					}
-				});
-		f_disconnectProjectItem.addListener(SWT.Selection,
-				new ProjectsActionListener() {
-					@Override
-					protected void run(final List<IJavaProject> projects) {
-						final List<String> projectNames = new ArrayList<String>();
-						for (final IJavaProject p : projects) {
-							projectNames.add(p.getElementName());
-						}
-						DeleteProjectDataJob.utility(projectNames, null, true);
-					}
-				});
+	@Override
+	public Listener getNoDataListener() {
+		return f_newServerAction;
+	}
+
+	@Override
+	public void init() {
+		// Actions in reverse order
+		f_view.addToViewMenu(f_serverSyncAction);
+		// f_view.addToViewMenu(f_buglinkSyncAction);
+		// f_view.addToViewMenu(f_serverUpdateAction);
+		f_view.addToViewMenu(f_toggleAutoSyncAction);
+		f_view.addToViewMenu(new Separator());
+
+		final ServerStatusSort sort = PreferenceConstants.getServerStatusSort();
+		final Action sortByServerAction = new Action("Show by Team Server",
+				IAction.AS_RADIO_BUTTON) {
+			@Override
+			public void run() {
+				setSortByServer(isChecked());
+			}
+		};
+		final Action sortByProjectAction = new Action("Show by Project",
+				IAction.AS_RADIO_BUTTON) {
+			@Override
+			public void run() {
+				setSortByServer(!isChecked());
+			}
+		};
+		sortByServerAction.setChecked(ServerStatusSort.BY_SERVER == sort);
+		sortByProjectAction.setChecked(ServerStatusSort.BY_PROJECT == sort);
+		f_view.addToViewMenu(sortByProjectAction);
+		f_view.addToViewMenu(sortByServerAction);
+
+		super.init();
+		f_manager.addObserver(this);
+		notify(f_manager);
 
 		f_statusTree.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(final DoubleClickEvent event) {
@@ -735,123 +672,63 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 						}
 					}
 				});
+	}
+	
+	void setupContextMenu(Menu contextMenu) {
+		addAlwaysOnMenuItems(contextMenu);
 
-		f_contextMenu.addListener(SWT.Show, new Listener() {
-			public void handleEvent(final Event event) {
-				f_newServerItem.setEnabled(true);
+		final SelectedServers servers = collectServers();
+		final boolean onlyServer = servers.indirect.size() == 1;
+		final boolean onlyTeamServer;
+		final boolean onlyBugLink;
+		if (onlyServer) {
+			final ConnectedServer focus = servers.indirect.get(0);
+			onlyTeamServer = focus.isTeamServer();
+			onlyBugLink = focus != null;
+		} else {
+			onlyTeamServer = onlyBugLink = false;
+		}
+		final boolean enableSendFilters = 
+			SendScanFiltersJob.ENABLED && onlyBugLink && onlyServer;
+		if (onlyServer) {
+			addServerMenuItems(contextMenu, enableSendFilters);
+		}
 
-				final SelectedServers servers = collectServers();
-				final boolean onlyServer = servers.indirect.size() == 1;
-				final boolean onlyTeamServer;
-				final boolean onlyBugLink;
-				if (onlyServer) {
-					final ConnectedServer focus = servers.indirect.get(0);
-					onlyTeamServer = focus.isTeamServer();
-					onlyBugLink = focus != null;
-				} else {
-					onlyTeamServer = onlyBugLink = false;
-				}
-				f_duplicateServerAction.setEnabled(onlyServer);
-				f_deleteServerAction.setEnabled(onlyServer);
-				f_openInBrowserAction.setEnabled(onlyServer);
-				f_browseServerItem.setEnabled(onlyServer);
-				f_duplicateServerItem.setEnabled(onlyServer);
-				f_deleteServerItem.setEnabled(onlyServer);
-				if (SendScanFiltersJob.ENABLED) {
-					f_sendResultFilters.setEnabled(onlyBugLink && onlyServer);
-				} else {
-					f_sendResultFilters.setEnabled(false);
-				}
-				f_serverPropertiesItem.setEnabled(onlyServer);
+		final List<ScanFilter> filters = collectScanFilters();
+		final boolean onlyScanFilter = filters.size() == 1;
+		if (onlyScanFilter) {
+			addScanFilterMenuItems(contextMenu);
+		}
 
-				final List<ScanFilter> filters = collectScanFilters();
-				final boolean onlyScanFilter = filters.size() == 1;
-				f_getResultFilters.setEnabled(onlyScanFilter);
-
-				final List<ProjectStatus> status = collectSelectedProjectStatus();
-				final boolean someProjects = !status.isEmpty();
-				boolean allConnected = someProjects;
-				boolean allHasScans = someProjects;
-				if (someProjects) {
-					// try {
-					for (final ProjectStatus ps : status) {
-						if ((f_manager == null) || (ps == null)) {
-							// LOG.severe("Null project status");
-							continue;
-						}
-						if (!f_manager.isConnected(ps.name)) {
-							allConnected = false;
-						}
-						if (ps.scanDoc == null || !ps.scanDoc.exists()) {
-							allHasScans = false;
-						} else if (ps.scanInfo != null
-								&& ps.scanInfo.isPartial()) {
-							allHasScans = false;
-						}
+		final List<ProjectStatus> status = collectSelectedProjectStatus();
+		final boolean someProjects = !status.isEmpty();
+		boolean allConnected = someProjects;
+		boolean allHasScans = someProjects;
+		if (someProjects) {
+			// try {
+				for (final ProjectStatus ps : status) {
+					if ((f_manager == null) || (ps == null)) {
+						// LOG.severe("Null project status");
+						continue;
 					}
-					/*
-					 * } catch (Throwable t) { t.printStackTrace(); }
-					 */
+					if (!f_manager.isConnected(ps.name)) {
+						allConnected = false;
+					}
+					if (ps.scanDoc == null || !ps.scanDoc.exists()) {
+						allHasScans = false;
+					} else if (ps.scanInfo != null
+							&& ps.scanInfo.isPartial()) {
+						allHasScans = false;
+					}
 				}
-				f_serverConnectItem
-						.setEnabled((onlyTeamServer && !servers.direct
-								.isEmpty())
-								|| (someProjects && !allConnected));
-				f_scanProjectItem.setEnabled(someProjects);
-				f_rescanProjectItem.setEnabled(someProjects);
-				f_synchConnectedProjects.setEnabled(someProjects);
-				f_publishScansItem.setEnabled(allHasScans);
-				f_disconnectProjectItem.setEnabled(allConnected);
-			}
-		});
-
-		/*
-		 * final AutoJob doServerAutoUpdate = new AutoJob("Server auto-update",
-		 * lastServerUpdateTime) {
-		 * 
-		 * @Override protected boolean isEnabled() { return
-		 * PreferenceConstants.getServerInteractionSetting()
-		 * .doServerAutoUpdate(); }
-		 * 
-		 * @Override protected long getDelay() { return PreferenceConstants
-		 * .getServerInteractionPeriodInMinutes() 60000; }
-		 * 
-		 * @Override protected void run() { asyncUpdateServerInfo(); } };
-		 * doServerAutoUpdate.schedule(doServerAutoUpdate.getDelay());
-		 */
-
-		// final IPreferenceStore store = Activator.getDefault()
-		// .getPreferenceStore();
-		// store.addPropertyChangeListener(new IPropertyChangeListener() {
-		// public void propertyChange(final PropertyChangeEvent event) {
-		// if (event.getProperty() ==
-		// PreferenceConstants.P_SERVER_INTERACTION_SETTING) {
-		// if (event.getNewValue() != event.getOldValue()) {
-		// final ServerInteractionSetting s = ServerInteractionSetting
-		// .valueOf((String) event.getNewValue());
-		// final Job job = new DatabaseJob(
-		// "Switching server interaction") {
-		// @Override
-		// protected IStatus run(final IProgressMonitor monitor) {
-		// synchronized (responseMap) {
-		// if (s.useAuditThreshold()
-		// && checkAutoSyncTrigger(projects)) {
-		// asyncSyncWithServer(ServerSyncType.BY_SERVER_SETTINGS);
-		// } else if (s.doServerAutoSync()) {
-		// asyncSyncWithServer(ServerSyncType.BY_SERVER_SETTINGS);
-		// } else if (s.doServerAutoUpdate()) {
-		// asyncUpdateServerInfo();
-		// }
-		// }
-		// return Status.OK_STATUS;
-		// }
-		// };
-		// job.schedule();
-		// }
-		// }
-		// }
-		//
-		// });
+				/*
+				 * } catch (Throwable t) { t.printStackTrace(); }
+				 */
+		}
+		if (someProjects) {
+			addProjectMenuItems(contextMenu, allHasScans, allConnected);
+			//FIX (onlyTeamServer && !servers.direct.isEmpty())
+		}
 	}
 
 	private List<ScanFilter> collectScanFilters() {
@@ -2168,6 +2045,86 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 
 	static final ServersViewContent[] emptyChildren = new ServersViewContent[0];
 
+	void addAlwaysOnMenuItems(Menu contextMenu) {
+		final MenuItem newServerItem = AbstractSierraView.createMenuItem(contextMenu, "New...",
+				SLImages.getImage(CommonImages.IMG_EDIT_NEW));
+		newServerItem.addListener(SWT.Selection, f_newServerAction);
+	}
+	
+	void addServerMenuItems(Menu contextMenu, boolean enableSendFilters) {
+
+		final MenuItem browseServerItem = AbstractSierraView.createMenuItem(contextMenu, "Browse",
+				SLImages.getImage(CommonImages.IMG_SIERRA_SERVER));
+
+		final MenuItem duplicateServerItem = AbstractSierraView.createMenuItem(contextMenu,
+				"Duplicate", SLImages.getImage(CommonImages.IMG_EDIT_COPY));
+
+		final MenuItem deleteServerItem = AbstractSierraView.createMenuItem(contextMenu, "Delete",
+				SLImages.getImage(CommonImages.IMG_EDIT_DELETE));
+
+		browseServerItem.addListener(SWT.Selection, f_openInBrowserAction);
+		duplicateServerItem.addListener(SWT.Selection,
+				f_duplicateServerAction);
+		deleteServerItem.addListener(SWT.Selection, f_deleteServerAction);
+		
+		new MenuItem(contextMenu, SWT.SEPARATOR);
+		
+		final MenuItem serverConnectItem = AbstractSierraView.createMenuItem(contextMenu,
+				"Connect...", CommonImages.IMG_SIERRA_SERVER);
+		if (enableSendFilters) {
+			final MenuItem sendResultFilters = AbstractSierraView.createMenuItem(contextMenu,
+					"Send Local Scan Filter As ...", CommonImages.IMG_FILTER);
+			sendResultFilters.addListener(SWT.Selection, f_sendResultFiltersAction);
+		}
+		serverConnectItem.addListener(SWT.Selection, f_serverConnectAction);
+				
+		final MenuItem serverPropertiesItem = new MenuItem(contextMenu,
+				SWT.PUSH);
+		serverPropertiesItem.setText("Server Properties...");
+		serverPropertiesItem.addListener(SWT.Selection, f_serverPropertiesAction);
+	}
+	
+	void addProjectMenuItems(Menu contextMenu, boolean allHasScans, boolean allConnected) {
+		if (!allConnected) {
+			final MenuItem serverConnectItem = AbstractSierraView.createMenuItem(contextMenu,
+					"Connect...", CommonImages.IMG_SIERRA_SERVER);
+			serverConnectItem.addListener(SWT.Selection, f_serverConnectAction);
+
+			new MenuItem(contextMenu, SWT.SEPARATOR);
+		}
+		final MenuItem scanProjectItem = AbstractSierraView.createMenuItem(contextMenu,
+				"Scan Project", CommonImages.IMG_SIERRA_SCAN);
+		final MenuItem rescanProjectItem = AbstractSierraView.createMenuItem(contextMenu,
+				"Re-Scan Changes in Project",
+				CommonImages.IMG_SIERRA_SCAN_DELTA);
+		final MenuItem synchProjects = AbstractSierraView.createMenuItem(contextMenu,
+				"Synchronize Project", CommonImages.IMG_SIERRA_SYNC);
+		
+		scanProjectItem.addListener(SWT.Selection, f_scanProjectAction);
+		rescanProjectItem.addListener(SWT.Selection, f_rescanProjectAction);
+		synchProjects.addListener(SWT.Selection, f_synchConnectedProjectsAction);
+		
+		if (allHasScans || allConnected) {
+			new MenuItem(contextMenu, SWT.SEPARATOR);
+		}
+		if (allHasScans) {
+			final MenuItem publishScansItem = AbstractSierraView.createMenuItem(contextMenu,
+					"Publish Latest Scan", CommonImages.IMG_SIERRA_PUBLISH);
+			publishScansItem.addListener(SWT.Selection, f_publishScansAction);
+		}
+		if (allConnected) {
+			final MenuItem disconnectProjectItem = AbstractSierraView.createMenuItem(contextMenu,
+					"Disconnect", CommonImages.IMG_SIERRA_DISCONNECT);
+
+			disconnectProjectItem.addListener(SWT.Selection, f_disconnectProjectAction);
+		}
+	}
+	
+	void addScanFilterMenuItems(Menu contextMenu) {
+		final MenuItem getResultFilters = AbstractSierraView.createMenuItem(contextMenu, "Overwrite Local Scan Filter", (Image)null);
+		getResultFilters.addListener(SWT.Selection, f_getResultFiltersAction);
+	}
+	
 	private class ContentProvider implements ITreeContentProvider {
 		public Object[] getChildren(final Object parentElement) {
 			if (parentElement instanceof ServersViewContent) {

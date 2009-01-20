@@ -31,7 +31,9 @@ public abstract class AbstractSierraView<M extends IViewMediator> extends
 
 	protected static MenuItem createMenuItem(Menu menu, String name, Image image) {
 		MenuItem item = new MenuItem(menu, SWT.PUSH);
-		item.setImage(image);
+		if (image != null) {
+			item.setImage(image);
+		}
 		item.setText(name);
 		return item;
 	}
