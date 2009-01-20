@@ -23,8 +23,6 @@ import com.surelogic.common.jdbc.TransactionException;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.jobs.LoadConnectedServersJob;
-import com.surelogic.sierra.client.eclipse.jobs.SynchronizeJob;
-import com.surelogic.sierra.client.eclipse.preferences.ServerFailureReport;
 import com.surelogic.sierra.jdbc.settings.ConnectedServer;
 import com.surelogic.sierra.jdbc.settings.ServerLocations;
 import com.surelogic.sierra.tool.message.ServerLocation;
@@ -252,9 +250,6 @@ public final class ConnectedServerManager extends
 			f_servers.add(newServer);
 		}
 		saveAndNotifyObservers();
-		new SynchronizeJob(null, null, server,
-				ServerSyncType.BY_SERVER_SETTINGS, true,
-				ServerFailureReport.SHOW_DIALOG).schedule();
 		return newServer;
 	}
 
@@ -274,8 +269,6 @@ public final class ConnectedServerManager extends
 			f_servers.add(to);
 		}
 		saveAndNotifyObservers();
-		new SynchronizeJob(null, null, to, ServerSyncType.BY_SERVER_SETTINGS,
-				true, ServerFailureReport.SHOW_DIALOG).schedule();
 		return to;
 	}
 
@@ -477,24 +470,27 @@ public final class ConnectedServerManager extends
 			// Do we still have the same connected servers?
 			if (!servers.equals(map.keySet())) {
 				updated = true;
-			}
-			// Are all of the new project associations the same as old project
-			// associations?
-			for (final ConnectedServer s : servers) {
-				final Collection<String> projs = map.get(s);
-				for (final String project : projs) {
-					final ConnectedServer last = projects.get(project);
-					if (last != s && !last.equals(s)) {
-						updated = true;
+			} else {
+				// Are all of the new project associations the same as old
+				// project
+				// associations?
+				for (final ConnectedServer s : servers) {
+					final Collection<String> projs = map.get(s);
+					for (final String project : projs) {
+						final ConnectedServer last = projects.get(project);
+						if (last != s && !last.equals(s)) {
+							updated = true;
+						}
 					}
 				}
-			}
-			// Are all of the old project associations the same as new project
-			// associations?
-			for (final Entry<String, ConnectedServer> entry : projects
-					.entrySet()) {
-				if (!map.get(entry.getValue()).contains(entry.getKey())) {
-					updated = true;
+				// Are all of the old project associations the same as new
+				// project
+				// associations?
+				for (final Entry<String, ConnectedServer> entry : projects
+						.entrySet()) {
+					if (!map.get(entry.getValue()).contains(entry.getKey())) {
+						updated = true;
+					}
 				}
 			}
 			if (updated) {

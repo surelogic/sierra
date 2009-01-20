@@ -12,7 +12,7 @@ public final class TroubleshootWrongAuthentication extends
 		TroubleshootConnection {
 
 	public TroubleshootWrongAuthentication(final ServerFailureReport strategy,
-			ServerLocation location) {
+			final ServerLocation location) {
 		super(strategy, location);
 	}
 
@@ -38,10 +38,9 @@ public final class TroubleshootWrongAuthentication extends
 						getLocation());
 			}
 		});
-		if (f_modifiedLocation == null)
+		if (f_modifiedLocation == null) {
 			f_modifiedLocation = getLocation();
-		final boolean modified = getLocation() != f_modifiedLocation;
-		setRetry(!modified);
+		}
 		return f_modifiedLocation;
 	}
 }
