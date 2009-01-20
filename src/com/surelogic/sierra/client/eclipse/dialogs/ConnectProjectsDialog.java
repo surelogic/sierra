@@ -87,6 +87,7 @@ public final class ConnectProjectsDialog extends Dialog {
 		for (IJavaProject p : f_unconnectedProjects) {
 			TableItem item = new TableItem(projectList, SWT.NONE);
 			item.setText(p.getElementName());
+			item.setData(p);
 			item.setImage(SLImages.getImage(CommonImages.IMG_PROJECT));
 		}
 
@@ -172,7 +173,7 @@ public final class ConnectProjectsDialog extends Dialog {
 			if (!f_connectAll) {
 				for (TableItem item : f_queryTable.getItems()) {
 					if (!item.getChecked()) {
-						f_unconnectedProjects.remove(item.getText());
+						f_unconnectedProjects.remove(item.getData());
 					}
 				}
 			}
