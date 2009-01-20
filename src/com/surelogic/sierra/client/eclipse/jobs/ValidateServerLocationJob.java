@@ -30,7 +30,7 @@ public class ValidateServerLocationJob extends AbstractServerProjectJob {
 	 */
 	public ValidateServerLocationJob(final ServerLocation location,
 			final boolean savePassword, final boolean autoSync) {
-		super(null, "Validating conection to " + location.getHost(),
+		super(null, "Validating connection to " + location.getHost(),
 				null /* TODO */, null, ServerFailureReport.SHOW_DIALOG);
 		f_loc = location;
 		f_savePass = savePassword;
