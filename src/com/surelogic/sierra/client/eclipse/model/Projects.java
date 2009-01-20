@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
+import com.surelogic.common.ILifecycle;
 import com.surelogic.common.jdbc.QB;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;
@@ -24,13 +25,10 @@ import com.surelogic.sierra.client.eclipse.Data;
  * <p>
  * The class allows observers to changes to this list of projects
  */
-public final class Projects extends DatabaseObservable<IProjectsObserver> {
+public final class Projects extends DatabaseObservable<IProjectsObserver>
+		implements ILifecycle {
 
 	private static final Projects INSTANCE = new Projects();
-
-	static {
-		DatabaseHub.getInstance().addObserver(INSTANCE);
-	}
 
 	public static Projects getInstance() {
 		return INSTANCE;
@@ -38,6 +36,15 @@ public final class Projects extends DatabaseObservable<IProjectsObserver> {
 
 	private Projects() {
 		// singleton
+	}
+
+	public void init() {
+		DatabaseHub.getInstance().addObserver(this);
+		refresh();
+	}
+
+	public void dispose() {
+		DatabaseHub.getInstance().removeObserver(this);
 	}
 
 	@Override

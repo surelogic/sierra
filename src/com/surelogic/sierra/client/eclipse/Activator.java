@@ -75,8 +75,8 @@ public final class Activator extends AbstractUIPlugin {
 			// load up persisted sierra selections
 			SelectionManager.getInstance().load(getSelectionSaveFile());
 			// start observing data changes
-			Projects.getInstance().refresh();
-			BuglinkData.getInstance().refresh();
+			Projects.getInstance().init();
+			BuglinkData.getInstance().init();
 			// listen changes to the active editor and preference listener
 			final MarkersHandler handler = MarkersHandler.getInstance();
 			handler.addMarkerListener();
@@ -117,6 +117,8 @@ public final class Activator extends AbstractUIPlugin {
 		try {
 			SierraServersAutoSync.stop();
 			AdHocDataSource.getInstance().dispose();
+			Projects.getInstance().dispose();
+			BuglinkData.getInstance().dispose();
 			if (f_databaseInSync.get()) {
 				ConnectedServerManager.getInstance().dispose();
 				SelectionManager.getInstance().save(getSelectionSaveFile());

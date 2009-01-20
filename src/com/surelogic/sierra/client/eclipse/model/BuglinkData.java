@@ -4,6 +4,7 @@ import java.sql.*;
 import java.util.*;
 import java.util.logging.Level;
 
+import com.surelogic.common.ILifecycle;
 import com.surelogic.common.jdbc.*;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;
@@ -16,18 +17,24 @@ import com.surelogic.sierra.jdbc.tool.FindingTypes;
 /**
  * A singleton that tracks the BugLink data in the client database
  * <p>
- * The class allows observers to changes to the BugLink data
+ * The class allows observers to be notified about changes to BugLink data.
  */
-public final class BuglinkData extends DatabaseObservable<IBuglinkDataObserver> {
+public final class BuglinkData extends DatabaseObservable<IBuglinkDataObserver>
+		implements ILifecycle {
 
 	private static final BuglinkData INSTANCE = new BuglinkData();
 
-	static {
-		DatabaseHub.getInstance().addObserver(INSTANCE);
-	}
-
 	public static BuglinkData getInstance() {
 		return INSTANCE;
+	}
+
+	public void init() {
+		DatabaseHub.getInstance().addObserver(this);
+		refresh();
+	}
+
+	public void dispose() {
+		DatabaseHub.getInstance().removeObserver(this);
 	}
 
 	/**
@@ -66,8 +73,8 @@ public final class BuglinkData extends DatabaseObservable<IBuglinkDataObserver> 
 					findingTypes.put(ftype.getUid(), ftype);
 				}
 
-				List<CategoryDO> raw = Data.getInstance().withReadOnly(SettingQueries
-						.getLocalCategories());
+				List<CategoryDO> raw = Data.getInstance().withReadOnly(
+						SettingQueries.getLocalCategories());
 				// Key: uid of the category
 				Map<String, CategoryDO> rawCategories = new HashMap<String, CategoryDO>(
 						raw.size());
@@ -189,9 +196,4 @@ public final class BuglinkData extends DatabaseObservable<IBuglinkDataObserver> 
 	public void changed() {
 		refresh();
 	}
-	/*
-	 * @Override public void projectDeleted() { refresh(); }
-	 * 
-	 * @Override public void scanLoaded() { refresh(); }
-	 */
 }
