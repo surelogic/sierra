@@ -2088,7 +2088,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 		}
 		if (enableConnect) {			
 			final MenuItem serverConnectItem = AbstractSierraView.createMenuItem(contextMenu,
-					"Connect...", CommonImages.IMG_SIERRA_SERVER);
+					"Connect Projects...", CommonImages.IMG_SIERRA_SERVER);
 			serverConnectItem.addListener(SWT.Selection, f_serverConnectAction);
 		}
 		if (enableSendFilters) {
@@ -2106,7 +2106,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 	void addProjectMenuItems(Menu contextMenu, boolean allHasScans, boolean allConnected) {
 		if (!allConnected) {
 			final MenuItem serverConnectItem = AbstractSierraView.createMenuItem(contextMenu,
-					"Connect...", CommonImages.IMG_SIERRA_SERVER);
+					"Connect Projects...", CommonImages.IMG_SIERRA_SERVER);
 			serverConnectItem.addListener(SWT.Selection, f_serverConnectAction);
 
 			new MenuItem(contextMenu, SWT.SEPARATOR);
