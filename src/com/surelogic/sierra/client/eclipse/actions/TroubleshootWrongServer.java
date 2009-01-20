@@ -11,9 +11,9 @@ public final class TroubleshootWrongServer extends TroubleshootConnection {
 
 	private final String f_projectName;
 
-	public TroubleshootWrongServer(final ServerFailureReport method,
+	public TroubleshootWrongServer(final ServerFailureReport strategy,
 			ServerLocation location, String projectName) {
-		super(method, location);
+		super(strategy, location);
 		f_projectName = projectName;
 	}
 

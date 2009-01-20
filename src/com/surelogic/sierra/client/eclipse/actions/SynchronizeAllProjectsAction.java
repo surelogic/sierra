@@ -21,13 +21,13 @@ public class SynchronizeAllProjectsAction implements
 		IWorkbenchWindowActionDelegate {
 	private final boolean force;
 	private ServerProjectGroupJob group;
-	private final ServerFailureReport f_method;
+	private final ServerFailureReport f_strategy;
 	private final ServerSyncType f_syncType;
 
 	public SynchronizeAllProjectsAction(ServerSyncType sync,
-			ServerFailureReport method, boolean force) {
+			ServerFailureReport strategy, boolean force) {
 		f_syncType = sync;
-		f_method = method;
+		f_strategy = strategy;
 		this.force = force;
 	}
 
@@ -79,7 +79,7 @@ public class SynchronizeAllProjectsAction implements
 							Shell shell) {
 						final SynchronizeJob job = new SynchronizeJob(joinJob,
 								projectName, server, f_syncType, force,
-								f_method);
+								f_strategy);
 						job.schedule();
 					}
 				};
@@ -94,7 +94,7 @@ public class SynchronizeAllProjectsAction implements
 							Shell shell) {
 						final SynchronizeJob job = new SynchronizeJob(joinJob,
 								null, server, ServerSyncType.BUGLINK, force,
-								f_method);
+								f_strategy);
 						job.schedule();
 					}
 				};

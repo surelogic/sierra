@@ -28,16 +28,16 @@ import com.surelogic.sierra.tool.message.SierraServiceClientException;
 
 public final class SendScanFiltersJob extends DatabaseJob {
 	public static final boolean ENABLED = true;
-	private final ServerFailureReport f_method;
+	private final ServerFailureReport f_strategy;
 	private ConnectedServer f_server;
 	private final String f_name;
 
-	public SendScanFiltersJob(final ServerFailureReport method,
+	public SendScanFiltersJob(final ServerFailureReport strategy,
 			final ConnectedServer server, final String name) {
 		super("Sending local scan filter settings to " + server.getName());
 		f_server = server;
 		f_name = name;
-		f_method = method;
+		f_strategy = strategy;
 	}
 
 	@Override
@@ -86,10 +86,10 @@ public final class SendScanFiltersJob extends DatabaseJob {
 		} catch (final SierraServiceClientException e) {
 			TroubleshootConnection troubleshoot;
 			if (e instanceof InvalidLoginException) {
-				troubleshoot = new TroubleshootWrongAuthentication(f_method,
+				troubleshoot = new TroubleshootWrongAuthentication(f_strategy,
 						f_server.getLocation());
 			} else {
-				troubleshoot = new TroubleshootNoSuchServer(f_method, f_server
+				troubleshoot = new TroubleshootNoSuchServer(f_strategy, f_server
 						.getLocation());
 			}
 			// We had a recoverable error. Rollback, run the appropriate

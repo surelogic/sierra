@@ -12,9 +12,9 @@ public final class TroubleshootException extends TroubleshootConnection {
 	private final boolean f_isSevere;
 	private Exception f_e;
 
-	public TroubleshootException(final ServerFailureReport method,
+	public TroubleshootException(final ServerFailureReport strategy,
 			ServerLocation location, Exception e, boolean severe) {
-		super(method, location);
+		super(strategy, location);
 		f_e = e;
 		f_isSevere = severe;
 	}

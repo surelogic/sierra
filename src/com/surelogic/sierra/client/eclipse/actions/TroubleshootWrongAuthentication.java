@@ -11,9 +11,9 @@ import com.surelogic.sierra.tool.message.ServerLocation;
 public final class TroubleshootWrongAuthentication extends
 		TroubleshootConnection {
 
-	public TroubleshootWrongAuthentication(final ServerFailureReport method,
+	public TroubleshootWrongAuthentication(final ServerFailureReport strategy,
 			ServerLocation location) {
-		super(method, location);
+		super(strategy, location);
 	}
 
 	@Override

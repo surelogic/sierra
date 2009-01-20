@@ -13,11 +13,11 @@ import com.surelogic.sierra.jdbc.settings.ConnectedServer;
 
 public class SynchronizeBugLinkServerAction implements IWorkbenchWindowActionDelegate {
 	private final boolean force;
-	private final ServerFailureReport f_method;
+	private final ServerFailureReport f_strategy;
 	private ConnectedServer f_server;
 	
-	public SynchronizeBugLinkServerAction(ServerFailureReport method, boolean force) {
-		f_method = method;
+	public SynchronizeBugLinkServerAction(ServerFailureReport strategy, boolean force) {
+		f_strategy = strategy;
 		this.force = force;
 	}
 
@@ -32,7 +32,7 @@ public class SynchronizeBugLinkServerAction implements IWorkbenchWindowActionDel
 	public void run(IAction action) {
 		final SynchronizeJob job = 
 			new SynchronizeJob(null, null, f_server,
-				               ServerSyncType.BUGLINK, force, f_method);
+				               ServerSyncType.BUGLINK, force, f_strategy);
 		job.schedule();
 	}
 

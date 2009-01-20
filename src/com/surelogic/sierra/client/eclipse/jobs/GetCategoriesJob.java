@@ -27,13 +27,13 @@ import com.surelogic.sierra.tool.message.ServerLocation;
 import com.surelogic.sierra.tool.message.SierraServiceClientException;
 
 public final class GetCategoriesJob extends DatabaseJob {
-	private final ServerFailureReport f_method;
+	private final ServerFailureReport f_strategy;
 	private ConnectedServer f_server;
 
-	public GetCategoriesJob(ServerFailureReport method, ConnectedServer server) {
+	public GetCategoriesJob(ServerFailureReport strategy, ConnectedServer server) {
 		super("Getting categories from " + server.getName());
 		f_server = server;
-		f_method = method;
+		f_strategy = strategy;
 	}
 
 	@Override
@@ -67,10 +67,10 @@ public final class GetCategoriesJob extends DatabaseJob {
 		} catch (final SierraServiceClientException e) {
 			TroubleshootConnection troubleshoot;
 			if (e instanceof InvalidLoginException) {
-				troubleshoot = new TroubleshootWrongAuthentication(f_method,
+				troubleshoot = new TroubleshootWrongAuthentication(f_strategy,
 						f_server.getLocation());
 			} else {
-				troubleshoot = new TroubleshootNoSuchServer(f_method, f_server
+				troubleshoot = new TroubleshootNoSuchServer(f_strategy, f_server
 						.getLocation());
 			}
 			// We had a recoverable error. Rollback, run the appropriate

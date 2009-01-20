@@ -37,9 +37,9 @@ public class ShareScanJob extends AbstractServerProjectJob {
 
 	public ShareScanJob(final ServerProjectGroupJob family,
 			final String projectName, final ConnectedServer server,
-			final File scanFile, final ServerFailureReport method) {
+			final File scanFile, final ServerFailureReport strategy) {
 		super(family, "Sharing scan of project '" + projectName + "'", server,
-				projectName, method);
+				projectName, strategy);
 		if (scanFile == null)
 			throw new IllegalArgumentException(I18N.err(44, "scanFile"));
 		f_scanFile = scanFile;
@@ -102,7 +102,7 @@ public class ShareScanJob extends AbstractServerProjectJob {
 			return new TreeSet<String>(timeseries);
 		} catch (final SierraServiceClientException e) {
 			if (joinJob != null && joinJob.troubleshoot(getServer())) {
-				troubleshoot = getTroubleshootConnection(f_method, e);
+				troubleshoot = getTroubleshootConnection(f_strategy, e);
 
 				// We had a recoverable error. Rollback, run the appropriate
 				// troubleshoot, and try again.
@@ -134,7 +134,7 @@ public class ShareScanJob extends AbstractServerProjectJob {
 					.markAsConnected();
 			return Status.OK_STATUS;
 		} catch (final SierraServiceClientException e) {
-			troubleshoot = getTroubleshootConnection(f_method, e);
+			troubleshoot = getTroubleshootConnection(f_strategy, e);
 
 			// We had a recoverable error. Rollback, run the appropriate
 			// troubleshoot, and try again.

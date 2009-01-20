@@ -17,12 +17,12 @@ public abstract class AbstractServerJob extends Job {
 	}
 
 	public static final TroubleshootConnection getTroubleshootConnection(
-			final ServerFailureReport method, final ServerLocation location,
+			final ServerFailureReport strategy, final ServerLocation location,
 			final SierraServiceClientException e) {
 		if (e instanceof InvalidLoginException) {
-			return new TroubleshootWrongAuthentication(method, location);
+			return new TroubleshootWrongAuthentication(strategy, location);
 		} else {
-			return new TroubleshootNoSuchServer(method, location);
+			return new TroubleshootNoSuchServer(strategy, location);
 		}
 	}
 	

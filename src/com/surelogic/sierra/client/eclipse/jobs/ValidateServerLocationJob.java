@@ -45,7 +45,7 @@ public class ValidateServerLocationJob extends AbstractServerProjectJob {
 			return Status.OK_STATUS;
 		} catch (final SierraServiceClientException e) {
 			final TroubleshootConnection c = getTroubleshootConnection(
-					f_method, f_loc, e);
+					f_strategy, f_loc, e);
 			final ServerLocation updLoc = c.fix();
 			if (c.retry()) {
 				return validate(updLoc, savePassword);
@@ -66,7 +66,7 @@ public class ValidateServerLocationJob extends AbstractServerProjectJob {
 				 * information with it.
 				 */
 				final SynchronizeJob job = new SynchronizeJob(null, null,
-						getServer(), ServerSyncType.BUGLINK, true, f_method);
+						getServer(), ServerSyncType.BUGLINK, true, f_strategy);
 				job.schedule();
 			}
 			return status;

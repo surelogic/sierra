@@ -55,20 +55,20 @@ public class SynchronizeJob extends AbstractServerProjectJob {
 	 * @param force
 	 *            when {@code true} it causes the synchronize to be attempted
 	 *            even if too many failures have occurred in the past.
-	 * @param method
+	 * @param strategy
 	 *            the method to report problems that the job encounters.
 	 */
 	public SynchronizeJob(final ServerProjectGroupJob family,
 			final String projectName, final ConnectedServer server,
 			final ServerSyncType syncType, final boolean force,
-			final ServerFailureReport method) {
+			final ServerFailureReport strategy) {
 		super(
 				family,
 				syncType.equals(ServerSyncType.BUGLINK) ? "Synchronizing BugLink data for server '"
 						+ server.getName() + "'"
 						: "Synchronizing Sierra data for project '"
 								+ projectName + "'", server, projectName,
-				method);
+				strategy);
 		f_force = force;
 		f_syncType = syncType;
 		setRule(DatabaseAccessRule.getInstance());
@@ -103,10 +103,10 @@ public class SynchronizeJob extends AbstractServerProjectJob {
 			TroubleshootConnection troubleshoot = null;
 			if (joinJob != null && joinJob.troubleshoot(getServer())) {
 				if (cause instanceof ServerMismatchException) {
-					troubleshoot = new TroubleshootWrongServer(f_method,
+					troubleshoot = new TroubleshootWrongServer(f_strategy,
 							getServer().getLocation(), f_projectName);
 				} else if (cause instanceof SierraServiceClientException) {
-					troubleshoot = getTroubleshootConnection(f_method,
+					troubleshoot = getTroubleshootConnection(f_strategy,
 							(SierraServiceClientException) cause);
 				}
 				if (troubleshoot != null && troubleshoot.retry()) {

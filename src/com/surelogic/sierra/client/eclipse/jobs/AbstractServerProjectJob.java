@@ -47,7 +47,7 @@ public abstract class AbstractServerProjectJob extends AbstractServerJob {
 
 	protected final String f_projectName;
 	protected final ServerProjectGroupJob joinJob;
-	protected final ServerFailureReport f_method;
+	protected final ServerFailureReport f_strategy;
 
 	/**
 	 * Construct a job.
@@ -61,13 +61,13 @@ public abstract class AbstractServerProjectJob extends AbstractServerJob {
 	 * @param project
 	 *            the project name that this job is working with, may be {@code
 	 *            null}.
-	 * @param method
+	 * @param strategy
 	 *            the method to report problems that the job encounters, may be
 	 *            {@code null}.
 	 */
 	public AbstractServerProjectJob(final ServerProjectGroupJob family,
 			final String name, final ConnectedServer server,
-			final String project, final ServerFailureReport method) {
+			final String project, final ServerFailureReport strategy) {
 		super(name);
 		joinJob = family;
 		if (family != null) {
@@ -75,13 +75,13 @@ public abstract class AbstractServerProjectJob extends AbstractServerJob {
 		}
 		f_server = server;
 		f_projectName = project == null ? "(none)" : project;
-		f_method = method;
+		f_strategy = strategy;
 	}
 
 	protected final TroubleshootConnection getTroubleshootConnection(
-			final ServerFailureReport method,
+			final ServerFailureReport strategy,
 			final SierraServiceClientException e) {
-		return getTroubleshootConnection(method, f_server.getLocation(), e);
+		return getTroubleshootConnection(strategy, f_server.getLocation(), e);
 	}
 
 	protected final IStatus createWarningStatus(final int errNo,

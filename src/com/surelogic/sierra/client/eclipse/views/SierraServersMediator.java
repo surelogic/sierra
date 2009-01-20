@@ -1285,7 +1285,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 
 				// Try to distinguish server failure/disconnection and
 				// RPC failure
-				final ServerFailureReport method = PreferenceConstants
+				final ServerFailureReport strategy = PreferenceConstants
 						.getServerFailureReporting();
 				TroubleshootConnection tc;
 				try {
@@ -1297,17 +1297,17 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 					serverResponse = checkForBugLinkUpdates(c, serverResponse,
 							loc);
 				} catch (final ServerMismatchException e) {
-					tc = new TroubleshootWrongServer(method, server
+					tc = new TroubleshootWrongServer(strategy, server
 							.getLocation(), name);
 					failedServers = handleServerProblem(failedServers, server,
 							tc, e);
 				} catch (final SierraServiceClientException e) {
-					tc = AbstractServerJob.getTroubleshootConnection(method,
+					tc = AbstractServerJob.getTroubleshootConnection(strategy,
 							server.getLocation(), e);
 					failedServers = handleServerProblem(failedServers, server,
 							tc, e);
 				} catch (final Exception e) {
-					tc = new TroubleshootException(method,
+					tc = new TroubleshootException(strategy,
 							server.getLocation(), e, e instanceof SQLException);
 					failedServers = handleServerProblem(failedServers, server,
 							tc, e);

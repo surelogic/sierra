@@ -9,9 +9,9 @@ import com.surelogic.sierra.tool.message.ServerLocation;
 
 public final class TroubleshootNoSuchServer extends TroubleshootConnection {
 
-	public TroubleshootNoSuchServer(final ServerFailureReport method,
+	public TroubleshootNoSuchServer(final ServerFailureReport strategy,
 			ServerLocation location) {
-		super(method, location);
+		super(strategy, location);
 	}
 
 	@Override
