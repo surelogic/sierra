@@ -72,16 +72,14 @@ public class ValidateServerLocationJob extends DatabaseJob {
 		monitor.beginTask("Trying to connect...", IProgressMonitor.UNKNOWN);
 		try {
 			final ConnectedServer server = validate(f_loc, f_savePass);
-			if (server != null) {
-				/*
-				 * We can talk to this team server. Next, we synchronize BugLink
-				 * information with it.
-				 */
-				final SynchronizeJob job = new SynchronizeJob(null, null,
-						server, ServerSyncType.BUGLINK, true,
-						ServerFailureReport.SHOW_BALLOON);
-				job.schedule();
-			}
+			/*
+			 * We can talk to this team server. Next, we synchronize BugLink
+			 * information with it.
+			 */
+			final SynchronizeJob job = new SynchronizeJob(null, null, server,
+					ServerSyncType.BUGLINK, true,
+					ServerFailureReport.SHOW_BALLOON);
+			job.schedule();
 			return Status.OK_STATUS;
 		} catch (final Exception e) {
 			if (e instanceof TransactionException
