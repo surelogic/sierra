@@ -113,13 +113,15 @@ import com.surelogic.sierra.tool.message.SyncTrailResponse;
 public final class SierraServersMediator extends AbstractSierraViewMediator
 		implements ISierraServerObserver, IProjectsObserver {
 	private static final boolean showFiltersOnServer = true;
-
+	
 	static final String SCAN_FILTERS = "Scan Filters";
 
 	static final String CATEGORIES = "Categories";
 
 	static final String CONNECTED_PROJECTS = "Connected Projects";
 
+	static final String UNCONNECTED_PROJECTS = "Unconnected";
+	
 	private static final String NO_SERVER_DATA = "Needs to grab from server";
 
 	/**
@@ -985,7 +987,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 					collectProjects(projects, item, true);
 				} else if (item.getText().endsWith(CONNECTED_PROJECTS)) {
 					collectProjects(projects, item, false);
-				} else if ("Unconnected".equals(item.getText())) {
+				} else if (item.getText().endsWith(UNCONNECTED_PROJECTS)) {
 					collectProjects(projects, item, false);
 				} else {
 					final ProjectStatus status = inProject(item.getParent());
@@ -1731,7 +1733,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 
 		serverNode.setChildren(serverContent.toArray(emptyChildren));
 		final ChangeStatus status3 = serverNode.getChangeStatus();
-		serverNode.setText(status3.getLabel() + server + " ["
+		serverNode.setText(status3.getLabel() + server.getName() + " ["
 				+ server.getLocation().createHomeURL() + ']');
 		return serverNode;
 	}
