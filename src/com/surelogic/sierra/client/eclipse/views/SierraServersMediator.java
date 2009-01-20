@@ -675,8 +675,6 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 	}
 	
 	void setupContextMenu(Menu contextMenu) {
-		addAlwaysOnMenuItems(contextMenu);
-
 		final SelectedServers servers = collectServers();
 		final boolean onlyServer = servers.indirect.size() == 1;
 		final boolean onlyTeamServer;
@@ -690,14 +688,18 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 		}
 		final boolean enableSendFilters = 
 			SendScanFiltersJob.ENABLED && onlyBugLink && onlyServer;
+		final boolean enableConnect = onlyTeamServer && !servers.direct.isEmpty();
 		if (onlyServer) {
-			addServerMenuItems(contextMenu, enableSendFilters);
+			addAlwaysOnMenuItems(contextMenu);
+			addServerMenuItems(contextMenu, enableConnect, enableSendFilters);
+			return;
 		}
 
 		final List<ScanFilter> filters = collectScanFilters();
 		final boolean onlyScanFilter = filters.size() == 1;
 		if (onlyScanFilter) {
 			addScanFilterMenuItems(contextMenu);
+			return;
 		}
 
 		final List<ProjectStatus> status = collectSelectedProjectStatus();
@@ -705,30 +707,27 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 		boolean allConnected = someProjects;
 		boolean allHasScans = someProjects;
 		if (someProjects) {
-			// try {
-				for (final ProjectStatus ps : status) {
-					if ((f_manager == null) || (ps == null)) {
-						// LOG.severe("Null project status");
-						continue;
-					}
-					if (!f_manager.isConnected(ps.name)) {
-						allConnected = false;
-					}
-					if (ps.scanDoc == null || !ps.scanDoc.exists()) {
-						allHasScans = false;
-					} else if (ps.scanInfo != null
-							&& ps.scanInfo.isPartial()) {
-						allHasScans = false;
-					}
+			for (final ProjectStatus ps : status) {
+				if ((f_manager == null) || (ps == null)) {
+					// LOG.severe("Null project status");
+					continue;
 				}
-				/*
-				 * } catch (Throwable t) { t.printStackTrace(); }
-				 */
+				if (!f_manager.isConnected(ps.name)) {
+					allConnected = false;
+				}
+				if (ps.scanDoc == null || !ps.scanDoc.exists()) {
+					allHasScans = false;
+				} else if (ps.scanInfo != null
+						&& ps.scanInfo.isPartial()) {
+					allHasScans = false;
+				}
+			}
 		}
 		if (someProjects) {
 			addProjectMenuItems(contextMenu, allHasScans, allConnected);
-			//FIX (onlyTeamServer && !servers.direct.isEmpty())
+			return;
 		}
+		addAlwaysOnMenuItems(contextMenu);
 	}
 
 	private List<ScanFilter> collectScanFilters() {
@@ -782,6 +781,9 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 				servers.direct.add(s);
 				servers.indirect.add(s);
 			} else {
+				if (item.getText().endsWith(CONNECTED_PROJECTS)) {
+					return new SelectedServers(false);
+				}
 				// System.out.println("Got a non-server selection:
 				// "+item.getText());
 				final ConnectedServer s = inServer(item);
@@ -1911,6 +1913,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 			scanFilter.setData(ps.filter);
 		}
 		if (ps.serverData == null) {
+			/* No need to update any more?
 			if (server != null) {
 				final ServersViewContent noServer = new ServersViewContent(
 						root, null);
@@ -1919,6 +1922,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 						.setText("No server info available ... click to update");
 				noServer.setData(NO_SERVER_DATA);
 			}
+			*/
 		} else if (!ps.serverData.isEmpty()) {
 			final ServersViewContent audits = new ServersViewContent(root,
 					SLImages.getImage(CommonImages.IMG_SIERRA_STAMP));
@@ -2051,7 +2055,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 		newServerItem.addListener(SWT.Selection, f_newServerAction);
 	}
 	
-	void addServerMenuItems(Menu contextMenu, boolean enableSendFilters) {
+	void addServerMenuItems(Menu contextMenu, boolean enableConnect, boolean enableSendFilters) {
 
 		final MenuItem browseServerItem = AbstractSierraView.createMenuItem(contextMenu, "Browse",
 				SLImages.getImage(CommonImages.IMG_SIERRA_SERVER));
@@ -2069,14 +2073,16 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 		
 		new MenuItem(contextMenu, SWT.SEPARATOR);
 		
-		final MenuItem serverConnectItem = AbstractSierraView.createMenuItem(contextMenu,
-				"Connect...", CommonImages.IMG_SIERRA_SERVER);
+		if (enableConnect) {			
+			final MenuItem serverConnectItem = AbstractSierraView.createMenuItem(contextMenu,
+					"Connect...", CommonImages.IMG_SIERRA_SERVER);
+			serverConnectItem.addListener(SWT.Selection, f_serverConnectAction);
+		}
 		if (enableSendFilters) {
 			final MenuItem sendResultFilters = AbstractSierraView.createMenuItem(contextMenu,
 					"Send Local Scan Filter As ...", CommonImages.IMG_FILTER);
 			sendResultFilters.addListener(SWT.Selection, f_sendResultFiltersAction);
 		}
-		serverConnectItem.addListener(SWT.Selection, f_serverConnectAction);
 				
 		final MenuItem serverPropertiesItem = new MenuItem(contextMenu,
 				SWT.PUSH);
