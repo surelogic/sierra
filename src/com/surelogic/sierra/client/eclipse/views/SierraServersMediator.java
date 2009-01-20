@@ -120,8 +120,6 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 
 	static final String UNCONNECTED_PROJECTS = "Unconnected";
 
-	private static final String NO_SERVER_DATA = "Needs to grab from server";
-
 	/**
 	 * This should only be changed in the UI thread
 	 */
@@ -600,7 +598,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 		f_view.addToViewMenu(f_serverSyncAction);
 		// f_view.addToViewMenu(f_buglinkSyncAction);
 		// f_view.addToViewMenu(f_serverUpdateAction);
-		f_view.addToViewMenu(f_toggleAutoSyncAction);
+		//f_view.addToViewMenu(f_toggleAutoSyncAction);
 		f_view.addToViewMenu(new Separator());
 
 		final ServerStatusSort sort = PreferenceConstants.getServerStatusSort();
@@ -679,19 +677,22 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 		final boolean onlyServer = servers.indirect.size() == 1;
 		final boolean onlyTeamServer;
 		final boolean onlyBugLink;
+		final AutoSyncType syncType;
 		if (onlyServer) {
 			final ConnectedServer focus = servers.indirect.get(0);
 			onlyTeamServer = focus.isTeamServer();
 			onlyBugLink = focus != null;
+			syncType = focus.getLocation().isAutoSync() ? AutoSyncType.ON : AutoSyncType.OFF;
 		} else {
 			onlyTeamServer = onlyBugLink = false;
+			syncType = AutoSyncType.MIXED;
 		}
 		final boolean enableSendFilters = 
 			SendScanFiltersJob.ENABLED && onlyBugLink && onlyServer;
 		final boolean enableConnect = onlyTeamServer && !servers.direct.isEmpty();
 		if (onlyServer) {
 			addAlwaysOnMenuItems(contextMenu);
-			addServerMenuItems(contextMenu, enableConnect, enableSendFilters);
+			addServerMenuItems(contextMenu, syncType, enableConnect, enableSendFilters);
 			return;
 		}
 
@@ -1192,6 +1193,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 		}
 	}
 
+	/*
 	private void updateServerInfo() throws Exception {
 		final Connection c = Data.getInstance().transactionConnection();
 		Exception exc = null;
@@ -1237,6 +1239,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 			}
 		}
 	}
+    */
 
 	private ServerUpdateStatus checkForBugLinkUpdates(final Connection c,
 			ServerUpdateStatus serverResponse, final ServerLocation loc) {
@@ -2055,7 +2058,8 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 		newServerItem.addListener(SWT.Selection, f_newServerAction);
 	}
 	
-	void addServerMenuItems(Menu contextMenu, boolean enableConnect, boolean enableSendFilters) {
+	void addServerMenuItems(Menu contextMenu, AutoSyncType syncType,
+			                boolean enableConnect, boolean enableSendFilters) {
 
 		final MenuItem browseServerItem = AbstractSierraView.createMenuItem(contextMenu, "Browse",
 				SLImages.getImage(CommonImages.IMG_SIERRA_SERVER));
@@ -2073,6 +2077,12 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 		
 		new MenuItem(contextMenu, SWT.SEPARATOR);
 		
+		if (syncType.areAllSame()) {
+			final MenuItem toggleAutosyncItem = new MenuItem(contextMenu, SWT.CHECK);
+			toggleAutosyncItem.setText("Toggle Auto-sync");
+			toggleAutosyncItem.addListener(SWT.Selection, f_toggleAutoSyncAction);
+			toggleAutosyncItem.setSelection(syncType == AutoSyncType.ON);
+		}
 		if (enableConnect) {			
 			final MenuItem serverConnectItem = AbstractSierraView.createMenuItem(contextMenu,
 					"Connect...", CommonImages.IMG_SIERRA_SERVER);
