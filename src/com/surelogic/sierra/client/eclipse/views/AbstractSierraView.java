@@ -1,5 +1,6 @@
 package com.surelogic.sierra.client.eclipse.views;
 
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IContributionItem;
@@ -25,6 +26,7 @@ import com.surelogic.sierra.client.eclipse.actions.PreferencesAction;
 
 public abstract class AbstractSierraView<M extends IViewMediator> extends
 		ViewPart implements IViewCallback {
+	public static final String PREFERENCES_MSG = "Preferences...";
 	public static final String VIEW_GROUP = "com.surelogic.sierra.client.eclipse.views";
 
 	protected static MenuItem createMenuItem(Menu menu, String name, Image image) {
@@ -74,7 +76,7 @@ public abstract class AbstractSierraView<M extends IViewMediator> extends
 		final IMenuManager menu = bars.getMenuManager();
 		menu.add(new GroupMarker(VIEW_GROUP));
 		menu.add(new Separator());
-		menu.add(new PreferencesAction("Preferences..."));
+		menu.add(createPreferencesAction());
 
 		bars.getToolBarManager().add(new GroupMarker(VIEW_GROUP));
 
@@ -95,6 +97,10 @@ public abstract class AbstractSierraView<M extends IViewMediator> extends
 		getSite().getWorkbenchWindow().getWorkbench().getHelpSystem().setHelp(
 				parent, mediator.getHelpId());
 		// parent.layout(true, true);
+	}
+
+	protected Action createPreferencesAction() {
+		return new PreferencesAction(PREFERENCES_MSG);
 	}
 
 	protected M createMorePartControls(Composite[] parents) {

@@ -449,18 +449,6 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 	@Override
 	public void init() {
 		// Actions in reverse order
-		final Action serverInteractionAction = new Action(
-				"Server Interaction Preferences ...", IAction.AS_PUSH_BUTTON) {
-			@Override
-			public void run() {
-				final PreferenceDialog dialog = PreferencesUtil
-						.createPreferenceDialogOn(null,
-								PreferencesAction.SERVER_INTERACTION_ID,
-								PreferencesAction.FILTER, null);
-				dialog.open();
-			}
-		};
-		//f_view.addToViewMenu(serverInteractionAction);
 		f_view.addToViewMenu(f_serverSyncAction);
 		// f_view.addToViewMenu(f_buglinkSyncAction);
 		// f_view.addToViewMenu(f_serverUpdateAction);
