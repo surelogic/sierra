@@ -101,7 +101,7 @@ public class SynchronizeJob extends AbstractServerProjectJob {
 		} catch (final TransactionException e) {
 			final Throwable cause = e.getCause();
 			TroubleshootConnection troubleshoot = null;
-			if (joinJob != null && joinJob.troubleshoot(getServer())) {
+			if (joinJob == null || joinJob.troubleshoot(getServer())) {
 				if (cause instanceof ServerMismatchException) {
 					troubleshoot = new TroubleshootWrongServer(f_strategy,
 							getServer().getLocation(), f_projectName);
@@ -121,7 +121,9 @@ public class SynchronizeJob extends AbstractServerProjectJob {
 					}
 				}
 			}
-			joinJob.fail(getServer());
+			if (joinJob != null) {
+				joinJob.fail(getServer());
+			}
 			return fail(e);
 		}
 	}
