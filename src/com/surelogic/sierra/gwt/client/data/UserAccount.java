@@ -66,6 +66,7 @@ public final class UserAccount implements Serializable {
 	}
 
 	public boolean showServerConfig() {
-		return isAdministrator && serverName == null;
+		return isAdministrator
+				&& (serverName == null || "* no name *".equals(serverName));
 	}
 }
