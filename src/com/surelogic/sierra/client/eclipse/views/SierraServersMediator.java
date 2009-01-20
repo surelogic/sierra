@@ -27,6 +27,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.PreferenceDialog;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ILabelDecorator;
@@ -113,7 +114,7 @@ import com.surelogic.sierra.tool.message.SyncTrailResponse;
 public final class SierraServersMediator extends AbstractSierraViewMediator
 		implements ISierraServerObserver, IProjectsObserver {
 	private static final boolean showFiltersOnServer = true;
-	
+
 	static final String SCAN_FILTERS = "Scan Filters";
 
 	static final String CATEGORIES = "Categories";
@@ -121,7 +122,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 	static final String CONNECTED_PROJECTS = "Connected Projects";
 
 	static final String UNCONNECTED_PROJECTS = "Unconnected";
-	
+
 	private static final String NO_SERVER_DATA = "Needs to grab from server";
 
 	/**
@@ -319,14 +320,20 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 						.asyncSyncWithServer(ServerSyncType.BUGLINK);
 			}
 		};
-		f_serverSyncAction = new ActionListener(
-				"Synchronize All Connected Projects",
-				"Synchronize servers and connected projects") {
+		f_serverSyncAction = new ActionListener("Synchronize All",
+				"Synchronize with all servers and connected projects") {
+			@Override
+			public ImageDescriptor getImageDescriptor() {
+				return SLImages
+						.getImageDescriptor(CommonImages.IMG_SIERRA_SYNC);
+			}
+
 			@Override
 			public void run() {
 				SierraServersAutoSync.asyncSyncWithServer(ServerSyncType.ALL);
 			}
 		};
+		view.addToActionBar(f_serverSyncAction);
 		/*
 		 * view.addToActionBar(f_serverSyncAction); view.addToActionBar(new
 		 * Separator());
@@ -453,7 +460,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 				dialog.open();
 			}
 		};
-		f_view.addToViewMenu(serverInteractionAction);
+		//f_view.addToViewMenu(serverInteractionAction);
 		f_view.addToViewMenu(f_serverSyncAction);
 		// f_view.addToViewMenu(f_buglinkSyncAction);
 		// f_view.addToViewMenu(f_serverUpdateAction);
