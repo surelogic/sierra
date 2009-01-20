@@ -22,6 +22,8 @@ import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.jdbc.TransactionException;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;
+import com.surelogic.sierra.client.eclipse.jobs.SynchronizeJob;
+import com.surelogic.sierra.client.eclipse.preferences.ServerFailureReport;
 import com.surelogic.sierra.jdbc.settings.ConnectedServer;
 import com.surelogic.sierra.jdbc.settings.ServerLocations;
 import com.surelogic.sierra.tool.message.ServerLocation;
@@ -92,7 +94,7 @@ public final class ConnectedServerManager extends
 	public ConnectedServer getServerByUuid(final String uuid) {
 		if (uuid != null) {
 			final Set<ConnectedServer> servers = getServers();
-			for (ConnectedServer server : servers) {
+			for (final ConnectedServer server : servers) {
 				if (server.getUuid().equals(uuid)) {
 					return server;
 				}
@@ -112,7 +114,7 @@ public final class ConnectedServerManager extends
 	public ConnectedServer getServerByLocation(final ServerLocation location) {
 		if (location != null) {
 			final Set<ConnectedServer> servers = getServers();
-			for (ConnectedServer server : servers) {
+			for (final ConnectedServer server : servers) {
 				if (server.getLocation().equals(location)) {
 					return server;
 				}
@@ -249,7 +251,31 @@ public final class ConnectedServerManager extends
 			f_servers.add(newServer);
 		}
 		saveAndNotifyObservers();
+		new SynchronizeJob(null, null, server,
+				ServerSyncType.BY_SERVER_SETTINGS, true,
+				ServerFailureReport.SHOW_DIALOG).schedule();
 		return newServer;
+	}
+
+	/**
+	 * Changes out the server object with another, updated, server object.
+	 * 
+	 * @param from
+	 *            the old server object.
+	 * @param to
+	 *            the new server object.
+	 * @return the new server.
+	 */
+	public ConnectedServer changeServer(final ConnectedServer from,
+			final ConnectedServer to) {
+		synchronized (this) {
+			f_servers.remove(from);
+			f_servers.add(to);
+		}
+		saveAndNotifyObservers();
+		new SynchronizeJob(null, null, to, ServerSyncType.BY_SERVER_SETTINGS,
+				true, ServerFailureReport.SHOW_DIALOG).schedule();
+		return to;
 	}
 
 	/**
@@ -273,25 +299,6 @@ public final class ConnectedServerManager extends
 		}
 		saveAndNotifyObservers();
 		return newServer;
-	}
-
-	/**
-	 * Changes out the server object with another, updated, server object.
-	 * 
-	 * @param from
-	 *            the old server object.
-	 * @param to
-	 *            the new server object.
-	 * @return the new server.
-	 */
-	public ConnectedServer changeServer(final ConnectedServer from,
-			final ConnectedServer to) {
-		synchronized (this) {
-			f_servers.remove(from);
-			f_servers.add(to);
-		}
-		saveAndNotifyObservers();
-		return to;
 	}
 
 	/**
@@ -376,9 +383,10 @@ public final class ConnectedServerManager extends
 	 * @return the non-null connection statistics between the client and a
 	 *         server within a this Eclipse session.
 	 */
-	public ConnectedServerStats getStats(ConnectedServer server) {
-		if (server == null)
+	public ConnectedServerStats getStats(final ConnectedServer server) {
+		if (server == null) {
 			throw new IllegalArgumentException(I18N.err(44, "server"));
+		}
 		final String uuid = server.getUuid();
 		ConnectedServerStats stats;
 		synchronized (this) {
