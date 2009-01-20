@@ -884,7 +884,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 					return; // No children
 				}
 				// look for CONNECTED_PROJECTS (if a server)
-				ServersViewContent temp = parent.getChildren()[0];
+				ServersViewContent temp = null;
 				for (ServersViewContent c : parent.getChildren()) {
 					if (c.getText().endsWith(CONNECTED_PROJECTS)) {
 						temp = c;
@@ -894,6 +894,9 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 				projectItems = temp;
 			} else {
 				projectItems = parent;
+			}
+			if (projectItems == null) {
+				return;
 			}
 			for (final ServersViewContent item : projectItems.getChildren()) {
 				if (item.getData() == null) {
