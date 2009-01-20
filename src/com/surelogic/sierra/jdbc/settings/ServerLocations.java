@@ -129,11 +129,11 @@ public final class ServerLocations {
 		return new NullDBQuery() {
 			@Override
 			public void doPerform(final Query q) {
+				final Queryable<Void> delete = q
+						.prepared("ServerLocations.deleteIdentity");
+				final Queryable<Void> insert = q
+						.prepared("ServerLocations.insertIdentity");
 				for (final ServerIdentity id : ids) {
-					final Queryable<Void> delete = q
-							.prepared("ServerLocations.deleteIdentity");
-					final Queryable<Void> insert = q
-							.prepared("ServerLocations.insertIdentity");
 					q.prepared("ServerLocations.selectIdentityRevision",
 							new NullResultHandler() {
 								@Override
@@ -141,7 +141,7 @@ public final class ServerLocations {
 									for (final Row r : result) {
 										// We don't want to do anything if
 										// we already have a higher revision
-										if (r.nextLong() <= id.getRevision()) {
+										if (r.nextLong() >= id.getRevision()) {
 											return;
 										}
 									}

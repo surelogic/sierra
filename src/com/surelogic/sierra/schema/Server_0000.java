@@ -16,6 +16,25 @@ public class Server_0000 implements SchemaAction {
 		final String serverUuid = UUID.randomUUID().toString();
 		c.createStatement().execute(
 				"INSERT INTO SERVER (UUID) VALUES('" + serverUuid + "')");
+		final PreparedStatement nameSt = c
+				.prepareStatement("INSERT INTO SERVER_IDENTITY (UUID,NAME,REVISION) VALUES (?,?,?)");
+		try {
+			nameSt.setString(1, serverUuid);
+			nameSt.setString(2, "* no name *");
+			nameSt.setLong(3, 0L);
+			nameSt.execute();
+		} finally {
+			nameSt.close();
+		}
+		final PreparedStatement nameSettingSt = c
+				.prepareStatement("INSERT INTO SITE_SETTINGS (SETTING_NAME, SETTING_VALUE) VALUES ('Name', ?)");
+		try {
+			nameSettingSt.setString(1, "* no name *");
+			nameSettingSt.execute();
+		} finally {
+			nameSettingSt.close();
+		}
+
 		final PreparedStatement groupSt = c
 				.prepareStatement("INSERT INTO SIERRA_GROUP (NAME,INFO) VALUES (?,?)");
 		try {
@@ -57,7 +76,7 @@ public class Server_0000 implements SchemaAction {
 					.execute("INSERT INTO SERVER_LOCATION (PROTOCOL,HOST,PORT,CONTEXT_PATH,SERVER_USER,PASSWORD,AUTOSYNC,UUID,SAVEPASS,TEAMSERVER) "
 							+ " VALUES ('http','buglink.org',13376,'/sl/','buglink-user','bl!uzer','Y','9a997ac4-ec2b-4d02-869a-423999fecfed','Y','N')");
 			st
-					.execute("INSERT INTO SERVER_IDENTITY (UUID,NAME,REVISION) VALUES ('9a997ac4-ec2b-4d02-869a-423999fecfed','buglink',-1)");
+					.execute("INSERT INTO SERVER_IDENTITY (UUID,NAME,REVISION) VALUES ('9a997ac4-ec2b-4d02-869a-423999fecfed','buglink',0)");
 		} finally {
 			st.close();
 		}
