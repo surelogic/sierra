@@ -16,15 +16,15 @@ import java.util.logging.Level;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.jobs.Job;
 
 import com.surelogic.common.ILifecycle;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.jdbc.TransactionException;
 import com.surelogic.common.logging.SLLogger;
-import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.jobs.LoadConnectedServersJob;
+import com.surelogic.sierra.client.eclipse.jobs.UpdateConnectedServersJob;
 import com.surelogic.sierra.jdbc.settings.ConnectedServer;
-import com.surelogic.sierra.jdbc.settings.ServerLocations;
 import com.surelogic.sierra.tool.message.ServerLocation;
 
 /**
@@ -428,8 +428,9 @@ public final class ConnectedServerManager extends
 			if (map != null) {
 				Platform.addAuthorizationInfo(FAKE_URL, "", AUTH_SCHEME, map);
 			}
-			Data.getInstance().withTransaction(
-					ServerLocations.saveQuery(servers, false));
+			final Job j = new UpdateConnectedServersJob(servers);
+			j.setSystem(true);
+			j.schedule();
 		} catch (final TransactionException e) {
 			SLLogger.getLogger().log(Level.SEVERE,
 					I18N.err(38, "Team Servers", "database"), e);
@@ -478,7 +479,7 @@ public final class ConnectedServerManager extends
 					final Collection<String> projs = map.get(s);
 					for (final String project : projs) {
 						final ConnectedServer last = projects.get(project);
-						if (last != s && !last.equals(s)) {
+						if (last == null || !last.equals(s)) {
 							updated = true;
 						}
 					}
@@ -508,7 +509,9 @@ public final class ConnectedServerManager extends
 		final Map<String, String> passwords = Platform.getAuthorizationInfo(
 				FAKE_URL, "", AUTH_SCHEME);
 		try {
-			new LoadConnectedServersJob(passwords).schedule();
+			final Job j = new LoadConnectedServersJob(passwords);
+			j.setSystem(true);
+			j.schedule();
 		} catch (final Exception e) {
 			SLLogger.getLogger().log(Level.SEVERE,
 					"Failure loading connected server data", e);
