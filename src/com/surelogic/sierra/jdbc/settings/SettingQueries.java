@@ -527,7 +527,8 @@ public class SettingQueries {
 								"No server matching this uuid exists in the database.");
 					}
 				}
-				ServerLocations.saveQuery(newServers, true).doPerform(q);
+				ServerLocations.saveQuery(newServers, savePassword)
+						.doPerform(q);
 			}
 		};
 	}
