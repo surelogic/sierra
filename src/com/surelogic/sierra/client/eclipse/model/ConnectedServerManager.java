@@ -476,8 +476,10 @@ public final class ConnectedServerManager extends
 			// Are all of the new project associations the same as old project
 			// associations?
 			for (final ConnectedServer s : servers) {
-				for (final String project : map.get(s)) {
-					if (!projects.get(project).equals(s)) {
+				final Collection<String> projs = map.get(s);
+				for (final String project : projs) {
+					final ConnectedServer last = projects.get(project);
+					if (last != s && !last.equals(s)) {
 						return true;
 					}
 				}
