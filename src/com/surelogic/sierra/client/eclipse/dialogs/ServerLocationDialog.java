@@ -25,6 +25,7 @@ import com.surelogic.common.eclipse.SWTUtility;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.images.CommonImages;
 import com.surelogic.sierra.client.eclipse.jobs.ValidateServerLocationJob;
+import com.surelogic.sierra.client.eclipse.model.ConnectedServerManager;
 import com.surelogic.sierra.jdbc.settings.ConnectedServer;
 import com.surelogic.sierra.tool.message.ServerLocation;
 
@@ -75,10 +76,10 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 				server.getLocation(), title);
 		if (dialog.open() == Window.OK) {
 			final ServerLocation location = dialog.f_location;
-			// FIXME
-			final Job job = new ValidateServerLocationJob(location,
-					dialog.f_savePassword, dialog.f_autoSync);
-			job.schedule();
+			ConnectedServerManager.getInstance().changeServer(
+					server,
+					new ConnectedServer(server.getUuid(), server.getName(),
+							server.isTeamServer(), location));
 		}
 	}
 
