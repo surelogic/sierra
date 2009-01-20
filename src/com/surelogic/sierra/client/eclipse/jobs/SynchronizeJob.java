@@ -110,7 +110,7 @@ public class SynchronizeJob extends AbstractServerProjectJob {
 							(SierraServiceClientException) cause);
 				}
 				if (troubleshoot != null && troubleshoot.retry()) {
-					ServerLocation fixed = troubleshoot.fix();
+					final ServerLocation fixed = troubleshoot.fix();
 					if (troubleshoot.retry()) {
 						/*
 						 * First update our server information.
@@ -137,8 +137,8 @@ public class SynchronizeJob extends AbstractServerProjectJob {
 			final Query q = new ConnectionQuery(conn);
 			SettingQueries.updateServerInfo(getServer().getLocation()).perform(
 					q);
-			if (f_syncType.syncBugLink() && joinJob != null
-					&& joinJob.process(getServer())) {
+			if (f_syncType.syncBugLink()
+					&& (joinJob == null || joinJob.process(getServer()))) {
 				final ServerLocation loc = getServer().getLocation();
 				SettingQueries.retrieveCategories(loc,
 						SettingQueries.categoryRequest().perform(q)).perform(q);
