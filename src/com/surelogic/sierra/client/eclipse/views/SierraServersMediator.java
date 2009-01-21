@@ -14,6 +14,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Level;
 
 import org.eclipse.core.resources.IProject;
@@ -1004,24 +1005,8 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 		asyncUpdateContents();
 	}
 
-	/*
-	 * void asyncUpdateServerInfo() { final long now =
-	 * System.currentTimeMillis(); lastServerUpdateTime.set(now);
-	 * System.out.println("Update at: " + now);
-	 * 
-	 * final Job lastJob = lastUpdateJob.get(); if ((lastJob == null) ||
-	 * (lastJob.getResult() != null)) { final Job job = new
-	 * DatabaseJob("Updating server status") {
-	 * 
-	 * @Override protected IStatus run(final IProgressMonitor monitor) {
-	 * monitor.beginTask("Updating server info", IProgressMonitor.UNKNOWN); try
-	 * { updateServerInfo(); } catch (final Exception e) { final int errNo = 58;
-	 * // FIX final String msg = I18N.err(errNo); return
-	 * SLEclipseStatusUtility.createErrorStatus(errNo, msg, e); }
-	 * monitor.done(); return Status.OK_STATUS; } }; lastUpdateJob.set(job);
-	 * job.schedule(); } }
-	 */
-
+	private final AtomicLong latestUpdate = new AtomicLong(System.currentTimeMillis());
+	
 	private void asyncUpdateContents() {
 		asyncUpdateContentsForUI(new IViewUpdater() {
 			public void updateContentsForUI() {
@@ -1031,26 +1016,19 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 				}
 			}
 		});
-		/*
-		 * final Job infoJob = new Job("Getting server info") {
-		 * 
-		 * @Override protected IStatus run(final IProgressMonitor monitor) {
-		 * final int threshold = PreferenceConstants
-		 * .getServerInteractionRetryThreshold(); final ConnectedServerManager
-		 * mgr = ConnectedServerManager .getInstance(); for (final
-		 * ConnectedServer s : mgr.getServers()) { if
-		 * (mgr.getStats(s).getProblemCount() <= threshold) {
-		 * s.updateServerInfo(); } } return Status.OK_STATUS; }
-		 * 
-		 * }; infoJob.setSystem(true); infoJob.schedule();
-		 */
+		final long now = System.currentTimeMillis();
+		latestUpdate.set(now);
 
 		final Job job = new DatabaseJob("Updating project status") {
 			@Override
 			protected IStatus run(final IProgressMonitor monitor) {
 				monitor.beginTask("Updating list", IProgressMonitor.UNKNOWN);
 				try {
-					updateContents();
+					final long latest = latestUpdate.get();
+					if (now >= latest) {					
+						// This is the latest update
+						updateContents(now);
+					}
 				} catch (final Exception e) {
 					final int errNo = 58; // FIX
 					final String msg = I18N.err(errNo);
@@ -1271,7 +1249,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 		return tc.isServerConsideredBad();
 	}
 
-	private void updateContents() throws Exception {
+	private void updateContents(final long now) throws Exception {
 		final Connection c = Data.getInstance().transactionConnection();
 		Exception exc = null;
 		try {
@@ -1285,6 +1263,12 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 			final Map<String, List<ScanFilter>> filters;
 			synchronized (responseMap) {
 				for (final IJavaProject jp : JDTUtility.getJavaProjects()) {
+					final long latest = latestUpdate.get();
+					if (now < latest) {	
+						// This isn't the latest update, so stop
+						c.rollback();
+						return;
+					}
 					final String name = jp.getElementName();
 					if (!Projects.getInstance().contains(name)) {
 						continue; // Not scanned
