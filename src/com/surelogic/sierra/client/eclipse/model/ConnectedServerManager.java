@@ -245,8 +245,11 @@ public final class ConnectedServerManager extends
 			final String user, final String pass, final boolean savePassword) {
 		final ConnectedServer newServer;
 		synchronized (this) {
-			f_servers.remove(server);
 			newServer = server.changeAuthorization(user, pass, savePassword);
+			for (final String project : getProjectsConnectedTo(server)) {
+				f_projectNameToServer.put(project, newServer);
+			}
+			f_servers.remove(server);
 			f_servers.add(newServer);
 		}
 		saveAndNotifyObservers();
@@ -266,6 +269,9 @@ public final class ConnectedServerManager extends
 			final ConnectedServer to) {
 		synchronized (this) {
 			f_servers.remove(from);
+			for (final String project : getProjectsConnectedTo(from)) {
+				f_projectNameToServer.put(project, to);
+			}
 			f_servers.add(to);
 		}
 		saveAndNotifyObservers();
