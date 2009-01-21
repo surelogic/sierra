@@ -1304,6 +1304,8 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 						serverResponseMap);
 				filters = SettingQueries.getLocalScanFilters().perform(q);
 			}
+			latestUpdate.compareAndSet(now, now+1);
+			
 			asyncUpdateContentsForUI(new IViewUpdater() {
 				public void updateContentsForUI() {
 					updateContentsInUI(projects, serverUpdates, filters);
