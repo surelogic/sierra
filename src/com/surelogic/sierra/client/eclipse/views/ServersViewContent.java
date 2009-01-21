@@ -96,11 +96,13 @@ class ServersViewContent implements IServerActionFilter {
 				} else if (AUTO_SYNC.equals(value)) {
 					return server.getLocation().isAutoSync();
 				}
+			/*
 			} else if (BUGLINK_TYPE.equals(value)) {
 				return text.endsWith(SierraServersMediator.SCAN_FILTERS)
 						|| text.endsWith(SierraServersMediator.CATEGORIES);
 			} else if (TEAM_SERVER_TYPE.equals(value)) {
 				return text.endsWith(SierraServersMediator.CONNECTED_PROJECTS);
+			*/
 			}
 		}		
 		return false;
