@@ -515,12 +515,6 @@ public final class ConnectedServerManager extends
 		} catch (final Exception e) {
 			SLLogger.getLogger().log(Level.SEVERE,
 					"Failure loading connected server data", e);
-		} finally {
-			try {
-				Platform.flushAuthorizationInfo(FAKE_URL, "", AUTH_SCHEME);
-			} catch (final CoreException e) {
-				SLLogger.getLogger().log(Level.SEVERE, I18N.err(42), e);
-			}
 		}
 	}
 
