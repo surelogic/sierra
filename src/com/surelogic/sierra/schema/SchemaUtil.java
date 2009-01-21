@@ -30,11 +30,8 @@ public class SchemaUtil {
 		final FindingTypeManager ftMan = FindingTypeManager.getInstance(conn);
 		final List<FindingTypes> types = new ArrayList<FindingTypes>(3);
 
-		types.add(getFindingTypes("findbugs.xml"));
-		types.add(getFindingTypes("pmd.xml"));
-		types.add(getFindingTypes("cpd.xml"));
-		types.add(getFindingTypes("jsure.xml"));
-		types.add(getFindingTypes("checkstyle.xml"));
+		types.add(getFindingTypes("finding_types.xml"));
+		types.add(getFindingTypes("categories.xml"));
 		ftMan.updateFindingTypes(types, 0);
 	}
 
