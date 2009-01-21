@@ -29,7 +29,6 @@ public class SchemaUtil {
 	static void updateFindingTypes(final Connection conn) throws SQLException {
 		final FindingTypeManager ftMan = FindingTypeManager.getInstance(conn);
 		final List<FindingTypes> types = new ArrayList<FindingTypes>(3);
-
 		types.add(getFindingTypes("finding_types.xml"));
 		types.add(getFindingTypes("categories.xml"));
 		ftMan.updateFindingTypes(types, 0);
