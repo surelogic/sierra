@@ -32,6 +32,7 @@ import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -94,9 +95,7 @@ import com.surelogic.sierra.jdbc.project.ProjectDO;
 import com.surelogic.sierra.jdbc.scan.ScanInfo;
 import com.surelogic.sierra.jdbc.scan.Scans;
 import com.surelogic.sierra.jdbc.settings.ConnectedServer;
-import com.surelogic.sierra.jdbc.settings.ScanFilterDO;
 import com.surelogic.sierra.jdbc.settings.ScanFilterView;
-import com.surelogic.sierra.jdbc.settings.ScanFilters;
 import com.surelogic.sierra.jdbc.settings.ServerScanFilterInfo;
 import com.surelogic.sierra.jdbc.settings.SettingQueries;
 import com.surelogic.sierra.tool.message.FilterSet;
@@ -282,6 +281,8 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 				Menu contextMenu = new Menu(statusTree.getTree().getShell(), SWT.POP_UP);
 				setupContextMenu(contextMenu);
 				statusTree.getTree().setMenu(contextMenu);
+				
+				System.out.println("Empty Selection: "+statusTree.getSelection().isEmpty());
 			}
 		});
 		
@@ -753,7 +754,13 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 	SelectedServers collectServers() {
 		final IStructuredSelection si = (IStructuredSelection) f_statusTree
 				.getSelection();
+		String lastMethod = new Throwable().getStackTrace()[1].getMethodName();
+		System.out.println("collectServers() from "+lastMethod+"(): "+si.size());
+		
 		if (si.size() == 0) {
+			if ("selectionChanged".equals(lastMethod)) {
+				System.out.println("selectionChanged");
+			}
 			return new SelectedServers(false);
 		}
 		final SelectedServers servers = new SelectedServers(true);
@@ -1374,10 +1381,13 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 		f_deleteServerAction.setEnabled(onlyServer);
 		f_openInBrowserAction.setEnabled(onlyServer);
 
+		final IStructuredSelection selection = 
+			(IStructuredSelection) f_statusTree.getSelection();
 		final TreeInput input = createTreeInput();
 		f_statusTree.setInput(input);
 		f_statusTree.getTree().getParent().layout();
 		f_statusTree.expandToLevel(3);
+		f_statusTree.setSelection(input.translateSelection(selection));
 
 		checkAutoSyncTrigger(projects);
 	}
@@ -1420,6 +1430,80 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 			byServer = server;
 			content = c;
 		}
+
+		private Map<Object, ServersViewContent> prepTranslation() {
+			Map<Object,ServersViewContent> map = new HashMap<Object, ServersViewContent>();
+			for(ServersViewContent c : content) {
+				processContent(map, c);
+			}
+			return map;
+		}
+		
+		private void processContent(Map<Object, ServersViewContent> map, 
+				                    ServersViewContent c) {
+			if (c == null || c.getData() == null) {
+				return;
+			}
+			map.put(createKey(c), c);
+			
+			ServersViewContent[] children = c.getChildren();
+			if (children != null) {
+				for(ServersViewContent child : children) {
+					processContent(map, child);
+				}
+			}
+		}
+
+		private Object createKey(ServersViewContent c) {
+			Object data = c.getData();
+			if (data instanceof String) {
+				return data+" for "+c.getParent();
+			} else {
+				return data;
+			}
+		}
+		@SuppressWarnings("unchecked")
+		ISelection translateSelection(IStructuredSelection selection) {
+			if (selection.isEmpty()) {
+				return selection;
+			}
+			Map<Object,ServersViewContent> map = prepTranslation();
+			final List<ServersViewContent> selected = new ArrayList<ServersViewContent>();
+			
+			Iterator it = selection.iterator();
+			while (it.hasNext()) {
+				Object key = createKey((ServersViewContent) it.next());
+				ServersViewContent translation = map.get(key);
+				if (translation != null) {
+					selected.add(translation);
+				}
+			}			
+			return new IStructuredSelection() {
+				public boolean isEmpty() {
+					return selected.isEmpty();
+				}
+
+				public Object getFirstElement() {
+					return selected.get(0);
+				}
+
+				public Iterator iterator() {
+					return selected.iterator();
+				}
+
+				public int size() {
+					return selected.size();
+				}
+
+				public Object[] toArray() {
+					return selected.toArray();
+				}
+
+				public List toList() {
+					return selected;
+				}				
+			};
+		}		
 	}
 
 	private TreeInput createTreeInput() {
