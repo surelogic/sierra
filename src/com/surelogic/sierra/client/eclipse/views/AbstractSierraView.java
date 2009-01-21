@@ -86,7 +86,7 @@ public abstract class AbstractSierraView<M extends IViewMediator> extends
 		final M mediator = f_mediator = createMorePartControls(f_dataPages);
 		mediator.init();
 
-		waitingForDataPage.setText("Waiting for data ...");
+		waitingForDataPage.setText("Waiting for data...");
 		
 		noDataPage.setText(I18N.msg(mediator.getNoDataI18N()));
 		final Listener noDataListener = mediator.getNoDataListener();
