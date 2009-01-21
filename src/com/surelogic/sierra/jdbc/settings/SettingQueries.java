@@ -555,7 +555,7 @@ public class SettingQueries {
 				final String name = reply.getName() == null ?
 						reply.getUid() : reply.getName();
 				final ConnectedServer s = new ConnectedServer(reply.getUid(),
-						reply.getName(), reply.getServices().contains(
+						name, reply.getServices().contains(
 								Services.TEAMSERVER), server);
 				ServerLocations.saveServerLocation(s, savePassword).perform(q);
 				return s;
