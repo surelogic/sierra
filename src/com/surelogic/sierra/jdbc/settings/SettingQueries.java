@@ -552,6 +552,8 @@ public class SettingQueries {
 			public ConnectedServer perform(final Query q) {
 				ServerLocations.updateServerIdentities(reply.getServers())
 						.perform(q);
+				final String name = reply.getName() == null ?
+						reply.getUid() : reply.getName();
 				final ConnectedServer s = new ConnectedServer(reply.getUid(),
 						reply.getName(), reply.getServices().contains(
 								Services.TEAMSERVER), server);
