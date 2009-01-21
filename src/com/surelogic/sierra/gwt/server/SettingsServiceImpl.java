@@ -369,6 +369,7 @@ public final class SettingsServiceImpl extends SierraServiceServlet implements
 								.listFindingTypes()) {
 							result.add(getType(type, q));
 						}
+						Collections.sort(result);
 						return result;
 					}
 				});
@@ -457,6 +458,7 @@ public final class SettingsServiceImpl extends SierraServiceServlet implements
 									.call(filter.getUuid())));
 							list.add(filter);
 						}
+						Collections.sort(list);
 						return list;
 					}
 				});
