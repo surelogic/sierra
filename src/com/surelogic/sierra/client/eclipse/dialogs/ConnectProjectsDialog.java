@@ -28,6 +28,7 @@ import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.common.images.CommonImages;
 import com.surelogic.sierra.client.eclipse.actions.SynchronizeProjectAction;
 import com.surelogic.sierra.client.eclipse.model.ConnectedServerManager;
+import com.surelogic.sierra.client.eclipse.model.Projects;
 import com.surelogic.sierra.jdbc.settings.ConnectedServer;
 
 public final class ConnectProjectsDialog extends Dialog {
@@ -48,9 +49,14 @@ public final class ConnectProjectsDialog extends Dialog {
 			throw new IllegalStateException(
 					"server of focus must be non-null (bug)");
 		List<IJavaProject> projects = JDTUtility.getJavaProjects();
+		List<String> scannedProjects = Projects.getInstance().getProjectNames();
 		Iterator<IJavaProject> it = projects.iterator();
 		while (it.hasNext()) {
-			if (f_manager.isConnected(it.next().getElementName())) {
+			final String projectName = it.next().getElementName();
+			if (f_manager.isConnected(projectName)) {
+				it.remove();
+			}
+			if (!scannedProjects.contains(projectName)) {
 				it.remove();
 			}
 		}
