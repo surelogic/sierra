@@ -11,8 +11,10 @@ import org.eclipse.ui.progress.UIJob;
 import com.surelogic.common.eclipse.jobs.SLUIJob;
 import com.surelogic.sierra.client.eclipse.actions.SynchronizeAllProjectsAction;
 import com.surelogic.sierra.client.eclipse.jobs.*;
+import com.surelogic.sierra.client.eclipse.model.ConnectedServerManager;
 import com.surelogic.sierra.client.eclipse.model.ServerSyncType;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
+import com.surelogic.sierra.jdbc.settings.ConnectedServer;
 
 public class SierraServersAutoSync {
 	private static final AtomicLong lastServerUpdateTime = new AtomicLong(System
@@ -109,7 +111,17 @@ public class SierraServersAutoSync {
 		}
 
 		protected void run() {
-			SierraServersAutoSync.asyncSyncWithServer(ServerSyncType.BY_SERVER_SETTINGS);
+			// Check if any servers have auto-sync on
+			boolean autoSync = false;
+			for(ConnectedServer s : ConnectedServerManager.getInstance().getServers()) {
+				if (s.getLocation().isAutoSync()) {
+					autoSync = true;
+					break;
+				}
+			}
+			if (autoSync) {
+				SierraServersAutoSync.asyncSyncWithServer(ServerSyncType.BY_SERVER_SETTINGS);
+			}
 		}
 	}
 }
