@@ -282,7 +282,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 				setupContextMenu(contextMenu);
 				statusTree.getTree().setMenu(contextMenu);
 				
-				System.out.println("Empty Selection: "+statusTree.getSelection().isEmpty());
+				//System.out.println("Empty Selection: "+statusTree.getSelection().isEmpty());
 			}
 		});
 		
@@ -754,13 +754,11 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 	SelectedServers collectServers() {
 		final IStructuredSelection si = (IStructuredSelection) f_statusTree
 				.getSelection();
+		/*
 		String lastMethod = new Throwable().getStackTrace()[1].getMethodName();
 		System.out.println("collectServers() from "+lastMethod+"(): "+si.size());
-		
+		*/
 		if (si.size() == 0) {
-			if ("selectionChanged".equals(lastMethod)) {
-				System.out.println("selectionChanged");
-			}
 			return new SelectedServers(false);
 		}
 		final SelectedServers servers = new SelectedServers(true);
