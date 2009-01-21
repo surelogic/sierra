@@ -32,7 +32,8 @@ import com.surelogic.sierra.client.eclipse.model.Projects;
 import com.surelogic.sierra.jdbc.settings.ConnectedServer;
 
 public final class ConnectProjectsDialog extends Dialog {
-
+    private final boolean disallowUnscannedProjects = false;
+	
 	private final ConnectedServerManager f_manager = ConnectedServerManager
 			.getInstance();
 
@@ -49,14 +50,14 @@ public final class ConnectProjectsDialog extends Dialog {
 			throw new IllegalStateException(
 					"server of focus must be non-null (bug)");
 		List<IJavaProject> projects = JDTUtility.getJavaProjects();
-		List<String> scannedProjects = Projects.getInstance().getProjectNames();
+		List<String> scannedProjects = disallowUnscannedProjects ? Projects.getInstance().getProjectNames() : null;
 		Iterator<IJavaProject> it = projects.iterator();
 		while (it.hasNext()) {
 			final String projectName = it.next().getElementName();
 			if (f_manager.isConnected(projectName)) {
 				it.remove();
 			}
-			if (!scannedProjects.contains(projectName)) {
+			if (disallowUnscannedProjects && !scannedProjects.contains(projectName)) {
 				it.remove();
 			}
 		}
