@@ -237,7 +237,12 @@ public class Category implements Serializable, Cacheable, Comparable<Category> {
 	}
 
 	public int compareTo(final Category o) {
-		return getName().compareTo(o.getName());
+		int cmp = Boolean.valueOf(o.isLocal()).compareTo(
+				Boolean.valueOf(isLocal()));
+		if (cmp == 0) {
+			cmp = getName().compareToIgnoreCase(o.getName());
+		}
+		return cmp;
 	}
 
 	public static class ScanFilterInfo implements Serializable {

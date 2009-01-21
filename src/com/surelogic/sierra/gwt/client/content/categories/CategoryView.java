@@ -62,13 +62,9 @@ public class CategoryView extends BasicPanel {
 			ownerGrid.setVisible(false);
 		} else {
 			ownerGrid.setVisible(true);
-			final StringBuilder linkHtml = new StringBuilder();
-			linkHtml.append("<a href=\"").append(cat.getOwnerURL()).append(
-					"\">");
-			linkHtml.append(cat.getOwnerLabel() == null ? "Unknown" : cat
-					.getOwnerLabel());
-			linkHtml.append("</a>");
-			ownerGrid.setWidget(0, 2, new HTML(linkHtml.toString()));
+			ownerGrid.setWidget(0, 2, new HTML("<em>"
+					+ (cat.getOwnerLabel() == null ? "Unknown" : cat
+							.getOwnerLabel()) + "</em>"));
 		}
 
 		final String catInfo = cat == null ? "" : cat.getInfo();

@@ -6,7 +6,8 @@ import java.util.List;
 
 import com.surelogic.sierra.gwt.client.data.cache.Cacheable;
 
-public class FindingType implements Cacheable, Serializable {
+public class FindingType implements Cacheable, Serializable,
+		Comparable<FindingType> {
 	private static final long serialVersionUID = 1766277814214421247L;
 
 	private String uuid;
@@ -325,6 +326,10 @@ public class FindingType implements Cacheable, Serializable {
 			return true;
 		}
 
+	}
+
+	public int compareTo(final FindingType o) {
+		return getName().compareToIgnoreCase(o.getName());
 	}
 
 }

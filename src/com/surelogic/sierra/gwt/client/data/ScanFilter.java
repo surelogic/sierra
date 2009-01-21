@@ -7,7 +7,8 @@ import java.util.Set;
 import com.surelogic.sierra.gwt.client.data.cache.Cacheable;
 import com.surelogic.sierra.gwt.client.util.LangUtil;
 
-public class ScanFilter implements Serializable, Cacheable {
+public class ScanFilter implements Serializable, Cacheable,
+		Comparable<ScanFilter> {
 
 	/**
 	 * 
@@ -54,7 +55,7 @@ public class ScanFilter implements Serializable, Cacheable {
 		return local;
 	}
 
-	public void setLocal(boolean local) {
+	public void setLocal(final boolean local) {
 		this.local = local;
 	}
 
@@ -116,6 +117,15 @@ public class ScanFilter implements Serializable, Cacheable {
 			return LangUtil.equals(uuid, ((ScanFilter) obj).uuid);
 		}
 		return false;
+	}
+
+	public int compareTo(final ScanFilter o) {
+		int cmp = Boolean.valueOf(o.isLocal()).compareTo(
+				Boolean.valueOf(isLocal()));
+		if (cmp == 0) {
+			cmp = getName().compareToIgnoreCase(o.getName());
+		}
+		return cmp;
 	}
 
 }
