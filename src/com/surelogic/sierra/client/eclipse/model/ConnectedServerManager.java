@@ -212,7 +212,7 @@ public final class ConnectedServerManager extends
 			}
 		}
 		if (notify) {
-			saveAndNotifyObservers();
+			notifyObservers();
 		}
 	}
 
