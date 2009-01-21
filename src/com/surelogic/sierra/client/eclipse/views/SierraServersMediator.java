@@ -716,7 +716,16 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 			addProjectMenuItems(contextMenu, allHasScans, allConnected);
 			return;
 		}
-		addNothingSelected_MenuItems(contextMenu);
+		final IStructuredSelection si = 
+			(IStructuredSelection) f_statusTree.getSelection();
+		if (si.size() == 1) {
+			ServersViewContent c = (ServersViewContent) si.getFirstElement();
+			if (c.getData() == null && c.getText().endsWith(SCAN_FILTERS)) {
+				addSendLocalFilter_MenuItem(contextMenu);
+			}
+			return;
+		} 
+		addNothingSelected_MenuItems(contextMenu);		
 	}
 
 	private List<ScanFilter> collectScanFilters() {
@@ -2106,11 +2115,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 			serverConnectItem.addListener(SWT.Selection, f_serverConnectAction);
 		}
 		if (enableSendFilters) {
-			final MenuItem sendResultFilters = AbstractSierraView
-					.createMenuItem(contextMenu, "Send Local Scan Filter As...",
-							CommonImages.IMG_FILTER);
-			sendResultFilters.addListener(SWT.Selection,
-					f_sendResultFiltersAction);
+			addSendLocalFilter_MenuItem(contextMenu);
 		}
 
 		final MenuItem serverPropertiesItem = new MenuItem(contextMenu,
@@ -2120,8 +2125,16 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 				f_serverPropertiesAction);
 	}
 
+	void addSendLocalFilter_MenuItem(Menu contextMenu) {
+		final MenuItem sendResultFilters = 
+			AbstractSierraView.createMenuItem(contextMenu, 
+					                          "Send Local Scan Filter As...",
+             				                  CommonImages.IMG_FILTER);
+		sendResultFilters.addListener(SWT.Selection, f_sendResultFiltersAction);
+	}
+	
 	void addProjectMenuItems(Menu contextMenu, boolean allHasScans,
-			boolean allConnected) {
+			                 boolean allConnected) {
 		if (!allConnected) {
 			final MenuItem serverConnectItem = AbstractSierraView
 					.createMenuItem(contextMenu, "Connect Projects...",
@@ -2135,31 +2148,30 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 		final MenuItem rescanProjectItem = AbstractSierraView.createMenuItem(
 				contextMenu, "Re-Scan Changes in Project",
 				CommonImages.IMG_SIERRA_SCAN_DELTA);
-		final MenuItem synchProjects = AbstractSierraView.createMenuItem(
-				contextMenu, "Synchronize Project",
-				CommonImages.IMG_SIERRA_SYNC);
-
+		if (allConnected) {
+			final MenuItem synchProjects = AbstractSierraView.createMenuItem(
+					contextMenu, "Synchronize Project",
+					CommonImages.IMG_SIERRA_SYNC);
+			synchProjects.addListener(SWT.Selection, f_synchConnectedProjectsAction);
+		}
 		scanProjectItem.addListener(SWT.Selection, f_scanProjectAction);
 		rescanProjectItem.addListener(SWT.Selection, f_rescanProjectAction);
-		synchProjects
-				.addListener(SWT.Selection, f_synchConnectedProjectsAction);
 
-		if (allHasScans || allConnected) {
-			new MenuItem(contextMenu, SWT.SEPARATOR);
-		}
-		if (allHasScans) {
-			final MenuItem publishScansItem = AbstractSierraView
-					.createMenuItem(contextMenu, "Publish Latest Scan",
-							CommonImages.IMG_SIERRA_PUBLISH);
-			publishScansItem.addListener(SWT.Selection, f_publishScansAction);
-		}
 		if (allConnected) {
+			new MenuItem(contextMenu, SWT.SEPARATOR);
+
+			if (allHasScans) {
+				final MenuItem publishScansItem = AbstractSierraView
+				.createMenuItem(contextMenu, "Publish Latest Scan",
+						CommonImages.IMG_SIERRA_PUBLISH);
+				publishScansItem.addListener(SWT.Selection, f_publishScansAction);
+			}
 			final MenuItem disconnectProjectItem = AbstractSierraView
 					.createMenuItem(contextMenu, "Disconnect",
 							CommonImages.IMG_SIERRA_DISCONNECT);
 
 			disconnectProjectItem.addListener(SWT.Selection,
-					f_disconnectProjectAction);
+					f_disconnectProjectAction);		
 		}
 	}
 
