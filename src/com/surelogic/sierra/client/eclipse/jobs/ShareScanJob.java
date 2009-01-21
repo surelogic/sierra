@@ -40,8 +40,9 @@ public class ShareScanJob extends AbstractServerProjectJob {
 			final File scanFile, final ServerFailureReport strategy) {
 		super(family, "Sharing scan of project '" + projectName + "'", server,
 				projectName, strategy);
-		if (scanFile == null)
+		if (scanFile == null) {
 			throw new IllegalArgumentException(I18N.err(44, "scanFile"));
+		}
 		f_scanFile = scanFile;
 		setRule(ShareScanRule.getInstance());
 	}
@@ -106,7 +107,7 @@ public class ShareScanJob extends AbstractServerProjectJob {
 
 				// We had a recoverable error. Rollback, run the appropriate
 				// troubleshoot, and try again.
-				ServerLocation fixed = troubleshoot.fix();
+				final ServerLocation fixed = troubleshoot.fix();
 				if (troubleshoot.retry()) {
 					/*
 					 * First update our server information.
@@ -138,7 +139,7 @@ public class ShareScanJob extends AbstractServerProjectJob {
 
 			// We had a recoverable error. Rollback, run the appropriate
 			// troubleshoot, and try again.
-			ServerLocation fixed = troubleshoot.fix();
+			final ServerLocation fixed = troubleshoot.fix();
 			if (troubleshoot.retry()) {
 				/*
 				 * First update our server information.
