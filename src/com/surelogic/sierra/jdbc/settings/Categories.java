@@ -241,7 +241,8 @@ public final class Categories {
 		}
 		if (!illegalFindingTypes.isEmpty()) {
 			throw new IllegalArgumentException(
-					"The following finding types do not exist and cannot be added to this category: "
+					"The following finding types do not exist and cannot be added to the "
+							+ set.getName() + " category: "
 							+ illegalFindingTypes);
 		}
 	}
