@@ -523,50 +523,49 @@ block.</p>]]>
     <artifact tool="FindBugs"
 	      mnemonic="JCIP_FIELD_ISNT_FINAL_IN_IMMUTABLE_CLASS">
     </artifact>
-    <shortMessage>
-      Fields of immutable classes should be final
-    </shortMessage>
+    <name>Field isn't final in an immutable class</name>
+    <shortMessage>Fields that are declared within an immutable class should be final.</shortMessage>
     <info>
-      &lt;p&gt; The class is annotated with
-      net.jcip.annotations.Immutable, and the rules for that
-      annotation require that all fields are final. .&lt;/p&gt;
+<![CDATA[<p>This class is annotated with the
+<code>net.jcip.annotations.Immutable</code> annotation, and the rules
+for that annotation require that all fields are final.  This class is
+in voilation of those rules.</p>]]>
     </info>
-    <name>Field Isn't Final In Immutable Class</name>
   </findingType>
+
   <findingType>
     <id>ThreadPassedWhereRunnableExpected</id>
     <artifact tool="FindBugs"
 	      mnemonic="DMI_THREAD_PASSED_WHERE_RUNNABLE_EXPECTED">
     </artifact>
-    <shortMessage>
-      Thread passed where Runnable expected
-    </shortMessage>
+    <name>Thread passed where Runnable is expected</name>
+    <shortMessage>A Thread object has been passed as a parameter to a method where a Runnable is expected.</shortMessage>
     <info>
-      &lt;p&gt; A Thread object is passed as a parameter to a
-      method where a Runnable is expected. This is rather unusual,
-      and may indicate a logic error or cause unexpected behavior.
-      &lt;/p&gt;
+<![CDATA[<p>A Thread object is passed as a parameter to a method where
+a Runnable is expected. This is unusual, and may indicate a logic
+error or cause unexpected behavior.</p>
+
+<p>Consider changing the type of the object to not be a Thread.</p>]]>
     </info>
-    <name>Thread Passed Where Runnable Expected</name>
   </findingType>
+
   <findingType>
     <id>AvoidCollectionOfURLS</id>
     <artifact tool="FindBugs" mnemonic="DMI_COLLECTION_OF_URLS">
     </artifact>
-    <shortMessage>
-      Maps and sets of URLs can be performance hogs
-    </shortMessage>
+    <name>Avoid a collection Of URLs</name>
+    <shortMessage>Maps and sets of URLs can be horrible performance hogs.</shortMessage>
     <info>
-      &lt;p&gt; This method or field is or uses a Map or Set of
-      URLs. Since both the equals and hashCode method of URL
-      perform domain name resolution, this can result in a big
-      performance hit. See &lt;a
-      href=&quot;http://michaelscharf.blogspot.com/2006/11/javaneturlequals-and-hashcode-make.html&quot;&gt;http://michaelscharf.blogspot.com/2006/11/javaneturlequals-and-hashcode-make.html&lt;/a&gt;
-      for more information. Consider using
-      &lt;code&gt;java.net.URI&lt;/code&gt; instead. &lt;/p&gt;
+<![CDATA[ <p>This method or field is or uses a <code>Map</code> or
+<code>Set</code> of URLs. Since both the equals and hashCode methods of
+URL perform domain name resolution, this can result in a big
+performance hit. See <a
+href="http://michaelscharf.blogspot.com/2006/11/javaneturlequals-and-hashcode-make.html">http://michaelscharf.blogspot.com/2006/11/javaneturlequals-and-hashcode-make.html</a>
+for more information. Consider using <code>java.net.URI</code>
+instead.</p>]]>
     </info>
-    <name>Avoid Collection Of URLs</name>
   </findingType>
+
   <findingType>
     <id>BlockingMethodsOnURL</id>
     <artifact tool="FindBugs"
