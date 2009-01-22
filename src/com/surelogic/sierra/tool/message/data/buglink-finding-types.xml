@@ -10,8 +10,10 @@
     <info>
 <![CDATA[<p>This is often due to copy-and-paste programming, and it
 often causes problems in long-term maintenance, due to flaws being
-fixed in one copy, but not the other.</p> <p>Consider refactoring this
-duplicated code into a single method.</p>]]>
+fixed in one copy, but not the other.</p>
+
+<p>Consider refactoring this duplicated code into a single
+method.</p>]]>
     </info>
   </findingType>
 
@@ -37,10 +39,10 @@ href="http://www.easymock.org/">www.easymock.org</a>.</p>]]>
     <info>
 <![CDATA[<p> A method, field or class declares a generic signature
 where a non-hashable class is used in context where a hashable class
-is required.  A class that declares an <tt>equals()</tt> method but
-inherits a <tt>hashCode()</tt> method from <tt>java.lang.Object</tt>
-is unhashable, since it doesn't fulfill the requirement that equal
-objects have equal hashCodes.</p>]]>
+is required.  A class that declares an <code>equals()</code> method
+but inherits a <code>hashCode()</code> method from
+<code>java.lang.Object</code> is unhashable, since it doesn't fulfill
+the requirement that equal objects have equal hash codes.</p>]]>
     </info>
   </findingType>
 
@@ -51,11 +53,27 @@ objects have equal hashCodes.</p>]]>
     <shortMessage>Unchecked type in generic call</shortMessage>
     <info>
 <![CDATA[<p>This call to a generic collection method passes an
-argument while compile type Object where a specific type from the
-generic type parameters is expected.  Thus, neither the standard Java
-type system nor static analysis can provide useful information on
-whether the object being passed as a parameter is of an appropriate
-type.</p>]]>
+argument of compile type <code>Object</code> where a specific type
+from the generic type parameters is expected.  Thus, neither the
+standard Java type system nor static analysis can provide useful
+information on whether the object being passed as a parameter is of an
+appropriate type.</p>
+
+<p>An example of this finding is shown in the code snippet below.</p>
+
+<pre>
+final Object o = "1";
+Set<Integer> intSet = new HashSet<Integer>();
+intSet.remove(o);
+</pre>
+
+<p>In this case the call to remove <code>o</code> from the set
+compiles because the <code>remove()</code> method takes an argument of
+type <code>Object</code> rather than of the generic type.  In this
+example the call to <code>remove()</code> can be safely deleted.  In
+general, it is recommended to examine the finding and determine if it
+has identified a type mismatch that the compiler was not able to
+report.</p>]]>
     </info>
   </findingType>
 
@@ -64,28 +82,85 @@ type.</p>]]>
     <artifact tool="FindBugs"
 	      mnemonic="SW_SWING_METHODS_INVOKED_IN_SWING_THREAD">
     </artifact>
-    <shortMessage>
-      Certain Swing methods need to be invoked in the Swing event
-      dispatch thread
-    </shortMessage>
-    <info>
-      <![CDATA[<p>(<a href="http://java.sun.com/developer/JDCTechTips/2003/tt1208.html#1">From JDC Tech Tip</a>):
-	       The Swing methods <code>show()</code>,
-	       <code>setVisible()</code>, and <code>pack()</code> will create the associated peer for
-	       the frame. With the creation of the peer, the system creates
-	       the event dispatch thread. This makes things problematic
-	       because the event dispatch thread could be notifying
-	       listeners while pack and validate are still processing. This
-	       situation could result in two threads going through the
-	       Swing component-based GUI&mdash;it's a serious flaw that could
-	       result in deadlocks or other related threading issues. A
-	       pack call causes components to be realized. As they are
-	       being realized (that is, not necessarily visible), they
-	       could trigger listener notification on the event dispatch
-	       thread.</p>]]>
-    </info>
     <name>Swing Methods Should Be Invoked In Swing Thread</name>
+    <shortMessage>Certain Swing methods need to be invoked in the Swing event dispatch thread</shortMessage>
+    <info>
+<![CDATA[<p>(<a
+href="http://java.sun.com/developer/JDCTechTips/2003/tt1208.html#1">From
+JDC Tech Tips</a>): The Swing methods <code>show()</code>,
+<code>setVisible()</code>, and <code>pack()</code> will create the
+associated peer for the frame. With the creation of the peer, the
+system creates the event dispatch thread. This makes things
+problematic because the event dispatch thread could be notifying
+listeners while pack and validate are still processing. This situation
+could result in two threads going through the Swing component-based
+GUI&mdash;it's a serious flaw that could result in deadlocks or other
+related threading issues. A pack call causes components to be
+realized. As they are being realized (that is, not necessarily
+visible), they could trigger listener notification on the event
+dispatch thread.</p>
+
+<p>Recommendations for thread safety have changed slightly since this
+article was written. It is now recommended that you use
+<code>invokeLater()</code> to create the GUI on the event-dispatching
+thread, rather than constructing the GUI on the main thread.  So the
+below code violates this recommendation.</p>
+
+<pre>
+import javax.swing.JButton;
+import javax.swing.JFrame;
+
+public class GUI extends JFrame {
+
+  public GUI() {
+    super("GUI");
+    setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+    final JButton button = new JButton("Hello, Swing!");
+    add(button);
+    pack();
+  }
+
+  public static void main(String[] args) {
+    final GUI gui = new GUI();
+    gui.setVisible(true);
+ }
+}
+</pre>
+
+<p>At issue is the construction of the Swing objects and the call to
+<code>setVisible()</code> in the main thread.  The below code fixes
+the program by moving these actions onto the event dispatch
+thread using the <code>invokeLater()</code> method.</p>
+
+<pre>
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
+
+public class GUI extends JFrame {
+
+  public GUI() {
+    super("GUI");
+    setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+    final JButton button = new JButton("Hello, Swing!");
+    add(button);
+    pack();
+  }
+
+  public static void main(String[] args) {
+    SwingUtilities.invokeLater(new Runnable() {
+      @Override public void run() {
+        final GUI gui = new GUI();
+        gui.setVisible(true);
+      }
+    });
+  }
+}
+</pre>
+]]>
+    </info>
   </findingType>
+
   <findingType>
     <id>CaughtInfiniteLoop</id>
     <artifact tool="FindBugs" mnemonic="IL_INFINITE_LOOP">
@@ -11921,3 +11996,7 @@ use <code>java.util.Arrays.hashCode(a)</code>.
     <name>Avoid StringBuffer-typed Fields</name>
   </findingType>
 </findingTypes>
+<!-- LocalWords:  JUnit UNHASHABLE unhashable hashable hashCodes GC intSet
+-->
+<!-- LocalWords:  HashSet
+-->
