@@ -1,11 +1,17 @@
 <findingTypes>
 
+  <!-- NOTES: -->
+  <!-- No whitespace in "name" or "shortMessage" tags -->
+  <!-- Sentence case in "name" tags -->
+  <!-- Sentences in "shortMessage" tags (no HTML) -->
+  <!-- Use CDATA for "info" tags with HTML -->
+
   <findingType>
     <id>DuplicatedCode</id>
     <artifact tool="CPD"
 	      mnemonic="DuplicatedCode">
     </artifact>
-    <name>Suspected Duplicated Code</name>
+    <name>Suspected duplicated code</name>
     <shortMessage>Duplicated code often causes problems in long-term maintenance, due to flaws being fixed in one copy, but not the other.</shortMessage>
     <info>
 <![CDATA[<p>This is often due to copy-and-paste programming, and it
@@ -35,7 +41,7 @@ href="http://www.easymock.org/">www.easymock.org</a>.</p>]]>
     <id>HE_SIGNATURE_DECLARES_HASHING_OF_UNHASHABLE_CLASS</id>
     <artifact tool="FindBugs"	mnemonic="HE_SIGNATURE_DECLARES_HASHING_OF_UNHASHABLE_CLASS"/>
     <name>Signature declares use of unhashable class in hashed construct</name>
-    <shortMessage>Signature declares use of unhashable class in hashed construct</shortMessage>
+    <shortMessage>Signature declares use of unhashable class in hashed construct.</shortMessage>
     <info>
 <![CDATA[<p> A method, field or class declares a generic signature
 where a non-hashable class is used in context where a hashable class
@@ -50,7 +56,7 @@ the requirement that equal objects have equal hash codes.</p>]]>
     <id>GC_UNCHECKED_TYPE_IN_GENERIC_CALL</id>
     <artifact tool="FindBugs"	mnemonic="GC_UNCHECKED_TYPE_IN_GENERIC_CALL"/>
     <name>Unchecked type in generic call</name>
-    <shortMessage>Unchecked type in generic call</shortMessage>
+    <shortMessage>Unchecked type in a generic call.  This could be a type mismatch that the compiler is not able to detect.</shortMessage>
     <info>
 <![CDATA[<p>This call to a generic collection method passes an
 argument of compile type <code>Object</code> where a specific type
@@ -69,11 +75,11 @@ intSet.remove(o);
 
 <p>In this case the call to remove <code>o</code> from the set
 compiles because the <code>remove()</code> method takes an argument of
-type <code>Object</code> rather than of the generic type.  In this
-example the call to <code>remove()</code> can be safely deleted.  In
-general, it is recommended to examine the finding and determine if it
-has identified a type mismatch that the compiler was not able to
-report.</p>]]>
+type <code>Object</code> rather than of the generic type (for
+backwards compatibility).  In this example the call to
+<code>remove()</code> can be safely deleted.  In general, it is
+recommended to examine the finding and determine if it has identified
+a type mismatch that the compiler was not able to report.</p>]]>
     </info>
   </findingType>
 
@@ -82,8 +88,8 @@ report.</p>]]>
     <artifact tool="FindBugs"
 	      mnemonic="SW_SWING_METHODS_INVOKED_IN_SWING_THREAD">
     </artifact>
-    <name>Swing Methods Should Be Invoked In Swing Thread</name>
-    <shortMessage>Certain Swing methods need to be invoked in the Swing event dispatch thread</shortMessage>
+    <name>Swing methods should be invoked in Swing thread</name>
+    <shortMessage>Certain Swing methods need to be invoked in the Swing event dispatch thread.</shortMessage>
     <info>
 <![CDATA[<p>(<a
 href="http://java.sun.com/developer/JDCTechTips/2003/tt1208.html#1">From
@@ -165,153 +171,148 @@ public class GUI extends JFrame {
     <id>CaughtInfiniteLoop</id>
     <artifact tool="FindBugs" mnemonic="IL_INFINITE_LOOP">
     </artifact>
-    <shortMessage>An apparent infinite loop</shortMessage>
+    <name>Caught infinite loop</name>
+    <shortMessage>An apparent infinite loop that doesn't seem to have a way to terminate.</shortMessage>
     <info>
-      &lt;p&gt;This loop doesn't seem to have a way to terminate
-      (other than by perhaps throwing an exception).&lt;/p&gt;
+<![CDATA[<p>This loop doesn't seem to have a way to terminate (other
+than by perhaps throwing an exception).</p>]]>
     </info>
-    <name>Caught Infinite Loop</name>
   </findingType>
+
   <findingType>
     <id>CaughtInfiniteRecursiveLoop</id>
     <artifact tool="FindBugs"
 	      mnemonic="IL_INFINITE_RECURSIVE_LOOP">
     </artifact>
-    <shortMessage>An apparent infinite recursive loop</shortMessage>
+    <name>Caught infinite recursive loop</name>
+    <shortMessage>An apparent infinite recursive loop that could result in a stack overflow.</shortMessage>
     <info>
-      &lt;p&gt;This method unconditionally invokes itself. This
-      would seem to indicate an infinite recursive loop that will
-      result in a stack overflow.&lt;/p&gt;
+<![CDATA[<p>This method unconditionally invokes itself. This would
+seem to indicate an infinite recursive loop that will result in a
+stack overflow.</p>]]>
     </info>
-    <name>Caught Infinite Recursive Loop</name>
   </findingType>
+
   <findingType>
     <id>ContainerAddedToItself</id>
     <artifact tool="FindBugs"
 	      mnemonic="IL_CONTAINER_ADDED_TO_ITSELF">
     </artifact>
-    <shortMessage>A container is added to itself</shortMessage>
+    <name>Container added to itself</name>
+    <shortMessage>A container is added to itself, computing its hash code could throw a StackOverflowException.</shortMessage>
     <info>
-      &lt;p&gt;A container is added to itself. As a result,
-      computing the hashCode of this set will throw a
-      StackOverflowException. &lt;/p&gt;
+<![CDATA[<p>A container is added to itself. As a result, computing the
+hash code via <code>hashCode()</code> will throw a
+StackOverflowException.</p>]]>
     </info>
-    <name>Container Added To Itself</name>
   </findingType>
+
   <findingType>
     <id>VolatileReferenceToArray</id>
     <artifact tool="FindBugs"
 	      mnemonic="VO_VOLATILE_REFERENCE_TO_ARRAY">
     </artifact>
-    <shortMessage>
-      A volatile reference to an array doesn't treat the array
-      elements as volatile
-    </shortMessage>
+    <name>Volatile reference to array</name>
+    <shortMessage>A volatile reference to an array doesn't treat the array elements as volatile.  This could indicate a race condition.</shortMessage>
     <info>
-      &lt;p&gt;This declares a volatile reference to an array,
-      which might not be what you want. With a volatile reference
-      to an array, reads and writes of the reference to the array
-      are treated as volatile, but the array elements are
-      non-volatile. To get volatile array elements, you will need
-      to use one of the atomic array classes in
-      java.util.concurrent (provided in Java 5.0).&lt;/p&gt;
+<![CDATA[<p>This declares a volatile reference to an array, which
+might not be what you want. With a volatile reference to an array,
+reads and writes of the reference to the array are treated as
+volatile, but the array elements are non-volatile. To get volatile
+array elements, you will need to use one of the atomic array classes
+in java.util.concurrent (provided in Java 5.0).<p>]]>
     </info>
-    <name>Volatile Reference To Array</name>
   </findingType>
+
   <findingType>
     <id>UnsafeInheritanceOfGetResource</id>
     <artifact tool="FindBugs"
 	      mnemonic="UI_INHERITANCE_UNSAFE_GETRESOURCE">
     </artifact>
-    <shortMessage>
-      Usage of GetResource may be unsafe if class is extended
-    </shortMessage>
+    <name>Unsafe inheritance of the getResource method</name>
+    <shortMessage>Usage of the getResource method may be unsafe if class is extended.</shortMessage>
     <info>
-      &lt;p&gt;Calling
-      &lt;code&gt;this.getClass().getResource(...)&lt;/code&gt;
-      could give results other than expected if this class is
-      extended by a class in another package.&lt;/p&gt;
+<![CDATA[<p>Calling <code>this.getClass().getResource(...)</code>
+could give results other than expected if this class is extended by a
+class in another package.</p>
+
+<p>To prohibit extension of this class it can be declared to be
+final.</p>]]>
     </info>
-    <name>Unsafe Inheritance getResource()</name>
   </findingType>
+
   <findingType>
     <id>SynchronizeAndNullCheckOnSameField</id>
     <artifact tool="FindBugs"
 	      mnemonic="NP_SYNC_AND_NULL_CHECK_FIELD">
     </artifact>
-    <shortMessage>
-      Synchronize and null check on the same field
-    </shortMessage>
+    <name>Synchronize and subsequent null check on the same field</name>
+    <shortMessage>Synchronize and subsequent null check on the same field could indicate that a NullPointerException may be thrown.</shortMessage>
     <info>
-      &lt;p&gt;Since field is synchronized on, it seems not likely
-      to be null. If it is null and then synchronized on a
-      NullPointerException will be thrown and the check would be
-      pointless. Better to synchronize on another field.&lt;/p&gt;
+<![CDATA[<p>Since this field is synchronized on, it is not likely to
+be <code>null</code>. If the field is <code>null</code> when it is
+synchronized on then a NullPointerException will be thrown and the
+subsequent check would be pointless.</p>]]>
     </info>
-    <name>Synchronize and Null Check on the Same Field</name>
   </findingType>
+
   <findingType>
     <id>GeneratedFromIncompleteDetectors</id>
     <artifact tool="FindBugs" mnemonic="TESTING"></artifact>
-    <shortMessage>
-      This bug pattern is only generated by new, incompletely
-      implemented bug detectors in FindBugs
-    </shortMessage>
+    <name>Generated from incomplete FindBugs detectors</name>
+    <shortMessage>This bug pattern is only generated by new, incompletely implemented bug detectors in FindBugs.</shortMessage>
     <info>
-      &lt;p&gt;This bug pattern is only generated by new,
-      incompletely implemented bug detectors in
-      FindBugs.&lt;/p&gt;
+<![CDATA[<p>This bug pattern is only generated by new, incompletely
+implemented bug detectors in FindBugs.</p>]]>
     </info>
-    <name>Generated From Incomplete Detectors</name>
   </findingType>
+
   <findingType>
     <id>UnknownBugPattern</id>
     <artifact tool="FindBugs" mnemonic="UNKNOWN"></artifact>
-    <shortMessage>Unknown bug pattern in FindBugs</shortMessage>
+    <name>Unknown FindBugs bug pattern</name>
+    <shortMessage>A warning was recorded for an unknown FindBugs bug pattern.</shortMessage>
     <info>
-      &lt;p&gt;A warning was recorded, but FindBugs can't find the
-      description of this bug pattern and so can't describe it.
-      This should occur only in cases of a bug in FindBugs or its
-      configuration, or perhaps if an analysis was generated using
-      a plugin, but that plugin is not currently loaded.
-      .&lt;/p&gt;
+<![CDATA[<p>A warning was recorded, but FindBugs can't find the
+description of this bug pattern and so can't describe it.  This should
+occur only in cases of a bug in FindBugs or its configuration, or
+perhaps if an analysis was generated using a plugin, but that plugin
+is not currently loaded.</p>]]>
     </info>
-    <name>Unknown Bug Pattern</name>
   </findingType>
+
   <findingType>
     <id>CreatesEmptyZipFileEntry</id>
     <artifact tool="FindBugs"
 	      mnemonic="AM_CREATES_EMPTY_ZIP_FILE_ENTRY">
     </artifact>
-    <shortMessage>Creates an empty zip file entry</shortMessage>
+    <name>Creates empty Zip file entry</name>
+    <shortMessage>Creates an empty Zip file entry</shortMessage>
     <info>
-      &lt;p&gt;The code calls
-      &lt;code&gt;putNextEntry()&lt;/code&gt;, immediately
-      followed by a call to &lt;code&gt;closeEntry()&lt;/code&gt;.
-      This results in an empty ZipFile entry. The contents of the
-      entry should be written to the ZipFile between the calls to
-      &lt;code&gt;putNextEntry()&lt;/code&gt; and
-      &lt;code&gt;closeEntry()&lt;/code&gt;.&lt;/p&gt;
+<![CDATA[<p>The code calls <code>putNextEntry()</code>, immediately
+followed by a call to <code>closeEntry()</code>.  This results in an
+empty ZipFile entry. The contents of the entry should be written to
+the ZipFile between the calls to <code>putNextEntry()</code> and
+<code>closeEntry()</code>.</p>]]>
     </info>
-    <name>Creates Empty Zip File Entry</name>
   </findingType>
+
   <findingType>
     <id>CreatesEmptyJarFileEntry</id>
     <artifact tool="FindBugs"
 	      mnemonic="AM_CREATES_EMPTY_JAR_FILE_ENTRY">
     </artifact>
-    <shortMessage>Creates an empty jar file entry</shortMessage>
+    <name>Creates empty Jar file entry</name>
+    <shortMessage>Creates an empty Jar file entry</shortMessage>
     <info>
-      &lt;p&gt;The code calls
-      &lt;code&gt;putNextEntry()&lt;/code&gt;, immediately
-      followed by a call to &lt;code&gt;closeEntry()&lt;/code&gt;.
-      This results in an empty JarFile entry. The contents of the
-      entry should be written to the JarFile between the calls to
-      &lt;code&gt;putNextEntry()&lt;/code&gt; and
-      &lt;code&gt;closeEntry()&lt;/code&gt;.&lt;/p&gt;
+<![CDATA[<p>The code calls <code>putNextEntry()</code>, immediately
+followed by a call to <code>closeEntry()</code>.  This results in an
+empty JarFile entry. The contents of the entry should be written to
+the JarFile between the calls to <code>putNextEntry()</code> and
+<code>closeEntry()</code>.</p>]]>
     </info>
-    <name>Creates Empty Jar File Entry</name>
   </findingType>
+
   <findingType>
     <id>AvoidCatchingIllegalStateMonitorException</id>
     <artifact tool="FindBugs" mnemonic="IMSE_DONT_CATCH_IMSE">
@@ -7260,7 +7261,7 @@ public class GUI extends JFrame {
 (e.g., <code>x == 0 || y == 0</code>). 
 </p>
 
-      ]]>
+]]>
     </info>
     <name>Repeated conditional tests</name>
   </findingType>
