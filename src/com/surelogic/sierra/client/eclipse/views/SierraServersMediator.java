@@ -414,6 +414,15 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 			@Override
 			protected void handleEventOnServer(final ConnectedServer server) {
 				List<IJavaProject> projects = collectProjects();
+				// Remove connected ones
+				final ConnectedServerManager csm = ConnectedServerManager.getInstance();
+				Iterator<IJavaProject> it = projects.iterator();
+				while (it.hasNext()) {
+					IJavaProject p = it.next();
+					if (csm.getServer(p.getElementName()) != null) {
+						it.remove();
+					}
+				}
 				if (!projects.isEmpty()) {
 					boolean syncAfterConnect = true;
 					final MessageDialog dialog = new MessageDialog(
