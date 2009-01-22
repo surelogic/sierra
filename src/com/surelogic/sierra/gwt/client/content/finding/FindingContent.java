@@ -149,8 +149,6 @@ public final class FindingContent extends ContentComposite {
 		}
 		final String s = "This <em>"
 				+ f.getFindingType()
-				+ "</em> in <em>"
-				+ f.getCategory()
 				+ "</em> is of <strong>"
 				+ f.getImportance()
 				+ "</strong> importance."

@@ -15,7 +15,6 @@ public class FindingOverview implements Serializable {
 	private long findingId;
 
 	private String findingType;
-	private String category;
 	private String summary;
 	private ImportanceView importance;
 
@@ -51,14 +50,6 @@ public class FindingOverview implements Serializable {
 
 	public void setFindingType(final String findingType) {
 		this.findingType = findingType;
-	}
-
-	public String getCategory() {
-		return category;
-	}
-
-	public void setCategory(final String category) {
-		this.category = category;
 	}
 
 	public String getSummary() {
