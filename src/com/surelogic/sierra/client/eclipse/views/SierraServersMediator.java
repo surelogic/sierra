@@ -298,7 +298,6 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 			protected void handleEventOnServer(final ConnectedServer server) {
 				ConnectedServerManager.getInstance().setAutoSyncFor(server,
 						!server.getLocation().isAutoSync());
-				ConnectedServerManager.getInstance().notifyObservers();
 			}
 		};
 
