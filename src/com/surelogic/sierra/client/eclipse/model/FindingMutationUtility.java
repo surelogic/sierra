@@ -25,7 +25,7 @@ public final class FindingMutationUtility {
 
 	static abstract class MutationJob extends DatabaseJob {
 		public MutationJob(String name) {
-			super(name);
+			super(name, Job.INTERACTIVE);
 			setSystem(false);
 		}
 

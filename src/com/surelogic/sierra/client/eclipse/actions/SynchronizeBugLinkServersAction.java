@@ -6,6 +6,6 @@ import com.surelogic.sierra.client.eclipse.preferences.ServerFailureReport;
 public class SynchronizeBugLinkServersAction 
 extends	SynchronizeAllProjectsAction {
     public SynchronizeBugLinkServersAction() {
-    	super(ServerSyncType.BUGLINK, ServerFailureReport.SHOW_DIALOG, true);
+    	super(ServerSyncType.BUGLINK, ServerFailureReport.SHOW_DIALOG, true, 0);
     }
 }

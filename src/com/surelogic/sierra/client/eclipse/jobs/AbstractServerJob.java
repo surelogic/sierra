@@ -14,6 +14,9 @@ public abstract class AbstractServerJob extends Job {
 
 	public AbstractServerJob(String name) {
 		super(name);
+		
+		// Lower priority below UI jobs
+		this.setPriority(BUILD);
 	}
 
 	public static final TroubleshootConnection getTroubleshootConnection(

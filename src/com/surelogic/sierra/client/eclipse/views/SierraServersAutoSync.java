@@ -34,9 +34,9 @@ public class SierraServersAutoSync {
 			public IStatus runInUIThread(final IProgressMonitor monitor) {
 				final Job group = lastSyncGroup.get();
 				if ((group == null) || (group.getResult() != null)) {
-					final SynchronizeAllProjectsAction sync = new SynchronizeAllProjectsAction(
-							type, PreferenceConstants
-									.getServerFailureReporting(), false);
+					final SynchronizeAllProjectsAction sync = 
+						new SynchronizeAllProjectsAction(type, 
+								PreferenceConstants.getServerFailureReporting(), false, 5000);
 					sync.run(null);
 					lastSyncGroup.set(sync.getGroup());
 				} else {

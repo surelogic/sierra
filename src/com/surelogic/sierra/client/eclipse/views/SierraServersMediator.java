@@ -1050,7 +1050,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 		final long now = System.currentTimeMillis();
 		latestUpdate.set(now);
 
-		final Job job = new DatabaseJob("Updating project status") {
+		final Job job = new DatabaseJob("Updating project status", Job.INTERACTIVE) {
 			@Override
 			protected IStatus run(final IProgressMonitor monitor) {
 				monitor.beginTask("Updating list", IProgressMonitor.UNKNOWN);

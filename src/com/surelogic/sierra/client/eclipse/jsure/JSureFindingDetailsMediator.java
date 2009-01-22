@@ -192,7 +192,7 @@ public class JSureFindingDetailsMediator extends AbstractSierraViewMediator
 		f_finding = detail;
 
 		final Job job = new DatabaseJob("Querying JSure details of finding "
-				+ findingIdObj) {
+				+ findingIdObj, Job.INTERACTIVE) {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				monitor.beginTask("Querying finding data",

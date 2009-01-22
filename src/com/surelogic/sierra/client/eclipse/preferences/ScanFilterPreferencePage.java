@@ -146,7 +146,7 @@ public class ScanFilterPreferencePage extends PreferencePage implements
 						"IO failure writing " + output + " filter set file", e);
 			}
 		}
-		final Job job = new DatabaseJob("Updating Global Sierra Settings") {
+		final Job job = new DatabaseJob("Updating Global Sierra Settings", Job.INTERACTIVE) {
 			@Override
 			protected IStatus run(final IProgressMonitor monitor) {
 				monitor.beginTask("Updating Global Sierra Settings",
@@ -195,7 +195,7 @@ public class ScanFilterPreferencePage extends PreferencePage implements
 						if (!findingTypeUUID.equals(f_selectedFindingTypeUUID)) {
 							f_selectedFindingTypeUUID = findingTypeUUID;
 							final Job job = new DatabaseJob(
-									"Querying Sierra Artifact Type Description") {
+									"Querying Sierra Artifact Type Description", Job.INTERACTIVE) {
 								@Override
 								protected IStatus run(
 										final IProgressMonitor monitor) {

@@ -152,7 +152,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 				if (f_table != null && f_table.isDisposed()) {
 					getSelection().removeObserver(MListOfFindingsColumn.this);
 				} else {
-					final Job job = new DatabaseJob("Refresh list of findings") {
+					final Job job = new DatabaseJob("Refresh list of findings", Job.INTERACTIVE) {
 						@Override
 						protected IStatus run(final IProgressMonitor monitor) {
 							try {

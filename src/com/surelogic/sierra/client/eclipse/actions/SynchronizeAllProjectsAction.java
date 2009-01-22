@@ -23,16 +23,18 @@ public class SynchronizeAllProjectsAction implements
 	private ServerProjectGroupJob group;
 	private final ServerFailureReport f_strategy;
 	private final ServerSyncType f_syncType;
-
+	private final int delayInSec;
+	
 	public SynchronizeAllProjectsAction(ServerSyncType sync,
-			ServerFailureReport strategy, boolean force) {
+			ServerFailureReport strategy, boolean force, int delay) {
 		f_syncType = sync;
 		f_strategy = strategy;
 		this.force = force;
+		delayInSec = delay;
 	}
 
 	public SynchronizeAllProjectsAction() {
-		this(ServerSyncType.ALL, ServerFailureReport.SHOW_DIALOG, true);
+		this(ServerSyncType.ALL, ServerFailureReport.SHOW_DIALOG, true, 0);
 	}
 
 	private static final AtomicLong lastSyncTime = new AtomicLong(System
@@ -63,6 +65,7 @@ public class SynchronizeAllProjectsAction implements
 
 		setTime();
 
+		int totalDelay = 0;
 		final Set<ConnectedServer> unconnectedServers = manager.getServers();
 		if (f_syncType.syncProjects()) {
 			for (String projectName : manager.getConnectedProjects()) {
@@ -72,7 +75,8 @@ public class SynchronizeAllProjectsAction implements
 				if (f_syncType.syncByServerSettings()
 						&& !server.getLocation().isAutoSync()) {
 					continue;
-				}
+				}				
+				final int delay = totalDelay;
 				final ServerActionOnAProject serverAction = new ServerActionOnAProject() {
 					@Override
 					public void run(String projectName, ConnectedServer server,
@@ -80,14 +84,16 @@ public class SynchronizeAllProjectsAction implements
 						final SynchronizeJob job = new SynchronizeJob(joinJob,
 								projectName, server, f_syncType, force,
 								f_strategy);
-						job.schedule();
+						job.schedule(delay);
 					}
 				};
 				promptAndSchedule(projectName, server, serverAction);
+				totalDelay += delayInSec;
 			}
 		}
 		if (f_syncType.syncBugLink()) {
 			for (ConnectedServer server : unconnectedServers) {
+				final int delay = totalDelay;
 				final ServerActionOnAProject serverAction = new ServerActionOnAProject() {
 					@Override
 					public void run(String projectName, ConnectedServer server,
@@ -95,10 +101,11 @@ public class SynchronizeAllProjectsAction implements
 						final SynchronizeJob job = new SynchronizeJob(joinJob,
 								null, server, ServerSyncType.BUGLINK, force,
 								f_strategy);
-						job.schedule();
+						job.schedule(delay);
 					}
 				};
 				promptAndSchedule(null, server, serverAction);
+				totalDelay += delayInSec;
 			}
 		}
 		group = joinJob;

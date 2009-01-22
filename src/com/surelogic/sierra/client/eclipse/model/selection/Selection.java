@@ -418,7 +418,7 @@ public final class Selection extends AbstractDatabaseObserver {
 		 * The database has changed. Refresh this selection if it has any
 		 * filters.
 		 */
-		final Job job = new DatabaseJob("Refresh selection") {
+		final Job job = new DatabaseJob("Refresh selection", Job.INTERACTIVE) {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
@@ -443,7 +443,7 @@ public final class Selection extends AbstractDatabaseObserver {
 	 * Blocks until all the queries are completed.
 	 */
 	public void refreshFilters() {
-		final Job job = new DatabaseJob("Refresh selection") {
+		final Job job = new DatabaseJob("Refresh selection", Job.INTERACTIVE) {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
@@ -488,7 +488,7 @@ public final class Selection extends AbstractDatabaseObserver {
 	 *            a filter that is part of this selection.
 	 */
 	void filterChanged(final Filter changedFilter) {
-		final Job job = new DatabaseJob("Refresh filter") {
+		final Job job = new DatabaseJob("Refresh filter", Job.INTERACTIVE) {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {

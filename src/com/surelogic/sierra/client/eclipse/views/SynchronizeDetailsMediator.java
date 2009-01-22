@@ -173,7 +173,7 @@ public class SynchronizeDetailsMediator extends AbstractSierraViewMediator {
 			job.schedule();
 		} else {
 			final Job job = new DatabaseJob(
-					"Updating reading events from server synchronize") {
+					"Updating reading events from server synchronize", Job.INTERACTIVE) {
 				@Override
 				protected IStatus run(IProgressMonitor monitor) {
 					monitor
