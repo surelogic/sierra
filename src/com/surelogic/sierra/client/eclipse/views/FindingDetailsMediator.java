@@ -128,9 +128,9 @@ public class FindingDetailsMediator extends AbstractSierraViewMediator
 	private String f_tabNameShown = SYNOPSIS_TAB;
 
 	private void memoTabShown() {
-		int index = f_folder.getSelectionIndex();
+		final int index = f_folder.getSelectionIndex();
 		if (index != -1) {
-			TabItem tab = f_folder.getItem(index);
+			final TabItem tab = f_folder.getItem(index);
 			if (f_auditTab == tab) {
 				f_tabNameShown = AUDIT_TAB;
 			} else if (f_artifactTab == tab) {
@@ -154,15 +154,19 @@ public class FindingDetailsMediator extends AbstractSierraViewMediator
 		}
 	}
 
-	public FindingDetailsMediator(FindingDetailsView view, Composite parent,
-			ToolItem summaryIcon, Text summaryText, TabFolder folder,
-			TabItem synopsisTab, SashForm synopsisSash, Button synopsisAudit,
-			Link findingSynopsis, Tree locationTree, Browser detailsText,
-			TabItem auditTab, Button quickAudit, Button criticalButton,
-			Button highButton, Button mediumButton, Button lowButton,
-			Button irrelevantButton, Text commentText, Button commentButton,
-			AuditTrail scrollingLabelComposite, TabItem artifactTab,
-			Table artifacts) {
+	public FindingDetailsMediator(final FindingDetailsView view,
+			final Composite parent, final ToolItem summaryIcon,
+			final Text summaryText, final TabFolder folder,
+			final TabItem synopsisTab, final SashForm synopsisSash,
+			final Button synopsisAudit, final Link findingSynopsis,
+			final Tree locationTree, final Browser detailsText,
+			final TabItem auditTab, final Button quickAudit,
+			final Button criticalButton, final Button highButton,
+			final Button mediumButton, final Button lowButton,
+			final Button irrelevantButton, final Text commentText,
+			final Button commentButton,
+			final AuditTrail scrollingLabelComposite,
+			final TabItem artifactTab, final Table artifacts) {
 		super(view);
 		f_parent = parent;
 		f_summaryIcon = summaryIcon;
@@ -192,25 +196,25 @@ public class FindingDetailsMediator extends AbstractSierraViewMediator
 
 		f_viewCut = new FocusAction(parent) {
 			@Override
-			protected void takeActionOnText(Text c) {
+			protected void takeActionOnText(final Text c) {
 				c.cut();
 			}
 		};
 		f_viewCopy = new FocusAction(parent) {
 			@Override
-			protected void takeActionOnText(Text c) {
+			protected void takeActionOnText(final Text c) {
 				c.copy();
 			}
 		};
 		f_viewPaste = new FocusAction(parent) {
 			@Override
-			protected void takeActionOnText(Text c) {
+			protected void takeActionOnText(final Text c) {
 				c.paste();
 			}
 		};
 		f_viewSelectAll = new FocusAction(parent) {
 			@Override
-			protected void takeActionOnText(Text c) {
+			protected void takeActionOnText(final Text c) {
 				c.selectAll();
 			}
 		};
@@ -229,7 +233,7 @@ public class FindingDetailsMediator extends AbstractSierraViewMediator
 	@Override
 	public Listener getNoDataListener() {
 		return new Listener() {
-			public void handleEvent(Event event) {
+			public void handleEvent(final Event event) {
 				ViewUtility.showView(FindingsSelectionView.ID);
 			}
 		};
@@ -245,19 +249,20 @@ public class FindingDetailsMediator extends AbstractSierraViewMediator
 		final Job job = new DatabaseJob("Querying details of finding "
 				+ findingId) {
 			@Override
-			protected IStatus run(IProgressMonitor monitor) {
+			protected IStatus run(final IProgressMonitor monitor) {
 				monitor.beginTask("Querying finding data",
 						IProgressMonitor.UNKNOWN);
 				try {
-					Connection c = Data.getInstance().readOnlyConnection();
+					final Connection c = Data.getInstance()
+							.readOnlyConnection();
 					try {
-						FindingDetail detail = FindingDetail.getDetailOrNull(c,
-								findingId);
+						final FindingDetail detail = FindingDetail
+								.getDetailOrNull(c, findingId);
 						f_finding = detail;
 
 						// got details, update the view in the UI thread
 						asyncUpdateContentsForUI(FindingDetailsMediator.this);
-					} catch (IllegalArgumentException iae) {
+					} catch (final IllegalArgumentException iae) {
 						f_finding = null;
 						asyncUpdateContentsForUI(FindingDetailsMediator.this);
 					} finally {
@@ -265,7 +270,7 @@ public class FindingDetailsMediator extends AbstractSierraViewMediator
 					}
 					monitor.done();
 					return Status.OK_STATUS;
-				} catch (SQLException e) {
+				} catch (final SQLException e) {
 					final int errNo = 57;
 					final String msg = I18N.err(errNo, findingId);
 					return SLEclipseStatusUtility.createErrorStatus(errNo, msg,
@@ -286,7 +291,7 @@ public class FindingDetailsMediator extends AbstractSierraViewMediator
 		}
 		final UIJob job = new SLUIJob() {
 			@Override
-			public IStatus runInUIThread(IProgressMonitor monitor) {
+			public IStatus runInUIThread(final IProgressMonitor monitor) {
 				f_synopsisSash.setWeights(new int[] { sashLocationWeight,
 						sashDescriptionWeight });
 				return Status.OK_STATUS;
@@ -302,7 +307,7 @@ public class FindingDetailsMediator extends AbstractSierraViewMediator
 		}
 		final UIJob job = new SLUIJob() {
 			@Override
-			public IStatus runInUIThread(IProgressMonitor monitor) {
+			public IStatus runInUIThread(final IProgressMonitor monitor) {
 				showTab(tabName);
 				return Status.OK_STATUS;
 			}
@@ -311,7 +316,7 @@ public class FindingDetailsMediator extends AbstractSierraViewMediator
 	}
 
 	private final Listener f_radioListener = new Listener() {
-		public void handleEvent(Event event) {
+		public void handleEvent(final Event event) {
 			final Importance current = f_finding.getImportance();
 			if (event.widget != null) {
 				if (event.widget.getData() instanceof Importance) {
@@ -327,14 +332,15 @@ public class FindingDetailsMediator extends AbstractSierraViewMediator
 	};
 
 	private final Listener f_locationListener = new Listener() {
-		public void handleEvent(Event event) {
+		public void handleEvent(final Event event) {
 			final TreeItem item = (TreeItem) event.item;
 			if (item == null) {
 				return;
 			}
 			final SourceDetail src = (SourceDetail) item.getData();
-			if (src == null)
+			if (src == null) {
 				return;
+			}
 
 			JDTUtility.tryToOpenInEditor(f_finding.getProjectName(), src
 					.getPackageName(), src.getClassName(), src.getLineOfCode());
@@ -350,11 +356,11 @@ public class FindingDetailsMediator extends AbstractSierraViewMediator
 		f_irrelevantButton.addListener(SWT.Selection, f_radioListener);
 
 		f_folder.addSelectionListener(new SelectionListener() {
-			public void widgetDefaultSelected(SelectionEvent e) {
+			public void widgetDefaultSelected(final SelectionEvent e) {
 				// I'm not sure when this is called (if ever) for a tab folder.
 			}
 
-			public void widgetSelected(SelectionEvent e) {
+			public void widgetSelected(final SelectionEvent e) {
 				/*
 				 * Invoked when the tab selection changes.
 				 */
@@ -363,16 +369,17 @@ public class FindingDetailsMediator extends AbstractSierraViewMediator
 		});
 
 		final Listener commentListener = new Listener() {
-			public void handleEvent(Event event) {
+			public void handleEvent(final Event event) {
 				final String commentText = f_commentText.getText();
-				if (commentText == null || commentText.trim().equals(""))
+				if (commentText == null || commentText.trim().equals("")) {
 					return;
+				}
 				FindingMutationUtility.asyncComment(f_finding.getFindingId(),
 						commentText);
 			}
 		};
 		f_commentText.addListener(SWT.KeyDown, new Listener() {
-			public void handleEvent(Event e) {
+			public void handleEvent(final Event e) {
 				if (e.character != SWT.CR) {
 					return;
 				}
@@ -388,7 +395,7 @@ public class FindingDetailsMediator extends AbstractSierraViewMediator
 
 		final SelectionAdapter stampAction = new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent e) {
+			public void widgetSelected(final SelectionEvent e) {
 				FindingMutationUtility.asyncComment(f_finding.getFindingId(),
 						STAMP_COMMENT);
 			}
@@ -440,7 +447,7 @@ public class FindingDetailsMediator extends AbstractSierraViewMediator
 		irrelevantItem.addListener(SWT.Selection, f_radioListener);
 
 		f_summaryIcon.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event event) {
+			public void handleEvent(final Event event) {
 				Point point = new Point(event.x, event.y);
 				point = f_parent.getDisplay().map(f_summaryIcon.getParent(),
 						null, point);
@@ -449,7 +456,7 @@ public class FindingDetailsMediator extends AbstractSierraViewMediator
 			}
 		});
 		f_findingSynopsis.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event event) {
+			public void handleEvent(final Event event) {
 				final String target = event.text;
 				showTab(target);
 			}
@@ -468,14 +475,14 @@ public class FindingDetailsMediator extends AbstractSierraViewMediator
 		f_summaryText.addListener(SWT.FocusOut, tel);
 
 		f_artifacts.addListener(SWT.MouseDoubleClick, new Listener() {
-			public void handleEvent(Event arg0) {
+			public void handleEvent(final Event arg0) {
 				final TableItem[] items = f_artifacts.getSelection();
 				if (items.length > 0) {
 					final TableItem item = items[0];
 					final String projectName = f_finding.getProjectName();
 					final String packageName = item.getText(2);
 					final String className = item.getText(3);
-					int lineNumber = Integer.valueOf(item.getText(4));
+					final int lineNumber = Integer.valueOf(item.getText(4));
 					JDTUtility.tryToOpenInEditor(projectName, packageName,
 							className, lineNumber);
 				}
@@ -488,8 +495,8 @@ public class FindingDetailsMediator extends AbstractSierraViewMediator
 		 * way to do this.
 		 */
 		f_locationTree.addListener(SWT.Resize, new Listener() {
-			public void handleEvent(Event event) {
-				int[] weights = f_synopsisSash.getWeights();
+			public void handleEvent(final Event event) {
+				final int[] weights = f_synopsisSash.getWeights();
 				if (weights != null && weights.length == 2) {
 					f_sashLocationWeight = weights[0];
 					f_sashDescriptionWeight = weights[1];
@@ -518,20 +525,21 @@ public class FindingDetailsMediator extends AbstractSierraViewMediator
 
 	@Override
 	public void dispose() {
-		if (f_finding == null)
+		if (f_finding == null) {
 			FindingDetailsPersistence.saveNoFindingShown(f_sashLocationWeight,
 					f_sashDescriptionWeight, f_tabNameShown);
-		else
+		} else {
 			FindingDetailsPersistence.save(f_finding.getFindingId(),
 					f_sashLocationWeight, f_sashDescriptionWeight,
 					f_tabNameShown);
+		}
 		super.dispose();
 	}
 
 	public void setFocus() {
-		TabItem[] items = f_folder.getSelection();
+		final TabItem[] items = f_folder.getSelection();
 		if (items.length > 0) {
-			TabItem item = items[0];
+			final TabItem item = items[0];
 			if (item == f_auditTab) {
 				f_commentText.setFocus();
 			} else {
@@ -555,8 +563,9 @@ public class FindingDetailsMediator extends AbstractSierraViewMediator
 			 */
 			f_detailsText.setVisible(showFinding);
 		}
-		if (!showFinding)
+		if (!showFinding) {
 			return;
+		}
 
 		/*
 		 * We have a finding so show the details about it.
@@ -566,7 +575,7 @@ public class FindingDetailsMediator extends AbstractSierraViewMediator
 				+ f_finding.getImportance().toStringSentenceCase());
 		f_summaryText.setText(f_finding.getSummary());
 
-		for (MenuItem i : f_importanceRadioPopupMenu.getItems()) {
+		for (final MenuItem i : f_importanceRadioPopupMenu.getItems()) {
 			i.setSelection(f_finding.getImportance() == i.getData());
 		}
 
@@ -574,10 +583,10 @@ public class FindingDetailsMediator extends AbstractSierraViewMediator
 
 		initLocationTree(f_locationTree, f_finding);
 
-		StringBuffer b = new StringBuffer();
+		final StringBuffer b = new StringBuffer();
 		HTMLPrinter.insertPageProlog(b, 0, f_BackgroundColorRGB,
 				StyleSheetHelper.getInstance().getStyleSheet());
-		String details = f_finding.getFindingTypeDetail();
+		final String details = f_finding.getFindingTypeDetail();
 		b.append(details);
 		f_detailsText.setText(b.toString());
 
@@ -600,7 +609,7 @@ public class FindingDetailsMediator extends AbstractSierraViewMediator
 			f_irrelevantButton.setSelection(true);
 		}
 
-		List<AuditDetail> auditDetails = f_finding.getAudits();
+		final List<AuditDetail> auditDetails = f_finding.getAudits();
 
 		// Add label
 
@@ -643,7 +652,7 @@ public class FindingDetailsMediator extends AbstractSierraViewMediator
 		final Image pkgImage = SLImages.getImage(CommonImages.IMG_PACKAGE);
 		final Image classImage = SLImages.getImage(CommonImages.IMG_CLASS);
 
-		for (ArtifactDetail artifactDetail : f_finding.getArtifacts()) {
+		for (final ArtifactDetail artifactDetail : f_finding.getArtifacts()) {
 			final TableItem item = new TableItem(f_artifacts, SWT.NONE);
 
 			final String tool = artifactDetail.getTool();
@@ -663,7 +672,7 @@ public class FindingDetailsMediator extends AbstractSierraViewMediator
 
 			item.setText(4, Integer.toString(artifactDetail.getLineOfCode()));
 		}
-		for (TableColumn c : f_artifacts.getColumns()) {
+		for (final TableColumn c : f_artifacts.getColumns()) {
 			c.pack();
 		}
 
@@ -685,10 +694,8 @@ public class FindingDetailsMediator extends AbstractSierraViewMediator
 		final String tool = f_finding.getTool();
 		final FindingStatus status = f_finding.getStatus();
 
-		StringBuilder b = new StringBuilder();
-		b.append("This '");
-		b.append(f_finding.getCategory());
-		b.append("' finding (id=");
+		final StringBuilder b = new StringBuilder();
+		b.append("This finding (id=");
 		b.append(f_finding.getFindingId());
 		b.append(") ");
 		b.append("is of ");
@@ -721,8 +728,9 @@ public class FindingDetailsMediator extends AbstractSierraViewMediator
 					b.append("by multiple tools (with ");
 					b.append(f_finding.getNumberOfArtifacts());
 					b.append(" artifacts reported)");
-				} else
+				} else {
 					b.append(tool);
+				}
 				b.append("</a> during the last scan.");
 			} else {
 				b.append("and has been reported by ");
@@ -736,7 +744,7 @@ public class FindingDetailsMediator extends AbstractSierraViewMediator
 		return b.toString();
 	}
 
-	private void initLocationTree(Tree tree, FindingDetail finding) {
+	private void initLocationTree(final Tree tree, final FindingDetail finding) {
 		tree.removeAll();
 
 		// TODO reuse old TreeItems?
@@ -744,7 +752,7 @@ public class FindingDetailsMediator extends AbstractSierraViewMediator
 		proj.setText(finding.getProjectName());
 		proj.setImage(SLImages.getImage(CommonImages.IMG_PROJECT));
 
-		int numArtifacts = finding.getNumberOfArtifacts();
+		final int numArtifacts = finding.getNumberOfArtifacts();
 		if (numArtifacts < 1) {
 			throw new IllegalArgumentException("Bad number of artifacts: "
 					+ numArtifacts);
@@ -757,11 +765,11 @@ public class FindingDetailsMediator extends AbstractSierraViewMediator
 		if (finding.getNumberOfArtifacts() == 1
 				&& firstArtifact.getAdditionalSources().isEmpty()) {
 			// Just one source location to show
-			TreeItem pkg = new TreeItem(proj, SWT.NULL);
+			final TreeItem pkg = new TreeItem(proj, SWT.NULL);
 			pkg.setText(firstArtifact.getPackageName());
 			pkg.setImage(SLImages.getImage(CommonImages.IMG_PACKAGE));
 
-			TreeItem clazz = new TreeItem(pkg, SWT.NULL);
+			final TreeItem clazz = new TreeItem(pkg, SWT.NULL);
 			clazz.setText(firstArtifact.getClassName() + " at line "
 					+ firstArtifact.getLineOfCode());
 			clazz.setImage(SLImages.getImage(CommonImages.IMG_CLASS));
@@ -770,10 +778,10 @@ public class FindingDetailsMediator extends AbstractSierraViewMediator
 			// clazz.addListener(SWT.Selection, f_locationListener);
 			tree.showItem(clazz);
 		} else {
-			List<SourceDetail> srcs = new ArrayList<SourceDetail>();
-			for (ArtifactDetail artifact : finding.getArtifacts()) {
+			final List<SourceDetail> srcs = new ArrayList<SourceDetail>();
+			for (final ArtifactDetail artifact : finding.getArtifacts()) {
 				srcs.add(artifact.getPrimarySource());
-				for (SourceDetail src : artifact.getAdditionalSources()) {
+				for (final SourceDetail src : artifact.getAdditionalSources()) {
 					srcs.add(src);
 				}
 			}
@@ -781,13 +789,13 @@ public class FindingDetailsMediator extends AbstractSierraViewMediator
 
 			// Deal with multiple artifacts, and multiple locations
 			// TODO eliminate these if the sources are ordered?
-			Map<String, TreeItem> packages = new HashMap<String, TreeItem>();
-			Map<String, TreeItem> classes = new HashMap<String, TreeItem>();
-			Map<String, TreeItem> lines = new HashMap<String, TreeItem>();
+			final Map<String, TreeItem> packages = new HashMap<String, TreeItem>();
+			final Map<String, TreeItem> classes = new HashMap<String, TreeItem>();
+			final Map<String, TreeItem> lines = new HashMap<String, TreeItem>();
 			TreeItem first = null;
-			for (SourceDetail src : srcs) {
-				TreeItem loc = createLocation(proj, packages, classes, lines,
-						src);
+			for (final SourceDetail src : srcs) {
+				final TreeItem loc = createLocation(proj, packages, classes,
+						lines, src);
 				tree.showItem(loc);
 				if (first == null) {
 					first = loc;
@@ -805,14 +813,15 @@ public class FindingDetailsMediator extends AbstractSierraViewMediator
 		}
 	}
 
-	private void showAsLink(TreeItem item) {
-		Display d = item.getDisplay();
+	private void showAsLink(final TreeItem item) {
+		final Display d = item.getDisplay();
 		item.setForeground(d.getSystemColor(SWT.COLOR_BLUE));
 	}
 
-	private TreeItem createLocation(TreeItem proj,
-			Map<String, TreeItem> packages, Map<String, TreeItem> classes,
-			Map<String, TreeItem> lines, SourceDetail loc) {
+	private TreeItem createLocation(final TreeItem proj,
+			final Map<String, TreeItem> packages,
+			final Map<String, TreeItem> classes,
+			final Map<String, TreeItem> lines, final SourceDetail loc) {
 		TreeItem pkg = packages.get(loc.getPackageName());
 		TreeItem clazz;
 		TreeItem line;
@@ -875,15 +884,15 @@ public class FindingDetailsMediator extends AbstractSierraViewMediator
 	private void updateTabTitles() {
 		final int auditCount = f_finding.getNumberOfAudits();
 		final int artifactCount = f_finding.getNumberOfArtifacts();
-		if (auditCount == 0)
+		if (auditCount == 0) {
 			f_auditTab.setText("No Audits");
-		else {
+		} else {
 			f_auditTab.setText(auditCount + " Audit"
 					+ (auditCount > 1 ? "s" : ""));
 		}
-		if (artifactCount == 0)
+		if (artifactCount == 0) {
 			f_artifactTab.setText("No Artifacts");
-		else {
+		} else {
 			f_artifactTab.setText(artifactCount + " Artifact"
 					+ (artifactCount > 1 ? "s" : ""));
 		}
