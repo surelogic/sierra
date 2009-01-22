@@ -82,6 +82,7 @@ import com.surelogic.sierra.client.eclipse.jobs.AbstractServerJob;
 import com.surelogic.sierra.client.eclipse.jobs.DeleteProjectDataJob;
 import com.surelogic.sierra.client.eclipse.jobs.OverwriteLocalScanFilterJob;
 import com.surelogic.sierra.client.eclipse.jobs.SendScanFiltersJob;
+import com.surelogic.sierra.client.eclipse.jobs.SynchronizeJob;
 import com.surelogic.sierra.client.eclipse.model.ConnectedServerManager;
 import com.surelogic.sierra.client.eclipse.model.IProjectsObserver;
 import com.surelogic.sierra.client.eclipse.model.ISierraServerObserver;
@@ -210,7 +211,9 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 
 		@Override
 		public final void run() {
-			final List<ConnectedServer> servers = collectServers().indirect;
+			SelectedServers ss = collectServers();
+			ss.other.addAll(ss.indirect);
+			final List<ConnectedServer> servers = ss.other;
 			if (servers.size() == 1) {
 				handleEventOnServer(servers.get(0));
 				/*
@@ -757,14 +760,21 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 	private static class SelectedServers {
 		final List<ConnectedServer> direct;
 		final List<ConnectedServer> indirect;
+		final List<ConnectedServer> other;
 
 		SelectedServers(boolean allocate) {
 			if (allocate) {
 				direct = new ArrayList<ConnectedServer>();
 				indirect = new ArrayList<ConnectedServer>();
+				other = new ArrayList<ConnectedServer>();
 			} else {
-				direct = indirect = Collections.emptyList();
+				direct = indirect = other = Collections.emptyList();
 			}
+		}
+		void clear() {
+			direct.clear();
+			indirect.clear();
+			other.clear();
 		}
 	}
 
@@ -791,9 +801,13 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 				servers.direct.add(s);
 				servers.indirect.add(s);
 			} else {
-				if (item.getText().endsWith(CONNECTED_PROJECTS)
-						|| item.getText().endsWith(SCAN_FILTERS)) {
+				if (item.getText().endsWith(CONNECTED_PROJECTS)) {
 					return new SelectedServers(false);
+				}
+				if (item.getText().endsWith(SCAN_FILTERS)) {
+					servers.clear();
+					servers.other.add(inServer(item));
+					return servers;
 				}
 				// System.out.println("Got a non-server selection:
 				// "+item.getText());
