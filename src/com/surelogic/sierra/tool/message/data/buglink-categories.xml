@@ -1503,10 +1503,6 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>TESTING</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
             <type>NP_NULL_INSTANCEOF</type>
             <filtered>false</filtered>
         </filter>
@@ -1813,10 +1809,6 @@
         </filter>
         <filter>
             <type>LongVariable</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>AvoidNonConstructorMethodsWithClassName</type>
             <filtered>false</filtered>
         </filter>
         <filter>
@@ -2267,7 +2259,7 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>AvoidStaticDateformat</type>
+            <type>STCAL_STATIC_SIMPLE_DATE_FORMAT_INSTANCE</type>
             <filtered>false</filtered>
         </filter>
         <filter>
