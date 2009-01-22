@@ -179,6 +179,7 @@ public final class FindingTypeManager {
 		final Set<String> categoryDuplicates = new HashSet<String>();
 		final Set<Long> artifactIdSet = new HashSet<Long>();
 		final Set<Long> artifactDuplicates = new HashSet<Long>();
+		final Set<String> invalidArtifacts = new HashSet<String>();
 		for (final FindingTypes type : types) {
 			final FindingTypeRecord fRec = factory.newFindingTypeRecord();
 			// Load in all of the finding types, and associate them with
@@ -213,6 +214,10 @@ public final class FindingTypeManager {
 												.getTool(), at.getVersion(), at
 												.getMnemonic()));
 							}
+							if (typeIds.isEmpty()) {
+								invalidArtifacts.add(at.getMnemonic() + " in "
+										+ at.getTool());
+							}
 							for (final long id : typeIds) {
 								if (!artifactIdSet.add(id)) {
 									artifactDuplicates.add(id);
@@ -243,6 +248,13 @@ public final class FindingTypeManager {
 			}
 		} finally {
 			set.close();
+		}
+
+		if (!invalidArtifacts.isEmpty()) {
+			final String message = "The following artifact types do not actually exist in the system: "
+					+ invalidArtifacts + ".";
+			log.severe(message);
+			throw new IllegalStateException(message);
 		}
 		// FIXME We want to check to see if a finding type doesn't belong to any
 		// filter set
