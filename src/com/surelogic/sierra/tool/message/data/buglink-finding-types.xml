@@ -69,7 +69,7 @@ appropriate type.</p>
 
 <pre>
 final Object o = "1";
-Set<Integer> intSet = new HashSet<Integer>();
+Set&lt;Integer&gt; intSet = new HashSet&lt;Integer&gt;();
 intSet.remove(o);
 </pre>
 
