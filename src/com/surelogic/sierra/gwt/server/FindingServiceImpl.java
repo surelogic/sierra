@@ -90,7 +90,6 @@ public class FindingServiceImpl extends SierraServiceServlet implements
 			f.setImportance(ImportanceView.values()[r.nextInt()]);
 			f.setSummary(r.nextString());
 			f.setFindingType(r.nextString());
-			f.setCategory(r.nextString());
 			f.setProject(r.nextString());
 			f.setPackageName(r.nextString());
 			f.setClassName(r.nextString());
