@@ -9,10 +9,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import com.surelogic.common.jdbc.Nulls;
 import com.surelogic.common.jdbc.Query;
 import com.surelogic.common.jdbc.Queryable;
 import com.surelogic.common.jdbc.Row;
 import com.surelogic.common.jdbc.RowHandler;
+import com.surelogic.common.jdbc.SingleRowHandler;
 import com.surelogic.common.jdbc.StringRowHandler;
 import com.surelogic.sierra.jdbc.RevisionException;
 import com.surelogic.sierra.tool.message.FilterEntry;
@@ -219,15 +221,28 @@ public final class Categories {
 				insertParent.call(rec.getId(), parentRec.getId());
 			} else {
 				throw new IllegalArgumentException("The specified parent uid "
-						+ parent + " does not match an existing filter set.");
+						+ parent + " does not match an existing category.");
 			}
 		}
 		q.prepared("FilterSets.deleteFilterSetEntries").call(rec.getId());
+		final Queryable<String> checkType = q.prepared(
+				"FilterSets.checkFindingType", SingleRowHandler
+						.from(new StringRowHandler()));
 		final Queryable<Void> insertEntry = q
 				.prepared("FilterSets.insertFilterSetEntry");
+		final List<String> illegalFindingTypes = new ArrayList<String>();
 		for (final CategoryEntryDO entry : set.getFilters()) {
-			insertEntry.call(rec.getId(), entry.getFindingType(), entry
-					.isFiltered() ? "Y" : "N");
+			if (checkType.call(Nulls.coerce(entry.getFindingType())) == null) {
+				illegalFindingTypes.add(entry.getFindingType());
+			} else {
+				insertEntry.call(rec.getId(), entry.getFindingType(), entry
+						.isFiltered() ? "Y" : "N");
+			}
+		}
+		if (!illegalFindingTypes.isEmpty()) {
+			throw new IllegalArgumentException(
+					"The following finding types do not exist and cannot be added to this category: "
+							+ illegalFindingTypes);
 		}
 	}
 
