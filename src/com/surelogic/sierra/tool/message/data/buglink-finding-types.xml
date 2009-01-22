@@ -317,32 +317,37 @@ the JarFile between the calls to <code>putNextEntry()</code> and
     <id>AvoidCatchingIllegalStateMonitorException</id>
     <artifact tool="FindBugs" mnemonic="IMSE_DONT_CATCH_IMSE">
     </artifact>
-    <shortMessage>
-      Dubious catching of IllegalMonitorStateException
-    </shortMessage>
+    <name>Avoid catching IllegalStateMonitorException</name>
+    <shortMessage>Dubious code that is catching IllegalMonitorStateException may be masking a design flaw in your code.</shortMessage>
     <info>
-      &lt;p&gt;IllegalMonitorStateException is generally only
-      thrown in case of a design flaw in your code (calling wait
-      or notify on an object you do not hold a lock on).&lt;/p&gt;
+<![CDATA[<p>IllegalMonitorStateException is generally only thrown in
+case of a design flaw in your code (calling wait or notify on an
+object you do not hold a lock on).</p>
+
+<p>It is recommended that this catch be removed from your code and the
+design flaw fixed.</p>]]>
     </info>
-    <name>Avoid Catching IllegalStateMonitorException</name>
   </findingType>
+
   <findingType>
     <id>AvoidUsingFloatForMathOperations</id>
     <artifact tool="FindBugs"
 	      mnemonic="FL_MATH_USING_FLOAT_PRECISION">
     </artifact>
-    <shortMessage>
-      Method performs math using floating point precision
-    </shortMessage>
+    <name>Avoid using float type for math operations</name>
+    <shortMessage>Method performs math using floating point precision, consider using double precision instead.</shortMessage>
     <info>
-      &lt;p&gt; The method performs math operations using floating
-      point precision. Floating point precision is very imprecise.
-      For example, 16777216.0f + 1.0f = 16777216.0f. Consider
-      using double math instead.&lt;/p&gt;
+<![CDATA[<p>The method performs math operations using floating point
+precision. Floating point precision is very imprecise.  For example,
+16777216.0f + 1.0f = 16777216.0f.</p>
+
+<p>Consider using double precision math instead. To do this change
+<code>float</code> type variables to <code>double</code> type
+variables and avoid the <code>f</code> prefix on floating point
+constants.</p>]]>
     </info>
-    <name>Avoid Using Float For Math Operations</name>
   </findingType>
+
   <findingType>
     <id>CloneMethodMustImplementCloneable</id>
     <artifact tool="FindBugs" mnemonic="CN_IDIOM"></artifact>
