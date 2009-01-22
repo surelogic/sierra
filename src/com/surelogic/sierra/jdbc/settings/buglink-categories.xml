@@ -323,88 +323,6 @@
         </filter>
     </filterSets>
     <filterSets>
-        <uid>1f838b0f-59c4-4721-9596-bb863da65a87</uid>
-        <owner>9a997ac4-ec2b-4d02-869a-423999fecfed</owner>
-        <revision>0</revision>
-        <name>Whitespace</name>
-        <info></info>
-        <filter>
-            <type>MethodParamPad</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>ParenPad</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>NoWhitespaceBefore</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>TypecastParenPad</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>EmptyForIteratorPad</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>WhitespaceAfter</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>EmptyForInitializerPad</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>TabCharacter</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>ParameterNumber</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>NoWhitespaceAfter</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>OperatorWrap</type>
-            <filtered>false</filtered>
-        </filter>
-    </filterSets>
-    <filterSets>
-        <uid>29e33d04-bf68-42ca-b219-0cb7f79c4c1c</uid>
-        <owner>9a997ac4-ec2b-4d02-869a-423999fecfed</owner>
-        <revision>0</revision>
-        <name>Size Violations</name>
-        <info></info>
-        <filter>
-            <type>LineLength</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>MethodLength</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>AnonInnerLength</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>FileLength</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>ImportControl</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>ExecutableStatementCount</type>
-            <filtered>false</filtered>
-        </filter>
-    </filterSets>
-    <filterSets>
         <uid>2b7d423c-ca28-4645-9177-ef72a46c7462</uid>
         <owner>9a997ac4-ec2b-4d02-869a-423999fecfed</owner>
         <revision>0</revision>
@@ -485,67 +403,6 @@
         </filter>
     </filterSets>
     <filterSets>
-        <uid>39573e18-2c28-4db0-851c-9fced9898a71</uid>
-        <owner>9a997ac4-ec2b-4d02-869a-423999fecfed</owner>
-        <revision>0</revision>
-        <name>Miscellaneous</name>
-        <info>
-			Other issues that don't fall into an obvious category
-		</info>
-        <filter>
-            <type>Translation</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>TodoComment</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>RequiredRegexp</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>TrailingComment</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>Indentation</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>JavaNCSS</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>UpperEll</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>NewlineAtEndOfFile</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>DescendantToken</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>UncommentedMain</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>ArrayTypeStyle</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>GenericIllegalRegexp</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>FinalParameters</type>
-            <filtered>false</filtered>
-        </filter>
-    </filterSets>
-    <filterSets>
         <uid>3d4882a0-c9ea-4462-b995-508c55890182</uid>
         <owner>9a997ac4-ec2b-4d02-869a-423999fecfed</owner>
         <revision>0</revision>
@@ -588,37 +445,6 @@
         </filter>
         <filter>
             <type>UseArraysAsList</type>
-            <filtered>false</filtered>
-        </filter>
-    </filterSets>
-    <filterSets>
-        <uid>51772760-0e10-4d1f-b2cf-d3b5dff26036</uid>
-        <owner>9a997ac4-ec2b-4d02-869a-423999fecfed</owner>
-        <revision>0</revision>
-        <name>Imports</name>
-        <info></info>
-        <filter>
-            <type>IllegalImport</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>AvoidStarImport</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>RedundantImport</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>ImportOrder</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>CrossLanguageRegexpHeader</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>UnusedImports2</type>
             <filtered>false</filtered>
         </filter>
     </filterSets>
@@ -999,17 +825,6 @@
         </filter>
     </filterSets>
     <filterSets>
-        <uid>6b563a32-9889-4b02-90d8-999c0a7a7205</uid>
-        <owner>9a997ac4-ec2b-4d02-869a-423999fecfed</owner>
-        <revision>0</revision>
-        <name>Duplicate Code</name>
-        <info></info>
-        <filter>
-            <type>ThrowsCount</type>
-            <filtered>false</filtered>
-        </filter>
-    </filterSets>
-    <filterSets>
         <uid>6e58ba42-e673-47c2-aff0-1b4c2e33a1e5</uid>
         <owner>9a997ac4-ec2b-4d02-869a-423999fecfed</owner>
         <revision>0</revision>
@@ -1228,64 +1043,6 @@
         </filter>
     </filterSets>
     <filterSets>
-        <uid>75959024-82ef-482f-9e8d-f0edefcad766</uid>
-        <owner>9a997ac4-ec2b-4d02-869a-423999fecfed</owner>
-        <revision>0</revision>
-        <name>Metrics</name>
-        <info></info>
-        <filter>
-            <type>BooleanExpressionComplexity</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>NPathComplexity2</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>ClassDataAbstractionCoupling</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>CyclomaticComplexity2</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>ClassFanOutComplexity</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>StrictDuplicateCode</type>
-            <filtered>false</filtered>
-        </filter>
-    </filterSets>
-    <filterSets>
-        <uid>7abdc682-fbcc-44d5-a8c2-ee5684d83fbe</uid>
-        <owner>9a997ac4-ec2b-4d02-869a-423999fecfed</owner>
-        <revision>0</revision>
-        <name>Block Checks</name>
-        <info></info>
-        <filter>
-            <type>RedundantModifier</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>NeedBraces</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>LeftCurly</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>RightCurly</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>EmptyBlock</type>
-            <filtered>false</filtered>
-        </filter>
-    </filterSets>
-    <filterSets>
         <uid>8e461557-1ca9-41c5-a01a-7569fabe612d</uid>
         <owner>9a997ac4-ec2b-4d02-869a-423999fecfed</owner>
         <revision>0</revision>
@@ -1388,25 +1145,6 @@
         </filter>
         <filter>
             <type>JUnit4TestShouldUseTestAnnotation</type>
-            <filtered>false</filtered>
-        </filter>
-    </filterSets>
-    <filterSets>
-        <uid>91caca12-cd3a-4c12-9ab7-b4dc7307b4a2</uid>
-        <owner>9a997ac4-ec2b-4d02-869a-423999fecfed</owner>
-        <revision>0</revision>
-        <name>Headers</name>
-        <info></info>
-        <filter>
-            <type>Header</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>RegexpHeader</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>TypeName</type>
             <filtered>false</filtered>
         </filter>
     </filterSets>
@@ -1934,88 +1672,6 @@
         </filter>
     </filterSets>
     <filterSets>
-        <uid>a728dc35-4aa3-4a4f-b310-01f704e9dd9c</uid>
-        <owner>9a997ac4-ec2b-4d02-869a-423999fecfed</owner>
-        <revision>5</revision>
-        <name>Class Design</name>
-        <info>Hello Class Design</info>
-        <filter>
-            <type>DesignForExtension</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>HideUtilityClassConstructor</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>VisibilityModifier</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>MutableException</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>FinalClass</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>InterfaceIsType</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>UnnecessaryParentheses2</type>
-            <filtered>false</filtered>
-        </filter>
-    </filterSets>
-    <filterSets>
-        <uid>ab5f9b94-7597-4b28-a284-37dc113a1507</uid>
-        <owner>9a997ac4-ec2b-4d02-869a-423999fecfed</owner>
-        <revision>0</revision>
-        <name>Naming Conventions</name>
-        <info></info>
-        <filter>
-            <type>MemberName</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>AbstractClassName</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>LocalVariableName</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>StaticVariableName</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>MethodName</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>PackageName</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>WriteTag</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>LocalFinalVariableName</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>ConstantName</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>ParameterName</type>
-            <filtered>false</filtered>
-        </filter>
-    </filterSets>
-    <filterSets>
         <uid>af53a1fd-bd99-4afd-a0d0-8a46b250ab13</uid>
         <owner>9a997ac4-ec2b-4d02-869a-423999fecfed</owner>
         <revision>0</revision>
@@ -2030,21 +1686,6 @@
         </filter>
         <filter>
             <type>ProperLogger</type>
-            <filtered>false</filtered>
-        </filter>
-    </filterSets>
-    <filterSets>
-        <uid>b1d722bb-b6d2-4ca4-8209-e1834f828fcf</uid>
-        <owner>9a997ac4-ec2b-4d02-869a-423999fecfed</owner>
-        <revision>0</revision>
-        <name>Modifiers</name>
-        <info></info>
-        <filter>
-            <type>WhitespaceAround</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>ModifierOrder</type>
             <filtered>false</filtered>
         </filter>
     </filterSets>
@@ -2184,23 +1825,6 @@
         </filter>
     </filterSets>
     <filterSets>
-        <uid>d06f712d-06f9-471d-ae93-56d701ec9125</uid>
-        <owner>9a997ac4-ec2b-4d02-869a-423999fecfed</owner>
-        <revision>6</revision>
-        <name>My Basic Rules</name>
-        <parent>15105317-d7f9-418b-8fe3-b17f403e49ce</parent>
-        <parent>70199f05-dc5a-4b91-a9fc-ba0d17c9b707</parent>
-        <parent>51772760-0e10-4d1f-b2cf-d3b5dff26036</parent>
-        <filter>
-            <type>AvoidMultipleUnaryOperators</type>
-            <filtered>true</filtered>
-        </filter>
-        <filter>
-            <type>UnnecessaryReturn</type>
-            <filtered>true</filtered>
-        </filter>
-    </filterSets>
-    <filterSets>
         <uid>d2816915-3d13-489e-b9a4-8cc9ccf85abc</uid>
         <owner>9a997ac4-ec2b-4d02-869a-423999fecfed</owner>
         <revision>0</revision>
@@ -2247,33 +1871,6 @@
         </filter>
         <filter>
             <type>UseAssertEqualsInsteadOfAssertTrue</type>
-            <filtered>false</filtered>
-        </filter>
-    </filterSets>
-    <filterSets>
-        <uid>d393a363-ef51-4f9c-92f6-351d214f46e7</uid>
-        <owner>9a997ac4-ec2b-4d02-869a-423999fecfed</owner>
-        <revision>0</revision>
-        <name>Javadoc Comments</name>
-        <info></info>
-        <filter>
-            <type>JavadocMethod</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>PackageHtml</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>JavadocStyle</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>JavadocType</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>JavadocVariable</type>
             <filtered>false</filtered>
         </filter>
     </filterSets>
@@ -2578,57 +2175,6 @@
         </filter>
     </filterSets>
     <filterSets>
-        <uid>e5fab7f3-66b5-49aa-889b-84acb8ad2d37</uid>
-        <owner>9a997ac4-ec2b-4d02-869a-423999fecfed</owner>
-        <revision>0</revision>
-        <name>J2EE Checks</name>
-        <info></info>
-        <filter>
-            <type>ThisParameter</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>EntityBean</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>RemoteHomeInterface</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>MessageBean</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>Regexp</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>LocalInterface</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>FinalStatic</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>LocalHomeInterface</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>RemoteInterface</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>SessionBean</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>ThisReturn</type>
-            <filtered>false</filtered>
-        </filter>
-    </filterSets>
-    <filterSets>
         <uid>eb029c7f-e181-49db-be7e-332e1ecd005c</uid>
         <owner>9a997ac4-ec2b-4d02-869a-423999fecfed</owner>
         <revision>0</revision>
@@ -2806,169 +2352,6 @@
         </filter>
         <filter>
             <type>MethodSpinsOnField</type>
-            <filtered>false</filtered>
-        </filter>
-    </filterSets>
-    <filterSets>
-        <uid>ed230b94-b348-44fe-af67-bfb208d047ff</uid>
-        <owner>9a997ac4-ec2b-4d02-869a-423999fecfed</owner>
-        <revision>0</revision>
-        <name>Coding</name>
-        <info></info>
-        <filter>
-            <type>NestedIfDepth</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>ParameterAssignment</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>HiddenField</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>EmptyStatement</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>InnerAssignment</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>AvoidNestedBlocks</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>JUnitTestCase</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>FallThrough</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>NestedTryDepth</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>MultipleStringLiterals</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>SimplifyBooleanReturn</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>ModifiedControlVariable</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>DoubleCheckedLocking2</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>FinalLocalVariable</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>RedundantThrows</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>SuperFinalize</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>DefaultComesLast</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>IllegalInstantiation</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>StringLiteralEquality</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>SuperClone</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>ExplicitInitialization</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>IllegalToken</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>EqualsHashCode</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>MissingSwitchDefault</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>AvoidInlineConditionals</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>IllegalType</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>RequireThis</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>MagicNumber</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>PackageDeclaration</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>ReturnCount</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>CovariantEquals</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>MissingCtor</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>MultipleVariableDeclarations</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>IllegalCatch</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>IllegalThrows</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>SimplifyBooleanExpression</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>IllegalTokenText</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>DeclarationOrder</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>ArrayTrailingComma</type>
             <filtered>false</filtered>
         </filter>
     </filterSets>
