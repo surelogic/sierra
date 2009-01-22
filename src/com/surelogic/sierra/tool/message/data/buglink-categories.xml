@@ -506,7 +506,7 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>CreatesEmptyZipFileEntry</type>
+            <type>AM_CREATES_EMPTY_ZIP_FILE_ENTRY</type>
             <filtered>false</filtered>
         </filter>
         <filter>
@@ -542,11 +542,11 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>UnsafeInheritanceOfGetResource</type>
+            <type>UI_INHERITANCE_UNSAFE_GETRESOURCE</type>
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>AvoidCatchingIllegalStateMonitorException</type>
+            <type>IMSE_DONT_CATCH_IMSE</type>
             <filtered>false</filtered>
         </filter>
         <filter>
@@ -562,7 +562,7 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>UseOfFutureKeywordAsMemberIdentifier</type>
+            <type>NM_FUTURE_KEYWORD_USED_AS_IDENTIFIER</type>
             <filtered>false</filtered>
         </filter>
         <filter>
@@ -598,7 +598,7 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>UseOfFutureKeywordAsIdentifier</type>
+            <type>NM_FUTURE_KEYWORD_USED_AS_MEMBER_IDENTIFIER</type>
             <filtered>false</filtered>
         </filter>
         <filter>
@@ -618,7 +618,7 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>MethodMightDropException</type>
+            <type>DE_MIGHT_DROP</type>
             <filtered>false</filtered>
         </filter>
         <filter>
@@ -670,7 +670,7 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>NoSuperCloneCall</type>
+            <type>CN_IDIOM_NO_SUPER_CALL</type>
             <filtered>false</filtered>
         </filter>
         <filter>
@@ -710,7 +710,7 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>CloneMethodMustImplementCloneable</type>
+            <type>CN_IDIOM</type>
             <filtered>false</filtered>
         </filter>
         <filter>
@@ -726,7 +726,7 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>MethodMightIgnoreException</type>
+            <type>DE_MIGHT_IGNORE</type>
             <filtered>false</filtered>
         </filter>
         <filter>
@@ -778,7 +778,7 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>CreatesEmptyJarFileEntry</type>
+            <type>AM_CREATES_EMPTY_JAR_FILE_ENTRY</type>
             <filtered>false</filtered>
         </filter>
         <filter>
@@ -1219,7 +1219,7 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>AvoidUsingFloatForMathOperations</type>
+            <type>FL_MATH_USING_FLOAT_PRECISION</type>
             <filtered>false</filtered>
         </filter>
         <filter>
@@ -1227,7 +1227,7 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>CaughtInfiniteRecursiveLoop</type>
+            <type>IL_INFINITE_RECURSIVE_LOOP</type>
             <filtered>false</filtered>
         </filter>
         <filter>
@@ -1367,7 +1367,7 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>UnknownBugPattern</type>
+            <type>UNKNOWN</type>
             <filtered>false</filtered>
         </filter>
         <filter>
@@ -1451,7 +1451,7 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>CaughtInfiniteLoop</type>
+            <type>IL_INFINITE_LOOP</type>
             <filtered>false</filtered>
         </filter>
         <filter>
@@ -1503,7 +1503,7 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>GeneratedFromIncompleteDetectors</type>
+            <type>TESTING</type>
             <filtered>false</filtered>
         </filter>
         <filter>
@@ -1527,7 +1527,7 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>ContainerAddedToItself</type>
+            <type>IL_CONTAINER_ADDED_TO_ITSELF</type>
             <filtered>false</filtered>
         </filter>
         <filter>
@@ -2299,7 +2299,7 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>VolatileReferenceToArray</type>
+            <type>VO_VOLATILE_REFERENCE_TO_ARRAY</type>
             <filtered>false</filtered>
         </filter>
         <filter>
