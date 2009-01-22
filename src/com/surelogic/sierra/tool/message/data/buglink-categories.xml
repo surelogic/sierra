@@ -622,10 +622,6 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>MethodRequiresSecurityPermissionCheck</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
             <type>FinalizeDoesNotCallSuperFinalize</type>
             <filtered>false</filtered>
         </filter>
@@ -746,7 +742,7 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>SwingMethodsShouldBeInvokedInSwingThread</type>
+            <type>SW_SWING_METHODS_INVOKED_IN_SWING_THREAD</type>
             <filtered>false</filtered>
         </filter>
         <filter>
@@ -755,10 +751,6 @@
         </filter>
         <filter>
             <type>DefinesEqualsUsesHashcode</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>ClassloaderCreationRequiresSecurityPermissionCheck</type>
             <filtered>false</filtered>
         </filter>
         <filter>
@@ -1631,7 +1623,7 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>FieldIsntFinalInImmutableClass</type>
+            <type>JCIP_FIELD_ISNT_FINAL_IN_IMMUTABLE_CLASS</type>
             <filtered>false</filtered>
         </filter>
         <filter>
@@ -1972,7 +1964,7 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>ThreadPassedWhereRunnableExpected</type>
+            <type>DMI_THREAD_PASSED_WHERE_RUNNABLE_EXPECTED</type>
             <filtered>false</filtered>
         </filter>
         <filter>
@@ -2502,7 +2494,7 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>AvoidCollectionOfURLS</type>
+            <type>DMI_COLLECTION_OF_URLS</type>
             <filtered>false</filtered>
         </filter>
         <filter>

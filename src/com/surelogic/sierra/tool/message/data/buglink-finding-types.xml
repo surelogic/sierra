@@ -1,11 +1,12 @@
 <findingTypes>
 
-  <!-- NOTES: -->
-  <!-- No whitespace in "name" or "shortMessage" tags -->
-  <!-- Sentence case in "name" tags -->
-  <!-- Sentences in "shortMessage" tags (no HTML) -->
-  <!-- Use CDATA for "info" tags with HTML -->
+  <!-- NOTES:                                          -->
+  <!-- No whitespace in "name" or "shortMessage" tags  -->
+  <!-- Sentence case in "name" tags                    -->
+  <!-- Sentences in "shortMessage" tags (no HTML)      -->
+  <!-- Use CDATA for "info" tags with HTML             -->
 
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>DuplicatedCode</id>
     <artifact tool="CPD"
@@ -22,7 +23,7 @@ fixed in one copy, but not the other.</p>
 method.</p>]]>
     </info>
   </findingType>
-
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>DMI_VACUOUS_CALL_TO_EASYMOCK_METHOD</id>
     <artifact tool="FindBugs"	mnemonic="DMI_VACUOUS_CALL_TO_EASYMOCK_METHOD"/>
@@ -36,7 +37,7 @@ Java's proxy mechanism.  For more information please visit <a
 href="http://www.easymock.org/">www.easymock.org</a>.</p>]]>
     </info>
   </findingType>
-
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>HE_SIGNATURE_DECLARES_HASHING_OF_UNHASHABLE_CLASS</id>
     <artifact tool="FindBugs"	mnemonic="HE_SIGNATURE_DECLARES_HASHING_OF_UNHASHABLE_CLASS"/>
@@ -51,7 +52,7 @@ but inherits a <code>hashCode()</code> method from
 the requirement that equal objects have equal hash codes.</p>]]>
     </info>
   </findingType>
-
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>GC_UNCHECKED_TYPE_IN_GENERIC_CALL</id>
     <artifact tool="FindBugs"	mnemonic="GC_UNCHECKED_TYPE_IN_GENERIC_CALL"/>
@@ -82,9 +83,9 @@ recommended to examine the finding and determine if it has identified
 a type mismatch that the compiler was not able to report.</p>]]>
     </info>
   </findingType>
-
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
-    <id>SwingMethodsShouldBeInvokedInSwingThread</id>
+    <id>SW_SWING_METHODS_INVOKED_IN_SWING_THREAD</id>
     <artifact tool="FindBugs"
 	      mnemonic="SW_SWING_METHODS_INVOKED_IN_SWING_THREAD">
     </artifact>
@@ -166,7 +167,7 @@ public class GUI extends JFrame {
 ]]>
     </info>
   </findingType>
-
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>IL_INFINITE_LOOP</id>
     <artifact tool="FindBugs" mnemonic="IL_INFINITE_LOOP">
@@ -178,7 +179,7 @@ public class GUI extends JFrame {
 than by perhaps throwing an exception).</p>]]>
     </info>
   </findingType>
-
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>IL_INFINITE_RECURSIVE_LOOP</id>
     <artifact tool="FindBugs"
@@ -192,7 +193,7 @@ seem to indicate an infinite recursive loop that will result in a
 stack overflow.</p>]]>
     </info>
   </findingType>
-
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>IL_CONTAINER_ADDED_TO_ITSELF</id>
     <artifact tool="FindBugs"
@@ -206,7 +207,7 @@ hash code via <code>hashCode()</code> will throw a
 StackOverflowException.</p>]]>
     </info>
   </findingType>
-
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>VO_VOLATILE_REFERENCE_TO_ARRAY</id>
     <artifact tool="FindBugs"
@@ -223,7 +224,7 @@ array elements, you will need to use one of the atomic array classes
 in java.util.concurrent (provided in Java 5.0).<p>]]>
     </info>
   </findingType>
-
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UI_INHERITANCE_UNSAFE_GETRESOURCE</id>
     <artifact tool="FindBugs"
@@ -240,7 +241,7 @@ class in another package.</p>
 final.</p>]]>
     </info>
   </findingType>
-
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SynchronizeAndNullCheckOnSameField</id>
     <artifact tool="FindBugs"
@@ -258,7 +259,7 @@ be thrown and the subsequent check would be pointless.</p>
 understanding of Java semantics.</p>]]>
     </info>
   </findingType>
-
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UNKNOWN</id>
     <artifact tool="FindBugs" mnemonic="UNKNOWN"></artifact>
@@ -272,7 +273,7 @@ perhaps if an analysis was generated using a plugin, but that plugin
 is not currently loaded.</p>]]>
     </info>
   </findingType>
-
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AM_CREATES_EMPTY_ZIP_FILE_ENTRY</id>
     <artifact tool="FindBugs"
@@ -288,7 +289,7 @@ the ZipFile between the calls to <code>putNextEntry()</code> and
 <code>closeEntry()</code>.</p>]]>
     </info>
   </findingType>
-
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AM_CREATES_EMPTY_JAR_FILE_ENTRY</id>
     <artifact tool="FindBugs"
@@ -304,7 +305,7 @@ the JarFile between the calls to <code>putNextEntry()</code> and
 <code>closeEntry()</code>.</p>]]>
     </info>
   </findingType>
-
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>IMSE_DONT_CATCH_IMSE</id>
     <artifact tool="FindBugs" mnemonic="IMSE_DONT_CATCH_IMSE">
@@ -320,7 +321,7 @@ object you do not hold a lock on.</p>
 design flaw fixed.</p>]]>
     </info>
   </findingType>
-
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>FL_MATH_USING_FLOAT_PRECISION</id>
     <artifact tool="FindBugs"
@@ -339,7 +340,7 @@ variables and avoid the <code>f</code> prefix on floating point
 constants.</p>]]>
     </info>
   </findingType>
-
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>CN_IDIOM</id>
     <artifact tool="FindBugs" mnemonic="CN_IDIOM"></artifact>
@@ -377,7 +378,7 @@ public static MyClass newInstance(MyClass o) { ... }
 modern Java programs.</p>]]>
     </info>
   </findingType>
-
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>CN_IDIOM_NO_SUPER_CALL</id>
     <artifact tool="FindBugs" mnemonic="CN_IDIOM_NO_SUPER_CALL">
@@ -418,7 +419,7 @@ public static MyClass newInstance(MyClass o) { ... }
 modern Java programs.</p>]]>
     </info>
   </findingType>
-
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>NM_FUTURE_KEYWORD_USED_AS_IDENTIFIER</id>
     <artifact tool="FindBugs"
@@ -432,7 +433,7 @@ in later versions of Java, and your code will need to be changed in
 order for it to compile in later versions of Java.</p>]]>
     </info>
   </findingType>
-
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>NM_FUTURE_KEYWORD_USED_AS_MEMBER_IDENTIFIER</id>
     <artifact tool="FindBugs"
@@ -447,7 +448,7 @@ API, will need to be changed in order for it to compile in later
 versions of Java.</p>]]>
     </info>
   </findingType>
-
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>DE_MIGHT_DROP</id>
     <artifact tool="FindBugs" mnemonic="DE_MIGHT_DROP"></artifact>
@@ -460,7 +461,7 @@ exceptions should be handled or reported in some way, or they should
 be thrown out of the method.</p>]]>
     </info>
   </findingType>
-
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>DE_MIGHT_IGNORE</id>
     <artifact tool="FindBugs" mnemonic="DE_MIGHT_IGNORE"></artifact>
@@ -473,11 +474,10 @@ exceptions should be handled or reported in some way, or they should
 be thrown out of the method.</p>]]>
     </info>
   </findingType>
-
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>DP_DO_INSIDE_DO_PRIVILEGED</id>
-    <artifact tool="FindBugs"
-	      mnemonic="DP_DO_INSIDE_DO_PRIVILEGED"></artifact>
+    <artifact tool="FindBugs" mnemonic="DP_DO_INSIDE_DO_PRIVILEGED"></artifact>
     <artifact tool="FindBugs" mnemonic="DP_DO_INSIDE_DO_PRIVILEDGED"></artifact>
     <name>Method requires security permission check</name>
     <shortMessage>Method is invoked that should be only be invoked inside a doPrivileged block.</shortMessage>
@@ -489,13 +489,11 @@ then the invocation needs to occur inside a <code>doPrivileged</code>
 block.</p>]]>
     </info>
   </findingType>
-
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>DP_CREATE_CLASSLOADER_INSIDE_DO_PRIVILEGED</id>
-    <artifact tool="FindBugs"
-	      mnemonic="DP_CREATE_CLASSLOADER_INSIDE_DO_PRIVILEGED"></artifact>
-    <artifact tool="FindBugs"
-	      mnemonic="DP_CREATE_CLASSLOADER_INSIDE_DO_PRIVILEDGED"></artifact>
+    <artifact tool="FindBugs" mnemonic="DP_CREATE_CLASSLOADER_INSIDE_DO_PRIVILEGED"></artifact>
+    <artifact tool="FindBugs" mnemonic="DP_CREATE_CLASSLOADER_INSIDE_DO_PRIVILEDGED"></artifact>
     <name>Classloader creation requires security permission check</name>
     <shortMessage>Classloaders should only be created inside a doPrivileged block.</shortMessage>
     <info>
@@ -506,12 +504,10 @@ classloader creation needs to occur inside a <code>doPrivileged</code>
 block.</p>]]>
     </info>
   </findingType>
-
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
-    <id>FieldIsntFinalInImmutableClass</id>
-    <artifact tool="FindBugs"
-	      mnemonic="JCIP_FIELD_ISNT_FINAL_IN_IMMUTABLE_CLASS">
-    </artifact>
+    <id>JCIP_FIELD_ISNT_FINAL_IN_IMMUTABLE_CLASS</id>
+    <artifact tool="FindBugs" mnemonic="JCIP_FIELD_ISNT_FINAL_IN_IMMUTABLE_CLASS"></artifact>
     <name>Field isn't final in an immutable class</name>
     <shortMessage>Fields that are declared within an immutable class should be final.</shortMessage>
     <info>
@@ -521,12 +517,10 @@ for that annotation require that all fields are final.  This class is
 in voilation of those rules.</p>]]>
     </info>
   </findingType>
-
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
-    <id>ThreadPassedWhereRunnableExpected</id>
-    <artifact tool="FindBugs"
-	      mnemonic="DMI_THREAD_PASSED_WHERE_RUNNABLE_EXPECTED">
-    </artifact>
+    <id>DMI_THREAD_PASSED_WHERE_RUNNABLE_EXPECTED</id>
+    <artifact tool="FindBugs" mnemonic="DMI_THREAD_PASSED_WHERE_RUNNABLE_EXPECTED"></artifact>
     <name>Thread passed where Runnable is expected</name>
     <shortMessage>A Thread object has been passed as a parameter to a method where a Runnable is expected.</shortMessage>
     <info>
@@ -537,9 +531,9 @@ error or cause unexpected behavior.</p>
 <p>Consider changing the type of the object to not be a Thread.</p>]]>
     </info>
   </findingType>
-
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
-    <id>AvoidCollectionOfURLS</id>
+    <id>DMI_COLLECTION_OF_URLS</id>
     <artifact tool="FindBugs" mnemonic="DMI_COLLECTION_OF_URLS">
     </artifact>
     <name>Avoid a collection Of URLs</name>
@@ -554,7 +548,7 @@ for more information. Consider using <code>java.net.URI</code>
 instead.</p>]]>
     </info>
   </findingType>
-
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>BlockingMethodsOnURL</id>
     <artifact tool="FindBugs"
