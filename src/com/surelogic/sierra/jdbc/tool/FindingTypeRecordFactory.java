@@ -3,7 +3,6 @@ package com.surelogic.sierra.jdbc.tool;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import com.surelogic.sierra.jdbc.record.CategoryRecord;
 import com.surelogic.sierra.jdbc.record.FindingTypeRecord;
 import com.surelogic.sierra.jdbc.record.UpdateBaseMapper;
 import com.surelogic.sierra.jdbc.record.UpdateRecordMapper;
@@ -11,33 +10,21 @@ import com.surelogic.sierra.jdbc.record.UpdateRecordMapper;
 public final class FindingTypeRecordFactory {
 
 	private final UpdateRecordMapper findingTypeMapper;
-	private final UpdateRecordMapper categoryMapper;
 
-	private FindingTypeRecordFactory(Connection conn) throws SQLException {
+	private FindingTypeRecordFactory(final Connection conn) throws SQLException {
 		this.findingTypeMapper = new UpdateBaseMapper(
 				conn,
 				"INSERT INTO FINDING_TYPE (UUID,NAME,SHORT_MESSAGE,INFO) VALUES (?,?,?,?)",
 				"SELECT ID,NAME,SHORT_MESSAGE,INFO FROM FINDING_TYPE WHERE UUID = ?",
 				"DELETE FROM FINDING_TYPE WHERE ID = ?",
 				"UPDATE FINDING_TYPE SET NAME = ?, SHORT_MESSAGE = ?, INFO = ? WHERE ID = ?");
-		this.categoryMapper = new UpdateBaseMapper(
-				conn,
-				"INSERT INTO FINDING_CATEGORY (UUID,NAME,DESCRIPTION) VALUES (?,?,?)",
-				"SELECT ID,NAME,DESCRIPTION FROM FINDING_CATEGORY WHERE UUID = ?",
-				"DELETE FROM FINDING_CATEGORY WHERE ID = ?",
-				"UPDATE FINDING_CATEGORY SET NAME = ?, DESCRIPTION = ? WHERE ID = ?");
 	}
 
 	public FindingTypeRecord newFindingTypeRecord() {
 		return new FindingTypeRecord(findingTypeMapper);
 	}
 
-	public CategoryRecord newCategoryRecord() {
-		return new CategoryRecord(categoryMapper);
-	}
-
-
-	public static FindingTypeRecordFactory getInstance(Connection conn)
+	public static FindingTypeRecordFactory getInstance(final Connection conn)
 			throws SQLException {
 		return new FindingTypeRecordFactory(conn);
 	}

@@ -29,15 +29,14 @@ public class SchemaUtil {
 	static void updateFindingTypes(final Connection conn) throws SQLException {
 		final FindingTypeManager ftMan = FindingTypeManager.getInstance(conn);
 		final List<FindingTypes> types = new ArrayList<FindingTypes>(3);
-		types.add(getFindingTypes("finding_types.xml"));
-		types.add(getFindingTypes("categories.xml"));
+		types.add(getFindingTypes("buglink-finding-types.xml"));
 		ftMan.updateFindingTypes(types, 0);
 	}
 
 	private static FindingTypes getFindingTypes(final String file) {
 		final InputStream in = Thread.currentThread().getContextClassLoader()
 				.getResourceAsStream(
-						"com/surelogic/sierra/tool/message/" + file);
+						"com/surelogic/sierra/tool/message/data/" + file);
 		return MessageWarehouse.getInstance().fetchFindingTypes(in);
 	}
 
@@ -52,7 +51,7 @@ public class SchemaUtil {
 							.currentThread()
 							.getContextClassLoader()
 							.getResourceAsStream(
-									"com/surelogic/sierra/jdbc/settings/buglink-categories.xml"));
+									"com/surelogic/sierra/tool/message/data/buglink-categories.xml"));
 			SettingQueries.updateCategories(response, true).perform(q);
 		} catch (final JAXBException e) {
 			throw new IllegalStateException(e);

@@ -8,7 +8,6 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -180,7 +179,7 @@ public final class ClientFindingManager extends FindingManager {
 						+ "     L.RELATION_TYPE = O.RELATION_TYPE  AND L.SCAN_ID = ? "
 						+ " WHERE L.CHILD_FINDING_ID IS NULL");
 		populateFindingOverviewCurrentFindings = conn
-				.prepareStatement("INSERT INTO FINDINGS_OVERVIEW (FINDING_ID,PROJECT_ID,AUDITED,LAST_CHANGED,IMPORTANCE,STATUS,LINE_OF_CODE,ARTIFACT_COUNT,AUDIT_COUNT,PROJECT,PACKAGE,CLASS,FINDING_TYPE,CATEGORY,TOOL,SUMMARY,CU,ASSURANCE_TYPE)"
+				.prepareStatement("INSERT INTO FINDINGS_OVERVIEW (FINDING_ID,PROJECT_ID,AUDITED,LAST_CHANGED,IMPORTANCE,STATUS,LINE_OF_CODE,ARTIFACT_COUNT,AUDIT_COUNT,PROJECT,PACKAGE,CLASS,FINDING_TYPE,TOOL,SUMMARY,CU,ASSURANCE_TYPE)"
 						+ " SELECT F.ID,F.PROJECT_ID,"
 						+ "        CASE WHEN F.IS_READ = 'Y' THEN 'Yes' ELSE 'No' END,"
 						+ "        F.LAST_CHANGED,"
@@ -202,7 +201,6 @@ public final class ClientFindingManager extends FindingManager {
 						+ "        LM.PACKAGE_NAME,"
 						+ "        LM.CLASS_NAME,"
 						+ "        FT.UUID,"
-						+ "        FC.NAME,"
 						+ "        SO.TOOL,"
 						+ "        F.SUMMARY,"
 						+ "        SO.CU,"
@@ -220,10 +218,9 @@ public final class ClientFindingManager extends FindingManager {
 						+ "       FROM SIERRA_AUDIT A"
 						+ "       GROUP BY A.FINDING_ID) AS COUNT ON COUNT.ID = F.ID"
 						+ "    INNER JOIN LOCATION_MATCH LM ON LM.FINDING_ID = F.ID"
-						+ "    INNER JOIN FINDING_TYPE FT ON FT.ID = LM.FINDING_TYPE_ID"
-						+ "    INNER JOIN FINDING_CATEGORY FC ON FC.ID = FT.CATEGORY_ID");
+						+ "    INNER JOIN FINDING_TYPE FT ON FT.ID = LM.FINDING_TYPE_ID");
 		populateFindingOverviewFixedFindings = conn
-				.prepareStatement("INSERT INTO FINDINGS_OVERVIEW (FINDING_ID,PROJECT_ID,AUDITED,LAST_CHANGED,IMPORTANCE,STATUS,LINE_OF_CODE,ARTIFACT_COUNT,AUDIT_COUNT,PROJECT,PACKAGE,CLASS,FINDING_TYPE,CATEGORY,TOOL,SUMMARY,CU,ASSURANCE_TYPE)"
+				.prepareStatement("INSERT INTO FINDINGS_OVERVIEW (FINDING_ID,PROJECT_ID,AUDITED,LAST_CHANGED,IMPORTANCE,STATUS,LINE_OF_CODE,ARTIFACT_COUNT,AUDIT_COUNT,PROJECT,PACKAGE,CLASS,FINDING_TYPE,TOOL,SUMMARY,CU,ASSURANCE_TYPE)"
 						+ " SELECT F.ID,F.PROJECT_ID,"
 						+ "        CASE WHEN F.IS_READ = 'Y' THEN 'Yes' ELSE 'No' END,"
 						+ "        F.LAST_CHANGED,"
@@ -242,7 +239,6 @@ public final class ClientFindingManager extends FindingManager {
 						+ "        LM.PACKAGE_NAME,"
 						+ "        LM.CLASS_NAME,"
 						+ "        FT.UUID,"
-						+ "        FC.NAME,"
 						+ "        SO.TOOL,"
 						+ "        F.SUMMARY,"
 						+ "        SO.CU,"
@@ -260,8 +256,7 @@ public final class ClientFindingManager extends FindingManager {
 						+ "       FROM SIERRA_AUDIT A"
 						+ "       GROUP BY A.FINDING_ID) AS COUNT ON COUNT.ID = F.ID"
 						+ "    INNER JOIN LOCATION_MATCH LM ON LM.FINDING_ID = F.ID"
-						+ "    INNER JOIN FINDING_TYPE FT ON FT.ID = LM.FINDING_TYPE_ID"
-						+ "    INNER JOIN FINDING_CATEGORY FC ON FC.ID = FT.CATEGORY_ID");
+						+ "    INNER JOIN FINDING_TYPE FT ON FT.ID = LM.FINDING_TYPE_ID");
 		deleteTempIds = conn.prepareStatement("DELETE FROM " + tempTableName);
 		insertTempId = conn.prepareStatement("INSERT INTO " + tempTableName
 				+ " (ID) VALUES (?)");
@@ -947,7 +942,7 @@ public final class ClientFindingManager extends FindingManager {
 			if (monitor.isCanceled()) {
 				return;
 			}
-			
+
 			final String findingUid = trail.getFinding();
 			final Merge merge = trail.getMerge();
 			final Match m = merge.getMatch();

@@ -446,7 +446,7 @@ public class SettingQueries {
 	/**
 	 * The full location, on the Java classpath, of the default world file.
 	 */
-	public static final String DEFAULT_FILTER_SET_FILE = "/com/surelogic/sierra/jdbc/settings/SureLogicDefaultFilterSet.txt";
+	public static final String DEFAULT_FILTER_SET_FILE = "/com/surelogic/sierra/tool/message/data/buglink-default-scan-filter.txt";
 
 	/**
 	 * Gets the default set of finding type UUIDs that have been selected by
@@ -552,11 +552,12 @@ public class SettingQueries {
 			public ConnectedServer perform(final Query q) {
 				ServerLocations.updateServerIdentities(reply.getServers())
 						.perform(q);
-				final String name = reply.getName() == null ?
-						reply.getUid() : reply.getName();
+				final String name = reply.getName() == null ? reply.getUid()
+						: reply.getName();
 				final ConnectedServer s = new ConnectedServer(reply.getUid(),
-						name, reply.getServices().contains(
-								Services.TEAMSERVER), server);
+						name,
+						reply.getServices().contains(Services.TEAMSERVER),
+						server);
 				ServerLocations.saveServerLocation(s, savePassword).perform(q);
 				return s;
 			}
