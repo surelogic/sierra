@@ -7,6 +7,7 @@ import java.util.logging.Level;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 
 import com.surelogic.common.eclipse.jobs.DatabaseJob;
 import com.surelogic.common.eclipse.jobs.SLProgressMonitorWrapper;
@@ -19,6 +20,7 @@ import com.surelogic.sierra.client.eclipse.actions.TroubleshootConnection;
 import com.surelogic.sierra.client.eclipse.actions.TroubleshootNoSuchServer;
 import com.surelogic.sierra.client.eclipse.actions.TroubleshootWrongAuthentication;
 import com.surelogic.sierra.client.eclipse.model.ConnectedServerManager;
+import com.surelogic.sierra.client.eclipse.model.ServerSyncType;
 import com.surelogic.sierra.client.eclipse.preferences.ServerFailureReport;
 import com.surelogic.sierra.jdbc.settings.ConnectedServer;
 import com.surelogic.sierra.jdbc.settings.SettingQueries;
@@ -52,6 +54,12 @@ public final class SendScanFiltersJob extends DatabaseJob {
 			final Connection conn = Data.getInstance().readOnlyConnection();
 			try {
 				status = sendResultFilters(conn, slMonitor);
+
+				if (status.getSeverity() == IStatus.OK) {	 			
+					final Job sync = new SynchronizeJob(null, null, f_server, 
+							                            ServerSyncType.BUGLINK, true, f_strategy);
+					sync.schedule();
+				}
 			} catch (final Throwable e) {
 				final int errNo = 49;
 				final String errMsg = I18N.err(errNo, f_server);
