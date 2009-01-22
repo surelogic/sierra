@@ -227,6 +227,9 @@ public final class ConnectedServerManager extends
 		}
 	}
 
+	/**
+	 * @RequiresLock this
+	 */
 	private void updateServer(final ConnectedServer server,
 			final ConnectedServer newServer) {
 		for (final String project : getProjectsConnectedTo(server)) {
@@ -457,13 +460,14 @@ public final class ConnectedServerManager extends
 	 */
 	public void updateConnectedServers(
 			final Map<ConnectedServer, Collection<String>> map) {
-		synchronized (f_servers) {
+		boolean updated = false;
+		synchronized (this) {
 			final Set<ConnectedServer> servers = new HashSet<ConnectedServer>(
 					f_servers);
 			final Map<String, ConnectedServer> projects = new HashMap<String, ConnectedServer>(f_projectNameToServer);
 			f_projectNameToServer.clear();
 			f_servers.clear();
-			boolean updated = false;
+
 			for (final Entry<ConnectedServer, Collection<String>> entry : map
 					.entrySet()) {
 				final ConnectedServer s = entry.getKey();
@@ -500,10 +504,10 @@ public final class ConnectedServerManager extends
 					}
 				}
 			}
-			if (updated) {
-				notifyObservers();
-			}
 		}
+		if (updated) {
+			notifyObservers();
+		}	
 	}
 
 	/**
