@@ -32,7 +32,6 @@ public class FindingOverview {
 	private final String compilation;
 	private final String tool;
 	private final String findingType;
-	private final String category;
 	private final String summary;
 	private final AssuranceType assuranceType;
 
@@ -44,11 +43,11 @@ public class FindingOverview {
 	private final int numberOfArtifacts;
 	private final int numberOfComments;
 
-	FindingOverview(ResultSet set) throws SQLException {
-    this(set, 1);
+	FindingOverview(final ResultSet set) throws SQLException {
+		this(set, 1);
 	}
 
-	FindingOverview(ResultSet set, int idx) throws SQLException {
+	FindingOverview(final ResultSet set, int idx) throws SQLException {
 		this.findingId = set.getLong(idx++);
 		this.examined = "Yes".equals(set.getString(idx++));
 		this.lastChanged = set.getTimestamp(idx++);
@@ -63,11 +62,10 @@ public class FindingOverview {
 		this.className = set.getString(idx++);
 		this.compilation = set.getString(idx++);
 		this.findingType = set.getString(idx++);
-		this.category = set.getString(idx++);
 		this.tool = set.getString(idx++);
 		this.summary = set.getString(idx++);
-		
-		String aType = set.getString(idx++);
+
+		final String aType = set.getString(idx++);
 		this.assuranceType = AssuranceType.fromFlag(aType);
 	}
 
@@ -106,7 +104,7 @@ public class FindingOverview {
 	public AssuranceType getAssuranceType() {
 		return assuranceType;
 	}
-	
+
 	public boolean isExamined() {
 		return examined;
 	}
@@ -140,10 +138,6 @@ public class FindingOverview {
 		return numberOfComments;
 	}
 
-	public String getCategory() {
-		return category;
-	}
-
 	public static View getView() {
 		return view;
 	}
@@ -155,11 +149,10 @@ public class FindingOverview {
 	 * 
 	 */
 	public static class View {
-		private static final String SELECT_COLUMNS =
-			"SELECT FINDING_ID,AUDITED,LAST_CHANGED,IMPORTANCE,STATUS,LINE_OF_CODE,"+
-			"ARTIFACT_COUNT,AUDIT_COUNT,PROJECT,PACKAGE,CLASS,CU,FINDING_TYPE,CATEGORY,"+
-			"TOOL,SUMMARY,ASSURANCE_TYPE";
-		
+		private static final String SELECT_COLUMNS = "SELECT FINDING_ID,AUDITED,LAST_CHANGED,IMPORTANCE,STATUS,LINE_OF_CODE,"
+				+ "ARTIFACT_COUNT,AUDIT_COUNT,PROJECT,PACKAGE,CLASS,CU,FINDING_TYPE,"
+				+ "TOOL,SUMMARY,ASSURANCE_TYPE";
+
 		/**
 		 * Get the latest findings for the given class, and any inner classes.
 		 * Only findings with status New or Unchanged are returned, fixed
@@ -172,18 +165,19 @@ public class FindingOverview {
 		 * @param packageName
 		 * @return
 		 */
-		public List<FindingOverview> showFindingsForClass(Connection conn,
-				String projectName, String packageName, String className)
+		public List<FindingOverview> showFindingsForClass(
+				final Connection conn, final String projectName,
+				final String packageName, final String className)
 				throws SQLException {
-			List<FindingOverview> findings = new ArrayList<FindingOverview>();
-			PreparedStatement selectFindingsByClass = conn
+			final List<FindingOverview> findings = new ArrayList<FindingOverview>();
+			final PreparedStatement selectFindingsByClass = conn
 					.prepareStatement(SELECT_COLUMNS
 							+ " FROM FINDINGS_OVERVIEW WHERE PROJECT = ? AND PACKAGE = ? AND CU = ?");
 			int idx = 1;
 			selectFindingsByClass.setString(idx++, projectName);
 			selectFindingsByClass.setString(idx++, packageName);
 			selectFindingsByClass.setString(idx++, className);
-			ResultSet set = selectFindingsByClass.executeQuery();
+			final ResultSet set = selectFindingsByClass.executeQuery();
 			try {
 				while (set.next()) {
 					findings.add(new FindingOverview(set));
@@ -207,17 +201,18 @@ public class FindingOverview {
 		 * @return
 		 */
 		public List<FindingOverview> showRelevantFindingsForClass(
-				Connection conn, String projectName, String packageName,
-				String compilation) throws SQLException {
-			List<FindingOverview> findings = new ArrayList<FindingOverview>();
-			PreparedStatement selectFindingsByClass = conn
+				final Connection conn, final String projectName,
+				final String packageName, final String compilation)
+				throws SQLException {
+			final List<FindingOverview> findings = new ArrayList<FindingOverview>();
+			final PreparedStatement selectFindingsByClass = conn
 					.prepareStatement(SELECT_COLUMNS
 							+ " FROM FINDINGS_OVERVIEW WHERE PROJECT = ? AND PACKAGE = ? AND CU = ? AND IMPORTANCE != 'Irrelevant'");
 			int idx = 1;
 			selectFindingsByClass.setString(idx++, projectName);
 			selectFindingsByClass.setString(idx++, packageName);
 			selectFindingsByClass.setString(idx++, compilation);
-			ResultSet set = selectFindingsByClass.executeQuery();
+			final ResultSet set = selectFindingsByClass.executeQuery();
 			try {
 				while (set.next()) {
 					findings.add(new FindingOverview(set));
@@ -227,57 +222,62 @@ public class FindingOverview {
 			}
 			return findings;
 		}
-		
-    /**
-     * Get the latest findings that are above the given importance 
-     * for the given class, and any inner classes.
-     * Only findings with status New or Unchanged are returned, fixed
-     * findings are not shown.
-     * 
-     * TODO do we want to also show fixed findings?
-     */
-    public List<FindingOverview> showImportantEnoughFindingsForClass(
-        Connection conn, String projectName, String packageName,
-        String compilation, Importance importance) throws SQLException {
-      if (importance.ordinal() == 0) {
-        return showFindingsForClass(conn, projectName, packageName, compilation);
-      }
-      if (importance.ordinal() == 1 && Importance.IRRELEVANT.ordinal() == 0) {
-        return showRelevantFindingsForClass(conn, projectName, packageName, compilation);
-      }
-      boolean first = true;
-      StringBuilder importanceClause = new StringBuilder("(");
-      for(Importance i : Importance.values()) {
-        if (i.ordinal() >= importance.ordinal()) {
-          if (first) {
-            first = false;
-          } else {
-            importanceClause.append(" OR ");
-          }
-          importanceClause.append("IMPORTANCE = '").append(i.toStringSentenceCase()).append('\'');
-        }
-      }      
-      importanceClause.append(')');
-      
-      List<FindingOverview> findings = new ArrayList<FindingOverview>();
-      
-      PreparedStatement selectFindingsByClass = conn
-          .prepareStatement(SELECT_COLUMNS
-              + " FROM FINDINGS_OVERVIEW WHERE PROJECT = ? AND PACKAGE = ? AND CU = ? AND "+importanceClause);
-      int idx = 1;
-      selectFindingsByClass.setString(idx++, projectName);
-      selectFindingsByClass.setString(idx++, packageName);
-      selectFindingsByClass.setString(idx++, compilation);
-      ResultSet set = selectFindingsByClass.executeQuery();
-      try {
-        while (set.next()) {
-          findings.add(new FindingOverview(set));
-        }
-      } finally {
-        set.close();
-      }
-      return findings;
-    }
+
+		/**
+		 * Get the latest findings that are above the given importance for the
+		 * given class, and any inner classes. Only findings with status New or
+		 * Unchanged are returned, fixed findings are not shown.
+		 * 
+		 * TODO do we want to also show fixed findings?
+		 */
+		public List<FindingOverview> showImportantEnoughFindingsForClass(
+				final Connection conn, final String projectName,
+				final String packageName, final String compilation,
+				final Importance importance) throws SQLException {
+			if (importance.ordinal() == 0) {
+				return showFindingsForClass(conn, projectName, packageName,
+						compilation);
+			}
+			if (importance.ordinal() == 1
+					&& Importance.IRRELEVANT.ordinal() == 0) {
+				return showRelevantFindingsForClass(conn, projectName,
+						packageName, compilation);
+			}
+			boolean first = true;
+			final StringBuilder importanceClause = new StringBuilder("(");
+			for (final Importance i : Importance.values()) {
+				if (i.ordinal() >= importance.ordinal()) {
+					if (first) {
+						first = false;
+					} else {
+						importanceClause.append(" OR ");
+					}
+					importanceClause.append("IMPORTANCE = '").append(
+							i.toStringSentenceCase()).append('\'');
+				}
+			}
+			importanceClause.append(')');
+
+			final List<FindingOverview> findings = new ArrayList<FindingOverview>();
+
+			final PreparedStatement selectFindingsByClass = conn
+					.prepareStatement(SELECT_COLUMNS
+							+ " FROM FINDINGS_OVERVIEW WHERE PROJECT = ? AND PACKAGE = ? AND CU = ? AND "
+							+ importanceClause);
+			int idx = 1;
+			selectFindingsByClass.setString(idx++, projectName);
+			selectFindingsByClass.setString(idx++, packageName);
+			selectFindingsByClass.setString(idx++, compilation);
+			final ResultSet set = selectFindingsByClass.executeQuery();
+			try {
+				while (set.next()) {
+					findings.add(new FindingOverview(set));
+				}
+			} finally {
+				set.close();
+			}
+			return findings;
+		}
 	}
 
 }

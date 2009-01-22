@@ -11,8 +11,8 @@ public class SynchedFindingDetail {
 	private final List<AuditDetail> audits;
 	private final List<AuditDetail> commits;
 
-	SynchedFindingDetail(FindingOverview overview, List<AuditDetail> audits,
-			List<AuditDetail> commits) {
+	SynchedFindingDetail(final FindingOverview overview,
+			final List<AuditDetail> audits, final List<AuditDetail> commits) {
 		this.overview = overview;
 		this.audits = audits;
 		this.commits = commits;
@@ -24,10 +24,6 @@ public class SynchedFindingDetail {
 
 	public List<AuditDetail> getCommits() {
 		return commits;
-	}
-
-	public String getCategory() {
-		return overview.getCategory();
 	}
 
 	public String getClassName() {

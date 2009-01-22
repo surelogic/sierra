@@ -22,8 +22,9 @@ public final class FindingDetail {
 	private final List<AuditDetail> audits;
 	private final List<ArtifactDetail> artifacts;
 
-	private FindingDetail(Connection conn, Long findingId) throws SQLException {
-		Statement st = conn.createStatement();
+	private FindingDetail(final Connection conn, final Long findingId)
+			throws SQLException {
+		final Statement st = conn.createStatement();
 		try {
 			ResultSet set = st
 					.executeQuery("SELECT FT.INFO,FO.FINDING_ID,FO.AUDITED,FO.LAST_CHANGED,FO.IMPORTANCE,FO.STATUS,FO.LINE_OF_CODE,FO.ARTIFACT_COUNT,FO.AUDIT_COUNT,FO.PROJECT,FO.PACKAGE,FO.CLASS,FO.CU,FO.FINDING_TYPE,FO.CATEGORY,FO.TOOL,FO.SUMMARY,FO.Assurance_Type"
@@ -65,10 +66,6 @@ public final class FindingDetail {
 		}
 	}
 
-	public String getCategory() {
-		return overview.getCategory();
-	}
-
 	public String getClassName() {
 		return overview.getClassName();
 	}
@@ -94,12 +91,12 @@ public final class FindingDetail {
 	}
 
 	public int[] getLinesOfCode() {
-		Set<Integer> lineSet = new TreeSet<Integer>();
-		for (ArtifactDetail a : artifacts) {
+		final Set<Integer> lineSet = new TreeSet<Integer>();
+		for (final ArtifactDetail a : artifacts) {
 			lineSet.add(a.getLineOfCode());
 		}
-		Iterator<Integer> iter = lineSet.iterator();
-		int lines[] = new int[lineSet.size()];
+		final Iterator<Integer> iter = lineSet.iterator();
+		final int lines[] = new int[lineSet.size()];
 		for (int i = 0; i < lines.length; i++) {
 			lines[i] = iter.next();
 		}
@@ -162,8 +159,8 @@ public final class FindingDetail {
 	 * @throws SQLException
 	 *             if the query fails.
 	 */
-	public static FindingDetail getDetail(Connection conn, Long findingId)
-			throws SQLException {
+	public static FindingDetail getDetail(final Connection conn,
+			final Long findingId) throws SQLException {
 		return new FindingDetail(conn, findingId);
 	}
 
@@ -178,11 +175,12 @@ public final class FindingDetail {
 	 * @return the details of the finding, or <code>null</code> if the finding
 	 *         cannot be found.
 	 */
-	public static FindingDetail getDetailOrNull(Connection conn, Long findingId) {
+	public static FindingDetail getDetailOrNull(final Connection conn,
+			final Long findingId) {
 		FindingDetail result;
 		try {
 			result = getDetail(conn, findingId);
-		} catch (SQLException e) {
+		} catch (final SQLException e) {
 			result = null;
 		}
 		return result;
