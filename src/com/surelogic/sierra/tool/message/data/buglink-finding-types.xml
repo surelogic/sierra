@@ -354,118 +354,152 @@ constants.</p>]]>
     <artifact tool="PMD"
 	      mnemonic="CloneMethodMustImplementCloneable">
     </artifact>
-    <shortMessage>
-      Class implements Cloneable but does not define or use clone
-      method
-    </shortMessage>
+    <name>Clone method must implement Cloneable</name>
+    <shortMessage>This class implements Cloneable but does not define or use clone method.</shortMessage>
     <info>
-      &lt;p&gt; Class implements Cloneable but does not define or
-      use the clone method.&lt;/p&gt; &lt;p&gt; The method clone()
-      should only be implemented if the class implements the
-      Cloneable interface with the exception of a final method
-      that only throws CloneNotSupportedException.
+<![CDATA[<p>This class implements the <code>Cloneable</code> interface
+but does not define or use the <code>clone()</code> method.  A class
+that implements <code>Cloneable</code> is expected to provide a
+properly functioning public <code>clone()</code> method.</p>
+
+<p>The method <code>clone()</code> should only be implemented if the
+class implements the <code>Cloneable</code> interface with the
+exception of a final method that only throws
+<code>CloneNotSupportedException</code>.</p>
+
+<p>Overall it is considered bad practice to use the extralinguistic
+clone mechanism (reference Bloch's Effective Java (2nd edition) item
+11).  A copy constructor is one alternative approach.</p>
+
+<pre>
+public MyClass(MyClass o) { ... }
+</pre>
+
+<p> A copy factory is another alternative approach.</p>
+
+<pre>
+public static MyClass newInstance(MyClass o) { ... }
+</pre>
+
+<p>Either one of these alternatives is considered better practice in
+modern Java programs.</p>]]>
     </info>
-    <name>Clone Method Must Implement Cloneable</name>
   </findingType>
+
   <findingType>
     <id>NoSuperCloneCall</id>
     <artifact tool="FindBugs" mnemonic="CN_IDIOM_NO_SUPER_CALL">
     </artifact>
     <artifact tool="PMD" mnemonic="ProperCloneImplementation">
     </artifact>
-    <shortMessage>
-      clone method does not call super.clone()
-    </shortMessage>
+    <name>No super.clone() call in clone method</name>
+    <shortMessage>This non-final class defines a clone method that does not call super.clone().</shortMessage>
     <info>
-      &lt;p&gt; This non-final class defines a clone() method that
-      does not call super.clone(). If this class
-      (&quot;&lt;i&gt;A&lt;/i&gt;&quot;) is extended by a subclass
-      (&quot;&lt;i&gt;B&lt;/i&gt;&quot;), and the subclass
-      &lt;i&gt;B&lt;/i&gt; calls super.clone(), then it is likely
-      that &lt;i&gt;B&lt;/i&gt;'s clone() method will return an
-      object of type &lt;i&gt;A&lt;/i&gt;, which violates the
-      standard contract for clone().&lt;/p&gt;
+<![CDATA[<p>This non-final class defines a <code>clone()</code> method
+that does not call <code>super.clone()</code>. If this class, which we
+will call <code>A</code>, is extended by a subclass <code>B</code>,
+and the subclass <code>B</code> calls <code>super.clone()</code>, then
+it is likely that <code>B</code>'s <code>clone()</code> method will
+return an object of type <code>A</code>, which violates the contract
+for <code>clone()</code>.</p>
 
-      &lt;p&gt; If all clone() methods call super.clone(), then
-      they are guaranteed to use Object.clone(), which always
-      returns an object of the correct type.&lt;/p&gt;
+<p>If all <code>clone()</code> methods call
+<code>super.clone()</code>, then they are guaranteed to use
+<code>Object.clone()</code>, which always returns an object of the
+correct type.</p>
+
+<p>Overall it is considered bad practice to use the extralinguistic
+clone mechanism (reference Bloch's Effective Java (2nd edition) item
+11).  A copy constructor is one alternative approach.</p>
+
+<pre>
+public MyClass(MyClass o) { ... }
+</pre>
+
+<p> A copy factory is another alternative approach.</p>
+
+<pre>
+public static MyClass newInstance(MyClass o) { ... }
+</pre>
+
+<p>Either one of these alternatives is considered better practice in
+modern Java programs.</p>]]>
     </info>
-    <name>No Super Clone Call</name>
   </findingType>
+
   <findingType>
     <id>UseOfFutureKeywordAsIdentifier</id>
     <artifact tool="FindBugs"
 	      mnemonic="NM_FUTURE_KEYWORD_USED_AS_IDENTIFIER">
     </artifact>
-    <shortMessage>
-      Use of identifier that is a keyword in later versions of
-      Java
-    </shortMessage>
+    <name>Use of a future keyword as identifier</name>
+    <shortMessage>Use of an identifier that is a keyword in later versions of Java.</shortMessage>
     <info>
-      &lt;p&gt;The identifier is a word that is reserversed as a
-      keyword in later versions of Java, and your code will need
-      to be changed in order to compile it in later versions of
-      Java.&lt;/p&gt;
+<![CDATA[<p>The identifier is a word that is reserversed as a keyword
+in later versions of Java, and your code will need to be changed in
+order for it to compile in later versions of Java.</p>]]>
     </info>
-    <name>Use Of Future Keyword As Identifier</name>
   </findingType>
+
   <findingType>
     <id>UseOfFutureKeywordAsMemberIdentifier</id>
     <artifact tool="FindBugs"
 	      mnemonic="NM_FUTURE_KEYWORD_USED_AS_MEMBER_IDENTIFIER">
     </artifact>
-    <shortMessage>
-      Use of identifier that is a keyword in later versions of
-      Java
-    </shortMessage>
+    <name>Use of a future keyword as a member identifier</name>
+    <shortMessage>Use of an identifier that is a keyword in later versions of Java.</shortMessage>
     <info>
-      &lt;p&gt;This identifier is used as a keyword in later
-      versions of Java. This code, and any code that references
-      this API, will need to be changed in order to compile it in
-      later versions of Java.&lt;/p&gt;
+<![CDATA[<p>This identifier is a word that is used as a keyword in
+later versions of Java. This code, and any code that references this
+API, will need to be changed in order for it to compile in later
+versions of Java.</p>]]>
     </info>
-    <name>Use Of Future Keyword As Member Identifier</name>
   </findingType>
+
   <findingType>
     <id>MethodMightDropException</id>
     <artifact tool="FindBugs" mnemonic="DE_MIGHT_DROP"></artifact>
-    <shortMessage>Method might drop exception</shortMessage>
+    <name>Method might drop an exception</name>
+    <shortMessage>Method might drop an exception.</shortMessage>
     <info>
-      &lt;p&gt; This method might drop an exception.&amp;nbsp; In
-      general, exceptions should be handled or reported in some
-      way, or they should be thrown out of the method.&lt;/p&gt;
+<![CDATA[<p>This method might drop an exception that may indicate a
+serious problem has occurred in the running program. In general,
+exceptions should be handled or reported in some way, or they should
+be thrown out of the method.</p>]]>
     </info>
-    <name>Method Might Drop Exception</name>
   </findingType>
+
   <findingType>
     <id>MethodMightIgnoreException</id>
     <artifact tool="FindBugs" mnemonic="DE_MIGHT_IGNORE"></artifact>
-    <shortMessage>Method might ignore exception</shortMessage>
+    <name>Method might ignore an exception</name>
+    <shortMessage>Method might ignore an exception.</shortMessage>
     <info>
-      &lt;p&gt; This method might ignore an exception.&amp;nbsp;
-      In general, exceptions should be handled or reported in some
-      way, or they should be thrown out of the method.&lt;/p&gt;
+<![CDATA[<p>This method might ignore an exception that my indicate a
+serious problem has occurred in the running program. In general,
+exceptions should be handled or reported in some way, or they should
+be thrown out of the method.</p>]]>
     </info>
-    <name>Method Might Ignore Exception</name>
   </findingType>
+
   <findingType>
     <id>DP_DO_INSIDE_DO_PRIVILEGED</id>
     <artifact tool="FindBugs"
 	      mnemonic="DP_DO_INSIDE_DO_PRIVILEGED">
     </artifact>
-    <shortMessage>
-      Method invoked that should be only be invoked inside a
-      doPrivileged block
-    </shortMessage>
+    <name>Method requires security permission check</name>
+    <shortMessage>Method is invoked that should be only be invoked inside a doPrivileged block.</shortMessage>
     <info>
-      &lt;p&gt; This code invokes a method that requires a
-      security permission check. If this code will be granted
-      security permissions, but might be invoked by code that does
-      not have security permissions, then the invocation needs to
-      occur inside a doPrivileged block.&lt;/p&gt;
+<![CDATA[<p>This code invokes a method that requires a security
+permission check. If this code will be granted security permissions,
+but might be invoked by code that does not have security permissions,
+then the invocation needs to occur inside a <code>doPrivileged</code>
+block.</p>]]>
     </info>
-    <name>Method Requires Security Permission Check</name>
   </findingType>
+
+  <!-- STOP -->
+
   <findingType>
     <id>MethodRequiresSecurityPermissionCheck</id>
     <artifact tool="FindBugs"
@@ -11389,312 +11423,6 @@ use <code>java.util.Arrays.hashCode(a)</code>.
     </info>
     <name>String Instantiation</name>
   </findingType>
-  <!-- Duplicate
-       <findingType>
-       <id>UseNotifyAllInsteadOfNotify</id>
-       <artifact tool="PMD" mnemonic="UseNotifyAllInsteadOfNotify">
-       </artifact>
-       <shortMessage>
-       Thread.notify() awakens a thread monitoring the object. If
-       more than one thread is monitoring, then only one is chosen.
-       The thread chosen is arbitrary; thus it's usually safer to
-       call notifyAll() instead.
-       </shortMessage>
-       <info>
-       Thread.notify() awakens a thread monitoring the object. If
-       more than one thread is monitoring, then only one is chosen.
-       The thread chosen is arbitrary; thus it's usually safer to
-       call notifyAll() instead.
-       </info>
-       <name>Use Notify All Instead Of Notify</name>
-       </findingType>
-       
-       <findingType>
-       <id>StringInstantiation</id>
-       <artifact tool="PMD" mnemonic="StringInstantiation"></artifact>
-       <shortMessage>
-       Avoid instantiating String objects; this is usually
-       unnecessary.
-       </shortMessage>
-       <info>
-       Avoid instantiating String objects; this is usually
-       unnecessary.
-       </info>
-       <name>String Instantiation</name>
-       </findingType>
-       <findingType>
-       <id>AvoidCallingFinalize</id>
-       <artifact tool="PMD" mnemonic="AvoidCallingFinalize"></artifact>
-       <shortMessage>
-       Object.finalize() is called by the garbage collector on an
-       object when garbage collection determines that there are no
-       more references to the object.
-       </shortMessage>
-       <info>
-       Object.finalize() is called by the garbage collector on an
-       object when garbage collection determines that there are no
-       more references to the object.
-       </info>
-       <name>Avoid Calling Finalize</name>
-       </findingType>
-       
-       <findingType>
-       <id>UnusedPrivateField</id>
-       <artifact tool="PMD" mnemonic="UnusedPrivateField"></artifact>
-       <shortMessage>
-       Detects when a private field is declared and/or assigned a
-       value, but not used.
-       </shortMessage>
-       <info>
-       Detects when a private field is declared and/or assigned a
-       value, but not used.
-       </info>
-       <name>Unused Private Field</name>
-       </findingType>
-       
-       <findingType>
-       <id>UseStringBufferForStringAppends</id>
-       <artifact tool="PMD"
-       mnemonic="UseStringBufferForStringAppends">
-       </artifact>
-       <shortMessage>
-       Finds usages of += for appending strings.
-       </shortMessage>
-       <info>Finds usages of += for appending strings.</info>
-       <name>Use String Buffer For String Appends</name>
-       </findingType>
-       
-       <findingType>
-       <id>IntegerInstantiation</id>
-       <artifact tool="PMD" mnemonic="IntegerInstantiation"></artifact>
-       <shortMessage>
-       In JDK 1.5, calling new Integer() causes memory allocation.
-       Integer.valueOf() is more memory friendly.
-       </shortMessage>
-       <info>
-       In JDK 1.5, calling new Integer() causes memory allocation.
-       Integer.valueOf() is more memory friendly.
-       </info>
-       <name>Integer Instantiation</name>
-       </findingType>
-       
-       <findingType>
-       <id>SuspiciousHashcodeMethodName</id>
-       <artifact tool="PMD" mnemonic="SuspiciousHashcodeMethodName">
-       </artifact>
-       <shortMessage>
-       The method name and return type are suspiciously close to
-       hashCode(), which may mean you are intending to override the
-       hashCode() method.
-       </shortMessage>
-       <info>
-       The method name and return type are suspiciously close to
-       hashCode(), which may mean you are intending to override the
-       hashCode() method.
-       </info>
-       <name>Suspicious Hashcode Method Name</name>
-       </findingType>
-       
-       <findingType>
-       <id>SuspiciousEqualsMethodName</id>
-       <artifact tool="PMD" mnemonic="SuspiciousEqualsMethodName">
-       </artifact>
-       <shortMessage>
-       The method name and parameter number are suspiciously close
-       to equals(Object), which may mean you are intending to
-       override the equals(Object) method.
-       </shortMessage>
-       <info>
-       The method name and parameter number are suspiciously close
-       to equals(Object), which may mean you are intending to
-       override the equals(Object) method.
-       </info>
-       <name>Suspicious Equals Method Name</name>
-       </findingType>
-       
-       <findingType>
-       <id>MethodNamingConventions</id>
-       <artifact tool="PMD" mnemonic="MethodNamingConventions">
-       </artifact>
-       <shortMessage>
-       Method names should always begin with a lower case
-       character, and should not contain underscores.
-       </shortMessage>
-       <info>
-       Method names should always begin with a lower case
-       character, and should not contain underscores.
-       </info>
-       <name>Method Naming Conventions</name>
-       </findingType>
-       
-       <findingType>
-       <id>VariableNamingConventions</id>
-       <artifact tool="PMD" mnemonic="VariableNamingConventions">
-       </artifact>
-       <shortMessage>
-       A variable naming conventions rule - customize this to your
-       liking. Currently, it checks for final variables that should
-       be fully capitalized and non-final variables that should not
-       include underscores.
-       </shortMessage>
-       <info>
-       A variable naming conventions rule - customize this to your
-       liking. Currently, it checks for final variables that should
-       be fully capitalized and non-final variables that should not
-       include underscores.
-       </info>
-       <name>Variable Naming Conventions</name>
-       </findingType>
-       
-       <findingType>
-       <id>ClassNamingConventions</id>
-       <artifact tool="PMD" mnemonic="ClassNamingConventions">
-       </artifact>
-       <shortMessage>
-       Class names should always begin with an upper case
-       character.
-       </shortMessage>
-       <info>
-       Class names should always begin with an upper case
-       character.
-       </info>
-       <name>Class Naming Conventions</name>
-       </findingType>
-       
-       <findingType>
-       <id>FinalizeShouldBeProtected</id>
-       <artifact tool="PMD" mnemonic="FinalizeShouldBeProtected">
-       </artifact>
-       <shortMessage>
-       If you override finalize(), make it protected. If you make
-       it public, other classes may call it.
-       </shortMessage>
-       <info>
-       If you override finalize(), make it protected. If you make
-       it public, other classes may call it.
-       </info>
-       <name>Finalize Should Be Protected</name>
-       </findingType>
-       <findingType>
-       <id>ProperCloneImplementation</id>
-       <artifact tool="PMD" mnemonic="ProperCloneImplementation">
-       </artifact>
-       <shortMessage>
-       Object clone() should be implemented with super.clone().
-       </shortMessage>
-       <info>
-       Object clone() should be implemented with super.clone().
-       </info>
-       <name>Proper Clone Implementation</name>
-       </findingType>
-       
-       <findingType>
-       <id>CloneMethodMustImplementCloneable</id>
-       <artifact tool="PMD"
-       mnemonic="CloneMethodMustImplementCloneable">
-       </artifact>
-       <shortMessage>
-       The method clone() should only be implemented if the class
-       implements the Cloneable interface with the exception of a
-       final method that only throws CloneNotSupportedException.
-       </shortMessage>
-       <info>
-       The method clone() should only be implemented if the class
-       implements the Cloneable interface with the exception of a
-       final method that only throws CloneNotSupportedException.
-       </info>
-       <name>Clone Method Must Implement Cloneable</name>
-       </findingType>
-       
-       <findingType>
-       <id>MisplacedNullCheck</id>
-       <artifact tool="PMD" mnemonic="MisplacedNullCheck"></artifact>
-       <shortMessage>
-       The null check here is misplaced. if the variable is null
-       you'll get a NullPointerException. Either the check is
-       useless (the variable will never be &quot;null&quot;) or
-       it's incorrect.
-       </shortMessage>
-       <info>
-       The null check here is misplaced. if the variable is null
-       you'll get a NullPointerException. Either the check is
-       useless (the variable will never be &quot;null&quot;) or
-       it's incorrect.
-       </info>
-       <name>Misplaced Null Check</name>
-       </findingType>
-       
-       <findingType>
-       <id>EqualsNull</id>
-       <artifact tool="PMD" mnemonic="EqualsNull"></artifact>
-       <shortMessage>
-       Inexperienced programmers sometimes confuse comparison
-       concepts and use equals() to compare to null.
-       </shortMessage>
-       <info>
-       Inexperienced programmers sometimes confuse comparison
-       concepts and use equals() to compare to null.
-       </info>
-       <name>Equals Null</name>
-       </findingType>
-       
-       <findingType>
-       <id>EmptyFinalizer</id>
-       <artifact tool="PMD" mnemonic="EmptyFinalizer"></artifact>
-       <shortMessage>
-       If the finalize() method is empty, then it does not need to
-       exist.
-       </shortMessage>
-       <info>
-       If the finalize() method is empty, then it does not need to
-       exist.
-       </info>
-       <name>Empty Finalizer</name>
-       </findingType>
-       
-       <findingType>
-       <id>FinalizeOnlyCallsSuperFinalize</id>
-       <artifact tool="PMD"
-       mnemonic="FinalizeOnlyCallsSuperFinalize">
-       </artifact>
-       <shortMessage>
-       If the finalize() is implemented, it should do something
-       besides just calling super.finalize().
-       </shortMessage>
-       <info>
-       If the finalize() is implemented, it should do something
-       besides just calling super.finalize().
-       </info>
-       <name>Finalize Only Calls Super Finalize</name>
-       </findingType>
-       
-       <findingType>
-       <id>FinalizeDoesNotCallSuperFinalize</id>
-       <artifact tool="PMD"
-       mnemonic="FinalizeDoesNotCallSuperFinalize">
-       </artifact>
-       <shortMessage>
-       If the finalize() is implemented, its last action should be
-       to call super.finalize.
-       </shortMessage>
-       <info>
-       If the finalize() is implemented, its last action should be
-       to call super.finalize.
-       </info>
-       <name>Finalize Does Not Call Super Finalize</name>
-       </findingType>
-       
-       <findingType>
-       <id>EmptySynchronizedBlock</id>
-       <artifact tool="PMD" mnemonic="EmptySynchronizedBlock">
-       </artifact>
-       <shortMessage>
-       Avoid empty synchronized blocks - they're useless.
-       </shortMessage>
-       <info>Avoid empty synchronized blocks - they're useless.</info>
-       <name>Empty Synchronized Block</name>
-       </findingType>
-  -->
   
   <!-- For PMD 4.1 -->
   <findingType>
@@ -12002,7 +11730,3 @@ use <code>java.util.Arrays.hashCode(a)</code>.
     <name>Avoid StringBuffer-typed Fields</name>
   </findingType>
 </findingTypes>
-<!-- LocalWords:  JUnit UNHASHABLE unhashable hashable hashCodes GC intSet
--->
-<!-- LocalWords:  HashSet
--->
