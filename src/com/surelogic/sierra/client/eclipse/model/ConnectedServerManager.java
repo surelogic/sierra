@@ -227,6 +227,15 @@ public final class ConnectedServerManager extends
 		}
 	}
 
+	private void updateServer(final ConnectedServer server,
+			final ConnectedServer newServer) {
+		for (final String project : getProjectsConnectedTo(server)) {
+			f_projectNameToServer.put(project, newServer);
+		}
+		f_servers.remove(server);
+		f_servers.add(newServer);
+	}
+	
 	/**
 	 * This method changes the authorization information for a specified server.
 	 * 
@@ -246,11 +255,7 @@ public final class ConnectedServerManager extends
 		final ConnectedServer newServer;
 		synchronized (this) {
 			newServer = server.changeAuthorization(user, pass, savePassword);
-			for (final String project : getProjectsConnectedTo(server)) {
-				f_projectNameToServer.put(project, newServer);
-			}
-			f_servers.remove(server);
-			f_servers.add(newServer);
+			updateServer(server, newServer);
 		}
 		saveAndNotifyObservers();
 		return newServer;
@@ -268,11 +273,7 @@ public final class ConnectedServerManager extends
 	public ConnectedServer changeServer(final ConnectedServer from,
 			final ConnectedServer to) {
 		synchronized (this) {
-			f_servers.remove(from);
-			for (final String project : getProjectsConnectedTo(from)) {
-				f_projectNameToServer.put(project, to);
-			}
-			f_servers.add(to);
+			updateServer(from, to);
 		}
 		saveAndNotifyObservers();
 		return to;
@@ -293,9 +294,8 @@ public final class ConnectedServerManager extends
 			final boolean autoSync) {
 		final ConnectedServer newServer;
 		synchronized (this) {
-			f_servers.remove(server);
 			newServer = server.changeAutoSync(autoSync);
-			f_servers.add(newServer);
+			updateServer(server, newServer);
 		}
 		saveAndNotifyObservers();
 		return newServer;
@@ -460,7 +460,7 @@ public final class ConnectedServerManager extends
 		synchronized (f_servers) {
 			final Set<ConnectedServer> servers = new HashSet<ConnectedServer>(
 					f_servers);
-			final Map<String, ConnectedServer> projects = new HashMap<String, ConnectedServer>();
+			final Map<String, ConnectedServer> projects = new HashMap<String, ConnectedServer>(f_projectNameToServer);
 			f_projectNameToServer.clear();
 			f_servers.clear();
 			boolean updated = false;
