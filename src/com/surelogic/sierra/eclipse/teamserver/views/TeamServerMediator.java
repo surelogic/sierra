@@ -12,6 +12,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
@@ -337,7 +338,10 @@ public final class TeamServerMediator implements ITeamServerObserver {
 		} else if (f_teamServer.isNotRunning()) {
 			if (PreferenceConstants.warnAboutServerStaysRunning()) {
 				final ServerStaysRunningWarning dialog = new ServerStaysRunningWarning();
-				dialog.open();
+				final int result = dialog.open();
+				if (result == Dialog.CANCEL) {
+					return;
+				}
 			}
 			final int portFromForm = Integer.parseInt(f_port.getText());
 			if (portFromForm != f_teamServer.getPort() && portFromForm > 0) {
