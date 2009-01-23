@@ -318,15 +318,22 @@ public final class ConnectedServerManager extends
 	}
 
 	public void connect(final String projectName, final ConnectedServer server) {
+		connect(projectName, server, true);
+	}
+	
+	private void connect_private(final String projectName, final ConnectedServer server) {
+		connect(projectName, server, false);
+	}
+	
+	private void connect(final String projectName, final ConnectedServer server, boolean notify) {
 		if (projectName == null) {
 			throw new IllegalArgumentException(I18N.err(44, "projectName"));
 		}
 		if (server == null) {
 			throw new IllegalArgumentException(I18N.err(44, "server"));
-		}
-		final boolean notify;
+		}		
 		synchronized (this) {
-			notify = server != f_projectNameToServer.put(projectName, server);
+			notify &= server != f_projectNameToServer.put(projectName, server);
 		}
 		if (notify) {
 			saveAndNotifyObservers();
@@ -473,7 +480,7 @@ public final class ConnectedServerManager extends
 				final ConnectedServer s = entry.getKey();
 				f_servers.add(s);
 				for (final String project : entry.getValue()) {
-					connect(project, s);
+					connect_private(project, s);
 				}
 			}
 
