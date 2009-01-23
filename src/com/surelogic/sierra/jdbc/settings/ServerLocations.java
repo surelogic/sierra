@@ -9,6 +9,7 @@ import java.util.Map.Entry;
 
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.jdbc.DBQuery;
+import com.surelogic.common.jdbc.HasResultHandler;
 import com.surelogic.common.jdbc.NullDBQuery;
 import com.surelogic.common.jdbc.NullResultHandler;
 import com.surelogic.common.jdbc.Nulls;
@@ -48,15 +49,12 @@ public final class ServerLocations {
 			@Override
 			public void doPerform(final Query q) {
 				final ServerLocation l = s.getLocation();
+				if (q.prepared("ServerLocations.checkIdentity",
+						new HasResultHandler()).call(s.getUuid())) {
+					throw new IllegalArgumentException(I18N.err(160));
+				}
 				if (q.prepared("ServerLocations.checkLocation",
-						new ResultHandler<Boolean>() {
-							public Boolean handle(final Result result) {
-								if (result.iterator().hasNext()) {
-									return true;
-								}
-								return false;
-							}
-						}).call(s.getUuid())) {
+						new HasResultHandler()).call(s.getUuid())) {
 					throw new InvalidServerException(I18N.err(158, l
 							.createHomeURL().toString()));
 				}

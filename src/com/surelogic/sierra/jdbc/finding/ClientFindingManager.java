@@ -315,7 +315,7 @@ public final class ClientFindingManager extends FindingManager {
 						+ " WHERE"
 						+ " S.ID = ? AND A.SCAN_ID = S.ID AND SL.ID = A.PRIMARY_SOURCE_LOCATION_ID AND CU.ID = SL.COMPILATION_UNIT_ID AND ART.ID = A.ARTIFACT_TYPE_ID AND ART.TOOL_ID = T.ID AND T.NAME = ?");
 		selectFindingFindingType = conn
-				.prepareStatement("SELECT DISTINCT FT.UUID FROM LOCATION_MATCH LM, FINDING_TYPE FT WHERE FT.ID = LM.FINDING_TYPE_ID AND LM.FINDING_ID = ?");
+				.prepareStatement("SELECT DISTINCT FT.UUID,P.PROJECT FROM LOCATION_MATCH LM, FINDING_TYPE FT, PROJECT P WHERE FT.ID = LM.FINDING_TYPE_ID AND P.ID = LM.PROJECT_ID AND LM.FINDING_ID = ?");
 	}
 
 	/**
@@ -1006,34 +1006,42 @@ public final class ClientFindingManager extends FindingManager {
 
 	/**
 	 * Remove the finding type linked to this finding id from the global
-	 * settings.
+	 * settings. If the finding id belongs to a project that is not currently
+	 * using the global settings, then we do nothing.
 	 * 
 	 * @param findingId
 	 * @param monitor
 	 * @throws SQLException
+	 * @return whether or not we removed this finding type from the global
+	 *         settings
 	 */
-	public void filterFindingTypeFromScans(final long findingId,
+	public boolean filterFindingTypeFromScans(final long findingId,
 			final SLProgressMonitor monitor) throws SQLException {
 		selectFindingFindingType.setLong(1, findingId);
 		final ResultSet set = selectFindingFindingType.executeQuery();
 		try {
 			set.next();
 			final String type = set.getString(1);
+			final String project = set.getString(2);
 			final ScanFilters filters = new ScanFilters(new ConnectionQuery(
 					conn));
-			final ScanFilterDO scanFilter = filters
-					.getScanFilter(SettingQueries.LOCAL_UUID);
-			for (final TypeFilterDO filter : scanFilter.getFilterTypes()) {
-				if (type.equals(filter.getFindingType())) {
-					filter.setFiltered(true);
-					filters.writeScanFilter(scanFilter);
-					return;
+			final ScanFilterDO scanFilter = filters.getScanFilter(project);
+			if (SettingQueries.LOCAL_UUID.equals(scanFilter.getUid())) {
+				for (final TypeFilterDO filter : scanFilter.getFilterTypes()) {
+					if (type.equals(filter.getFindingType())) {
+						filter.setFiltered(true);
+						filters.writeScanFilter(scanFilter);
+						return true;
+					}
 				}
+				// We did not find the type filter, so we make one
+				final TypeFilterDO filter = new TypeFilterDO(type, null, true);
+				scanFilter.getFilterTypes().add(filter);
+				filters.writeScanFilter(scanFilter);
+				return true;
+			} else {
+				return false;
 			}
-			// We did not find the type filter, so we make one
-			final TypeFilterDO filter = new TypeFilterDO(type, null, true);
-			scanFilter.getFilterTypes().add(filter);
-			filters.writeScanFilter(scanFilter);
 		} finally {
 			set.close();
 		}

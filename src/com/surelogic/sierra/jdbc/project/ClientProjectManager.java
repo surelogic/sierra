@@ -76,7 +76,8 @@ public final class ClientProjectManager extends ProjectManager {
 			p.insert();
 		}
 
-		// Resolve the server uid
+		// Resolve the server uid. If one isn't associated with this project,
+		// then do so now.
 		selectServerUid.setLong(1, p.getId());
 		final ResultSet set = selectServerUid.executeQuery();
 		String serverUid;
@@ -84,7 +85,6 @@ public final class ClientProjectManager extends ProjectManager {
 			if (set.next()) {
 				serverUid = set.getString(1);
 			} else {
-				// TODO Is this still the place we should be doing this?
 				serverUid = server.getUuid();
 				insertServerUid.setLong(1, p.getId());
 				insertServerUid.setString(2, serverUid);

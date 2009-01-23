@@ -16,6 +16,7 @@ import com.surelogic.common.jdbc.ConnectionQuery;
 import com.surelogic.common.jdbc.Query;
 import com.surelogic.common.jdbc.StringResultHandler;
 import com.surelogic.common.jdbc.StringRowHandler;
+import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.jdbc.settings.ScanFilterDO;
 import com.surelogic.sierra.jdbc.settings.ScanFilters;
 import com.surelogic.sierra.jdbc.settings.SettingQueries;
@@ -46,13 +47,24 @@ public class SchemaUtil {
 			final JAXBContext ctx = JAXBContext
 					.newInstance(ListCategoryResponse.class);
 			final Unmarshaller unmarshaller = ctx.createUnmarshaller();
+			final InputStream in = Thread
+					.currentThread()
+					.getContextClassLoader()
+					.getResourceAsStream(
+							"com/surelogic/sierra/tool/message/data/buglink-categories.xml");
 			final ListCategoryResponse response = (ListCategoryResponse) unmarshaller
-					.unmarshal(Thread
-							.currentThread()
-							.getContextClassLoader()
-							.getResourceAsStream(
-									"com/surelogic/sierra/tool/message/data/buglink-categories.xml"));
+					.unmarshal(in);
 			SettingQueries.updateCategories(response, true).perform(q);
+			final List<String> orphanedTypes = q.prepared(
+					"SchemaUtil.checkFindingTypeCategories",
+					new StringRowHandler()).call();
+			if (!orphanedTypes.isEmpty()) {
+				SLLogger
+						.getLoggerFor(SchemaUtil.class)
+						.warning(
+								"The following finding types do not currently belong to a category of any sort: "
+										+ orphanedTypes);
+			}
 		} catch (final JAXBException e) {
 			throw new IllegalStateException(e);
 		}
