@@ -731,6 +731,9 @@ public final class ClientFindingManager extends FindingManager {
 	private void regenerateFindingsOverview(final String projectName,
 			final Set<Long> findingIds, final SLProgressMonitor monitor)
 			throws SQLException {
+		if (findingIds.isEmpty()) {
+			return;
+		}		
 		int count = 0;
 		for (final long id : findingIds) {
 			deleteFindingFromOverview.setLong(1, id);
