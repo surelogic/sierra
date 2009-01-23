@@ -1,7 +1,7 @@
 package com.surelogic.sierra.client.eclipse.model;
 
 import java.sql.Connection;
-import java.util.*;
+import java.util.Collection;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -24,26 +24,26 @@ public final class FindingMutationUtility {
 	}
 
 	static abstract class MutationJob extends DatabaseJob {
-		public MutationJob(String name) {
+		public MutationJob(final String name) {
 			super(name, Job.INTERACTIVE);
 			setSystem(false);
 		}
 
 		@Override
-		protected final IStatus run(IProgressMonitor monitor) {
+		protected final IStatus run(final IProgressMonitor monitor) {
 			monitor
 					.beginTask("Updating finding data",
 							IProgressMonitor.UNKNOWN);
 			try {
-				Connection c = Data.getInstance().transactionConnection();
+				final Connection c = Data.getInstance().transactionConnection();
 				Exception exc = null;
 				try {
-					ClientFindingManager manager = ClientFindingManager
+					final ClientFindingManager manager = ClientFindingManager
 							.getInstance(c);
 					updateFindings(monitor, manager);
 					c.commit();
 					DatabaseHub.getInstance().notifyFindingMutated();
-				} catch (Exception e) {
+				} catch (final Exception e) {
 					c.rollback();
 					exc = e;
 				} finally {
@@ -55,7 +55,7 @@ public final class FindingMutationUtility {
 						}
 					}
 				}
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				final int errNo = 52;
 				final String msg = I18N.err(errNo, getName());
 				return SLEclipseStatusUtility.createErrorStatus(errNo, msg, e);
@@ -70,14 +70,15 @@ public final class FindingMutationUtility {
 
 	public static void asyncChangeSummary(final long finding_id,
 			final String summary) {
-		if (summary == null || summary.trim().equals(""))
+		if (summary == null || summary.trim().equals("")) {
 			return;
+		}
 
 		final Job job = new MutationJob("Changing the summary of finding id "
 				+ finding_id + " to \"" + summary + "\"") {
 			@Override
-			protected void updateFindings(IProgressMonitor monitor,
-					ClientFindingManager manager) throws Exception {
+			protected void updateFindings(final IProgressMonitor monitor,
+					final ClientFindingManager manager) throws Exception {
 				manager.changeSummary(finding_id, summary);
 			}
 		};
@@ -85,14 +86,15 @@ public final class FindingMutationUtility {
 	}
 
 	public static void asyncComment(final long finding_id, final String comment) {
-		if (comment == null || comment.trim().equals(""))
+		if (comment == null || comment.trim().equals("")) {
 			return;
+		}
 
 		final Job job = new MutationJob("Adding the comment \"" + comment
 				+ "\" to finding id " + finding_id) {
 			@Override
-			protected void updateFindings(IProgressMonitor monitor,
-					ClientFindingManager manager) throws Exception {
+			protected void updateFindings(final IProgressMonitor monitor,
+					final ClientFindingManager manager) throws Exception {
 				manager.comment(finding_id, comment);
 			}
 		};
@@ -101,15 +103,16 @@ public final class FindingMutationUtility {
 
 	public static void asyncComment(final Collection<Long> finding_ids,
 			final String comment) {
-		if (comment == null || comment.trim().equals(""))
+		if (comment == null || comment.trim().equals("")) {
 			return;
+		}
 
 		final Job job = new MutationJob("Adding the comment \"" + comment
 				+ "\" to " + finding_ids.size() + " findings") {
 			@Override
-			protected void updateFindings(IProgressMonitor monitor,
-					ClientFindingManager manager) throws Exception {
-				for (Long finding_id : finding_ids) {
+			protected void updateFindings(final IProgressMonitor monitor,
+					final ClientFindingManager manager) throws Exception {
+				for (final Long finding_id : finding_ids) {
 					if (finding_id != null) {
 						manager.comment(finding_id, comment);
 					}
@@ -125,8 +128,8 @@ public final class FindingMutationUtility {
 				"Changing the importance of finding id " + finding_id
 						+ " from " + from + " to " + to) {
 			@Override
-			protected void updateFindings(IProgressMonitor monitor,
-					ClientFindingManager manager) throws Exception {
+			protected void updateFindings(final IProgressMonitor monitor,
+					final ClientFindingManager manager) throws Exception {
 				manager.setImportance(finding_id, to);
 			}
 		};
@@ -139,8 +142,8 @@ public final class FindingMutationUtility {
 				+ finding_ids.size() + " finding(s) to "
 				+ to.toStringSentenceCase()) {
 			@Override
-			protected void updateFindings(IProgressMonitor monitor,
-					ClientFindingManager manager) throws Exception {
+			protected void updateFindings(final IProgressMonitor monitor,
+					final ClientFindingManager manager) throws Exception {
 				manager.setImportance(finding_ids, to,
 						new SLProgressMonitorWrapper(monitor,
 								"Updating finding data"));
@@ -155,8 +158,8 @@ public final class FindingMutationUtility {
 		final Job job = new MutationJob("Filtering out '" + findingTypeName
 				+ "' from future scans") {
 			@Override
-			protected void updateFindings(IProgressMonitor monitor,
-					ClientFindingManager manager) throws Exception {
+			protected void updateFindings(final IProgressMonitor monitor,
+					final ClientFindingManager manager) throws Exception {
 				manager.filterFindingTypeFromScans(finding_id,
 						new SLProgressMonitorWrapper(monitor,
 								"Filter finding type from scans"));
@@ -171,11 +174,11 @@ public final class FindingMutationUtility {
 		final Job job = new MutationJob("Filtering out '" + findingTypeName
 				+ "' from future scans") {
 			@Override
-			protected void updateFindings(IProgressMonitor monitor,
-					ClientFindingManager manager) throws Exception {
-				SLProgressMonitor mon = new SLProgressMonitorWrapper(monitor,
-						getName());
-				for (Long finding_id : finding_ids) {
+			protected void updateFindings(final IProgressMonitor monitor,
+					final ClientFindingManager manager) throws Exception {
+				final SLProgressMonitor mon = new SLProgressMonitorWrapper(
+						monitor, getName());
+				for (final Long finding_id : finding_ids) {
 					if (finding_id != null) {
 						manager.filterFindingTypeFromScans(finding_id, mon);
 					}
