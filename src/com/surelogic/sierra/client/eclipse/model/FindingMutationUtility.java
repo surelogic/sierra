@@ -7,10 +7,10 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.progress.UIJob;
 
 import com.surelogic.common.eclipse.SWTUtility;
-import com.surelogic.common.eclipse.dialogs.ErrorDialogUtility;
 import com.surelogic.common.eclipse.jobs.DatabaseJob;
 import com.surelogic.common.eclipse.jobs.SLProgressMonitorWrapper;
 import com.surelogic.common.eclipse.logging.SLEclipseStatusUtility;
@@ -171,13 +171,11 @@ public final class FindingMutationUtility {
 						@Override
 						public IStatus runInUIThread(
 								final IProgressMonitor monitor) {
-							ErrorDialogUtility
-									.open(
+							MessageDialog
+									.openInformation(
 											SWTUtility.getShell(),
 											"Scan settings owned by server.",
-											SLEclipseStatusUtility
-													.createInfoStatus("This finding belongs to a project whose settings are not managed locally.  You will need to update the project's scan filter on the server."),
-											false);
+											"This finding belongs to a project whose settings are not managed locally.  You will need to update the project's scan filter on the server.");
 							return Status.OK_STATUS;
 						}
 					};
