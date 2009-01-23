@@ -7,7 +7,10 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.ui.progress.UIJob;
 
+import com.surelogic.common.eclipse.SWTUtility;
+import com.surelogic.common.eclipse.dialogs.ErrorDialogUtility;
 import com.surelogic.common.eclipse.jobs.DatabaseJob;
 import com.surelogic.common.eclipse.jobs.SLProgressMonitorWrapper;
 import com.surelogic.common.eclipse.logging.SLEclipseStatusUtility;
@@ -160,9 +163,26 @@ public final class FindingMutationUtility {
 			@Override
 			protected void updateFindings(final IProgressMonitor monitor,
 					final ClientFindingManager manager) throws Exception {
-				manager.filterFindingTypeFromScans(finding_id,
+				if (!manager.filterFindingTypeFromScans(finding_id,
 						new SLProgressMonitorWrapper(monitor,
-								"Filter finding type from scans"));
+								"Filter finding type from scans"))) {
+					final UIJob uiJob = new UIJob(
+							"Scan settings owned by server.") {
+						@Override
+						public IStatus runInUIThread(
+								final IProgressMonitor monitor) {
+							ErrorDialogUtility
+									.open(
+											SWTUtility.getShell(),
+											"Scan settings owned by server.",
+											SLEclipseStatusUtility
+													.createInfoStatus("This finding belongs to a project whose settings are not managed locally.  You will need to update the project's scan filter on the server."),
+											false);
+							return Status.OK_STATUS;
+						}
+					};
+					uiJob.schedule();
+				}
 			}
 		};
 		job.setUser(true);
