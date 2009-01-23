@@ -558,7 +558,7 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>AvoidCallingSystemRunFinalizersOnExit</type>
+            <type>DM_RUN_FINALIZERS_ON_EXIT</type>
             <filtered>false</filtered>
         </filter>
         <filter>
@@ -710,7 +710,7 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>AvoidCallingSystemExit</type>
+            <type>DM_EXIT</type>
             <filtered>false</filtered>
         </filter>
         <filter>
@@ -1551,7 +1551,7 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>AnnotationIsNotVisibleToReflection</type>
+            <type>DMI_ANNOTATION_IS_NOT_VISIBLE_TO_REFLECTION</type>
             <filtered>false</filtered>
         </filter>
         <filter>
@@ -2319,7 +2319,7 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>SynchronizeAndNullCheckOnSameField</type>
+            <type>NP_SYNC_AND_NULL_CHECK_FIELD</type>
             <filtered>false</filtered>
         </filter>
         <filter>
@@ -2462,11 +2462,11 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>AvoidCallingtoStringOnString</type>
+            <type>DM_STRING_TOSTRING</type>
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>UseStringLength</type>
+            <type>DM_STRING_EMPTY_EQUALS</type>
             <filtered>false</filtered>
         </filter>
         <filter>
@@ -2474,7 +2474,7 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>BlockingMethodsOnURL</type>
+            <type>DMI_BLOCKING_METHODS_ON_URL</type>
             <filtered>false</filtered>
         </filter>
         <filter>
@@ -2482,15 +2482,11 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>InefficientStringConstructor</type>
+            <type>DM_STRING_CTOR</type>
             <filtered>false</filtered>
         </filter>
         <filter>
             <type>UM_UNNECESSARY_MATH</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>InefficientFloatingPointNumberConstructor</type>
             <filtered>false</filtered>
         </filter>
         <filter>
@@ -2514,7 +2510,7 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>InefficientNumberConstructor</type>
+            <type>DM_NUMBER_CTOR</type>
             <filtered>false</filtered>
         </filter>
         <filter>
@@ -2522,7 +2518,7 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>InefficientBooleanConstructor</type>
+            <type>DM_BOOLEAN_CTOR</type>
             <filtered>false</filtered>
         </filter>
         <filter>
@@ -2538,7 +2534,7 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>AvoidExplicitGarbageCollection</type>
+            <type>DM_GC</type>
             <filtered>false</filtered>
         </filter>
         <filter>

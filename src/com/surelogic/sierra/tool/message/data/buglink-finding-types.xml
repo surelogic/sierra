@@ -1,21 +1,18 @@
 <findingTypes>
-
-  <!-- NOTES:                                          -->
-  <!-- No whitespace in "name" or "shortMessage" tags  -->
-  <!-- Sentence case in "name" tags                    -->
-  <!-- Sentences in "shortMessage" tags (no HTML)      -->
-  <!-- Use CDATA for "info" tags with HTML             -->
-
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+  <!-- NOTES:                                                                        -->
+  <!-- o No whitespace in "name" or "shortMessage" tags                              -->
+  <!-- o Sentence case in "name" tags                                                -->
+  <!-- o Sentences in "shortMessage" tags (no HTML)                                  -->
+  <!-- o Use CDATA for "info" tags with HTML; do NOT indent CDATA sections           -->
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>DuplicatedCode</id>
     <artifact tool="CPD"
-	      mnemonic="DuplicatedCode">
-    </artifact>
+	      mnemonic="DuplicatedCode"/>
     <name>Suspected duplicated code</name>
     <shortMessage>Duplicated code often causes problems in long-term maintenance, due to flaws being fixed in one copy, but not the other.</shortMessage>
-    <info>
-<![CDATA[<p>This is often due to copy-and-paste programming, and it
+    <info><![CDATA[<p>This is often due to copy-and-paste programming, and it
 often causes problems in long-term maintenance, due to flaws being
 fixed in one copy, but not the other.</p>
 
@@ -87,8 +84,7 @@ a type mismatch that the compiler was not able to report.</p>]]>
   <findingType>
     <id>SW_SWING_METHODS_INVOKED_IN_SWING_THREAD</id>
     <artifact tool="FindBugs"
-	      mnemonic="SW_SWING_METHODS_INVOKED_IN_SWING_THREAD">
-    </artifact>
+	      mnemonic="SW_SWING_METHODS_INVOKED_IN_SWING_THREAD"/>
     <name>Swing methods should be invoked in Swing thread</name>
     <shortMessage>Certain Swing methods need to be invoked in the Swing event dispatch thread.</shortMessage>
     <info>
@@ -228,8 +224,7 @@ in java.util.concurrent (provided in Java 5.0).<p>]]>
   <findingType>
     <id>UI_INHERITANCE_UNSAFE_GETRESOURCE</id>
     <artifact tool="FindBugs"
-	      mnemonic="UI_INHERITANCE_UNSAFE_GETRESOURCE">
-    </artifact>
+	      mnemonic="UI_INHERITANCE_UNSAFE_GETRESOURCE"/>
     <name>Unsafe inheritance of the getResource method</name>
     <shortMessage>Usage of the getResource method may be unsafe if class is extended.</shortMessage>
     <info>
@@ -243,10 +238,9 @@ final.</p>]]>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
-    <id>SynchronizeAndNullCheckOnSameField</id>
+    <id>NP_SYNC_AND_NULL_CHECK_FIELD</id>
     <artifact tool="FindBugs"
-	      mnemonic="NP_SYNC_AND_NULL_CHECK_FIELD">
-    </artifact>
+	      mnemonic="NP_SYNC_AND_NULL_CHECK_FIELD"/>
     <name>Synchronize and subsequent null check on the same field</name>
     <shortMessage>Synchronize and subsequent null check on the same field could indicate that a NullPointerException may be thrown.</shortMessage>
     <info>
@@ -262,7 +256,7 @@ understanding of Java semantics.</p>]]>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UNKNOWN</id>
-    <artifact tool="FindBugs" mnemonic="UNKNOWN"></artifact>
+    <artifact tool="FindBugs" mnemonic="UNKNOWN"/>
     <name>Unknown FindBugs bug pattern</name>
     <shortMessage>A warning was recorded for an unknown FindBugs bug pattern.</shortMessage>
     <info>
@@ -277,8 +271,7 @@ is not currently loaded.</p>]]>
   <findingType>
     <id>AM_CREATES_EMPTY_ZIP_FILE_ENTRY</id>
     <artifact tool="FindBugs"
-	      mnemonic="AM_CREATES_EMPTY_ZIP_FILE_ENTRY">
-    </artifact>
+	      mnemonic="AM_CREATES_EMPTY_ZIP_FILE_ENTRY"/>
     <name>Creates empty Zip file entry</name>
     <shortMessage>Creates an empty Zip file entry</shortMessage>
     <info>
@@ -308,8 +301,7 @@ the JarFile between the calls to <code>putNextEntry()</code> and
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>IMSE_DONT_CATCH_IMSE</id>
-    <artifact tool="FindBugs" mnemonic="IMSE_DONT_CATCH_IMSE">
-    </artifact>
+    <artifact tool="FindBugs" mnemonic="IMSE_DONT_CATCH_IMSE"/>
     <name>Avoid catching IllegalStateMonitorException</name>
     <shortMessage>Dubious code that is catching IllegalMonitorStateException may be masking a design flaw in your code.</shortMessage>
     <info>
@@ -325,8 +317,7 @@ design flaw fixed.</p>]]>
   <findingType>
     <id>FL_MATH_USING_FLOAT_PRECISION</id>
     <artifact tool="FindBugs"
-	      mnemonic="FL_MATH_USING_FLOAT_PRECISION">
-    </artifact>
+	      mnemonic="FL_MATH_USING_FLOAT_PRECISION"/>
     <name>Avoid using float type for math operations</name>
     <shortMessage>Method performs math using floating point precision, consider using double precision instead.</shortMessage>
     <info>
@@ -343,10 +334,8 @@ constants.</p>]]>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>CN_IDIOM</id>
-    <artifact tool="FindBugs" mnemonic="CN_IDIOM"></artifact>
-    <artifact tool="PMD"
-	      mnemonic="CloneMethodMustImplementCloneable">
-    </artifact>
+    <artifact tool="FindBugs" mnemonic="CN_IDIOM"/>
+    <artifact tool="PMD" mnemonic="CloneMethodMustImplementCloneable"/>
     <name>Clone method must implement Cloneable</name>
     <shortMessage>This class implements Cloneable but does not define or use clone method.</shortMessage>
     <info>
@@ -381,10 +370,8 @@ modern Java programs.</p>]]>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>CN_IDIOM_NO_SUPER_CALL</id>
-    <artifact tool="FindBugs" mnemonic="CN_IDIOM_NO_SUPER_CALL">
-    </artifact>
-    <artifact tool="PMD" mnemonic="ProperCloneImplementation">
-    </artifact>
+    <artifact tool="FindBugs" mnemonic="CN_IDIOM_NO_SUPER_CALL"/>
+    <artifact tool="PMD" mnemonic="ProperCloneImplementation"/>
     <name>No super.clone() call in clone method</name>
     <shortMessage>This non-final class defines a clone method that does not call super.clone().</shortMessage>
     <info>
@@ -422,9 +409,7 @@ modern Java programs.</p>]]>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>NM_FUTURE_KEYWORD_USED_AS_IDENTIFIER</id>
-    <artifact tool="FindBugs"
-	      mnemonic="NM_FUTURE_KEYWORD_USED_AS_IDENTIFIER">
-    </artifact>
+    <artifact tool="FindBugs" mnemonic="NM_FUTURE_KEYWORD_USED_AS_IDENTIFIER"/>
     <name>Use of a future keyword as identifier</name>
     <shortMessage>Use of an identifier that is a keyword in later versions of Java.</shortMessage>
     <info>
@@ -437,8 +422,7 @@ order for it to compile in later versions of Java.</p>]]>
   <findingType>
     <id>NM_FUTURE_KEYWORD_USED_AS_MEMBER_IDENTIFIER</id>
     <artifact tool="FindBugs"
-	      mnemonic="NM_FUTURE_KEYWORD_USED_AS_MEMBER_IDENTIFIER">
-    </artifact>
+	      mnemonic="NM_FUTURE_KEYWORD_USED_AS_MEMBER_IDENTIFIER"/>
     <name>Use of a future keyword as a member identifier</name>
     <shortMessage>Use of an identifier that is a keyword in later versions of Java.</shortMessage>
     <info>
@@ -451,7 +435,7 @@ versions of Java.</p>]]>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>DE_MIGHT_DROP</id>
-    <artifact tool="FindBugs" mnemonic="DE_MIGHT_DROP"></artifact>
+    <artifact tool="FindBugs" mnemonic="DE_MIGHT_DROP"/>
     <name>Method might drop an exception</name>
     <shortMessage>Method might drop an exception.</shortMessage>
     <info>
@@ -464,7 +448,7 @@ be thrown out of the method.</p>]]>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>DE_MIGHT_IGNORE</id>
-    <artifact tool="FindBugs" mnemonic="DE_MIGHT_IGNORE"></artifact>
+    <artifact tool="FindBugs" mnemonic="DE_MIGHT_IGNORE"/>
     <name>Method might ignore an exception</name>
     <shortMessage>Method might ignore an exception.</shortMessage>
     <info>
@@ -477,8 +461,8 @@ be thrown out of the method.</p>]]>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>DP_DO_INSIDE_DO_PRIVILEGED</id>
-    <artifact tool="FindBugs" mnemonic="DP_DO_INSIDE_DO_PRIVILEGED"></artifact>
-    <artifact tool="FindBugs" mnemonic="DP_DO_INSIDE_DO_PRIVILEDGED"></artifact>
+    <artifact tool="FindBugs" mnemonic="DP_DO_INSIDE_DO_PRIVILEGED"/>
+    <artifact tool="FindBugs" mnemonic="DP_DO_INSIDE_DO_PRIVILEDGED"/>
     <name>Method requires security permission check</name>
     <shortMessage>Method is invoked that should be only be invoked inside a doPrivileged block.</shortMessage>
     <info>
@@ -492,8 +476,8 @@ block.</p>]]>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>DP_CREATE_CLASSLOADER_INSIDE_DO_PRIVILEGED</id>
-    <artifact tool="FindBugs" mnemonic="DP_CREATE_CLASSLOADER_INSIDE_DO_PRIVILEGED"></artifact>
-    <artifact tool="FindBugs" mnemonic="DP_CREATE_CLASSLOADER_INSIDE_DO_PRIVILEDGED"></artifact>
+    <artifact tool="FindBugs" mnemonic="DP_CREATE_CLASSLOADER_INSIDE_DO_PRIVILEGED"/>
+    <artifact tool="FindBugs" mnemonic="DP_CREATE_CLASSLOADER_INSIDE_DO_PRIVILEDGED"/>
     <name>Classloader creation requires security permission check</name>
     <shortMessage>Classloaders should only be created inside a doPrivileged block.</shortMessage>
     <info>
@@ -507,7 +491,7 @@ block.</p>]]>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>JCIP_FIELD_ISNT_FINAL_IN_IMMUTABLE_CLASS</id>
-    <artifact tool="FindBugs" mnemonic="JCIP_FIELD_ISNT_FINAL_IN_IMMUTABLE_CLASS"></artifact>
+    <artifact tool="FindBugs" mnemonic="JCIP_FIELD_ISNT_FINAL_IN_IMMUTABLE_CLASS"/>
     <name>Field isn't final in an immutable class</name>
     <shortMessage>Fields that are declared within an immutable class should be final.</shortMessage>
     <info>
@@ -520,7 +504,7 @@ in voilation of those rules.</p>]]>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>DMI_THREAD_PASSED_WHERE_RUNNABLE_EXPECTED</id>
-    <artifact tool="FindBugs" mnemonic="DMI_THREAD_PASSED_WHERE_RUNNABLE_EXPECTED"></artifact>
+    <artifact tool="FindBugs" mnemonic="DMI_THREAD_PASSED_WHERE_RUNNABLE_EXPECTED"/>
     <name>Thread passed where Runnable is expected</name>
     <shortMessage>A Thread object has been passed as a parameter to a method where a Runnable is expected.</shortMessage>
     <info>
@@ -534,8 +518,7 @@ error or cause unexpected behavior.</p>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>DMI_COLLECTION_OF_URLS</id>
-    <artifact tool="FindBugs" mnemonic="DMI_COLLECTION_OF_URLS">
-    </artifact>
+    <artifact tool="FindBugs" mnemonic="DMI_COLLECTION_OF_URLS"/>
     <name>Avoid a collection Of URLs</name>
     <shortMessage>Maps and sets of URLs can be horrible performance hogs.</shortMessage>
     <info>
@@ -550,229 +533,219 @@ instead.</p>]]>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
-    <id>BlockingMethodsOnURL</id>
-    <artifact tool="FindBugs"
-	      mnemonic="DMI_BLOCKING_METHODS_ON_URL">
-    </artifact>
-    <shortMessage>
-      The equals and hashCode methods of URL are blocking
-    </shortMessage>
+    <id>DMI_BLOCKING_METHODS_ON_URL</id>
+    <artifact tool="FindBugs" mnemonic="DMI_BLOCKING_METHODS_ON_URL"/>
+    <name>Blocking methods on URL</name>
+    <shortMessage>The equals and hashCode methods of URL are blocking.  This could result in a big performance hit.</shortMessage>
     <info>
-      &lt;p&gt; The equals and hashCode method of URL perform
-      domain name resolution, this can result in a big performance
-      hit. See &lt;a
-      href=&quot;http://michaelscharf.blogspot.com/2006/11/javaneturlequals-and-hashcode-make.html&quot;&gt;http://michaelscharf.blogspot.com/2006/11/javaneturlequals-and-hashcode-make.html&lt;/a&gt;
-      for more information. Consider using
-      &lt;code&gt;java.net.URI&lt;/code&gt; instead. &lt;/p&gt;
+<![CDATA[<p>The equals and hashCode method of URL perform domain name
+resolution, this can result in a big performance hit. See <a
+href="http://michaelscharf.blogspot.com/2006/11/javaneturlequals-and-hashcode-make.html">Michael
+Scharf's Blog entry</a> on this topic for more information.</p>
+
+<p>Consider using <code>java.net.URI</code> instead.  When using URI
+objects in your code it is straightforward to convert one to a URL
+object as shown in the code below.  This might be necessary to use the
+object with some libraries and frameworks.</p>
+
+<pre>
+try {
+  URI uri = new URI("http://www.surelogic.com");
+  URL url = uri.toURL();
+  assert uri.getHost().equals(url.getHost());
+} catch (Exception e) {
+  // handle URL and URI exceptions
+}
+</pre>]]>
     </info>
-    <name>Blocking Methods On URL</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
-    <id>AnnotationIsNotVisibleToReflection</id>
-    <artifact tool="FindBugs"
-	      mnemonic="DMI_ANNOTATION_IS_NOT_VISIBLE_TO_REFLECTION">
-    </artifact>
-    <shortMessage>
-      Can't use reflection to check for presence of annotation
-      with default retention
-    </shortMessage>
+    <id>DMI_ANNOTATION_IS_NOT_VISIBLE_TO_REFLECTION</id>
+    <artifact tool="FindBugs" mnemonic="DMI_ANNOTATION_IS_NOT_VISIBLE_TO_REFLECTION"/>
+    <name>Annotation is not visible to reflection</name>
+    <shortMessage>Can't use reflection to check for presence of annotation with default retention.</shortMessage>
     <info>
-      &lt;p&gt; Unless an annotation has itself been annotated
-      with a @Retention other than the default of source-only
-      retention, the annotation isn't retained in the classfile
-      and can't be observed using reflection (e.g., by using the
-      isAnnotationPresent method). .&lt;/p&gt;
+<![CDATA[<p>Unless an annotation has itself been annotated with a
+<code>@Retention</code> other than the default of source-only
+retention, the annotation isn't retained in the classfile and can't be
+observed using reflection, i.e., using the
+<code>isAnnotationPresent</code> method.</p>
+
+<p>The standard annotation <code>@SuppressWarnings</code> is not
+retained in the classfile, however <code>@Deprecated</code> is as
+shown in the code below.</p>
+
+<pre>
+@Documented
+@Retention(RetentionPolicy.RUNTIME)
+public @interface Deprecated {}
+</pre>]]>
     </info>
-    <name>Annotation Is Not Visible To Reflection</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
-    <id>AvoidCallingSystemExit</id>
+    <id>DM_EXIT</id>
     <artifact tool="FindBugs" mnemonic="DM_EXIT"></artifact>
-    <shortMessage>Method invokes System.exit(...)</shortMessage>
+    <name>Avoid calling System.exit(...)</name>
+    <shortMessage>Calling System.exit(...) may make it difficult for your code to be invoked by other code.</shortMessage>
     <info>
-      &lt;p&gt; Invoking System.exit shuts down the entire Java
-      virtual machine. This should only been done when it is
-      appropriate. Such calls make it hard or impossible for your
-      code to be invoked by other code. Consider throwing a
-      RuntimeException instead.&lt;/p&gt;
+<![CDATA[<p>Invoking <code>System.exit(...)</code> shuts down the entire
+Java virtual machine. This should only been done when it is
+appropriate. Such calls make it hard or impossible for your code to be
+invoked by other code. Consider throwing a RuntimeException
+instead.</p>]]>
     </info>
-    <name>Avoid Calling System.exit(...)</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
-    <id>AvoidCallingSystemRunFinalizersOnExit</id>
+    <id>DM_RUN_FINALIZERS_ON_EXIT</id>
     <artifact tool="FindBugs"
-	      mnemonic="DM_RUN_FINALIZERS_ON_EXIT">
-    </artifact>
-    <shortMessage>
-      Method invokes dangerous method runFinalizersOnExit
-    </shortMessage>
+	      mnemonic="DM_RUN_FINALIZERS_ON_EXIT"/>
+    <name>Avoid the dangerous runFinalizersOnExit method</name>
+    <shortMessage>Calling dangerous method runFinalizersOnExit could result in erratic behavior or deadlock.</shortMessage>
     <info>
-      &lt;p&gt; &lt;em&gt;Never call System.runFinalizersOnExit or
-      Runtime.runFinalizersOnExit for any reason: they are among
-      the most dangerous methods in the Java libraries.&lt;/em&gt;
-      -- Joshua Bloch&lt;/p&gt;
-    </info>
-    <name>Avoid Calling System.runFinalizersOnExit()</name>
-  </findingType>
-  <findingType>
-    <id>InefficientStringConstructor</id>
-    <artifact tool="FindBugs" mnemonic="DM_STRING_CTOR"></artifact>
-    <artifact tool="PMD" mnemonic="StringInstantiation"></artifact>
-    <artifact tool="FindBugs" mnemonic="DM_STRING_VOID_CTOR">
-    </artifact>
-    <shortMessage>
-      Method invokes inefficient new String(String) constructor
-    </shortMessage>
-    <info>
-      &lt;p&gt; Using the
-      &lt;code&gt;java.lang.String(String)&lt;/code&gt;
-      constructor wastes memory because the object so constructed
-      will be functionally indistinguishable from the
-      &lt;code&gt;String&lt;/code&gt; passed as a
-      parameter.&amp;nbsp; Just use the argument
-      &lt;code&gt;String&lt;/code&gt; directly.&lt;/p&gt;
+<![CDATA[<p><em>Never call System.runFinalizersOnExit or
+Runtime.runFinalizersOnExit for any reason: they are among the most
+dangerous methods in the Java libraries.</em> &mdash; Joshua Bloch
+(reference Bloch's Effective Java (2nd edition) item 7)</p>
 
-      Avoid instantiating String objects; this is usually
-      unnecessary.
+<p>Calling <code>runFinalizersOnExit</code> is inherently unsafe.  It
+may result in finalizers being called on live objects while other
+threads are concurrently manipulating those objects, resulting in
+erratic behavior or deadlock.</p>
 
-      &lt;p&gt; Creating a new
-      &lt;code&gt;java.lang.String&lt;/code&gt; object using the
-      no-argument constructor wastes memory because the object so
-      created will be functionally indistinguishable from the
-      empty string constant
-      &lt;code&gt;&quot;&quot;&lt;/code&gt;.&amp;nbsp; Java
-      guarantees that identical string constants will be
-      represented by the same &lt;code&gt;String&lt;/code&gt;
-      object.&amp;nbsp; Therefore, you should just use the empty
-      string constant directly.&lt;/p&gt;
+<p>Any Java program which depends upon finalizers, or a programmer who
+thinks of them as similar to C++ destructors, is headed for serious
+trouble. Work to avoid the use of finalizers in your code for
+non-memory resources.  In Java, <code>try-finally</code> blocks should
+be used for this purpose.</p>]]>
     </info>
-    <name>Inefficient String Constructor</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
-    <id>AvoidCallingtoStringOnString</id>
-    <artifact tool="FindBugs" mnemonic="DM_STRING_TOSTRING">
-    </artifact>
-    <shortMessage>
-      Method invokes toString() method on a String
-    </shortMessage>
+    <id>DM_STRING_CTOR</id>
+    <artifact tool="FindBugs" mnemonic="DM_STRING_CTOR"/>
+    <artifact tool="PMD" mnemonic="StringInstantiation"/>
+    <artifact tool="FindBugs" mnemonic="DM_STRING_VOID_CTOR"/>
+    <name>Use of inefficient String constructor</name>
+    <shortMessage>Use of String constructor wastes memory and is inefficient.</shortMessage>
     <info>
-      &lt;p&gt; Calling &lt;code&gt;String.toString()&lt;/code&gt;
-      is just a redundant operation. Just use the
-      String.&lt;/p&gt;
+<![CDATA[<p>Using the <code>java.lang.String(String)</code>
+constructor wastes memory because the object so constructed will be
+functionally indistinguishable from the <code>String</code> passed as
+a parameter. Just use the argument <code>String</code> directly.  For
+example, <code>new String("Hi")</code> is replaced with
+<code>"Hi"</code> and <code>new String(s)</code> is replaced with
+<code>s</code>.</p>
+
+<p>Avoid instantiating String objects; this is usually unnecessary.</p>
+
+<p>Creating a new <code>java.lang.String</code> object using the
+no-argument constructor wastes memory because the object so created
+will be functionally indistinguishable from the empty string constant
+<code>""</code> Java guarantees that identical string constants will
+be represented by the same <code>String</code> object. Therefore, you
+should just use the empty string constant directly.</p>]]>
     </info>
-    <name>Avoid Calling toString() On String</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
-    <id>AvoidExplicitGarbageCollection</id>
+    <id>DM_STRING_TOSTRING</id>
+    <artifact tool="FindBugs" mnemonic="DM_STRING_TOSTRING"/>
+    <name>Avoid calling toString() on a String</name>
+    <shortMessage>Method invokes the toString() method on a String.</shortMessage>
+    <info>
+<![CDATA[<p>Calling <code>String.toString()</code> is just a redundant
+operation. Just use the String directly.  For example,
+<code>s.toString()</code> is replaced with <code>s</code>.</p>]]>
+    </info>
+  </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+  <findingType>
+    <id>DM_GC</id>
     <artifact tool="FindBugs" mnemonic="DM_GC"></artifact>
     <artifact tool="PMD" mnemonic="DoNotCallGarbageCollectionExplicitly"/>
-    <shortMessage>
-      Explicit garbage collection; extremely dubious except in
-      benchmarking code
-    </shortMessage>
+    <name>Avoid explicit garbage collection</name>
+    <shortMessage>Explicit garbage collection is being invoked which is extremely dubious except in benchmarking code.</shortMessage>
     <info>
-      &lt;p&gt; Code explicitly invokes garbage collection. Except
-      for specific use in benchmarking, this is very
-      dubious.&lt;/p&gt; &lt;p&gt;In the past, situations where
-      people have explicitly invoked the garbage collector in
-      routines such as close or finalize methods has led to huge
-      performance black holes. Garbage collection can be
-      expensive. Any situation that forces hundreds or thousands
-      of garbage collections will bring the machine to a
-      crawl.&lt;/p&gt;
+<![CDATA[<p>This code explicitly invokes garbage collection. Except
+for use in benchmarking, this is very dubious.  It is recommended that
+these calls be removed from your program.</p>
+
+<p>In the past, situations where people have explicitly invoked the
+garbage collector in routines such as close or finalize methods has
+led to huge performance black holes. Garbage collection can be
+expensive. Any situation that forces hundreds or thousands of garbage
+collections will bring the machine to a crawl.</p>]]>
     </info>
-    <name>Avoid Explicit Garbage Collection</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
-    <id>InefficientBooleanConstructor</id>
-    <artifact tool="FindBugs" mnemonic="DM_BOOLEAN_CTOR"></artifact>
-    <shortMessage>
-      Method invokes inefficient Boolean constructor; use
-      Boolean.valueOf(...) instead
-    </shortMessage>
+    <id>DM_BOOLEAN_CTOR</id>
+    <artifact tool="FindBugs" mnemonic="DM_BOOLEAN_CTOR"/>
+    <name>Inefficient boolean constructor</name>
+    <shortMessage>Method invokes inefficient Boolean constructor; use Boolean.valueOf(...) instead.</shortMessage>
     <info>
-      &lt;p&gt; Creating new instances of
-      &lt;code&gt;java.lang.Boolean&lt;/code&gt; wastes memory,
-      since &lt;code&gt;Boolean&lt;/code&gt; objects are immutable
-      and there are only two useful values of this type.&amp;nbsp;
-      Use the &lt;code&gt;Boolean.valueOf()&lt;/code&gt; method
-      (or Java 1.5 autoboxing) to create
-      &lt;code&gt;Boolean&lt;/code&gt; objects instead.&lt;/p&gt;
+<![CDATA[<p>Creating new instances of <code>java.lang.Boolean</code>
+wastes memory, since <code>Boolean</code> objects are immutable and
+there are only two useful values of this type. Use the
+<code>Boolean.valueOf()</code> method, <code>Boolean.TRUE</code> or
+<code>Boolean.FALSE</code>, or autoboxing if you are using Java 1.5 or
+above to create <code>Boolean</code> objects instead.</p>]]>
     </info>
-    <name>Inefficient Boolean Constructor</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
-    <id>InefficientNumberConstructor</id>
-    <artifact tool="FindBugs" mnemonic="DM_NUMBER_CTOR"></artifact>
-    <artifact tool="PMD" mnemonic="IntegerInstantiation"></artifact>
+    <id>DM_NUMBER_CTOR</id>
+    <artifact tool="FindBugs" mnemonic="DM_NUMBER_CTOR"/>
+    <artifact tool="FindBugs" mnemonic="DM_FP_NUMBER_CTOR"/>
+    <artifact tool="PMD" mnemonic="IntegerInstantiation"/>
+    <name>Inefficient number constructor</name>
     <shortMessage>
-      Method invokes inefficient Number constructor; use static
+      Method invokes inefficient number constructor; use static
       valueOf instead
     </shortMessage>
     <info>
-      &lt;p&gt; Using &lt;code&gt;new Integer(int)&lt;/code&gt; is
-      guaranteed to always result in a new object whereas
-      &lt;code&gt;Integer.valueOf(int)&lt;/code&gt; allows caching
-      of values to be done by the compiler, class library, or JVM.
-      Using of cached values avoids object allocation and the code
-      will be faster. &lt;/p&gt; &lt;p&gt; Values between -128 and
-      127 are guaranteed to have corresponding cached instances
-      and using &lt;code&gt;valueOf&lt;/code&gt; is approximately
-      3.5 times faster than using constructor. For values outside
-      the constant range the performance of both styles is the
-      same. &lt;/p&gt; &lt;p&gt; Unless the class must be
-      compatible with JVMs predating Java 1.5, use either
-      autoboxing or the &lt;code&gt;valueOf()&lt;/code&gt; method
-      when creating instances of &lt;code&gt;Long&lt;/code&gt;,
-      &lt;code&gt;Integer&lt;/code&gt;,
-      &lt;code&gt;Short&lt;/code&gt;,
-      &lt;code&gt;Character&lt;/code&gt;, and
-      &lt;code&gt;Byte&lt;/code&gt;. &lt;/p&gt;
+<![CDATA[<p>Using <code>new Integer(int)</code> (or any number
+constructor such as <code>new Double(double)</code>) is guaranteed to
+always result in a new object whereas
+<code>Integer.valueOf(int)</code> allows caching of values to be done
+by the compiler, class library, or JVM.  Using of cached values avoids
+object allocation and the code will be faster.</p>
 
-      In JDK 1.5, calling new Integer() causes memory allocation.
-      Integer.valueOf() is more memory friendly.
+<p>For the integer numbers, values between -128 and 127 are guaranteed
+to have corresponding cached instances and using
+<code>valueOf()</code> is approximately 3.5 times faster than using
+the constructor. For values outside the constant range the performance
+of both styles is the same.</p>
+
+<p>Unless the class must be compatible with JVMs predating Java 1.5,
+use either autoboxing or the <code>valueOf()</code> method when
+creating instances of <code>Double</code>, <code>Float</code>,
+<code>Long</code>, <code>Integer</code>, <code>Short</code>,
+<code>Character</code>, and <code>Byte</code>.</p>]]>
     </info>
-    <name>Inefficient Number Constructor</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
-    <id>InefficientFloatingPointNumberConstructor</id>
-    <artifact tool="FindBugs" mnemonic="DM_FP_NUMBER_CTOR">
-    </artifact>
-    <shortMessage>
-      Method invokes inefficient floating-point Number
-      constructor; use static valueOf instead
-    </shortMessage>
+    <id>DM_STRING_EMPTY_EQUALS</id>
+    <artifact tool="FindBugs" mnemonic="DM_STRING_EMPTY_EQUALS"/>
+    <name>Use length to check if a String is empty</name>
+    <shortMessage>Method invokes inefficient String.equals(""); use String.length() == 0 instead.</shortMessage>
     <info>
-      &lt;p&gt; Using &lt;code&gt;new Double(double)&lt;/code&gt;
-      is guaranteed to always result in a new object whereas
-      &lt;code&gt;Double.valueOf(double)&lt;/code&gt; allows
-      caching of values to be done by the compiler, class library,
-      or JVM. Using of cached values avoids object allocation and
-      the code will be faster. &lt;/p&gt; &lt;p&gt; Unless the
-      class must be compatible with JVMs predating Java 1.5, use
-      either autoboxing or the &lt;code&gt;valueOf()&lt;/code&gt;
-      method when creating instances of
-      &lt;code&gt;Double&lt;/code&gt; and
-      &lt;code&gt;Float&lt;/code&gt;. &lt;/p&gt;
+<![CDATA[<p>An object is compared to the empty String object using the
+equals() method here. Checking that the String object's length is zero
+may be faster, and removes String constants from the class file.
+Change <code>s.equals("")</code> or <code>"".equals(s)</code> to
+<code>s.length() == 0</code></p>
+
+<p>If you are using JDK 1.6 or above an <code>isEmpty()</code> method
+was added to the String class which will directly answer the query.
+Thus in the example above use <code>s.isEmpty()</code>.</p>]]>
     </info>
-    <name>Inefficient Floating-Point Number Constructor</name>
   </findingType>
-  <findingType>
-    <id>UseStringLength</id>
-    <artifact tool="FindBugs" mnemonic="DM_STRING_EMPTY_EQUALS">
-    </artifact>
-    <shortMessage>
-      Method invokes inefficient String.equals(&quot;&quot;); use
-      String.length() == 0 instead
-    </shortMessage>
-    <info>
-      &lt;p&gt; An object is compared to the empty String object
-      using the equals() method here. Checking that the String
-      object's length is zero may be faster, and removes String
-      constants from the class file.&lt;/p&gt;
-    </info>
-    <name>Use String Length</name>
-  </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UseLocaleParameterizedVersion</id>
     <artifact tool="FindBugs" mnemonic="DM_CONVERT_CASE"></artifact>
@@ -793,6 +766,7 @@ instead.</p>]]>
     </info>
     <name>Use Locale Parameterized Version</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UnboxedAndCoercedForTernaryOperator</id>
     <artifact tool="FindBugs"
@@ -819,6 +793,7 @@ instead.</p>]]>
     </info>
     <name>Unboxed And Coerced For Ternary Operator</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>BoxingImmediatelyUnboxed</id>
     <artifact tool="FindBugs"
@@ -835,6 +810,7 @@ instead.</p>]]>
     </info>
     <name>Boxing Immediately Unboxed</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>BoxingImmediatelyUnboxedToPerformCoercion</id>
     <artifact tool="FindBugs"
@@ -853,6 +829,7 @@ instead.</p>]]>
     </info>
     <name>Boxing Immediately Unboxed To Perform Coercion</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>BoxedPrimitiveToString</id>
     <artifact tool="FindBugs"
@@ -900,6 +877,7 @@ instead.</p>]]>
     </info>
     <name>Avoid Allocating Object For Obtaining Class Object</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>MonitorWaitOnCondition</id>
     <artifact tool="FindBugs"
@@ -917,6 +895,7 @@ instead.</p>]]>
     </info>
     <name>Monitor Wait On Condition</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>RandomValue01ToInt</id>
     <artifact tool="FindBugs" mnemonic="RV_01_TO_INT"></artifact>
@@ -931,6 +910,7 @@ instead.</p>]]>
     </info>
     <name>01 To Int</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UseNextIntNotNextDoubleOfRandom</id>
     <artifact tool="FindBugs"
