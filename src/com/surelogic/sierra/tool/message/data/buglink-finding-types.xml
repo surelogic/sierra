@@ -421,8 +421,7 @@ order for it to compile in later versions of Java.</p>]]>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>NM_FUTURE_KEYWORD_USED_AS_MEMBER_IDENTIFIER</id>
-    <artifact tool="FindBugs"
-	      mnemonic="NM_FUTURE_KEYWORD_USED_AS_MEMBER_IDENTIFIER"/>
+    <artifact tool="FindBugs" mnemonic="NM_FUTURE_KEYWORD_USED_AS_MEMBER_IDENTIFIER"/>
     <name>Use of a future keyword as a member identifier</name>
     <shortMessage>Use of an identifier that is a keyword in later versions of Java.</shortMessage>
     <info>
@@ -586,15 +585,20 @@ public @interface Deprecated {}
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>DM_EXIT</id>
-    <artifact tool="FindBugs" mnemonic="DM_EXIT"></artifact>
+    <artifact tool="FindBugs" mnemonic="DM_EXIT"/>
+    <artifact tool="PMD" mnemonic="DoNotCallSystemExit"/>
     <name>Avoid calling System.exit(...)</name>
     <shortMessage>Calling System.exit(...) may make it difficult for your code to be invoked by other code.</shortMessage>
     <info>
-<![CDATA[<p>Invoking <code>System.exit(...)</code> shuts down the entire
-Java virtual machine. This should only been done when it is
+<![CDATA[<p>Invoking <code>System.exit(...)</code> shuts down the
+entire Java virtual machine. This should only been done when it is
 appropriate. Such calls make it hard or impossible for your code to be
-invoked by other code. Consider throwing a RuntimeException
-instead.</p>]]>
+invoked by other code. Consider throwing a
+<code>RuntimeException</code> instead.</p>
+
+<p>It is prohibited for any EJB to invoke this call and shutdown the
+container (reference section 21.1.2 of the EJB 3.0
+Specification).</p>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
@@ -769,7 +773,7 @@ strings, use <code>toUpperCase(Locale.ENGLISH)</code>.</p>]]>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
-    <id>UnboxedAndCoercedForTernaryOperator</id>
+    <id>BX_UNBOXED_AND_COERCED_FOR_TERNARY_OPERATOR</id>
     <artifact tool="FindBugs" mnemonic="BX_UNBOXED_AND_COERCED_FOR_TERNARY_OPERATOR"/>
     <name>Unboxed and coerced for ternary operator</name>
     <shortMessage>A primitive value is unboxed and coerced for use with the ternary operator.</shortMessage>
@@ -950,249 +954,234 @@ object. This thread, then, does nothing but waste time.</p>]]>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
-    <id>PossibleDoubleCheckOfField</id>
-    <artifact tool="FindBugs" mnemonic="DC_DOUBLECHECK"></artifact>
-    <artifact tool="PMD" mnemonic="DoubleCheckedLocking"></artifact>
-    <shortMessage>Possible double check of field</shortMessage>
+    <id>DC_DOUBLECHECK</id>
+    <artifact tool="FindBugs" mnemonic="DC_DOUBLECHECK"/>
+    <artifact tool="PMD" mnemonic="DoubleCheckedLocking"/>
+    <name>Double-checked locking</name>
+    <shortMessage>Possible instance of double-check locking on a field.</shortMessage>
     <info>
-      &lt;p&gt; This method may contain an instance of
-      double-checked locking.&amp;nbsp; This idiom is not correct
-      according to the semantics of the Java memory
-      model.&amp;nbsp; For more information, see the web page
-      &lt;a
-      href=&quot;http://www.cs.umd.edu/~pugh/java/memoryModel/DoubleCheckedLocking.html&quot;
-      &gt;http://www.cs.umd.edu/~pugh/java/memoryModel/DoubleCheckedLocking.html&lt;/a&gt;
-      as well as &lt;a
-      href=&quot;http://www.javaworld.com/javaworld/jw-02-2001/jw-0209-double.html&quot;
-      &gt;http://www.javaworld.com/javaworld/jw-02-2001/jw-0209-double.html&lt;/a&gt;
-      .&lt;/p&gt;
+<![CDATA[<p>This method may contain an instance of double-checked
+locking. This idiom is not correct according to the semantics of the
+Java memory model.</p>
+
+<p>For more detailed information on this problem and how to correct
+it, see the web page <a
+href="http://www.cs.umd.edu/~pugh/java/memoryModel/DoubleCheckedLocking.html"
+>http://www.cs.umd.edu/~pugh/java/memoryModel/DoubleCheckedLocking.html</a>
+as well as <a
+href="http://www.javaworld.com/javaworld/jw-02-2001/jw-0209-double.html"
+>http://www.javaworld.com/javaworld/jw-02-2001/jw-0209-double.html</a>
+.</p>]]>
     </info>
-    <name>Double-checked Locking</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>FI_FINALIZER_NULLS_FIELDS</id>
-    <artifact tool="FindBugs"
-	      mnemonic="FI_FINALIZER_NULLS_FIELDS">
-    </artifact>
-    <shortMessage>Finalizer nulls fields</shortMessage>
+    <artifact tool="FindBugs" mnemonic="FI_FINALIZER_NULLS_FIELDS"/>
+    <name>Finalizer nulls fields</name>
+    <shortMessage>Finalizer nulls fields which does not aid garbage collection.</shortMessage>
     <info>
-      &lt;p&gt; This finalizer nulls out fields. This is usually
-      an error, as it does not aid garbage collection, and the
-      object is going to be garbage collected anyway.
+<![CDATA[<p>This finalizer <code>null</code>s out fields. This is
+usually an error, as it does not aid garbage collection, and the
+object is going to be garbage collected anyway.</p>
+
+<p>It is recommended to try to remove all finalizers from your
+program.</p>]]>
     </info>
-    <name>Finalizer Nulls Fields</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>FI_FINALIZER_ONLY_NULLS_FIELDS</id>
-    <artifact tool="FindBugs"
-	      mnemonic="FI_FINALIZER_ONLY_NULLS_FIELDS">
-    </artifact>
-    <shortMessage>Finalizer only nulls fields</shortMessage>
+    <artifact tool="FindBugs" mnemonic="FI_FINALIZER_ONLY_NULLS_FIELDS"/>
+    <name>Finalizer only nulls out fields</name>
+    <shortMessage>Finalizer only nulls out fields. This finalize method should be removed.</shortMessage>
     <info>
-      &lt;p&gt; This finalizer does nothing except null out
-      fields. This is completely pointless, and requires that the
-      object be garbage collected, finalized, and then garbage
-      collected again. You should just remove the finalize method.
-    </info>
-    <name>Finalizer Only Nulls Fields</name>
-  </findingType>
-  <findingType>
-    <id>FinalizeShouldBeProtected</id>
-    <artifact tool="FindBugs"
-	      mnemonic="FI_PUBLIC_SHOULD_BE_PROTECTED">
-    </artifact>
-    <artifact tool="PMD" mnemonic="FinalizeShouldBeProtected">
-    </artifact>
-    <shortMessage>
-      Finalizer should be protected, not public
-    </shortMessage>
-    <info>
-      &lt;p&gt; A class's &lt;code&gt;finalize()&lt;/code&gt;
-      method should have protected access, not public.&lt;/p&gt;
+<![CDATA[<p>This finalizer does nothing except <code>null</code> out
+fields. This is completely pointless, and requires that the object be
+garbage collected, finalized, and then garbage collected again. You
+should just remove the finalize method.</p>
 
-      If you override finalize(), make it protected. If you make
-      it public, other classes may call it.
+<p>It is recommended to try to remove all finalizers from your
+program.</p>]]>
     </info>
-    <name>Finalize Should Be Protected</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
-    <id>EmptyFinalizer</id>
-    <artifact tool="FindBugs" mnemonic="FI_EMPTY"></artifact>
-    <artifact tool="PMD" mnemonic="EmptyFinalizer"></artifact>
-    <shortMessage>Empty finalizer should be deleted</shortMessage>
+    <id>FI_PUBLIC_SHOULD_BE_PROTECTED</id>
+    <artifact tool="FindBugs" mnemonic="FI_PUBLIC_SHOULD_BE_PROTECTED"/>
+    <artifact tool="PMD" mnemonic="FinalizeShouldBeProtected"/>
+    <name>Finalize method should be protected</name>
+    <shortMessage>Finalizer method should be declared to be protected, not public. Other classes can call public methods. Change the visibility or remove it.</shortMessage>
     <info>
-      &lt;p&gt; Empty &lt;code&gt;finalize()&lt;/code&gt; methods
-      are useless, so they should be deleted.&lt;/p&gt;
+<![CDATA[<p>A class's <code>finalize()</code> method should have
+protected access, not public.</p>
 
-      If the finalize() method is empty, then it does not need to
-      exist.
+If you override <code>finalize()</code>, make it protected. If you
+make it public, other classes may call it.</p>
+
+<p>It is recommended to try to remove all finalizers from your
+program.</p>]]>
     </info>
-    <name>Empty Finalizer Block</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+  <findingType>
+    <id>FI_EMPTY</id>
+    <artifact tool="FindBugs" mnemonic="FI_EMPTY"/>
+    <artifact tool="PMD" mnemonic="EmptyFinalizer"/>
+    <name>Empty finalizer block</name>
+    <shortMessage>Empty finalizer should be removed</shortMessage>
+    <info>
+<![CDATA[<p>Empty <code>finalize()</code> methods are useless, so they
+should be deleted.</p>
+
+<p>It is recommended to try to remove all finalizers from your
+program.</p>]]>
+    </info>
+  </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>FI_NULLIFY_SUPER</id>
-    <artifact tool="FindBugs" mnemonic="FI_NULLIFY_SUPER">
-    </artifact>
-    <shortMessage>
-      Finalizer nullifies superclass finalizer
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="FI_NULLIFY_SUPER"/>
+    <name>Finalizer nullifies superclass finalizer</name>
+    <shortMessage>Finalizer nullifies superclass finalizer.  Consider removing this method.</shortMessage>
     <info>
-      &lt;p&gt; This empty &lt;code&gt;finalize()&lt;/code&gt;
-      method explicitly negates the effect of any finalizer
-      defined by its superclass.&amp;nbsp; Any finalizer actions
-      defined for the superclass will not be performed.&amp;nbsp;
-      Unless this is intended, delete this method.&lt;/p&gt;
-    </info>
-    <name>Nullify Super</name>
-  </findingType>
-  <findingType>
-    <id>FinalizeOnlyCallsSuperFinalize</id>
-    <artifact tool="FindBugs" mnemonic="FI_USELESS"></artifact>
-    <artifact tool="PMD"
-	      mnemonic="FinalizeOnlyCallsSuperFinalize">
-    </artifact>
-    <shortMessage>
-      Finalizer does nothing but call superclass finalizer
-    </shortMessage>
-    <info>
-      &lt;p&gt; The only thing this
-      &lt;code&gt;finalize()&lt;/code&gt; method does is call the
-      superclass's &lt;code&gt;finalize()&lt;/code&gt; method,
-      making it redundant.&amp;nbsp; Delete it.&lt;/p&gt;
+<![CDATA[<p>This empty <code>finalize()</code> method explicitly
+negates the effect of any finalizer defined by its superclass. Any
+finalizer actions defined for the superclass will not be
+performed. Unless this is intended, delete this method.</p>
 
-      If the finalize() is implemented, it should do something
-      besides just calling super.finalize().
+<p>It is recommended to try to remove all finalizers from your
+program.</p>]]>
     </info>
-    <name>Finalize Only Calls Super Finalize</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
-    <id>FinalizeDoesNotCallSuperFinalize</id>
-    <artifact tool="FindBugs" mnemonic="FI_MISSING_SUPER_CALL">
-    </artifact>
-    <artifact tool="PMD"
-	      mnemonic="FinalizeDoesNotCallSuperFinalize">
-    </artifact>
-    <shortMessage>
-      Finalizer does not call superclass finalizer
-    </shortMessage>
+    <id>FI_USELESS</id>
+    <artifact tool="FindBugs" mnemonic="FI_USELESS"/>
+    <artifact tool="PMD" mnemonic="FinalizeOnlyCallsSuperFinalize"/>
+    <name>Finalize only calls super.finalize()</name>
+    <shortMessage>Finalizer does nothing but call its superclass finalizer.  Consider removing this method.</shortMessage>
     <info>
-      &lt;p&gt; This &lt;code&gt;finalize()&lt;/code&gt; method
-      does not make a call to its superclass's
-      &lt;code&gt;finalize()&lt;/code&gt; method.&amp;nbsp; So,
-      any finalizer actions defined for the superclass will not be
-      performed.&amp;nbsp; Add a call to
-      &lt;code&gt;super.finalize()&lt;/code&gt;.&lt;/p&gt;
+<![CDATA[<p>The only thing this <code>finalize()</code> method does
+is call the superclass's <code>finalize()</code> method, making it
+redundant. Delete this method.</p>
 
-      If the finalize() is implemented, its last action should be
-      to call super.finalize.
+<p>It is recommended to try to remove all finalizers from your
+program.</p>]]>
     </info>
-    <name>Finalize Does Not Call Super Finalize</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
-    <id>AvoidCallingFinalizeExplicitly</id>
-    <artifact tool="FindBugs" mnemonic="FI_EXPLICIT_INVOCATION">
-    </artifact>
-    <artifact tool="PMD" mnemonic="AvoidCallingFinalize"></artifact>
-    <shortMessage>Explicit invocation of finalizer</shortMessage>
+    <id>FI_MISSING_SUPER_CALL</id>
+    <artifact tool="FindBugs" mnemonic="FI_MISSING_SUPER_CALL"/>
+    <artifact tool="PMD" mnemonic="FinalizeDoesNotCallSuperFinalize"/>
+    <name>Finalize does not call super finalize</name>
+    <shortMessage>Finalizer does not call the superclass finalizer as its last operation.  Add a call to super.finalize() to this method.</shortMessage>
     <info>
-      &lt;p&gt; This method contains an explicit invocation of the
-      &lt;code&gt;finalize()&lt;/code&gt; method on an
-      object.&amp;nbsp; Because finalizer methods are supposed to
-      be executed once, and only by the VM, this is a bad
-      idea.&lt;/p&gt; &lt;p&gt;If a connected set of objects
-      beings finalizable, then the VM will invoke the finalize
-      method on all the finalizable object, possibly at the same
-      time in different threads. Thus, it is a particularly bad
-      idea, in the finalize method for a class X, invoke finalize
-      on objects referenced by X, because they may already be
-      getting finalized in a separate thread.
+<![CDATA[<p>This <code>finalize()</code> method does not make a call
+to its superclass's <code>finalize()</code> method. So, any finalizer
+actions defined for the superclass will not be performed.</p>
+
+<p>To fix this problem add a call to
+<code>super.finalize()</code>. Note that this method's last action
+should be the call to <code>super.finalize()</code>.</p>
+
+<p>It is recommended to try to remove all finalizers from your
+program.</p>]]>
     </info>
-    <name>Avoid Calling Finalize Explicitly</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+  <findingType>
+    <id>FI_EXPLICIT_INVOCATION</id>
+    <artifact tool="FindBugs" mnemonic="FI_EXPLICIT_INVOCATION"/>
+    <artifact tool="PMD" mnemonic="AvoidCallingFinalize"/>
+    <name>Avoid calling finalize() explicitly</name>
+    <shortMessage>Explicit invocation of finalizer found. This is almost always a bug.</shortMessage>
+    <info>
+<![CDATA[<p>This method contains an explicit invocation of the
+<code>finalize()</code> method on an object. Because finalizer methods
+are supposed to be executed once, and only by the VM, this is a bad
+idea.</p>
+
+<p>If a connected set of objects becomes finalizable, then the VM will
+invoke the <code>finalize()</code> method on all the finalizable
+objects, possibly at the same time in different threads. Thus, it is a
+particularly bad idea, in the <code>finalize()</code> method for a
+class X, to invoke <code>finalize()</code> on objects referenced by X,
+because they may already be getting finalized in a separate
+thread.</p>
+
+<p>It is recommended to try to remove all finalizers from your
+program.</p>]]>
+    </info>
+  </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>EQ_DONT_DEFINE_EQUALS_FOR_ENUM</id>
-    <artifact tool="FindBugs"
-	      mnemonic="EQ_DONT_DEFINE_EQUALS_FOR_ENUM">
-    </artifact>
-    <shortMessage>
-      Covariant equals() method defined for enum
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="EQ_DONT_DEFINE_EQUALS_FOR_ENUM"/>
+    <name>Don't define equals()for enum</name>
+    <shortMessage>Covariant equals() method defined for enum.  This is a bad practice.</shortMessage>
     <info>
-      &lt;p&gt; This class defines an enumeration, and equality on
-      enumerations are defined using object identity. Definine a
-      covariant equals method for an enumeration value is
-      exceptionally bad practice, since it would likely result in
-      having two different enumeration values that compare as
-      equals using the covariant enum method, and as not equal
-      when compared normally. Don't do it. &lt;/p&gt;
+<![CDATA[<p>This class defines an enumeration, and equality on
+enumerations are defined using object identity. Defining a covariant
+equals method for an enumeration value is exceptionally bad practice,
+since it would likely result in having two different enumeration
+values that compare as equals using the covariant enum method, and as
+not equal when compared normally. Don't do it.</p>]]>
     </info>
-    <name>Don't Define Equals For enum</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>EQ_SELF_USE_OBJECT</id>
-    <artifact tool="FindBugs" mnemonic="EQ_SELF_USE_OBJECT">
-    </artifact>
-    <shortMessage>
-      Covariant equals() method defined, Object.equals(Object)
-      inherited
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="EQ_SELF_USE_OBJECT"/>
+    <artifact tool="FindBugs" mnemonic="EQ_SELF_NO_OBJECT"/>
+    <name>Equals defined that does not override Object.equals</name>
+    <shortMessage>Covariant equals() method defined, Object.equals(Object) inherited.</shortMessage>
     <info>
-      &lt;p&gt; This class defines a covariant version of the
-      &lt;code&gt;equals()&lt;/code&gt; method, but inherits the
-      normal &lt;code&gt;equals(Object)&lt;/code&gt; method
-      defined in the base
-      &lt;code&gt;java.lang.Object&lt;/code&gt; class.&amp;nbsp;
-      The class should probably define a non-covariant version of
-      &lt;code&gt;equals()&lt;/code&gt;.&amp;nbsp; (I.e., a method
-      with the signature &lt;code&gt;boolean
-      equals(java.lang.Object)&lt;/code&gt;.&lt;/p&gt;
-    </info>
-    <name>Self Use Object</name>
-  </findingType>
-  <findingType>
-    <id>EQ_SELF_NO_OBJECT</id>
-    <artifact tool="FindBugs" mnemonic="EQ_SELF_NO_OBJECT">
-    </artifact>
-    <shortMessage>Covariant equals() method defined</shortMessage>
-    <info>
+<![CDATA[<p>This class defines a covariant version of the
+<code>equals()</code> method, but inherits the normal
+<code>equals(Object)</code> method defined in the base
+<code>java.lang.Object</code> class. The class probably intended to
+define a non-covariant version of <code>equals()</code> and use the
+<code>@Override</code> tag if using JDK 1.5 or above as shown in the
+code below.  In addition, to correctly override the
+<code>equals</code> method in <code>java.lang.Object</code>, the
+parameter must have the type <code>java.lang.Object</code>.</p>
 
-      <p> This class defines a covariant version of
-      <code>equals()</code>.&amp;nbsp; To correctly
-      override the <code>equals()</code> method in
-      <code>java.lang.Object</code>, the parameter of
-      <code>equals()</code> must have type
-      <code>java.lang.Object</code>.</p>
+<pre>
+@Override public boolean equals(Object obj) {
+  // implementation (don't forget to override hashCode as well!)
+}
+</pre>
 
+<p>If this was not the intent of the class, then the method should be
+renamed something other than <code>equals</code> to avoid
+confusion.</p>]]>
     </info>
-    <name>Self No Object</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>EQ_OVERRIDING_EQUALS_NOT_SYMMETRIC</id>
-    <artifact tool="FindBugs"
-	      mnemonic="EQ_OVERRIDING_EQUALS_NOT_SYMMETRIC">
-    </artifact>
-    <shortMessage>
-      equals method overrides equals in superclass and may not be
-      symmetric
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="EQ_OVERRIDING_EQUALS_NOT_SYMMETRIC"/>
+    <name>Overriding equals not symmetric</name>
+    <shortMessage>Equals method overrides equals in superclass and may not be symmetric.</shortMessage>
     <info>
+<![CDATA[<p>This class defines an equals method that overrides an
+equals method in a superclass. Both equals methods methods use
+<code>instanceof</code> in the determination of whether two objects
+are equals. This is fraught with peril, since it is important that the
+equals method is symmetrical (in other words, <code>a.equals(b) ==
+b.equals(a)</code>). If B is a subtype of A, and A's equals method
+checks that the argument is an instanceof A, and B's equals method
+checks that the argument is an instanceof B, it is quite likely that
+the equivalence relation defined by these methods is not
+symmetric.</p>
 
-      &lt;p&gt; This class defines an equals method that overrides
-      an equals method in a superclass. Both equals methods
-      methods use &lt;code&gt;instanceof&lt;/code&gt; in the
-      determination of whether two objects are equals. This is
-      fraught with peril, since it is important that the equals
-      method is symetrical (in other words,
-      &lt;code&gt;a.equals(b) == b.equals(a)&lt;/code&gt;). If B
-      is a subtype of A, and A's equals method checks that the
-      argument is an instanceof A, and B's equals method checks
-      that the argument is an instanceof B, it is quite likely
-      that the equivalence relation defined by these methods is
-      not symmetric.
-
+<p>See Bloch's Effective Java (second edition) item 8 for (much) more
+information.</p>]]>
     </info>
-    <name>Overriding Equals Not Symmetric</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>HSC_HUGE_SHARED_STRING_CONSTANT</id>
     <artifact tool="FindBugs"
@@ -1217,6 +1206,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Huge Shared String Constant</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>NP_ARGUMENT_MIGHT_BE_NULL</id>
     <artifact tool="FindBugs"
@@ -1235,6 +1225,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Argument Might Be Null</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>NP_EQUALS_SHOULD_HANDLE_NULL_ARGUMENT</id>
     <artifact tool="FindBugs"
@@ -1254,6 +1245,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Equals Should Handle Null Argument</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>NP_DOES_NOT_HANDLE_NULL</id>
     <artifact tool="FindBugs" mnemonic="NP_DOES_NOT_HANDLE_NULL">
@@ -1272,6 +1264,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Does Not Handle Null</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>CO_SELF_NO_OBJECT</id>
     <artifact tool="FindBugs" mnemonic="CO_SELF_NO_OBJECT">
@@ -1291,6 +1284,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Self No Object</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>HE_USE_OF_UNHASHABLE_CLASS</id>
     <artifact tool="FindBugs"
@@ -1311,6 +1305,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Use Of Unhashable Class</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>DefinesHashCodeUsesEquals</id>
     <artifact tool="FindBugs"
@@ -1348,6 +1343,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Defines Hash Code Uses Equals</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>EQ_COMPARETO_USE_OBJECT_EQUALS</id>
     <artifact tool="FindBugs"
@@ -1380,6 +1376,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Defines compareTo() Uses Object Equals</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>DefinesHashcodeNotEquals</id>
     <artifact tool="FindBugs" mnemonic="HE_HASHCODE_NO_EQUALS">
@@ -1402,6 +1399,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Defines Hashcode Not Equals</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>DefinesEqualsUsesHashcode</id>
     <artifact tool="FindBugs" mnemonic="HE_EQUALS_USE_HASHCODE">
@@ -1436,6 +1434,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Defines equals() Uses hashcode()</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>InheritsEqualsUsesHashCode</id>
     <artifact tool="FindBugs"
@@ -1470,6 +1469,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Inherits Equals Uses Hashcode</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>OverridesEqualsNotHashcode</id>
     <artifact tool="FindBugs" mnemonic="HE_EQUALS_NO_HASHCODE">
@@ -1493,6 +1493,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Overrides Equals Not Hashcode</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>EQ_ABSTRACT_SELF</id>
     <artifact tool="FindBugs" mnemonic="EQ_ABSTRACT_SELF">
@@ -1512,6 +1513,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Abstract Self</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>ES_COMPARING_STRINGS_WITH_EQ</id>
     <artifact tool="FindBugs"
@@ -1537,6 +1539,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Comparing Strings With == or !=</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>ES_COMPARING_PARAMETER_STRING_WITH_EQ</id>
     <artifact tool="FindBugs"
@@ -1559,6 +1562,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Comparing Parameter String With == or !=</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>CO_ABSTRACT_SELF</id>
     <artifact tool="FindBugs" mnemonic="CO_ABSTRACT_SELF">
@@ -1578,6 +1582,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Abstract Self</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>FieldNotGuarded</id>
     <artifact tool="FindBugs" mnemonic="IS_FIELD_NOT_GUARDED">
@@ -1594,6 +1599,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Field Not Guarded</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>InconsistentSynchronization2</id>
     <artifact tool="FindBugs" mnemonic="IS2_INCONSISTENT_SYNC">
@@ -1636,6 +1642,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Inconsistent Sync</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>NakedNotifyCall</id>
     <artifact tool="FindBugs" mnemonic="NN_NAKED_NOTIFY"></artifact>
@@ -1659,6 +1666,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Naked Notify</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>PublicStaticMayExposeInternalRepresentation</id>
     <artifact tool="FindBugs" mnemonic="MS_EXPOSE_REP"></artifact>
@@ -1676,6 +1684,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Expose Rep</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>MayExposeInternalRepresentation</id>
     <artifact tool="FindBugs" mnemonic="EI_EXPOSE_REP"></artifact>
@@ -1697,6 +1706,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Expose Rep</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>MayExposeInternalRepresentation2</id>
     <artifact tool="FindBugs" mnemonic="EI_EXPOSE_REP2"></artifact>
@@ -1717,6 +1727,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Expose REP2</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>MayExposeInternalStaticStatic</id>
     <artifact tool="FindBugs" mnemonic="EI_EXPOSE_STATIC_REP2">
@@ -1737,6 +1748,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Expose Static REP2</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>InvokesRun</id>
     <artifact tool="FindBugs" mnemonic="RU_INVOKE_RUN"></artifact>
@@ -1757,6 +1769,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Invoke Run</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>MethodSpinsOnField</id>
     <artifact tool="FindBugs" mnemonic="SP_SPIN_ON_FIELD">
@@ -1774,6 +1787,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Spin On Field</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>NS_DANGEROUS_NON_SHORT_CIRCUIT</id>
     <artifact tool="FindBugs"
@@ -1806,6 +1820,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Dangerous Non Short Circuit</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>NS_NON_SHORT_CIRCUIT</id>
     <artifact tool="FindBugs" mnemonic="NS_NON_SHORT_CIRCUIT">
@@ -1833,6 +1848,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Non Short Circuit</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>WaitWithTwoLocks</id>
     <artifact tool="FindBugs" mnemonic="TLW_TWO_LOCK_WAIT">
@@ -1849,6 +1865,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Two Lock Wait</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>TwoLocksOnNotify</id>
     <artifact tool="FindBugs" mnemonic="TLW_TWO_LOCK_NOTIFY">
@@ -1868,6 +1885,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Two Lock Notify</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UnconditionalWait</id>
     <artifact tool="FindBugs" mnemonic="UW_UNCOND_WAIT"></artifact>
@@ -1884,6 +1902,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Unconditional Wait</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UR_UNINIT_READ</id>
     <artifact tool="FindBugs" mnemonic="UR_UNINIT_READ"></artifact>
@@ -1900,6 +1919,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Uninitialized Read</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SynchronizedSetUnsynchronizedGet</id>
     <artifact tool="FindBugs" mnemonic="UG_SYNC_SET_UNSYNC_GET">
@@ -1934,6 +1954,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Init Circularity</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>IC_SUPERCLASS_USES_SUBCLASS_DURING_INITIALIZATION</id>
     <artifact tool="FindBugs"
@@ -1962,6 +1983,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Superclass Uses Subclass During Initialization</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>IT_NO_SUCH_ELEMENT</id>
     <artifact tool="FindBugs" mnemonic="IT_NO_SUCH_ELEMENT">
@@ -1985,6 +2007,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>No Such Element</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SynchronizationOnSharedConstant</id>
     <artifact tool="FindBugs"
@@ -2012,6 +2035,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Synchronization On Shared Constant</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>EmptySynchronizationBlock</id>
     <artifact tool="FindBugs" mnemonic="ESync_EMPTY_SYNC">
@@ -2031,6 +2055,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Empty Sync</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>InconsistentSynchronization</id>
     <artifact tool="FindBugs" mnemonic="IS_INCONSISTENT_SYNC">
@@ -2063,6 +2088,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Inconsistent Sync</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AvoidSynchronizationOnUpdatedField</id>
     <artifact tool="FindBugs" mnemonic="ML_SYNC_ON_UPDATED_FIELD">
@@ -2080,6 +2106,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Sync On Updated Field</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>FieldShouldBeOutOfInterfaceAndPackageProtected</id>
     <artifact tool="FindBugs" mnemonic="MS_OOI_PKGPROTECT">
@@ -2117,6 +2144,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Final and Package Protected</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>FieldShouldBeFinal</id>
     <artifact tool="FindBugs" mnemonic="MS_SHOULD_BE_FINAL">
@@ -2132,6 +2160,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Should Be Final</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>PackageProtectField</id>
     <artifact tool="FindBugs" mnemonic="MS_PKGPROTECT"></artifact>
@@ -2145,6 +2174,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Package Protect Field</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>MutableHashtable</id>
     <artifact tool="FindBugs" mnemonic="MS_MUTABLE_HASHTABLE">
@@ -2160,6 +2190,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Mutable Hashtable</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>MutableArray</id>
     <artifact tool="FindBugs" mnemonic="MS_MUTABLE_ARRAY">
@@ -2175,6 +2206,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Mutable Array</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>CannotBeFinal</id>
     <artifact tool="FindBugs" mnemonic="MS_CANNOT_BE_FINAL">
@@ -2192,6 +2224,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Cannot Be Final</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>IA_AMBIGUOUS_INVOCATION_OF_INHERITED_OR_OUTER_METHOD</id>
     <artifact tool="FindBugs"
@@ -2216,6 +2249,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Ambiguous Invocation Of Inherited Or Outer Method</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>ClassNamingConventions</id>
     <artifact tool="FindBugs"
@@ -2241,6 +2275,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Class Naming Convention</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>MethodNamingConventions</id>
     <artifact tool="FindBugs"
@@ -2261,6 +2296,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Method Naming Convention</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>FieldNamingConventions</id>
     <artifact tool="FindBugs"
@@ -2298,6 +2334,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Very Confusing</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>NM_VERY_CONFUSING_INTENTIONAL</id>
     <artifact tool="FindBugs"
@@ -2321,6 +2358,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Very Confusing Intentional</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>NM_CONFUSING</id>
     <artifact tool="FindBugs" mnemonic="NM_CONFUSING"></artifact>
@@ -2333,6 +2371,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Confusing</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>NM_METHOD_CONSTRUCTOR_CONFUSION</id>
     <artifact tool="FindBugs"
@@ -2355,6 +2394,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Method Constructor Confusion</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SuspiciousHashcodeMethodName</id>
     <artifact tool="FindBugs" mnemonic="NM_LCASE_HASHCODE">
@@ -2378,6 +2418,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Suspicious Hashcode Method Name</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>NM_LCASE_TOSTRING</id>
     <artifact tool="FindBugs" mnemonic="NM_LCASE_TOSTRING">
@@ -2396,6 +2437,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Lowercase tostring() Method Defined</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SuspiciousEqualsMethodName</id>
     <artifact tool="FindBugs" mnemonic="NM_BAD_EQUAL"></artifact>
@@ -2419,6 +2461,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Suspicious Equals Method Name</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>NM_CLASS_NOT_EXCEPTION</id>
     <artifact tool="FindBugs" mnemonic="NM_CLASS_NOT_EXCEPTION">
@@ -2436,6 +2479,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Class Not Exception</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>RR_NOT_CHECKED</id>
     <artifact tool="FindBugs" mnemonic="RR_NOT_CHECKED"></artifact>
@@ -2458,6 +2502,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Not Checked</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SR_NOT_CHECKED</id>
     <artifact tool="FindBugs" mnemonic="SR_NOT_CHECKED"></artifact>
@@ -2482,6 +2527,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Not Checked</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SE_READ_RESOLVE_MUST_RETURN_OBJECT</id>
     <artifact tool="FindBugs"
@@ -2499,6 +2545,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Read Resolve Must Return Object</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SE_TRANSIENT_FIELD_OF_NONSERIALIZABLE_CLASS</id>
     <artifact tool="FindBugs"
@@ -2519,6 +2566,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Transient Field Of Nonserializable Class</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SE_TRANSIENT_FIELD_NOT_RESTORED</id>
     <artifact tool="FindBugs"
@@ -2539,6 +2587,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Transient Field Not Restored</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SE_METHOD_MUST_BE_PRIVATE</id>
     <artifact tool="FindBugs"
@@ -2558,6 +2607,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Method Must Be Private</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SE_NO_SUITABLE_CONSTRUCTOR_FOR_EXTERNALIZATION</id>
     <artifact tool="FindBugs"
@@ -2580,6 +2630,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>No Suitable Constructor For Externalization</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SE_NO_SUITABLE_CONSTRUCTOR</id>
     <artifact tool="FindBugs"
@@ -2602,6 +2653,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>No Suitable Constructor</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SE_NO_SERIALVERSIONID</id>
     <artifact tool="FindBugs" mnemonic="SE_NO_SERIALVERSIONID">
@@ -2629,6 +2681,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>No Serial Version Id Defined</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SE_COMPARATOR_SHOULD_BE_SERIALIZABLE</id>
     <artifact tool="FindBugs"
@@ -2653,6 +2706,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Comparator Should Be Serializable</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SF_SWITCH_FALLTHROUGH</id>
     <artifact tool="FindBugs" mnemonic="SF_SWITCH_FALLTHROUGH">
@@ -2670,6 +2724,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Switch Fallthrough</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SF_DEAD_STORE_DUE_TO_SWITCH_FALLTHROUGH</id>
     <artifact tool="FindBugs"
@@ -2688,6 +2743,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Dead Store Due To Switch Fallthrough</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>IncorrectSynchronizationOfWriteObject</id>
     <artifact tool="FindBugs" mnemonic="WS_WRITEOBJECT_SYNC">
@@ -2706,6 +2762,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>writeObject Is Only Synchronized Method</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AvoidSynchronizationOfReadObject</id>
     <artifact tool="FindBugs" mnemonic="RS_READOBJECT_SYNC">
@@ -2728,6 +2785,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>readObject Method is Synchronized</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SE_NONSTATIC_SERIALVERSIONID</id>
     <artifact tool="FindBugs"
@@ -2762,6 +2820,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Nonfinal Serial Version Id</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SE_NONLONG_SERIALVERSIONID</id>
     <artifact tool="FindBugs"
@@ -2801,6 +2860,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Bad Field</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SE_BAD_FIELD_INNER_CLASS</id>
     <artifact tool="FindBugs" mnemonic="SE_BAD_FIELD_INNER_CLASS">
@@ -2824,6 +2884,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Bad Field Inner Class</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SE_INNER_CLASS</id>
     <artifact tool="FindBugs" mnemonic="SE_INNER_CLASS"></artifact>
@@ -2841,6 +2902,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Inner Class</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SE_BAD_FIELD_STORE</id>
     <artifact tool="FindBugs" mnemonic="SE_BAD_FIELD_STORE">
@@ -2872,6 +2934,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Start In Constructor</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SS_SHOULD_BE_STATIC</id>
     <artifact tool="FindBugs" mnemonic="SS_SHOULD_BE_STATIC">
@@ -2916,6 +2979,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Unread Field</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>QF_QUESTIONABLE_FOR_LOOP</id>
     <artifact tool="FindBugs" mnemonic="QF_QUESTIONABLE_FOR_LOOP">
@@ -2945,6 +3009,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Null Field</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UWF_UNWRITTEN_FIELD</id>
     <artifact tool="FindBugs" mnemonic="UWF_UNWRITTEN_FIELD">
@@ -2960,6 +3025,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Unwritten Field</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD</id>
     <artifact tool="FindBugs"
@@ -2977,6 +3043,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Write To Static From Instance Method</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>NP_LOAD_OF_KNOWN_NULL_VALUE</id>
     <artifact tool="FindBugs"
@@ -2995,6 +3062,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Load Of Known Null Value</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>NP_IMMEDIATE_DEREFERENCE_OF_READLINE</id>
     <artifact tool="FindBugs"
@@ -3013,6 +3081,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Immediate Dereference Of Readline</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>NP_UNWRITTEN_FIELD</id>
     <artifact tool="FindBugs" mnemonic="NP_UNWRITTEN_FIELD">
@@ -3028,6 +3097,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Unwritten Field</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SIC_INNER_SHOULD_BE_STATIC</id>
     <artifact tool="FindBugs"
@@ -3046,6 +3116,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Inner Should Be Static</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>NP_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR</id>
     <artifact tool="FindBugs"
@@ -3066,6 +3137,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Field Not Initialized In Constructor</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR</id>
     <artifact tool="FindBugs"
@@ -3086,6 +3158,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Field Not Initialized In Constructor</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SIC_INNER_SHOULD_BE_STATIC_ANON</id>
     <artifact tool="FindBugs"
@@ -3134,6 +3207,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Inner Should Be Static Needs This</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>WaitNotInLoop</id>
     <artifact tool="FindBugs" mnemonic="WA_NOT_IN_LOOP"></artifact>
@@ -3194,6 +3268,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Notify Not Notifyall</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>RV_CHECK_FOR_POSITIVE_INDEXOF</id>
     <artifact tool="FindBugs"
@@ -3214,6 +3289,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Check For Positive Indexof</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>RV_DONT_JUST_NULL_CHECK_READLINE</id>
     <artifact tool="FindBugs"
@@ -3234,6 +3310,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Dont Just Null Check Readline</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>RV_RETURN_VALUE_IGNORED</id>
     <artifact tool="FindBugs" mnemonic="RV_RETURN_VALUE_IGNORED">
@@ -3259,6 +3336,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Return Value Ignored</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>RV_RETURN_VALUE_IGNORED2</id>
     <artifact tool="FindBugs" mnemonic="RV_RETURN_VALUE_IGNORED2">
@@ -3284,6 +3362,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Return Value IGNORED2</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>NP_ALWAYS_NULL</id>
     <artifact tool="FindBugs" mnemonic="NP_ALWAYS_NULL"></artifact>
@@ -3314,6 +3393,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Store Into Nonnull Field</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>NP_ALWAYS_NULL_EXCEPTION</id>
     <artifact tool="FindBugs" mnemonic="NP_ALWAYS_NULL_EXCEPTION">
@@ -3352,6 +3432,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Null On Some Path</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>NP_NULL_ON_SOME_PATH_EXCEPTION</id>
     <artifact tool="FindBugs"
@@ -3377,6 +3458,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Null On Some Path Exception</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE</id>
     <artifact tool="FindBugs"
@@ -3398,6 +3480,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Null On Some Path From Return Value</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>NP_NULL_PARAM_DEREF_NONVIRTUAL</id>
     <artifact tool="FindBugs"
@@ -3416,6 +3499,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Null Param Deref Nonvirtual</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>NP_NULL_PARAM_DEREF_ALL_TARGETS_DANGEROUS</id>
     <artifact tool="FindBugs"
@@ -3451,6 +3535,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Null Param Deref</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>NP_NONNULL_PARAM_VIOLATION</id>
     <artifact tool="FindBugs"
@@ -3470,6 +3555,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Nonnull Param Violation</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>NP_NONNULL_RETURN_VIOLATION</id>
     <artifact tool="FindBugs"
@@ -3487,6 +3573,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Nonnull Return Violation</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>NP_CLONE_COULD_RETURN_NULL</id>
     <artifact tool="FindBugs"
@@ -3521,6 +3608,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Tostring Could Return Null</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>NP_GUARANTEED_DEREF</id>
     <artifact tool="FindBugs" mnemonic="NP_GUARANTEED_DEREF">
@@ -3538,6 +3626,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Guaranteed Deref</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>NP_GUARANTEED_DEREF_ON_EXCEPTION_PATH</id>
     <artifact tool="FindBugs"
@@ -3558,6 +3647,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Guaranteed Deref On Exception Path</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SI_INSTANCE_BEFORE_FINALS_ASSIGNED</id>
     <artifact tool="FindBugs"
@@ -3576,6 +3666,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Instance Before Finals Assigned</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>OS_OPEN_STREAM</id>
     <artifact tool="FindBugs" mnemonic="OS_OPEN_STREAM"></artifact>
@@ -3593,6 +3684,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Open Stream</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>OS_OPEN_STREAM_EXCEPTION_PATH</id>
     <artifact tool="FindBugs"
@@ -3614,6 +3706,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Open Stream Exception Path</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>PZLA_PREFER_ZERO_LENGTH_ARRAYS</id>
     <artifact tool="FindBugs"
@@ -3642,6 +3735,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Prefer Zero Length Arrays</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UCF_USELESS_CONTROL_FLOW</id>
     <artifact tool="FindBugs" mnemonic="UCF_USELESS_CONTROL_FLOW">
@@ -3660,6 +3754,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Useless Control Flow</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UCF_USELESS_CONTROL_FLOW_NEXT_LINE</id>
     <artifact tool="FindBugs"
@@ -3680,6 +3775,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Useless Control Flow Next Line</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE</id>
     <artifact tool="FindBugs"
@@ -3702,6 +3798,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Redundant Nullcheck Would Have Been A NullPointerException</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>RCN_REDUNDANT_NULLCHECK_OF_NULL_VALUE</id>
     <artifact tool="FindBugs"
@@ -3718,6 +3815,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Redundant Nullcheck Of Null Value</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE</id>
     <artifact tool="FindBugs"
@@ -3734,6 +3832,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Redundant Nullcheck Of Nonnull Value</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>RCN_REDUNDANT_COMPARISON_TWO_NULL_VALUES</id>
     <artifact tool="FindBugs"
@@ -3750,6 +3849,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Redundant Comparison Two Null Values</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>RedundantComparisonOfNullAndNonnullValue</id>
     <artifact tool="FindBugs"
@@ -3770,6 +3870,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Redundant Comparison Of Null And Nonnull Value</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UnreleasedLock</id>
     <artifact tool="FindBugs" mnemonic="UL_UNRELEASED_LOCK">
@@ -3789,6 +3890,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Unreleased Lock</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UnreleasedLockOnExceptionPath</id>
     <artifact tool="FindBugs"
@@ -3809,6 +3911,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Unreleased Lock On An Exception Path</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>RC_REF_COMPARISON</id>
     <artifact tool="FindBugs" mnemonic="RC_REF_COMPARISON">
@@ -3826,6 +3929,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Ref Comparison</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>EC_UNRELATED_TYPES</id>
     <artifact tool="FindBugs" mnemonic="EC_UNRELATED_TYPES">
@@ -3849,6 +3953,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Unrelated Types</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>EC_UNRELATED_INTERFACES</id>
     <artifact tool="FindBugs" mnemonic="EC_UNRELATED_INTERFACES">
@@ -3874,6 +3979,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Unrelated Interfaces</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>EC_UNRELATED_CLASS_AND_INTERFACE</id>
     <artifact tool="FindBugs"
@@ -3900,6 +4006,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Unrelated Class And Interface</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>EqualComparisonToNullArgument</id>
     <artifact tool="FindBugs" mnemonic="EC_NULL_ARG"></artifact>
@@ -3918,6 +4025,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Equal Comparison To Null Argument</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>MismatchedWait</id>
     <artifact tool="FindBugs" mnemonic="MWN_MISMATCHED_WAIT">
@@ -3934,6 +4042,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Mismatched Wait</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>MismatchedNotify</id>
     <artifact tool="FindBugs" mnemonic="MWN_MISMATCHED_NOTIFY">
@@ -3951,6 +4060,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Mismatched Notify</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SA_LOCAL_SELF_ASSIGNMENT</id>
     <artifact tool="FindBugs" mnemonic="SA_LOCAL_SELF_ASSIGNMENT">
@@ -3966,6 +4076,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Local Self Assignment</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SA_FIELD_SELF_ASSIGNMENT</id>
     <artifact tool="FindBugs" mnemonic="SA_FIELD_SELF_ASSIGNMENT">
@@ -3998,6 +4109,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Field Double Assignment</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SA_LOCAL_DOUBLE_ASSIGNMENT</id>
     <artifact tool="FindBugs"
@@ -4015,6 +4127,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Local Double Assignment</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SA_FIELD_SELF_COMPUTATION</id>
     <artifact tool="FindBugs"
@@ -4036,6 +4149,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Field Self Computation</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SA_LOCAL_SELF_COMPUTATION</id>
     <artifact tool="FindBugs"
@@ -4057,6 +4171,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Local Self Computation</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SA_FIELD_SELF_COMPARISON</id>
     <artifact tool="FindBugs" mnemonic="SA_FIELD_SELF_COMPARISON">
@@ -4073,6 +4188,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Field Self Comparison</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SA_LOCAL_SELF_COMPARISON</id>
     <artifact tool="FindBugs" mnemonic="SA_LOCAL_SELF_COMPARISON">
@@ -4089,6 +4205,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Local Self Comparison</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>DMI_LONG_BITS_TO_DOUBLE_INVOKED_ON_INT</id>
     <artifact tool="FindBugs"
@@ -4107,6 +4224,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Long Bits To Double Invoked On Int</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>DMI_RANDOM_USED_ONLY_ONCE</id>
     <artifact tool="FindBugs"
@@ -4135,6 +4253,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Random Used Only Once</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>RV_ABSOLUTE_VALUE_OF_RANDOM_INT</id>
     <artifact tool="FindBugs"
@@ -4178,6 +4297,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Absolute Value Of Hashcode</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>RV_REM_OF_RANDOM_INT</id>
     <artifact tool="FindBugs" mnemonic="RV_REM_OF_RANDOM_INT">
@@ -4197,6 +4317,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Rem Of Random Int</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>RV_REM_OF_HASHCODE</id>
     <artifact tool="FindBugs" mnemonic="RV_REM_OF_HASHCODE">
@@ -4225,6 +4346,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Rem Of Hashcode</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>INT_BAD_COMPARISON_WITH_NONNEGATIVE_VALUE</id>
     <artifact tool="FindBugs"
@@ -4241,6 +4363,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Bad Comparison With Nonnegative Value</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>INT_BAD_COMPARISON_WITH_SIGNED_BYTE</id>
     <artifact tool="FindBugs"
@@ -4259,6 +4382,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Bad Comparison With Signed Byte</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>INT_VACUOUS_COMPARISON</id>
     <artifact tool="FindBugs" mnemonic="INT_VACUOUS_COMPARISON">
@@ -4272,6 +4396,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Vacuous Comparison</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>INT_BAD_REM_BY_1</id>
     <artifact tool="FindBugs" mnemonic="INT_BAD_REM_BY_1">
@@ -4286,6 +4411,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Bad Rem By 1</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>BIT_IOR_OF_SIGNED_BYTE</id>
     <artifact tool="FindBugs" mnemonic="BIT_IOR_OF_SIGNED_BYTE">
@@ -4320,6 +4446,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Bitwise OR Of Signed Byte</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>BIT_AND</id>
     <artifact tool="FindBugs" mnemonic="BIT_AND"></artifact>
@@ -4334,6 +4461,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Incompatible Bit Masks And</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>BIT_AND_ZZ</id>
     <artifact tool="FindBugs" mnemonic="BIT_AND_ZZ"></artifact>
@@ -4349,6 +4477,7 @@ object. This thread, then, does nothing but waste time.</p>]]>
     </info>
     <name>Incompatible Bit Masks And Zero</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>BIT_IOR</id>
     <artifact tool="FindBugs" mnemonic="BIT_IOR"></artifact>
@@ -6140,29 +6269,6 @@ Bug #6178997</a>.</p>]]>
     <name>Invoke On Static Date Format Instance</name>
   </findingType>
 
-  <!-- This type is no longer used.  Do not assign artifacts to it. -->
-  <findingType>
-    <id>InefficientStringVoidConstructor</id>
-    <shortMessage>
-      Method invokes inefficient new String() constructor
-    </shortMessage>
-    <info>
-
-      &lt;p&gt; Creating a new
-      &lt;code&gt;java.lang.String&lt;/code&gt; object using the
-      no-argument constructor wastes memory because the object so
-      created will be functionally indistinguishable from the
-      empty string constant
-      &lt;code&gt;&quot;&quot;&lt;/code&gt;.&amp;nbsp; Java
-      guarantees that identical string constants will be
-      represented by the same &lt;code&gt;String&lt;/code&gt;
-      object.&amp;nbsp; Therefore, you should just use the empty
-      string constant directly.&lt;/p&gt;
-
-    </info>
-    <name>Inefficient String Void Constructor</name>
-  </findingType>
-
   <!-- FindBugs 1.3.0 Upgrade -->
   <findingType>
     <id>DoesntOverrideEquals</id>
@@ -7636,6 +7742,7 @@ use <code>java.util.Arrays.hashCode(a)</code>.
     </info>
     <name>Method may fail to clean up stream or resource</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>JSure</id>
     <artifact tool="JSure"
@@ -8349,23 +8456,6 @@ use <code>java.util.Arrays.hashCode(a)</code>.
     </info>
     <name>Empty Initializer</name>
   </findingType>
-<!--  <findingType>
-    <id>AvoidNonConstructorMethodsWithClassName</id>
-    <artifact tool="PMD"
-	      mnemonic="AvoidNonConstructorMethodsWithClassName">
-    </artifact>
-    <shortMessage>
-      It is very easy to confuse methods having the same name as
-      their class with constructors. It is preferable to choose a
-      different name for these methods.
-    </shortMessage>
-    <info>
-      It is very easy to confuse methods having the same name as
-      their class with constructors. It is preferable to choose a
-      different name for these methods.
-    </info>
-    <name>Avoid Non-Constructor Methods With Class Name</name>
-  </findingType> -->
   <findingType>
     <id>EmptyCatchBlock</id>
     <artifact tool="PMD" mnemonic="EmptyCatchBlock"></artifact>
@@ -11299,21 +11389,7 @@ use <code>java.util.Arrays.hashCode(a)</code>.
     </info>
     <name>Override Both Equals And Hashcode</name>
   </findingType>
-  <!-- This finding type is no longer in use -->
-  <findingType>
-    <id>StringInstantiation</id>
-    <shortMessage>
-      Avoid instantiating String objects; this is usually
-      unnecessary.
-    </shortMessage>
-    <info>
-      Avoid instantiating String objects; this is usually
-      unnecessary.
-    </info>
-    <name>String Instantiation</name>
-  </findingType>
-  
-  <!-- For PMD 4.1 -->
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AvoidUsingHardCodedIP</id>
     <artifact tool="PMD"
@@ -11330,6 +11406,7 @@ use <code>java.util.Arrays.hashCode(a)</code>.
     </info>
     <name>Avoid Using Hardcoded IP Addresses</name>
   </findingType>	
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>CheckResultSet</id>
     <artifact tool="PMD"
@@ -11342,6 +11419,7 @@ use <code>java.util.Arrays.hashCode(a)</code>.
     </info>
     <name>Check Return Values from ResultSet Methods</name>
   </findingType>		
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AvoidFinalLocalVariable</id>
     <artifact tool="PMD"
@@ -11357,6 +11435,7 @@ use <code>java.util.Arrays.hashCode(a)</code>.
     </info>
     <name>Avoid Final Local Variables</name>
   </findingType>	
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AvoidUsingShortType</id>
     <artifact tool="PMD"
@@ -11377,245 +11456,354 @@ use <code>java.util.Arrays.hashCode(a)</code>.
     </info>
     <name>Avoid Using Short Type</name>
   </findingType>	
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AvoidUsingVolatile</id>
-    <artifact tool="PMD"
-	      mnemonic="AvoidUsingVolatile">
-    </artifact>
-    <shortMessage>
-      Avoid using "volatile" fields
-    </shortMessage>
+    <artifact tool="PMD" mnemonic="AvoidUsingVolatile"/>
+    <name>Avoid using volatile fields</name>
+    <shortMessage>Avoid using volatile fields.</shortMessage>
     <info>
+<![CDATA[<p>The <code>volatile</code> keyword is generally used to
+fine tune a concurrent Java application, and therefore, requires a
+expert knowledge of the Java Memory Model.  Moreover, it is often
+misused. Therefore, consider carefully if this use of the
+<code>volatile</code> keyword is correct.</p>
 
-      &lt;p&gt; The 'volatile' keyword is generally used to fine tune a concurrent Java 
-      application, and therefore, requires a expert knowledge of the Java Memory Model. 
-      Moreover, it is often misused. Therefore, the 'volatile'	keyword should not be used
-      for maintenance purposes and portability. 
-      &lt;/p&gt;
+<p>It is also recommended to consider if the use of one of the atomic
+classes from util.concurrent is a better implementation
+choice.  For example, the below code</p>
+<pre>
+public class ThrDeux {
+  private volatile int counter = 1;
+  private volatile String var = "Hi";
+}
+</pre>
 
+<p>could be changed to</p>
+
+<pre>
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
+
+public class ThrDeux {
+  private final AtomicInteger counter = new AtomicInteger(1);
+  private final AtomicReference<String> var = new AtomicReference<String>("Hi");
+}
+</pre>]]>
     </info>
-    <name>Avoid Using Volatile Fields</name>
   </findingType>	
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AvoidUsingNativeCode</id>
-    <artifact tool="PMD"
-	      mnemonic="AvoidUsingNativeCode">
-    </artifact>
-    <shortMessage>
-      Avoid using native code
-    </shortMessage>
+    <artifact tool="PMD" mnemonic="AvoidUsingNativeCode"/>
+    <name>Avoid using native code (JNI)</name>
+    <shortMessage>Avoid using native code. Try to reimplement so that JNI is not needed.</shortMessage>
     <info>
-
-      &lt;p&gt; 
-      The JVM and Java language allows for a wide range of functionality, so it should be
-      very rare to have to rely on non-Java code, and in particular, on the 
-      Java Native Interface (JNI).  Since the use of JNI often makes an application 
-      less portable, and harder to maintain, it is not recommended. &lt;/p&gt;
-
+<![CDATA[<p>The Java language allows for a wide range of
+functionality, so it should be very rare to have to rely on non-Java
+code, and in particular, on the Java Native Interface (JNI).  Since
+the use of JNI makes an application less portable, and harder to
+maintain, it is not recommended.</p>]]>
     </info>
-    <name>Avoid Using Native Code</name>
   </findingType>	
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AvoidAccessibilityAlteration</id>
-    <artifact tool="PMD"
-	      mnemonic="AvoidAccessibilityAlteration">
-    </artifact>
-    <shortMessage>
-      Avoid changing class/method accessibility at runtime
-    </shortMessage>
+    <artifact tool="PMD" mnemonic="AvoidAccessibilityAlteration"/>
+    <name>Avoid changing class/method accessibility at runtime</name>
+    <shortMessage>Avoid changing class/method accessibility at runtime.</shortMessage>
     <info>
+<![CDATA[<p>Methods in <code>java.lang.reflect</code>, such as
+<code>getDeclaredConstructors()</code>, <code>getDeclaredConstructor(Class[])</code> and
+<code>setAccessible()</code>, allow someone to alter, at runtime, the accessibility
+of fields, classes, or methods, even if they are declared to be <code>private</code>.</p>
 
-      &lt;p&gt; 		
-      Methods in java.lang.reflect, such as getDeclaredConstructors(), 
-      getDeclaredConstructor(Class[]) and setAccessible(), allow someone to alter, 
-      at runtime, the accessibility of fields, classes, or methods, even if they 
-      are private. &lt;/p&gt;
+<pre>
+import java.lang.reflect.AccessibleObject;
+import java.lang.reflect.Method;
+import java.security.PrivilegedAction;
 
+public class Violation {
+  public void invalidCallsInMethod() throws SecurityException, NoSuchMethodException {
+    // Possible call to forbidden getDeclaredConstructors
+    Class[] arrayOfClass = new Class[1];
+    this.getClass().getDeclaredConstructors();
+    this.getClass().getDeclaredConstructor(arrayOfClass);
+    Class clazz = this.getClass();
+    clazz.getDeclaredConstructor(arrayOfClass);
+    clazz.getDeclaredConstructors();
+
+    // Possible call to forbidden setAccessible
+    clazz.getMethod("", arrayOfClass).setAccessible(false);
+    AccessibleObject.setAccessible(null, false);
+    Method.setAccessible(null, false);
+    Method[] methodsArray = clazz.getMethods();
+    int nbMethod;
+    for ( nbMethod = 0; nbMethod < methodsArray.length; nbMethod++ ) {
+      methodsArray[nbMethod].setAccessible(false);
+    }
+
+    // Possible call to forbidden PrivilegedAction
+    PrivilegedAction priv = (PrivilegedAction) new Object(); priv.run();
+  }
+}
+</pre>
+
+<p>There are legitimate specialized uses of these methods, but
+observer caution that a security risk is not being introduced into
+your system if their use is allowed.</p>]]>
     </info>
-    <name>Avoid Changing Class/Method Accessibility At Runtime</name>
   </findingType>	
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>ClassWithOnlyPrivateConstructorsShouldBeFinal</id>
-    <artifact tool="PMD"
-	      mnemonic="ClassWithOnlyPrivateConstructorsShouldBeFinal">
-    </artifact>
-    <shortMessage>
-      A class which only has private constructors should be final
-    </shortMessage>
+    <artifact tool="PMD" mnemonic="ClassWithOnlyPrivateConstructorsShouldBeFinal"/>
+    <name>Class with only private constructors should be final</name>
+    <shortMessage>A class which only has private constructors should be declared final.</shortMessage>
     <info>
+<![CDATA[<p>A class with only private constructors should be final,
+unless the private constructor is called by a inner class.  The code below</p>
 
-      &lt;p&gt; A class with only private constructors should be final, 
-      unless the private constructor is called by a inner class. &lt;/p&gt;
+<pre>
+public class Foo {
+  private Foo() { ... }
+  // no other constructors or inner classes
+  ...
+}
+</pre>
 
+<p>could be changed to</p>
+
+<pre>
+public final class Foo {
+  private Foo() { ... }
+  // no other constructors or inner classes
+  ...
+}
+</pre>]]>
     </info>
-    <name>Class With Only Private Constructors Should Be Final</name>
   </findingType>	
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>EmptyMethodInAbstractClassShouldBeAbstract</id>
     <artifact tool="PMD"
 	      mnemonic="EmptyMethodInAbstractClassShouldBeAbstract">
     </artifact>
-    <shortMessage>
-      An empty method in an abstract class should instead be abstract
-    </shortMessage>
+    <name>Empty method in abstract class should be abstract</name>
+    <shortMessage>Consider if an empty method in an abstract class should be abstract.</shortMessage>
     <info>
+<![CDATA[<p>An empty method in an abstract class should instead be
+abstract, as developer may rely on this empty implementation, rather
+than code an appropriate one.  The code below</p>
 
-      &lt;p&gt; An empty method in an abstract class should instead be abstract,
-      as developer may rely on this empty implementation, rather than code an 
-      appropriate one. 
-      &lt;/p&gt;
+<pre>
+public abstract class ShouldBeAbstract {
+  public Object couldBeAbstract() {
+    return null;
+  }
+  public void couldBeAbstractToo() {
+  }
+}
+</pre>
 
+<p>could be changed to</p>
+
+<pre>
+public abstract class ShouldBeAbstract {
+  public abstract Object couldBeAbstract();
+  public abstract void couldBeAbstractToo();
+}
+</pre>
+
+<p>One exception to this rule of thumb is if the class is providing a
+reasonable default behavior that is to do nothing.</p>]]>
     </info>
-    <name>Empty Method In Abstract Class Should Be Abstract</name>
   </findingType>	
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>TooManyStaticImports</id>
-    <artifact tool="PMD"
-	      mnemonic="TooManyStaticImports">
-    </artifact>
-    <shortMessage>
-      Too many static imports may lead to messy code
-    </shortMessage>
+    <artifact tool="PMD" mnemonic="TooManyStaticImports"/>
+    <name>Too many static imports</name>
+    <shortMessage>Too many static imports may lead to unmaintainable code.</shortMessage>
     <info>
+<![CDATA[<p>If you overuse the static import feature it can make your
+program unreadable and unmaintainable.  This feature pollutes the
+namespace with all the imported static members.  Readers of your code
+(including you, a few months after you wrote it) will not know which
+class a static member comes from (Sun 1.5 Language Guide).</p>
 
-      &lt;p&gt; If you overuse the static import feature, it can make your program
-      unreadable and unmaintainable, polluting its namespace with all the static 
-      members you import.  Readers of your code (including you, a few months after
-      you wrote it) will not know which class a static member comes from (Sun 1.5 
-      Language Guide). 
-      &lt;/p&gt;
-
+<pre>
+import static Lennon;
+import static Ringo;
+import static George;
+import static Paul;
+import static Yoko; // Too much !
+</pre>]]>
     </info>
-    <name>Too Many Static Imports</name>
   </findingType>	
-  <findingType>
-    <id>DoNotCallSystemExit</id>
-    <artifact tool="PMD"
-	      mnemonic="DoNotCallSystemExit">
-    </artifact>
-    <shortMessage>
-      System.exit() should not be used in J2EE/JEE apps
-    </shortMessage>
-    <info>
-
-      &lt;p&gt; Web applications should not call System.exit(), 
-      since only the web container or the application server should stop the JVM. &lt;/p&gt;
-
-    </info>
-    <name>Do Not Call System.exit()</name>
-  </findingType>	
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>StaticEJBFieldShouldBeFinal</id>
-    <artifact tool="PMD"
-	      mnemonic="StaticEJBFieldShouldBeFinal">
-    </artifact>
-    <shortMessage>
-      EJB's shouldn't have non-final static fields
-    </shortMessage>
+    <artifact tool="PMD" mnemonic="StaticEJBFieldShouldBeFinal"/>
+    <name>Static EJB fields should be final</name>
+    <shortMessage>EJB's shouldn't have non-final static fields.  This can cause bugs when the container distributes the application across several JREs.</shortMessage>
     <info>
-
-      &lt;p&gt; According to the J2EE specification (p.494), an EJB should not have
-      any static fields with write access. However, static read-only fields are allowed. 
-      This ensures proper behavior, especially when instances are distributed by the 
-      container on several JREs.. &lt;/p&gt;
-
+<![CDATA[<p>According to the J2EE specification (reference section
+21.1.2 of the EJB 3.0 Specification), an EJB should not have any
+static fields with write access. However, static read-only fields are
+allowed.  This ensures proper behavior, especially when instances are
+distributed by the container across several JREs.</p>]]>
     </info>
-    <name>Static EJB Fields Should Be Final</name>
   </findingType>	
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>DoNotUseThreads</id>
-    <artifact tool="PMD"
-	      mnemonic="DoNotUseThreads">
-    </artifact>
-    <shortMessage>
-      To be J2EE-compliant, a web app should not use any threads
-    </shortMessage>
+    <artifact tool="PMD" mnemonic="DoNotUseThreads"/>
+    <name>Do not use threads in a J2EE web application</name>
+    <shortMessage>To be J2EE-compliant, a web application should not use any threads.</shortMessage>
     <info>
-
-      &lt;p&gt; The J2EE specification explicitly forbid use of threads. &lt;/p&gt;
-
+<![CDATA[<p>The J2EE specification explicitly forbids the use of
+threads within a container-based application (reference section 21.1.2
+of the EJB 3.0 Specification)</p>]]>
     </info>
-    <name>Do Not Use Threads</name>
-  </findingType>	
-
-  <!-- For PMD 4.2 -->
+  </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AvoidMultipleUnaryOperators</id>
     <artifact tool="PMD" mnemonic="AvoidMultipleUnaryOperators">
     </artifact>
-    <shortMessage>Avoid using multiple unary operators</shortMessage>
+    <name>Avoid using multiple unary operators</name>
+    <shortMessage>Avoid using multiple unary operators to make your code clearer.</shortMessage>
     <info>
-      &lt;p&gt; Using multiple unary operators may be a bug, and/or is confusing.  
-      Check that the usage is not a bug, or consider simplifying the expression.
-      For more info, see http://pmd.sourceforge.net/rules/basic.html#AvoidMultipleUnaryOperators
-      &lt;/p&gt;
+<![CDATA[<p>Using multiple unary operators may be a bug.  It can also
+be confusing.  Check that the usage is not a bug and consider
+simplifying the expression.</p>
+
+<pre>
+// These are typo bugs, or at best needlessly complex and confusing:
+int i = - -1;
+int j = + - +1;
+int z = ~~2;
+boolean b = !!true;
+boolean c = !!!true;
+
+// These are better:
+int i = 1;
+int j = -1;
+int z = 2;
+boolean b = true;
+boolean c = false;
+
+// And these just make your brain hurt:
+int i = ~-2;
+int j = -~7;
+</pre>]]>
     </info>
-    <name>Avoid Using Multiple Unary Operators</name>
   </findingType>	
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>TooManyMethods</id>
-    <artifact tool="PMD" mnemonic="TooManyMethods">
-    </artifact>
-    <shortMessage>Class has too many methods</shortMessage>
+    <artifact tool="PMD" mnemonic="TooManyMethods"/>
+    <name>Avoid classes with too many methods</name>
+    <shortMessage>A class with too many methods may indicate poor object-oriented design.</shortMessage>
     <info>
-      &lt;p&gt; A class with too many methods is probably a good suspect for refactoring,
-      in order to reduce its complexity and find a way to have more fine grained objects.
-      &lt;/p&gt;
+<![CDATA[<p>A class with too many methods is probably a good prospect
+for refactoring in order to reduce its complexity and find a way to
+have more fine grained objects.</p>]]>
     </info>
-    <name>Avoid Classes with Too Many Methods</name>
   </findingType>		
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AbstractClassWithoutAnyMethod</id>
-    <artifact tool="PMD" mnemonic="AbstractClassWithoutAnyMethod">
-    </artifact>
-    <shortMessage>No abstract methods in abstract class</shortMessage>
+    <artifact tool="PMD" mnemonic="AbstractClassWithoutAnyMethod"/>
+    <name>No abstract methods in an abstract class</name>
+    <shortMessage>No abstract methods in abstract class, consider other approaches to prevent instantiation.</shortMessage>
     <info>
-      &lt;p&gt; If the abstract class does not provides any methods, 
-      it may be just a data container
-      that is not to be instantiated. In this case, it's probably
-      better to use a private or a protected constructor in order to 
-      prevent instantiation than make the class misleadingly abstract.
-      . &lt;/p&gt;
+<![CDATA[<p>If the abstract class does not provides any methods, it
+may be just a data container that is not to be instantiated. In this
+case, it's probably better to use a private or a protected constructor
+in order to prevent instantiation than make the class misleadingly
+abstract.</p>
+
+<pre>
+public abstract class Foo {
+  void int method1() { ... }
+  void int method2() { ... }
+  // consider using abstract methods or removing
+  // the abstract modifier and adding protected constructors
+}
+</pre>]]>
     </info>
-    <name>No Abstract Methods in Abstract Class</name>
   </findingType>				
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>TooFewBranchesForASwitchStatement</id>
-    <artifact tool="PMD" mnemonic="TooFewBranchesForASwitchStatement">
-    </artifact>
-    <shortMessage>Avoid using hard-coded IP address</shortMessage>
+    <artifact tool="PMD" mnemonic="TooFewBranchesForASwitchStatement"/>
+    <name>Avoid switch statements with only a few branches</name>
+    <shortMessage>Avoid switch statements with only a few branches. Use an if statement instead.</shortMessage>
     <info>
-      &lt;p&gt; Switch statements are designed complex branches, and allow branches
-      to share treatment. Using a switch for only 2	branches is ill advised, as 
-      switches are not as easy to understand as if statements. In this case, it's most likely
-      is a good idea to use a if statement instead, at least to increase code readability. 
-      &lt;/p&gt;
+<![CDATA[<p>Switch statements are designed complex branches, and allow
+branches to share treatment. Using a <code>switch</code> for only two
+branches is ill advised, as switches are not as easy to understand as
+<code>if</code> statements.</p>
+
+<pre>
+public void bar() {
+  switch (condition) {
+  case ONE:
+    // do something
+    break;
+  default:
+    // do something
+    break; // not enough for a 'switch', a simple 'if' would be more appropriate
+  }
+}
+</pre>
+
+<p>In this case, it's most likely is a good idea to use a
+<code>if</code> statement instead, at least to increase code
+readability.</p>]]>
     </info>
-    <name>Avoid Switch Statements with Only A Few Branches</name>
   </findingType>					  	
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>DoNotThrowExceptionInFinally</id>
-    <artifact tool="PMD" mnemonic="DoNotThrowExceptionInFinally">
-    </artifact>
-    <shortMessage>Avoid throwing Exceptions in 'finally' clauses</shortMessage>
+    <artifact tool="PMD" mnemonic="DoNotThrowExceptionInFinally"/>
+    <name>Avoid throwing exceptions in finally clauses</name>
+    <shortMessage>Avoid throwing exceptions in finally clauses. It is confusing and may mask exceptions or code defects.</shortMessage>
     <info>
-      &lt;p&gt; Throwing exceptions in a finally block is confusing. 
-      It may mask exceptions or a defect of the code, as well as make
-      it also render code cleanup unstable.
-      Note: This is a PMD implementation of the Lint4j rule "A throw in a finally block" 
-      &lt;/p&gt;
+<![CDATA[<p>Throwing exceptions in a finally block is confusing.  It
+may mask exceptions or a code defect.  Further, it may render code
+cleanup unstable.</p>
+
+<pre>
+public void bar() {
+  try {
+    // Here do some stuff
+  } catch( Exception e) {
+    // Handling the issue
+  } finally {
+    // is this really a good idea ?
+    throw new Exception();
+  }
+}
+</pre>
+
+<p>It is highly recommended to redesign the implementation of this
+code.</p>]]>
     </info>
-    <name>Avoid Throwing Exceptions In Finally Clauses</name>
   </findingType>				  	
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AvoidStringBufferField</id>
-    <artifact tool="PMD" mnemonic="AvoidStringBufferField">
-    </artifact>
-    <shortMessage>Avoid keeping StringBuffers as a field</shortMessage>
+    <artifact tool="PMD" mnemonic="AvoidStringBufferField"/>
+    <name>Avoid StringBuffer-typed fields</name>
+    <shortMessage>Avoid keeping StringBuffer objects as a field.</shortMessage>
     <info>
-      &lt;p&gt; StringBuffers can grow quite a lot, and so may become a source of memory leaks 
-      (if the owning class has a long life time). &lt;/p&gt;
+<![CDATA[<p><code>StringBuffer</code> objects can grow quite a lot,
+and can become a source of memory leaks (if the owning class has a
+long life time).</p>]]>
     </info>
-    <name>Avoid StringBuffer-typed Fields</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
 </findingTypes>
