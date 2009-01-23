@@ -315,7 +315,7 @@ public final class ClientFindingManager extends FindingManager {
 						+ " WHERE"
 						+ " S.ID = ? AND A.SCAN_ID = S.ID AND SL.ID = A.PRIMARY_SOURCE_LOCATION_ID AND CU.ID = SL.COMPILATION_UNIT_ID AND ART.ID = A.ARTIFACT_TYPE_ID AND ART.TOOL_ID = T.ID AND T.NAME = ?");
 		selectFindingFindingType = conn
-				.prepareStatement("SELECT DISTINCT FT.UUID,P.PROJECT FROM LOCATION_MATCH LM, FINDING_TYPE FT, PROJECT P WHERE FT.ID = LM.FINDING_TYPE_ID AND P.ID = LM.PROJECT_ID AND LM.FINDING_ID = ?");
+				.prepareStatement("SELECT DISTINCT FT.UUID,P.NAME FROM LOCATION_MATCH LM, FINDING_TYPE FT, PROJECT P WHERE FT.ID = LM.FINDING_TYPE_ID AND P.ID = LM.PROJECT_ID AND LM.FINDING_ID = ?");
 	}
 
 	/**
@@ -1025,7 +1025,8 @@ public final class ClientFindingManager extends FindingManager {
 			final String project = set.getString(2);
 			final ScanFilters filters = new ScanFilters(new ConnectionQuery(
 					conn));
-			final ScanFilterDO scanFilter = filters.getScanFilter(project);
+			final ScanFilterDO scanFilter = filters
+					.getScanFilterByProject(project);
 			if (SettingQueries.LOCAL_UUID.equals(scanFilter.getUid())) {
 				for (final TypeFilterDO filter : scanFilter.getFilterTypes()) {
 					if (type.equals(filter.getFindingType())) {

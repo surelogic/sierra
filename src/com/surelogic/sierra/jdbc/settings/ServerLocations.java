@@ -49,7 +49,7 @@ public final class ServerLocations {
 			@Override
 			public void doPerform(final Query q) {
 				final ServerLocation l = s.getLocation();
-				if (q.prepared("ServerLocations.checkIdentity",
+				if (!q.prepared("ServerLocations.checkIdentity",
 						new HasResultHandler()).call(s.getUuid())) {
 					throw new IllegalArgumentException(I18N.err(160));
 				}
