@@ -3,17 +3,14 @@ package com.surelogic.sierra.client.eclipse.views;
 import java.io.File;
 import java.net.URL;
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Level;
 
@@ -63,26 +60,19 @@ import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.images.CommonImages;
 import com.surelogic.common.jdbc.ConnectionQuery;
 import com.surelogic.common.jdbc.Query;
-import com.surelogic.common.jobs.NullSLProgressMonitor;
-import com.surelogic.common.jobs.SLProgressMonitor;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.actions.NewScan;
 import com.surelogic.sierra.client.eclipse.actions.PublishScanAction;
 import com.surelogic.sierra.client.eclipse.actions.ScanChangedProjectsAction;
 import com.surelogic.sierra.client.eclipse.actions.SynchronizeProjectAction;
-import com.surelogic.sierra.client.eclipse.actions.TroubleshootConnection;
-import com.surelogic.sierra.client.eclipse.actions.TroubleshootException;
-import com.surelogic.sierra.client.eclipse.actions.TroubleshootWrongServer;
 import com.surelogic.sierra.client.eclipse.dialogs.ConnectProjectsDialog;
 import com.surelogic.sierra.client.eclipse.dialogs.PromptForFilterNameDialog;
 import com.surelogic.sierra.client.eclipse.dialogs.ServerLocationDialog;
 import com.surelogic.sierra.client.eclipse.dialogs.ServerSelectionDialog;
-import com.surelogic.sierra.client.eclipse.jobs.AbstractServerJob;
 import com.surelogic.sierra.client.eclipse.jobs.DeleteProjectDataJob;
 import com.surelogic.sierra.client.eclipse.jobs.OverwriteLocalScanFilterJob;
 import com.surelogic.sierra.client.eclipse.jobs.SendScanFiltersJob;
-import com.surelogic.sierra.client.eclipse.jobs.SynchronizeJob;
 import com.surelogic.sierra.client.eclipse.model.ConnectedServerManager;
 import com.surelogic.sierra.client.eclipse.model.IProjectsObserver;
 import com.surelogic.sierra.client.eclipse.model.ISierraServerObserver;
@@ -98,16 +88,9 @@ import com.surelogic.sierra.jdbc.scan.ScanInfo;
 import com.surelogic.sierra.jdbc.scan.Scans;
 import com.surelogic.sierra.jdbc.settings.ConnectedServer;
 import com.surelogic.sierra.jdbc.settings.ScanFilterView;
-import com.surelogic.sierra.jdbc.settings.ServerScanFilterInfo;
 import com.surelogic.sierra.jdbc.settings.SettingQueries;
 import com.surelogic.sierra.tool.message.FilterSet;
-import com.surelogic.sierra.tool.message.ListCategoryResponse;
-import com.surelogic.sierra.tool.message.ListScanFilterRequest;
 import com.surelogic.sierra.tool.message.ScanFilter;
-import com.surelogic.sierra.tool.message.ServerLocation;
-import com.surelogic.sierra.tool.message.ServerMismatchException;
-import com.surelogic.sierra.tool.message.SierraServiceClientException;
-import com.surelogic.sierra.tool.message.SyncTrailResponse;
 
 public final class SierraServersMediator extends AbstractSierraViewMediator
 		implements ISierraServerObserver, IProjectsObserver {
@@ -138,13 +121,11 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 			.emptyMap();
 
 	/**
-	 * A map from a project to the server response
+	 * A map from a project name to the project info 
 	 * 
 	 * Protected by itself This should only be accessed in a database job
 	 * (possibly from multiple threads)
 	 */
-	private final Map<String, List<SyncTrailResponse>> responseMap = new HashMap<String, List<SyncTrailResponse>>();
-
 	private final Map<String, ProjectDO> projectMap = new HashMap<String, ProjectDO>();
 
 	/**
@@ -153,7 +134,6 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 	private final Map<ConnectedServer, ServerUpdateStatus> serverResponseMap = new HashMap<ConnectedServer, ServerUpdateStatus>();
 
 	private final TreeViewer f_statusTree;
-	private final ActionListener f_buglinkSyncAction;
 	private final ActionListener f_serverSyncAction;
 	private final ActionListener f_toggleAutoSyncAction;
 	private final ActionListener f_newServerAction;
@@ -304,14 +284,6 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 			}
 		};
 
-		f_buglinkSyncAction = new ActionListener(
-				"Synchronize All BugLink Data", "Synchronize BugLink servers") {
-			@Override
-			public void run() {
-				SierraServersAutoSync
-						.asyncSyncWithServer(ServerSyncType.BUGLINK);
-			}
-		};
 		f_serverSyncAction = new ActionListener("Synchronize All",
 				"Synchronize with all servers and connected projects") {
 			@Override
@@ -1073,213 +1045,6 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 		job.schedule();
 	}
 
-	private static boolean isFailedServer(Set<ConnectedServer> failedServers,
-			ConnectedServer server, int numProblems) {
-		if ((failedServers != null) && failedServers.contains(server)) {
-			return true;
-		}
-		final int threshold = PreferenceConstants
-				.getServerInteractionRetryThreshold();
-		final int numServerProbs = ConnectedServerManager.getInstance()
-				.getStats(server).getProblemCount();
-		if (numServerProbs > threshold) {
-			failedServers = markAsFailedServer(failedServers, server);
-			return true;
-		}
-		if (numServerProbs + numProblems > threshold) {
-			return true;
-		}
-		return false;
-	}
-
-	private class ServerHandler {
-		final Connection c;
-		final ClientProjectManager cpm;
-		Set<ConnectedServer> failedServers = null;
-		Set<ConnectedServer> connectedServers = new HashSet<ConnectedServer>();
-
-		List<SyncTrailResponse> responses;
-		ServerUpdateStatus serverResponse;
-
-		ServerHandler(Connection c, ClientProjectManager cpm) {
-			this.c = c;
-			this.cpm = cpm;
-		}
-
-		private void init(ConnectedServer server) {
-			responses = null;
-			serverResponse = serverResponseMap.get(server);
-		}
-
-		void queryForProjects(ConnectedServerManager manager) {
-			final int threshold = PreferenceConstants
-					.getServerInteractionRetryThreshold();
-			for (final IJavaProject jp : JDTUtility.getJavaProjects()) {
-				final String name = jp.getElementName();
-				final int numProblems = Projects.getInstance().getProblemCount(
-						name);
-				if (!Projects.getInstance().contains(name)
-						|| (numProblems > threshold)) {
-					continue; // Not scanned
-				}
-
-				// Check for new remote audits
-				final ConnectedServer server = manager.getServer(name);
-				init(server);
-				queryServerForProject(server, name, numProblems);
-			}
-		}
-
-		void queryServers(ConnectedServerManager manager) {
-			for (ConnectedServer server : manager.getServers()) {
-				if (connectedServers.contains(server)) {
-					return; // Already handled
-				}
-				init(server);
-				queryServer(server, null, 0, true);
-			}
-		}
-
-		void queryServerForProject(ConnectedServer server, String name,
-				int numProblems) {
-			queryServer(server, name, numProblems, false);
-		}
-
-		void queryServer(ConnectedServer server, String name, int numProblems,
-				boolean onlyServer) {
-			if (server != null) {
-				connectedServers.add(server);
-
-				if (isFailedServer(failedServers, server, numProblems)) {
-					return;
-				}
-				final SLProgressMonitor monitor = new NullSLProgressMonitor();
-
-				// Try to distinguish server failure/disconnection and
-				// RPC failure
-				final ServerFailureReport strategy = PreferenceConstants
-						.getServerFailureReporting();
-				TroubleshootConnection tc;
-				try {
-					final ServerLocation loc = server.getLocation();
-					if (!onlyServer) {
-						responses = cpm
-								.getProjectUpdates(server, name, monitor);
-					}
-					serverResponse = checkForBugLinkUpdates(c, serverResponse,
-							loc);
-				} catch (final ServerMismatchException e) {
-					tc = new TroubleshootWrongServer(strategy, server
-							.getLocation(), name);
-					failedServers = handleServerProblem(failedServers, server,
-							tc, e);
-				} catch (final SierraServiceClientException e) {
-					tc = AbstractServerJob.getTroubleshootConnection(strategy,
-							server.getLocation(), e);
-					failedServers = handleServerProblem(failedServers, server,
-							tc, e);
-				} catch (final Exception e) {
-					tc = new TroubleshootException(strategy, server
-							.getLocation(), e, e instanceof SQLException);
-					failedServers = handleServerProblem(failedServers, server,
-							tc, e);
-				}
-			}
-			if (!onlyServer && responses != null) {
-				responseMap.put(name, responses);
-				handleServerSuccess(server, name);
-			}
-			if (serverResponse != null) {
-				serverResponseMap.put(server, serverResponse);
-				ConnectedServerManager.getInstance().getStats(server)
-						.markAsConnected();
-			}
-		}
-	}
-
-	/*
-	 * private void updateServerInfo() throws Exception { final Connection c =
-	 * Data.getInstance().transactionConnection(); Exception exc = null; try {
-	 * final ClientProjectManager cpm = ClientProjectManager .getInstance(c);
-	 * final ServerHandler handler = new ServerHandler(c, cpm); synchronized
-	 * (responseMap) { responseMap.clear(); serverResponseMap.clear();
-	 * projectMap.clear();
-	 * 
-	 * handler.queryForProjects(f_manager); handler.queryServers(f_manager);
-	 * 
-	 * com.surelogic.sierra.jdbc.project.Projects projects = new
-	 * com.surelogic.sierra.jdbc.project.Projects( c); ScanFilters filters = new
-	 * ScanFilters(c); // FIX to include server's label for (ProjectDO p :
-	 * projects.listProjects()) { // Update to use scan filter's name, not uid
-	 * ScanFilterDO filter = filters.getScanFilter(p .getScanFilter()); if
-	 * (filter != null) { p.setScanFilter(filter.getName()); }
-	 * projectMap.put(p.getName(), p); } } c.commit();
-	 * 
-	 * asyncUpdateContents(); } catch (final Exception e) { c.rollback(); exc =
-	 * e; } finally { try { c.close(); } finally { if (exc != null) { throw exc;
-	 * } } } }
-	 */
-
-	private ServerUpdateStatus checkForBugLinkUpdates(final Connection c,
-			ServerUpdateStatus serverResponse, final ServerLocation loc) {
-		// See if we need to pick up BugLink data
-		if (serverResponse == null) {
-			final Query q = new ConnectionQuery(c);
-			final ListCategoryResponse cr = SettingQueries.getNewCategories(
-					loc, SettingQueries.categoryRequest().perform(q))
-					.perform(q);
-			final ServerScanFilterInfo sfr = SettingQueries.getNewScanFilters(
-					loc, new ListScanFilterRequest()) // Need all
-					.perform(q);
-			serverResponse = new ServerUpdateStatus(cr, sfr);
-		} else {
-			// No need to update it again
-			serverResponse = null;
-		}
-		return serverResponse;
-	}
-
-	private Set<ConnectedServer> handleServerProblem(
-			Set<ConnectedServer> failedServers, final ConnectedServer server,
-			final TroubleshootConnection tc, final Exception e) {
-		if (handleServerProblem(tc, e)) {
-			failedServers = markAsFailedServer(failedServers, server);
-		}
-		return failedServers;
-	}
-
-	private static Set<ConnectedServer> markAsFailedServer(
-			Set<ConnectedServer> failedServers, final ConnectedServer server) {
-		if (failedServers == null) {
-			failedServers = new HashSet<ConnectedServer>();
-		}
-		failedServers.add(server);
-		return failedServers;
-	}
-
-	/**
-	 * Protected by responseMap
-	 * 
-	 * @param project
-	 */
-	private void handleServerSuccess(final ConnectedServer server,
-			final String project) {
-		// Contact was successful, so reset counts
-		ConnectedServerManager.getInstance().getStats(server).markAsConnected();
-		Projects.getInstance().markAsConnected(project);
-	}
-
-	/**
-	 * Protected by responseMap
-	 * 
-	 * @return true if consider the server failed
-	 */
-	private boolean handleServerProblem(final TroubleshootConnection tc,
-			final Exception e) {
-		tc.fix();
-		return tc.isServerConsideredBad();
-	}
-
 	private void updateContents(final long now) throws Exception {
 		final Connection c = Data.getInstance().transactionConnection();
 		Exception exc = null;
@@ -1292,7 +1057,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 			final List<ProjectStatus> projects = new ArrayList<ProjectStatus>();
 			final Map<ConnectedServer, ServerUpdateStatus> serverUpdates;
 			final Map<String, List<ScanFilter>> filters;
-			synchronized (responseMap) {
+			synchronized (projectMap) {
 				for (final IJavaProject jp : JDTUtility.getJavaProjects()) {
 					final long latest = latestUpdate.get();
 					if (now < latest) {	
@@ -1310,8 +1075,6 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 							.getNewLocalAudits(name);
 
 					// Check for new remote audits
-					final List<SyncTrailResponse> responses = responseMap
-							.get(name);
 					final ConnectedServer server = f_manager.getServer(name);
 					final int numServerProblems = server == null ? -1
 							: ConnectedServerManager.getInstance().getStats(
@@ -1327,7 +1090,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 					final ScanFilterView filter = SettingQueries
 							.scanFilterForProject(name).perform(q);
 					final ProjectStatus s = new ProjectStatus(jp, scan, info,
-							findings, responses, numServerProblems,
+							findings, numServerProblems,
 							numProjectProblems, dbInfo, filter);
 					projects.add(s);
 				}
@@ -1398,7 +1161,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 			for (final ProjectStatus ps : projects) {
 				ConnectedServer server = manager.getServer(ps.name);
 				if (server != null && server.getLocation().isAutoSync()) {
-					audits += ps.numLocalAudits + ps.numServerAudits;
+					audits += ps.numLocalAudits;
 				}
 			}
 			// FIX should this be per-project?
@@ -1965,27 +1728,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 			scanFilter.setText("Scan filter: " + ps.filter.getName());
 			scanFilter.setData(ps.filter);
 		}
-		if (ps.serverData == null) {
-			/*
-			 * No need to update any more? if (server != null) { final
-			 * ServersViewContent noServer = new ServersViewContent( root,
-			 * null); contents.add(noServer); noServer
-			 * .setText("No server info available ... click to update");
-			 * noServer.setData(NO_SERVER_DATA); }
-			 */
-		} else if (!ps.serverData.isEmpty()) {
-			final ServersViewContent audits = new ServersViewContent(root,
-					SLImages.getImage(CommonImages.IMG_SIERRA_STAMP));
-			contents.add(audits);
 
-			final List<ServersViewContent> auditContents = new ArrayList<ServersViewContent>();
-			createAuditItems(audits, auditContents, true, ps.numServerAudits,
-					ps.serverData.size(), ps.earliestServerAudit,
-					ps.latestServerAudit);
-			createServerAuditDetails(ps, audits, auditContents);
-			audits.setChildren(auditContents.toArray(emptyChildren));
-			audits.setChangeStatus(ChangeStatus.REMOTE);
-		}
 		// Also sets status
 		root.setChildren(contents.toArray(emptyChildren));
 		final String label = root.getChangeStatus().getLabel();
@@ -2043,36 +1786,6 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 					+ f.getFindingId());
 			item.setData(f);
 			contents.add(item);
-		}
-	}
-
-	private void createServerAuditDetails(final ProjectStatus ps,
-			final ServersViewContent audits,
-			final List<ServersViewContent> contents) {
-		if (ps.comments > 0) {
-			createLabel(audits, contents, ps.comments + " comment"
-					+ s(ps.comments));
-		}
-		if (ps.importance > 0) {
-			createLabel(audits, contents, ps.importance + " change"
-					+ s(ps.importance) + " to the importance");
-		}
-		if (ps.summary > 0) {
-			createLabel(audits, contents, ps.summary + " change"
-					+ s(ps.summary) + " to the summary");
-		}
-		if (ps.read > 0) {
-			createLabel(audits, contents, ps.read + " other finding"
-					+ s(ps.read) + " examined");
-		}
-		for (final Map.Entry<String, Integer> e : ps.userCount.entrySet()) {
-			if (e.getValue() != null) {
-				final int count = e.getValue().intValue();
-				if (count > 0) {
-					createLabel(audits, contents, count + " audit" + s(count)
-							+ " by " + e.getKey());
-				}
-			}
 		}
 	}
 
