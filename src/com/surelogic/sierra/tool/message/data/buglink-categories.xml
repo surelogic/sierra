@@ -318,7 +318,7 @@
 			code flaws having to do with internationalization and locale
 		</info>
         <filter>
-            <type>UseLocaleParameterizedVersion</type>
+            <type>DM_CONVERT_CASE</type>
             <filtered>false</filtered>
         </filter>
     </filterSets>
@@ -1239,7 +1239,7 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>RandomValue01ToInt</type>
+            <type>RV_01_TO_INT</type>
             <filtered>false</filtered>
         </filter>
         <filter>
@@ -2183,7 +2183,7 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>UselessThread</type>
+            <type>DM_USELESS_THREAD</type>
             <filtered>false</filtered>
         </filter>
         <filter>
@@ -2243,7 +2243,7 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>MonitorWaitOnCondition</type>
+            <type>DM_MONITOR_WAIT_ON_CONDITION</type>
             <filtered>false</filtered>
         </filter>
         <filter>
@@ -2442,7 +2442,7 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>BoxingImmediatelyUnboxedToPerformCoercion</type>
+            <type>BX_BOXING_IMMEDIATELY_UNBOXED_TO_PERFORM_COERCION</type>
             <filtered>false</filtered>
         </filter>
         <filter>
@@ -2458,7 +2458,7 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>AvoidAllocatingObjectForObtainingClassObject</type>
+            <type>DM_NEW_FOR_GETCLASS</type>
             <filtered>false</filtered>
         </filter>
         <filter>
@@ -2478,7 +2478,7 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>UseNextIntNotNextDoubleOfRandom</type>
+            <type>DM_NEXTINT_VIA_NEXTDOUBLE</type>
             <filtered>false</filtered>
         </filter>
         <filter>
@@ -2502,7 +2502,7 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>BoxedPrimitiveToString</type>
+            <type>DM_BOXED_PRIMITIVE_TOSTRING</type>
             <filtered>false</filtered>
         </filter>
         <filter>
@@ -2522,7 +2522,7 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>BoxingImmediatelyUnboxed</type>
+            <type>BX_BOXING_IMMEDIATELY_UNBOXED</type>
             <filtered>false</filtered>
         </filter>
         <filter>

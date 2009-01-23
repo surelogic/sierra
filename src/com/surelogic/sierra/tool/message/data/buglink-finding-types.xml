@@ -731,7 +731,7 @@ creating instances of <code>Double</code>, <code>Float</code>,
   <findingType>
     <id>DM_STRING_EMPTY_EQUALS</id>
     <artifact tool="FindBugs" mnemonic="DM_STRING_EMPTY_EQUALS"/>
-    <name>Use length to check if a String is empty</name>
+    <name>Use length() or isEmpty() to check if a String is empty</name>
     <shortMessage>Method invokes inefficient String.equals(""); use String.length() == 0 instead.</shortMessage>
     <info>
 <![CDATA[<p>An object is compared to the empty String object using the
@@ -747,240 +747,208 @@ Thus in the example above use <code>s.isEmpty()</code>.</p>]]>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
-    <id>UseLocaleParameterizedVersion</id>
-    <artifact tool="FindBugs" mnemonic="DM_CONVERT_CASE"></artifact>
-    <shortMessage>
-      Consider using Locale parameterized version of invoked
-      method
-    </shortMessage>
+    <id>DM_CONVERT_CASE</id>
+    <artifact tool="FindBugs" mnemonic="DM_CONVERT_CASE"/>
+    <name>Use Locale parameterized versions of toUpperCase and toLowerCase methods</name>
+    <shortMessage>Consider using the Locale parameterized version of the invoked method.</shortMessage>
     <info>
-      &lt;p&gt; A String is being converted to upper or lowercase,
-      using the platform's default encoding. This may result in
-      improper conversions when used with international
-      characters. Use the &lt;/p&gt;
-      &lt;table&gt;&lt;tr&gt;&lt;td&gt;String.toUpperCase( Locale
-      l
-      )&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;String.toLowerCase(
-      Locale l )&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-      &lt;p&gt;versions instead.&lt;/p&gt;
+<![CDATA[<p>A String is being converted to upper or lowercase, using
+the platform's default encoding. This may result in improper
+conversions when used with international characters. Consider using
+the below versions instead.</p>
+
+<pre>
+String.toUpperCase(Locale)
+String.toLowerCase(Locale)
+</pre>
+
+<p>One instance where this might be an issue is conversion of local
+insensitive strings. To obtain correct results for locale insensitive
+strings, use <code>toUpperCase(Locale.ENGLISH)</code>.</p>]]>
     </info>
-    <name>Use Locale Parameterized Version</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UnboxedAndCoercedForTernaryOperator</id>
-    <artifact tool="FindBugs"
-	      mnemonic="BX_UNBOXED_AND_COERCED_FOR_TERNARY_OPERATOR">
-    </artifact>
-    <shortMessage>
-      Primitive value is unboxed and coerced for ternary operator
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="BX_UNBOXED_AND_COERCED_FOR_TERNARY_OPERATOR"/>
+    <name>Unboxed and coerced for ternary operator</name>
+    <shortMessage>A primitive value is unboxed and coerced for use with the ternary operator.</shortMessage>
     <info>
-      &lt;p&gt;A wrapped primative value is unboxed and converted
-      to another primative type as part of the evaluation of a
-      conditional ternary operator (the &lt;code&gt; b ? e1 :
-      e2&lt;/code&gt; operator). The semantics of Java mandate
-      that if &lt;code&gt;e1&lt;/code&gt; and
-      &lt;code&gt;e2&lt;/code&gt; are wrapped numeric values, the
-      values are unboxed and converted/coerced to their common
-      type (e.g, if &lt;code&gt;e1&lt;/code&gt; is of type
-      &lt;code&gt;Integer&lt;/code&gt; and
-      &lt;code&gt;e2&lt;/code&gt; is of type
-      &lt;code&gt;Float&lt;/code&gt;, then
-      &lt;code&gt;e1&lt;/code&gt; is unboxed, converted to a
-      floating point value, and boxed. See JLS Section 15.25.
-      &lt;/p&gt;
+<![CDATA[<p>A wrapped primitive value is unboxed and converted to
+another primitive type as part of the evaluation of a conditional
+ternary operator (the <code> b ? e1 : e2</code> operator). The
+semantics of Java mandate that if <code>e1</code> and <code>e2</code>
+are wrapped numeric values, the values are unboxed and
+converted/coerced to their common type (e.g, if <code>e1</code> is of
+type <code>Integer</code> and <code>e2</code> is of type
+<code>Float</code>, then <code>e1</code> is unboxed, converted to a
+floating point value, and boxed. See JLS Section 15.25.</p>
+
+<p>This behavior can be unexpected and can be a source of subtle
+bugs.</p>]]>
     </info>
-    <name>Unboxed And Coerced For Ternary Operator</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
-    <id>BoxingImmediatelyUnboxed</id>
-    <artifact tool="FindBugs"
-	      mnemonic="BX_BOXING_IMMEDIATELY_UNBOXED">
-    </artifact>
-    <shortMessage>
-      Primitive value is boxed and then immediately unboxed
-    </shortMessage>
+    <id>BX_BOXING_IMMEDIATELY_UNBOXED</id>
+    <artifact tool="FindBugs" mnemonic="BX_BOXING_IMMEDIATELY_UNBOXED"/>
+    <name>Boxing immediately unboxed</name>
+    <shortMessage>A primitive value is boxed and then immediately unboxed.</shortMessage>
     <info>
-      &lt;p&gt;A primitive is boxed, and then immediately unboxed.
-      This probably is due to a manual boxing in a place where an
-      unboxed value is required, thus forcing the compiler to
-      immediately undue the work of the boxing. &lt;/p&gt;
+<![CDATA[<p>A primitive is boxed, and then immediately unboxed.  This
+probably is due to a manual boxing in a place where an unboxed value
+is required, thus forcing the compiler to immediately undue the work
+of the boxing.</p>
+
+<p>This change may improve program performance.</p>]]>
     </info>
-    <name>Boxing Immediately Unboxed</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
-    <id>BoxingImmediatelyUnboxedToPerformCoercion</id>
-    <artifact tool="FindBugs"
-	      mnemonic="BX_BOXING_IMMEDIATELY_UNBOXED_TO_PERFORM_COERCION">
-    </artifact>
-    <shortMessage>
-      Primitive value is boxed then unboxed to perform primative
-      coercion
-    </shortMessage>
+    <id>BX_BOXING_IMMEDIATELY_UNBOXED_TO_PERFORM_COERCION</id>
+    <artifact tool="FindBugs" mnemonic="BX_BOXING_IMMEDIATELY_UNBOXED_TO_PERFORM_COERCION"/>
+    <name>Boxing immediately unboxed to perform coercion</name>
+    <shortMessage>A primitive value is boxed then unboxed to perform primitive coercion.</shortMessage>
     <info>
-      &lt;p&gt;A primitive boxed value constructed and then
-      immediately converted into a different primitive type (e.g.,
-      &lt;code&gt;new Double(d).intValue()&lt;/code&gt;). Just
-      perform direct primitive coercion (e.g., &lt;code&gt;(int)
-      d&lt;/code&gt;).&lt;/p&gt;
+<![CDATA[<p>A primitive boxed value constructed and then immediately
+converted into a different primitive type (e.g., <code>new
+Double(d).intValue()</code>). Just perform direct primitive coercion
+(e.g., <code>(int) d</code>).</p>
+
+<p>This change may improve program performance.</p>]]>
     </info>
-    <name>Boxing Immediately Unboxed To Perform Coercion</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
-    <id>BoxedPrimitiveToString</id>
-    <artifact tool="FindBugs"
-	      mnemonic="DM_BOXED_PRIMITIVE_TOSTRING">
-    </artifact>
-    <shortMessage>
-      Method allocates a boxed primitive just to call toString
-    </shortMessage>
+    <id>DM_BOXED_PRIMITIVE_TOSTRING</id>
+    <artifact tool="FindBugs" mnemonic="DM_BOXED_PRIMITIVE_TOSTRING"/>
+    <name>Boxed primitive used just to call toString</name>
+    <shortMessage>Method allocates a boxed primitive just to call toString.</shortMessage>
     <info>
-      &lt;p&gt;A boxed primitive is allocated just to call
-      toString(). It is more effective to just use the static form
-      of toString which takes the primitive value. So,&lt;/p&gt;
-      &lt;table&gt;
-      &lt;tr&gt;&lt;th&gt;Replace...&lt;/th&gt;&lt;th&gt;With
-      this...&lt;/th&gt;&lt;/tr&gt; &lt;tr&gt;&lt;td&gt;new
-      Integer(1).toString()&lt;/td&gt;&lt;td&gt;Integer.toString(1)&lt;/td&gt;&lt;/tr&gt;
-      &lt;tr&gt;&lt;td&gt;new
-      Long(1).toString()&lt;/td&gt;&lt;td&gt;Long.toString(1)&lt;/td&gt;&lt;/tr&gt;
-      &lt;tr&gt;&lt;td&gt;new
-      Float(1.0).toString()&lt;/td&gt;&lt;td&gt;Float.toString(1.0)&lt;/td&gt;&lt;/tr&gt;
-      &lt;tr&gt;&lt;td&gt;new
-      Double(1.0).toString()&lt;/td&gt;&lt;td&gt;Double.toString(1.0)&lt;/td&gt;&lt;/tr&gt;
-      &lt;tr&gt;&lt;td&gt;new
-      Byte(1).toString()&lt;/td&gt;&lt;td&gt;Byte.toString(1)&lt;/td&gt;&lt;/tr&gt;
-      &lt;tr&gt;&lt;td&gt;new
-      Short(1).toString()&lt;/td&gt;&lt;td&gt;Short.toString(1)&lt;/td&gt;&lt;/tr&gt;
-      &lt;tr&gt;&lt;td&gt;new
-      Boolean(true).toString()&lt;/td&gt;&lt;td&gt;Boolean.toString(true)&lt;/td&gt;&lt;/tr&gt;
-      &lt;/table&gt;
+<![CDATA[<p>A boxed primitive is allocated just to call toString(). It
+is more effective to just use the static form of <code>toString</code>
+on each wrapper type which takes the primitive value. So,</p>
+
+<table>
+      <tr><th>Replace...</th><th>With this...</th></tr>
+      <tr><td>new Integer(1).toString()</td><td>Integer.toString(1)</td></tr>
+      <tr><td>new Long(1).toString()</td><td>Long.toString(1)</td></tr>
+      <tr><td>new Float(1.0).toString()</td><td>Float.toString(1.0)</td></tr>
+      <tr><td>new Double(1.0).toString()</td><td>Double.toString(1.0)</td></tr>
+      <tr><td>new Byte(1).toString()</td><td>Byte.toString(1)</td></tr>
+      <tr><td>new Short(1).toString()</td><td>Short.toString(1)</td></tr>
+      <tr><td>new Boolean(true).toString()</td><td>Boolean.toString(true)</td></tr>
+</table>]]>
     </info>
-    <name>Boxed Primitive toString</name>
-  </findingType>
-  <findingType>
-    <id>AvoidAllocatingObjectForObtainingClassObject</id>
-    <artifact tool="FindBugs" mnemonic="DM_NEW_FOR_GETCLASS">
-    </artifact>
-    <shortMessage>
-      Method allocates an object, only to get the class object
-    </shortMessage>
-    <info>
-      &lt;p&gt;This method allocates an object just to call
-      getClass() on it, in order to retrieve the Class object for
-      it. It is simpler to just access the .class property of the
-      class.&lt;/p&gt;
-    </info>
-    <name>Avoid Allocating Object For Obtaining Class Object</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
-    <id>MonitorWaitOnCondition</id>
-    <artifact tool="FindBugs"
-	      mnemonic="DM_MONITOR_WAIT_ON_CONDITION">
-    </artifact>
-    <shortMessage>Monitor wait() called on Condition</shortMessage>
+    <id>DM_NEW_FOR_GETCLASS</id>
+    <artifact tool="FindBugs" mnemonic="DM_NEW_FOR_GETCLASS"/>
+    <name>Avoid allocating an object to obtain the class object</name>
+    <shortMessage>Method allocates an object, only to get the class object.  Use .class property of the class instead.</shortMessage>
     <info>
-      &lt;p&gt; This method calls &lt;code&gt;wait()&lt;/code&gt;
-      on a
-      &lt;code&gt;java.util.concurrent.locks.Condition&lt;/code&gt;
-      object.&amp;nbsp; Waiting for a
-      &lt;code&gt;Condition&lt;/code&gt; should be done using one
-      of the &lt;code&gt;await()&lt;/code&gt; methods defined by
-      the &lt;code&gt;Condition&lt;/code&gt; interface. &lt;/p&gt;
+ <![CDATA[<p>This method allocates an object just to call
+ <code>getClass()</code> on it, in order to retrieve the class object
+ for it. It is simpler to just access the <code>.class</code> property
+ of the class.</p>
+
+<p>For example, change <code>(new Foo()).getClass()</code> to
+<code>Foo.class</code>.]]>
     </info>
-    <name>Monitor Wait On Condition</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
-    <id>RandomValue01ToInt</id>
+    <id>DM_MONITOR_WAIT_ON_CONDITION</id>
+    <artifact tool="FindBugs" mnemonic="DM_MONITOR_WAIT_ON_CONDITION"/>
+    <name>Monitor wait on a util.concurrent Condition object</name>
+    <shortMessage>Monitor wait() called on a util.concurrent Condition object, use await() instead.</shortMessage>
+    <info>
+<![CDATA[<p>This method calls <code>wait()</code> on a
+<code>java.util.concurrent.locks.Condition</code> object.  Waiting for
+a <code>Condition</code> should be done using one of the
+<code>await()</code> methods defined by the <code>Condition</code>
+interface.</p>
+
+<p>This is highly confusing code that can lead to subtle concurrency
+bugs.</p>]]>
+    </info>
+  </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+  <findingType>
+    <id>RV_01_TO_INT</id>
     <artifact tool="FindBugs" mnemonic="RV_01_TO_INT"></artifact>
-    <shortMessage>
-      Random value from 0 to 1 is coerced to the integer 0
-    </shortMessage>
+    <name>Random value from 0 and 1 is to coerced to int</name>
+    <shortMessage>A random value from 0 to 1 is coerced to the integer 0.  This is probably not the desired behavior. Consider fixing with the Random.nextInt method.</shortMessage>
     <info>
-      &lt;p&gt;A random value from 0 to 1 is being coerced to the
-      integer value 0. You probably want to multiple the random
-      value by something else before coercing it to an integer, or
-      use the Random.nextInt(n) method. &lt;/p&gt;
+<![CDATA[<p>A random value from 0 to 1 is being coerced to the
+integer value 0.  This is probably not the desired behavior.</p>
+
+</p>You probably wanted to multiply the random value by something
+before coercing it to an integer.  It is highly recommended that the
+<code>nextInt</code> method (of the <code>Random</code> class) be used
+for this purpose because it avoid several tricky implementation issues
+(for more information see its method documentation).</p>]]>
     </info>
-    <name>01 To Int</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
-    <id>UseNextIntNotNextDoubleOfRandom</id>
-    <artifact tool="FindBugs"
-	      mnemonic="DM_NEXTINT_VIA_NEXTDOUBLE">
-    </artifact>
-    <shortMessage>
-      Use the nextInt method of Random rather than nextDouble to
-      generate a random integer
-    </shortMessage>
+    <id>DM_NEXTINT_VIA_NEXTDOUBLE</id>
+    <artifact tool="FindBugs" mnemonic="DM_NEXTINT_VIA_NEXTDOUBLE"/>
+    <name>Use nextInt not nextDouble to generate a random integer</name>
+    <shortMessage>Use the nextInt method of Random rather than nextDouble to generate a random integer.</shortMessage>
     <info>
-      &lt;p&gt;If r is a java.util.Random, you can generate a
-      random number from 0 to n-1 using r.nextInt(n) Rather than
-      using (int)(r.nextDouble() * n). &lt;/p&gt;
+<![CDATA[<p>If <code>r</code> is a <code>java.util.Random</code>
+object, you can generate a random number from 0 to <code>n</code>-1
+using <code>r.nextInt(n)</code> Rather than using
+<code>(int)(r.nextDouble() * n)<code>.</p>
+
+<p>It is highly recommended that the <code>nextInt</code> method be
+used for this purpose because it avoid several tricky implementation
+issues (for more information see its method documentation).</p>]]>
     </info>
-    <name>Use nextInt Not nextDouble Of Random</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SQL_NONCONSTANT_STRING_PASSED_TO_EXECUTE</id>
-    <artifact tool="FindBugs"
-	      mnemonic="SQL_NONCONSTANT_STRING_PASSED_TO_EXECUTE">
-    </artifact>
-    <shortMessage>
-      Nonconstant string passed to execute method on an SQL
-      statement
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="SQL_NONCONSTANT_STRING_PASSED_TO_EXECUTE"/>
+    <name>Nonconstant String passed to execute may be vulnerable to SQL injection</name>
+    <shortMessage>A Nonconstant string passed to execute method on an SQL statement.  This may be vulnerable to SQL injection.</shortMessage>
     <info>
-      &lt;p&gt;The method invokes the execute method on an SQL
-      statement with a String that seems to be dynamically
-      generated. Consider using a prepared statement instead. It
-      is more efficient and less vulnerable to SQL injection
-      attacks. &lt;/p&gt;
+<![CDATA[<p>The method invokes the execute method on an SQL statement
+with a <code>String</code> that seems to be dynamically
+generated. Consider using a prepared statement instead. It is more
+efficient and less vulnerable to SQL injection attacks.</p>]]>
     </info>
-    <name>Nonconstant String Passed To Execute</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
-    <id>
-      SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING
-    </id>
-    <artifact tool="FindBugs"
-	      mnemonic="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING">
-    </artifact>
-    <shortMessage>
-      A prepared statement is generated from a nonconstant String
-    </shortMessage>
+    <id>SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING</id>
+    <artifact tool="FindBugs" mnemonic="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING"/>
+    <name>Prepared statement generated from nonconstant String may be vulnerable to SQL injection</name>
+    <shortMessage>A prepared statement is generated from a nonconstant String.  This may be vulnerable to SQL injection.</shortMessage>
     <info>
-      &lt;p&gt;The code creates an SQL prepared statement from a
-      nonconstant String. If unchecked, tainted data from a user
-      is used in building this String, SQL injection could be used
-      to make the prepared statement do something unexpected and
-      undesirable. &lt;/p&gt;
+<![CDATA[<p>The code creates an SQL prepared statement from a
+nonconstant <code>String</code>. If unchecked, tainted data from a
+user is used in building this <code>String</code>, SQL injection could
+be used to make the prepared statement do something unexpected and
+undesirable.</p>]]>
     </info>
-    <name>
-      Prepared Statement Generated From Nonconstant String
-    </name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
-    <id>UselessThread</id>
-    <artifact tool="FindBugs" mnemonic="DM_USELESS_THREAD">
-    </artifact>
-    <shortMessage>
-      A thread was created using the default empty run method
-    </shortMessage>
+    <id>DM_USELESS_THREAD</id>
+    <artifact tool="FindBugs" mnemonic="DM_USELESS_THREAD"/>
+    <name>Useless thread</name>
+    <shortMessage>A thread was created using the default empty run method.  Delete this thread.</shortMessage>
     <info>
-      &lt;p&gt;This method creates a thread without specifying a
-      run method either by deriving from the Thread class, or by
-      passing a Runnable object. This thread, then, does nothing
-      but waste time. &lt;/p&gt;
+<![CDATA[<p>This method creates a thread without specifying a run
+method either by deriving from (i.e., subclassing) the
+<code>Thread</code> class, or by passing a <code>Runnable</code>
+object. This thread, then, does nothing but waste time.</p>]]>
     </info>
-    <name>Useless Thread</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>PossibleDoubleCheckOfField</id>
     <artifact tool="FindBugs" mnemonic="DC_DOUBLECHECK"></artifact>
@@ -1188,12 +1156,12 @@ Thus in the example above use <code>s.isEmpty()</code>.</p>]]>
     <shortMessage>Covariant equals() method defined</shortMessage>
     <info>
 
-      &lt;p&gt; This class defines a covariant version of
-      &lt;code&gt;equals()&lt;/code&gt;.&amp;nbsp; To correctly
-      override the &lt;code&gt;equals()&lt;/code&gt; method in
-      &lt;code&gt;java.lang.Object&lt;/code&gt;, the parameter of
-      &lt;code&gt;equals()&lt;/code&gt; must have type
-      &lt;code&gt;java.lang.Object&lt;/code&gt;.&lt;/p&gt;
+      <p> This class defines a covariant version of
+      <code>equals()</code>.&amp;nbsp; To correctly
+      override the <code>equals()</code> method in
+      <code>java.lang.Object</code>, the parameter of
+      <code>equals()</code> must have type
+      <code>java.lang.Object</code>.</p>
 
     </info>
     <name>Self No Object</name>
