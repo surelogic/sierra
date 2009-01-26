@@ -14,6 +14,8 @@ import javax.xml.bind.Unmarshaller;
 
 import com.surelogic.common.jdbc.ConnectionQuery;
 import com.surelogic.common.jdbc.Query;
+import com.surelogic.common.jdbc.Row;
+import com.surelogic.common.jdbc.RowHandler;
 import com.surelogic.common.jdbc.StringResultHandler;
 import com.surelogic.common.jdbc.StringRowHandler;
 import com.surelogic.common.logging.SLLogger;
@@ -22,11 +24,16 @@ import com.surelogic.sierra.jdbc.settings.ScanFilters;
 import com.surelogic.sierra.jdbc.settings.SettingQueries;
 import com.surelogic.sierra.jdbc.settings.TypeFilterDO;
 import com.surelogic.sierra.jdbc.tool.FindingTypeManager;
+import com.surelogic.sierra.tool.message.FilterEntry;
+import com.surelogic.sierra.tool.message.FilterSet;
 import com.surelogic.sierra.tool.message.FindingTypes;
 import com.surelogic.sierra.tool.message.ListCategoryResponse;
 import com.surelogic.sierra.tool.message.MessageWarehouse;
 
 public class SchemaUtil {
+
+	private static final String BUGLINK = "9a997ac4-ec2b-4d02-869a-423999fecfed";
+
 	static void updateFindingTypes(final Connection conn) throws SQLException {
 		final FindingTypeManager ftMan = FindingTypeManager.getInstance(conn);
 		final List<FindingTypes> types = new ArrayList<FindingTypes>(3);
@@ -113,6 +120,66 @@ public class SchemaUtil {
 					.call(newUuid, serverUuid);
 			q.prepared("ScanFilters.updateDefault").call(newUuid);
 		}
+	}
+
+	/*
+	 * This method is for writing out an initial set of categories for each
+	 * tool. It should not be called every time we update finding type
+	 * information.
+	 */
+	static void generateBuglinkCategories(final Connection c) {
+		final Query q = new ConnectionQuery(c);
+		final ListCategoryResponse r = new ListCategoryResponse();
+		String current = null;
+		FilterSet cat = new FilterSet();
+		for (final CatEntry entry : q
+				.prepared("SchemaUtil.categoriesFromArtifactTypes",
+						new CatEntryHandler()).call()) {
+			final String name = entry.cat + " (" + entry.tool + ")";
+			if (!name.equals(current)) {
+				current = name;
+				cat = new FilterSet();
+				cat.setUid(current);
+				cat.setName(current);
+				cat.setOwner(BUGLINK);
+				cat.setRevision(0L);
+				cat.setInfo("The set of finding types reported by the '"
+						+ entry.cat + "' category in " + entry.tool + ".");
+				r.getFilterSets().add(cat);
+			}
+			final FilterEntry fe = new FilterEntry();
+			fe.setFiltered(false);
+			fe.setType(entry.ft);
+			cat.getFilter().add(fe);
+		}
+		SettingQueries.updateCategories(r, true).perform(q);
+		final List<String> orphanedTypes = q
+				.prepared("SchemaUtil.checkFindingTypeCategories",
+						new StringRowHandler()).call();
+		if (!orphanedTypes.isEmpty()) {
+			SLLogger
+					.getLoggerFor(SchemaUtil.class)
+					.warning(
+							"The following finding types do not currently belong to a category of any sort: "
+									+ orphanedTypes);
+		}
+	}
+
+	private static class CatEntry {
+		String ft;
+		String cat;
+		String tool;
+	}
+
+	private static class CatEntryHandler implements RowHandler<CatEntry> {
+		public CatEntry handle(final Row r) {
+			final CatEntry ce = new CatEntry();
+			ce.tool = r.nextString();
+			ce.cat = r.nextString();
+			ce.ft = r.nextString();
+			return ce;
+		}
+
 	}
 
 }

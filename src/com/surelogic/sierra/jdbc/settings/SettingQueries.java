@@ -108,6 +108,15 @@ public class SettingQueries {
 		return updateCategories(response, false);
 	}
 
+	/**
+	 * Produces a query that, when run, will return and optionally update the
+	 * set of categories that are changed when applying the given response to
+	 * the local database.
+	 * 
+	 * @param response
+	 * @param update
+	 * @return
+	 */
 	public static final DBQuery<ListCategoryResponse> updateCategories(
 			final ListCategoryResponse response, final boolean update) {
 		return new DBQuery<ListCategoryResponse>() {
