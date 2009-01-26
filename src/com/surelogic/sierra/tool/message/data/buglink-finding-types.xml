@@ -2066,682 +2066,535 @@ Java</i> (second edition) item 56.</p>]]>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>NM_VERY_CONFUSING</id>
-    <artifact tool="FindBugs" mnemonic="NM_VERY_CONFUSING">
-    </artifact>
-    <shortMessage>Very confusing method names</shortMessage>
+    <artifact tool="FindBugs" mnemonic="NM_VERY_CONFUSING"/>
+    <name>Very confusing method names</name>
+    <shortMessage>Very confusing method names, consider renaming one or both methods.</shortMessage>
     <info>
+<![CDATA[<p>The referenced methods have names that differ only by
+capitalization or the packages of their parameters. This is very
+confusing because if the capitalization and parameter package names
+were identical then one of the methods would override the other.</p>
 
-      &lt;p&gt; The referenced methods have names that differ only
-      by capitalization or the packages of their parameters. This
-      is very confusing because if the capitalization and
-      parameter package names were identical then one of the
-      methods would override the other. &lt;/p&gt;
-
+<p>Consider renaming one or both methods to clarify their
+differences.</p>]]>
     </info>
-    <name>Very Confusing</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>NM_VERY_CONFUSING_INTENTIONAL</id>
-    <artifact tool="FindBugs"
-	      mnemonic="NM_VERY_CONFUSING_INTENTIONAL">
-    </artifact>
-    <shortMessage>
-      Very confusing method names (but intentional)
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="NM_VERY_CONFUSING_INTENTIONAL"/>
+    <name>Very confusing intentional method names</name>
+    <shortMessage>Very confusing (but intentional) method names, consider trying to eliminate one of them.</shortMessage>
     <info>
+<![CDATA[<p>The referenced methods have names that differ only by
+capitalization or the packages of their parameters. This is very
+confusing because if the capitalization were identical then one of the
+methods would override the other.</p>
 
-      &lt;p&gt; The referenced methods have names that differ only
-      by capitalization or the packages of their parameters. This
-      is very confusing because if the capitalization were
-      identical then one of the methods would override the other.
-      From the existence of other methods, it seems that the
-      existence of both of these methods is intentional, but is
-      sure is confusing. You should try hard to eliminate one of
-      them, unless you are forced to have both due to frozen APIs.
-      &lt;/p&gt;
-
+<p>From the existence of other methods, it seems that the existence of
+both of these methods is intentional, but is sure is confusing. You
+should try hard to eliminate one of them, unless you are forced to
+have both due to frozen APIs.</p>]]>
     </info>
-    <name>Very Confusing Intentional</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>NM_CONFUSING</id>
-    <artifact tool="FindBugs" mnemonic="NM_CONFUSING"></artifact>
-    <shortMessage>Confusing method names</shortMessage>
+    <artifact tool="FindBugs" mnemonic="NM_CONFUSING"/>
+    <name>Confusing method names</name>
+    <shortMessage>Confusing method names, consider renaming one or both methods.</shortMessage>
     <info>
+<![CDATA[<p>The referenced methods have names that differ only by
+capitalization.</p>
 
-      &lt;p&gt; The referenced methods have names that differ only
-      by capitalization.&lt;/p&gt;
-
+<p>Consider renaming one or both methods to clarify their
+differences.</p>]]>
     </info>
-    <name>Confusing</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>NM_METHOD_CONSTRUCTOR_CONFUSION</id>
-    <artifact tool="FindBugs"
-	      mnemonic="NM_METHOD_CONSTRUCTOR_CONFUSION">
-    </artifact>
-    <shortMessage>
-      Apparent method/constructor confusion
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="NM_METHOD_CONSTRUCTOR_CONFUSION"/>
+    <name>Method vs constructor confusion</name>
+    <shortMessage>Apparent method versus constructor confusion.</shortMessage>
     <info>
+<![CDATA[<p>This regular method has the same name as the class it is
+defined in. It is likely that this was intended to be a
+constructor.</p>
 
-      &lt;p&gt; This regular method has the same name as the class
-      it is defined in. It is likely that this was intended to be
-      a constructor. If it was intended to be a constructor,
-      remove the declaration of a void return value. If you had
-      accidently defined this method, realized the mistake,
-      defined a proper constructor but can't get rid of this
-      method due to backwards compatibility, deprecate the method.
-      &lt;/p&gt;
-
+<p>If it was intended to be a constructor, remove the declaration of a
+void return value. If you had accidently defined this method, realized
+the mistake, defined a proper constructor but can't get rid of this
+method due to backwards compatibility, deprecate the method.</p>]]>
     </info>
-    <name>Method Constructor Confusion</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SuspiciousHashcodeMethodName</id>
-    <artifact tool="FindBugs" mnemonic="NM_LCASE_HASHCODE">
-    </artifact>
-    <artifact tool="PMD" mnemonic="SuspiciousHashcodeMethodName">
-    </artifact>
-    <shortMessage>
-      Class defines hashcode(); should it be hashCode()?
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="NM_LCASE_HASHCODE"/>
+    <artifact tool="PMD" mnemonic="SuspiciousHashcodeMethodName"/>
+    <name>Suspicious hashcode method name</name>
+    <shortMessage>Class defines hashcode(); should it be hashCode()?</shortMessage>
     <info>
+<![CDATA[<p>This class defines a method called
+<code>hashcode</code>. This method does not override the
+<code>hashCode</code> method in <code>java.lang.Object</code>, which
+is probably what was intended.</p>
 
-      &lt;p&gt; This class defines a method called
-      &lt;code&gt;hashcode()&lt;/code&gt;.&amp;nbsp; This method
-      does not override the &lt;code&gt;hashCode()&lt;/code&gt;
-      method in &lt;code&gt;java.lang.Object&lt;/code&gt;, which
-      is probably what was intended.&lt;/p&gt;
-
-      The method name and return type are suspiciously close to
-      hashCode(), which may mean you are intending to override the
-      hashCode() method.
+<p>The method name and return type are suspiciously close to
+<code>hashCode</code>, which may mean you are intending to override
+the <code>hashCode</code> method.</p>]]>
     </info>
-    <name>Suspicious Hashcode Method Name</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>NM_LCASE_TOSTRING</id>
-    <artifact tool="FindBugs" mnemonic="NM_LCASE_TOSTRING">
-    </artifact>
-    <shortMessage>
-      Class defines tostring(); should it be toString()?
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="NM_LCASE_TOSTRING"/>
+    <name>Suspicious tostring method name</name>
+    <shortMessage>Class defines tostring(); should it be toString()?</shortMessage>
     <info>
-
-      &lt;p&gt; This class defines a method called
-      &lt;code&gt;tostring()&lt;/code&gt;.&amp;nbsp; This method
-      does not override the &lt;code&gt;toString()&lt;/code&gt;
-      method in &lt;code&gt;java.lang.Object&lt;/code&gt;, which
-      is probably what was intended.&lt;/p&gt;
-
+<![CDATA[<p>This class defines a method called
+<code>tostring</code>. This method does not override the
+<code>toString</code> method in <code>java.lang.Object</code>, which
+is probably what was intended.</p>]]>
     </info>
-    <name>Lowercase tostring() Method Defined</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SuspiciousEqualsMethodName</id>
-    <artifact tool="FindBugs" mnemonic="NM_BAD_EQUAL"></artifact>
-    <artifact tool="PMD" mnemonic="SuspiciousEqualsMethodName">
-    </artifact>
-    <shortMessage>
-      Class defines equal(); should it be equals()?
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="NM_BAD_EQUAL"/>
+    <artifact tool="PMD" mnemonic="SuspiciousEqualsMethodName"/>
+    <name>Suspicious equals method name</name>
+    <shortMessage>Class defines equal(); should it be equals()?</shortMessage>
     <info>
-
-      &lt;p&gt; This class defines a method
-      &lt;code&gt;equal(Object)&lt;/code&gt;.&amp;nbsp; This
-      method does not override the
-      &lt;code&gt;equals(Object)&lt;/code&gt; method in
-      &lt;code&gt;java.lang.Object&lt;/code&gt;, which is probably
-      what was intended.&lt;/p&gt;
-
-      The method name and parameter number are suspiciously close
-      to equals(Object), which may mean you are intending to
-      override the equals(Object) method.
+<![CDATA[<p>This class defines a method
+<code>equal(Object)</code>. This method does not override the
+<code>equals(Object)</code> method in <code>java.lang.Object</code>,
+which is probably what was intended.</p>]]>
     </info>
-    <name>Suspicious Equals Method Name</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>NM_CLASS_NOT_EXCEPTION</id>
-    <artifact tool="FindBugs" mnemonic="NM_CLASS_NOT_EXCEPTION">
-    </artifact>
-    <shortMessage>
-      Class is not derived from an Exception, even though it is
-      named as such
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="NM_CLASS_NOT_EXCEPTION"/>
+    <name>Class not an exception</name>
+    <shortMessage>Class is not derived from an Exception, even though it is named as such.</shortMessage>
     <info>
+<![CDATA[<p>This class is not derived from another exception, but ends
+with <tt>Exception</tt>. This will be confusing to users of this
+class.</p>
 
-      &lt;p&gt; This class is not derived from another exception,
-      but ends with 'Exception'. This will be confusing to users
-      of this class.&lt;/p&gt;
-
+<p>Consider renaming this class to clarify this code.</p>]]>
     </info>
-    <name>Class Not Exception</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>RR_NOT_CHECKED</id>
-    <artifact tool="FindBugs" mnemonic="RR_NOT_CHECKED"></artifact>
-    <shortMessage>
-      Method ignores results of InputStream.read()
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="RR_NOT_CHECKED"/>
+    <name>Read return value not checked</name>
+    <shortMessage>Method ignores results of one of the variants of the java.io.InputStream read method.</shortMessage>
     <info>
+<![CDATA[<p>This method ignores the return value of one of the
+variants of <code>java.io.InputStream.read()</code> which can return
+multiple bytes. If the return value is not checked, the caller will
+not be able to correctly handle the case where fewer bytes were read
+than the caller requested.</p>
 
-      &lt;p&gt; This method ignores the return value of one of the
-      variants of
-      &lt;code&gt;java.io.InputStream.read()&lt;/code&gt; which
-      can return multiple bytes.&amp;nbsp; If the return value is
-      not checked, the caller will not be able to correctly handle
-      the case where fewer bytes were read than the caller
-      requested.&amp;nbsp; This is a particularly insidious kind
-      of bug, because in many programs, reads from input streams
-      usually do read the full amount of data requested, causing
-      the program to fail only sporadically.&lt;/p&gt;
-
+<p>This is a particularly insidious kind of bug, because in many
+programs, reads from input streams usually do read the full amount of
+data requested, causing the program to fail only sporadically.</p>]]>
     </info>
-    <name>Not Checked</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SR_NOT_CHECKED</id>
-    <artifact tool="FindBugs" mnemonic="SR_NOT_CHECKED"></artifact>
-    <shortMessage>
-      Method ignores results of InputStream.skip()
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="SR_NOT_CHECKED"/>
+    <name>Skip return value not checked</name>
+    <shortMessage>Method ignores results of one of the variants of the java.io.InputStream skip method.</shortMessage>
     <info>
+<![CDATA[<p>This method ignores the return value of
+<code>java.io.InputStream.skip()</code> which can skip multiple
+bytes. If the return value is not checked, the caller will not be able
+to correctly handle the case where fewer bytes were skipped than the
+caller requested.</p>
 
-      &lt;p&gt; This method ignores the return value of
-      &lt;code&gt;java.io.InputStream.skip()&lt;/code&gt; which
-      can skip multiple bytes.&amp;nbsp; If the return value is
-      not checked, the caller will not be able to correctly handle
-      the case where fewer bytes were skipped than the caller
-      requested.&amp;nbsp; This is a particularly insidious kind
-      of bug, because in many programs, skips from input streams
-      usually do skip the full amount of data requested, causing
-      the program to fail only sporadically. With Buffered
-      streams, however, skip() will only skip data in the buffer,
-      and will routinely fail to skip the requested number of
-      bytes.&lt;/p&gt;
-
+<p>This is a particularly insidious kind of bug, because in many
+programs, skips from input streams usually do skip the full amount of
+data requested, causing the program to fail only sporadically. With
+Buffered streams, however, <code>skip()</code> will only skip data in
+the buffer, and will routinely fail to skip the requested number of
+bytes.</p>]]>
     </info>
-    <name>Not Checked</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SE_READ_RESOLVE_MUST_RETURN_OBJECT</id>
-    <artifact tool="FindBugs"
-	      mnemonic="SE_READ_RESOLVE_MUST_RETURN_OBJECT">
-    </artifact>
-    <shortMessage>
-      The readResolve method must be declared with a return type
-      of Object.
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="SE_READ_RESOLVE_MUST_RETURN_OBJECT"/>
+    <name>ReadResolve method must declare a return type of Object</name>
+    <shortMessage>The readResolve method must be declared with a return type of Object.</shortMessage>
     <info>
-
-      &lt;p&gt; In order for the readResolve method to be
-      recognized by the serialization mechanism. &lt;/p&gt;
-
+<![CDATA[<p>In order for the <code>readResolve</code> method to be
+recognized by the serialization mechanism it must declare a return
+type of <code>java.lang.Object</code>.</p>]]>
     </info>
-    <name>Read Resolve Must Return Object</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SE_TRANSIENT_FIELD_OF_NONSERIALIZABLE_CLASS</id>
-    <artifact tool="FindBugs"
-	      mnemonic="SE_TRANSIENT_FIELD_OF_NONSERIALIZABLE_CLASS">
-    </artifact>
-    <shortMessage>
-      Transient field of class that isn't Serializable.
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="SE_TRANSIENT_FIELD_OF_NONSERIALIZABLE_CLASS"/>
+    <name>Transient field in a non-serializable class</name>
+    <shortMessage>Transient field in a class that is not Serializable.</shortMessage>
     <info>
+<![CDATA[<p>The field is marked as transient, but the class isn't
+<code>Serializable</code>, so marking it as transient has absolutely
+no effect.</p>
 
-      &lt;p&gt; The field is marked as transient, but the class
-      isn't Serializable, so marking it as transient has
-      absolutely no effect. This may be leftover marking from a
-      previous version of the code in which the class was
-      transient, or it may indicate a misunderstanding of how
-      serialization works. &lt;/p&gt;
-
+<p>This may be leftover marking from a previous version of the code in
+which the class was transient, or it may indicate a misunderstanding
+of how serialization works.</p>]]>
     </info>
-    <name>Transient Field Of Nonserializable Class</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SE_TRANSIENT_FIELD_NOT_RESTORED</id>
-    <artifact tool="FindBugs"
-	      mnemonic="SE_TRANSIENT_FIELD_NOT_RESTORED">
-    </artifact>
-    <shortMessage>
-      Transient field that isn't set by deserialization.
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="SE_TRANSIENT_FIELD_NOT_RESTORED"/>
+    <name>Suspicious transient field</name>
+    <shortMessage>Transient field that isn't set by deserialization.</shortMessage>
     <info>
-
-      &lt;p&gt; This class contains a field that is updated at
-      multiple places in the class, thus it seems to be part of
-      the state of the class. However, since the field is marked
-      as transient and not set in readObject or readResolve, it
-      will contain the default value in any deserialized instance
-      of the class. &lt;/p&gt;
-
+<![CDATA[<p>This class contains a field that is updated at multiple
+places in the class, thus it seems to be part of the state of the
+class. However, since the field is marked as transient and not set in
+<code>readObject</code> or <code>readResolve</code>, it will contain
+the default value in any deserialized instance of the class.</p>]]>
     </info>
-    <name>Transient Field Not Restored</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SE_METHOD_MUST_BE_PRIVATE</id>
-    <artifact tool="FindBugs"
-	      mnemonic="SE_METHOD_MUST_BE_PRIVATE">
-    </artifact>
-    <shortMessage>
-      Method must be private in order for serialization to work
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="SE_METHOD_MUST_BE_PRIVATE"/>
+    <name>Serialization method must be private</name>
+    <shortMessage>Method must be declared to be private in order for serialization to work.</shortMessage>
     <info>
-
-      &lt;p&gt; This class implements the
-      &lt;code&gt;Serializable&lt;/code&gt; interface, and defines
-      a method for custom serialization/deserialization. But since
-      that method isn't declared private, it will be silently
-      ignored by the serialization/deserialization API.&lt;/p&gt;
-
+<![CDATA[<p>This class implements the <code>Serializable</code>
+interface, and defines a method for custom
+serialization/deserialization. But since that method isn't declared
+private, it will be silently ignored by the
+serialization/deserialization API.</p>]]>
     </info>
-    <name>Method Must Be Private</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SE_NO_SUITABLE_CONSTRUCTOR_FOR_EXTERNALIZATION</id>
-    <artifact tool="FindBugs"
-	      mnemonic="SE_NO_SUITABLE_CONSTRUCTOR_FOR_EXTERNALIZATION">
-    </artifact>
-    <shortMessage>
-      Class is Externalizable but doesn't define a void
-      constructor
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="SE_NO_SUITABLE_CONSTRUCTOR_FOR_EXTERNALIZATION"/>
+    <name>No suitable constructor for externalization</name>
+    <shortMessage>Class is Externalizable but it doesn't define a void constructor so it will fail at runtime.</shortMessage>
     <info>
-
-      &lt;p&gt; This class implements the
-      &lt;code&gt;Externalizable&lt;/code&gt; interface, but does
-      not define a void constructor. When Externalizable objects
-      are deserialized, they first need to be constructed by
-      invoking the void constructor. Since this class does not
-      have one, serialization and deserialization will fail at
-      runtime.&lt;/p&gt;
-
+<![CDATA[<p>This class implements the <code>Externalizable</code>
+interface, but does not define a void constructor. When
+<code>Externalizable</code> objects are deserialized, they first need
+to be constructed by invoking the void constructor. Because this class
+does not have one, serialization and deserialization will fail at
+runtime.</p>]]>
     </info>
-    <name>No Suitable Constructor For Externalization</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SE_NO_SUITABLE_CONSTRUCTOR</id>
-    <artifact tool="FindBugs"
-	      mnemonic="SE_NO_SUITABLE_CONSTRUCTOR">
-    </artifact>
-    <shortMessage>
-      Class is Serializable but its superclass doesn't define a
-      void constructor
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="SE_NO_SUITABLE_CONSTRUCTOR"/>
+    <name>No suitable constructor for serialization</name>
+    <shortMessage>Class is Serializable but its superclass doesn't define a void constructor so it will fail at runtime.</shortMessage>
     <info>
-
-      &lt;p&gt; This class implements the
-      &lt;code&gt;Serializable&lt;/code&gt; interface and its
-      superclass does not. When such an object is deserialized,
-      the fields of the superclass need to be initialized by
-      invoking the void constructor of the superclass. Since the
-      superclass does not have one, serialization and
-      deserialization will fail at runtime.&lt;/p&gt;
-
+<![CDATA[<p> This class implements the <code>Serializable</code>
+interface and its superclass does not. When such an object is
+deserialized, the fields of the superclass need to be initialized by
+invoking the void constructor of the superclass. Since the superclass
+does not have one, serialization and deserialization will fail at
+runtime.</p>]]>
     </info>
-    <name>No Suitable Constructor</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SE_NO_SERIALVERSIONID</id>
-    <artifact tool="FindBugs" mnemonic="SE_NO_SERIALVERSIONID">
-    </artifact>
-    <shortMessage>
-      Class is Serializable, but doesn't define serialVersionUID
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="SE_NO_SERIALVERSIONID"/>
+    <name>No serialVersionUID field defined for serialization</name>
+    <shortMessage>Class is Serializable, but it doesn't define a serialVersionUID field.</shortMessage>
     <info>
+<![CDATA[<p>This class implements the <code>Serializable</code>
+interface, but does not define a <code>serialVersionUID</code>
+field.</p>
 
-      &lt;p&gt; This class implements the
-      &lt;code&gt;Serializable&lt;/code&gt; interface, but does
-      not define a &lt;code&gt;serialVersionUID&lt;/code&gt;
-      field.&amp;nbsp; A change as simple as adding a reference to
-      a .class object will add synthetic fields to the class,
-      which will unfortunately change the implicit
-      serialVersionUID (e.g., adding a reference to
-      &lt;code&gt;String.class&lt;/code&gt; will generate a static
-      field &lt;code&gt;class$java$lang$String&lt;/code&gt;).
-      Also, different source code to bytecode compilers may use
-      different naming conventions for synthetic variables
-      generated for references to class objects or inner classes.
-      To ensure interoperability of Serializable across versions,
-      consider adding an explicit serialVersionUID.&lt;/p&gt;
+<p>A change as simple as adding a reference to a <code>.class</code>
+object will add synthetic fields to the class, which will
+unfortunately change the implicit serialVersionUID.  For example,
+adding a reference to <code>String.class</code> will generate a static
+field <code>class$java$lang$String</code>.</p>
 
+<p>Also, different source code to bytecode compilers may use different
+naming conventions for synthetic variables generated for references to
+class objects or inner classes.  To ensure interoperability of
+<code>Serializable</code> across versions, consider adding an explicit
+<code>serialVersionUID</code> field.</p>
+
+<p>This field can be generated within some Java IDEs. For example the
+below <code>serialVersionUID</code> field was generated by
+Eclipse.</p>
+
+<pre>
+public final class FutureDatabaseException extends Exception {
+  ...
+  private static final long serialVersionUID = 6446502447505736644L;
+}
+</pre>]]>
     </info>
-    <name>No Serial Version Id Defined</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SE_COMPARATOR_SHOULD_BE_SERIALIZABLE</id>
-    <artifact tool="FindBugs"
-	      mnemonic="SE_COMPARATOR_SHOULD_BE_SERIALIZABLE">
-    </artifact>
-    <shortMessage>
-      Comparator doesn't implement Serializable
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="SE_COMPARATOR_SHOULD_BE_SERIALIZABLE"/>
+    <name>Comparator should be Serializable</name>
+    <shortMessage>Comparator doesn't implement Serializable.</shortMessage>
     <info>
+<![CDATA[<p>This class implements the <code>Comparator</code>
+interface. You should consider whether or not it should also implement
+the <code>Serializable</code> interface. If a comparator is used to
+construct an ordered collection such as a <code>TreeMap</code>, then
+the <code>TreeMap</code> will be serializable only if the comparator
+is also serializable.</p>
 
-      &lt;p&gt; This class implements the
-      &lt;code&gt;Comparator&lt;/code&gt; interface. You should
-      consider whether or not it should also implement the
-      &lt;code&gt;Serializable&lt;/code&gt; interface. If a
-      comparator is used to construct an ordered collection such
-      as a &lt;code&gt;TreeMap&lt;/code&gt;, then the
-      &lt;code&gt;TreeMap&lt;/code&gt; will be serializable only
-      if the comparator is also serializable. As most comparators
-      have little or no state, making them serializable is
-      generally easy and good defensive programming. &lt;/p&gt;
-
+<p>As most comparators have little or no state, making them
+serializable is generally easy and good defensive programming.</p>]]>
     </info>
-    <name>Comparator Should Be Serializable</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SF_SWITCH_FALLTHROUGH</id>
-    <artifact tool="FindBugs" mnemonic="SF_SWITCH_FALLTHROUGH">
-    </artifact>
-    <shortMessage>
-      Switch statement found where one case falls through to the
-      next case
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="SF_SWITCH_FALLTHROUGH"/>
+    <name>Switch fallthrough</name>
+    <shortMessage>Switch statement found where one case falls through to the next case.  Did you forget a break or return?</shortMessage>
     <info>
-
-      &lt;p&gt; This method contains a switch statement where one
-      case branch will fall through to the next case. Usually you
-      need to end this case with a break or return.&lt;/p&gt;
-
+<![CDATA[<p>This method contains a switch statement where one case
+branch will fall through to the next case. Usually you need to end
+this case with a break or return.</p>]]>
     </info>
-    <name>Switch Fallthrough</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SF_DEAD_STORE_DUE_TO_SWITCH_FALLTHROUGH</id>
-    <artifact tool="FindBugs"
-	      mnemonic="SF_DEAD_STORE_DUE_TO_SWITCH_FALLTHROUGH">
-    </artifact>
-    <shortMessage>
-      Dead store due to switch statement fall through
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="SF_DEAD_STORE_DUE_TO_SWITCH_FALLTHROUGH"/>
+    <name>Dead store due to switch fallthrough</name>
+    <shortMessage>Dead store due to switch statement fallthrough.  Did you forget a break or return?</shortMessage>
     <info>
-
-      &lt;p&gt; A value stored in the previous switch case is
-      overwritten here due to a switch fall through. It is likely
-      that you forgot to put a break or return at the end of the
-      previous case. &lt;/p&gt;
-
+<![CDATA[<p>A value stored in the previous switch case is overwritten
+here due to a switch fall through. It is likely that you forgot to put
+a break or return at the end of the previous case.</p>]]>
     </info>
-    <name>Dead Store Due To Switch Fallthrough</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
-    <id>IncorrectSynchronizationOfWriteObject</id>
-    <artifact tool="FindBugs" mnemonic="WS_WRITEOBJECT_SYNC">
-    </artifact>
-    <shortMessage>
-      Class's writeObject() method is synchronized but nothing
-      else is
-    </shortMessage>
+    <id>WS_WRITEOBJECT_SYNC</id>
+    <artifact tool="FindBugs" mnemonic="WS_WRITEOBJECT_SYNC"/>
+    <name>Suspicious writeObject is the only synchronized method</name>
+    <shortMessage>Suspicious that the writeObject() method is synchronized but nothing else is.</shortMessage>
     <info>
-
-      &lt;p&gt; This class has a
-      &lt;code&gt;writeObject()&lt;/code&gt; method which is
-      synchronized; however, no other method of the class is
-      synchronized.&lt;/p&gt;
-
+<![CDATA[<p>This class has a <code>writeObject()</code> method which
+is synchronized; however, no other method of the class is
+synchronized.  Check that the concurrency policy of this class is
+implemented correctly.</p>]]>
     </info>
-    <name>writeObject Is Only Synchronized Method</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
-    <id>AvoidSynchronizationOfReadObject</id>
-    <artifact tool="FindBugs" mnemonic="RS_READOBJECT_SYNC">
-    </artifact>
-    <shortMessage>
-      Class's readObject() method is synchronized
-    </shortMessage>
+    <id>RS_READOBJECT_SYNC</id>
+    <artifact tool="FindBugs" mnemonic="RS_READOBJECT_SYNC"/>
+    <name>Suspicious synchronized readObject method</name>
+    <shortMessage>Suspicious that the readObject() method is synchronized, it probably does not need to be.</shortMessage>
     <info>
+<![CDATA[<p>This serializable class defines a
+<code>readObject()</code> which is synchronized. By definition, an
+object created by deserialization is only reachable by one thread, and
+thus there is no need for <code>readObject()</code> to be
+synchronized.</p>
 
-      &lt;p&gt; This serializable class defines a
-      &lt;code&gt;readObject()&lt;/code&gt; which is
-      synchronized.&amp;nbsp; By definition, an object created by
-      deserialization is only reachable by one thread, and thus
-      there is no need for &lt;code&gt;readObject()&lt;/code&gt;
-      to be synchronized.&amp;nbsp; If the
-      &lt;code&gt;readObject()&lt;/code&gt; method itself is
-      causing the object to become visible to another thread, that
-      is an example of very dubious coding style.&lt;/p&gt;
-
+<p>If the <code>readObject()</code> method itself is causing the
+object to become visible to another thread, that is an example of very
+dubious coding style.</p>]]>
     </info>
-    <name>readObject Method is Synchronized</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SE_NONSTATIC_SERIALVERSIONID</id>
-    <artifact tool="FindBugs"
-	      mnemonic="SE_NONSTATIC_SERIALVERSIONID">
-    </artifact>
-    <shortMessage>serialVersionUID isn't static</shortMessage>
+    <artifact tool="FindBugs" mnemonic="SE_NONSTATIC_SERIALVERSIONID"/>
+    <name>Non-static serialVersionUID field</name>
+    <shortMessage>The serialVersionUID field is not static, but it should be.</shortMessage>
     <info>
+<![CDATA[<p>This class defines a <code>serialVersionUID</code> field
+that is not static.</p>
 
-      &lt;p&gt; This class defines a
-      &lt;code&gt;serialVersionUID&lt;/code&gt; field that is not
-      static.&amp;nbsp; The field should be made static if it is
-      intended to specify the version UID for purposes of
-      serialization.&lt;/p&gt;
-
+<p>The field should be made static if it is intended to specify the
+version UID for purposes of serialization. If it is not intended for
+this purpose it should probably be renamed to avoid confusion.</p>]]>
     </info>
-    <name>Nonstatic Serial Version Id</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SE_NONFINAL_SERIALVERSIONID</id>
-    <artifact tool="FindBugs"
-	      mnemonic="SE_NONFINAL_SERIALVERSIONID">
-    </artifact>
-    <shortMessage>serialVersionUID isn't final</shortMessage>
+    <artifact tool="FindBugs" mnemonic="SE_NONFINAL_SERIALVERSIONID"/>
+    <name>Non-final serialVirsionUID field</name>
+    <shortMessage>The serialVersionUID is not final, but it should be.</shortMessage>
     <info>
+<![CDATA[<p>This class defines a <code>serialVersionUID</code> field
+that is not final.</p>
 
-      &lt;p&gt; This class defines a
-      &lt;code&gt;serialVersionUID&lt;/code&gt; field that is not
-      final.&amp;nbsp; The field should be made final if it is
-      intended to specify the version UID for purposes of
-      serialization.&lt;/p&gt;
-
+<p>The field should be made final if it is intended to specify the
+version UID for purposes of serialization. If it is not intended for
+this purpose it should probably be renamed to avoid confusion.</p>]]>
     </info>
-    <name>Nonfinal Serial Version Id</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SE_NONLONG_SERIALVERSIONID</id>
-    <artifact tool="FindBugs"
-	      mnemonic="SE_NONLONG_SERIALVERSIONID">
-    </artifact>
-    <shortMessage>serialVersionUID isn't long</shortMessage>
+    <artifact tool="FindBugs" mnemonic="SE_NONLONG_SERIALVERSIONID"/>
+    <name>Non-long serialVersionUID field</name>
+    <shortMessage>serialVersionUID is not of type long, but it should be.</shortMessage>
     <info>
+<![CDATA[<p>This class defines a <code>serialVersionUID</code> field
+that is not long.</p>
 
-      &lt;p&gt; This class defines a
-      &lt;code&gt;serialVersionUID&lt;/code&gt; field that is not
-      long.&amp;nbsp; The field should be made long if it is
-      intended to specify the version UID for purposes of
-      serialization.&lt;/p&gt;
-
+<p>The field should be made long if it is intended to specify the
+version UID for purposes of serialization. If it is not intended for
+this purpose it should probably be renamed to avoid confusion.</p>]]>
     </info>
-    <name>Nonlong Serial Version Id</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SE_BAD_FIELD</id>
-    <artifact tool="FindBugs" mnemonic="SE_BAD_FIELD"></artifact>
-    <shortMessage>
-      Non-transient non-serializable instance field in
-      serializable class
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="SE_BAD_FIELD"/>
+    <name>Bad field in a serializable class</name>
+    <shortMessage>Non-transient, non-serializable instance field in a serializable class.  This class could fail at runtime.</shortMessage>
     <info>
+<![CDATA[<p>This <code>Serializable</code> class defines a
+non-primitive instance field which is neither <code>transient</code>,
+<code>Serializable</code>, or <code>java.lang.Object</code>, and does
+not appear to implement the <code>Externalizable</code> interface or
+the <code>readObject()</code> and <code>writeObject()</code>
+methods.</p>
 
-      &lt;p&gt; This Serializable class defines a non-primitive
-      instance field which is neither transient, Serializable, or
-      &lt;code&gt;java.lang.Object&lt;/code&gt;, and does not
-      appear to implement the
-      &lt;code&gt;Externalizable&lt;/code&gt; interface or the
-      &lt;code&gt;readObject()&lt;/code&gt; and
-      &lt;code&gt;writeObject()&lt;/code&gt; methods.&amp;nbsp;
-      Objects of this class will not be deserialized correctly if
-      a non-Serializable object is stored in this field.&lt;/p&gt;
-
+<p>Objects of this class will not be deserialized correctly if a
+non-Serializable object is stored in this field.  Consider fixing this
+implementation so that it can be statically checked.</p>]]>
     </info>
-    <name>Bad Field</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SE_BAD_FIELD_INNER_CLASS</id>
-    <artifact tool="FindBugs" mnemonic="SE_BAD_FIELD_INNER_CLASS">
-    </artifact>
-    <shortMessage>
-      Non-serializable class has a serializable inner class
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="SE_BAD_FIELD_INNER_CLASS"/>
+    <name>Serializable inner class inside a non-serializable class</name>
+    <shortMessage>Non-serializable class has a serializable inner class.  This class could fail at runtime.</shortMessage>
     <info>
+<![CDATA[<p>This Serializable class is an inner class of a
+non-serializable class. Thus, attempts to serialize it will also
+attempt to serialize the instance of the outer class with which it is
+associated, leading to a runtime error.</p>
 
-      &lt;p&gt; This Serializable class is an inner class of a
-      non-serializable class. Thus, attempts to serialize it will
-      also attempt to associate instance of the outer class with
-      which it is associated, leading to a runtime error.
-      &lt;/p&gt; &lt;p&gt;If possible, making the inner class a
-      static inner class should solve the problem. Making the
-      outer class serializable might also work, but that would
-      mean serializing an instance of the inner class would always
-      also serialize the instance of the outer class, which it
-      often not what you really want.
-
+<p>If possible, making the inner class a static inner class should
+solve the problem. Making the outer class serializable might also
+work, but that would mean serializing an instance of the inner class
+would always also serialize the instance of the outer class, which is
+often not what you really want.</p>]]>
     </info>
-    <name>Bad Field Inner Class</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SE_INNER_CLASS</id>
-    <artifact tool="FindBugs" mnemonic="SE_INNER_CLASS"></artifact>
-    <shortMessage>Serializable inner class</shortMessage>
+    <artifact tool="FindBugs" mnemonic="SE_INNER_CLASS"/>
+    <name>Serializable inner class</name>
+    <shortMessage>Serializable inner class will also serialize the associated outer instance.  Is this intended?</shortMessage>
     <info>
+<![CDATA[<p>This Serializable class is an inner class. Any attempt to
+serialize it will also serialize the associated outer instance. The
+outer instance is serializable, so this won't fail, but it might
+serialize a lot more data than intended.</p>
 
-      &lt;p&gt; This Serializable class is an inner class. Any
-      attempt to serialize it will also serialize the associated
-      outer instance. The outer instance is serializable, so this
-      won't fail, but it might serialize a lot more data than
-      intended. If possible, making the inner class a static inner
-      class (also known as a nested class) should solve the
-      problem.
-
+<p>If possible, declaring the inner class to be static might be what
+you want to do to avoid this issue.</p>]]>
     </info>
-    <name>Inner Class</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SE_BAD_FIELD_STORE</id>
-    <artifact tool="FindBugs" mnemonic="SE_BAD_FIELD_STORE">
-    </artifact>
-    <shortMessage>
-      Non-serializable value stored into instance field of a
-      serializable class
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="SE_BAD_FIELD_STORE"/>
+    <name>Non-serializable value stored into a serializable field</name>
+    <shortMessage>Non-serializable value stored into instance field of a serializable class.</shortMessage>
     <info>
-
-      &lt;p&gt; A non-serializable value is stored into a
-      non-transient field of a serializable class.&lt;/p&gt;
-
+<![CDATA[<p>A non-serializable value is stored into a non-transient
+field of a serializable class.  This may cause the class to fail at
+runtime when it is serialized.</p>]]>
     </info>
-    <name>Bad Field Store</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
-    <id>AvoidThreadStartInConstructor</id>
-    <artifact tool="FindBugs" mnemonic="SC_START_IN_CTOR">
-    </artifact>
-    <shortMessage>Constructor invokes Thread.start()</shortMessage>
+    <id>SC_START_IN_CTOR</id>
+    <artifact tool="FindBugs" mnemonic="SC_START_IN_CTOR"/>
+    <name>Thread start in constructor</name>
+    <shortMessage>This constructor invokes Thread.start() which is highly dubious.</shortMessage>
     <info>
+<![CDATA[<p>The constructor starts a thread. This is likely to be
+wrong if the class is ever extended/subclassed, since the thread will
+be started before the subclass constructor is started.  This practice
+can also cause subtle race conditions.</p>
 
-      &lt;p&gt; The constructor starts a thread. This is likely to
-      be wrong if the class is ever extended/subclassed, since the
-      thread will be started before the subclass constructor is
-      started.&lt;/p&gt;
-
+<p>Consider moving the thread start into a separate method, such as an
+<code>init</code> method.</p>]]>
     </info>
-    <name>Start In Constructor</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SS_SHOULD_BE_STATIC</id>
-    <artifact tool="FindBugs" mnemonic="SS_SHOULD_BE_STATIC">
-    </artifact>
-    <shortMessage>
-      Unread field: should this field be static?
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="SS_SHOULD_BE_STATIC"/>
+    <name>Should field be static</name>
+    <shortMessage>This field is initialized to a compile-time static value.  Should this field be static?</shortMessage>
     <info>
-
-      &lt;p&gt; This class contains an instance final field that
-      is initialized to a compile-time static value. Consider
-      making the field static.&lt;/p&gt;
-
+<![CDATA[<p>This class contains an instance final field that is
+initialized to a compile-time static value. Consider making the field
+static.</p>]]>
     </info>
-    <name>Should Be Static</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
-    <id>UnusedField</id>
-    <artifact tool="FindBugs" mnemonic="UUF_UNUSED_FIELD"></artifact>
-    <artifact tool="PMD" mnemonic="UnusedPrivateField"></artifact>
-    <shortMessage>Unused field</shortMessage>
+    <id>UUF_UNUSED_FIELD</id>
+    <artifact tool="FindBugs" mnemonic="UUF_UNUSED_FIELD"/>
+    <artifact tool="PMD" mnemonic="UnusedPrivateField"/>
+    <name>Unused field</name>
+    <shortMessage>This field is never used.</shortMessage>
     <info>
-
-      &lt;p&gt; This field is never used.&amp;nbsp; Consider
-      removing it from the class.&lt;/p&gt;
-
-      Detects when a private field is declared and/or assigned a
-      value, but not used.
+<![CDATA[<p>This field is never used. Consider removing it from the
+class.</p>]]>
     </info>
-    <name>Unused Field</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>URF_UNREAD_FIELD</id>
-    <artifact tool="FindBugs" mnemonic="URF_UNREAD_FIELD">
-    </artifact>
-    <shortMessage>Unread field</shortMessage>
+    <artifact tool="FindBugs" mnemonic="URF_UNREAD_FIELD"/>
+    <name>Unread field</name>
+    <shortMessage>This field is never read.</shortMessage>
     <info>
-
-      &lt;p&gt; This field is never read.&amp;nbsp; Consider
-      removing it from the class.&lt;/p&gt;
-
+<![CDATA[<p>This field is never read. Consider removing it from the
+class.</p>]]>
     </info>
-    <name>Unread Field</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>QF_QUESTIONABLE_FOR_LOOP</id>
-    <artifact tool="FindBugs" mnemonic="QF_QUESTIONABLE_FOR_LOOP">
-    </artifact>
-    <shortMessage>
-      Complicated, subtle or wrong increment in for-loop
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="QF_QUESTIONABLE_FOR_LOOP"/>
+    <name>Questionable for loop</name>
+    <shortMessage>Complicated, subtle or wrong increment in for loop.</shortMessage>
     <info>
-
-      &lt;p&gt;Are you sure this for loop is incrementing the
-      correct variable? It appears that another variable is being
-      initialized and checked by the for loop. &lt;/p&gt;
-
+<![CDATA[<p>Are you sure this for loop is incrementing the correct
+variable? It appears that another variable is being initialized and
+checked by the for loop.</p>]]>
     </info>
-    <name>Questionable For Loop</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UWF_NULL_FIELD</id>
     <artifact tool="FindBugs" mnemonic="UWF_NULL_FIELD"></artifact>
@@ -2928,6 +2781,7 @@ Java</i> (second edition) item 56.</p>]]>
     </info>
     <name>Inner Should Be Static Anon</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SIC_INNER_SHOULD_BE_STATIC_NEEDS_THIS</id>
     <artifact tool="FindBugs"
@@ -2969,6 +2823,7 @@ Java</i> (second edition) item 56.</p>]]>
     </info>
     <name>Not In Loop</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AwaitNotInLoop</id>
     <artifact tool="FindBugs" mnemonic="WA_AWAIT_NOT_IN_LOOP">
@@ -2986,6 +2841,7 @@ Java</i> (second edition) item 56.</p>]]>
     </info>
     <name>Await Not In Loop</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UseNotifyAllInsteadOfNotify</id>
     <artifact tool="FindBugs" mnemonic="NO_NOTIFY_NOT_NOTIFYALL">
@@ -3336,6 +3192,7 @@ Java</i> (second edition) item 56.</p>]]>
     </info>
     <name>Clone Could Return Null</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>NP_TOSTRING_COULD_RETURN_NULL</id>
     <artifact tool="FindBugs"
@@ -4022,6 +3879,7 @@ Java</i> (second edition) item 56.</p>]]>
     </info>
     <name>Absolute Value Of Random Int</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>RV_ABSOLUTE_VALUE_OF_HASHCODE</id>
     <artifact tool="FindBugs"
@@ -4243,6 +4101,7 @@ Java</i> (second edition) item 56.</p>]]>
     </info>
     <name>Incompatible Bit Masks OR</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>IncorrectLazyInitializationOfInstance</id>
     <artifact tool="FindBugs" mnemonic="LI_LAZY_INIT_INSTANCE">
@@ -4265,6 +4124,7 @@ Java</i> (second edition) item 56.</p>]]>
     </info>
     <name>Lazy Init Instance</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>IncorrectLazyInitializationOfStatic</id>
     <artifact tool="FindBugs" mnemonic="LI_LAZY_INIT_STATIC">
@@ -4287,6 +4147,7 @@ Java</i> (second edition) item 56.</p>]]>
     </info>
     <name>Incorrect Lazy Initialization of Static Field</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AvoidCallingSynchronizedOnLock</id>
     <artifact tool="FindBugs"
@@ -4307,6 +4168,7 @@ Java</i> (second edition) item 56.</p>]]>
     </info>
     <name>JSR166 Lock Monitor Enter</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UPM_UNCALLED_PRIVATE_METHOD</id>
     <artifact tool="FindBugs"
@@ -4323,6 +4185,7 @@ Java</i> (second edition) item 56.</p>]]>
     </info>
     <name>Uncalled Private Method</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UMAC_UNCALLABLE_METHOD_OF_ANONYMOUS_CLASS</id>
     <artifact tool="FindBugs"
@@ -4346,6 +4209,7 @@ Java</i> (second edition) item 56.</p>]]>
     </info>
     <name>Uncallable Method Of Anonymous Class</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>ODR_OPEN_DATABASE_RESOURCE</id>
     <artifact tool="FindBugs"
@@ -4368,6 +4232,7 @@ Java</i> (second edition) item 56.</p>]]>
     </info>
     <name>Open Database Resource</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>ODR_OPEN_DATABASE_RESOURCE_EXCEPTION_PATH</id>
     <artifact tool="FindBugs"
@@ -4390,6 +4255,7 @@ Java</i> (second edition) item 56.</p>]]>
     </info>
     <name>Open Database Resource Exception Path</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UseStringBufferForStringAppends</id>
     <artifact tool="FindBugs"
@@ -4429,6 +4295,7 @@ Java</i> (second edition) item 56.</p>]]>
     </info>
     <name>Use StringBuffer For String Appends</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>ITA_INEFFICIENT_TO_ARRAY</id>
     <artifact tool="FindBugs" mnemonic="ITA_INEFFICIENT_TO_ARRAY">
@@ -4451,6 +4318,7 @@ Java</i> (second edition) item 56.</p>]]>
     </info>
     <name>Inefficient To Array</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>IJU_ASSERT_METHOD_INVOKED_FROM_RUN_METHOD</id>
     <artifact tool="FindBugs"
@@ -4471,6 +4339,7 @@ Java</i> (second edition) item 56.</p>]]>
     </info>
     <name>Assert Method Invoked From Run Method</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>IJU_SETUP_NO_SUPER</id>
     <artifact tool="FindBugs" mnemonic="IJU_SETUP_NO_SUPER">
@@ -4487,6 +4356,7 @@ Java</i> (second edition) item 56.</p>]]>
     </info>
     <name>Setup No Super</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>IJU_TEARDOWN_NO_SUPER</id>
     <artifact tool="FindBugs" mnemonic="IJU_TEARDOWN_NO_SUPER">
@@ -4504,6 +4374,7 @@ Java</i> (second edition) item 56.</p>]]>
     </info>
     <name>Teardown No Super</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>IJU_SUITE_NOT_STATIC</id>
     <artifact tool="FindBugs" mnemonic="IJU_SUITE_NOT_STATIC">
@@ -4520,6 +4391,7 @@ Java</i> (second edition) item 56.</p>]]>
     </info>
     <name>Suite Not Static</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>IJU_BAD_SUITE_METHOD</id>
     <artifact tool="FindBugs" mnemonic="IJU_BAD_SUITE_METHOD">
@@ -4538,6 +4410,7 @@ Java</i> (second edition) item 56.</p>]]>
     </info>
     <name>Bad Suite Method</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>IJU_NO_TESTS</id>
     <artifact tool="FindBugs" mnemonic="IJU_NO_TESTS"></artifact>
@@ -4550,6 +4423,7 @@ Java</i> (second edition) item 56.</p>]]>
     </info>
     <name>No Tests</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>BOA_BADLY_OVERRIDDEN_ADAPTER</id>
     <artifact tool="FindBugs"
@@ -4570,6 +4444,7 @@ Java</i> (second edition) item 56.</p>]]>
     </info>
     <name>Badly Overridden Adapter</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>BRSA_BAD_RESULTSET_ACCESS</id>
     <artifact tool="FindBugs"
@@ -4587,6 +4462,7 @@ Java</i> (second edition) item 56.</p>]]>
     </info>
     <name>Bad Resultset Access</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SQL_BAD_RESULTSET_ACCESS</id>
     <artifact tool="FindBugs" mnemonic="SQL_BAD_RESULTSET_ACCESS">
@@ -4603,6 +4479,7 @@ Java</i> (second edition) item 56.</p>]]>
     </info>
     <name>Bad Resultset Access</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SQL_BAD_PREPARED_STATEMENT_ACCESS</id>
     <artifact tool="FindBugs"
@@ -4622,6 +4499,7 @@ Java</i> (second edition) item 56.</p>]]>
     </info>
     <name>Bad Prepared Statement Access</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SIO_SUPERFLUOUS_INSTANCEOF</id>
     <artifact tool="FindBugs"
@@ -4639,6 +4517,7 @@ Java</i> (second edition) item 56.</p>]]>
     </info>
     <name>Superfluous instanceof</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>BAC_BAD_APPLET_CONSTRUCTOR</id>
     <artifact tool="FindBugs"
@@ -4657,6 +4536,7 @@ Java</i> (second edition) item 56.</p>]]>
     </info>
     <name>Bad Applet Constructor</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>EC_ARRAY_AND_NONARRAY</id>
     <artifact tool="FindBugs" mnemonic="EC_ARRAY_AND_NONARRAY">
@@ -4678,6 +4558,7 @@ Java</i> (second edition) item 56.</p>]]>
     </info>
     <name>Array And Nonarray</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>EC_BAD_ARRAY_COMPARE</id>
     <artifact tool="FindBugs" mnemonic="EC_BAD_ARRAY_COMPARE">
@@ -4698,6 +4579,7 @@ Java</i> (second edition) item 56.</p>]]>
     </info>
     <name>Bad Array Compare</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UOE_USE_OBJECT_EQUALS</id>
     <artifact tool="FindBugs" mnemonic="UOE_USE_OBJECT_EQUALS">
@@ -4724,6 +4606,7 @@ Java</i> (second edition) item 56.</p>]]>
     </info>
     <name>Use Object Equals</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>STI_INTERRUPTED_ON_CURRENTTHREAD</id>
     <artifact tool="FindBugs"
@@ -4742,6 +4625,7 @@ Java</i> (second edition) item 56.</p>]]>
     </info>
     <name>Interrupted On Currentthread</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>STI_INTERRUPTED_ON_UNKNOWNTHREAD</id>
     <artifact tool="FindBugs"
@@ -4763,6 +4647,7 @@ Java</i> (second edition) item 56.</p>]]>
     </info>
     <name>Interrupted On Unknown Thread</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>IP_PARAMETER_IS_DEAD_BUT_OVERWRITTEN</id>
     <artifact tool="FindBugs"
@@ -4781,6 +4666,7 @@ Java</i> (second edition) item 56.</p>]]>
     </info>
     <name>Parameter Is Dead But Overwritten</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>DLS_DEAD_LOCAL_STORE</id>
     <artifact tool="FindBugs" mnemonic="DLS_DEAD_LOCAL_STORE">
@@ -4800,6 +4686,7 @@ Java</i> (second edition) item 56.</p>]]>
     </info>
     <name>Dead Local Store</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>DLS_DEAD_LOCAL_STORE_OF_NULL</id>
     <artifact tool="FindBugs"
@@ -4818,6 +4705,7 @@ Java</i> (second edition) item 56.</p>]]>
     </info>
     <name>Dead Local Store Of Null</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>MF_METHOD_MASKS_FIELD</id>
     <artifact tool="FindBugs" mnemonic="MF_METHOD_MASKS_FIELD">
@@ -4835,6 +4723,7 @@ Java</i> (second edition) item 56.</p>]]>
     </info>
     <name>Method Masks Field</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>MF_CLASS_MASKS_FIELD</id>
     <artifact tool="FindBugs" mnemonic="MF_CLASS_MASKS_FIELD">
@@ -4852,6 +4741,7 @@ Java</i> (second edition) item 56.</p>]]>
     </info>
     <name>Class Masks Field</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>WMI_WRONG_MAP_ITERATOR</id>
     <artifact tool="FindBugs" mnemonic="WMI_WRONG_MAP_ITERATOR">
@@ -4870,6 +4760,7 @@ Java</i> (second edition) item 56.</p>]]>
     </info>
     <name>Wrong Map Iterator</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>ISC_INSTANTIATE_STATIC_CLASS</id>
     <artifact tool="FindBugs"
@@ -4889,6 +4780,7 @@ Java</i> (second edition) item 56.</p>]]>
     </info>
     <name>Instantiate Static Class</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>REC_CATCH_EXCEPTION</id>
     <artifact tool="FindBugs" mnemonic="REC_CATCH_EXCEPTION">
@@ -4910,6 +4802,7 @@ Java</i> (second edition) item 56.</p>]]>
     </info>
     <name>Catch Exception</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>FE_TEST_IF_EQUAL_TO_NOT_A_NUMBER</id>
     <artifact tool="FindBugs"
@@ -4937,6 +4830,7 @@ Java</i> (second edition) item 56.</p>]]>
     </info>
     <name>Test If Equal To Not A Number</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>FE_FLOATING_POINT_EQUALITY</id>
     <artifact tool="FindBugs"
@@ -4959,6 +4853,7 @@ Java</i> (second edition) item 56.</p>]]>
     </info>
     <name>Floating Point Equality</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UM_UNNECESSARY_MATH</id>
     <artifact tool="FindBugs" mnemonic="UM_UNNECESSARY_MATH">
@@ -5014,6 +4909,7 @@ Java</i> (second edition) item 56.</p>]]>
     </info>
     <name>Unnecessary Math</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>CD_CIRCULAR_DEPENDENCY</id>
     <artifact tool="FindBugs" mnemonic="CD_CIRCULAR_DEPENDENCY">
@@ -5031,6 +4927,7 @@ Java</i> (second edition) item 56.</p>]]>
     </info>
     <name>Circular Dependency</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>RI_REDUNDANT_INTERFACES</id>
     <artifact tool="FindBugs" mnemonic="RI_REDUNDANT_INTERFACES">
@@ -5052,6 +4949,7 @@ Java</i> (second edition) item 56.</p>]]>
     </info>
     <name>Redundant Interfaces</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>MTIA_SUSPECT_STRUTS_INSTANCE_FIELD</id>
     <artifact tool="FindBugs"
@@ -5073,6 +4971,7 @@ Java</i> (second edition) item 56.</p>]]>
     </info>
     <name>Suspect Struts Instance Field</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>MTIA_SUSPECT_SERVLET_INSTANCE_FIELD</id>
     <artifact tool="FindBugs"
@@ -5093,6 +4992,7 @@ Java</i> (second edition) item 56.</p>]]>
     </info>
     <name>Suspect Servlet Instance Field</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>PS_PUBLIC_SEMAPHORES</id>
     <artifact tool="FindBugs" mnemonic="PS_PUBLIC_SEMAPHORES">
@@ -5116,6 +5016,7 @@ Java</i> (second edition) item 56.</p>]]>
     </info>
     <name>Public Semaphores</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>ICAST_INTEGER_MULTIPLY_CAST_TO_LONG</id>
     <artifact tool="FindBugs"
@@ -5144,6 +5045,7 @@ Java</i> (second edition) item 56.</p>]]>
     </info>
     <name>Integer Multiply Cast To Long</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>ICAST_INT_CAST_TO_FLOAT_PASSED_TO_ROUND</id>
     <artifact tool="FindBugs"
@@ -5168,6 +5070,7 @@ Java</i> (second edition) item 56.</p>]]>
     </info>
     <name>Int Cast To Float Passed To Round</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>ICAST_INT_CAST_TO_DOUBLE_PASSED_TO_CEIL</id>
     <artifact tool="FindBugs"
@@ -5192,6 +5095,7 @@ Java</i> (second edition) item 56.</p>]]>
     </info>
     <name>Int Cast To Double Passed To Math.ceil</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>ICAST_IDIV_CAST_TO_DOUBLE</id>
     <artifact tool="FindBugs"
@@ -5219,6 +5123,7 @@ Java</i> (second edition) item 56.</p>]]>
     </info>
     <name>Idiv Cast To Double</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>J2EE_STORE_OF_NON_SERIALIZABLE_OBJECT_INTO_SESSION</id>
     <artifact tool="FindBugs"
@@ -5236,6 +5141,7 @@ Java</i> (second edition) item 56.</p>]]>
     </info>
     <name>Store Of Non Serializable Object Into Session</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>DMI_NONSERIALIZABLE_OBJECT_WRITTEN</id>
     <artifact tool="FindBugs"
@@ -5254,6 +5160,7 @@ Java</i> (second edition) item 56.</p>]]>
     </info>
     <name>Nonserializable Object Written</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>VA_PRIMITIVE_ARRAY_PASSED_TO_OBJECT_VARARG</id>
     <artifact tool="FindBugs"
@@ -5273,6 +5180,7 @@ Java</i> (second edition) item 56.</p>]]>
     </info>
     <name>Primitive Array Passed To Object Vararg</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>BC_EQUALS_METHOD_SHOULD_WORK_FOR_ALL_OBJECTS</id>
     <artifact tool="FindBugs"
@@ -5293,6 +5201,7 @@ Java</i> (second edition) item 56.</p>]]>
     </info>
     <name>Equals Method Should Work For All Objects</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>BC_BAD_CAST_TO_ABSTRACT_COLLECTION</id>
     <artifact tool="FindBugs"
@@ -5315,6 +5224,7 @@ Java</i> (second edition) item 56.</p>]]>
     </info>
     <name>Bad Cast To Abstract Collection</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>BC_IMPOSSIBLE_CAST_PRIMITIVE_ARRAY</id>
     <artifact tool="FindBugs"
@@ -5331,6 +5241,7 @@ Java</i> (second edition) item 56.</p>]]>
     </info>
     <name>Impossible Cast Primitive Array</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>BC_IMPOSSIBLE_CAST</id>
     <artifact tool="FindBugs" mnemonic="BC_IMPOSSIBLE_CAST">
@@ -5344,6 +5255,7 @@ Java</i> (second edition) item 56.</p>]]>
     </info>
     <name>Impossible Cast</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>NP_NULL_INSTANCEOF</id>
     <artifact tool="FindBugs" mnemonic="NP_NULL_INSTANCEOF">
@@ -5362,6 +5274,7 @@ Java</i> (second edition) item 56.</p>]]>
     </info>
     <name>Null instanceof</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>BC_NULL_INSTANCEOF</id>
     <artifact tool="FindBugs" mnemonic="BC_NULL_INSTANCEOF">
@@ -5380,6 +5293,7 @@ Java</i> (second edition) item 56.</p>]]>
     </info>
     <name>Null instanceof</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>BC_IMPOSSIBLE_INSTANCEOF</id>
     <artifact tool="FindBugs" mnemonic="BC_IMPOSSIBLE_INSTANCEOF">
@@ -5408,6 +5322,7 @@ Java</i> (second edition) item 56.</p>]]>
     </info>
     <name>Vacuous instanceof</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>BC_UNCONFIRMED_CAST</id>
     <artifact tool="FindBugs" mnemonic="BC_UNCONFIRMED_CAST">
@@ -5423,6 +5338,7 @@ Java</i> (second edition) item 56.</p>]]>
     </info>
     <name>Unconfirmed Cast</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>BC_BAD_CAST_TO_CONCRETE_COLLECTION</id>
     <artifact tool="FindBugs"
@@ -5444,6 +5360,7 @@ Java</i> (second edition) item 56.</p>]]>
     </info>
     <name>Bad Cast To Concrete Collection</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>RE_POSSIBLE_UNINTENDED_PATTERN</id>
     <artifact tool="FindBugs"
@@ -5465,6 +5382,7 @@ Java</i> (second edition) item 56.</p>]]>
     </info>
     <name>Possible Unintended Pattern</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>RE_BAD_SYNTAX_FOR_REGULAR_EXPRESSION</id>
     <artifact tool="FindBugs"
@@ -5483,6 +5401,7 @@ Java</i> (second edition) item 56.</p>]]>
     </info>
     <name>Bad Syntax For Regular Expression</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>RE_CANT_USE_FILE_SEPARATOR_AS_REGULAR_EXPRESSION</id>
     <artifact tool="FindBugs"
@@ -5508,6 +5427,7 @@ Java</i> (second edition) item 56.</p>]]>
     </info>
     <name>Cant Use File Separator As Regular Expression</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>DLS_OVERWRITTEN_INCREMENT</id>
     <artifact tool="FindBugs"
@@ -5525,6 +5445,7 @@ Java</i> (second edition) item 56.</p>]]>
     </info>
     <name>Overwritten Increment</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>ICAST_QUESTIONABLE_UNSIGNED_RIGHT_SHIFT</id>
     <artifact tool="FindBugs"
@@ -5545,6 +5466,7 @@ Java</i> (second edition) item 56.</p>]]>
     </info>
     <name>Questionable Unsigned Right Shift</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>ICAST_BAD_SHIFT_AMOUNT</id>
     <artifact tool="FindBugs" mnemonic="ICAST_BAD_SHIFT_AMOUNT">
@@ -5563,6 +5485,7 @@ Java</i> (second edition) item 56.</p>]]>
     </info>
     <name>Bad Shift Amount</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>IM_MULTIPLYING_RESULT_OF_IREM</id>
     <artifact tool="FindBugs"
@@ -5581,6 +5504,7 @@ Java</i> (second edition) item 56.</p>]]>
     </info>
     <name>Multiplying Result Of Int Remainder</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>DMI_INVOKING_TOSTRING_ON_ARRAY</id>
     <artifact tool="FindBugs"
@@ -5598,6 +5522,7 @@ Java</i> (second edition) item 56.</p>]]>
     </info>
     <name>Invoking toString On Array</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>IM_AVERAGE_COMPUTATION_COULD_OVERFLOW</id>
     <artifact tool="FindBugs"
@@ -5629,6 +5554,7 @@ Java</i> (second edition) item 56.</p>]]>
     </info>
     <name>Average Computation Could Overflow</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>IM_BAD_CHECK_FOR_ODD</id>
     <artifact tool="FindBugs" mnemonic="IM_BAD_CHECK_FOR_ODD">
@@ -5647,6 +5573,7 @@ Java</i> (second edition) item 56.</p>]]>
     </info>
     <name>Bad Check For Odd</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>DMI_HARDCODED_ABSOLUTE_FILENAME</id>
     <artifact tool="FindBugs"
@@ -5665,6 +5592,7 @@ Java</i> (second edition) item 56.</p>]]>
     </info>
     <name>Hardcoded Absolute Filename</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>DMI_BAD_MONTH</id>
     <artifact tool="FindBugs" mnemonic="DMI_BAD_MONTH"></artifact>
@@ -5677,6 +5605,7 @@ Java</i> (second edition) item 56.</p>]]>
     </info>
     <name>Bad Month</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>DMI_USELESS_SUBSTRING</id>
     <artifact tool="FindBugs" mnemonic="DMI_USELESS_SUBSTRING">
@@ -5692,6 +5621,7 @@ Java</i> (second edition) item 56.</p>]]>
     </info>
     <name>Useless Substring</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>DMI_CALLING_NEXT_FROM_HASNEXT</id>
     <artifact tool="FindBugs"
@@ -5709,6 +5639,7 @@ Java</i> (second edition) item 56.</p>]]>
     </info>
     <name>Calling Next From hasNext</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AvoidCallingSleepWithLockHeld</id>
     <artifact tool="FindBugs" mnemonic="SWL_SLEEP_WITH_LOCK_HELD">
@@ -5728,6 +5659,7 @@ Java</i> (second edition) item 56.</p>]]>
     </info>
     <name>Sleep With Lock Held</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>DB_DUPLICATE_BRANCHES</id>
     <artifact tool="FindBugs" mnemonic="DB_DUPLICATE_BRANCHES">
@@ -5744,6 +5676,7 @@ Java</i> (second edition) item 56.</p>]]>
     </info>
     <name>Duplicate Branches</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>DB_DUPLICATE_SWITCH_CLAUSES</id>
     <artifact tool="FindBugs"
@@ -5762,6 +5695,7 @@ Java</i> (second edition) item 56.</p>]]>
     </info>
     <name>Duplicate Switch Clauses</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>IMA_INEFFICIENT_MEMBER_ACCESS</id>
     <artifact tool="FindBugs"
@@ -5783,6 +5717,7 @@ Java</i> (second edition) item 56.</p>]]>
     </info>
     <name>Inefficient Member Access</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>XFB_XML_FACTORY_BYPASS</id>
     <artifact tool="FindBugs" mnemonic="XFB_XML_FACTORY_BYPASS">
@@ -5807,6 +5742,7 @@ Java</i> (second edition) item 56.</p>]]>
     </info>
     <name>XML Factory Bypass</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>USM_USELESS_SUBCLASS_METHOD</id>
     <artifact tool="FindBugs"
@@ -5825,6 +5761,7 @@ Java</i> (second edition) item 56.</p>]]>
     </info>
     <name>Useless Subclass Method</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>USM_USELESS_ABSTRACT_METHOD</id>
     <artifact tool="FindBugs"
@@ -5843,6 +5780,7 @@ Java</i> (second edition) item 56.</p>]]>
     </info>
     <name>Useless Abstract Method</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>CI_CONFUSED_INHERITANCE</id>
     <artifact tool="FindBugs" mnemonic="CI_CONFUSED_INHERITANCE">
@@ -5862,6 +5800,7 @@ Java</i> (second edition) item 56.</p>]]>
     </info>
     <name>Confused Inheritance</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>QBA_QUESTIONABLE_BOOLEAN_ASSIGNMENT</id>
     <artifact tool="FindBugs"
@@ -5880,6 +5819,7 @@ Java</i> (second edition) item 56.</p>]]>
     </info>
     <name>Questionable Boolean Assignment</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>VR_UNRESOLVABLE_REFERENCE</id>
     <artifact tool="FindBugs"
@@ -5897,6 +5837,7 @@ Java</i> (second edition) item 56.</p>]]>
     </info>
     <name>Unresolvable Reference</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>GC_UNRELATED_TYPES</id>
     <artifact tool="FindBugs" mnemonic="GC_UNRELATED_TYPES">
@@ -5916,6 +5857,7 @@ Java</i> (second edition) item 56.</p>]]>
     </info>
     <name>Unrelated Types</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AvoidStaticCalendar</id>
     <artifact tool="FindBugs"
@@ -5945,6 +5887,7 @@ Java</i> (second edition) item 56.</p>]]>
     </info>
     <name>Static Calendar Instance</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>CallToStaticCalendar</id>
     <artifact tool="FindBugs"
@@ -5967,7 +5910,7 @@ Java</i> (second edition) item 56.</p>]]>
     </info>
     <name>Invoke On Static Calendar Instance</name>
   </findingType>
-
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>STCAL_STATIC_SIMPLE_DATE_FORMAT_INSTANCE</id>
     <artifact tool="FindBugs"
@@ -5992,7 +5935,7 @@ href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6178997">Sun
 Bug #6178997</a>.</p>]]>
     </info>
   </findingType>
-
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>CallToStaticDateFormat</id>
     <artifact tool="FindBugs"
@@ -6014,7 +5957,7 @@ Bug #6178997</a>.</p>]]>
     </info>
     <name>Invoke On Static Date Format Instance</name>
   </findingType>
-
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <!-- FindBugs 1.3.0 Upgrade -->
   <findingType>
     <id>DoesntOverrideEquals</id>
@@ -6039,6 +5982,7 @@ Bug #6178997</a>.</p>]]>
     </info>
     <name>Doesn't Override Equals</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SameSimpleNameAsInterface</id>
     <artifact tool="FindBugs"
@@ -6064,6 +6008,7 @@ Bug #6178997</a>.</p>]]>
     </info>
     <name>Same Simple Name As Interface</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SameSimpleNameAsSuperclass</id>
     <artifact tool="FindBugs"
@@ -6087,6 +6032,7 @@ Bug #6178997</a>.</p>]]>
     </info>
     <name>Same Simple Name As Superclass</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>WrongPackage</id>
     <artifact tool="FindBugs" mnemonic="NM_WRONG_PACKAGE">
@@ -6118,7 +6064,8 @@ Bug #6178997</a>.</p>]]>
     </info>
     <name>Wrong Package</name>
   </findingType>
-  <findingType>
+   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+ <findingType>
     <id>WrongPackageIntentional</id>
     <artifact tool="FindBugs"
 	      mnemonic="NM_WRONG_PACKAGE_INTENTIONAL">
@@ -6158,6 +6105,7 @@ Bug #6178997</a>.</p>]]>
     </info>
     <name>Wrong Package Intentional</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>ReturnValueIgnoredBadPractice</id>
     <artifact tool="FindBugs"
@@ -6177,6 +6125,7 @@ Bug #6178997</a>.</p>]]>
     </info>
     <name>Return Value Ignored Bad Practice</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>ExceptionNotThrown</id>
     <artifact tool="FindBugs" mnemonic="RV_EXCEPTION_NOT_THROWN">
@@ -6199,6 +6148,7 @@ Bug #6178997</a>.</p>]]>
     </info>
     <name>Exception Not Thrown</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UnrelatedTypesUsingPointerEquality</id>
     <artifact tool="FindBugs"
@@ -6217,6 +6167,7 @@ Bug #6178997</a>.</p>]]>
     </info>
     <name>Unrelated Types Using Pointer Equality</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>BitSignedCheck</id>
     <artifact tool="FindBugs" mnemonic="BIT_SIGNED_CHECK">
@@ -6237,6 +6188,7 @@ Bug #6178997</a>.</p>]]>
     </info>
     <name>Signed Check</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>BitSignedCheckHighBit</id>
     <artifact tool="FindBugs"
@@ -6258,6 +6210,7 @@ Bug #6178997</a>.</p>]]>
     </info>
     <name>Signed Check High Bit</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>LazyInitUpdateStatic</id>
     <artifact tool="FindBugs"
@@ -6281,6 +6234,7 @@ Bug #6178997</a>.</p>]]>
     </info>
     <name>Lazy Init Update Static</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>DeadStoreOfClassLiteral</id>
     <artifact tool="FindBugs"
@@ -6306,6 +6260,7 @@ Bug #6178997</a>.</p>]]>
     </info>
     <name>Dead Store Of Class Literal</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AlwaysValueUsedWhereNeverRequired</id>
     <artifact tool="FindBugs"
@@ -6338,6 +6293,7 @@ Bug #6178997</a>.</p>]]>
     </info>
     <name>Always Value Used Where Never Required</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>NeverValueUsedWhereAlwaysRequired</id>
     <artifact tool="FindBugs"
@@ -6364,6 +6320,7 @@ Bug #6178997</a>.</p>]]>
     </info>
     <name>Never Value Used Where Always Required</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>MaybeSourceValueReachesAlwaysSink</id>
     <artifact tool="FindBugs"
@@ -6391,6 +6348,7 @@ Bug #6178997</a>.</p>]]>
     </info>
     <name>Maybe Source Value Reaches Always Sink</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>MaybeSourceValueReachesNeverSink</id>
     <artifact tool="FindBugs"
@@ -6411,6 +6369,7 @@ Bug #6178997</a>.</p>]]>
     </info>
     <name>Maybe Source Value Reaches Never Sink</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
 
   <!-- For FB 1.3.1 -->
   <findingType>
@@ -6430,6 +6389,7 @@ Bug #6178997</a>.</p>]]>
     </info>
     <name>Boolean-typed Method Returns Null</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AppendingToObjectOutputStream</id>
     <artifact tool="FindBugs"
@@ -6451,6 +6411,7 @@ Bug #6178997</a>.</p>]]>
     </info>
     <name>Appending To ObjectOutputStream</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>FormatStringArgsMismatch</id>
     <artifact tool="FindBugs"
@@ -6469,6 +6430,7 @@ Bug #6178997</a>.</p>]]>
     </info>
     <name>Mismatch Of Number Of Args For Format String</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>InvokingToStringOnArray</id>
     <artifact tool="FindBugs"
@@ -6487,7 +6449,7 @@ Bug #6178997</a>.</p>]]>
     </info>
     <name>Invocation Of toString() On Array</name>
   </findingType>
-  
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <!-- For FB 1.3.2 -->
   <findingType>
     <id>HttpParameterWrittenToServlet</id>
@@ -6506,6 +6468,7 @@ Bug #6178997</a>.</p>]]>
     </info>
     <name>Servlet cross site scripting vulnerability</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>HttpParameterWrittenToJSP</id>
     <artifact tool="FindBugs"
@@ -6523,6 +6486,7 @@ Bug #6178997</a>.</p>]]>
     </info>
     <name>JSP cross site scripting vulnerability</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>EqualsDoesntOverride</id>
     <artifact tool="FindBugs"
@@ -6542,6 +6506,7 @@ Bug #6178997</a>.</p>]]>
     </info>
     <name>equals() doesn't override Object.equals(Object)</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>EqualsDoesntOverrideInherited</id>
     <artifact tool="FindBugs"
@@ -6562,6 +6527,7 @@ Bug #6178997</a>.</p>]]>
     </info>
     <name>equals() doesn't override inherited equals(Object)</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>NP_NULL_ON_SOME_PATH_MIGHT_BE_INFEASIBLE</id>
     <artifact tool="FindBugs"
@@ -6582,7 +6548,7 @@ Bug #6178997</a>.</p>]]>
     </info>
     <name>Possible null dereference on potentially infeasible path</name>
   </findingType>	
-
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <!-- For FB 1.3.3 -->
   <findingType>
     <id>HRS_REQUEST_PARAMETER_TO_HTTP_HEADER</id>
@@ -6601,6 +6567,7 @@ Bug #6178997</a>.</p>]]>
     </info>
     <name>HTTP Response splitting vulnerability</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>HRS_REQUEST_PARAMETER_TO_COOKIE</id>
     <artifact tool="FindBugs"
@@ -6621,6 +6588,7 @@ Bug #6178997</a>.</p>]]>
     </info>
     <name>HTTP cookie formed from untrusted input</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>CN_IMPLEMENTS_CLONE_BUT_NOT_CLONEABLE</id>
     <artifact tool="FindBugs"
@@ -6638,6 +6606,7 @@ Bug #6178997</a>.</p>]]>
     </info>
     <name>Class defines clone() but doesn't implement Cloneable</name>
   </findingType>	
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>DMI_CONSTANT_DB_PASSWORD</id>
     <artifact tool="FindBugs"
@@ -6655,6 +6624,7 @@ Bug #6178997</a>.</p>]]>
     </info>
     <name>Hardcoded constant database password</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>DMI_EMPTY_DB_PASSWORD</id>
     <artifact tool="FindBugs"
@@ -6671,6 +6641,7 @@ Bug #6178997</a>.</p>]]>
     </info>
     <name>Empty database password</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>DL_SYNCHRONIZATION_ON_BOOLEAN</id>
     <artifact tool="FindBugs"
@@ -6699,6 +6670,7 @@ Bug #6178997</a>.</p>]]>
     </info>
     <name>Synchronization on Boolean could lead to deadlock</name>
   </findingType>	
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>DL_SYNCHRONIZATION_ON_BOXED_PRIMITIVE</id>
     <artifact tool="FindBugs"
@@ -6726,6 +6698,7 @@ Bug #6178997</a>.</p>]]>
     </info>
     <name>Synchronization on boxed primitive value could lead to deadlock</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>DL_SYNCHRONIZATION_ON_UNSHARED_BOXED_PRIMITIVE</id>
     <artifact tool="FindBugs"
@@ -6759,6 +6732,7 @@ Bug #6178997</a>.</p>]]>
     </info>
     <name>Synchronization on boxed primitive values</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>WL_USING_GETCLASS_RATHER_THAN_CLASS_LITERAL</id>
     <artifact tool="FindBugs"
@@ -6800,6 +6774,7 @@ Bug #6178997</a>.</p>]]>
     </info>
     <name>Synchronization on getClass rather than class literal</name>
   </findingType>	
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>ML_SYNC_ON_FIELD_TO_GUARD_CHANGING_THAT_FIELD</id>
     <artifact tool="FindBugs"
@@ -6832,6 +6807,7 @@ Bug #6178997</a>.</p>]]>
     </info>
     <name>Synchronization on field in futile attempt to guard that field</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>DLS_DEAD_LOCAL_STORE_IN_RETURN</id>
     <artifact tool="FindBugs"
@@ -6849,7 +6825,7 @@ Bug #6178997</a>.</p>]]>
     </info>
     <name>Useless assignment in return statement</name>
   </findingType>
-
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <!-- For FB 1.3.4 -->
   <findingType>
     <id>XSS_REQUEST_PARAMETER_TO_SEND_ERROR</id>
@@ -6871,6 +6847,7 @@ Bug #6178997</a>.</p>]]>
     </info>
     <name>Servlet reflected cross site scripting vulnerability</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SKIPPED_CLASS_TOO_BIG</id>
     <artifact tool="FindBugs"
@@ -6886,6 +6863,7 @@ Bug #6178997</a>.</p>]]>
     </info>
     <name>Class too big for analysis</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>EQ_COMPARING_CLASS_NAMES</id>
     <artifact tool="FindBugs"
@@ -6903,6 +6881,7 @@ Bug #6178997</a>.</p>]]>
     </info>
     <name>Comparing Class Names</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>EQ_UNUSUAL</id>
     <artifact tool="FindBugs"
@@ -6920,6 +6899,7 @@ Bug #6178997</a>.</p>]]>
     </info>
     <name>Unusual equals() method</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>EQ_GETCLASS_AND_CLASS_CONSTANT</id>
     <artifact tool="FindBugs"
@@ -6938,6 +6918,7 @@ Bug #6178997</a>.</p>]]>
     </info>
     <name>equals() fails for subtypes</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>EQ_ALWAYS_TRUE</id>
     <artifact tool="FindBugs"
@@ -6954,6 +6935,7 @@ Bug #6178997</a>.</p>]]>
     </info>
     <name>equals() always returns true</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>EQ_ALWAYS_FALSE</id>
     <artifact tool="FindBugs"
@@ -6978,6 +6960,7 @@ Bug #6178997</a>.</p>]]>
     </info>
     <name>equals() always returns false</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>MSF_MUTABLE_SERVLET_FIELD</id>
     <artifact tool="FindBugs"
@@ -6996,6 +6979,7 @@ Bug #6178997</a>.</p>]]>
     </info>
     <name>Mutable servlet field</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SE_READ_RESOLVE_IS_STATIC</id>
     <artifact tool="FindBugs"
@@ -7012,6 +6996,7 @@ Bug #6178997</a>.</p>]]>
     </info>
     <name>Static readResolve() method</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SE_PRIVATE_READ_RESOLVE_NOT_INHERITED</id>
     <artifact tool="FindBugs"
@@ -7029,6 +7014,7 @@ Bug #6178997</a>.</p>]]>
     </info>
     <name>Private readResolve() not inherited</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>RpC_REPEATED_CONDITIONAL_TEST</id>
     <artifact tool="FindBugs"	mnemonic="RpC_REPEATED_CONDITIONAL_TEST"/>
@@ -7061,6 +7047,7 @@ Bug #6178997</a>.</p>]]>
     </info>
     <name>Futile attempt to change max pool size of ScheduledThreadPoolExecutor</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>DMI_SCHEDULED_THREAD_POOL_EXECUTOR_WITH_ZERO_CORE_THREADS</id>
     <artifact tool="FindBugs"	mnemonic="DMI_SCHEDULED_THREAD_POOL_EXECUTOR_WITH_ZERO_CORE_THREADS"/>
@@ -7077,6 +7064,7 @@ Bug #6178997</a>.</p>]]>
     </info>
     <name>Creation of ScheduledThreadPoolExecutor with zero core threads</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>DMI_UNSUPPORTED_METHOD</id>
     <artifact tool="FindBugs"	mnemonic="DMI_UNSUPPORTED_METHOD"/>
@@ -7092,6 +7080,7 @@ Bug #6178997</a>.</p>]]>
     </info>
     <name>Call to unsupported method</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>NP_DEREFERENCE_OF_READLINE_VALUE</id>
     <artifact tool="FindBugs"	mnemonic="NP_DEREFERENCE_OF_READLINE_VALUE"/>
@@ -7107,6 +7096,7 @@ to read, readLine() will return null and dereferencing that will generate a null
     </info>
     <name>Dereference of the result of readLine() without nullcheck</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>EQ_CHECK_FOR_OPERAND_NOT_COMPATIBLE_WITH_THIS</id>
     <artifact tool="FindBugs"	mnemonic="EQ_CHECK_FOR_OPERAND_NOT_COMPATIBLE_WITH_THIS"/>
@@ -7136,6 +7126,7 @@ is symmetric and transitive. Without those properties, very unexpected behavoirs
     </info>
     <name>Equals checks for noncompatible operand</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>NP_PARAMETER_MUST_BE_NONNULL_BUT_MARKED_AS_NULLABLE</id>
     <artifact tool="FindBugs"	mnemonic="NP_PARAMETER_MUST_BE_NONNULL_BUT_MARKED_AS_NULLABLE"/>
@@ -7152,6 +7143,7 @@ of the parameter or the annotation is wrong.
     </info>
     <name>Parameter must be nonnull but is marked as nullable</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>VA_FORMAT_STRING_BAD_CONVERSION</id>
     <artifact tool="FindBugs"	mnemonic="VA_FORMAT_STRING_BAD_CONVERSION"/>
@@ -7170,6 +7162,7 @@ the String "1" is incompatible with the format specifier %d.
     </info>
     <name>The type of a supplied argument doesn't match format specifier</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>VA_FORMAT_STRING_BAD_CONVERSION_TO_BOOLEAN</id>
     <artifact tool="FindBugs"	mnemonic="VA_FORMAT_STRING_BAD_CONVERSION_TO_BOOLEAN"/>
@@ -7187,6 +7180,7 @@ This feature of format strings is strange, and may not be what you intended.
     </info>
     <name>Non-Boolean argument formatted using %b format specifier</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>VA_FORMAT_STRING_BAD_CONVERSION_FROM_ARRAY</id>
     <artifact tool="FindBugs"	mnemonic="VA_FORMAT_STRING_BAD_CONVERSION_FROM_ARRAY"/>
@@ -7205,6 +7199,7 @@ Consider wrapping the array using <code>Arrays.asList(...)</code> before handlin
     </info>
     <name>Array formatted in useless way using format string</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>VA_FORMAT_STRING_NO_PREVIOUS_ARGUMENT</id>
     <artifact tool="FindBugs"	mnemonic="VA_FORMAT_STRING_NO_PREVIOUS_ARGUMENT"/>
@@ -7226,6 +7221,7 @@ For example,
     </info>
     <name>No previous argument for format string</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>VA_FORMAT_STRING_BAD_ARGUMENT</id>
     <artifact tool="FindBugs"	mnemonic="VA_FORMAT_STRING_BAD_ARGUMENT"/>
@@ -7249,6 +7245,7 @@ this statement is executed.
     </info>
     <name>Format string placeholder incompatible with passed argument</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>VA_FORMAT_STRING_MISSING_ARGUMENT</id>
     <artifact tool="FindBugs"	mnemonic="VA_FORMAT_STRING_MISSING_ARGUMENT"/>
@@ -7266,6 +7263,7 @@ this statement is executed.
     </info>
     <name>Format string references missing argument</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>VA_FORMAT_STRING_ILLEGAL</id>
     <artifact tool="FindBugs"	mnemonic="VA_FORMAT_STRING_ILLEGAL"/>
@@ -7283,6 +7281,7 @@ this statement is executed.
     </info>
     <name>Illegal format string</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>VA_FORMAT_STRING_EXTRA_ARGUMENTS_PASSED</id>
     <artifact tool="FindBugs"	mnemonic="VA_FORMAT_STRING_EXTRA_ARGUMENTS_PASSED"/>
@@ -7301,6 +7300,7 @@ information that was intended to be included in the formatted string.
     </info>
     <name>More arguments are passed that are actually used in the format string</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>BIT_ADD_OF_SIGNED_BYTE</id>
     <artifact tool="FindBugs"	mnemonic="BIT_ADD_OF_SIGNED_BYTE"/>
@@ -7337,6 +7337,7 @@ result = ((result &lt;&lt; 8) + (b[i] &amp; 0xff));
     </info>
     <name>Bitwise add of signed byte value</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>DMI_INVOKING_HASHCODE_ON_ARRAY</id>
     <artifact tool="FindBugs"	mnemonic="DMI_INVOKING_HASHCODE_ON_ARRAY"/>
@@ -7357,6 +7358,7 @@ use <code>java.util.Arrays.hashCode(a)</code>.
     </info>
     <name>Invocation of hashCode on an array</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>DMI_USING_REMOVEALL_TO_CLEAR_COLLECTION</id>
     <artifact tool="FindBugs"	mnemonic="DMI_USING_REMOVEALL_TO_CLEAR_COLLECTION"/>
@@ -7372,6 +7374,7 @@ use <code>java.util.Arrays.hashCode(a)</code>.
     </info>
     <name>Don't use removeAll to clear a collection</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>DMI_VACUOUS_SELF_COLLECTION_CALL</id>
     <artifact tool="FindBugs"	mnemonic="DMI_VACUOUS_SELF_COLLECTION_CALL"/>
@@ -7387,6 +7390,7 @@ use <code>java.util.Arrays.hashCode(a)</code>.
     </info>
     <name>Vacuous call to collections</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>DMI_COLLECTIONS_SHOULD_NOT_CONTAIN_THEMSELVES</id>
     <artifact tool="FindBugs"	mnemonic="DMI_COLLECTIONS_SHOULD_NOT_CONTAIN_THEMSELVES"/>
@@ -7404,6 +7408,7 @@ use <code>java.util.Arrays.hashCode(a)</code>.
     </info>
     <name>Collections should not contain themselves</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>TQ_EXPLICIT_UNKNOWN_SOURCE_VALUE_REACHES_NEVER_SINK</id>
     <artifact tool="FindBugs"	mnemonic="TQ_EXPLICIT_UNKNOWN_SOURCE_VALUE_REACHES_NEVER_SINK"/>
@@ -7421,6 +7426,7 @@ use <code>java.util.Arrays.hashCode(a)</code>.
     </info>
     <name>Explicit annotation inconsistent with use</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>TQ_EXPLICIT_UNKNOWN_SOURCE_VALUE_REACHES_ALWAYS_SINK</id>
     <artifact tool="FindBugs"	mnemonic="TQ_EXPLICIT_UNKNOWN_SOURCE_VALUE_REACHES_ALWAYS_SINK"/>
@@ -7438,6 +7444,7 @@ use <code>java.util.Arrays.hashCode(a)</code>.
     </info>
     <name>Explicit annotation inconsistent with use</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>OBL_UNSATISFIED_OBLIGATION</id>
     <artifact tool="FindBugs"	mnemonic="OBL_UNSATISFIED_OBLIGATION"/>
@@ -7502,6 +7509,7 @@ use <code>java.util.Arrays.hashCode(a)</code>.
     </info>
     <name>JSure Issue</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>ColorSecondPass_inferredColor</id> 
     <artifact tool="JSure" mnemonic="ColorSecondPass_inferredColor"/>
@@ -7509,6 +7517,7 @@ use <code>java.util.Arrays.hashCode(a)</code>.
     <info>TBD</info>
     <name>Inferred Color</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>ColorSecondPass_inheritedColor</id> 
     <artifact tool="JSure"
@@ -7517,6 +7526,7 @@ use <code>java.util.Arrays.hashCode(a)</code>.
     <info>TBD</info>
     <name>Inherited Color</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>ColorSecondPass_inheritedTransparent</id> 
     <artifact tool="JSure"
@@ -7525,6 +7535,7 @@ use <code>java.util.Arrays.hashCode(a)</code>.
     <info>TBD</info>
     <name>Inherited as Transparent</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>ColorSecondPass_colorContextDrop</id>
     <artifact tool="JSure"
@@ -7539,6 +7550,7 @@ use <code>java.util.Arrays.hashCode(a)</code>.
     ]]></info>
     <name>@ColorContext</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>ThreadEffectsAnalysis_noThreadsDrop</id> 
     <artifact tool="JSure"
@@ -7547,6 +7559,7 @@ use <code>java.util.Arrays.hashCode(a)</code>.
     <info>TBD</info>
     <name>No Threads Started</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>ThreadEffectsAnalysis_threadEffectDrop</id> 
     <artifact tool="JSure"
@@ -7563,6 +7576,7 @@ use <code>java.util.Arrays.hashCode(a)</code>.
     <info>TBD</info>
     <name>Call Will Not Start Threads</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>ThreadEffectsAnalysis_callNotPromiseDrop</id> 
     <artifact tool="JSure"
@@ -7571,6 +7585,7 @@ use <code>java.util.Arrays.hashCode(a)</code>.
     <info>TBD</info>
     <name>Call May Start Threads</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>LockAnalysis_ds_SynchronizedConstructorAssured</id>
     
@@ -7580,6 +7595,7 @@ use <code>java.util.Arrays.hashCode(a)</code>.
     <info>TBD</info>
     <name>Single-threaded Constructor Assured</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>LockAnalysis_ds_SynchronizedConstructorNotAssured</id>
     
@@ -7589,6 +7605,7 @@ use <code>java.util.Arrays.hashCode(a)</code>.
     <info>TBD</info>
     <name>Single-threaded Constructor Not Assured</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>LockAnalysis_ds_AggregationNeeded</id> 
     <artifact tool="JSure"
@@ -7597,6 +7614,7 @@ use <code>java.util.Arrays.hashCode(a)</code>.
     <info>TBD</info>
     <name>Object Aggregation Needed</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>LockAnalysis_ds_AggregationNeeded2</id> 
     <artifact tool="JSure"
@@ -7605,6 +7623,7 @@ use <code>java.util.Arrays.hashCode(a)</code>.
     <info>TBD</info>
     <name>Receiver Aggregation Needed</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>LockAnalysis_ds_FieldAccessAssured</id> 
     <artifact tool="JSure"
@@ -7613,6 +7632,7 @@ use <code>java.util.Arrays.hashCode(a)</code>.
     <info>TBD</info>
     <name>Field Access Assured</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>LockAnalysis_ds_FieldAccessAssuredAlternative</id>
     
@@ -7622,6 +7642,7 @@ use <code>java.util.Arrays.hashCode(a)</code>.
     <info>TBD</info>
     <name>Field Access Assured</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>LockAnalysis_ds_FieldAccessNotAssured</id> 
     <artifact tool="JSure"
@@ -7630,6 +7651,7 @@ use <code>java.util.Arrays.hashCode(a)</code>.
     <info>TBD</info>
     <name>Field Access Not Assured</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>LockAnalysis_ds_FieldAccessNotResolvable</id> 
     <artifact tool="JSure"
@@ -7638,6 +7660,7 @@ use <code>java.util.Arrays.hashCode(a)</code>.
     <info>TBD</info>
     <name>Unresolvable Field Access</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>LockAnalysis_ds_PreconditionsAssured</id> 
     <artifact tool="JSure"
@@ -7646,6 +7669,7 @@ use <code>java.util.Arrays.hashCode(a)</code>.
     <info>TBD</info>
     <name>Lock Precondition Assured</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>LockAnalysis_ds_PreconditionsAssuredAlternative</id>
     <artifact tool="JSure"
@@ -7654,6 +7678,7 @@ use <code>java.util.Arrays.hashCode(a)</code>.
     <info>TBD</info>
     <name>Lock Precondition Assured</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>LockAnalysis_ds_PreconditionsNotAssured</id> 
     <artifact tool="JSure"
@@ -7662,6 +7687,7 @@ use <code>java.util.Arrays.hashCode(a)</code>.
     <info>TBD</info>
     <name>Lock Precondition Not Assured</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>LockAnalysis_ds_PreconditionNotResolvable</id> 
     <artifact tool="JSure"
@@ -7670,6 +7696,7 @@ use <code>java.util.Arrays.hashCode(a)</code>.
     <info>TBD</info>
     <name>Unresolvable Lock Precondition</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>LockAnalysis_ds_IndirectFieldAccessAssured</id> 
     <artifact tool="JSure"
@@ -7678,6 +7705,7 @@ use <code>java.util.Arrays.hashCode(a)</code>.
     <info>TBD</info>
     <name>Indirect Field Access Assured</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>LockAnalysis_ds_IndirectFieldAccessAssuredAlternative</id>
     <artifact tool="JSure"
@@ -7686,6 +7714,7 @@ use <code>java.util.Arrays.hashCode(a)</code>.
     <info>TBD</info>
     <name>Indirect Field Access Assured</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>LockAnalysis_ds_IndirectFieldAccessNotAssured</id>
     <artifact tool="JSure"
@@ -7694,14 +7723,16 @@ use <code>java.util.Arrays.hashCode(a)</code>.
     <info>TBD</info>
     <name>Indirect Field Access Not Assured</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>LockAnalysis_ds_ReturnAssured</id> 
     <artifact tool="JSure"
 	      mnemonic="LockAnalysis_ds_ReturnAssured"/>
-    p    <shortMessage>TBD</shortMessage>
+    <shortMessage>TBD</shortMessage>
     <info>TBD</info>
     <name>Return Statement Assured</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>LockAnalysis_ds_ReturnNotAssured</id> 
     <artifact tool="JSure"
@@ -7710,6 +7741,7 @@ use <code>java.util.Arrays.hashCode(a)</code>.
     <info>TBD</info>
     <name>Return Statement Not Assured</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>LockAnalysis_ds_SynchronizedMethodWarningDetails</id>
     <artifact tool="JSure"
@@ -7726,6 +7758,7 @@ use <code>java.util.Arrays.hashCode(a)</code>.
     <info>TBD</info>
     <name>Unidentified Lock: Class</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>LockAnalysis_ds_SynchronizationUnused</id> 
     <artifact tool="JSure"
@@ -7734,6 +7767,7 @@ use <code>java.util.Arrays.hashCode(a)</code>.
     <info>TBD</info>
     <name>Unused Locks</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>LockAnalysis_ds_NonfinalExpression</id> 
     <artifact tool="JSure"
@@ -7742,6 +7776,7 @@ use <code>java.util.Arrays.hashCode(a)</code>.
     <info>TBD</info>
     <name>Non-final Lock Expression</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>LockAnalysis_ds_UnidentifiableLock</id> 
     <artifact tool="JSure"
@@ -7750,6 +7785,7 @@ use <code>java.util.Arrays.hashCode(a)</code>.
     <info>TBD</info>
     <name>Unidentified Lock</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>LockAnalysis_ds_RedundantSynchronized</id> 
     <artifact tool="JSure"
@@ -7758,6 +7794,7 @@ use <code>java.util.Arrays.hashCode(a)</code>.
     <info>TBD</info>
     <name>Redundant Synchronization</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>LockAnalysis_ds_SyncedJUCLock</id> 
     <artifact tool="JSure"
@@ -7766,6 +7803,7 @@ use <code>java.util.Arrays.hashCode(a)</code>.
     <info>TBD</info>
     <name>Native Synchronization On JUC Lock</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>LockAnalysis_ds_MasqueradingCall</id> 
     <artifact tool="JSure"
@@ -7782,6 +7820,7 @@ use <code>java.util.Arrays.hashCode(a)</code>.
     <info>TBD</info>
     <name>Masquerading JUC ReadWriteLock Call</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>LockAnalysis_ds_JUCLockFields</id> 
     <artifact tool="JSure"
@@ -7790,6 +7829,7 @@ use <code>java.util.Arrays.hashCode(a)</code>.
     <info>TBD</info>
     <name>Fields Declared As JUC Locks</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>LockAnalysis_ds_DeclaredJUCLockField</id> 
     <artifact tool="JSure"
@@ -7798,6 +7838,7 @@ use <code>java.util.Arrays.hashCode(a)</code>.
     <info>TBD</info>
     <name>Field Declared As JUC Lock</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UniquenessAssurance_uniquenessContraints1</id> 
     <artifact tool="JSure"
@@ -7806,6 +7847,7 @@ use <code>java.util.Arrays.hashCode(a)</code>.
     <info>TBD</info>
     <name>Uniqueness Assured</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UniquenessAssurance_uniquenessContraints2</id> 
     <artifact tool="JSure"
@@ -7814,6 +7856,7 @@ use <code>java.util.Arrays.hashCode(a)</code>.
     <info>TBD</info>
     <name>Uniqueness Not Assured</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UniquenessAssurance_uniqueReturnDrop</id> 
     <artifact tool="JSure"
@@ -7822,6 +7865,7 @@ use <code>java.util.Arrays.hashCode(a)</code>.
     <info>TBD</info>
     <name>Unique Return Value</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UniquenessAssurance_borrowedParametersDrop</id> 
     <artifact tool="JSure"
@@ -7830,6 +7874,7 @@ use <code>java.util.Arrays.hashCode(a)</code>.
     <info>TBD</info>
     <name>Borrowed Parameters</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UniquenessAssurance_uniqueParametersDrop</id> 
     <artifact tool="JSure"
@@ -7838,6 +7883,7 @@ use <code>java.util.Arrays.hashCode(a)</code>.
     <info>Unique Parameters</info>
     <name>TBD</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UniquenessAssurance_effectOfCallDrop</id> 
     <artifact tool="JSure"
@@ -7846,6 +7892,7 @@ use <code>java.util.Arrays.hashCode(a)</code>.
     <info>TBD</info>
     <name>Method Call Effects</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UniquenessAssurance_dependencyDrop</id> 
     <artifact tool="JSure"
@@ -7854,6 +7901,7 @@ use <code>java.util.Arrays.hashCode(a)</code>.
     <info>TBD</info>
     <name>Conservative Uniqueness Dependency</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UniquenessAssurance_error</id> 
     <artifact tool="JSure"
@@ -7862,6 +7910,7 @@ use <code>java.util.Arrays.hashCode(a)</code>.
     <info>TBD</info>
     <name>Uniqueness Error</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UniquenessAssurance</id> 
     <artifact tool="JSure"
@@ -7870,6 +7919,7 @@ use <code>java.util.Arrays.hashCode(a)</code>.
     <info>TBD</info>
     <name>Uniqueness Assurance</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>BorrowedPromiseDrop</id> 
     <artifact tool="JSure"
@@ -7891,6 +7941,7 @@ use <code>java.util.Arrays.hashCode(a)</code>.
     ]]></info>
     <name>@Borrowed</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UniquePromiseDrop</id> 
     <artifact tool="JSure"
@@ -7906,6 +7957,7 @@ use <code>java.util.Arrays.hashCode(a)</code>.
     ]]></info>
     <name>@Unique</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AggregatePromiseDrop</id> 
     <artifact tool="JSure"
@@ -7920,6 +7972,7 @@ use <code>java.util.Arrays.hashCode(a)</code>.
     ]]></info>
     <name>@Aggregate</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>StartsPromiseDrop</id> 
     <artifact tool="JSure"
@@ -7936,6 +7989,7 @@ use <code>java.util.Arrays.hashCode(a)</code>.
     ]]></info>
     <name>@Starts</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>RegionEffectsPromiseDrop</id> 
     <artifact tool="JSure"
@@ -7950,6 +8004,7 @@ use <code>java.util.Arrays.hashCode(a)</code>.
     ]]></info>
     <name>@RegionEffects</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>InRegionPromiseDrop</id> 
     <artifact tool="JSure"
@@ -7960,6 +8015,7 @@ use <code>java.util.Arrays.hashCode(a)</code>.
     region.]]></info>
     <name>@InRegion</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>RegionModel</id> 
     <artifact tool="JSure" mnemonic="RegionModel"/>
@@ -7972,6 +8028,7 @@ use <code>java.util.Arrays.hashCode(a)</code>.
     ]]></info>
     <name>@Region</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>LockModel</id> 
     <artifact tool="JSure" mnemonic="LockModel"/>
@@ -7994,6 +8051,7 @@ use <code>java.util.Arrays.hashCode(a)</code>.
     ]]></info>
     <name>@RegionLock</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>RequiresLockPromiseDrop</id> 
     <artifact tool="JSure"
@@ -8013,6 +8071,7 @@ use <code>java.util.Arrays.hashCode(a)</code>.
     ]]></info>
     <name>@RequiresLock</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SelfProtectedPromiseDrop</id> 
     <artifact tool="JSure"
@@ -8032,6 +8091,7 @@ use <code>java.util.Arrays.hashCode(a)</code>.
     ]]></info>
     <name>@SelfProtected</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SingleThreadedPromiseDrop</id> 
     <artifact tool="JSure"
@@ -8048,6 +8108,7 @@ use <code>java.util.Arrays.hashCode(a)</code>.
     ]]></info>
     <name>@SingleThreaded</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>TransparentPromiseDrop</id> 
     <artifact tool="JSure"
@@ -8060,6 +8121,7 @@ use <code>java.util.Arrays.hashCode(a)</code>.
     ]]></info>
     <name>@Transparent</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>PromisePromiseDrop</id> 
     <artifact tool="JSure"
@@ -8068,6 +8130,7 @@ use <code>java.util.Arrays.hashCode(a)</code>.
     <info>TBD</info>
     <name>Scoped Promise</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>LockAnalysis_ds_OnBehalfOfConstructor</id> 
     <artifact tool="JSure"
@@ -8076,6 +8139,7 @@ use <code>java.util.Arrays.hashCode(a)</code>.
     <info>TBD</info>
     <name>Analyzed Initializers</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>LockAnalysis_ds_FieldDeclaration</id> 
     <artifact tool="JSure"
@@ -8084,6 +8148,7 @@ use <code>java.util.Arrays.hashCode(a)</code>.
     <info>TBD</info>
     <name>Field Declaration</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>LockAnalysis_ds_HeldLock</id> 
     <artifact tool="JSure"
@@ -8092,6 +8157,7 @@ use <code>java.util.Arrays.hashCode(a)</code>.
     <info>TBD</info>
     <name>Intrinsic Lock Held</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>LockAnalysis_ds_HeldJUCLock</id> 
     <artifact tool="JSure"
@@ -8100,6 +8166,7 @@ use <code>java.util.Arrays.hashCode(a)</code>.
     <info>TBD</info>
     <name>JUC Lock Held</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>LockAnalysis_ds_PoisonedLockCall</id> 
     <artifact tool="JSure"
@@ -8108,6 +8175,7 @@ use <code>java.util.Arrays.hashCode(a)</code>.
     <info>TBD</info>
     <name>Inconsistent Matching Locks</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>LockAnalysis_ds_NoMatchingUnlocks</id> 
     <artifact tool="JSure"
@@ -8116,6 +8184,7 @@ use <code>java.util.Arrays.hashCode(a)</code>.
     <info>TBD</info>
     <name>No Matching Unlocks</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>LockAnalysis_ds_MatchingUnlock</id> 
     <artifact tool="JSure"
@@ -8124,6 +8193,7 @@ use <code>java.util.Arrays.hashCode(a)</code>.
     <info>TBD</info>
     <name>Matching Unlock</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>LockAnalysis_ds_PoisonedUnlockCall</id> 
     <artifact tool="JSure"
@@ -8132,6 +8202,7 @@ use <code>java.util.Arrays.hashCode(a)</code>.
     <info>TBD</info>
     <name>Inconsistent Matching Unlocks</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>LockAnalysis_ds_NoMatchingLocks</id> 
     <artifact tool="JSure"
@@ -8140,6 +8211,7 @@ use <code>java.util.Arrays.hashCode(a)</code>.
     <info>TBD</info>
     <name>No Matching Locks</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>LockAnalysis_ds_MatchingLock</id> 
     <artifact tool="JSure"
@@ -8148,6 +8220,7 @@ use <code>java.util.Arrays.hashCode(a)</code>.
     <info>TBD</info>
     <name>Matching Lock</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>LockAnalysis_ds_AggregationEvidence</id> 
     <artifact tool="JSure"
@@ -8156,7 +8229,7 @@ use <code>java.util.Arrays.hashCode(a)</code>.
     <info>TBD</info>
     <name>Aggregation Evidence</name>
   </findingType>
-  
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>EffectAssurance_msgUnaccountedFor</id> 
     <artifact tool="JSure"
@@ -8165,6 +8238,7 @@ use <code>java.util.Arrays.hashCode(a)</code>.
     <info>TBD</info>
     <name>Unaccounted Region Effects</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>EffectAssurance_msgCheckedBy</id> 
     <artifact tool="JSure"
@@ -8173,6 +8247,7 @@ use <code>java.util.Arrays.hashCode(a)</code>.
     <info>TBD</info>
     <name>Checked Region Effects</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>EffectAssurance_msgEmptyEffects</id> 
     <artifact tool="JSure"
@@ -8181,94 +8256,90 @@ use <code>java.util.Arrays.hashCode(a)</code>.
     <info>TBD</info>
     <name>Empty Region Effects</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>EffectAssurance_msgContructorRule</id> 
-    <artifact tool="JSure"
-	      mnemonic="EffectAssurance_msgContructorRule"/>
+    <artifact tool="JSure" mnemonic="EffectAssurance_msgContructorRule"/>
     <shortMessage>TBD</shortMessage>
     <info>TBD</info>
     <name>Region Effects Checked By Constructor</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>EmptyInitializer</id>
-    <artifact tool="PMD"
-	      mnemonic="EmptyInitializer">
-    </artifact>
-    <shortMessage>
-      It is questionable to have an empty initializer.
-    </shortMessage>
+    <artifact tool="PMD" mnemonic="EmptyInitializer"/>
+    <name>Empty initializer</name>
+    <shortMessage>It is questionable coding practice to have an empty initializer.</shortMessage>
     <info>
-      It is questionable to have an empty initializer.
+<![CDATA[<p>It is questionable to have an empty initializer. Consider
+removing it from your code.</p>]]>
     </info>
-    <name>Empty Initializer</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>EmptyCatchBlock</id>
-    <artifact tool="PMD" mnemonic="EmptyCatchBlock"></artifact>
-    <shortMessage>
-      Empty Catch Block finds instances where an exception is
-      caught, but nothing is done. In most circumstances, this
-      swallows an exception which should either be acted on or
-      reported.
-    </shortMessage>
+    <artifact tool="PMD" mnemonic="EmptyCatchBlock"/>
+    <name>Empty catch block</name>
+    <shortMessage>Are you swallowing an exception which should either be acted on or
+      reported?</shortMessage>
     <info>
-      Empty Catch Block finds instances where an exception is
-      caught, but nothing is done. In most circumstances, this
-      swallows an exception which should either be acted on or
-      reported.
+<![CDATA[<p>An exception is caught, but nothing is done. In most
+circumstances, this swallows an exception which should either be acted
+on or reported.</p>]]>
     </info>
-    <name>Empty Catch Block</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>EmptyIfStmt</id>
-    <artifact tool="PMD" mnemonic="EmptyIfStmt"></artifact>
-    <shortMessage>
-      Empty If Statement finds instances where a condition is
-      checked but nothing is done about it.
-    </shortMessage>
+    <artifact tool="PMD" mnemonic="EmptyIfStmt"/>
+    <name>Empty if</name>
+    <shortMessage>It is questionable coding practice to have an empty if statement.</shortMessage>
     <info>
-      Empty If Statement finds instances where a condition is
-      checked but nothing is done about it.
+<![CDATA[<p>A condition is being checked but nothing is done about it.
+Consider removing the check if it doesn't have side-effects.</p>
+
+<p>If the check has side-effects just call the check and ignore the
+result.  For example, <code>if (sideEffect()) {}</code> would be
+replaced with <code>sideEffect()</code>.</p>]]>
     </info>
-    <name>Empty If Statement</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>EmptyWhileStmt</id>
-    <artifact tool="PMD" mnemonic="EmptyWhileStmt"></artifact>
-    <shortMessage>
-      Empty While Statement finds all instances where a while
-      statement does nothing. If it is a timing loop, then you
-      should use Thread.sleep() for it; if it's a while loop that
-      does a lot in the exit expression, rewrite it to make it
-      clearer.
-    </shortMessage>
+    <artifact tool="PMD" mnemonic="EmptyWhileStmt"/>
+    <name>Empty while</name>
+    <shortMessage>It is questionable coding practice to have an empty while statement.</shortMessage>
     <info>
-      Empty While Statement finds all instances where a while
-      statement does nothing. If it is a timing loop, then you
-      should use Thread.sleep() for it; if it's a while loop that
-      does a lot in the exit expression, rewrite it to make it
-      clearer.
+<![CDATA[<p>This <code>while</code> statement appears to do
+nothing. If it is a timing loop, then you should use
+<code>Thread.sleep()</code> for it; if it's a while loop that does a
+lot in the exit expression, then consider rewriting it to make what it
+is doing clearer.</p>]]>
     </info>
-    <name>Empty While Statement</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>EmptyTryBlock</id>
-    <artifact tool="PMD" mnemonic="EmptyTryBlock"></artifact>
-    <shortMessage>
-      Avoid empty try blocks - what's the point?
-    </shortMessage>
-    <info>Avoid empty try blocks - what's the point?</info>
-    <name>Empty Try Block</name>
+    <artifact tool="PMD" mnemonic="EmptyTryBlock"/>
+    <name>Empty try block</name>
+    <shortMessage>It is questionable coding practice to have an empty try block.</shortMessage>
+    <info>
+<![CDATA[<p>This <code>try</code> block is empty. It should be removed
+from the code.</p>]]>
+    </info>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>EmptyFinallyBlock</id>
-    <artifact tool="PMD" mnemonic="EmptyFinallyBlock"></artifact>
-    <shortMessage>
-      Avoid empty finally blocks - these can be deleted.
-    </shortMessage>
-    <info>Avoid empty finally blocks - these can be deleted.</info>
-    <name>Empty Finally Block</name>
+    <artifact tool="PMD" mnemonic="EmptyFinallyBlock"/>
+    <name>Empty finally block</name>
+    <shortMessage>It is questionable coding practice to have an empty finally block.</shortMessage>
+    <info>
+<![CDATA[<p>This <code>finally</code> block is empty. It should be
+removed from the code.</p>]]>
+    </info>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>EmptySwitchStatements</id>
     <artifact tool="PMD" mnemonic="EmptySwitchStatements">
