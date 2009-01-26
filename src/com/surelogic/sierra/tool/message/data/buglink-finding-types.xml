@@ -1710,7 +1710,7 @@ bug is quite high.</p>]]>
     <id>UW_UNCOND_WAIT</id>
     <artifact tool="FindBugs" mnemonic="UW_UNCOND_WAIT"/>
     <name>Unconditional wait</name>
-    <shortMessage>Unconditional wait could cause your code to "hang"</shortMessage>
+    <shortMessage>Unconditional wait could cause your code to hang</shortMessage>
     <info>
 <![CDATA[<p>This method contains a call to
 <code>java.lang.Object.wait()</code> which is not guarded by
@@ -1718,7 +1718,7 @@ conditional control flow. The code should verify that condition it
 intends to wait for is not already satisfied before calling wait.  The
 reason for this is that when you invoke <code>wait</code> any previous
 notifications (i.e., those made in the past) will be ignored and your
-program could "hang".</p>]]>
+program could hang.</p>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
