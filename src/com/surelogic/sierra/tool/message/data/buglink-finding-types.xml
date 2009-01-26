@@ -8,8 +8,7 @@
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>DuplicatedCode</id>
-    <artifact tool="CPD"
-	      mnemonic="DuplicatedCode"/>
+    <artifact tool="CPD" mnemonic="DuplicatedCode"/>
     <name>Suspected duplicated code</name>
     <shortMessage>Duplicated code often causes problems in long-term maintenance, due to flaws being fixed in one copy, but not the other.</shortMessage>
     <info><![CDATA[<p>This is often due to copy-and-paste programming, and it
@@ -23,7 +22,7 @@ method.</p>]]>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>DMI_VACUOUS_CALL_TO_EASYMOCK_METHOD</id>
-    <artifact tool="FindBugs"	mnemonic="DMI_VACUOUS_CALL_TO_EASYMOCK_METHOD"/>
+    <artifact tool="FindBugs" mnemonic="DMI_VACUOUS_CALL_TO_EASYMOCK_METHOD"/>
     <name>Useless/vacuous call to EasyMock method</name>
     <shortMessage>Useless/vacuous call to EasyMock method.</shortMessage>
     <info>
@@ -37,7 +36,7 @@ href="http://www.easymock.org/">www.easymock.org</a>.</p>]]>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>HE_SIGNATURE_DECLARES_HASHING_OF_UNHASHABLE_CLASS</id>
-    <artifact tool="FindBugs"	mnemonic="HE_SIGNATURE_DECLARES_HASHING_OF_UNHASHABLE_CLASS"/>
+    <artifact tool="FindBugs" mnemonic="HE_SIGNATURE_DECLARES_HASHING_OF_UNHASHABLE_CLASS"/>
     <name>Signature declares use of unhashable class in hashed construct</name>
     <shortMessage>Signature declares use of unhashable class in hashed construct.</shortMessage>
     <info>
@@ -52,7 +51,7 @@ the requirement that equal objects have equal hash codes.</p>]]>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>GC_UNCHECKED_TYPE_IN_GENERIC_CALL</id>
-    <artifact tool="FindBugs"	mnemonic="GC_UNCHECKED_TYPE_IN_GENERIC_CALL"/>
+    <artifact tool="FindBugs" mnemonic="GC_UNCHECKED_TYPE_IN_GENERIC_CALL"/>
     <name>Unchecked type in generic call</name>
     <shortMessage>Unchecked type in a generic call.  This could be a type mismatch that the compiler is not able to detect.</shortMessage>
     <info>
@@ -83,8 +82,7 @@ a type mismatch that the compiler was not able to report.</p>]]>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SW_SWING_METHODS_INVOKED_IN_SWING_THREAD</id>
-    <artifact tool="FindBugs"
-	      mnemonic="SW_SWING_METHODS_INVOKED_IN_SWING_THREAD"/>
+    <artifact tool="FindBugs" mnemonic="SW_SWING_METHODS_INVOKED_IN_SWING_THREAD"/>
     <name>Swing methods should be invoked in Swing thread</name>
     <shortMessage>Certain Swing methods need to be invoked in the Swing event dispatch thread.</shortMessage>
     <info>
@@ -350,8 +348,9 @@ exception of a final method that only throws
 <code>CloneNotSupportedException</code>.</p>
 
 <p>Overall it is considered bad practice to use the extralinguistic
-clone mechanism (reference Bloch's Effective Java (2nd edition) item
-11).  A copy constructor is one alternative approach.</p>
+clone mechanism (reference Bloch's <i>Effective Java</i> (second
+edition) item 11).  A copy constructor is one alternative
+approach.</p>
 
 <pre>
 public MyClass(MyClass o) { ... }
@@ -389,8 +388,9 @@ for <code>clone()</code>.</p>
 correct type.</p>
 
 <p>Overall it is considered bad practice to use the extralinguistic
-clone mechanism (reference Bloch's Effective Java (2nd edition) item
-11).  A copy constructor is one alternative approach.</p>
+clone mechanism (reference Bloch's <i>Effective Java</i> (second
+edition) item 11).  A copy constructor is one alternative
+approach.</p>
 
 <pre>
 public MyClass(MyClass o) { ... }
@@ -612,7 +612,7 @@ Specification).</p>]]>
 <![CDATA[<p><em>Never call System.runFinalizersOnExit or
 Runtime.runFinalizersOnExit for any reason: they are among the most
 dangerous methods in the Java libraries.</em> &mdash; Joshua Bloch
-(reference Bloch's Effective Java (2nd edition) item 7)</p>
+(reference Bloch's <i>Effective Java</i> (second edition) item 7)</p>
 
 <p>Calling <code>runFinalizersOnExit</code> is inherently unsafe.  It
 may result in finalizers being called on live objects while other
@@ -1135,6 +1135,7 @@ not equal when compared normally. Don't do it.</p>]]>
     <id>EQ_SELF_USE_OBJECT</id>
     <artifact tool="FindBugs" mnemonic="EQ_SELF_USE_OBJECT"/>
     <artifact tool="FindBugs" mnemonic="EQ_SELF_NO_OBJECT"/>
+    <artifact tool="FindBugs" mnemonic="EQ_ABSTRACT_SELF"/>
     <name>Equals defined that does not override Object.equals</name>
     <shortMessage>Covariant equals() method defined, Object.equals(Object) inherited.</shortMessage>
     <info>
@@ -1177,747 +1178,561 @@ checks that the argument is an instanceof B, it is quite likely that
 the equivalence relation defined by these methods is not
 symmetric.</p>
 
-<p>See Bloch's Effective Java (second edition) item 8 for (much) more
-information.</p>]]>
+<p>See Bloch's <i>Effective Java</i> (second edition) item 8 for
+(much) more information.</p>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>HSC_HUGE_SHARED_STRING_CONSTANT</id>
-    <artifact tool="FindBugs"
-	      mnemonic="HSC_HUGE_SHARED_STRING_CONSTANT">
-    </artifact>
-    <shortMessage>
-      Huge string constants is duplicated across multiple class
-      files
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="HSC_HUGE_SHARED_STRING_CONSTANT"/>
+    <name>Huge shared string constant</name>
+    <shortMessage>Huge string constants are duplicated across multiple class files.</shortMessage>
     <info>
+<![CDATA[<p>A large String constant is duplicated across multiple
+class files. This is likely because a final field is initialized to a
+String constant, and the Java language mandates that all references to
+a final field from other classes be inlined into that classfile.</p>
 
-      &lt;p&gt; A large String constant is duplicated across
-      multiple class files. This is likely because a final field
-      is initialized to a String constant, and the Java language
-      mandates that all references to a final field from other
-      classes be inlined into that classfile. See &lt;a
-      href=&quot;http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6447475&quot;&gt;JDK
-      bug 6447475&lt;/a&gt; for a description of an occurrence of
-      this bug in the JDK and how resolving it reduced the size of
-      the JDK by 1 megabyte. &lt;/p&gt;
-
+<p>See <a
+href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6447475">JDK
+bug 6447475</a> for a description of an occurrence of this bug in the
+JDK and how resolving it reduced the size of the JDK by 1
+megabyte.</p>]]>
     </info>
-    <name>Huge Shared String Constant</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>NP_ARGUMENT_MIGHT_BE_NULL</id>
-    <artifact tool="FindBugs"
-	      mnemonic="NP_ARGUMENT_MIGHT_BE_NULL">
-    </artifact>
-    <shortMessage>
-      Method does not check for null argument
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="NP_ARGUMENT_MIGHT_BE_NULL"/>
+    <name>Argument might be null</name>
+    <shortMessage>Method does not check for a null argument.</shortMessage>
     <info>
-
-      &lt;p&gt; A parameter to this method has been identified as
-      a value that should always be checked to see whether or not
-      it is null, but it is being dereferenced without a preceding
-      null check. &lt;/p&gt;
-
+<![CDATA[<p>A parameter to this method has been identified as a value
+that should always be checked to see whether or not it is
+<code>null</code>, but it is being dereferenced without a preceding
+null check.</p>]]>
     </info>
-    <name>Argument Might Be Null</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>NP_EQUALS_SHOULD_HANDLE_NULL_ARGUMENT</id>
-    <artifact tool="FindBugs"
-	      mnemonic="NP_EQUALS_SHOULD_HANDLE_NULL_ARGUMENT">
-    </artifact>
-    <shortMessage>
-      equals() method does not check for null argument
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="NP_EQUALS_SHOULD_HANDLE_NULL_ARGUMENT"/>
+    <artifact tool="FindBugs" mnemonic="NP_DOES_NOT_HANDLE_NULL"/>
+    <name>Equals should handle null argument</name>
+    <shortMessage>This equals() method does not check for null argument.  This contract violation should be fixed.</shortMessage>
     <info>
-
-      &lt;p&gt; This implementation of equals(Object) violates the
-      contract defined by java.lang.Object.equals() because it
-      does not check for null being passed as the argument. All
-      equals() methods should return false if passed a null value.
-      &lt;/p&gt;
-
+<![CDATA[<p>This implementation of <code>equals(Object)</code>
+violates the contract defined by
+<code>java.lang.Object.equals()</code> because it does not check for
+<code>null</code> being passed as the argument. By the defined
+contract, all <code>equals()</code> methods should return false if
+passed a <code>null</code> value.</p>]]>
     </info>
-    <name>Equals Should Handle Null Argument</name>
-  </findingType>
-  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-  <findingType>
-    <id>NP_DOES_NOT_HANDLE_NULL</id>
-    <artifact tool="FindBugs" mnemonic="NP_DOES_NOT_HANDLE_NULL">
-    </artifact>
-    <shortMessage>
-      equals() method does not check for null parameter
-    </shortMessage>
-    <info>
-
-      &lt;p&gt; This implementation of equals(Object) violates the
-      contract defined by java.lang.Object.equals() because it
-      does not check for null being passed as the parameter. All
-      equals() methods should return false if passed a null value.
-      &lt;/p&gt;
-
-    </info>
-    <name>Does Not Handle Null</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>CO_SELF_NO_OBJECT</id>
-    <artifact tool="FindBugs" mnemonic="CO_SELF_NO_OBJECT">
-    </artifact>
-    <shortMessage>
-      Covariant compareTo() method defined
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="CO_SELF_NO_OBJECT"/>
+    <artifact tool="FindBugs" mnemonic="CO_ABSTRACT_SELF"/>
+    <name>Covariant compareTo method</name>
+    <shortMessage>Covariant compareTo() method defined.</shortMessage>
     <info>
+<![CDATA[<p>This class defines a covariant version of
+<code>compareTo()</code>. To correctly implement (or override if an
+implementation is provided by a superclass) the
+<code>compareTo()</code> method in the <code>Comparable</code>
+interface, the parameter of <code>compareTo()</code> must have type
+<code>java.lang.Object</code>.</p>
 
-      &lt;p&gt; This class defines a covariant version of
-      &lt;code&gt;compareTo()&lt;/code&gt;.&amp;nbsp; To correctly
-      override the &lt;code&gt;compareTo()&lt;/code&gt; method in
-      the &lt;code&gt;Comparable&lt;/code&gt; interface, the
-      parameter of &lt;code&gt;compareTo()&lt;/code&gt; must have
-      type &lt;code&gt;java.lang.Object&lt;/code&gt;.&lt;/p&gt;
-
+<p>If this was not the intent of the class, then the method should be
+renamed something other than <code>compareTo</code> to avoid
+confusion.</p>]]>
     </info>
-    <name>Self No Object</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>HE_USE_OF_UNHASHABLE_CLASS</id>
-    <artifact tool="FindBugs"
-	      mnemonic="HE_USE_OF_UNHASHABLE_CLASS">
-    </artifact>
-    <shortMessage>
-      Use of class without a hashCode() method in a hashed data
-      structure
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="HE_USE_OF_UNHASHABLE_CLASS"/>
+    <name>Use of unhashable class</name>
+    <shortMessage>Use of class without a hashCode() method in a hashed data structure.</shortMessage>
     <info>
-
-      &lt;p&gt; A class defines an equals(Object) method but not a
-      hashCode() method, and thus doesn't fulfill the requirement
-      that equal Objects have equal hashCodes. An instance of this
-      class is used in a hash data structure, making the need to
-      fix this problem of highest importance.
-
+<![CDATA[<p>A class defines an <code>equals(Object)</code> method but
+not a <code>hashCode()</code> method, and thus doesn't fulfill the
+requirement that equal objects have equal hash codes. An instance of
+this class is used in a hash data structure, making the need to fix
+this problem of highest importance.]]>
     </info>
-    <name>Use Of Unhashable Class</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
-    <id>DefinesHashCodeUsesEquals</id>
-    <artifact tool="FindBugs"
-	      mnemonic="HE_HASHCODE_USE_OBJECT_EQUALS">
-    </artifact>
-    <shortMessage>
-      Class defines hashCode() and uses Object.equals()
-    </shortMessage>
+    <id>HE_HASHCODE_NO_EQUALS</id>
+    <artifact tool="FindBugs" mnemonic="HE_HASHCODE_NO_EQUALS"/>
+    <artifact tool="FindBugs" mnemonic="HE_HASHCODE_USE_OBJECT_EQUALS"/>
+    <name>Defines hash code but inherits equals</name>
+    <shortMessage>Class defines hashCode() but inherits equals().</shortMessage>
     <info>
+<![CDATA[<p>This class defines a <code>hashCode()</code> method but
+inherits its <code>equals()</code> method from
+<code>java.lang.Object</code> (which defines equality by comparing
+object references). Although this will probably satisfy the contract
+that equal objects must have equal hashcodes, it is probably not what
+was intended by overriding the <code>hashCode()</code>
+method. Overriding <code>hashCode()</code> typically implies that the
+object's identity is based on criteria more complicated than simple
+reference equality.</p>
 
-      &lt;p&gt; This class defines a
-      &lt;code&gt;hashCode()&lt;/code&gt; method but inherits its
-      &lt;code&gt;equals()&lt;/code&gt; method from
-      &lt;code&gt;java.lang.Object&lt;/code&gt; (which defines
-      equality by comparing object references).&amp;nbsp; Although
-      this will probably satisfy the contract that equal objects
-      must have equal hashcodes, it is probably not what was
-      intended by overriding the
-      &lt;code&gt;hashCode()&lt;/code&gt; method.&amp;nbsp;
-      (Overriding &lt;code&gt;hashCode()&lt;/code&gt; implies that
-      the object's identity is based on criteria more complicated
-      than simple reference equality.)&lt;/p&gt; &lt;p&gt;If you
-      don't think instances of this class will ever be inserted
-      into a HashMap/HashTable, the recommended
-      &lt;code&gt;hashCode&lt;/code&gt; implementation to use
-      is:&lt;/p&gt; &lt;p&gt;&lt;pre&gt;public int hashCode() {
-      assert false : &quot;hashCode not designed&quot;; return 42;
-      // any arbitrary constant will do }&lt;/pre&gt;&lt;/p&gt;
+<p>If you don't think instances of this class will ever be inserted
+into a HashMap/HashTable, the recommended <code>hashCode</code>
+implementation to use is:</p>
 
-      Override both public boolean Object.equals(Object other),
-      and public int Object.hashCode(), or override neither. Even
-      if you are inheriting a hashCode() from a parent class,
-      consider implementing hashCode and explicitly delegating to
-      your superclass.
+<pre>
+@Override public int hashCode() {
+  assert false : "hashCode not designed";
+  return 42; // any arbitrary constant will do
+}
+</pre>
+
+<p>Note however, that some Java IDEs, such as Eclipse, will generate a
+reasonable equals and hashcode for you.</p>
+
+<p>Override both <code>public boolean Object.equals(Object
+other)</code>, and <code>public int Object.hashCode()</code>, or
+override neither. Even if you are inheriting a <code>hashCode</code>
+method from a parent class, consider implementing
+<code>hashCode</code> and explicitly delegating to your
+superclass.</p>
+
+<p>For more information on this topic please reference items 8 and 9
+of Bloch's <i>Effective Java</i> (second edition).</p>]]>
     </info>
-    <name>Defines Hash Code Uses Equals</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>EQ_COMPARETO_USE_OBJECT_EQUALS</id>
-    <artifact tool="FindBugs"
-	      mnemonic="EQ_COMPARETO_USE_OBJECT_EQUALS">
-    </artifact>
-    <shortMessage>
-      Class defines compareTo(...) and uses Object.equals()
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="EQ_COMPARETO_USE_OBJECT_EQUALS"/>
+    <name>Defines compareTo() but uses Object.equals()</name>
+    <shortMessage>Class defines a compareTo(...) method but uses Object.equals().</shortMessage>
     <info>
-      &lt;p&gt; This class defines a
-      &lt;code&gt;compareTo(...)&lt;/code&gt; method but inherits
-      its &lt;code&gt;equals()&lt;/code&gt; method from
-      &lt;code&gt;java.lang.Object&lt;/code&gt;. Generally, the
-      value of compareTo should return zero if and only if equals
-      returns true. If this is violated, weird and unpredictable
-      failures will occur in classes such as PriorityQueue. In
-      Java 5 the PriorityQueue.remove method uses the compareTo
-      method, while in Java 6 it uses the equals method.
+<![CDATA[<p>This class defines a <code>compareTo(...)</code> method
+but inherits its <code>equals</code> method from
+<code>java.lang.Object</code>. Generally, the <code>compareTo</code>
+method should return zero if and only if <code>equals</code> returns
+true. If this is violated, weird and unpredictable failures will occur
+in classes such as <code>PriorityQueue</code>. In Java 5 the
+<code>remove</code> method of <code>PriorityQueue</code> uses the
+<code>compareTo</code> method, while in Java 6 it uses the
+<code>equals</code> method.
 
-      &lt;p&gt;From the JavaDoc for the compareTo method in the
-      Comparable interface: &lt;blockquote&gt; It is strongly
-      recommended, but not strictly required that
-      &lt;code&gt;(x.compareTo(y)==0) ==
-      (x.equals(y))&lt;/code&gt;. Generally speaking, any class
-      that implements the Comparable interface and violates this
-      condition should clearly indicate this fact. The recommended
-      language is &quot;Note: this class has a natural ordering
-      that is inconsistent with equals.&quot; &lt;/blockquote&gt;
+<p>From the JavaDoc for the <code>compareTo</code> method in the
+<code>Comparable</code> interface:</p>
 
+<blockquote> It is strongly recommended, but not strictly required
+that <code>(x.compareTo(y)==0) == (x.equals(y))</code>. Generally
+speaking, any class that implements the Comparable interface and
+violates this condition should clearly indicate this fact. The
+recommended language is &quot;Note: this class has a natural ordering
+that is inconsistent with equals.&quot;</blockquote>
+
+<p>For more information on this topic please reference item 12 of
+Bloch's <i>Effective Java</i> (second edition).</p>]]>
     </info>
-    <name>Defines compareTo() Uses Object Equals</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
-    <id>DefinesHashcodeNotEquals</id>
-    <artifact tool="FindBugs" mnemonic="HE_HASHCODE_NO_EQUALS">
-    </artifact>
-    <shortMessage>
-      Class defines hashCode() but not equals()
-    </shortMessage>
+    <id>HE_EQUALS_NO_HASHCODE</id>
+    <artifact tool="FindBugs" mnemonic="HE_EQUALS_NO_HASHCODE"/>
+    <artifact tool="FindBugs" mnemonic="HE_EQUALS_USE_HASHCODE"/>
+    <name>Defines equals but inherits hash code</name>
+    <shortMessage>Class defines equals() but inherits hashCode().</shortMessage>
     <info>
-      &lt;p&gt; This class defines a
-      &lt;code&gt;hashCode()&lt;/code&gt; method but not an
-      &lt;code&gt;equals()&lt;/code&gt; method.&amp;nbsp;
-      Therefore, the class may violate the invariant that equal
-      objects must have equal hashcodes.&lt;/p&gt;
+<![CDATA[<p> This class overrides <code>equals(Object)</code>, but
+does not override <code>hashCode()</code>, and inherits the
+implementation of <code>hashCode()</code> from
+<code>java.lang.Object</code>.  The implementation of
+<code>hashCode</code> in <code>java.lang.Object</code> returns the
+identity hash code, an arbitrary value assigned to the object by the
+VM).  Therefore, the class is likely to violate the invariant that
+equal objects must have equal hashcodes.</p>
 
-      Override both public boolean Object.equals(Object other),
-      and public int Object.hashCode(), or override neither. Even
-      if you are inheriting a hashCode() from a parent class,
-      consider implementing hashCode and explicitly delegating to
-      your superclass.
+<p>If you don't think instances of this class will ever be inserted
+into a HashMap/HashTable, the recommended <code>hashCode</code>
+implementation to use is:</p>
+
+<pre>
+@Override public int hashCode() {
+  assert false : "hashCode not designed";
+  return 42; // any arbitrary constant will do
+}
+</pre>
+
+<p>Note however, that some Java IDEs, such as Eclipse, will generate a
+reasonable equals and hashcode for you.</p>
+
+<p>Override both <code>public boolean Object.equals(Object
+other)</code>, and <code>public int Object.hashCode()</code>, or
+override neither. Even if you are inheriting a <code>hashCode</code>
+method from a parent class, consider implementing
+<code>hashCode</code> and explicitly delegating to your
+superclass.</p>
+
+<p>For more information on this topic please reference items 8 and 9
+of Bloch's <i>Effective Java</i> (second edition).</p>]]>
     </info>
-    <name>Defines Hashcode Not Equals</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
-    <id>DefinesEqualsUsesHashcode</id>
-    <artifact tool="FindBugs" mnemonic="HE_EQUALS_USE_HASHCODE">
-    </artifact>
-    <shortMessage>
-      Class defines equals() and uses Object.hashCode()
-    </shortMessage>
+    <id>HE_INHERITS_EQUALS_USE_HASHCODE</id>
+    <artifact tool="FindBugs" mnemonic="HE_INHERITS_EQUALS_USE_HASHCODE"/>
+    <name>Inherits equals but uses hash code</name>
+    <shortMessage>Class inherits equals() but uses Object.hashCode().</shortMessage>
     <info>
+<![CDATA[<p>This class inherits <code>equals(Object)</code> from an
+abstract superclass, and <code>hashCode()</code> from
+<code>java.lang.Object</code> The implementation of
+<code>hashCode</code> in <code>java.lang.Object</code> returns the
+identity hash code, an arbitrary value assigned to the object by the
+VM).  Therefore, the class is likely to violate the invariant that
+equal objects must have equal hashcodes.</p>
 
-      &lt;p&gt; This class overrides
-      &lt;code&gt;equals(Object)&lt;/code&gt;, but does not
-      override &lt;code&gt;hashCode()&lt;/code&gt;, and inherits
-      the implementation of &lt;code&gt;hashCode()&lt;/code&gt;
-      from &lt;code&gt;java.lang.Object&lt;/code&gt; (which
-      returns the identity hash code, an arbitrary value assigned
-      to the object by the VM).&amp;nbsp; Therefore, the class is
-      very likely to violate the invariant that equal objects must
-      have equal hashcodes.&lt;/p&gt;
+<p>If you don't think instances of this class will ever be inserted
+into a HashMap/HashTable, the recommended <code>hashCode</code>
+implementation to use is:</p>
 
-      &lt;p&gt;If you don't think instances of this class will
-      ever be inserted into a HashMap/HashTable, the recommended
-      &lt;code&gt;hashCode&lt;/code&gt; implementation to use
-      is:&lt;/p&gt; &lt;pre&gt;public int hashCode() { assert
-      false : &quot;hashCode not designed&quot;; return 42; // any
-      arbitrary constant will do }&lt;/pre&gt;
+<pre>
+public int hashCode() {
+  assert false : &quot;hashCode not designed&quot;;
+  return 42; // any arbitrary constant will do
+}
+</pre>
 
-      Override both public boolean Object.equals(Object other),
-      and public int Object.hashCode(), or override neither. Even
-      if you are inheriting a hashCode() from a parent class,
-      consider implementing hashCode and explicitly delegating to
-      your superclass.
+<p>Note however, that some Java IDEs, such as Eclipse, will generate a
+reasonable equals and hashcode for you.</p>
+
+<p>Override both <code>public boolean Object.equals(Object
+other)</code>, and <code>public int Object.hashCode()</code>, or
+override neither. Even if you are inheriting a <code>hashCode</code>
+method from a parent class, consider implementing
+<code>hashCode</code> and explicitly delegating to your
+superclass.</p>
+
+<p>For more information on this topic please reference items 8 and 9
+of Bloch's <i>Effective Java</i> (second edition).</p>]]>
     </info>
-    <name>Defines equals() Uses hashcode()</name>
-  </findingType>
-  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-  <findingType>
-    <id>InheritsEqualsUsesHashCode</id>
-    <artifact tool="FindBugs"
-	      mnemonic="HE_INHERITS_EQUALS_USE_HASHCODE">
-    </artifact>
-    <shortMessage>
-      Class inherits equals() and uses Object.hashCode()
-    </shortMessage>
-    <info>
-
-      &lt;p&gt; This class inherits
-      &lt;code&gt;equals(Object)&lt;/code&gt; from an abstract
-      superclass, and &lt;code&gt;hashCode()&lt;/code&gt; from
-      &lt;code&gt;java.lang.Object&lt;/code&gt; (which returns the
-      identity hash code, an arbitrary value assigned to the
-      object by the VM).&amp;nbsp; Therefore, the class is very
-      likely to violate the invariant that equal objects must have
-      equal hashcodes.&lt;/p&gt;
-
-      &lt;p&gt;If you don't want to define a hashCode method,
-      and/or don't believe the object will ever be put into a
-      HashMap/Hashtable, define the
-      &lt;code&gt;hashCode()&lt;/code&gt; method to throw
-      &lt;code&gt;UnsupportedOperationException&lt;/code&gt;.&lt;/p&gt;
-
-      Override both public boolean Object.equals(Object other),
-      and public int Object.hashCode(), or override neither. Even
-      if you are inheriting a hashCode() from a parent class,
-      consider implementing hashCode and explicitly delegating to
-      your superclass.
-
-    </info>
-    <name>Inherits Equals Uses Hashcode</name>
-  </findingType>
-  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-  <findingType>
-    <id>OverridesEqualsNotHashcode</id>
-    <artifact tool="FindBugs" mnemonic="HE_EQUALS_NO_HASHCODE">
-    </artifact>
-    <shortMessage>
-      Class defines equals() but not hashCode()
-    </shortMessage>
-    <info>
-
-      &lt;p&gt; This class overrides
-      &lt;code&gt;equals(Object)&lt;/code&gt;, but does not
-      override &lt;code&gt;hashCode()&lt;/code&gt;.&amp;nbsp;
-      Therefore, the class may violate the invariant that equal
-      objects must have equal hashcodes.&lt;/p&gt;
-
-      Override both public boolean Object.equals(Object other),
-      and public int Object.hashCode(), or override neither. Even
-      if you are inheriting a hashCode() from a parent class,
-      consider implementing hashCode and explicitly delegating to
-      your superclass.
-    </info>
-    <name>Overrides Equals Not Hashcode</name>
-  </findingType>
-  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-  <findingType>
-    <id>EQ_ABSTRACT_SELF</id>
-    <artifact tool="FindBugs" mnemonic="EQ_ABSTRACT_SELF">
-    </artifact>
-    <shortMessage>
-      Abstract class defines covariant equals() method
-    </shortMessage>
-    <info>
-
-      &lt;p&gt; This class defines a covariant version of
-      &lt;code&gt;equals()&lt;/code&gt;.&amp;nbsp; To correctly
-      override the &lt;code&gt;equals()&lt;/code&gt; method in
-      &lt;code&gt;java.lang.Object&lt;/code&gt;, the parameter of
-      &lt;code&gt;equals()&lt;/code&gt; must have type
-      &lt;code&gt;java.lang.Object&lt;/code&gt;.&lt;/p&gt;
-
-    </info>
-    <name>Abstract Self</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>ES_COMPARING_STRINGS_WITH_EQ</id>
-    <artifact tool="FindBugs"
-	      mnemonic="ES_COMPARING_STRINGS_WITH_EQ">
-    </artifact>
-    <artifact tool="PMD"
-	      mnemonic="UseEqualsToCompareStrings"/>				
-    <shortMessage>
-      Comparison of String objects using == or !=
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="ES_COMPARING_STRINGS_WITH_EQ"/>
+    <artifact tool="FindBugs" mnemonic="ES_COMPARING_PARAMETER_STRING_WITH_EQ"/>
+    <artifact tool="PMD" mnemonic="UseEqualsToCompareStrings"/>				
+    <name>String comparison with == or !=</name>
+    <shortMessage>Suspicious comparison of String objects using == or !=.</shortMessage>
     <info>
+<![CDATA[<p>This code compares <code>java.lang.String</code> objects
+for reference equality using the == or != operators. Unless both
+strings are constants in a source file or have been interned using the
+<code>String.intern()</code> method, the same string value may be
+represented by two different String objects.  In short, only very
+specialized code should use == or != operators on strings as this is
+unusual and can create subtle bugs in your code.</p>
 
-      &lt;p&gt;This code compares
-      &lt;code&gt;java.lang.String&lt;/code&gt; objects for
-      reference equality using the == or != operators. Unless both
-      strings are either constants in a source file, or have been
-      interned using the &lt;code&gt;String.intern()&lt;/code&gt;
-      method, the same string value may be represented by two
-      different String objects. Consider using the
-      &lt;code&gt;equals(Object)&lt;/code&gt; method
-      instead.&lt;/p&gt;
+<p>This is even worse if the string is a parameter. Requiring callers
+to pass only String constants or interned strings to a method is
+unnecessarily fragile, and rarely leads to measurable performance
+gains.</p>
 
+<p>Consider using the <code>equals(Object)</code> method instead.  For
+example, change <code>s1 == s2</code> with <code>s1.equals(s2)</code>
+where you are sure that <code>s1</code> is non-null.</p>
+
+<p>If you are comparing a constant string to any other string always
+call <code>equals</code> on the constant as this avoids any possibility
+of a <code>NullPointerException</code>.  For example, use
+<code>"hello".equals(s1)</code> rather than
+<code>s1.equals("hello")</code>.]]>
     </info>
-    <name>Comparing Strings With == or !=</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
-    <id>ES_COMPARING_PARAMETER_STRING_WITH_EQ</id>
-    <artifact tool="FindBugs"
-	      mnemonic="ES_COMPARING_PARAMETER_STRING_WITH_EQ">
-    </artifact>
-    <shortMessage>
-      Comparison of String parameter using == or !=
-    </shortMessage>
+    <id>IS_FIELD_NOT_GUARDED</id>
+    <artifact tool="FindBugs" mnemonic="IS_FIELD_NOT_GUARDED"/>
+    <name>Annotated field is not guarded</name>
+    <shortMessage>Annotated field is not guarded against concurrent access.</shortMessage>
     <info>
-
-      &lt;p&gt;This code compares a
-      &lt;code&gt;java.lang.String&lt;/code&gt; parameter for
-      reference equality using the == or != operators. Requiring
-      callers to pass only String constants or interned strings to
-      a method is unnecessarily fragile, and rarely leads to
-      measurable performance gains. Consider using the
-      &lt;code&gt;equals(Object)&lt;/code&gt; method
-      instead.&lt;/p&gt;
-
+<![CDATA[<p>This field is annotated with
+<code>net.jcip.annotations.GuardedBy</code>, but can be accessed in a
+way that seems to violate the annotation.</p>]]>
     </info>
-    <name>Comparing Parameter String With == or !=</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
-    <id>CO_ABSTRACT_SELF</id>
-    <artifact tool="FindBugs" mnemonic="CO_ABSTRACT_SELF">
-    </artifact>
-    <shortMessage>
-      Abstract class defines covariant compareTo() method
-    </shortMessage>
+    <id>IS2_INCONSISTENT_SYNC</id>
+    <artifact tool="FindBugs" mnemonic="IS2_INCONSISTENT_SYNC"/>
+    <artifact tool="FindBugs" mnemonic="IS_INCONSISTENT_SYNC"/>
+    <name>Inconsistent field synchronization</name>
+    <shortMessage>Inconsistent synchronization of fields.  Possible race condition detected.</shortMessage>
     <info>
+<![CDATA[<p>The fields of this class appear to be accessed
+inconsistently with respect to synchronization. This bug report
+indicates that the bug pattern detector judged that</p>
 
-      &lt;p&gt; This class defines a covariant version of
-      &lt;code&gt;compareTo()&lt;/code&gt;.&amp;nbsp; To correctly
-      override the &lt;code&gt;compareTo()&lt;/code&gt; method in
-      the &lt;code&gt;Comparable&lt;/code&gt; interface, the
-      parameter of &lt;code&gt;compareTo()&lt;/code&gt; must have
-      type &lt;code&gt;java.lang.Object&lt;/code&gt;.&lt;/p&gt;
+<ol>
+<li> The class contains a mix of locked and unlocked accesses,</li>
+<li> At least one locked access was performed by one of the class's own methods, and</li>
+<li> The number of unsynchronized field accesses (reads and writes) was no more than one third of all accesses, with writes being weighed twice as high as reads</li>
+</ol>
 
+<p>A typical bug matching this bug pattern is forgetting to
+synchronize one of the methods in a class that is intended to be
+thread-safe.</p>
+
+<p>Note that there are various sources of inaccuracy in this
+detector; for example, the detector cannot statically detect all
+situations in which a lock is held.  Also, even when the detector is
+accurate in distinguishing locked vs. unlocked accesses, the code in
+question may still be correct.</p>
+
+<p>To address this issue you must determine what the programmer
+intended with respect to concurrency policy design intent and ensure
+that this class faithfully implements that intent.</p>]]>
     </info>
-    <name>Abstract Self</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
-    <id>FieldNotGuarded</id>
-    <artifact tool="FindBugs" mnemonic="IS_FIELD_NOT_GUARDED">
-    </artifact>
-    <shortMessage>
-      Field not guarded against concurrent access
-    </shortMessage>
+    <id>NN_NAKED_NOTIFY</id>
+    <artifact tool="FindBugs" mnemonic="NN_NAKED_NOTIFY"/>
+    <name>Naked notify</name>
+    <shortMessage>Naked notify, no apparent change has been made to mutable object state.</shortMessage>
     <info>
+<![CDATA[<p> A call to <code>notify()</code> or
+<code>notifyAll()</code> was made without any (apparent) accompanying
+modification to mutable object state. In general, calling a notify
+method on a monitor is done because some condition another thread is
+waiting for has become true. However, for the condition to be
+meaningful, it must involve a heap object that is visible to both
+threads.</p>
 
-      &lt;p&gt; This field is annotated with
-      net.jcip.annotations.GuardedBy, but can be accessed in a way
-      that seems to violate the annotation.&lt;/p&gt;
-
+<p>This bug does not necessarily indicate an error, since the change
+to mutable object state may have taken place in a method which then
+called the method containing the notification.</p>]]>
     </info>
-    <name>Field Not Guarded</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
-    <id>InconsistentSynchronization2</id>
-    <artifact tool="FindBugs" mnemonic="IS2_INCONSISTENT_SYNC">
-    </artifact>
-    <shortMessage>Inconsistent synchronization</shortMessage>
+    <id>MS_EXPOSE_REP</id>
+    <artifact tool="FindBugs" mnemonic="MS_EXPOSE_REP"/>
+    <name>Exposing a mutable array</name>
+    <shortMessage>Public static method may expose internal representation by returning a mutable array.</shortMessage>
     <info>
+<![CDATA[<p>A public static method returns a reference to an array
+that is part of the static state of the class. Any code that calls
+this method can freely modify the underlying array.  If the array is
+accessed by untrusted code, and unchecked changes to the mutable array
+would compromise security or other important properties, you will need
+to do something different.</p>
 
-      &lt;p&gt; The fields of this class appear to be accessed
-      inconsistently with respect to synchronization.&amp;nbsp;
-      This bug report indicates that the bug pattern detector
-      judged that &lt;/p&gt; &lt;ol&gt; &lt;li&gt; The class
-      contains a mix of locked and unlocked accesses,&lt;/li&gt;
-      &lt;li&gt; At least one locked access was performed by one
-      of the class's own methods, and&lt;/li&gt; &lt;li&gt; The
-      number of unsynchronized field accesses (reads and writes)
-      was no more than one third of all accesses, with writes
-      being weighed twice as high as reads&lt;/li&gt; &lt;/ol&gt;
-
-      &lt;p&gt; A typical bug matching this bug pattern is
-      forgetting to synchronize one of the methods in a class that
-      is intended to be thread-safe.&lt;/p&gt;
-
-      &lt;p&gt; You can select the nodes labeled
-      &quot;Unsynchronized access&quot; to show the code locations
-      where the detector believed that a field was accessed
-      without synchronization.&lt;/p&gt;
-
-      &lt;p&gt; Note that there are various sources of inaccuracy
-      in this detector; for example, the detector cannot
-      statically detect all situations in which a lock is
-      held.&amp;nbsp; Also, even when the detector is accurate in
-      distinguishing locked vs. unlocked accesses, the code in
-      question may still be correct.&lt;/p&gt;
-
-      &lt;p&gt; This description refers to the &quot;IS2&quot;
-      version of the pattern detector, which has more accurate
-      ways of detecting locked vs. unlocked accesses than the
-      older &quot;IS&quot; detector.&lt;/p&gt;
-
+<p>One possible fix is to return a copy of the array.</p>]]>
     </info>
-    <name>Inconsistent Sync</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
-    <id>NakedNotifyCall</id>
-    <artifact tool="FindBugs" mnemonic="NN_NAKED_NOTIFY"></artifact>
-    <shortMessage>Naked notify</shortMessage>
+    <id>EI_EXPOSE_REP</id>
+    <artifact tool="FindBugs" mnemonic="EI_EXPOSE_REP"/>
+    <name>Exposing a mutable object</name>
+    <shortMessage>May expose internal representation by returning a reference to a mutable object.</shortMessage>
     <info>
+<![CDATA[<p>Returning a reference to a mutable object value stored in
+one of the object's fields exposes the internal representation of the
+object. If instances are accessed by untrusted code, and unchecked
+changes to the mutable object would compromise security or other
+important properties, you will need to do something different.</p>
 
-      &lt;p&gt; A call to &lt;code&gt;notify()&lt;/code&gt; or
-      &lt;code&gt;notifyAll()&lt;/code&gt; was made without any
-      (apparent) accompanying modification to mutable object
-      state.&amp;nbsp; In general, calling a notify method on a
-      monitor is done because some condition another thread is
-      waiting for has become true.&amp;nbsp; However, for the
-      condition to be meaningful, it must involve a heap object
-      that is visible to both threads.&lt;/p&gt;
-
-      &lt;p&gt; This bug does not necessarily indicate an error,
-      since the change to mutable object state may have taken
-      place in a method which then called the method containing
-      the notification.&lt;/p&gt;
-
+<p>Returning a new copy of the object is better approach in many
+situations.</p> ]]>
     </info>
-    <name>Naked Notify</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
-    <id>PublicStaticMayExposeInternalRepresentation</id>
-    <artifact tool="FindBugs" mnemonic="MS_EXPOSE_REP"></artifact>
-    <shortMessage>
-      Public static method may expose internal representation by
-      returning array
-    </shortMessage>
+    <id>EI_EXPOSE_REP2</id>
+    <artifact tool="FindBugs" mnemonic="EI_EXPOSE_REP2"/>
+    <name>Exposing a mutable object by reference</name>
+    <shortMessage>May expose internal representation by incorporating a reference to a mutable object.</shortMessage>
     <info>
+<![CDATA[<p>This code stores a reference to an externally mutable
+object into the internal representation of the object. If instances
+are accessed by untrusted code, and unchecked changes to the mutable
+object would compromise security or other important properties, you
+will need to do something different.</p>
 
-      &lt;p&gt; A public static method returns a reference to an
-      array that is part of the static state of the class. Any
-      code that calls this method can freely modify the underlying
-      array. One fix is to return a copy of the array.&lt;/p&gt;
-
+<p>Storing a copy of the object is better approach in many
+situations.</p>]]>
     </info>
-    <name>Expose Rep</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
-    <id>MayExposeInternalRepresentation</id>
-    <artifact tool="FindBugs" mnemonic="EI_EXPOSE_REP"></artifact>
-    <shortMessage>
-      May expose internal representation by returning reference to
-      mutable object
-    </shortMessage>
+    <id>EI_EXPOSE_STATIC_REP2</id>
+    <artifact tool="FindBugs" mnemonic="EI_EXPOSE_STATIC_REP2"/>
+    <name>Exposing mutable state via a static field</name>
+    <shortMessage>May expose internal static state by storing a mutable object into a static field.</shortMessage>
     <info>
+<![CDATA[<p>This code stores a reference to an externally mutable
+object into a static field. If unchecked changes to the mutable object
+would compromise security or other important properties, you will need
+to do something different.</p>
 
-      &lt;p&gt; Returning a reference to a mutable object value
-      stored in one of the object's fields exposes the internal
-      representation of the object.&amp;nbsp; If instances are
-      accessed by untrusted code, and unchecked changes to the
-      mutable object would compromise security or other important
-      properties, you will need to do something different.
-      Returning a new copy of the object is better approach in
-      many situations.&lt;/p&gt;
-
+<p>Storing a copy of the object is better approach in many
+situations.</p>]]>
     </info>
-    <name>Expose Rep</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
-    <id>MayExposeInternalRepresentation2</id>
-    <artifact tool="FindBugs" mnemonic="EI_EXPOSE_REP2"></artifact>
-    <shortMessage>
-      May expose internal representation by incorporating
-      reference to mutable object
-    </shortMessage>
+    <id>RU_INVOKE_RUN</id>
+    <artifact tool="FindBugs" mnemonic="RU_INVOKE_RUN"/>
+    <name>Invokes run on a thread</name>
+    <shortMessage>Invokes run on a thread, it is likely that this code intended to invoke start instead.</shortMessage>
     <info>
-
-      &lt;p&gt; This code stores a reference to an externally
-      mutable object into the internal representation of the
-      object.&amp;nbsp; If instances are accessed by untrusted
-      code, and unchecked changes to the mutable object would
-      compromise security or other important properties, you will
-      need to do something different. Storing a copy of the object
-      is better approach in many situations.&lt;/p&gt;
-
+<![CDATA[<p>This method explicitly invokes <code>run()</code> on an
+object. In general, classes implement the <code>Runnable</code>
+interface because they are going to have their <code>run()</code>
+method invoked in a new thread, in which case
+<code>Thread.start()</code> is the right method to call.</p>]]>
     </info>
-    <name>Expose REP2</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
-    <id>MayExposeInternalStaticStatic</id>
-    <artifact tool="FindBugs" mnemonic="EI_EXPOSE_STATIC_REP2">
-    </artifact>
-    <shortMessage>
-      May expose internal static state by storing a mutable object
-      into a static field
-    </shortMessage>
+    <id>SP_SPIN_ON_FIELD</id>
+    <artifact tool="FindBugs" mnemonic="SP_SPIN_ON_FIELD"/>
+    <name>Spinning on a field read</name>
+    <shortMessage>This method spins in a loop which reads a field.  This may be changed into an infinite loop by the compiler.</shortMessage>
     <info>
+<![CDATA[<p>This method spins in a loop which reads a field.  The
+compiler may legally hoist the read out of the loop, turning the code
+into an infinite loop.</p>
 
-      &lt;p&gt; This code stores a reference to an externally
-      mutable object into a static field. If unchecked changes to
-      the mutable object would compromise security or other
-      important properties, you will need to do something
-      different. Storing a copy of the object is better approach
-      in many situations.&lt;/p&gt;
-
+<p>The class should be changed so it uses proper synchronization,
+likely including wait and notify calls.  Also consider the use of the
+classes in <code>java.util.concurrent</code> and
+<code>java.util.concurrent.atomic</code>.</p>]]>
     </info>
-    <name>Expose Static REP2</name>
-  </findingType>
-  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-  <findingType>
-    <id>InvokesRun</id>
-    <artifact tool="FindBugs" mnemonic="RU_INVOKE_RUN"></artifact>
-    <shortMessage>
-      Invokes run on a thread (did you mean to start it instead?)
-    </shortMessage>
-    <info>
-
-      &lt;p&gt; This method explicitly invokes
-      &lt;code&gt;run()&lt;/code&gt; on an object.&amp;nbsp; In
-      general, classes implement the
-      &lt;code&gt;Runnable&lt;/code&gt; interface because they are
-      going to have their &lt;code&gt;run()&lt;/code&gt; method
-      invoked in a new thread, in which case
-      &lt;code&gt;Thread.start()&lt;/code&gt; is the right method
-      to call.&lt;/p&gt;
-
-    </info>
-    <name>Invoke Run</name>
-  </findingType>
-  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-  <findingType>
-    <id>MethodSpinsOnField</id>
-    <artifact tool="FindBugs" mnemonic="SP_SPIN_ON_FIELD">
-    </artifact>
-    <shortMessage>Method spins on field</shortMessage>
-    <info>
-
-      &lt;p&gt; This method spins in a loop which reads a
-      field.&amp;nbsp; The compiler may legally hoist the read out
-      of the loop, turning the code into an infinite
-      loop.&amp;nbsp; The class should be changed so it uses
-      proper synchronization (including wait and notify
-      calls).&lt;/p&gt;
-
-    </info>
-    <name>Spin On Field</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>NS_DANGEROUS_NON_SHORT_CIRCUIT</id>
-    <artifact tool="FindBugs"
-	      mnemonic="NS_DANGEROUS_NON_SHORT_CIRCUIT">
-    </artifact>
-    <shortMessage>
-      Potentially dangerous use of non-short-circuit logic
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="NS_DANGEROUS_NON_SHORT_CIRCUIT"/>
+    <name>Dangerous use of non-short-circuit logic</name>
+    <shortMessage>Potentially dangerous use of non-short-circuit logic.</shortMessage>
     <info>
+<![CDATA[<p>This code seems to be using non-short-circuit logic, i.e.,
+<code>&</code> or <code>|</code>, rather than short-circuit logic,
+i.e., <code>&&</code> or <code>||</code>. In addition, it seem
+possible that, depending on the value of the left hand side, you might
+not want to evaluate the right hand side (because it would have side
+effects, could cause an exception or could be expensive.</p>
 
-      &lt;p&gt; This code seems to be using non-short-circuit
-      logic (e.g., &amp;amp; or |) rather than short-circuit logic
-      (&amp;amp;&amp;amp; or ||). In addition, it seem possible
-      that, depending on the value of the left hand side, you
-      might not want to evaluate the right hand side (because it
-      would have side effects, could cause an exception or could
-      be expensive.&lt;/p&gt; &lt;p&gt; Non-short-circuit logic
-      causes both sides of the expression to be evaluated even
-      when the result can be inferred from knowing the left-hand
-      side. This can be less efficient and can result in errors if
-      the left-hand side guards cases when evaluating the
-      right-hand side can generate an error. &lt;/p&gt;
+<p>Non-short-circuit logic causes both sides of the expression to be
+evaluated even when the result can be inferred from knowing the
+left-hand side. This can be less efficient and can result in errors if
+the left-hand side guards cases when evaluating the right-hand side
+can generate an error.</p>
 
-      &lt;p&gt;See &lt;a
-      href=&quot;http://java.sun.com/docs/books/jls/third_edition/html/expressions.html#15.22.2&quot;&gt;the
-      Java Language Specification&lt;/a&gt; for details
+<p>It is considered best practice to use short-circuit logic in most
+expressions.  Document exceptions in the code with clear reasons why
+the exception is required.</p>
 
-      &lt;/p&gt;
-
+<p>See <a
+href="http://java.sun.com/docs/books/jls/third_edition/html/expressions.html#15.22.2">the
+Java Language Specification</a> for further details</p>]]>
     </info>
-    <name>Dangerous Non Short Circuit</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>NS_NON_SHORT_CIRCUIT</id>
-    <artifact tool="FindBugs" mnemonic="NS_NON_SHORT_CIRCUIT">
-    </artifact>
-    <shortMessage>
-      Questionable use of non-short-circuit logic
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="NS_NON_SHORT_CIRCUIT"/>
+    <name>Questionable use of non-short-circuit logic</name>
+    <shortMessage>Questionable use of non-short-circuit logic.</shortMessage>
     <info>
+<![CDATA[<p>This code seems to be using non-short-circuit logic, i.e.,
+<code>&</code> or <code>|</code>, rather than short-circuit logic,
+i.e., <code>&&</code> or <code>||</code>.</p>
 
-      &lt;p&gt; This code seems to be using non-short-circuit
-      logic (e.g., &amp;amp; or |) rather than short-circuit logic
-      (&amp;amp;&amp;amp; or ||). Non-short-circuit logic causes
-      both sides of the expression to be evaluated even when the
-      result can be inferred from knowing the left-hand side. This
-      can be less efficient and can result in errors if the
-      left-hand side guards cases when evaluating the right-hand
-      side can generate an error.
+<p>Non-short-circuit logic causes both sides of the expression to be
+evaluated even when the result can be inferred from knowing the
+left-hand side. This can be less efficient and can result in errors if
+the left-hand side guards cases when evaluating the right-hand side
+can generate an error.</p>
 
-      &lt;p&gt;See &lt;a
-      href=&quot;http://java.sun.com/docs/books/jls/third_edition/html/expressions.html#15.22.2&quot;&gt;the
-      Java Language Specification&lt;/a&gt; for details
+<p>It is considered best practice to use short-circuit logic in most
+expressions.  Document exceptions in the code with clear reasons why
+the exception is required.</p>
 
-      &lt;/p&gt;
-
+<p>See <a
+href="http://java.sun.com/docs/books/jls/third_edition/html/expressions.html#15.22.2">the
+Java Language Specification</a> for further details</p>]]>
     </info>
-    <name>Non Short Circuit</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
-    <id>WaitWithTwoLocks</id>
-    <artifact tool="FindBugs" mnemonic="TLW_TWO_LOCK_WAIT">
-    </artifact>
-    <shortMessage>Wait with two locks held</shortMessage>
+    <id>TLW_TWO_LOCK_WAIT</id>
+    <artifact tool="FindBugs" mnemonic="TLW_TWO_LOCK_WAIT"/>
+    <name>Two lock wait</name>
+    <shortMessage>Wait with two locks held.  Only one lock released by the wait.</shortMessage>
     <info>
+<![CDATA[<p>Waiting on a monitor while two locks are held may cause
+deadlock. Performing a wait only releases the lock on the object being
+waited on, not any other locks.</p>
 
-      &lt;p&gt; Waiting on a monitor while two locks are held may
-      cause deadlock. &amp;nbsp; Performing a wait only releases
-      the lock on the object being waited on, not any other locks.
-      &amp;nbsp; This not necessarily a bug, but is worth
-      examining closely.&lt;/p&gt;
-
+<p>This not necessarily a bug, but is worth examining closely
+especially if there is also a warning about a two lock notify.</p>]]>
     </info>
-    <name>Two Lock Wait</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
-    <id>TwoLocksOnNotify</id>
+    <id>TLW_TWO_LOCK_NOTIFY</id>
     <artifact tool="FindBugs" mnemonic="TLW_TWO_LOCK_NOTIFY">
+    <name>Two lock notify</name>
     </artifact>
-    <shortMessage>Notify with two locks held</shortMessage>
+    <shortMessage>Notify with two locks held.</shortMessage>
     <info>
+<![CDATA[<p>The code calls <code>notify()</code> or
+<code>notifyAll()</code> while two locks are held. If this
+notification is intended to wake up a <code>wait()</code> that is
+holding the same locks, it may deadlock, since the wait will only give
+up one lock and the notify will be unable to get both locks, and thus
+the notify will not succeed.</p>
 
-      &lt;p&gt; The code calls notify() or notifyAll() while two
-      locks are held. If this notification is intended to wake up
-      a wait() that is holding the same locks, it may deadlock,
-      since the wait will only give up one lock and the notify
-      will be unable to get both locks, and thus the notify will
-      not succeed. &amp;nbsp; If there is also a warning about a
-      two lock wait, the probably of a bug is quite high.
-      &lt;/p&gt;
-
+<p>If there is also a warning about a two lock wait, the probably of a
+bug is quite high.</p>]]>
     </info>
-    <name>Two Lock Notify</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
-    <id>UnconditionalWait</id>
-    <artifact tool="FindBugs" mnemonic="UW_UNCOND_WAIT"></artifact>
-    <shortMessage>Unconditional wait</shortMessage>
+    <id>UW_UNCOND_WAIT</id>
+    <artifact tool="FindBugs" mnemonic="UW_UNCOND_WAIT"/>
+    <name>Unconditional wait</name>
+    <shortMessage>Unconditional wait could cause your code to "hang"</shortMessage>
     <info>
-
-      &lt;p&gt; This method contains a call to
-      &lt;code&gt;java.lang.Object.wait()&lt;/code&gt; which is
-      not guarded by conditional control flow.&amp;nbsp; The code
-      should verify that condition it intends to wait for is not
-      already satisfied before calling wait; any previous
-      notifications will be ignored. &lt;/p&gt;
-
+<![CDATA[<p>This method contains a call to
+<code>java.lang.Object.wait()</code> which is not guarded by
+conditional control flow. The code should verify that condition it
+intends to wait for is not already satisfied before calling wait.  The
+reason for this is that when you invoke <code>wait</code> any previous
+notifications (i.e., those made in the past) will be ignored and your
+program could "hang".</p>]]>
     </info>
-    <name>Unconditional Wait</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UR_UNINIT_READ</id>
-    <artifact tool="FindBugs" mnemonic="UR_UNINIT_READ"></artifact>
-    <shortMessage>
-      Uninitialized read of field in constructor
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="UR_UNINIT_READ"/>
+    <name>Uninitialized field read</name>
+    <shortMessage>Uninitialized read of a field within a constructor.</shortMessage>
     <info>
-
-      &lt;p&gt; This constructor reads a field which has not yet
-      been assigned a value.&amp;nbsp; This is often caused when
-      the programmer mistakenly uses the field instead of one of
-      the constructor's parameters.&lt;/p&gt;
-
+<![CDATA[<p>This constructor reads a field which has not yet been
+assigned a value. This issue is often caused when the programmer
+mistakenly uses the field instead of one of the constructor's
+parameters.</p>]]>
     </info>
-    <name>Uninitialized Read</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
@@ -2054,39 +1869,6 @@ information.</p>]]>
 
     </info>
     <name>Empty Sync</name>
-  </findingType>
-  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-  <findingType>
-    <id>InconsistentSynchronization</id>
-    <artifact tool="FindBugs" mnemonic="IS_INCONSISTENT_SYNC">
-    </artifact>
-    <shortMessage>Inconsistent synchronization</shortMessage>
-    <info>
-
-      &lt;p&gt; The fields of this class appear to be accessed
-      inconsistently with respect to synchronization.&amp;nbsp;
-      This bug report indicates that the bug pattern detector
-      judged that &lt;/p&gt; &lt;ol&gt; &lt;li&gt; The class
-      contains a mix of locked and unlocked accesses,&lt;/li&gt;
-      &lt;li&gt; At least one locked access was performed by one
-      of the class's own methods, and&lt;/li&gt; &lt;li&gt; The
-      number of unsynchronized field accesses (reads and writes)
-      was no more than one third of all accesses, with writes
-      being weighed twice as high as reads&lt;/li&gt; &lt;/ol&gt;
-
-      &lt;p&gt; A typical bug matching this bug pattern is
-      forgetting to synchronize one of the methods in a class that
-      is intended to be thread-safe.&lt;/p&gt;
-
-      &lt;p&gt; Note that there are various sources of inaccuracy
-      in this detector; for example, the detector cannot
-      statically detect all situations in which a lock is
-      held.&amp;nbsp; Also, even when the detector is accurate in
-      distinguishing locked vs. unlocked accesses, the code in
-      question may still be correct.&lt;/p&gt;
-
-    </info>
-    <name>Inconsistent Sync</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>

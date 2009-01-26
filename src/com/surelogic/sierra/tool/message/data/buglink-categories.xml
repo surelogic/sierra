@@ -462,19 +462,11 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>EQ_ABSTRACT_SELF</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
             <type>SE_READ_RESOLVE_MUST_RETURN_OBJECT</type>
             <filtered>false</filtered>
         </filter>
         <filter>
             <type>NM_VERY_CONFUSING_INTENTIONAL</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>ES_COMPARING_PARAMETER_STRING_WITH_EQ</type>
             <filtered>false</filtered>
         </filter>
         <filter>
@@ -509,19 +501,7 @@
             <type>ES_COMPARING_STRINGS_WITH_EQ</type>
             <filtered>false</filtered>
         </filter>
-        <filter>
-            <type>OverridesEqualsNotHashcode</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>CO_ABSTRACT_SELF</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>NP_DOES_NOT_HANDLE_NULL</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
+       <filter>
             <type>SI_INSTANCE_BEFORE_FINALS_ASSIGNED</type>
             <filtered>false</filtered>
         </filter>
@@ -578,10 +558,6 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>DefinesHashcodeNotEquals</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
             <type>SE_NONLONG_SERIALVERSIONID</type>
             <filtered>false</filtered>
         </filter>
@@ -626,7 +602,7 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>InheritsEqualsUsesHashCode</type>
+            <type>HE_INHERITS_EQUALS_USE_HASHCODE</type>
             <filtered>false</filtered>
         </filter>
         <filter>
@@ -742,7 +718,7 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>DefinesEqualsUsesHashcode</type>
+            <type>HE_EQUALS_NO_HASHCODE</type>
             <filtered>false</filtered>
         </filter>
         <filter>
@@ -750,7 +726,7 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>DefinesHashCodeUsesEquals</type>
+            <type>HE_HASHCODE_NO_EQUALS</type>
             <filtered>false</filtered>
         </filter>
         <filter>
@@ -2163,10 +2139,6 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>InconsistentSynchronization</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
             <type>DC_DOUBLECHECK</type>
             <filtered>false</filtered>
         </filter>
@@ -2187,11 +2159,11 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>FieldNotGuarded</type>
+            <type>IS_FIELD_NOT_GUARDED</type>
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>WaitWithTwoLocks</type>
+            <type>TLW_TWO_LOCK_WAIT</type>
             <filtered>false</filtered>
         </filter>
         <filter>
@@ -2199,7 +2171,7 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>InvokesRun</type>
+            <type>RU_INVOKE_RUN</type>
             <filtered>false</filtered>
         </filter>
         <filter>
@@ -2283,11 +2255,11 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>TwoLocksOnNotify</type>
+            <type>TLW_TWO_LOCK_NOTIFY</type>
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>InconsistentSynchronization2</type>
+            <type>IS2_INCONSISTENT_SYNC</type>
             <filtered>false</filtered>
         </filter>
         <filter>
@@ -2311,7 +2283,7 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>NakedNotifyCall</type>
+            <type>NN_NAKED_NOTIFY</type>
             <filtered>false</filtered>
         </filter>
         <filter>
@@ -2319,11 +2291,11 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>UnconditionalWait</type>
+            <type>UW_UNCOND_WAIT</type>
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>MethodSpinsOnField</type>
+            <type>SP_SPIN_ON_FIELD</type>
             <filtered>false</filtered>
         </filter>
     </filterSets>
@@ -2340,7 +2312,7 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>MayExposeInternalRepresentation</type>
+            <type>EI_EXPOSE_REP</type>
             <filtered>false</filtered>
         </filter>
         <filter>
@@ -2356,11 +2328,11 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>MayExposeInternalRepresentation2</type>
+            <type>EI_EXPOSE_REP2</type>
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>MayExposeInternalStaticStatic</type>
+            <type>EI_EXPOSE_STATIC_REP2</type>
             <filtered>false</filtered>
         </filter>
         <filter>
@@ -2392,7 +2364,7 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>PublicStaticMayExposeInternalRepresentation</type>
+            <type>MS_EXPOSE_REP</type>
             <filtered>false</filtered>
         </filter>
         <filter>
