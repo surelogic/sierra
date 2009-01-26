@@ -10,9 +10,7 @@ import org.eclipse.core.runtime.Status;
 import com.surelogic.common.eclipse.jobs.DatabaseAccessRule;
 import com.surelogic.common.eclipse.jobs.SLProgressMonitorWrapper;
 import com.surelogic.common.i18n.I18N;
-import com.surelogic.common.jdbc.ConnectionQuery;
 import com.surelogic.common.jdbc.DBTransaction;
-import com.surelogic.common.jdbc.Query;
 import com.surelogic.common.jdbc.TransactionException;
 import com.surelogic.common.jobs.SLProgressMonitor;
 import com.surelogic.common.logging.SLLogger;
@@ -25,17 +23,13 @@ import com.surelogic.sierra.client.eclipse.model.Projects;
 import com.surelogic.sierra.client.eclipse.model.ServerSyncType;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
 import com.surelogic.sierra.client.eclipse.preferences.ServerFailureReport;
+import com.surelogic.sierra.jdbc.project.ClientProjectManager;
 import com.surelogic.sierra.jdbc.settings.ConnectedServer;
-import com.surelogic.sierra.jdbc.settings.SettingQueries;
 import com.surelogic.sierra.tool.message.ServerLocation;
 import com.surelogic.sierra.tool.message.ServerMismatchException;
 import com.surelogic.sierra.tool.message.SierraServiceClientException;
 
-/**
- * This job explicitly adds the {@link DatabaseAccessRule} to run like a
- * database job.
- */
-public class SynchronizeJob extends AbstractServerProjectJob {
+public class SynchronizeProjectJob extends AbstractServerProjectJob {
 	private final boolean f_force;
 
 	/**
@@ -43,6 +37,8 @@ public class SynchronizeJob extends AbstractServerProjectJob {
 	 * 
 	 * @param family
 	 *            the job family, may be {@code null}.
+	 * @param projectName
+	 *            the name of a project being synchronized
 	 * @param server
 	 *            the non-null server to contact.
 	 * @param syncType
@@ -53,11 +49,11 @@ public class SynchronizeJob extends AbstractServerProjectJob {
 	 * @param strategy
 	 *            the method to report problems that the job encounters.
 	 */
-	public SynchronizeJob(final ServerProjectGroupJob family,
-			final ConnectedServer server, final boolean force,
-			final ServerFailureReport strategy) {
-		super(family, "Synchronizing BugLink data for server '"
-				+ server.getName() + "'", server, null, strategy);
+	public SynchronizeProjectJob(final ServerProjectGroupJob family,
+			final String projectName, final ConnectedServer server,
+			final boolean force, final ServerFailureReport strategy) {
+		super(family, "Synchronizing Sierra data for project '" + projectName
+				+ "'", server, projectName, strategy);
 		f_force = force;
 		setRule(DatabaseAccessRule.getInstance());
 	}
@@ -124,18 +120,8 @@ public class SynchronizeJob extends AbstractServerProjectJob {
 		}
 
 		public IStatus perform(final Connection conn) throws Exception {
-			final Query q = new ConnectionQuery(conn);
-			SettingQueries.updateServerInfo(getServer().getLocation()).perform(
-					q);
-			if (joinJob == null || joinJob.process(getServer())) {
-				final ServerLocation loc = getServer().getLocation();
-				SettingQueries.retrieveCategories(loc,
-						SettingQueries.categoryRequest().perform(q)).perform(q);
-				SettingQueries.retrieveScanFilters(loc,
-						SettingQueries.scanFilterRequest().perform(q)).perform(
-						q);
-				slMonitor.worked(1);
-			}
+			ClientProjectManager.getInstance(conn).synchronizeProject(
+					getServer(), f_projectName, slMonitor);
 			ConnectedServerManager.getInstance().getStats(getServer())
 					.markAsConnected();
 			if (slMonitor.isCanceled()) {
@@ -153,4 +139,5 @@ public class SynchronizeJob extends AbstractServerProjectJob {
 		SLLogger.getLogger().log(Level.WARNING, msg, e);
 		return Status.CANCEL_STATUS;
 	}
+
 }

@@ -20,7 +20,6 @@ import com.surelogic.sierra.client.eclipse.actions.TroubleshootConnection;
 import com.surelogic.sierra.client.eclipse.actions.TroubleshootNoSuchServer;
 import com.surelogic.sierra.client.eclipse.actions.TroubleshootWrongAuthentication;
 import com.surelogic.sierra.client.eclipse.model.ConnectedServerManager;
-import com.surelogic.sierra.client.eclipse.model.ServerSyncType;
 import com.surelogic.sierra.client.eclipse.preferences.ServerFailureReport;
 import com.surelogic.sierra.jdbc.settings.ConnectedServer;
 import com.surelogic.sierra.jdbc.settings.SettingQueries;
@@ -55,9 +54,9 @@ public final class SendScanFiltersJob extends DatabaseJob {
 			try {
 				status = sendResultFilters(conn, slMonitor);
 
-				if (status.getSeverity() == IStatus.OK) {	 			
-					final Job sync = new SynchronizeJob(null, null, f_server, 
-							                            ServerSyncType.BUGLINK, true, f_strategy);
+				if (status.getSeverity() == IStatus.OK) {
+					final Job sync = new SynchronizeJob(null, f_server, true,
+							f_strategy);
 					sync.schedule();
 				}
 			} catch (final Throwable e) {
@@ -97,8 +96,8 @@ public final class SendScanFiltersJob extends DatabaseJob {
 				troubleshoot = new TroubleshootWrongAuthentication(f_strategy,
 						f_server.getLocation());
 			} else {
-				troubleshoot = new TroubleshootNoSuchServer(f_strategy, f_server
-						.getLocation());
+				troubleshoot = new TroubleshootNoSuchServer(f_strategy,
+						f_server.getLocation());
 			}
 			// We had a recoverable error. Rollback, run the appropriate
 			// troubleshoot, and try again.

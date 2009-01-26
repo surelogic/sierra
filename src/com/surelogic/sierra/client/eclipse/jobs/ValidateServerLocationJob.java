@@ -12,7 +12,6 @@ import com.surelogic.sierra.client.eclipse.actions.TroubleshootConnection;
 import com.surelogic.sierra.client.eclipse.actions.TroubleshootNoSuchServer;
 import com.surelogic.sierra.client.eclipse.actions.TroubleshootWrongAuthentication;
 import com.surelogic.sierra.client.eclipse.model.DatabaseHub;
-import com.surelogic.sierra.client.eclipse.model.ServerSyncType;
 import com.surelogic.sierra.client.eclipse.preferences.ServerFailureReport;
 import com.surelogic.sierra.jdbc.settings.ConnectedServer;
 import com.surelogic.sierra.jdbc.settings.InvalidServerException;
@@ -77,8 +76,7 @@ public class ValidateServerLocationJob extends DatabaseJob {
 			 * We can talk to this team server. Next, we synchronize BugLink
 			 * information with it.
 			 */
-			final SynchronizeJob job = new SynchronizeJob(null, null, server,
-					ServerSyncType.BUGLINK, true,
+			final SynchronizeJob job = new SynchronizeJob(null, server, true,
 					ServerFailureReport.SHOW_DIALOG);
 			job.schedule();
 			DatabaseHub.getInstance().notifyServerSynchronized();
