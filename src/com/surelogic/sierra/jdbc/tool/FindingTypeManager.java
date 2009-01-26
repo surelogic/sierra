@@ -180,12 +180,19 @@ public final class FindingTypeManager {
 		final Set<Long> artifactIdSet = new HashSet<Long>();
 		final Set<Long> artifactDuplicates = new HashSet<Long>();
 		final Set<String> invalidArtifacts = new HashSet<String>();
+		final Set<String> invalidTypes = new HashSet<String>();
 		for (final FindingTypes type : types) {
 			final FindingTypeRecord fRec = factory.newFindingTypeRecord();
 			// Load in all of the finding types, and associate them with
 			// artifact
 			// types.
 			for (final FindingType ft : type.getFindingType()) {
+				if (ft.getId() == null || ft.getId().length() == 0
+						|| ft.getName() == null || ft.getName().length() == 0) {
+					invalidTypes.add("Id: " + ft.getId() + " Name: "
+							+ ft.getName());
+					continue;
+				}
 				final String uid = ft.getId().trim();
 				if (!idSet.add(uid)) {
 					duplicates.add(uid);
@@ -250,6 +257,12 @@ public final class FindingTypeManager {
 			set.close();
 		}
 
+		if (!invalidTypes.isEmpty()) {
+			final String message = "The following finding types have an invalid name or id: "
+					+ invalidTypes;
+			log.severe(message);
+			throw new IllegalStateException(message);
+		}
 		if (!invalidArtifacts.isEmpty()) {
 			final String message = "The following artifact types do not actually exist in the system: "
 					+ invalidArtifacts + ".";
