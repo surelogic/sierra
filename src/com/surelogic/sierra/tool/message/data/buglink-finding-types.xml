@@ -1643,7 +1643,7 @@ the exception is required.</p>
 
 <p>See <a
 href="http://java.sun.com/docs/books/jls/third_edition/html/expressions.html#15.22.2">the
-Java Language Specification</a> for further details</p>]]>
+Java Language Specification</a> for further details.</p>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
@@ -1669,7 +1669,7 @@ the exception is required.</p>
 
 <p>See <a
 href="http://java.sun.com/docs/books/jls/third_edition/html/expressions.html#15.22.2">the
-Java Language Specification</a> for further details</p>]]>
+Java Language Specification</a> for further details.</p>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
@@ -1690,9 +1690,8 @@ especially if there is also a warning about a two lock notify.</p>]]>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>TLW_TWO_LOCK_NOTIFY</id>
-    <artifact tool="FindBugs" mnemonic="TLW_TWO_LOCK_NOTIFY">
+    <artifact tool="FindBugs" mnemonic="TLW_TWO_LOCK_NOTIFY"/>
     <name>Two lock notify</name>
-    </artifact>
     <shortMessage>Notify with two locks held.</shortMessage>
     <info>
 <![CDATA[<p>The code calls <code>notify()</code> or
@@ -1737,370 +1736,334 @@ parameters.</p>]]>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
-    <id>SynchronizedSetUnsynchronizedGet</id>
-    <artifact tool="FindBugs" mnemonic="UG_SYNC_SET_UNSYNC_GET">
-    </artifact>
-    <shortMessage>
-      Unsynchronized get method, synchronized set method
-    </shortMessage>
+    <id>UG_SYNC_SET_UNSYNC_GET</id>
+    <artifact tool="FindBugs" mnemonic="UG_SYNC_SET_UNSYNC_GET"/>
+    <name>Synchronized setter unsynchronized getter</name>
+    <shortMessage>Unsynchronized get method with a corresponding synchronized set method. This may cause incorrect program behavior.</shortMessage>
     <info>
+<![CDATA[<p>This class contains similarly-named get and set methods
+where the set method is synchronized and the get method is not. This
+may result in incorrect behavior at runtime, as callers of the get
+method will not necessarily see a consistent state for the object. The
+get method should be made synchronized.</p>
 
-      &lt;p&gt; This class contains similarly-named get and set
-      methods where the set method is synchronized and the get
-      method is not.&amp;nbsp; This may result in incorrect
-      behavior at runtime, as callers of the get method will not
-      necessarily see a consistent state for the object.&amp;nbsp;
-      The get method should be made synchronized.&lt;/p&gt;
-
+<p>This situation is caused because of the Java Memory Model which
+requires that the program provide for reliable communication between
+threads as well as for mutual exclusion.  See <a
+href="http://java.sun.com/docs/books/jls/third_edition/html/memory.html#17.4">the
+Java Language Specification</a> for further details.  In addition,
+please reference Bloch's <i>Effective Java</i> item 66.</p>]]>
     </info>
-    <name>Sync Set Unsync Get</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>IC_INIT_CIRCULARITY</id>
-    <artifact tool="FindBugs" mnemonic="IC_INIT_CIRCULARITY">
-    </artifact>
-    <shortMessage>Initialization circularity</shortMessage>
+    <artifact tool="FindBugs" mnemonic="IC_INIT_CIRCULARITY"/>
+    <name>Initialization circularity</name>
+    <shortMessage>Initialization circularity between two classes should be removed.</shortMessage>
     <info>
-
-      &lt;p&gt; A circularity was detected in the static
-      initializers of the two classes referenced by the bug
-      instance.&amp;nbsp; Many kinds of unexpected behavior may
-      arise from such circularity.&lt;/p&gt;
-
+<![CDATA[<p> A circularity was detected in the static initializers of
+the two classes referenced by the bug instance. Many kinds of
+unexpected behavior may arise from such circularity.  It is
+recommended that this implementation be changed to avoid
+circularity.</p>]]>
     </info>
-    <name>Init Circularity</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>IC_SUPERCLASS_USES_SUBCLASS_DURING_INITIALIZATION</id>
-    <artifact tool="FindBugs"
-	      mnemonic="IC_SUPERCLASS_USES_SUBCLASS_DURING_INITIALIZATION">
-    </artifact>
-    <shortMessage>
-      Superclass uses subclass during initialization
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="IC_SUPERCLASS_USES_SUBCLASS_DURING_INITIALIZATION"/>
+    <name>Superclass uses subclass during initialization</name>
+    <shortMessage>Superclass uses subclass during initialization.</shortMessage>
     <info>
+<![CDATA[<p>During the initialization of a class, the class makes an
+active use of a subclass. That subclass will not yet be initialized at
+the time of this use. For example, in the following code,
+<code>foo</code> will be <code>null</code>.</p>
 
-      &lt;p&gt; During the initialization of a class, the class
-      makes an active use of a subclass. That subclass will not
-      yet be initialized at the time of this use. For example, in
-      the following code, &lt;code&gt;foo&lt;/code&gt; will be
-      null.&lt;/p&gt;
+<pre>
+public class CircularClassInitialization {
 
-      &lt;pre&gt; public class CircularClassInitialization {
-      static class InnerClassSingleton extends
-      CircularClassInitialization { static InnerClassSingleton
-      singleton = new InnerClassSingleton(); }
+  static class InnerClassSingleton extends CircularClassInitialization {
+    static InnerClassSingleton singleton = new InnerClassSingleton();
+  }
 
-      static CircularClassInitialization foo =
-      InnerClassSingleton.singleton; } &lt;/pre&gt;
+  static CircularClassInitialization foo = InnerClassSingleton.singleton; // will be null
+}
+</pre>
 
-
+<p>This finding probably indicates a muddled implementation or a
+misunderstanding of the details of how Java instantiates
+objects.</p>]]>
     </info>
-    <name>Superclass Uses Subclass During Initialization</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>IT_NO_SUCH_ELEMENT</id>
-    <artifact tool="FindBugs" mnemonic="IT_NO_SUCH_ELEMENT">
-    </artifact>
-    <shortMessage>
-      Iterator next() method can't throw NoSuchElement exception
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="IT_NO_SUCH_ELEMENT"/>
+    <name>Next must throw NoSuchElement</name>
+    <shortMessage>The next() method implementation in this class should throw NoSuchElement exception when there are no more elements to return.</shortMessage>
     <info>
+<![CDATA[<p>This class implements the <code>java.util.Iterator</code>
+interface. However, its <code>next()</code> method is not capable of
+throwing <code>java.util.NoSuchElementException</code>.</p>
 
-      &lt;p&gt; This class implements the
-      &lt;code&gt;java.util.Iterator&lt;/code&gt;
-      interface.&amp;nbsp; However, its
-      &lt;code&gt;next()&lt;/code&gt; method is not capable of
-      throwing
-      &lt;code&gt;java.util.NoSuchElementException&lt;/code&gt;.&amp;nbsp;
-      The &lt;code&gt;next()&lt;/code&gt; method should be changed
-      so it throws &lt;code&gt;NoSuchElementException&lt;/code&gt;
-      if is called when there are no more elements to
-      return.&lt;/p&gt;
-
+<p>The <code>next()</code> method should be changed so it throws
+<code>NoSuchElementException</code> if is called when there are no
+more elements to return.</p>]]>
     </info>
-    <name>No Such Element</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
-    <id>SynchronizationOnSharedConstant</id>
-    <artifact tool="FindBugs"
-	      mnemonic="DL_SYNCHRONIZATION_ON_SHARED_CONSTANT">
-    </artifact>
-    <shortMessage>
-      Synchronization on shared constant could lead to deadlock
-    </shortMessage>
+    <id>DL_SYNCHRONIZATION_ON_SHARED_CONSTANT</id>
+    <artifact tool="FindBugs" mnemonic="DL_SYNCHRONIZATION_ON_SHARED_CONSTANT"/>
+    <name>Synchronization on a shared constant</name>
+    <shortMessage>Synchronization on a shared constant could lead to deadlock.</shortMessage>
     <info>
+<![CDATA[<p>The code synchronizes on a shared primative constant, such
+as an interned String.</p>
 
-      &lt;p&gt; The code synchronizes on a shared primative
-      constant, such as an interned String. &lt;pre&gt; private
-      static String LOCK = &quot;LOCK&quot;; ...
-      synchronized(LOCK) { ...} ... &lt;/pre&gt; &lt;/p&gt;
-      &lt;p&gt;Such constants an interned and shared across all
-      other classes loaded by the JVM. Thus, this could is locking
-      on something that other code might also be locking. This
-      could result in very strange and hard to diagnose blocking
-      and deadlock behavior. See &lt;a
-      href=&quot;http://www.javalobby.org/java/forums/t96352.html&quot;&gt;http://www.javalobby.org/java/forums/t96352.html&lt;/a&gt;
-      and &lt;a
-      href=&quot;http://jira.codehaus.org/browse/JETTY-352&quot;&gt;http://jira.codehaus.org/browse/JETTY-352&lt;/a&gt;.
-      &lt;/p&gt;
+<pre>
+private static String LOCK = "LOCK";
+...
+synchronized(LOCK) { ...}
+...
+</pre>
 
+<p>Such constants an interned and shared across all other classes
+loaded by the JVM. Thus, this could is locking on something that other
+code might also be locking. This could result in very strange and hard
+to diagnose blocking and deadlock behavior.</p>
+
+<p>For further information please see <a
+href="http://www.javalobby.org/java/forums/t96352.html">http://www.javalobby.org/java/forums/t96352.html</a>
+and <a
+href="http://jira.codehaus.org/browse/JETTY-352">http://jira.codehaus.org/browse/JETTY-352</a>.</p>]]>
     </info>
-    <name>Synchronization On Shared Constant</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
-    <id>EmptySynchronizationBlock</id>
-    <artifact tool="FindBugs" mnemonic="ESync_EMPTY_SYNC">
-    </artifact>
-    <artifact tool="PMD" mnemonic="EmptySynchronizedBlock">
-    </artifact>
-    <shortMessage>Empty synchronized block</shortMessage>
+    <id>ESync_EMPTY_SYNC</id>
+    <artifact tool="FindBugs" mnemonic="ESync_EMPTY_SYNC"/>
+    <artifact tool="PMD" mnemonic="EmptySynchronizedBlock"/>
+    <name>Empty synchronized block</name>
+    <shortMessage>Empty synchronized block should be removed</shortMessage>
     <info>
+<![CDATA[<p>The code contains an empty synchronized block:</p>
 
-      &lt;p&gt; The code contains an empty synchronized
-      block:&lt;/p&gt; &lt;pre&gt; synchronized() {} &lt;/pre&gt;
-      &lt;p&gt;Empty synchronized blocks are far more subtle and
-      hard to use correctly than most people recognize, and empty
-      synchronized blocks are almost never a better solution than
-      less contrived solutions. &lt;/p&gt;
+<pre>
+synchronized(o) {}
+</pre>
 
+<p>Empty synchronized blocks are far more subtle and hard to use
+correctly than most people recognize, and empty synchronized blocks
+are almost never a better solution than less contrived solutions, for
+example, use of the util concurrent library.</p>]]>
     </info>
-    <name>Empty Sync</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
-    <id>AvoidSynchronizationOnUpdatedField</id>
-    <artifact tool="FindBugs" mnemonic="ML_SYNC_ON_UPDATED_FIELD">
-    </artifact>
-    <shortMessage>
-      Method synchronizes on an updated field
-    </shortMessage>
+    <id>ML_SYNC_ON_UPDATED_FIELD</id>
+    <artifact tool="FindBugs" mnemonic="ML_SYNC_ON_UPDATED_FIELD"/>
+    <name>Synchronize on updated field</name>
+    <shortMessage>Method synchronizes on an updated field.  This is likely to be incorrect.</shortMessage>
     <info>
+<![CDATA[<p>This method synchronizes on an object references from a
+mutable field. This is unlikely to have useful semantics, since
+different threads may be synchronizing on different objects.</p>
 
-      &lt;p&gt; This method synchronizes on an object references
-      from a mutable field. This is unlikely to have useful
-      semantics, since different threads may be synchronizing on
-      different objects.&lt;/p&gt;
-
+<p>Multiple threads must synchronize on the same object to allow
+shared data to be safely read and written.  It is therefore
+recommended that all locks be final fields or <code>this</code> or a
+static class (e.g., <code>MyClass.class</code>).</p>]]>
     </info>
-    <name>Sync On Updated Field</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
-    <id>FieldShouldBeOutOfInterfaceAndPackageProtected</id>
-    <artifact tool="FindBugs" mnemonic="MS_OOI_PKGPROTECT">
-    </artifact>
-    <shortMessage>
-      Field should be moved out of an interface and made package
-      protected
-    </shortMessage>
+    <id>MS_OOI_PKGPROTECT</id>
+    <artifact tool="FindBugs" mnemonic="MS_OOI_PKGPROTECT"/>
+    <name>Field should be out of interface and package protected</name>
+    <shortMessage>Field should should be moved out of an interface and made package protected to avoid malicious mutation.</shortMessage>
     <info>
+<![CDATA[<p>A final static field that is defined in an interface
+references a mutable object such as an array or hashtable. This
+mutable object could be changed by malicious code or by accident from
+another package.</p>
 
-      &lt;p&gt; A final static field that is defined in an
-      interface references a mutable object such as an array or
-      hashtable. This mutable object could be changed by malicious
-      code or by accident from another package. To solve this, the
-      field needs to be moved to a class and made package
-      protected to avoid this vulnerability.&lt;/p&gt;
-
+<p>To solve this, the field needs to be moved to a class and made
+package protected to avoid this vulnerability.</p>]]>
     </info>
-    <name>Field Out of Interface and Package Protected</name>
-  </findingType>
-  <findingType>
-    <id>FieldShouldBeFinalAndPackageProtected</id>
-    <artifact tool="FindBugs" mnemonic="MS_FINAL_PKGPROTECT">
-    </artifact>
-    <shortMessage>
-      Field should be both final and package protected
-    </shortMessage>
-    <info>
-
-      &lt;p&gt; A mutable static field could be changed by
-      malicious code or by accident from another package. The
-      field could be made package protected and/or made final to
-      avoid this vulnerability.&lt;/p&gt;
-
-    </info>
-    <name>Final and Package Protected</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
-    <id>FieldShouldBeFinal</id>
-    <artifact tool="FindBugs" mnemonic="MS_SHOULD_BE_FINAL">
-    </artifact>
-    <shortMessage>Field isn't final but should be</shortMessage>
+    <id>MS_FINAL_PKGPROTECT</id>
+    <artifact tool="FindBugs" mnemonic="MS_FINAL_PKGPROTECT"/>
+    <name>Field should be final and package protected</name>
+    <shortMessage>Field should be both made both final and package protected to avoid malicious mutation.</shortMessage>
     <info>
+<![CDATA[<p>A mutable static field could be changed by malicious code
+or by accident from another package.</p>
 
-      &lt;p&gt; A mutable static field could be changed by
-      malicious code or by accident from another package. The
-      field could be made final to avoid this
-      vulnerability.&lt;/p&gt;
-
+<p>The field could be made package protected and/or made final to
+avoid this vulnerability.</p>]]>
     </info>
-    <name>Should Be Final</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
-    <id>PackageProtectField</id>
+    <id>MS_SHOULD_BE_FINAL</id>
+    <artifact tool="FindBugs" mnemonic="MS_SHOULD_BE_FINAL"/>
+    <name>Field should be final</name>
+    <shortMessage>Field is not final but it should be to avoid malicious mutation.</shortMessage>
+    <info>
+<![CDATA[<p>A mutable static field could be changed by malicious code
+or by accident from another package.</p>
+
+<p>The field should be made final to avoid this vulnerability.</p>]]>
+    </info>
+  </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+  <findingType>
+    <id>MS_PKGPROTECT</id>
     <artifact tool="FindBugs" mnemonic="MS_PKGPROTECT"></artifact>
-    <shortMessage>Field should be package protected</shortMessage>
+    <name>Field should be packaged protected</name>
+    <shortMessage>Field should be made package protected to avoid malicious mutation.</shortMessage>
     <info>
+<![CDATA[<p>A mutable static field could be changed by malicious code
+or by accident.</p>
 
-      &lt;p&gt; A mutable static field could be changed by
-      malicious code or by accident. The field could be made
-      package protected to avoid this vulnerability.&lt;/p&gt;
-
+<p>The field could be made package protected to avoid this
+vulnerability.</p>]]>
     </info>
-    <name>Package Protect Field</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
-    <id>MutableHashtable</id>
-    <artifact tool="FindBugs" mnemonic="MS_MUTABLE_HASHTABLE">
-    </artifact>
-    <shortMessage>Field is a mutable Hashtable</shortMessage>
+    <id>MS_MUTABLE_HASHTABLE</id>
+    <artifact tool="FindBugs" mnemonic="MS_MUTABLE_HASHTABLE"/>
+    <name>Field is a mutable Hashtable</name>
+    <shortMessage>Field is a mutable Hashtable that may be accessible by malicious code.</shortMessage>
     <info>
+<![CDATA[<p>A final static field references a <code>Hashtable</code>
+and can be accessed by malicious code or by accident from another
+package. This code can freely modify the contents of the
+<code>Hashtable</code>.</p>
 
-      &lt;p&gt;A final static field references a Hashtable and can
-      be accessed by malicious code or by accident from another
-      package. This code can freely modify the contents of the
-      Hashtable.&lt;/p&gt;
-
+<p>It is recommended that you consider replacing this
+<code>Hashtable</code> with a <code>Map</code> implementation, such as
+<code>HashMap</code>.]]>
     </info>
-    <name>Mutable Hashtable</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
-    <id>MutableArray</id>
-    <artifact tool="FindBugs" mnemonic="MS_MUTABLE_ARRAY">
-    </artifact>
-    <shortMessage>Field is a mutable array</shortMessage>
+    <id>MS_MUTABLE_ARRAY</id>
+    <artifact tool="FindBugs" mnemonic="MS_MUTABLE_ARRAY"/>
+    <name>Field is a mutable array</name>
+    <shortMessage>Field is a mutable array that may be accessible by malicious code.</shortMessage>
     <info>
+<![CDATA[<p>A final static field references an array and can be
+accessed by malicious code or by accident from another package. This
+code can freely modify the contents of the array.</p>
 
-      &lt;p&gt; A final static field references an array and can
-      be accessed by malicious code or by accident from another
-      package. This code can freely modify the contents of the
-      array.&lt;/p&gt;
-
+<p>Consider encapsulating this field by reducing its visibility.</p>]]>
     </info>
-    <name>Mutable Array</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
-    <id>CannotBeFinal</id>
-    <artifact tool="FindBugs" mnemonic="MS_CANNOT_BE_FINAL">
-    </artifact>
-    <shortMessage>
-      Field isn't final and can't be protected from malicious code
-    </shortMessage>
+    <id>MS_CANNOT_BE_FINAL</id>
+    <artifact tool="FindBugs" mnemonic="MS_CANNOT_BE_FINAL"/>
+    <name>Field cannot be final</name>
+    <shortMessage>Field isn't final and can't be protected from malicious code.</shortMessage>
     <info>
+<![CDATA[<p>A mutable static field could be changed by malicious code
+or by accident from another package.  Unfortunately, the way the field
+is used doesn't allow any easy fix to this problem.</p>
 
-      &lt;p&gt; A mutable static field could be changed by
-      malicious code or by accident from another package.
-      Unfortunately, the way the field is used doesn't allow any
-      easy fix to this problem.&lt;/p&gt;
-
+<p>Consider encapsulating this field by reducing its visibility.</p>]]>
     </info>
-    <name>Cannot Be Final</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>IA_AMBIGUOUS_INVOCATION_OF_INHERITED_OR_OUTER_METHOD</id>
-    <artifact tool="FindBugs"
-	      mnemonic="IA_AMBIGUOUS_INVOCATION_OF_INHERITED_OR_OUTER_METHOD">
-    </artifact>
-    <shortMessage>
-      Ambiguous invocation of either an inherited or outer method
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="IA_AMBIGUOUS_INVOCATION_OF_INHERITED_OR_OUTER_METHOD"/>
+    <name>Ambiguous invocation of inherited or outer method</name>
+    <shortMessage>Ambiguous invocation of either an inherited or outer method.</shortMessage>
     <info>
+<![CDATA[<p>An inner class is invoking a method that could be resolved
+to either a inherited method or a method defined in an outer class. By
+the Java semantics, it will be resolved to invoke the inherited
+method, but this may not be want you intend.</p>
 
-      &lt;p&gt; An inner class is invoking a method that could be
-      resolved to either a inherited method or a method defined in
-      an outer class. By the Java semantics, it will be resolved
-      to invoke the inherited method, but this may not be want you
-      intend. If you really intend to invoke the inherited method,
-      invoke it by invoking the method on super (e.g., invoke
-      super.foo(17)), and thus it will be clear to other readers
-      of your code and to FindBugs that you want to invoke the
-      inherited method, not the method in the outer class.
-      &lt;/p&gt;
+<p>If you really intend to invoke the inherited method, invoke it by
+invoking the method on <code>super</code>, for example, invoke
+<code>super.foo(17)</code>, and thus it will be clear to other readers
+of your code that you want to invoke the inherited method, not the
+method in the outer class.</p>
 
+<p>You may also want to consider renaming one or both of the methods
+to avoid the confusion altogether.</p>]]>
     </info>
-    <name>Ambiguous Invocation Of Inherited Or Outer Method</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
-    <id>ClassNamingConventions</id>
-    <artifact tool="FindBugs"
-	      mnemonic="NM_CLASS_NAMING_CONVENTION">
-    </artifact>
-    <artifact tool="PMD" mnemonic="ClassNamingConventions">
-    </artifact>
-    <shortMessage>
-      Class names should start with an upper case letter
-    </shortMessage>
+    <id>NM_CLASS_NAMING_CONVENTION</id>
+    <artifact tool="FindBugs" mnemonic="NM_CLASS_NAMING_CONVENTION"/>
+    <artifact tool="PMD" mnemonic="ClassNamingConventions"/>
+    <name>Class naming convention violation</name>
+    <shortMessage>Class names should start with an upper case letter.</shortMessage>
     <info>
+<![CDATA[<p>Class names should be nouns, in mixed case with the first
+letter of each internal word capitalized. Try to keep your class names
+simple and descriptive. Use whole words&mdash;avoid acronyms and
+abbreviations.  Unless, of course, the abbreviation is much more
+widely used than the long form, such as URL or HTML, it is recommended
+that you use mixed case.  For example, <code>MyUrlClass</code> or
+<code>HttpServlet</code>.</p>
 
-      &lt;p&gt; Class names should be nouns, in mixed case with
-      the first letter of each internal word capitalized. Try to
-      keep your class names simple and descriptive. Use whole
-      words-avoid acronyms and abbreviations (unless the
-      abbreviation is much more widely used than the long form,
-      such as URL or HTML). &lt;/p&gt;
+<p>Class names should always begin with an upper case
+character.</p>
 
-      Class names should always begin with an upper case
-      character.
-
+<p>For further information, please reference Bloch's <i>Effective
+Java</i> (second edition) item 56.</p>]]>
     </info>
-    <name>Class Naming Convention</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
-    <id>MethodNamingConventions</id>
-    <artifact tool="FindBugs"
-	      mnemonic="NM_METHOD_NAMING_CONVENTION">
-    </artifact>
-    <artifact tool="PMD" mnemonic="MethodNamingConventions">
-    </artifact>
-    <shortMessage>
-      Method names should start with an lower case letter
-    </shortMessage>
+    <id>NM_METHOD_NAMING_CONVENTION</id>
+    <artifact tool="FindBugs" mnemonic="NM_METHOD_NAMING_CONVENTION"/>
+    <artifact tool="PMD" mnemonic="MethodNamingConventions"/>
+    <name>Method naming convention violation</name>
+    <shortMessage>Method names should start with an lower case letter.</shortMessage>
     <info>
-      &lt;p&gt; Methods should be verbs, in mixed case with the
-      first letter lowercase, with the first letter of each
-      internal word capitalized. &lt;/p&gt;
+<![CDATA[<p>Methods should be verbs, in mixed case with the first
+letter lowercase, with the first letter of each internal word
+capitalized.</p>
 
-      Method names should always begin with a lower case
-      character, and should not contain underscores.
+<p>Method names should always begin with a lower case character, and
+should not contain underscores.</p>
+
+<p>For further information, please reference Bloch's <i>Effective
+Java</i> (second edition) item 56.</p>]]>
     </info>
-    <name>Method Naming Convention</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
-    <id>FieldNamingConventions</id>
-    <artifact tool="FindBugs"
-	      mnemonic="NM_FIELD_NAMING_CONVENTION">
-    </artifact>
-    <artifact tool="PMD" mnemonic="VariableNamingConventions">
-    </artifact>
-    <shortMessage>
-      Field names should start with an lower case letter
-    </shortMessage>
+    <id>NM_FIELD_NAMING_CONVENTION</id>
+    <artifact tool="FindBugs" mnemonic="NM_FIELD_NAMING_CONVENTION"/>
+    <artifact tool="PMD" mnemonic="VariableNamingConventions"/>
+    <name>Field naming convention violation</name>
+    <shortMessage>Field names should start with an lower case letter.</shortMessage>
     <info>
+<![CDATA[<p>Names of fields that are not final should be in mixed case
+with a lowercase first letter and the first letters of subsequent
+words capitalized.</p>
 
-      &lt;p&gt; Names of fields that are not final should be in
-      mixed case with a lowercase first letter and the first
-      letters of subsequent words capitalized. &lt;/p&gt;
+<p>Final variables that should be fully capitalized and non-final
+variables should not include underscores.</p>
 
-      Final variables that should be fully capitalized and
-      non-final variables should not include underscores.
+<p>For further information, please reference Bloch's <i>Effective
+Java</i> (second edition) item 56.</p>]]>
     </info>
-    <name>Field Naming Convention</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>NM_VERY_CONFUSING</id>
     <artifact tool="FindBugs" mnemonic="NM_VERY_CONFUSING">

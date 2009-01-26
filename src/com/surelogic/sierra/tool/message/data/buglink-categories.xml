@@ -598,7 +598,7 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>MethodNamingConventions</type>
+            <type>NM_METHOD_NAMING_CONVENTION</type>
             <filtered>false</filtered>
         </filter>
         <filter>
@@ -622,7 +622,7 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>FieldNamingConventions</type>
+            <type>NM_FIELD_NAMING_CONVENTION</type>
             <filtered>false</filtered>
         </filter>
         <filter>
@@ -746,7 +746,7 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>ClassNamingConventions</type>
+            <type>NM_CLASS_NAMING_CONVENTION</type>
             <filtered>false</filtered>
         </filter>
         <filter>
@@ -2147,7 +2147,7 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>SynchronizationOnSharedConstant</type>
+            <type>DL_SYNCHRONIZATION_ON_SHARED_CONSTANT</type>
             <filtered>false</filtered>
         </filter>
         <filter>
@@ -2191,11 +2191,11 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>AvoidSynchronizationOnUpdatedField</type>
+            <type>ML_SYNC_ON_UPDATED_FIELD</type>
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>SynchronizedSetUnsynchronizedGet</type>
+            <type>UG_SYNC_SET_UNSYNC_GET</type>
             <filtered>false</filtered>
         </filter>
         <filter>
@@ -2239,7 +2239,7 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>EmptySynchronizationBlock</type>
+            <type>ESync_EMPTY_SYNC</type>
             <filtered>false</filtered>
         </filter>
         <filter>
@@ -2316,7 +2316,7 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>FieldShouldBeFinalAndPackageProtected</type>
+            <type>MS_FINAL_PKGPROTECT</type>
             <filtered>false</filtered>
         </filter>
         <filter>
@@ -2324,7 +2324,7 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>FieldShouldBeOutOfInterfaceAndPackageProtected</type>
+            <type>MS_OOI_PKGPROTECT</type>
             <filtered>false</filtered>
         </filter>
         <filter>
@@ -2336,7 +2336,7 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>MutableArray</type>
+            <type>MS_MUTABLE_ARRAY</type>
             <filtered>false</filtered>
         </filter>
         <filter>
@@ -2352,11 +2352,11 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>MutableHashtable</type>
+            <type>MS_MUTABLE_HASHTABLE</type>
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>CannotBeFinal</type>
+            <type>MS_CANNOT_BE_FINAL</type>
             <filtered>false</filtered>
         </filter>
         <filter>
@@ -2368,11 +2368,11 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>PackageProtectField</type>
+            <type>MS_PKGPROTECT</type>
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>FieldShouldBeFinal</type>
+            <type>MS_SHOULD_BE_FINAL</type>
             <filtered>false</filtered>
         </filter>
         <filter>
