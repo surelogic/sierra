@@ -26,7 +26,9 @@ import com.surelogic.sierra.client.eclipse.model.ServerSyncType;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
 import com.surelogic.sierra.client.eclipse.preferences.ServerFailureReport;
 import com.surelogic.sierra.jdbc.settings.ConnectedServer;
+import com.surelogic.sierra.jdbc.settings.ServerScanFilterInfo;
 import com.surelogic.sierra.jdbc.settings.SettingQueries;
+import com.surelogic.sierra.tool.message.ListCategoryResponse;
 import com.surelogic.sierra.tool.message.ServerLocation;
 import com.surelogic.sierra.tool.message.ServerMismatchException;
 import com.surelogic.sierra.tool.message.SierraServiceClientException;
@@ -127,13 +129,18 @@ public class SynchronizeJob extends AbstractServerProjectJob {
 			final Query q = new ConnectionQuery(conn);
 			SettingQueries.updateServerInfo(getServer().getLocation()).perform(
 					q);
+			boolean updated = false;
 			if (joinJob == null || joinJob.process(getServer())) {
 				final ServerLocation loc = getServer().getLocation();
-				SettingQueries.retrieveCategories(loc,
+				ListCategoryResponse categories = SettingQueries.retrieveCategories(loc,
 						SettingQueries.categoryRequest().perform(q)).perform(q);
-				SettingQueries.retrieveScanFilters(loc,
+				ServerScanFilterInfo filters = SettingQueries.retrieveScanFilters(loc,
 						SettingQueries.scanFilterRequest().perform(q)).perform(
 						q);
+				updated = !filters.getDeletions().isEmpty() ||
+		                  !filters.getScanFilters().isEmpty() ||
+					      !categories.getDeletions().isEmpty() ||
+				          !categories.getFilterSets().isEmpty();
 				slMonitor.worked(1);
 			}
 			ConnectedServerManager.getInstance().getStats(getServer())
@@ -142,7 +149,9 @@ public class SynchronizeJob extends AbstractServerProjectJob {
 				conn.rollback();
 				return Status.CANCEL_STATUS;
 			} else {
-				DatabaseHub.getInstance().notifyServerSynchronized();
+				if (updated) {
+					DatabaseHub.getInstance().notifyServerSynchronized();
+				}
 				return Status.OK_STATUS;
 			}
 		}
