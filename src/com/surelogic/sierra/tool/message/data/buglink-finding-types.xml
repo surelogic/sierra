@@ -658,6 +658,7 @@ should just use the empty string constant directly.</p>]]>
   <findingType>
     <id>DM_STRING_TOSTRING</id>
     <artifact tool="FindBugs" mnemonic="DM_STRING_TOSTRING"/>
+    <artifact tool="PMD" mnemonic="StringToString"/>
     <name>Avoid calling toString() on a String</name>
     <shortMessage>Method invokes the toString() method on a String.</shortMessage>
     <info>
@@ -689,6 +690,7 @@ collections will bring the machine to a crawl.</p>]]>
   <findingType>
     <id>DM_BOOLEAN_CTOR</id>
     <artifact tool="FindBugs" mnemonic="DM_BOOLEAN_CTOR"/>
+    <artifact tool="PMD" mnemonic="BooleanInstantiation"/>
     <name>Inefficient boolean constructor</name>
     <shortMessage>Method invokes inefficient Boolean constructor; use Boolean.valueOf(...) instead.</shortMessage>
     <info>
@@ -706,6 +708,9 @@ above to create <code>Boolean</code> objects instead.</p>]]>
     <artifact tool="FindBugs" mnemonic="DM_NUMBER_CTOR"/>
     <artifact tool="FindBugs" mnemonic="DM_FP_NUMBER_CTOR"/>
     <artifact tool="PMD" mnemonic="IntegerInstantiation"/>
+    <artifact tool="PMD" mnemonic="ByteInstantiation"/>
+    <artifact tool="PMD" mnemonic="LongInstantiation"/>
+    <artifact tool="PMD" mnemonic="ShortInstantiation"/>
     <name>Inefficient number constructor</name>
     <shortMessage>
       Method invokes inefficient number constructor; use static
@@ -827,6 +832,7 @@ Double(d).intValue()</code>). Just perform direct primitive coercion
   <findingType>
     <id>DM_BOXED_PRIMITIVE_TOSTRING</id>
     <artifact tool="FindBugs" mnemonic="DM_BOXED_PRIMITIVE_TOSTRING"/>
+    <artifact tool="PMD" mnemonic="UnnecessaryConversionTemporary"/>
     <name>Boxed primitive used just to call toString</name>
     <shortMessage>Method allocates a boxed primitive just to call toString.</shortMessage>
     <info>
@@ -1523,6 +1529,7 @@ called the method containing the notification.</p>]]>
   <findingType>
     <id>MS_EXPOSE_REP</id>
     <artifact tool="FindBugs" mnemonic="MS_EXPOSE_REP"/>
+    <artifact tool="PMD" mnemonic="MethodReturnsInternalArray"/>
     <name>Exposing a mutable array</name>
     <shortMessage>Public static method may expose internal representation by returning a mutable array.</shortMessage>
     <info>
@@ -2551,6 +2558,7 @@ can also cause subtle race conditions.</p>
   <findingType>
     <id>SS_SHOULD_BE_STATIC</id>
     <artifact tool="FindBugs" mnemonic="SS_SHOULD_BE_STATIC"/>
+    <artifact tool="PMD" mnemonic="FinalFieldCouldBeStatic"/>
     <name>Should field be static</name>
     <shortMessage>This field is initialized to a compile-time static value.  Should this field be static?</shortMessage>
     <info>
@@ -2979,6 +2987,7 @@ checked by the for loop.</p>]]>
     </info>
     <name>Always Null</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>NP_STORE_INTO_NONNULL_FIELD</id>
     <artifact tool="FindBugs"
@@ -3019,6 +3028,7 @@ checked by the for loop.</p>]]>
     </info>
     <name>Always Null Exception</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>NP_NULL_ON_SOME_PATH</id>
     <artifact tool="FindBugs" mnemonic="NP_NULL_ON_SOME_PATH">
@@ -3121,6 +3131,7 @@ checked by the for loop.</p>]]>
     </info>
     <name>Null Param Deref All Targets Dangerous</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>NP_NULL_PARAM_DEREF</id>
     <artifact tool="FindBugs" mnemonic="NP_NULL_PARAM_DEREF">
@@ -3271,34 +3282,9 @@ checked by the for loop.</p>]]>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
-    <id>OS_OPEN_STREAM_EXCEPTION_PATH</id>
-    <artifact tool="FindBugs"
-	      mnemonic="OS_OPEN_STREAM_EXCEPTION_PATH">
-    </artifact>
-    <shortMessage>
-      Method may fail to close stream on exception
-    </shortMessage>
-    <info>
-
-      &lt;p&gt; The method creates an IO stream object, does not
-      assign it to any fields, pass it to other methods, or return
-      it, and does not appear to close it on all possible
-      exception paths out of the method.&amp;nbsp; This may result
-      in a file descriptor leak.&amp;nbsp; It is generally a good
-      idea to use a &lt;code&gt;finally&lt;/code&gt; block to
-      ensure that streams are closed.&lt;/p&gt;
-
-    </info>
-    <name>Open Stream Exception Path</name>
-  </findingType>
-  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-  <findingType>
     <id>PZLA_PREFER_ZERO_LENGTH_ARRAYS</id>
-    <artifact tool="FindBugs"
-	      mnemonic="PZLA_PREFER_ZERO_LENGTH_ARRAYS">
-    </artifact>
-    <artifact tool="PMD" mnemonic="ReturnEmptyArrayRatherThanNull">
-    </artifact>		
+    <artifact tool="FindBugs" mnemonic="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
+    <artifact tool="PMD" mnemonic="ReturnEmptyArrayRatherThanNull"/>
     <shortMessage>
       Consider returning a zero length array rather than null
     </shortMessage>
@@ -4257,25 +4243,47 @@ checked by the for loop.</p>]]>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>ITA_INEFFICIENT_TO_ARRAY</id>
-    <artifact tool="FindBugs" mnemonic="ITA_INEFFICIENT_TO_ARRAY">
-    </artifact>
-    <shortMessage>
-      Method uses toArray() with zero-length array argument
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="ITA_INEFFICIENT_TO_ARRAY"/>
+    <artifact tool="PMD" mnemonic="ClassCastExceptionWithToArray"/>
+    <artifact tool="PMD" mnemonic="OptimizableToArrayCall"/>
+    <name>Questionable use of toArray</name>
+    <shortMessage>Method uses toArray() with no argument or a zero-length array argument. The no argument call may result in a ClassCastException.</shortMessage>
     <info>
+<![CDATA[<p>This method uses the <code>toArray()</code> method of a
+collection derived class, and passes nothing or a zero-length
+prototype array argument.</p>
 
-      &lt;p&gt; This method uses the toArray() method of a
-      collection derived class, and passes in a zero-length
-      prototype array argument. It is more efficient to use
-      &lt;code&gt;myCollection.toArray(new
-      Foo[myCollection.size()])&lt;/code&gt; If the array passed
-      in is big enough to store all of the elements of the
-      collection, then it is populated and returned directly. This
-      avoids the need to create a second array (by reflection) to
-      return as the result.&lt;/p&gt;
+<p>It is more efficient to use <code>myCollection.toArray(new
+Foo[myCollection.size()])</code> If the array passed in is big enough
+to store all of the elements of the collection, then it is populated
+and returned directly. This avoids the need to create a second array
+(by reflection) to return as the result.</p>
 
+<p>If you need to get an array of a class from a
+<code>Collection</code>, you should pass an array of the desired class
+as the parameter of the <code>toArray</code> method. Otherwise you
+will get a <code>ClassCastException</code>.</p>
+
+<pre>
+import java.util.ArrayList;
+import java.util.Collection;
+
+public class Test {
+  public static void main(String[] args) {
+    Collection c = new ArrayList();
+    Integer obj = new Integer(1);
+    c.add(obj);
+
+    // this would trigger the rule (and throw a ClassCastException if executed)
+    Integer[] a = (Integer[])c.toArray();
+
+    // this wouldn't trigger the rule
+    Integer[] b = (Integer[])c.toArray(new Integer[c.size()]);
+  }
+}
+
+</pre>]]>
     </info>
-    <name>Inefficient To Array</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
@@ -4764,30 +4772,23 @@ checked by the for loop.</p>]]>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>FE_TEST_IF_EQUAL_TO_NOT_A_NUMBER</id>
-    <artifact tool="FindBugs"
-	      mnemonic="FE_TEST_IF_EQUAL_TO_NOT_A_NUMBER">
-    </artifact>
-    <shortMessage>Doomed test for equality to NaN</shortMessage>
+    <artifact tool="FindBugs" mnemonic="FE_TEST_IF_EQUAL_TO_NOT_A_NUMBER"/>
+    <artifact tool="PMD" mnemonic="BadComparison"/>
+    <name>Doomed test for equality to NaN</name>
+    <shortMessage>Doomed test for equality to NaN.  Did you mean to use Double.isNaN() or Float.isNaN()?</shortMessage>
     <info>
+<![CDATA[<p>This code checks to see if a floating point value is equal
+to the special <i>Not A Number</i> (NaN) value (e.g., <code>if (x ==
+Double.NaN)</code>). However, because of the special semantics of
+<code>NaN</code>, no value is equal to <code>Nan</code>, including
+<code>NaN</code>. Thus, <code>x == Double.NaN</code> always evaluates
+to false.</p>
 
-      &lt;p&gt; This code checks to see if a floating point value
-      is equal to the special Not A Number value (e.g.,
-      &lt;code&gt;if (x == Double.NaN)&lt;/code&gt;). However,
-      because of the special semantics of
-      &lt;code&gt;NaN&lt;/code&gt;, no value is equal to
-      &lt;code&gt;Nan&lt;/code&gt;, including
-      &lt;code&gt;NaN&lt;/code&gt;. Thus, &lt;code&gt;x ==
-      Double.NaN&lt;/code&gt; always evaluates to false.
-
-      To check to see if a value contained in
-      &lt;code&gt;x&lt;/code&gt; is the special Not A Number
-      value, use &lt;code&gt;Double.isNaN(x)&lt;/code&gt; (or
-      &lt;code&gt;Float.isNaN(x)&lt;/code&gt; if
-      &lt;code&gt;x&lt;/code&gt; is floating point precision).
-      &lt;/p&gt;
-
+<p>To check to see if a value contained in <code>x</code> is the
+special Not A Number value, use <code>Double.isNaN(x)</code> (or
+<code>Float.isNaN(x)</code> if <code>x</code> is floating point
+precision).</p>]]>
     </info>
-    <name>Test If Equal To Not A Number</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
@@ -4815,76 +4816,55 @@ checked by the for loop.</p>]]>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UM_UNNECESSARY_MATH</id>
-    <artifact tool="FindBugs" mnemonic="UM_UNNECESSARY_MATH">
-    </artifact>
-    <shortMessage>
-      Method calls static Math class method on a constant value
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="UM_UNNECESSARY_MATH"/>
+    <name>Unnecessary math</name>
+    <shortMessage>Method calls static Math class method on a constant value.</shortMessage>
     <info>
+<![CDATA[<p>This method uses a static method from <code>java.lang.Math</code> on a
+constant value. This method's result in this case, can be determined
+statically, and is faster and sometimes more accurate to just use the
+constant. Methods detected are:</p>
 
-      &lt;p&gt; This method uses a static method from
-      java.lang.Math on a constant value. This method's result in
-      this case, can be determined statically, and is faster and
-      sometimes more accurate to just use the constant. Methods
-      detected are: &lt;/p&gt; &lt;table&gt; &lt;tr&gt;
-      &lt;th&gt;Method&lt;/th&gt; &lt;th&gt;Parameter&lt;/th&gt;
-      &lt;/tr&gt; &lt;tr&gt; &lt;td&gt;abs&lt;/td&gt;
-      &lt;td&gt;-any-&lt;/td&gt; &lt;/tr&gt; &lt;tr&gt;
-      &lt;td&gt;acos&lt;/td&gt; &lt;td&gt;0.0 or 1.0&lt;/td&gt;
-      &lt;/tr&gt; &lt;tr&gt; &lt;td&gt;asin&lt;/td&gt;
-      &lt;td&gt;0.0 or 1.0&lt;/td&gt; &lt;/tr&gt; &lt;tr&gt;
-      &lt;td&gt;atan&lt;/td&gt; &lt;td&gt;0.0 or 1.0&lt;/td&gt;
-      &lt;/tr&gt; &lt;tr&gt; &lt;td&gt;atan2&lt;/td&gt;
-      &lt;td&gt;0.0&lt;/td&gt; &lt;/tr&gt; &lt;tr&gt;
-      &lt;td&gt;cbrt&lt;/td&gt; &lt;td&gt;0.0 or 1.0&lt;/td&gt;
-      &lt;/tr&gt; &lt;tr&gt; &lt;td&gt;ceil&lt;/td&gt;
-      &lt;td&gt;-any-&lt;/td&gt; &lt;/tr&gt; &lt;tr&gt;
-      &lt;td&gt;cos&lt;/td&gt; &lt;td&gt;0.0&lt;/td&gt;
-      &lt;/tr&gt; &lt;tr&gt; &lt;td&gt;cosh&lt;/td&gt;
-      &lt;td&gt;0.0&lt;/td&gt; &lt;/tr&gt; &lt;tr&gt;
-      &lt;td&gt;exp&lt;/td&gt; &lt;td&gt;0.0 or 1.0&lt;/td&gt;
-      &lt;/tr&gt; &lt;tr&gt; &lt;td&gt;expm1&lt;/td&gt;
-      &lt;td&gt;0.0&lt;/td&gt; &lt;/tr&gt; &lt;tr&gt;
-      &lt;td&gt;floor&lt;/td&gt; &lt;td&gt;-any-&lt;/td&gt;
-      &lt;/tr&gt; &lt;tr&gt; &lt;td&gt;log&lt;/td&gt;
-      &lt;td&gt;0.0 or 1.0&lt;/td&gt; &lt;/tr&gt; &lt;tr&gt;
-      &lt;td&gt;log10&lt;/td&gt; &lt;td&gt;0.0 or 1.0&lt;/td&gt;
-      &lt;/tr&gt; &lt;tr&gt; &lt;td&gt;rint&lt;/td&gt;
-      &lt;td&gt;-any-&lt;/td&gt; &lt;/tr&gt; &lt;tr&gt;
-      &lt;td&gt;round&lt;/td&gt; &lt;td&gt;-any-&lt;/td&gt;
-      &lt;/tr&gt; &lt;tr&gt; &lt;td&gt;sin&lt;/td&gt;
-      &lt;td&gt;0.0&lt;/td&gt; &lt;/tr&gt; &lt;tr&gt;
-      &lt;td&gt;sinh&lt;/td&gt; &lt;td&gt;0.0&lt;/td&gt;
-      &lt;/tr&gt; &lt;tr&gt; &lt;td&gt;sqrt&lt;/td&gt;
-      &lt;td&gt;0.0 or 1.0&lt;/td&gt; &lt;/tr&gt; &lt;tr&gt;
-      &lt;td&gt;tan&lt;/td&gt; &lt;td&gt;0.0&lt;/td&gt;
-      &lt;/tr&gt; &lt;tr&gt; &lt;td&gt;tanh&lt;/td&gt;
-      &lt;td&gt;0.0&lt;/td&gt; &lt;/tr&gt; &lt;tr&gt;
-      &lt;td&gt;toDegrees&lt;/td&gt; &lt;td&gt;0.0 or
-      1.0&lt;/td&gt; &lt;/tr&gt; &lt;tr&gt;
-      &lt;td&gt;toRadians&lt;/td&gt; &lt;td&gt;0.0&lt;/td&gt;
-      &lt;/tr&gt; &lt;/table&gt;
-
+<table>
+  <tr><th>Method</th><th>Parameter</th></tr>
+  <tr><td>abs</td><td>-any-</td></tr>
+  <tr><td>acos</td><td>0.0 or 1.0</td></tr>
+  <tr><td>asin</td><td>0.0 or 1.0</td></tr>
+  <tr><td>atan</td> <td>0.0 or 1.0</td></tr>
+  <tr><td>atan2</td><td>0.0</td></tr>
+  <tr><td>cbrt</td><td>0.0 or 1.0</td></tr>
+  <tr><td>ceil</td><td>-any-</td></tr>
+  <tr><td>cos</td><td>0.0</td></tr>
+  <tr><td>cosh</td><td>0.0</td></tr>
+  <tr><td>exp</td><td>0.0 or 1.0</td></tr>
+  <tr><td>expm1</td><td>0.0</td></tr>
+  <tr><td>floor</td><td>-any-</td></tr>
+  <tr><td>log</td><td>0.0 or 1.0</td></tr>
+  <tr><td>log10</td><td>0.0 or 1.0</td></tr>
+  <tr><td>rint</td><td>-any-</td></tr>
+  <tr><td>round</td><td>-any-</td></tr>
+  <tr><td>sin</td><td>0.0</td></tr>
+  <tr><td>sinh</td><td>0.0</td></tr>
+  <tr><td>sqrt</td><td>0.0 or 1.0</td></tr>
+  <tr><td>tan</td><td>0.0</td></tr>
+  <tr><td>tanh</td><td>0.0</td></tr>
+  <tr><td>toDegrees</td><td>0.0 or 1.0</td></tr>
+  <tr><td>toRadians</td><td>0.0</td></tr>
+</table>]]>
     </info>
-    <name>Unnecessary Math</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>CD_CIRCULAR_DEPENDENCY</id>
-    <artifact tool="FindBugs" mnemonic="CD_CIRCULAR_DEPENDENCY">
-    </artifact>
-    <shortMessage>
-      Test for circular dependencies among classes
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="CD_CIRCULAR_DEPENDENCY"/>
+    <name>Circular dependency</name>
+    <shortMessage>Circular dependencies among classes detected.  This signposts a poor design or implementation.</shortMessage>
     <info>
-
-      &lt;p&gt; This class has a circular dependency with other
-      classes. This makes building these classes difficult, as
-      each is dependent on the other to build correctly. Consider
-      using interfaces to break the hard dependency. &lt;/p&gt;
-
+<![CDATA[<p>This class has a circular dependency with other
+classes. This makes building these classes difficult, as each is
+dependent on the other to build correctly. Consider using interfaces
+to break the hard dependency.</p>]]>
     </info>
-    <name>Circular Dependency</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
@@ -7409,6 +7389,8 @@ use <code>java.util.Arrays.hashCode(a)</code>.
     <artifact tool="FindBugs" mnemonic="OBL_UNSATISFIED_OBLIGATION"/>
     <artifact tool="FindBugs" mnemonic="OS_OPEN_STREAM"/>
     <artifact tool="FindBugs" mnemonic="ODR_OPEN_DATABASE_RESOURCE"/>
+    <artifact tool="FindBugs" mnemonic="OS_OPEN_STREAM_EXCEPTION_PATH"/>
+    <artifact tool="PMD" mnemonic="CloseResource"/>
     <name>Method may fail to clean up stream or resource</name>
     <shortMessage>Method may fail to clean up stream or resource</shortMessage>
     <info>
@@ -8257,11 +8239,19 @@ true</tt>.</p>]]>
   <findingType>
     <id>EmptyInitializer</id>
     <artifact tool="PMD" mnemonic="EmptyInitializer"/>
+    <artifact tool="PMD" mnemonic="EmptyStaticInitializer"/>
     <name>Empty initializer</name>
     <shortMessage>It is questionable coding practice to have an empty initializer.</shortMessage>
     <info>
-<![CDATA[<p>It is questionable to have an empty initializer. Consider
-removing it from your code.</p>]]>
+<![CDATA[<p>It is highly questionable to have an empty
+initializer. Consider removing it from your code.</p>
+
+<pre>
+public class Foo {
+  static {} // Why ?
+  {} // Again, why ?
+}
+</pre>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
@@ -8274,7 +8264,17 @@ removing it from your code.</p>]]>
     <info>
 <![CDATA[<p>An exception is caught, but nothing is done. In most
 circumstances, this swallows an exception which should either be acted
-on or reported.</p>]]>
+on or reported.</p>
+
+<pre>
+public void doSomething() {
+  try {
+    FileInputStream fis = new FileInputStream("/tmp/bugger");
+  } catch (IOException ioe) {
+      // not good
+  }
+}
+</pre>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
@@ -8289,7 +8289,17 @@ Consider removing the check if it doesn't have side-effects.</p>
 
 <p>If the check has side-effects just call the check and ignore the
 result.  For example, <code>if (sideEffect()) {}</code> would be
-replaced with <code>sideEffect()</code>.</p>]]>
+replaced with <code>sideEffect()</code>.</p>
+
+<pre>
+public class Foo {
+  void bar(int x) {
+    if (x == 0) {
+      // empty!
+    }
+  }
+}
+</pre>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
@@ -8303,7 +8313,17 @@ replaced with <code>sideEffect()</code>.</p>]]>
 nothing. If it is a timing loop, then you should use
 <code>Thread.sleep()</code> for it; if it's a while loop that does a
 lot in the exit expression, then consider rewriting it to make what it
-is doing clearer.</p>]]>
+is doing clearer.</p>
+
+<pre>
+public class Foo {
+  void bar(int a, int b) {
+    while (a == b) {
+      // empty!
+    }
+   }
+}
+</pre>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
@@ -8314,7 +8334,18 @@ is doing clearer.</p>]]>
     <shortMessage>It is questionable coding practice to have an empty try block.</shortMessage>
     <info>
 <![CDATA[<p>This <code>try</code> block is empty. It should be removed
-from the code.</p>]]>
+from the code.</p>
+
+<pre>
+public class Foo {
+  public void bar() {
+    try {
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+}
+</pre>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
@@ -8325,673 +8356,780 @@ from the code.</p>]]>
     <shortMessage>It is questionable coding practice to have an empty finally block.</shortMessage>
     <info>
 <![CDATA[<p>This <code>finally</code> block is empty. It should be
-removed from the code.</p>]]>
+removed from the code.</p>
+
+<pre>
+public class Foo {
+  public void bar() {
+    try {
+      int x=2;
+    } finally {
+      // empty!
+    }
+  }
+}
+</pre>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>EmptySwitchStatements</id>
-    <artifact tool="PMD" mnemonic="EmptySwitchStatements">
-    </artifact>
-    <shortMessage>Avoid empty switch statements.</shortMessage>
-    <info>Avoid empty switch statements.</info>
-    <name>Empty Switch Statements</name>
+    <artifact tool="PMD" mnemonic="EmptySwitchStatements"/>
+    <name>Empty switch</name>
+    <shortMessage>It is questionable coding practice to have an empty switch statement.</shortMessage>
+    <info>
+<![CDATA[[<p>This <code>switch</code> statement is empty. Consider
+removing it from the code.</p>
+
+<pre>
+public class Foo {
+  public void bar() {
+    int x = 2;
+    switch (x) {
+      // once there was code here
+      // but it's been commented out or something
+    }
+  }
+}
+</pre>]]>
+    </info>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>JumbledIncrementer</id>
-    <artifact tool="PMD" mnemonic="JumbledIncrementer"></artifact>
-    <shortMessage>
-      Avoid jumbled loop incrementers - it's usually a mistake,
-      and it's confusing even if it's what's intended.
-    </shortMessage>
+    <artifact tool="PMD" mnemonic="JumbledIncrementer"/>
+    <name>Jumbled incrementer</name>
+    <shortMessage>Avoid jumbled loop incrementers because it's usually a mistake.</shortMessage>
     <info>
-      Avoid jumbled loop incrementers - it's usually a mistake,
-      and it's confusing even if it's what's intended.
+<![CDATA[<p>Avoid jumbled loop incrementers&mdash;it's usually a
+mistake, and it's confusing even if it's what's intended.</p>
+
+<pre>
+public class JumbledIncrementerRule1 {
+  public void foo() {
+    for (int i = 0; i < 10; i++) {
+      for (int k = 0; k < 20; i++) {
+        System.out.println("Hello");
+      }
+    }
+  }
+}
+</pre>
+]]>
     </info>
-    <name>Jumbled Incrementer</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>ForLoopShouldBeWhileLoop</id>
-    <artifact tool="PMD" mnemonic="ForLoopShouldBeWhileLoop">
-    </artifact>
-    <shortMessage>
-      Some for loops can be simplified to while loops - this makes
-      them more concise.
-    </shortMessage>
+    <artifact tool="PMD" mnemonic="ForLoopShouldBeWhileLoop"/>
+    <name>For should be while</name>
+    <shortMessage>This for loop can be simplified to a while loop.</shortMessage>
     <info>
-      Some for loops can be simplified to while loops - this makes
-      them more concise.
-    </info>
-    <name>For Loop Should Be While Loop</name>
-  </findingType>
-  <findingType>
-    <id>UnnecessaryConversionTemporary</id>
-    <artifact tool="PMD"
-	      mnemonic="UnnecessaryConversionTemporary">
-    </artifact>
-    <shortMessage>
-      Avoid unnecessary temporaries when converting primitives to
-      Strings
-    </shortMessage>
-    <info>
-      Avoid unnecessary temporaries when converting primitives to
-      Strings
-    </info>
-    <name>Unnecessary Conversion Temporary</name>
-  </findingType>
+<![CDATA[
+<p>This loop can be simplified to a <code>while</code> and made more concise.</p>
 
-  <findingType>
-    <id>DoubleCheckedLocking</id>
-    <shortMessage>
-      Partially created objects can be returned by the Double
-      Checked Locking pattern when used in Java. An optimizing JRE
-      may assign a reference to the baz variable before it creates
-      the object the reference is intended to point to. For more
-      details see
-      http://www.javaworld.com/javaworld/jw-02-2001/jw-0209-double.html.
-    </shortMessage>
-    <info>
-      Partially created objects can be returned by the Double
-      Checked Locking pattern when used in Java. An optimizing JRE
-      may assign a reference to the baz variable before it creates
-      the object the reference is intended to point to. For more
-      details see
-      http://www.javaworld.com/javaworld/jw-02-2001/jw-0209-double.html.
+<pre>
+public class Foo {
+  void bar() {
+    for (;true;) true; // No Init or Update part, may as well be: while (true)
+  }
+}
+</pre>
+]]>
     </info>
-    <name>Double Checked Locking</name>
   </findingType>
-  
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>ReturnFromFinallyBlock</id>
-    <artifact tool="PMD" mnemonic="ReturnFromFinallyBlock">
-    </artifact>
-    <shortMessage>
-      Avoid returning from a finally block - this can discard
-      exceptions.
-    </shortMessage>
+    <artifact tool="PMD" mnemonic="ReturnFromFinallyBlock"/>
+    <name>Return from within finally block</name>
+    <shortMessage>It is questionable coding practice to return from a finally block because this can discard exceptions.</shortMessage>
     <info>
-      Avoid returning from a finally block - this can discard
-      exceptions.
-    </info>
-    <name>Return From Finally Block</name>
-  </findingType>
+<![CDATA[<p>It is questionable coding practice to return from a
+finally block because this can discard exceptions.</p>
 
+<pre>
+public class Bar {
+  public String foo() {
+    try {
+      throw new Exception( "My Exception" );
+    } catch (Exception e) {
+      throw e;
+    } finally {
+      return "A. O. K."; // Very bad.
+    }
+  }
+}
+</pre>
+
+<p>For more information on this issue see puzzle 36 of Bloch and
+Gafter's <i>Java Puzzlers</i>.</p>]]>
+    </info>
+  </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UnnecessaryReturn</id>
-    <artifact tool="PMD" mnemonic="UnnecessaryReturn"></artifact>
-    <shortMessage>Avoid unnecessary return statements</shortMessage>
-    <info>Avoid unnecessary return statements</info>
+    <artifact tool="PMD" mnemonic="UnnecessaryReturn"/>
     <name>Unnecessary Return</name>
+    <shortMessage>Avoid unnecessary return statements</shortMessage>
+    <info>
+<![CDATA[<p>It is questionable coding practice to place a return
+statement where the method would simply return without it.  This
+unnecessary return can be removed from your code.</p>
+
+</pre>
+public class Foo {
+  public void bar() {
+    int x = 42;
+    return;
+  }
+}
+</pre>]]>
+    </info>
   </findingType>
-  <findingType>
-    <id>EmptyStaticInitializer</id>
-    <artifact tool="PMD" mnemonic="EmptyStaticInitializer">
-    </artifact>
-    <shortMessage>
-      An empty static initializer was found.
-    </shortMessage>
-    <info>An empty static initializer was found.</info>
-    <name>Empty Static Initializer</name>
-  </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UnconditionalIfStatement</id>
-    <artifact tool="PMD" mnemonic="UnconditionalIfStatement">
-    </artifact>
-    <shortMessage>
-      Do not use &quot;if&quot; statements that are always true or
-      always false.
-    </shortMessage>
+    <artifact tool="PMD" mnemonic="UnconditionalIfStatement"/>
+    <name>Unconditional if</name>
+    <shortMessage>Avoid if statements that are always true or always false.  Can this be removed?</shortMessage>
     <info>
-      Do not use &quot;if&quot; statements that are always true or
-      always false.
+<![CDATA[<p>It is questionable coding practice to have an
+<code>if</code> statement that is always true or always false.  Unless
+this is test code (or some other special purpose code) the
+<code>if</code> can be removed.  Just remove the <code>if</code> and
+keep the block if the statement was always true.  Delete both the
+conditional and the block if the statement was always false.</p>
+
+<pre>
+public class Foo {
+  public void close() {
+    if (true) {
+      // ...
+    }
+  }
+}
+</pre>]]>
     </info>
-    <name>Unconditional If Statement</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>EmptyStatementNotInLoop</id>
-    <artifact tool="PMD" mnemonic="EmptyStatementNotInLoop">
-    </artifact>
-    <shortMessage>
-      An empty statement (aka a semicolon by itself) that is not
-      used as the sole body of a for loop or while loop is
-      probably a bug. It could also be a double semicolon, which
-      is useless and should be removed.
-    </shortMessage>
+    <artifact tool="PMD" mnemonic="EmptyStatementNotInLoop"/>
+    <name>Empty statement not in loop</name>
+    <shortMessage>It is questionable coding practice to include an empty statement, i.e., a semicolon by itself.  Consider removing this empty statement.</shortMessage>
     <info>
-      An empty statement (aka a semicolon by itself) that is not
-      used as the sole body of a for loop or while loop is
-      probably a bug. It could also be a double semicolon, which
-      is useless and should be removed.
+<![CDATA[<p>It is questionable coding practice to include an empty
+statement, i.e., a semicolon by itself, that is not used as the sole
+body of a for loop or while loop. This could also be a double
+semicolon, which is useless and should be removed.</p>
+
+<pre>
+public class MyClass {
+  public void doit() {
+    // this is probably not what you meant to do
+    ;
+    // the extra semicolon here this is not necessary
+    System.out.println("look at the extra semicolon");;
+  }
+}
+</pre>]]>
     </info>
-    <name>Empty Statement Not In Loop</name>
   </findingType>
-  <findingType>
-    <id>BooleanInstantiation</id>
-    <artifact tool="PMD" mnemonic="BooleanInstantiation"></artifact>
-    <shortMessage>
-      Avoid instantiating Boolean objects; you can reference
-      Boolean.TRUE, Boolean.FALSE, or call Boolean.valueOf()
-      instead.
-    </shortMessage>
-    <info>
-      Avoid instantiating Boolean objects; you can reference
-      Boolean.TRUE, Boolean.FALSE, or call Boolean.valueOf()
-      instead.
-    </info>
-    <name>Boolean Instantiation</name>
-  </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UnnecessaryFinalModifier</id>
-    <artifact tool="PMD" mnemonic="UnnecessaryFinalModifier">
-    </artifact>
-    <shortMessage>
-      When a class has the final modifier, all the methods are
-      automatically final.
-    </shortMessage>
+    <artifact tool="PMD" mnemonic="UnnecessaryFinalModifier"/>
+    <name>Unnecessary final modifier</name>
+    <shortMessage>This class has the final modifier, therefore all of its methods are automatically final.</shortMessage>
     <info>
-      When a class has the final modifier, all the methods are
-      automatically final.
+<![CDATA[<p>This class has the final modifier, therefore all of its
+methods are automatically final.  Any final declarations on methods
+may be removed.</p>
+
+<pre>
+public final class Foo {
+   // This final modifier is not necessary, since the class is final
+   // and thus, all methods are final
+   private final void foo() {
+   }
+}
+</pre>]]>
     </info>
-    <name>Unnecessary Final Modifier</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>CollapsibleIfStatements</id>
-    <artifact tool="PMD" mnemonic="CollapsibleIfStatements">
-    </artifact>
-    <shortMessage>
-      Sometimes two 'if' statements can be consolidated by
-      separating their conditions with a boolean short-circuit
-      operator.
-    </shortMessage>
+    <artifact tool="PMD" mnemonic="CollapsibleIfStatements"/>
+    <name>Collapsible if</name>
+    <shortMessage>Sometimes two if statements can be consolidated by separating their conditions with a boolean short-circuit operator.</shortMessage>
     <info>
-      Sometimes two 'if' statements can be consolidated by
-      separating their conditions with a boolean short-circuit
-      operator.
+<![CDATA[<p>Sometimes two if statements can be consolidated by
+separating their conditions with a boolean short-circuit
+operator. For example, the below code</p>
+
+<pre>
+if (x) {
+  if (y) {
+    // do stuff
+  }
+}
+</pre>
+
+<p>can be changed to</p>
+
+<pre>
+if (x && y) {
+  // do stuff
+}
+</pre>
+
+<p>When making this change ensure that the expression <code>y</code>
+has no side-effects.</p>]]>
     </info>
-    <name>Collapsible If Statements</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UselessOverridingMethod</id>
-    <artifact tool="PMD" mnemonic="UselessOverridingMethod">
-    </artifact>
-    <shortMessage>
-      The overriding method merely calls the same method defined
-      in a superclass
-    </shortMessage>
+    <artifact tool="PMD" mnemonic="UselessOverridingMethod"/>
+    <name>Useless overriding method</name>
+    <shortMessage>This overriding method merely calls the same method defined in a superclass. It should simply inherit the method.</shortMessage>
     <info>
-      The overriding method merely calls the same method defined
-      in a superclass
+<![CDATA[<p>This overriding method merely calls the same method
+defined in a superclass.</p>
+
+<pre>
+@Override public String foo() {
+  return super.foo();  //Why bother overriding?
+}
+</pre>
+
+<p>It is strongly recommended that you remove this method and simply
+inherit the method from the superclass.  This problem may indicate a
+lack of understanding about how inheritance works in the Java
+programming language.</p>]]>
     </info>
-    <name>Useless Overriding Method</name>
   </findingType>
-  <findingType>
-    <id>ClassCastExceptionWithToArray</id>
-    <artifact tool="PMD" mnemonic="ClassCastExceptionWithToArray">
-    </artifact>
-    <shortMessage>
-      if you need to get an array of a class from your Collection,
-      you should pass an array of the desidered class as the
-      parameter of the toArray method. Otherwise you will get a
-      ClassCastException.
-    </shortMessage>
-    <info>
-      if you need to get an array of a class from your Collection,
-      you should pass an array of the desidered class as the
-      parameter of the toArray method. Otherwise you will get a
-      ClassCastException.
-    </info>
-    <name>Class Cast Exception With To Array</name>
-  </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AvoidDecimalLiteralsInBigDecimalConstructor</id>
-    <artifact tool="PMD"
-	      mnemonic="AvoidDecimalLiteralsInBigDecimalConstructor">
-    </artifact>
-    <shortMessage>
-      One might assume that &quot;new BigDecimal(.1)&quot; is
-      exactly equal to .1, but it is actually equal to
-      .1000000000000000055511151231257827021181583404541015625.
-      This is so because .1 cannot be represented exactly as a
-      double (or, for that matter, as a binary fraction of any
-      finite length). Thus, the long value that is being passed in
-      to the constructor is not exactly equal to .1, appearances
-      notwithstanding.
-
-      The (String) constructor, on the other hand, is perfectly
-      predictable: 'new BigDecimal(&quot;.1&quot;)' is exactly
-      equal to .1, as one would expect. Therefore, it is generally
-      recommended that the (String) constructor be used in
-      preference to this one.
-    </shortMessage>
+    <artifact tool="PMD" mnemonic="AvoidDecimalLiteralsInBigDecimalConstructor"/>
+    <name>Avoid decimal literals in BigDecimal construction</name>
+    <shortMessage>Use of float or double literals when construction BigDecimal instances can result in imprecision.  Use the String argument constructor instead..</shortMessage>
     <info>
-      One might assume that &quot;new BigDecimal(.1)&quot; is
-      exactly equal to .1, but it is actually equal to
-      .1000000000000000055511151231257827021181583404541015625.
-      This is so because .1 cannot be represented exactly as a
-      double (or, for that matter, as a binary fraction of any
-      finite length). Thus, the long value that is being passed in
-      to the constructor is not exactly equal to .1, appearances
-      notwithstanding.
+<![CDATA[<p>One might assume that <code>new BigDecimal(.1)</code> is
+exactly equal to .1, but it is actually equal to
+.1000000000000000055511151231257827021181583404541015625.  This is the
+case because .1 cannot be represented exactly as a double (or, for
+that matter, as a binary fraction of any finite length). Thus, the
+long value that is being passed in to the constructor is not exactly
+equal to .1, appearances notwithstanding.</p>
 
-      The (String) constructor, on the other hand, is perfectly
-      predictable: 'new BigDecimal(&quot;.1&quot;)' is exactly
-      equal to .1, as one would expect. Therefore, it is generally
-      recommended that the (String) constructor be used in
-      preference to this one.
+<p>The String argument constructor, on the other hand, is perfectly
+predictable: <code>new BigDecimal(".1")</code> is exactly equal to .1,
+as one would expect. Therefore, it is generally recommended that the
+String argument constructor be used in preference to this one.</p>]]>
     </info>
-    <name>Avoid Decimal Literals In Big Decimal Constructor</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UselessOperationOnImmutable</id>
-    <artifact tool="PMD" mnemonic="UselessOperationOnImmutable">
-    </artifact>
-    <shortMessage>
-      An operation on an Immutable object (BigDecimal or
-      BigInteger) won't change the object itself. The result of
-      the operation is a new object. Therefore, ignoring the
-      operation result is an error.
-    </shortMessage>
+    <artifact tool="PMD" mnemonic="UselessOperationOnImmutable"/>
+    <name>Ignored operation on an immutable object</name>
+    <shortMessage>An operation on an Immutable object (e.g., a BigDecimal or a BigInteger) won't change the object itself. Thus, ignoring the result is probably an error.</shortMessage>
     <info>
-      An operation on an Immutable object (BigDecimal or
-      BigInteger) won't change the object itself. The result of
-      the operation is a new object. Therefore, ignoring the
-      operation result is an error.
-    </info>
-    <name>Useless Operation On Immutable</name>
-  </findingType>
+<![CDATA[<p>An operation on an immutable object (e.g., a
+<code>BigDecimal</code> or a <code>BigInteger</code>) won't change the
+object itself. The result of the operation is a new object. Therefore,
+ignoring the operation result is probably a mistake.</p>
 
+<pre>
+import java.math.*;
+class Test {
+  void method1() {
+    BigDecimal bd=new BigDecimal(10);
+    bd.add(new BigDecimal(5));      // this will trigger the rule
+  }
+  void method2() {
+    BigDecimal bd=new BigDecimal(10);
+    bd = bd.add(new BigDecimal(5)); // this won't trigger the rule
+  }
+}
+</pre>]]>
+    </info>
+  </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UnusedNullCheckInEquals</id>
-    <artifact tool="PMD" mnemonic="UnusedNullCheckInEquals">
-    </artifact>
-    <shortMessage>
-      After checking an object reference for null, you should
-      invoke equals() on that object rather than passing it to
-      another object's equals() method.
-    </shortMessage>
+    <artifact tool="PMD" mnemonic="UnusedNullCheckInEquals"/>
+    <name>Unused null check in equals</name>
+    <shortMessage>After checking an object reference for null, you should invoke equals() on that object rather than passing it to another object's equals() method.</shortMessage>
     <info>
-      After checking an object reference for null, you should
-      invoke equals() on that object rather than passing it to
-      another object's equals() method.
+<![CDATA[<p>After checking an object reference for <code>null</code>,
+you should invoke <code>equals()</code> on that object rather than
+passing it to another object's <code>equals()</code> method.</p>
+
+<pre>
+public class Example {
+
+  public String method1() { return "ok";}
+  public String method2() { return null;}
+
+  public void method(String a) {
+    String b;
+    /*
+     * I don't know if method1() can be "null" but I know "a" is not null...
+     * I'd better write a.equals(method1())
+     */
+    if (a != null && method1().equals(a)) { // will trigger the rule
+      // do something
+    }
+
+    if (method1().equals(a) && a != null) { // won't trigger the rule
+      // do something
+    }
+
+    if (a != null && method1().equals(b)) { // won't trigger the rule
+      // do something
+    }
+
+    if (a != null && "LITERAL".equals(a)) { // won't trigger the rule
+      // do something
+    }
+
+    if (a != null && !a.equals("go")) {     // won't trigger the rule
+      a = method2();
+      if (method1().equals(a)) {
+        //do something
+      }
+    }
+  }
+}
+</pre>]]>
     </info>
-    <name>Unused Null Check In Equals</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AvoidThreadGroup</id>
-    <artifact tool="PMD" mnemonic="AvoidThreadGroup"></artifact>
-    <shortMessage>
-      Avoid using ThreadGroup; although it is intended to be used
-      in a threaded environment it contains methods that are not
-      thread safe.
-    </shortMessage>
+    <artifact tool="PMD" mnemonic="AvoidThreadGroup"/>
+    <name>Avoid ThreadGroup</name>
+    <shortMessage>It is best to avoid the use of ThreadGroup. Consider updating this code to use a util concurrent Executor.</shortMessage>
     <info>
-      Avoid using ThreadGroup; although it is intended to be used
-      in a threaded environment it contains methods that are not
-      thread safe.
+<![CDATA[<p>It is best to avoid the use of ThreadGroup.  Although it
+is intended to be used in a threaded environment it contains methods
+that are not thread safe.</p>
+
+<pre>
+public class Bar {
+  void buz() {
+    ThreadGroup tg = new ThreadGroup("My threadgroup");
+    tg = new ThreadGroup(tg, "my thread group");
+    tg = Thread.currentThread().getThreadGroup();
+    tg = System.getSecurityManager().getThreadGroup();
+  }
+}
+</pre>
+
+<p>A better framework is provied by the util concurrent library found
+in the <code>java.util.concurrent</code> package.  This library was
+added to JDK 1.5.  In particular, the <code>Exceutor</code> framework
+is worth considering.</p>]]>
     </info>
-    <name>Avoid Thread Group</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>BrokenNullCheck</id>
     <artifact tool="PMD" mnemonic="BrokenNullCheck"></artifact>
-    <shortMessage>
-      The null check is broken since it will throw a
-      NullPointerException itself. It is likely that you used ||
-      instead of &amp;&amp; or vice versa.
-    </shortMessage>
+    <name>Broken null check expression</name>
+    <shortMessage>This null check appears to be broken since it can throw a NullPointerException. It is likely that you used || instead of &amp;&amp; or vice versa.</shortMessage>
     <info>
-      The null check is broken since it will throw a
-      NullPointerException itself. It is likely that you used ||
-      instead of &amp;&amp; or vice versa.
+<![CDATA[<p>This null check appears to be broken since it can throw a
+<code>NullPointerException</code>. It is likely that you used
+<code>||</code> instead of <code>&amp;&amp;</code> or vice versa.</p>
+
+<pre>
+class Foo {
+  String bar(String string) {
+    // should be &&
+    if (string != null || !string.equals(""))
+      return string;
+    // should be ||
+    if (string == null && string.equals(""))
+      return string;
+  }
+}
+</pre>]]>
     </info>
-    <name>Broken Null Check</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>BigIntegerInstantiation</id>
-    <artifact tool="PMD" mnemonic="BigIntegerInstantiation">
-    </artifact>
-    <shortMessage>
-      Don't create instances of already existing BigInteger
-      (BigInteger.ZERO, BigInteger.ONE) and for 1.5 on,
-      BigInteger.TEN and BigDecimal (BigDecimal.ZERO,
-      BigDecimal.ONE, BigDecimal.TEN)
-    </shortMessage>
+    <artifact tool="PMD" mnemonic="BigIntegerInstantiation"/>
+    <name>Use BigInteger and BigDecimal constants</name>
+    <shortMessage>This code creates an instance of BigInteger or BigDecimal for which a constant exists.  It is recommended that you use the constant instead of creating another object.</shortMessage>
     <info>
-      Don't create instances of already existing BigInteger
-      (BigInteger.ZERO, BigInteger.ONE) and for 1.5 on,
-      BigInteger.TEN and BigDecimal (BigDecimal.ZERO,
-      BigDecimal.ONE, BigDecimal.TEN)
+<![CDATA[<p>There is no need to create instances of already existing
+<code>BigInteger</code> or <code>BigDecimal</code> objects.</p>
+
+<pre>
+// Don't do this -- use the defined constants
+BigInteger bi = new BigInteger(1);
+BigInteger bi2 = new BigInteger("0");
+BigInteger bi3 = new BigInteger(0.0);
+BigInteger bi4;
+bi4 = new BigInteger(0);
+bi4 = BigInteger.ZERO; // OK
+</pre>
+
+<p>Just use the predefined constants, such as
+<code>BigInteger.ZERO</code>, <code>BigInteger.ONE</code>, (and for
+1.5 on) <code>BigInteger.TEN</code>, <code>BigDecimal.ZERO</code>,
+<code>BigDecimal.ONE</code>, and <code>BigDecimal.TEN</code>.</p>]]>
     </info>
-    <name>Big Integer Instantiation</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AvoidUsingOctalValues</id>
-    <artifact tool="PMD" mnemonic="AvoidUsingOctalValues">
-    </artifact>
-    <shortMessage>
-      Integer literals should not start with zero. Zero means that
-      the rest of literal will be interpreted as an octal value.
-    </shortMessage>
+    <artifact tool="PMD" mnemonic="AvoidUsingOctalValues"/>
+    <name>Avoid octal literals</name>
+    <shortMessage>Integer literals should not start with zero. Zero means that the rest of literal will be interpreted as an octal value which might not be what you want.</shortMessage>
     <info>
-      Integer literals should not start with zero. Zero means that
-      the rest of literal will be interpreted as an octal value.
+<![CDATA[<p>Integer literals should not start with zero. Zero means
+that the rest of literal will be interpreted as an octal value which
+might not be what you want.</p>
+
+<pre>
+int i = 012;   // sets i to 10 not  12
+int j = 010;   // sets j to  8 not  10
+int k = i * j; // sets k to 80 not 120
+</pre>
+
+<p>If you really want the octal literal, it is recommended that it be
+commented very clearly to avoid programmer confusion.</p>]]>
     </info>
-    <name>Avoid Using Octal Values</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>IfStmtsMustUseBraces</id>
-    <artifact tool="PMD" mnemonic="IfStmtsMustUseBraces"></artifact>
-    <shortMessage>
-      Avoid using if statements without using curly braces.
-    </shortMessage>
+    <artifact tool="PMD" mnemonic="IfStmtsMustUseBraces"/>
+    <artifact tool="PMD" mnemonic="IfElseStmtsMustUseBraces"/>
+    <name>If must use braces</name>
+    <shortMessage>Avoid if statements without curly braces.</shortMessage>
     <info>
-      Avoid using if statements without using curly braces.
+<![CDATA[<p>This rule flags all if statements that do not use curly
+braces because this has been deemed a questionable coding practice. To
+fix this change</p>
+
+<pre>
+if (expression)
+  statement1;
+else
+  statement2;
+</pre>
+
+<p>to</p>
+
+<pre>
+if (expression) {
+  statement1;
+} else {
+  statement2;
+}
+</pre>]]>
     </info>
-    <name>If Statements Must Use Braces</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>WhileLoopsMustUseBraces</id>
-    <artifact tool="PMD" mnemonic="WhileLoopsMustUseBraces">
-    </artifact>
-    <shortMessage>
-      Avoid using 'while' statements without using curly braces.
-    </shortMessage>
+    <artifact tool="PMD" mnemonic="WhileLoopsMustUseBraces"/>
+    <name>While must use braces</name>
+    <shortMessage>Avoid while loops without curly braces.</shortMessage>
     <info>
-      Avoid using 'while' statements without using curly braces.
+<![CDATA[<p>This rule flags all while loops that do not use curly
+braces because this has been deemed a questionable coding practice. To
+fix this change</p>
+
+<pre>
+while (expression)
+  statement;
+</pre>
+
+<p>to</p>
+
+<pre>
+while (expression) {
+  statement;
+}
+</pre>]]>
     </info>
-    <name>While Loops Must Use Braces</name>
   </findingType>
-  <findingType>
-    <id>IfElseStmtsMustUseBraces</id>
-    <artifact tool="PMD" mnemonic="IfElseStmtsMustUseBraces">
-    </artifact>
-    <shortMessage>
-      Avoid using if..else statements without using curly braces.
-    </shortMessage>
-    <info>
-      Avoid using if..else statements without using curly braces.
-    </info>
-    <name>If Else Statements Must Use Braces</name>
-  </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>ForLoopsMustUseBraces</id>
-    <artifact tool="PMD" mnemonic="ForLoopsMustUseBraces">
-    </artifact>
-    <shortMessage>
-      Avoid using 'for' statements without using curly braces.
-    </shortMessage>
+    <artifact tool="PMD" mnemonic="ForLoopsMustUseBraces"/>
+    <name>For must use braces</name>
+    <shortMessage>Avoid for loops without curly braces.</shortMessage>
     <info>
-      Avoid using 'for' statements without using curly braces.
-    </info>
-    <name>For Loops Must Use Braces</name>
-  </findingType>
+<![CDATA[<p>This rule flags all for loops that do not use curly braces
+because this has been deemed a questionable coding practice. To fix
+this change</p>
 
+<pre>
+for (e ; e ; e)
+  statement;
+</pre>
+
+<p>to</p>
+
+<pre>
+for (e ; e ; e)
+  statement;
+}
+</pre>]]>
+    </info>
+  </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>CloneThrowsCloneNotSupportedException</id>
-    <artifact tool="PMD"
-	      mnemonic="CloneThrowsCloneNotSupportedException">
-    </artifact>
-    <shortMessage>
-      The method clone() should throw a
-      CloneNotSupportedException.
-    </shortMessage>
+    <artifact tool="PMD" mnemonic="CloneThrowsCloneNotSupportedException"/>
+    <name>Clone method signature must include throws CloneNotSupportedException</name>
+    <shortMessage>This clone method does not declare that it can throw CloneNotSupportedException.  Its signature appears to be wrong.</shortMessage>
     <info>
-      The method clone() should throw a
-      CloneNotSupportedException.
-    </info>
-    <name>Clone Throws Clone Not Supported Exception</name>
-  </findingType>
+<![CDATA[<p>The method clone has the wrong signature, it should throw
+a <code>CloneNotSupportedException</code>.  So change the code
+below</p>
 
+<pre>
+public Object clone() { // will cause this finding to appear
+  return super.clone();
+}
+</pre>
+
+<p>to</p>
+
+<pre>
+public Object clone() throws CloneNotSupportedException {
+  return super.clone();
+}
+</pre>]]>
+    </info>
+  </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>NPathComplexity</id>
-    <artifact tool="PMD" mnemonic="NPathComplexity"></artifact>
-    <shortMessage>
-      The NPath complexity of a method is the number of acyclic
-      execution paths through that method. A threshold of 200 is
-      generally considered the point where measures should be
-      taken to reduce complexity.
-    </shortMessage>
+    <artifact tool="PMD" mnemonic="NPathComplexity"/>
+    <name>High NPath complexity</name>
+    <shortMessage>This method has a high NPath complexity.  Can you reduce its complexity?</shortMessage>
     <info>
-      The NPath complexity of a method is the number of acyclic
-      execution paths through that method. A threshold of 200 is
-      generally considered the point where measures should be
-      taken to reduce complexity.
+<![CDATA[<p>The NPath complexity of a method is the number of acyclic
+execution paths through that method. A threshold of 200 is generally
+considered the point where measures should be taken to reduce
+complexity.</p>]]>
     </info>
-    <name>NPath Complexity</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>ExcessiveMethodLength</id>
-    <artifact tool="PMD" mnemonic="ExcessiveMethodLength">
-    </artifact>
-    <shortMessage>
-      Violations of this rule usually indicate that the method is
-      doing too much. Try to reduce the method size by creating
-      helper methods and removing any copy/pasted code.
-    </shortMessage>
+    <artifact tool="PMD" mnemonic="ExcessiveMethodLength"/>
+    <name>Excessive method length</name>
+    <shortMessage>This method is very long. Can you make it more concise?</shortMessage>
     <info>
-      Violations of this rule usually indicate that the method is
-      doing too much. Try to reduce the method size by creating
-      helper methods and removing any copy/pasted code.
+<![CDATA[<p>Violations of this rule usually indicate that the method
+is doing too much. This may signpost a poor design. Try to reduce the
+method size by creating helper methods and removing any copy/pasted
+code.</p>]]>
     </info>
-    <name>Excessive Method Length</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>ExcessiveParameterList</id>
-    <artifact tool="PMD" mnemonic="ExcessiveParameterList">
-    </artifact>
-    <shortMessage>
-      Long parameter lists can indicate that a new object should
-      be created to wrap the numerous parameters. Basically, try
-      to group the parameters together.
-    </shortMessage>
+    <artifact tool="PMD" mnemonic="ExcessiveParameterList"/>
+    <name>Excessive parameter list</name>
+    <shortMessage>This method takes too many parameters.  Can it be redesigned to take less?</shortMessage>
     <info>
-      Long parameter lists can indicate that a new object should
-      be created to wrap the numerous parameters. Basically, try
-      to group the parameters together.
+<![CDATA[<p>Long parameter lists can indicate that a new object should
+be created to wrap the numerous parameters. Basically, try to group
+the parameters together.</p>]]>
     </info>
-    <name>Excessive Parameter List</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>ExcessiveClassLength</id>
-    <artifact tool="PMD" mnemonic="ExcessiveClassLength"></artifact>
-    <shortMessage>
-      Long Class files are indications that the class may be
-      trying to do too much. Try to break it down, and reduce the
-      size to something manageable.
-    </shortMessage>
+    <artifact tool="PMD" mnemonic="ExcessiveClassLength"/>
+    <name>Excessive class length</name>
+    <shortMessage>This class is very long. Can you make it more concise?</shortMessage>
     <info>
-      Long Class files are indications that the class may be
-      trying to do too much. Try to break it down, and reduce the
-      size to something manageable.
+<![CDATA[<p>Long Class files are indications that the class may be
+trying to do too much. Try to break it down, and reduce the size to
+something manageable.</p>]]>
     </info>
-    <name>Excessive Class Length</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>CyclomaticComplexity</id>
-    <artifact tool="PMD" mnemonic="CyclomaticComplexity"></artifact>
-    <shortMessage>
-      Complexity is determined by the number of decision points in
-      a method plus one for the method entry. The decision points
-      are 'if', 'while', 'for', and 'case labels'. Generally, 1-4
-      is low complexity, 5-7 indicates moderate complexity, 8-10
-      is high complexity, and 11+ is very high complexity.
-    </shortMessage>
+    <artifact tool="PMD" mnemonic="CyclomaticComplexity"/>
+    <name>High cyclomatic complexity</name>
+    <shortMessage>This method has a high cyclomatic complexity.  Can you reduce its complexity?</shortMessage>
     <info>
-      Complexity is determined by the number of decision points in
-      a method plus one for the method entry. The decision points
-      are 'if', 'while', 'for', and 'case labels'. Generally, 1-4
-      is low complexity, 5-7 indicates moderate complexity, 8-10
-      is high complexity, and 11+ is very high complexity.
+<![CDATA[<p>Complexity is determined by the number of decision points
+in a method plus one for the method entry. The decision points are
+<code>if</code>, <code>while</code>, <code>for</code>, and
+<code>case</code> labels. Generally, 1-4 is low complexity, 5-7
+indicates moderate complexity, 8-10 is high complexity, and 11+ is
+very high complexity.</p>]]>
     </info>
-    <name>Cyclomatic Complexity</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>ExcessivePublicCount</id>
-    <artifact tool="PMD" mnemonic="ExcessivePublicCount"></artifact>
-    <shortMessage>
-      A large number of public methods and attributes declared in
-      a class can indicate the class may need to be broken up as
-      increased effort will be required to thoroughly test it.
-    </shortMessage>
+    <artifact tool="PMD" mnemonic="ExcessivePublicCount"/>
+    <name>Excessive public count</name>
+    <shortMessage>This class has too many public methods and attributes.  Can you reduce this number?</shortMessage>
     <info>
-      A large number of public methods and attributes declared in
-      a class can indicate the class may need to be broken up as
-      increased effort will be required to thoroughly test it.
+<![CDATA[<p>A large number of public methods and attributes declared
+in a class can indicate the class may need to be broken up as
+increased effort will be required to thoroughly test it.</p>]]>
     </info>
-    <name>Excessive Public Count</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>TooManyFields</id>
-    <artifact tool="PMD" mnemonic="TooManyFields"></artifact>
-    <shortMessage>
-      Classes that have too many fields could be redesigned to
-      have fewer fields, possibly through some nested object
-      grouping of some of the information. For example, a class
-      with city/state/zip fields could instead have one Address
-      field.
-    </shortMessage>
+    <artifact tool="PMD" mnemonic="TooManyFields"/>
+    <name>Too many fields</name>
+    <shortMessage>This class has too many fields.  Can you reduce this number?</shortMessage>
     <info>
-      Classes that have too many fields could be redesigned to
-      have fewer fields, possibly through some nested object
-      grouping of some of the information. For example, a class
-      with city/state/zip fields could instead have one Address
-      field.
+<![CDATA[<p>Classes that have too many fields could be redesigned to
+have fewer fields, possibly through some nested object grouping of
+some of the information. For example, a class with city/state/zip
+fields could instead have one Address field.</p>]]>
     </info>
-    <name>Too Many Fields</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>NcssMethodCount</id>
-    <artifact tool="PMD" mnemonic="NcssMethodCount"></artifact>
-    <shortMessage>
-      This rule uses the NCSS (Non Commenting Source Statements)
-      algorithm to determine the number of lines of code for a
-      given method. NCSS ignores comments, and counts actual
-      statements. Using this algorithm, lines of code that are
-      split are counted as one.
-    </shortMessage>
+    <artifact tool="PMD" mnemonic="NcssMethodCount"/>
+    <name>NCSS method count</name>
+    <shortMessage>This rule uses the NCSS (Non Commenting Source Statements) algorithm to determine the number of lines of code for a given method.</shortMessage>
     <info>
-      This rule uses the NCSS (Non Commenting Source Statements)
-      algorithm to determine the number of lines of code for a
-      given method. NCSS ignores comments, and counts actual
-      statements. Using this algorithm, lines of code that are
-      split are counted as one.
+<![CDATA[<p>This rule uses the NCSS (Non Commenting Source Statements)
+algorithm to determine the number of lines of code for a given
+method. NCSS ignores comments, and counts actual statements. Using
+this algorithm, lines of code that are split are counted as
+one.</p>]]>
     </info>
-    <name>NCSS Method Count</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>NcssTypeCount</id>
-    <artifact tool="PMD" mnemonic="NcssTypeCount"></artifact>
-    <shortMessage>
-      This rule uses the NCSS (Non Commenting Source Statements)
-      algorithm to determine the number of lines of code for a
-      given type. NCSS ignores comments, and counts actual
-      statements. Using this algorithm, lines of code that are
-      split are counted as one.
-    </shortMessage>
+    <artifact tool="PMD" mnemonic="NcssTypeCount"/>
+    <name>NCSS type count</name>
+    <shortMessage>This rule uses the NCSS (Non Commenting Source Statements) algorithm to determine the number of lines of code for a given type.</shortMessage>
     <info>
-      This rule uses the NCSS (Non Commenting Source Statements)
-      algorithm to determine the number of lines of code for a
-      given type. NCSS ignores comments, and counts actual
-      statements. Using this algorithm, lines of code that are
-      split are counted as one.
+<![CDATA[<p>This rule uses the NCSS (Non Commenting Source Statements)
+algorithm to determine the number of lines of code for a given
+type. NCSS ignores comments, and counts actual statements. Using this
+algorithm, lines of code that are split are counted as one.</p>]]>
     </info>
-    <name>NCSS Type Count</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>NcssConstructorCount</id>
-    <artifact tool="PMD" mnemonic="NcssConstructorCount"></artifact>
-    <shortMessage>
-      This rule uses the NCSS (Non Commenting Source Statements)
-      algorithm to determine the number of lines of code for a
-      given constructor. NCSS ignores comments, and counts actual
-      statements. Using this algorithm, lines of code that are
-      split are counted as one.
-    </shortMessage>
+    <artifact tool="PMD" mnemonic="NcssConstructorCount"/>
+    <name>NCSS constructor count</name>
+    <shortMessage>This rule uses the NCSS (Non Commenting Source Statements) algorithm to determine the number of lines of code for a given constructor.</shortMessage>
     <info>
-      This rule uses the NCSS (Non Commenting Source Statements)
-      algorithm to determine the number of lines of code for a
-      given constructor. NCSS ignores comments, and counts actual
-      statements. Using this algorithm, lines of code that are
-      split are counted as one.
+<![CDATA[<p>This rule uses the NCSS (Non Commenting Source
+Statements) algorithm to determine the number of lines of code for a
+given constructor. NCSS ignores comments, and counts actual
+statements. Using this algorithm, lines of code that are split are
+counted as one.</p>]]>
     </info>
-    <name>NCSS Constructor Count</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UnnecessaryConstructor</id>
-    <artifact tool="PMD" mnemonic="UnnecessaryConstructor">
-    </artifact>
-    <shortMessage>
-      This rule detects when a constructor is not necessary; i.e.,
-      when there's only one constructor, it's public, has an empty
-      body, and takes no arguments.
-    </shortMessage>
+    <artifact tool="PMD" mnemonic="UnnecessaryConstructor"/>
+    <name>Unnecessary constructor</name>
+    <shortMessage>This constructor is not required to be explicitly declared. You may remove it from your code and it will be automatically generated for you.</shortMessage>
     <info>
-      This rule detects when a constructor is not necessary; i.e.,
-      when there's only one constructor, it's public, has an empty
-      body, and takes no arguments.
+<![CDATA[<p>This rule detects when a constructor is not necessary;
+i.e., when there's only one constructor, it's public, has an empty
+body, and takes no arguments.  In this case Java will generate a
+default constructor for you.</p>]]>
     </info>
-    <name>Unnecessary Constructor</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>NullAssignment</id>
-    <artifact tool="PMD" mnemonic="NullAssignment"></artifact>
-    <shortMessage>
-      Assigning a &quot;null&quot; to a variable (outside of its
-      declaration) is usually bad form. Some times, the assignment
-      is an indication that the programmer doesn't completely
-      understand what is going on in the code. NOTE: This sort of
-      assignment may in rare cases be useful to encourage garbage
-      collection. If that's what you're using it for, by all
-      means, disregard this rule :-)
-    </shortMessage>
+    <artifact tool="PMD" mnemonic="NullAssignment"/>
+    <name>Null assignment warning</name>
+    <shortMessage>Null is being assigned to a variable which could indicate a muddled implementation.</shortMessage>
     <info>
-      Assigning a &quot;null&quot; to a variable (outside of its
-      declaration) is usually bad form. Some times, the assignment
-      is an indication that the programmer doesn't completely
-      understand what is going on in the code. NOTE: This sort of
-      assignment may in rare cases be useful to encourage garbage
-      collection. If that's what you're using it for, by all
-      means, disregard this rule :-)
+<![CDATA[<p>Assigning a <code>null</code> to a variable (outside of
+its declaration) is usually bad form. Some times, the assignment is an
+indication that the programmer doesn't completely understand what is
+going on in the code.</p>
+
+<p>This sort of assignment may in rare cases be useful to encourage
+garbage collection. If that's what it's being using it for, by all
+means, disregard this finding.</p>]]>
     </info>
-    <name>Null Assignment</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>OnlyOneReturn</id>
-    <artifact tool="PMD" mnemonic="OnlyOneReturn"></artifact>
-    <shortMessage>
-      A method should have only one exit point, and that should be
-      the last statement in the method.
-    </shortMessage>
+    <artifact tool="PMD" mnemonic="OnlyOneReturn"/>
+    <name>Only one return</name>
+    <shortMessage>This method has more than one exit point or its one exit point is not the last statement in the method. This has been deemed a questionable coding practice.</shortMessage>
     <info>
-      A method should have only one exit point, and that should be
-      the last statement in the method.
+<![CDATA[<p>It has been determined that each method should have only
+one exit point, and that should be the last statement in the
+method.</p>
+
+<pre>
+public void foo(int x) {
+  if (x > 0) {
+    return "hey"; // oops, multiple exit points!
+  }
+  return "hi";
+}
+</pre>]]>
     </info>
-    <name>Only One Return</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UnusedModifier</id>
-    <artifact tool="PMD" mnemonic="UnusedModifier"></artifact>
-    <shortMessage>
-      Fields in interfaces are automatically public static final,
-      and methods are public abstract. Classes or interfaces
-      nested in an interface are automatically public and static
-      (all nested interfaces are automatically static). For
-      historical reasons, modifiers which are implied by the
-      context are accepted by the compiler, but are superfluous.
-    </shortMessage>
+    <artifact tool="PMD" mnemonic="UnusedModifier"/>
+    <name>Superfluous method modifiers in an interface</name>
+    <shortMessage>This interface has superfluous modifiers on method declarations that are implied by their context.</shortMessage>
     <info>
-      Fields in interfaces are automatically public static final,
-      and methods are public abstract. Classes or interfaces
-      nested in an interface are automatically public and static
-      (all nested interfaces are automatically static). For
-      historical reasons, modifiers which are implied by the
-      context are accepted by the compiler, but are superfluous.
+<![CDATA[<p>Fields in interfaces are automatically <code>public</code>
+<code>static</code> <code>final</code>, and methods are
+<code>public</code> <code>abstract</code>. Classes or interfaces
+nested in an interface are automatically <code>public</code> and
+<code>static</code> (all nested interfaces are automatically
+<code>static</code>). For historical reasons, modifiers which are
+implied by the context are accepted by the compiler, but are
+superfluous.  Below are some examples.</p>
+
+<pre>
+public interface Foo {
+  public abstract void bar();    // both abstract and public are ignored by the compiler
+  public static final int X = 0; // public, static, and final all ignored
+  public static class Bar {}     // public, static ignored
+  public static interface Baz {} // ditto
+}
+public class Bar {
+  public static interface Baz {} // static ignored
+}
+</pre>]]>
     </info>
-    <name>Unused Modifier</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AssignmentInOperand</id>
-    <artifact tool="PMD" mnemonic="AssignmentInOperand"></artifact>
+    <artifact tool="PMD" mnemonic="AssignmentInOperand"/>
+    <name>Assignment In Operand</name>
     <shortMessage>
       Avoid assignments in operands; this can make code more
       complicated and harder to read.
@@ -9000,21 +9138,22 @@ removed from the code.</p>]]>
       Avoid assignments in operands; this can make code more
       complicated and harder to read.
     </info>
-    <name>Assignment In Operand</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AtLeastOneConstructor</id>
-    <artifact tool="PMD" mnemonic="AtLeastOneConstructor">
-    </artifact>
+    <artifact tool="PMD" mnemonic="AtLeastOneConstructor"/>
+    <name>At Least One Constructor</name>
     <shortMessage>
       Each class should declare at least one constructor.
     </shortMessage>
     <info>Each class should declare at least one constructor.</info>
-    <name>At Least One Constructor</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>DontImportSun</id>
-    <artifact tool="PMD" mnemonic="DontImportSun"></artifact>
+    <artifact tool="PMD" mnemonic="DontImportSun"/>
+    <name>Don't Import sun.* Packages</name>
     <shortMessage>
       Avoid importing anything from the 'sun.*' packages. These
       packages are not portable and are likely to change.
@@ -9023,151 +9162,174 @@ removed from the code.</p>]]>
       Avoid importing anything from the 'sun.*' packages. These
       packages are not portable and are likely to change.
     </info>
-    <name>Don't Import sun.* Packages</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SuspiciousOctalEscape</id>
-    <artifact tool="PMD" mnemonic="SuspiciousOctalEscape">
-    </artifact>
-    <shortMessage>
-      A suspicious octal escape sequence was found inside a String
-      literal. The Java language specification (section 3.10.6)
-      says an octal escape sequence inside a literal String shall
-      consist of a backslash followed by:
-
-      OctalDigit | OctalDigit OctalDigit | ZeroToThree OctalDigit
-      OctalDigit
-
-      Any octal escape sequence followed by non-octal digits can
-      be confusing, e.g. &quot;\038&quot; is interpreted as the
-      octal escape sequence &quot;\03&quot; followed by the
-      literal character &quot;8&quot;.
-    </shortMessage>
+    <artifact tool="PMD" mnemonic="SuspiciousOctalEscape"/>
+    <name>Suspicious octal escape inside a string literal</name>
+    <shortMessage>This is a suspicious octal escape sequence inside a String literal. Is this what is intended?</shortMessage>
     <info>
-      A suspicious octal escape sequence was found inside a String
-      literal. The Java language specification (section 3.10.6)
-      says an octal escape sequence inside a literal String shall
-      consist of a backslash followed by:
+<![CDATA[<p>A suspicious octal escape sequence was found inside a
+String literal. The Java language specification (section 3.10.6) says
+an octal escape sequence inside a literal String shall consist of a
+backslash followed by:</p>
 
-      OctalDigit | OctalDigit OctalDigit | ZeroToThree OctalDigit
-      OctalDigit
+<p><i>OctalDigit</i> | <i>OctalDigit</i> <i>OctalDigit</i> | <i>ZeroToThree</i> <i>OctalDigit</i> <i>OctalDigit</i></p>
 
-      Any octal escape sequence followed by non-octal digits can
-      be confusing, e.g. &quot;\038&quot; is interpreted as the
-      octal escape sequence &quot;\03&quot; followed by the
-      literal character &quot;8&quot;.
+<p>Any octal escape sequence followed by non-octal digits can be
+confusing, e.g. <code>"\038"</code> is interpreted as the octal escape
+sequence <code>\03</code> followed by the literal character
+<code>8</code>.</p>
+
+<pre>
+public void foo() {
+  // interpreted as octal 12, followed by the character '8'
+  System.out.println("suspicious: \128");
+}
+</pre>
+
+<p>See <a
+href="http://java.sun.com/docs/books/jls/third_edition/html/lexical.html#3.10.6">the
+Java Language Specification</a> for further details.</p>]]>
     </info>
-    <name>Suspicious Octal Escape</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>CallSuperInConstructor</id>
-    <artifact tool="PMD" mnemonic="CallSuperInConstructor">
-    </artifact>
-    <shortMessage>
-      It is a good practice to call super() in a constructor. If
-      super() is not called but another constructor (such as an
-      overloaded constructor) is called, this rule will not report
-      it.
-    </shortMessage>
+    <artifact tool="PMD" mnemonic="CallSuperInConstructor"/>
+    <name>Call super in all constructors</name>
+    <shortMessage>This constructor does not call super() explicitly.</shortMessage>
     <info>
-      It is a good practice to call super() in a constructor. If
-      super() is not called but another constructor (such as an
-      overloaded constructor) is called, this rule will not report
-      it.
+<![CDATA[<p>It is a good practice to call <code>super()</code> in a
+constructor. If <code>super()</code> is not called but another
+constructor (such as an overloaded constructor) is called, this rule
+will not report it.</p>
+
+<pre>
+public class Foo extends Bar{
+  public Foo() {
+    // call the constructor of Bar explicitly
+    super(); // if this was missing this rule would complain
+   }
+   public Foo(int code) {
+     this(); // no problem with this
+     // do something with 'code'
+   }
+}
+</pre>]]>
     </info>
-    <name>Call Super In Constructor</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UnnecessaryParentheses</id>
-    <artifact tool="PMD" mnemonic="UnnecessaryParentheses">
-    </artifact>
-    <shortMessage>
-      Sometimes expressions are wrapped in unnecessary
-      parentheses, making them look like a function call.
-    </shortMessage>
+    <artifact tool="PMD" mnemonic="UnnecessaryParentheses"/>
+    <name>Unnecessary parentheses</name>
+    <shortMessage>This expression is wrapped in unnecessary parentheses, making it look like a function call.</shortMessage>
     <info>
-      Sometimes expressions are wrapped in unnecessary
-      parentheses, making them look like a function call.
+<![CDATA[<p>Sometimes expressions are wrapped in unnecessary
+parentheses, making them look like a function call.  Consider removing
+the unnecessary parentheses.</p>
+
+<pre>
+public boolean bar() {
+  return (true); // bad
+}
+</pre>]]>
     </info>
-    <name>Unnecessary Parentheses</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SingularField</id>
-    <artifact tool="PMD" mnemonic="SingularField"></artifact>
-    <shortMessage>
-      A field that's only used by one method could perhaps be
-      replaced by a local variable.
-    </shortMessage>
+    <artifact tool="PMD" mnemonic="SingularField"/>
+    <name>Singular field</name>
+    <shortMessage>This field is only used by one method. Can it be replaced by a local variable? </shortMessage>
     <info>
-      A field that's only used by one method could perhaps be
-      replaced by a local variable.
+<![CDATA[<p>A field that's only used by one method could perhaps be
+replaced by a local variable.</p>]]>
     </info>
-    <name>Singular Field</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>DefaultPackage</id>
-    <artifact tool="PMD" mnemonic="DefaultPackage"></artifact>
-    <shortMessage>
-      Use explicit scoping instead of the default package private
-      level.
-    </shortMessage>
+    <artifact tool="PMD" mnemonic="DefaultPackage"/>/artifact>
+    <name>Use explicit visibility</name>
+    <shortMessage>Use explicit visibility instead of the default package private level.</shortMessage>
     <info>
-      Use explicit scoping instead of the default package private
-      level.
+<![CDATA[<p>Use explicit visibility for attributes instead of the
+default package private level.  For example, change</p>
+
+<pre>
+public class Foo {
+  int myInt;
+  ...
+}
+</pre>
+
+<p>to</p>
+
+<pre>
+public class Foo {
+  private int myInt;
+  ...
+}
+</pre>]]>
     </info>
-    <name>Default Package</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>BooleanInversion</id>
-    <artifact tool="PMD" mnemonic="BooleanInversion"></artifact>
-    <shortMessage>
-      Use bitwise inversion to invert boolean values - it's the
-      fastest way to do this.
-    </shortMessage>
+    <artifact tool="PMD" mnemonic="BooleanInversion"/>
+    <name>Use boolean inversion</name>
+    <shortMessage>Use bitwise inversion to invert this boolean value; it's the fastest way to do this.</shortMessage>
     <info>
-      Use bitwise inversion to invert boolean values - it's the
-      fastest way to do this. See
-      http://www.javaspecialists.co.za/archive/newsletter.do?issue=042&amp;locale=en_US
-      for specific details
+<![CDATA[<p>Use bitwise inversion to invert boolean values&mdash;it's
+the fastest way to do this.</p>
+
+<pre>
+boolean b = true;
+b = !b;    // slow
+b ^= true; // fast
+</pre>
+
+<p>See <a
+href="http://www.javaspecialists.co.za/archive/newsletter.do?issue=042">
+Speed-kings of inverting booleans</a> by Dr. Heinz M. Kabutz for more
+details.  It also may be prudent to check this result on your
+particular JVM.</p>]]>
     </info>
-    <name>Boolean Inversion</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>DataflowAnomalyAnalysis</id>
-    <artifact tool="PMD" mnemonic="DataflowAnomalyAnalysis">
-    </artifact>
-    <shortMessage>
-      The dataflow analysis tracks local definitions,
-      undefinitions and references to variables on different paths
-      on the data flow. From those informations there can be found
-      various problems.
-
-      1. UR - Anomaly: There is a reference to a variable that was
-      not defined before. This is a bug and leads to an error. 2.
-      DU - Anomaly: A recently defined variable is undefined.
-      These anomalies may appear in normal source text. 3. DD -
-      Anomaly: A recently defined variable is redefined. This is
-      ominous but don't have to be a bug.
-    </shortMessage>
+    <artifact tool="PMD" mnemonic="DataflowAnomalyAnalysis"/>
+    <name>Dataflow anomaly analysis</name>
+    <shortMessage>An anomaly has been detected via PMD dataflow analysis.</shortMessage>
     <info>
-      The dataflow analysis tracks local definitions,
-      undefinitions and references to variables on different paths
-      on the data flow. From those informations there can be found
-      various problems.
+<![CDATA[<p>The dataflow analysis tracks local definitions,
+undefinitions and references to variables on different paths on the
+data flow. From those informations there can be found various
+problems.</p>
 
-      1. UR - Anomaly: There is a reference to a variable that was
-      not defined before. This is a bug and leads to an error. 2.
-      DU - Anomaly: A recently defined variable is undefined.
-      These anomalies may appear in normal source text. 3. DD -
-      Anomaly: A recently defined variable is redefined. This is
-      ominous but don't have to be a bug.
+<ol>
+
+<li>UR - Anomaly: There is a reference to a variable that was not
+defined before. This is a bug and leads to an error.</li>
+
+<li>DU - Anomaly: A recently defined variable is undefined.  These
+anomalies may appear in normal source text.</li>
+
+<li>DD - Anomaly: A recently defined variable is redefined. This is
+ominous but don't have to be a bug.</li>
+
+</ol>]]>
     </info>
-    <name>Dataflow Anomaly Analysis</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>CouplingBetweenObjects</id>
-    <artifact tool="PMD" mnemonic="CouplingBetweenObjects">
-    </artifact>
+    <artifact tool="PMD" mnemonic="CouplingBetweenObjects"/>
+    <name>Coupling Between Objects</name>
     <shortMessage>
       This rule counts unique attributes, local variables and
       return types within an object. A number higher than
@@ -9178,171 +9340,256 @@ removed from the code.</p>]]>
       return types within an object. A number higher than
       specified threshold can indicate a high degree of coupling.
     </info>
-    <name>Coupling Between Objects</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>ExcessiveImports</id>
     <artifact tool="PMD" mnemonic="ExcessiveImports"></artifact>
-    <shortMessage>
-      A high number of imports can indicate a high degree of
-      coupling within an object. Rule counts the number of unique
-      imports and reports a violation if the count is above the
-      user defined threshold.
-    </shortMessage>
+    <name>Excessive imports</name>
+    <shortMessage>This class has too many imports. Can you reduce this count?</shortMessage>
     <info>
-      A high number of imports can indicate a high degree of
-      coupling within an object. Rule counts the number of unique
-      imports and reports a violation if the count is above the
-      user defined threshold.
+<![CDATA[<p>A high number of imports can indicate a high degree of
+coupling within an object. Rule counts the number of unique imports
+and reports a violation if the count is above the defined
+threshold.</p>]]>
     </info>
-    <name>Excessive Imports</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>LooseCoupling</id>
     <artifact tool="PMD" mnemonic="LooseCoupling"></artifact>
-    <shortMessage>
-      Avoid using implementation types (i.e., HashSet); use the
-      interface (i.e, Set) instead
-    </shortMessage>
+    <name>Loose coupling violation</name>
+    <shortMessage>Avoid using implementation types (i.e., HashSet); use the interface (i.e, Set) instead.</shortMessage>
     <info>
-      Avoid using implementation types (i.e., HashSet); use the
-      interface (i.e, Set) instead
+<![CDATA[<p>Avoid using implementation types (i.e.,
+<code>HashSet</code>); use the interface (i.e, <code>Set</code>)
+instead.</p>
+
+<pre>
+import java.util.*;
+public class Bar {
+  // Use List instead
+  private ArrayList list = new ArrayList();
+  // Use Set instead
+  public HashSet getFoo() {
+    return new HashSet();
+  }
+}
+</pre>]]>
     </info>
-    <name>Loose Coupling</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UseSingleton</id>
-    <artifact tool="PMD" mnemonic="UseSingleton"></artifact>
-    <shortMessage>
-      If you have a class that has nothing but static methods,
-      consider making it a Singleton. Note that this doesn't apply
-      to abstract classes, since their subclasses may well include
-      non-static methods. Also, if you want this class to be a
-      Singleton, remember to add a private constructor to prevent
-      instantiation.
-    </shortMessage>
+    <artifact tool="PMD" mnemonic="UseSingleton"/>
+    <name>Use singleton pattern</name>
+    <shortMessage>Consider refactoring this class to be a singleton.</shortMessage>
     <info>
-      If you have a class that has nothing but static methods,
-      consider making it a Singleton. Note that this doesn't apply
-      to abstract classes, since their subclasses may well include
-      non-static methods. Also, if you want this class to be a
-      Singleton, remember to add a private constructor to prevent
-      instantiation.
+<![CDATA[<p>If you have a class that has nothing but static methods,
+consider making it a singleton. Note that this doesn't apply to
+abstract classes, since their subclasses may well include non-static
+methods. Also, if you want this class to be a singleton, remember to
+add a private constructor to prevent instantiation.</p>
+
+<p>The singleton pattern in Java is typically implemented as a
+variation the below.  So instead of</p>
+
+<pre>
+public final class Foo {
+  public static void m1() {
+    // do something
+  }
+
+  private Foo() {
+    // no instances...a utility
+  }
+}
+</pre>
+
+<p>use</p>
+
+<pre>
+public final class Foo {
+  private static final INSTANCE = new Foo();
+
+  public static Foo getInstance() {
+    return INSTANCE;
+  }
+
+  private Foo() {
+    // singleton
+  }
+
+  public void m1() {
+    // do something
+  }
+}
+</pre>
+
+<p>Clients change calls to <code>m1()</code> from
+<code>Foo.m1()</code> to <code>Foo.getInstance().m1()</code>.</p>]]>
     </info>
-    <name>Use Singleton</name>
   </findingType>
-  <findingType>
-    <id>SimplifyBooleanReturns</id>
-    <artifact tool="PMD" mnemonic="SimplifyBooleanReturns">
-    </artifact>
-    <shortMessage>
-      Avoid unnecessary if..then..else statements when returning a
-      boolean.
-    </shortMessage>
-    <info>
-      Avoid unnecessary if..then..else statements when returning a
-      boolean.
-    </info>
-    <name>Simplify Boolean Returns</name>
-  </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SimplifyBooleanExpressions</id>
-    <artifact tool="PMD" mnemonic="SimplifyBooleanExpressions">
-    </artifact>
-    <shortMessage>
-      Avoid unnecessary comparisons in boolean expressions - this
-      complicates simple code.
-    </shortMessage>
+    <artifact tool="PMD" mnemonic="SimplifyBooleanReturns"/>
+    <artifact tool="PMD" mnemonic="SimplifyBooleanExpressions"/>
+    <name>Use boolean expressions directly</name>
+    <shortMessage>Use boolean expressions directly to simplify your code.</shortMessage>
     <info>
-      Avoid unnecessary comparisons in boolean expressions - this
-      complicates simple code.
+<![CDATA[<p>Avoid unnecessary comparisons in boolean
+expressions&mdash;this complicates simple code</p>
+
+<pre>
+public class Foo {
+
+  private int bar = 2;
+
+  public boolean isBarEqualsTo(int x) {
+    // this bit of code
+    if (bar == x) {
+     return true;
+    } else {
+     return false;
+    }
+    // can be simplified to 'return bar == x;'
+  }
+
+  // can be simplified to 'private boolean bar = isFoo();'
+  private boolean bar = (isFoo() == true);
+
+  public isFoo() {
+    return false;
+  }
+}
+</pre>]]>
     </info>
-    <name>Simplify Boolean Expressions</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SwitchStmtsShouldHaveDefault</id>
-    <artifact tool="PMD" mnemonic="SwitchStmtsShouldHaveDefault">
-    </artifact>
-    <shortMessage>
-      Switch statements should have a default label.
-    </shortMessage>
-    <info>Switch statements should have a default label.</info>
-    <name>Switch Statements Should Have Default</name>
+    <artifact tool="PMD" mnemonic="SwitchStmtsShouldHaveDefault"/>
+    <name>Switch with no default</name>
+    <shortMessage>This switch statement should have a default label.</shortMessage>
+    <info>
+<![CDATA[<p>It has been deemed questionable coding practice to not
+have a <code>default</code> lable for each <code>switch</code>.</p>
+
+<pre>
+int x = 2;
+switch (x) {
+  case 2: int j = 8; // no default?
+}
+</pre>
+]]>
+    </info>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AvoidDeeplyNestedIfStmts</id>
-    <artifact tool="PMD" mnemonic="AvoidDeeplyNestedIfStmts">
-    </artifact>
-    <shortMessage>
-      Deeply nested if..then statements are hard to read.
-    </shortMessage>
-    <info>Deeply nested if..then statements are hard to read.</info>
-    <name>Avoid Deeply Nested If Statements</name>
+    <artifact tool="PMD" mnemonic="AvoidDeeplyNestedIfStmts"/>
+    <name>Avoid deeply nested if statements</name>
+    <shortMessage>This is a deeply nested if that may be hard to read. Can the level of nesting be reduced?</shortMessage>
+    <info>
+<![CDATA[<p>Deeply nested if statments have been deemed to be
+questional coding practice because they can be hard to read.</p>]]>
+    </info>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AvoidReassigningParameters</id>
-    <artifact tool="PMD" mnemonic="AvoidReassigningParameters">
-    </artifact>
-    <shortMessage>
-      Reassigning values to parameters is a questionable practice.
-      Use a temporary local variable instead.
-    </shortMessage>
+    <artifact tool="PMD" mnemonic="AvoidReassigningParameters"/>
+    <name>Avoid reassigning parameter values</name>
+    <shortMessage>This method reassigns the values of one or more of its parameters.  This is a questionable practice.</shortMessage>
     <info>
-      Reassigning values to parameters is a questionable practice.
-      Use a temporary local variable instead.
+<![CDATA[<p>Reassigning values to parameters has been deemed a
+questionable coding practice. Use a temporary local variable
+instead.</p>
+
+<pre>
+private void foo(String bar) {
+  bar = "something else";  // don't do this
+}
+</pre>]]>
     </info>
-    <name>Avoid Reassigning Parameters</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SwitchDensity</id>
-    <artifact tool="PMD" mnemonic="SwitchDensity"></artifact>
-    <shortMessage>
-      A high ratio of statements to labels in a switch statement
-      implies that the switch statement is doing too much work.
-      Consider moving the statements into new methods, or creating
-      subclasses based on the switch variable.
-    </shortMessage>
+    <artifact tool="PMD" mnemonic="SwitchDensity"/>
+    <name>Switch density too high</name>
+    <shortMessage>This switch statement has a high ratio of statements to labels. Consider moving the statements into new methods, or creating subclasses based on the switch variable.</shortMessage>
     <info>
-      A high ratio of statements to labels in a switch statement
-      implies that the switch statement is doing too much work.
-      Consider moving the statements into new methods, or creating
-      subclasses based on the switch variable.
+<![CDATA[<p>A high ratio of statements to labels in a switch statement
+implies that the switch statement is probably doing too much work.
+Consider moving the statements into new methods, or creating
+subclasses based on the switch variable (to replace the switch
+statement with polymorphism).</p>
+
+<pre>
+switch (x) {
+  case 1: {
+    // lots of statements
+    break;
+  } case 2: {
+    // lots of statements
+    break;
+  }
+}
+</pre>]]>
     </info>
-    <name>Switch Density</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>ConstructorCallsOverridableMethod</id>
-    <artifact tool="PMD"
-	      mnemonic="ConstructorCallsOverridableMethod">
-    </artifact>
-    <shortMessage>
-      Calling overridable methods during construction poses a risk
-      of invoking methods on an incompletely constructed object
-      and can be difficult to discern. It may leave the sub-class
-      unable to construct its superclass or forced to replicate
-      the construction process completely within itself, losing
-      the ability to call super(). If the default constructor
-      contains a call to an overridable method, the subclass may
-      be completely uninstantiable. Note that this includes method
-      calls throughout the control flow graph - i.e., if a
-      constructor Foo() calls a private method bar() that calls a
-      public method buz(), this denotes a problem.
-    </shortMessage>
+    <artifact tool="PMD" mnemonic="ConstructorCallsOverridableMethod"/>
+    <name>Constructor calls an overridable method</name>
+    <shortMessage>This constructor calls, directly or indirectly, an
+    overridable method.  This is considered dangerous if this class is
+    subclassed.</shortMessage>
     <info>
-      Calling overridable methods during construction poses a risk
-      of invoking methods on an incompletely constructed object
-      and can be difficult to discern. It may leave the sub-class
-      unable to construct its superclass or forced to replicate
-      the construction process completely within itself, losing
-      the ability to call super(). If the default constructor
-      contains a call to an overridable method, the subclass may
-      be completely uninstantiable. Note that this includes method
-      calls throughout the control flow graph - i.e., if a
-      constructor Foo() calls a private method bar() that calls a
-      public method buz(), this denotes a problem.
+<![CDATA[<p> Calling overridable methods during construction poses a
+risk of invoking methods on an incompletely constructed object and can
+be difficult to discern. It may leave the sub-class unable to
+construct its superclass or forced to replicate the construction
+process completely within itself, losing the ability to call
+<code>super()</code>.</p>
+
+<p>If the default constructor contains a call to an overridable
+method, the subclass may be completely uninstantiable. Note that this
+includes method calls throughout the control flow graph, i.e., if a
+constructor <code>Foo()</code> calls a private method
+<code>bar()</code> that calls a public (and thus overridable) method
+<code>buz()</code>, this denotes a potential problem.</p>
+
+<p>The code below provides an example where this finding can cause
+confusing program behavior.</p>
+
+<pre>
+public class SeniorClass {
+  public SeniorClass() {
+      toString(); // may throw NullPointerException if overridden
+  }
+  public String toString() {
+    return "IAmSeniorClass";
+  }
+}
+
+public class JuniorClass extends SeniorClass {
+  private String name;
+  public JuniorClass() {
+    super(); // Automatic call leads to a NullPointerException because name is still null
+    name = "JuniorClass";
+  }
+  public String toString() {
+    return name.toUpperCase();
+  }
+}
+</pre>]]>
     </info>
-    <name>Constructor Calls Overridable Method</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AccessorClassGeneration</id>
     <artifact tool="PMD" mnemonic="AccessorClassGeneration">
@@ -9371,35 +9618,7 @@ removed from the code.</p>]]>
     </info>
     <name>Accessor Class Generation</name>
   </findingType>
-  <findingType>
-    <id>FinalFieldCouldBeStatic</id>
-    <artifact tool="PMD" mnemonic="FinalFieldCouldBeStatic">
-    </artifact>
-    <shortMessage>
-      If a final field is assigned to a compile-time constant, it
-      could be made static, thus saving overhead in each object at
-      runtime.
-    </shortMessage>
-    <info>
-      If a final field is assigned to a compile-time constant, it
-      could be made static, thus saving overhead in each object at
-      runtime.
-    </info>
-    <name>Final Field Could Be Static</name>
-  </findingType>
-  <findingType>
-    <id>CloseResource</id>
-    <artifact tool="PMD" mnemonic="CloseResource"></artifact>
-    <shortMessage>
-      Ensure that resources (like Connection, Statement, and
-      ResultSet objects) are always closed after use.
-    </shortMessage>
-    <info>
-      Ensure that resources (like Connection, Statement, and
-      ResultSet objects) are always closed after use.
-    </info>
-    <name>Close Resource</name>
-  </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>NonStaticInitializer</id>
     <artifact tool="PMD" mnemonic="NonStaticInitializer"></artifact>
@@ -9417,6 +9636,7 @@ removed from the code.</p>]]>
     </info>
     <name>Non Static Initializer</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>DefaultLabelNotLastInSwitchStmt</id>
     <artifact tool="PMD"
@@ -9432,6 +9652,7 @@ removed from the code.</p>]]>
     </info>
     <name>Default Label Not Last In Switch Statements</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>NonCaseLabelInSwitchStatement</id>
     <artifact tool="PMD" mnemonic="NonCaseLabelInSwitchStatement">
@@ -9448,33 +9669,7 @@ removed from the code.</p>]]>
     </info>
     <name>Non Case Label In Switch Statement</name>
   </findingType>
-  <findingType>
-    <id>OptimizableToArrayCall</id>
-    <artifact tool="PMD" mnemonic="OptimizableToArrayCall">
-    </artifact>
-    <shortMessage>
-      A call to Collection.toArray can use the Collection's size
-      vs an empty Array of the desired type.
-    </shortMessage>
-    <info>
-      A call to Collection.toArray can use the Collection's size
-      vs an empty Array of the desired type.
-    </info>
-    <name>Optimizable To Array Call</name>
-  </findingType>
-  <findingType>
-    <id>BadComparison</id>
-    <artifact tool="PMD" mnemonic="BadComparison"></artifact>
-    <shortMessage>
-      Avoid equality comparisons with Double.NaN - these are
-      likely to be logic errors.
-    </shortMessage>
-    <info>
-      Avoid equality comparisons with Double.NaN - these are
-      likely to be logic errors.
-    </info>
-    <name>Bad Comparison</name>
-  </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
 
   <findingType>
     <id>ConfusingTernary</id>
@@ -9517,6 +9712,7 @@ removed from the code.</p>]]>
     </info>
     <name>Instantiation To Get Class</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>IdempotentOperations</id>
     <artifact tool="PMD" mnemonic="IdempotentOperations"></artifact>
@@ -9528,6 +9724,7 @@ removed from the code.</p>]]>
     </info>
     <name>Idempotent Operations</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SimpleDateFormatNeedsLocale</id>
     <artifact tool="PMD" mnemonic="SimpleDateFormatNeedsLocale">
@@ -9542,6 +9739,7 @@ removed from the code.</p>]]>
     </info>
     <name>Simple Date Format Needs Locale</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>ImmutableField</id>
     <artifact tool="PMD" mnemonic="ImmutableField"></artifact>
@@ -9559,6 +9757,7 @@ removed from the code.</p>]]>
     </info>
     <name>Immutable Field</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UseLocaleWithCaseConversions</id>
     <artifact tool="PMD" mnemonic="UseLocaleWithCaseConversions">
@@ -9575,6 +9774,7 @@ removed from the code.</p>]]>
     </info>
     <name>Use Locale With Case Conversions</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AvoidProtectedFieldInFinalClass</id>
     <artifact tool="PMD"
@@ -9592,6 +9792,7 @@ removed from the code.</p>]]>
     </info>
     <name>Avoid Protected Field In Final Class</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AssignmentToNonFinalStatic</id>
     <artifact tool="PMD" mnemonic="AssignmentToNonFinalStatic">
@@ -9604,6 +9805,7 @@ removed from the code.</p>]]>
     </info>
     <name>Assignment To Non Final Static</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>MissingStaticMethodInNonInstantiatableClass</id>
     <artifact tool="PMD"
@@ -9619,6 +9821,7 @@ removed from the code.</p>]]>
     </info>
     <name>Missing Static Method In Non Instantiatable Class</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AvoidSynchronizedAtMethodLevel</id>
     <artifact tool="PMD"
@@ -9638,6 +9841,7 @@ removed from the code.</p>]]>
     </info>
     <name>Avoid Synchronized At Method Level</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>MissingBreakInSwitch</id>
     <artifact tool="PMD" mnemonic="MissingBreakInSwitch"></artifact>
@@ -9651,6 +9855,7 @@ removed from the code.</p>]]>
     </info>
     <name>Missing Break In Switch</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
 
   <findingType>
     <id>AvoidInstanceofChecksInCatchClause</id>
@@ -9667,6 +9872,7 @@ removed from the code.</p>]]>
     </info>
     <name>Avoid instanceof Checks In Catch Clause</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AbstractClassWithoutAbstractMethod</id>
     <artifact tool="PMD"
@@ -9690,6 +9896,7 @@ removed from the code.</p>]]>
     </info>
     <name>Abstract Class Without Abstract Method</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SimplifyConditional</id>
     <artifact tool="PMD" mnemonic="SimplifyConditional"></artifact>
@@ -9717,6 +9924,7 @@ removed from the code.</p>]]>
     </info>
     <name>Compare Objects With Equals</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>PositionLiteralsFirstInComparisons</id>
     <artifact tool="PMD"
@@ -9734,6 +9942,7 @@ removed from the code.</p>]]>
     </info>
     <name>Position Literals First In Comparisons</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UnnecessaryLocalBeforeReturn</id>
     <artifact tool="PMD" mnemonic="UnnecessaryLocalBeforeReturn">
@@ -9744,6 +9953,7 @@ removed from the code.</p>]]>
     <info>Avoid unnecessarily creating local variables</info>
     <name>Unnecessary Local Before Return</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>NonThreadSafeSingleton</id>
     <artifact tool="PMD" mnemonic="NonThreadSafeSingleton">
@@ -9772,6 +9982,7 @@ removed from the code.</p>]]>
     </info>
     <name>Non Thread Safe Singleton</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UncommentedEmptyMethod</id>
     <artifact tool="PMD" mnemonic="UncommentedEmptyMethod">
@@ -9792,6 +10003,7 @@ removed from the code.</p>]]>
     </info>
     <name>Uncommented Empty Method</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UncommentedEmptyConstructor</id>
     <artifact tool="PMD" mnemonic="UncommentedEmptyConstructor">
@@ -9812,6 +10024,7 @@ removed from the code.</p>]]>
     </info>
     <name>Uncommented Empty Constructor</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AvoidConstantsInterface</id>
     <artifact tool="PMD" mnemonic="AvoidConstantsInterface">
@@ -9828,6 +10041,7 @@ removed from the code.</p>]]>
     </info>
     <name>Avoid Constants Interface</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UnsynchronizedStaticDateFormatter</id>
     <artifact tool="PMD"
@@ -9847,6 +10061,7 @@ removed from the code.</p>]]>
     </info>
     <name>Unsynchronized Static Date Formatter</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>PreserveStackTrace</id>
     <artifact tool="PMD" mnemonic="PreserveStackTrace"></artifact>
@@ -9864,6 +10079,7 @@ removed from the code.</p>]]>
     </info>
     <name>Preserve Stack Trace</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UseCollectionIsEmpty</id>
     <artifact tool="PMD" mnemonic="UseCollectionIsEmpty"></artifact>
@@ -9879,6 +10095,7 @@ removed from the code.</p>]]>
     </info>
     <name>Use Collection Is Empty</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
 
 
   <findingType>
@@ -9896,6 +10113,7 @@ removed from the code.</p>]]>
     </info>
     <name>Finalize Overloaded</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
 
   <findingType>
     <id>DuplicateImports</id>
@@ -9904,6 +10122,7 @@ removed from the code.</p>]]>
     <info>Avoid duplicate import statements.</info>
     <name>Duplicate Imports</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>DontImportJavaLang</id>
     <artifact tool="PMD" mnemonic="DontImportJavaLang"></artifact>
@@ -9917,6 +10136,7 @@ removed from the code.</p>]]>
     </info>
     <name>Don't Import java.lang</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UnusedImports</id>
     <artifact tool="PMD" mnemonic="UnusedImports"></artifact>
@@ -9924,6 +10144,7 @@ removed from the code.</p>]]>
     <info>Avoid unused import statements.</info>
     <name>Unused Imports</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>ImportFromSamePackage</id>
     <artifact tool="PMD" mnemonic="ImportFromSamePackage">
@@ -9936,6 +10157,7 @@ removed from the code.</p>]]>
     </info>
     <name>Import From Same Package</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UseProperClassLoader</id>
     <artifact tool="PMD" mnemonic="UseProperClassLoader"></artifact>
@@ -9949,6 +10171,7 @@ removed from the code.</p>]]>
     </info>
     <name>Use Proper Class Loader</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>MDBAndSessionBeanNamingConvention</id>
     <artifact tool="PMD"
@@ -9964,6 +10187,7 @@ removed from the code.</p>]]>
     </info>
     <name>MDB And Session Bean Naming Convention</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>RemoteSessionInterfaceNamingConvention</id>
     <artifact tool="PMD"
@@ -9979,6 +10203,7 @@ removed from the code.</p>]]>
     </info>
     <name>Remote Session Interface Naming Convention</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>LocalInterfaceSessionNamingConvention</id>
     <artifact tool="PMD"
@@ -9994,6 +10219,7 @@ removed from the code.</p>]]>
     </info>
     <name>Local Interface Session Naming Convention</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>LocalHomeNamingConvention</id>
     <artifact tool="PMD" mnemonic="LocalHomeNamingConvention">
@@ -10008,6 +10234,7 @@ removed from the code.</p>]]>
     </info>
     <name>Local Home Naming Convention</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>RemoteInterfaceNamingConvention</id>
     <artifact tool="PMD"
@@ -10021,6 +10248,7 @@ removed from the code.</p>]]>
     </info>
     <name>Remote Interface Naming Convention</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>BeanMembersShouldSerialize</id>
     <artifact tool="PMD" mnemonic="BeanMembersShouldSerialize">
@@ -10045,6 +10273,7 @@ removed from the code.</p>]]>
     </info>
     <name>Bean Members Should Serialize</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>MissingSerialVersionUID</id>
     <artifact tool="PMD" mnemonic="MissingSerialVersionUID">
@@ -10059,6 +10288,7 @@ removed from the code.</p>]]>
     </info>
     <name>Missing Serial Version UID</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>JUnitStaticSuite</id>
     <artifact tool="PMD" mnemonic="JUnitStaticSuite"></artifact>
@@ -10072,6 +10302,7 @@ removed from the code.</p>]]>
     </info>
     <name>JUnit Static Suite</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>JUnitSpelling</id>
     <artifact tool="PMD" mnemonic="JUnitSpelling"></artifact>
@@ -10081,6 +10312,7 @@ removed from the code.</p>]]>
     <info>Some JUnit framework methods are easy to misspell.</info>
     <name>JUnit Spelling</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>JUnitAssertionsShouldIncludeMessage</id>
     <artifact tool="PMD"
@@ -10098,6 +10330,7 @@ removed from the code.</p>]]>
     </info>
     <name>JUnit Assertions Should Include Message</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>JUnitTestsShouldIncludeAssert</id>
     <artifact tool="PMD" mnemonic="JUnitTestsShouldIncludeAssert">
@@ -10114,6 +10347,7 @@ removed from the code.</p>]]>
     </info>
     <name>JUnit Tests Should Include Assert</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>TestClassWithoutTestCases</id>
     <artifact tool="PMD" mnemonic="TestClassWithoutTestCases">
@@ -10132,6 +10366,7 @@ removed from the code.</p>]]>
     </info>
     <name>Test Class Without Test Cases</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UnnecessaryBooleanAssertion</id>
     <artifact tool="PMD" mnemonic="UnnecessaryBooleanAssertion">
@@ -10154,6 +10389,7 @@ removed from the code.</p>]]>
     </info>
     <name>Unnecessary Boolean Assertion</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UseAssertEqualsInsteadOfAssertTrue</id>
     <artifact tool="PMD"
@@ -10171,6 +10407,7 @@ removed from the code.</p>]]>
     </info>
     <name>Use Assert Equals Instead Of Assert True</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UseAssertSameInsteadOfAssertTrue</id>
     <artifact tool="PMD"
@@ -10188,6 +10425,7 @@ removed from the code.</p>]]>
     </info>
     <name>Use Assert Same Instead Of Assert True</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UseAssertNullInsteadOfAssertTrue</id>
     <artifact tool="PMD"
@@ -10205,6 +10443,7 @@ removed from the code.</p>]]>
     </info>
     <name>Use Assert Null Instead Of Assert True</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SimplifyBooleanAssertion</id>
     <artifact tool="PMD" mnemonic="SimplifyBooleanAssertion">
@@ -10219,6 +10458,7 @@ removed from the code.</p>]]>
     </info>
     <name>Simplify Boolean Assertion</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UseCorrectExceptionLogging</id>
     <artifact tool="PMD" mnemonic="UseCorrectExceptionLogging">
@@ -10235,6 +10475,7 @@ removed from the code.</p>]]>
     </info>
     <name>Use Correct Exception Logging</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>ProperLogger</id>
     <artifact tool="PMD" mnemonic="ProperLogger"></artifact>
@@ -10254,6 +10495,7 @@ removed from the code.</p>]]>
     </info>
     <name>Proper Logger</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>MoreThanOneLogger</id>
     <artifact tool="PMD" mnemonic="MoreThanOneLogger"></artifact>
@@ -10286,6 +10528,7 @@ removed from the code.</p>]]>
     </info>
     <name>Use of System Println</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AvoidPrintStackTrace</id>
     <artifact tool="PMD" mnemonic="AvoidPrintStackTrace"></artifact>
@@ -10295,6 +10538,7 @@ removed from the code.</p>]]>
     <info>Avoid printStackTrace(); use a logger call instead.</info>
     <name>Avoid Print Stack Trace</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>ReplaceVectorWithList</id>
     <artifact tool="PMD" mnemonic="ReplaceVectorWithList">
@@ -10311,6 +10555,7 @@ removed from the code.</p>]]>
     </info>
     <name>Replace Vector With List</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>ReplaceHashtableWithMap</id>
     <artifact tool="PMD" mnemonic="ReplaceHashtableWithMap">
@@ -10325,6 +10570,7 @@ removed from the code.</p>]]>
     </info>
     <name>Replace Hashtable With Map</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>ReplaceEnumerationWithIterator</id>
     <artifact tool="PMD"
@@ -10340,6 +10586,7 @@ removed from the code.</p>]]>
     </info>
     <name>Replace Enumeration With Iterator</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AvoidEnumAsIdentifier</id>
     <artifact tool="PMD" mnemonic="AvoidEnumAsIdentifier">
@@ -10352,6 +10599,7 @@ removed from the code.</p>]]>
     </info>
     <name>Avoid Enum As Identifier</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AvoidAssertAsIdentifier</id>
     <artifact tool="PMD" mnemonic="AvoidAssertAsIdentifier">
@@ -10364,46 +10612,7 @@ removed from the code.</p>]]>
     </info>
     <name>Avoid Assert As Identifier</name>
   </findingType>
-
-  <findingType>
-    <id>ByteInstantiation</id>
-    <artifact tool="PMD" mnemonic="ByteInstantiation"></artifact>
-    <shortMessage>
-      In JDK 1.5, calling new Byte() causes memory allocation.
-      Byte.valueOf() is more memory friendly.
-    </shortMessage>
-    <info>
-      In JDK 1.5, calling new Byte() causes memory allocation.
-      Byte.valueOf() is more memory friendly.
-    </info>
-    <name>Byte Instantiation</name>
-  </findingType>
-  <findingType>
-    <id>ShortInstantiation</id>
-    <artifact tool="PMD" mnemonic="ShortInstantiation"></artifact>
-    <shortMessage>
-      In JDK 1.5, calling new Short() causes memory allocation.
-      Short.valueOf() is more memory friendly.
-    </shortMessage>
-    <info>
-      In JDK 1.5, calling new Short() causes memory allocation.
-      Short.valueOf() is more memory friendly.
-    </info>
-    <name>Short Instantiation</name>
-  </findingType>
-  <findingType>
-    <id>LongInstantiation</id>
-    <artifact tool="PMD" mnemonic="LongInstantiation"></artifact>
-    <shortMessage>
-      In JDK 1.5, calling new Long() causes memory allocation.
-      Long.valueOf() is more memory friendly.
-    </shortMessage>
-    <info>
-      In JDK 1.5, calling new Long() causes memory allocation.
-      Long.valueOf() is more memory friendly.
-    </info>
-    <name>Long Instantiation</name>
-  </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>JUnit4TestShouldUseBeforeAnnotation</id>
     <artifact tool="PMD"
@@ -10423,6 +10632,7 @@ removed from the code.</p>]]>
     </info>
     <name>JUnit4Test Should Use Before Annotation</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>JUnit4TestShouldUseAfterAnnotation</id>
     <artifact tool="PMD"
@@ -10442,6 +10652,7 @@ removed from the code.</p>]]>
     </info>
     <name>JUnit4Test Should Use After Annotation</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>JUnit4TestShouldUseTestAnnotation</id>
     <artifact tool="PMD"
@@ -10459,6 +10670,7 @@ removed from the code.</p>]]>
     </info>
     <name>JUnit4Test Should Use Test Annotation</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>JUnit4SuitesShouldUseSuiteAnnotation</id>
     <artifact tool="PMD"
@@ -10476,6 +10688,7 @@ removed from the code.</p>]]>
     </info>
     <name>JUnit4Suites Should Use Suite Annotation</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>JUnitUseExpected</id>
     <artifact tool="PMD" mnemonic="JUnitUseExpected"></artifact>
@@ -10483,6 +10696,7 @@ removed from the code.</p>]]>
     <info></info>
     <name>JUnit Use Expected</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>ShortVariable</id>
     <artifact tool="PMD" mnemonic="ShortVariable"></artifact>
@@ -10496,6 +10710,7 @@ removed from the code.</p>]]>
     </info>
     <name>Short Variable</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>LongVariable</id>
     <artifact tool="PMD" mnemonic="LongVariable"></artifact>
@@ -10509,6 +10724,7 @@ removed from the code.</p>]]>
     </info>
     <name>Long Variable</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>ShortMethodName</id>
     <artifact tool="PMD" mnemonic="ShortMethodName"></artifact>
@@ -10518,6 +10734,7 @@ removed from the code.</p>]]>
     <info>Detects when very short method names are used.</info>
     <name>Short Method Name</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AbstractNaming</id>
     <artifact tool="PMD" mnemonic="AbstractNaming"></artifact>
@@ -10527,6 +10744,7 @@ removed from the code.</p>]]>
     <info>Abstract classes should be named 'AbstractXXX'.</info>
     <name>Abstract Naming</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AvoidDollarSigns</id>
     <artifact tool="PMD" mnemonic="AvoidDollarSigns"></artifact>
@@ -10540,6 +10758,7 @@ removed from the code.</p>]]>
     </info>
     <name>Avoid Dollar Signs</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>MethodWithSameNameAsEnclosingClass</id>
     <artifact tool="PMD"
@@ -10555,6 +10774,7 @@ removed from the code.</p>]]>
     </info>
     <name>Method With Same Name As Enclosing Class</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
 
   <findingType>
     <id>SuspiciousConstantFieldName</id>
@@ -10572,6 +10792,7 @@ removed from the code.</p>]]>
     </info>
     <name>Suspicious Constant Field Name</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
 
   <findingType>
     <id>AvoidFieldNameMatchingTypeName</id>
@@ -10590,6 +10811,7 @@ removed from the code.</p>]]>
     </info>
     <name>Avoid Field Name Matching Type Name</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AvoidFieldNameMatchingMethodName</id>
     <artifact tool="PMD"
@@ -10609,6 +10831,7 @@ removed from the code.</p>]]>
     </info>
     <name>Avoid Field Name Matching Method Name</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>NoPackage</id>
     <artifact tool="PMD" mnemonic="NoPackage"></artifact>
@@ -10622,6 +10845,7 @@ removed from the code.</p>]]>
     </info>
     <name>No Package</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>PackageCase</id>
     <artifact tool="PMD" mnemonic="PackageCase"></artifact>
@@ -10635,6 +10859,7 @@ removed from the code.</p>]]>
     </info>
     <name>Package Case</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>MisleadingVariableName</id>
     <artifact tool="PMD" mnemonic="MisleadingVariableName">
@@ -10649,6 +10874,7 @@ removed from the code.</p>]]>
     </info>
     <name>Misleading Variable Name</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>BooleanGetMethodName</id>
     <artifact tool="PMD" mnemonic="BooleanGetMethodName"></artifact>
@@ -10664,6 +10890,7 @@ removed from the code.</p>]]>
     </info>
     <name>Boolean Get Method Name</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>LocalVariableCouldBeFinal</id>
     <artifact tool="PMD" mnemonic="LocalVariableCouldBeFinal">
@@ -10676,6 +10903,7 @@ removed from the code.</p>]]>
     </info>
     <name>Local Variable Could Be Final</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>MethodArgumentCouldBeFinal</id>
     <artifact tool="PMD" mnemonic="MethodArgumentCouldBeFinal">
@@ -10690,6 +10918,7 @@ removed from the code.</p>]]>
     </info>
     <name>Method Argument Could Be Final</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AvoidInstantiatingObjectsInLoops</id>
     <artifact tool="PMD"
@@ -10701,6 +10930,7 @@ removed from the code.</p>]]>
     <info>Detects when a new object is created inside a loop</info>
     <name>Avoid Instantiating Objects In Loops</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UseArrayListInsteadOfVector</id>
     <artifact tool="PMD" mnemonic="UseArrayListInsteadOfVector">
@@ -10715,6 +10945,7 @@ removed from the code.</p>]]>
     </info>
     <name>Use Array List Instead Of Vector</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SimplifyStartsWith</id>
     <artifact tool="PMD" mnemonic="SimplifyStartsWith"></artifact>
@@ -10730,6 +10961,7 @@ removed from the code.</p>]]>
     </info>
     <name>Simplify Starts With</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
 
   <findingType>
     <id>UseArraysAsList</id>
@@ -10748,6 +10980,7 @@ removed from the code.</p>]]>
     </info>
     <name>Use Arrays As List</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AvoidArrayLoops</id>
     <artifact tool="PMD" mnemonic="AvoidArrayLoops"></artifact>
@@ -10761,6 +10994,7 @@ removed from the code.</p>]]>
     </info>
     <name>Avoid Array Loops</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UnnecessaryWrapperObjectCreation</id>
     <artifact tool="PMD"
@@ -10772,6 +11006,7 @@ removed from the code.</p>]]>
     <info>Parsing method should be called directy instead.</info>
     <name>Unnecessary Wrapper Object Creation</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AddEmptyString</id>
     <artifact tool="PMD" mnemonic="AddEmptyString"></artifact>
@@ -10785,6 +11020,7 @@ removed from the code.</p>]]>
     </info>
     <name>Add Empty String</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AvoidCatchingThrowable</id>
     <artifact tool="PMD" mnemonic="AvoidCatchingThrowable">
@@ -10799,6 +11035,7 @@ removed from the code.</p>]]>
     </info>
     <name>Avoid Catching Throwable</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SignatureDeclareThrowsException</id>
     <artifact tool="PMD"
@@ -10818,6 +11055,7 @@ removed from the code.</p>]]>
     </info>
     <name>Signature Declare Throws Exception</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>ExceptionAsFlowControl</id>
     <artifact tool="PMD" mnemonic="ExceptionAsFlowControl">
@@ -10832,6 +11070,7 @@ removed from the code.</p>]]>
     </info>
     <name>Exception As Flow Control</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AvoidCatchingNPE</id>
     <artifact tool="PMD" mnemonic="AvoidCatchingNPE"></artifact>
@@ -10847,6 +11086,7 @@ removed from the code.</p>]]>
     </info>
     <name>Avoid Catching NullPointerException</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AvoidThrowingRawExceptionTypes</id>
     <artifact tool="PMD"
@@ -10864,6 +11104,7 @@ removed from the code.</p>]]>
     </info>
     <name>Avoid Throwing Raw Exception Types</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AvoidThrowingNullPointerException</id>
     <artifact tool="PMD"
@@ -10885,6 +11126,7 @@ removed from the code.</p>]]>
     </info>
     <name>Avoid Throwing NullPointerException</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AvoidRethrowingException</id>
     <artifact tool="PMD" mnemonic="AvoidRethrowingException">
@@ -10899,6 +11141,7 @@ removed from the code.</p>]]>
     </info>
     <name>Avoid Rethrowing Exception</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>DoNotExtendJavaLangError</id>
     <artifact tool="PMD" mnemonic="DoNotExtendJavaLangError">
@@ -10909,6 +11152,7 @@ removed from the code.</p>]]>
     <info>Errors are system exceptions. Do not extend them.</info>
     <name>Do Not Extend java.lang.Error</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AvoidDuplicateLiterals</id>
     <artifact tool="PMD" mnemonic="AvoidDuplicateLiterals">
@@ -10923,20 +11167,7 @@ removed from the code.</p>]]>
     </info>
     <name>Avoid Duplicate Literals</name>
   </findingType>
-
-  <findingType>
-    <id>StringToString</id>
-    <artifact tool="PMD" mnemonic="StringToString"></artifact>
-    <shortMessage>
-      Avoid calling toString() on String objects; this is
-      unnecessary.
-    </shortMessage>
-    <info>
-      Avoid calling toString() on String objects; this is
-      unnecessary.
-    </info>
-    <name>Call to toString() on a String</name>
-  </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>InefficientStringBuffering</id>
     <artifact tool="PMD" mnemonic="InefficientStringBuffering">
@@ -10951,6 +11182,7 @@ removed from the code.</p>]]>
     </info>
     <name>Inefficient String Buffering</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UnnecessaryCaseChange</id>
     <artifact tool="PMD" mnemonic="UnnecessaryCaseChange">
@@ -10965,6 +11197,7 @@ removed from the code.</p>]]>
     </info>
     <name>Unnecessary Case Change</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UseStringBufferLength</id>
     <artifact tool="PMD" mnemonic="UseStringBufferLength">
@@ -10983,6 +11216,7 @@ removed from the code.</p>]]>
     </info>
     <name>Use String Buffer Length</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AppendCharacterWithChar</id>
     <artifact tool="PMD" mnemonic="AppendCharacterWithChar">
@@ -10997,6 +11231,7 @@ removed from the code.</p>]]>
     </info>
     <name>Append Character With Char</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>ConsecutiveLiteralAppends</id>
     <artifact tool="PMD" mnemonic="ConsecutiveLiteralAppends">
@@ -11011,6 +11246,7 @@ removed from the code.</p>]]>
     </info>
     <name>Consecutive Literal Appends</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UseIndexOfChar</id>
     <artifact tool="PMD" mnemonic="UseIndexOfChar"></artifact>
@@ -11024,6 +11260,7 @@ removed from the code.</p>]]>
     </info>
     <name>Use Index Of Char</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>InefficientEmptyStringCheck</id>
     <artifact tool="PMD" mnemonic="InefficientEmptyStringCheck">
@@ -11046,6 +11283,7 @@ removed from the code.</p>]]>
     </info>
     <name>Inefficient Empty String Check</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>InsufficientStringBufferDeclaration</id>
     <artifact tool="PMD"
@@ -11073,6 +11311,7 @@ removed from the code.</p>]]>
     </info>
     <name>Insufficient String Buffer Declaration</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UselessStringValueOf</id>
     <artifact tool="PMD" mnemonic="UselessStringValueOf"></artifact>
@@ -11086,6 +11325,7 @@ removed from the code.</p>]]>
     </info>
     <name>Useless String.valueOf</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>StringBufferInstantiationWithChar</id>
     <artifact tool="PMD"
@@ -11101,22 +11341,7 @@ removed from the code.</p>]]>
     </info>
     <name>String Buffer Instantiation With Char</name>
   </findingType>
-  <findingType>
-    <id>MethodReturnsInternalArray</id>
-    <artifact tool="PMD" mnemonic="MethodReturnsInternalArray">
-    </artifact>
-    <shortMessage>
-      Exposing internal arrays directly allows the user to modify
-      some code that could be critical. It is safer to return a
-      copy of the array.
-    </shortMessage>
-    <info>
-      Exposing internal arrays directly allows the user to modify
-      some code that could be critical. It is safer to return a
-      copy of the array.
-    </info>
-    <name>Method Returns Internal Array</name>
-  </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>ArrayIsStoredDirectly</id>
     <artifact tool="PMD" mnemonic="ArrayIsStoredDirectly">
@@ -11133,6 +11358,7 @@ removed from the code.</p>]]>
     </info>
     <name>Array Is Stored Directly</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
 
   <findingType>
     <id>UnusedLocalVariable</id>
@@ -11147,6 +11373,7 @@ removed from the code.</p>]]>
     </info>
     <name>Unused Local Variable</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UnusedPrivateMethod</id>
     <artifact tool="PMD" mnemonic="UnusedPrivateMethod"></artifact>
@@ -11160,6 +11387,7 @@ removed from the code.</p>]]>
     </info>
     <name>Unused Private Method</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UnusedFormalParameter</id>
     <artifact tool="PMD" mnemonic="UnusedFormalParameter">
@@ -11174,6 +11402,7 @@ removed from the code.</p>]]>
     </info>
     <name>Unused Formal Parameter</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
 
   <findingType>
     <id>OverrideBothEqualsAndHashcode</id>
@@ -11244,9 +11473,8 @@ removed from the code.</p>]]>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AvoidUsingShortType</id>
-    <artifact tool="PMD"
-	      mnemonic="AvoidUsingShortType">
-    </artifact>
+    <artifact tool="PMD" mnemonic="AvoidUsingShortType"/>
+    <name>Avoid using short type</name>
     <shortMessage>
       Avoid using the "short" type
     </shortMessage>
@@ -11260,7 +11488,6 @@ removed from the code.</p>]]>
       &lt;/p&gt;
 
     </info>
-    <name>Avoid Using Short Type</name>
   </findingType>	
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
