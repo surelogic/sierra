@@ -203,6 +203,12 @@ public class SierraServiceImpl extends SecureServiceServlet implements
 
 			public SyncResponse perform(final Connection conn,
 					final Server server, final User user) throws Exception {
+				final ProjectRecord projectRecord = ProjectRecordFactory
+						.getInstance(conn).newProject();
+				projectRecord.setName(project);
+				if (!projectRecord.select()) {
+					projectRecord.insert();
+				}
 				return ServerFindingManager.getInstance(conn).getAuditUpdates(
 						project, revision);
 
