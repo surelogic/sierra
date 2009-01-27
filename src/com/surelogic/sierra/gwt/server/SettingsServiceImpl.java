@@ -449,13 +449,17 @@ public final class SettingsServiceImpl extends SierraServiceServlet implements
 
 						final FindingTypes ft = new FindingTypes(q);
 						final Categories fs = new Categories(q);
+						final ScanFilters filters = new ScanFilters(q);
+						final ScanFilterDO def = filters.getDefaultScanFilter();
 						final List<ScanFilter> list = new ArrayList<ScanFilter>();
-						for (final ScanFilterDO fDO : new ScanFilters(q)
-								.listScanFilters()) {
+						for (final ScanFilterDO fDO : filters.listScanFilters()) {
 							final ScanFilter filter = ServiceUtil.getFilter(
 									fDO, ft, fs);
 							filter.setLocal(serverUID.equals(definitionServer
 									.call(filter.getUuid())));
+							filter
+									.setDefault(fDO.getUid().equals(
+											def.getUid()));
 							list.add(filter);
 						}
 						Collections.sort(list);
@@ -565,19 +569,6 @@ public final class SettingsServiceImpl extends SierraServiceServlet implements
 												.success("Category deleted");
 									}
 								});
-					}
-				});
-	}
-
-	public ScanFilter getDefaultScanFilter() {
-		return ConnectionFactory.getInstance().withUserTransaction(
-				new UserQuery<ScanFilter>() {
-					public ScanFilter perform(final Query q, final Server s,
-							final User u) {
-						final ScanFilters filters = new ScanFilters(q);
-						return ServiceUtil.getFilter(filters
-								.getDefaultScanFilter(), new FindingTypes(q),
-								new Categories(q));
 					}
 				});
 	}
