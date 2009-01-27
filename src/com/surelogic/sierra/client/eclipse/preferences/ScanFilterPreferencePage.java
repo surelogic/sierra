@@ -502,7 +502,7 @@ public class ScanFilterPreferencePage extends PreferencePage implements
 
 	public void init(final IWorkbench workbench) {
 		setPreferenceStore(Activator.getDefault().getPreferenceStore());
-		setDescription("Use this page to select rules to include/exclude from the scan.");
+		setDescription("Use this page to select rules to include from the scan.");
 	}
 
 	private void setTypes(boolean state) {
