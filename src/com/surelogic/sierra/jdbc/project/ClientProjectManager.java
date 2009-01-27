@@ -48,10 +48,13 @@ public final class ClientProjectManager extends ProjectManager {
 		return findingManager;
 	}
 
-	public void synchronizeProject(final ConnectedServer server,
+	/**
+	 * @return true if updated
+	 */
+	public boolean synchronizeProject(final ConnectedServer server,
 			final String projectName, final SLProgressMonitor monitor)
 			throws ServerMismatchException, SQLException {
-		synchronizeProjectWithServer(server, projectName, monitor, false);
+		return !synchronizeProjectWithServer(server, projectName, monitor, false).isEmpty();
 	}
 
 	public List<SyncTrailResponse> getProjectUpdates(
