@@ -30,6 +30,8 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.widgets.TreeItem;
@@ -229,6 +231,27 @@ public class ScanFilterPreferencePage extends PreferencePage implements
 			}
 		});
 
+		final Menu contextMenu = new Menu(f_findingTypes.getShell(), SWT.POP_UP);
+		createMenuItem(contextMenu, "Select All").addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event event) {
+				setTypes(true);
+			}			
+		});		
+		createMenuItem(contextMenu, "Unselect All").addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event event) {
+				setTypes(false);
+			}			
+		});
+		f_findingTypes.setMenu(contextMenu);
+		/*
+		f_findingTypes.addListener(SWT.MenuDetect, new Listener() {
+			public void handleEvent(Event event) {
+				// TODO Auto-generated method stub
+				
+			}			
+		});
+		*/
+		
 		final TreeColumn treeColumn = new TreeColumn(f_findingTypes, SWT.NONE);
 		treeColumn.setText("Finding Type");
 		treeColumn.setWidth(300);
@@ -272,6 +295,12 @@ public class ScanFilterPreferencePage extends PreferencePage implements
 				"com.surelogic.sierra.client.eclipse.preferences-sierra");
 
 		return f_panel;
+	}
+
+	private MenuItem createMenuItem(final Menu contextMenu, String text) {
+		MenuItem item = new MenuItem(contextMenu, SWT.PUSH);
+		item.setText(text);
+		return item;
 	}
 
 	private final List<FindingTypeRow> f_artifactList = new ArrayList<FindingTypeRow>();
@@ -474,5 +503,24 @@ public class ScanFilterPreferencePage extends PreferencePage implements
 	public void init(final IWorkbench workbench) {
 		setPreferenceStore(Activator.getDefault().getPreferenceStore());
 		setDescription("Use this page to select rules to include/exclude from the scan.");
+	}
+
+	private void setTypes(boolean state) {
+		for(TreeItem item : f_findingTypes.getItems()) {
+			setItemChecked(item, state);	
+		}
+	}
+	private void setItemChecked(TreeItem item, boolean state) {
+		if (item == null) {
+			return;
+		}
+		item.setChecked(state);	
+		
+		if (item.getItems() == null) {
+			return;
+		}
+		for(TreeItem sub : item.getItems()) {
+			setItemChecked(sub, state);
+		}
 	}
 }
