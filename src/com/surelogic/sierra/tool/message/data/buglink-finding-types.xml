@@ -9592,31 +9592,42 @@ public class JuniorClass extends SeniorClass {
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AccessorClassGeneration</id>
-    <artifact tool="PMD" mnemonic="AccessorClassGeneration">
-    </artifact>
-    <shortMessage>
-      Instantiation by way of private constructors from outside of
-      the constructor's class often causes the generation of an
-      accessor. A factory method, or non-privitization of the
-      constructor can eliminate this situation. The generated
-      class file is actually an interface. It gives the accessing
-      class the ability to invoke a new hidden package scope
-      constructor that takes the interface as a supplementary
-      parameter. This turns a private constructor effectively into
-      one with package scope, and is challenging to discern.
-    </shortMessage>
+    <artifact tool="PMD" mnemonic="AccessorClassGeneration"/>
+    <name>Accessor class generation</name>
+    <shortMessage>This class uses private constructors from outside of the constructor's class which can cause the generation of an accessor.</shortMessage>
     <info>
-      Instantiation by way of private constructors from outside of
-      the constructor's class often causes the generation of an
-      accessor. A factory method, or non-privitization of the
-      constructor can eliminate this situation. The generated
-      class file is actually an interface. It gives the accessing
-      class the ability to invoke a new hidden package scope
-      constructor that takes the interface as a supplementary
-      parameter. This turns a private constructor effectively into
-      one with package scope, and is challenging to discern.
+<![CDATA[<p>Instantiation by way of private constructors from outside
+of the constructor's class often causes the generation of an
+accessor. A factory method, or non-privatization of the constructor
+can eliminate this situation. The generated class file is actually an
+interface. It gives the accessing class the ability to invoke a new
+hidden package scope constructor that takes the interface as a
+supplementary parameter. This turns a private constructor effectively
+into one with package scope, and is challenging to discern.</p>
+
+<pre>
+public class Outer {
+  void method(){
+    Inner ic = new Inner(); // Causes generation of an accessor class
+  }
+  public class Inner {
+    private Inner(){}
+  }
+}
+</pre>
+
+<p>This could be resolved by making the constructor not be
+<code>private</code> or by creating a factory method such as:</p>
+
+<pre>
+Inner getInstance() {
+  return new Inner();
+}
+</pre>
+
+<p>It is recommended to check if this generation still occurs on your
+JDK.  If not then this finding is not an issue.</p>]]>
     </info>
-    <name>Accessor Class Generation</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
