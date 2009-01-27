@@ -9569,7 +9569,7 @@ confusing program behavior.</p>
 <pre>
 public class SeniorClass {
   public SeniorClass() {
-      toString(); // may throw NullPointerException if overridden
+    toString(); // may throw NullPointerException if overridden
   }
   public String toString() {
     return "IAmSeniorClass";
@@ -9579,7 +9579,7 @@ public class SeniorClass {
 public class JuniorClass extends SeniorClass {
   private String name;
   public JuniorClass() {
-    super(); // Automatic call leads to a NullPointerException because name is still null
+    super(); // Automatic call leads to a NullPointerException because 'name' is still null
     name = "JuniorClass";
   }
   public String toString() {
