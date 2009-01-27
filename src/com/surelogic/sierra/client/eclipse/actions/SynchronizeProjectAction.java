@@ -1,5 +1,6 @@
 package com.surelogic.sierra.client.eclipse.actions;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -22,15 +23,19 @@ public class SynchronizeProjectAction extends AbstractWebServiceMenuAction {
 		}
 	}
 
+	private final Set<ConnectedServer> f_serversInAction = new HashSet<ConnectedServer>();
+
 	@Override
 	void runServerAction(final ServerProjectGroupJob family,
 			final String projectName, final ConnectedServer server,
 			final Shell shell) {
-		final SynchronizeJob job = new SynchronizeJob(family, server, true,
-				ServerFailureReport.SHOW_DIALOG);
+		if (f_serversInAction.add(server)) {
+			final SynchronizeJob job = new SynchronizeJob(family, server, true,
+					ServerFailureReport.SHOW_DIALOG);
+			job.schedule();
+		}
 		final SynchronizeProjectJob job2 = new SynchronizeProjectJob(family,
 				projectName, server, true, ServerFailureReport.SHOW_DIALOG);
-		job.schedule();
 		job2.schedule();
 	}
 }
