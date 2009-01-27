@@ -104,7 +104,6 @@ public class ProjectView extends BasicPanel {
 					if ((s != null) && s.isSuccess()) {
 						selection.setScanFilter(dialog.getSelectedFilter());
 						ProjectCache.getInstance().save(selection);
-						ProjectCache.getInstance().refresh();
 					}
 				}
 
