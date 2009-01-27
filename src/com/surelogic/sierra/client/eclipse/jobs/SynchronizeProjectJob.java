@@ -120,7 +120,8 @@ public class SynchronizeProjectJob extends AbstractServerProjectJob {
 		}
 
 		public IStatus perform(final Connection conn) throws Exception {
-			ClientProjectManager.getInstance(conn).synchronizeProject(
+			final boolean updated = 
+				ClientProjectManager.getInstance(conn).synchronizeProject(
 					getServer(), f_projectName, slMonitor);
 			ConnectedServerManager.getInstance().getStats(getServer())
 					.markAsConnected();
@@ -128,7 +129,9 @@ public class SynchronizeProjectJob extends AbstractServerProjectJob {
 				conn.rollback();
 				return Status.CANCEL_STATUS;
 			} else {
-				DatabaseHub.getInstance().notifyServerSynchronized();
+				if (updated) {
+					DatabaseHub.getInstance().notifyServerSynchronized();
+				}
 				return Status.OK_STATUS;
 			}
 		}
