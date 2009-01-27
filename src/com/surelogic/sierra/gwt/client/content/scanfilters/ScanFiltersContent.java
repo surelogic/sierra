@@ -125,13 +125,25 @@ public class ScanFiltersContent extends
 	}
 
 	@Override
+	protected void onCacheRefresh(final Cache<ScanFilter> cache,
+			final Throwable failure) {
+		for (final ScanFilter f : cache) {
+			if (f.isDefault()) {
+				defaultScanFilter = f;
+				break;
+			}
+		}
+		super.onCacheRefresh(cache, failure);
+	}
+
+	@Override
 	protected String getItemText(final ScanFilter item) {
 		return item.getName();
 	}
 
 	@Override
 	protected Widget getItemDecorator(final ScanFilter item) {
-		if (item != null && item.equals(defaultScanFilter)) {
+		if (item != null && item.isDefault()) {
 			final Widget w = StyleHelper.add(new Label("(Default)", false),
 					Style.ITALICS);
 			w
@@ -145,22 +157,6 @@ public class ScanFiltersContent extends
 	@Override
 	protected boolean isItemVisible(final ScanFilter item, final String query) {
 		return LangUtil.containsIgnoreCase(item.getName(), query);
-	}
-
-	@Override
-	protected void onCacheRefresh(final Cache<ScanFilter> cache,
-			final Throwable failure) {
-		ServiceHelper.getSettingsService().getDefaultScanFilter(
-				new StandardCallback<ScanFilter>() {
-
-					@Override
-					protected void doSuccess(final ScanFilter result) {
-						if (!LangUtil.equals(defaultScanFilter, result)) {
-							defaultScanFilter = result;
-							cache.refresh();
-						}
-					}
-				});
 	}
 
 	@Override

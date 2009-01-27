@@ -27,6 +27,8 @@ public class ScanFilter implements Serializable, Cacheable,
 
 	private Set<ScanFilterEntry> types;
 
+	private boolean _default;
+
 	public String getUuid() {
 		return uuid;
 	}
@@ -98,6 +100,14 @@ public class ScanFilter implements Serializable, Cacheable,
 			copy.types.add(entry.copy());
 		}
 		return copy;
+	}
+
+	public boolean isDefault() {
+		return _default;
+	}
+
+	public void setDefault(final boolean _default) {
+		this._default = _default;
 	}
 
 	@Override

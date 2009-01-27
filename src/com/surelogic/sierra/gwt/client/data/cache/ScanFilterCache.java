@@ -20,23 +20,15 @@ public final class ScanFilterCache extends Cache<ScanFilter> {
 		// singleton
 	}
 
-	public ScanFilter getGlobalFilter() {
-		for (final ScanFilter filter : this) {
-			if ("GLOBAL".equals(filter.getUuid())) {
-				return filter;
-			}
-		}
-		return null;
-	}
-
 	@Override
-	protected void doRefreshCall(AsyncCallback<List<ScanFilter>> callback) {
+	protected void doRefreshCall(final AsyncCallback<List<ScanFilter>> callback) {
 		ServiceHelper.getSettingsService().getScanFilters(callback);
 
 	}
 
 	@Override
-	protected void doSaveCall(ScanFilter item, AsyncCallback<Status> callback) {
+	protected void doSaveCall(final ScanFilter item,
+			final AsyncCallback<Status> callback) {
 		ServiceHelper.getSettingsService().updateScanFilter(item, callback);
 	}
 
