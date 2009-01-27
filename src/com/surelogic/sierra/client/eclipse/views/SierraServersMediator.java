@@ -11,7 +11,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Level;
 
 import org.eclipse.core.resources.IProject;
@@ -294,7 +293,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 
 			@Override
 			public void run() {
-				SierraServersAutoSync.asyncSyncWithServer(ServerSyncType.ALL);
+				SierraServersAutoSync.asyncSyncWithServer(ServerSyncType.ALL, 0);
 			}
 		};
 		view.addToActionBar(f_serverSyncAction);
@@ -1007,8 +1006,6 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 	public void changed() {
 		asyncUpdateContents();
 	}
-
-	private final AtomicLong latestUpdate = new AtomicLong(System.currentTimeMillis());
 	
 	private void asyncUpdateContents() {
 		asyncUpdateContentsForUI(new IViewUpdater() {
@@ -1019,16 +1016,14 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 				}
 			}
 		});
-		final long now = System.currentTimeMillis();
-		latestUpdate.set(now);
+		final long now = startingUpdate();
 
 		final Job job = new DatabaseJob("Updating project status", Job.INTERACTIVE) {
 			@Override
 			protected IStatus run(final IProgressMonitor monitor) {
 				monitor.beginTask("Updating list", IProgressMonitor.UNKNOWN);
 				try {
-					final long latest = latestUpdate.get();
-					if (now >= latest) {					
+					if (continueUpdate(now)) {					
 						// This is the latest update
 						updateContents(now);
 					}
@@ -1059,8 +1054,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 			final Map<String, List<ScanFilter>> filters;
 			synchronized (projectMap) {
 				for (final IJavaProject jp : JDTUtility.getJavaProjects()) {
-					final long latest = latestUpdate.get();
-					if (now < latest) {	
+					if (!continueUpdate(now)) {	
 						// This isn't the latest update, so stop
 						c.rollback();
 						return;
@@ -1098,7 +1092,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 						serverResponseMap);
 				filters = SettingQueries.getLocalScanFilters().perform(q);
 			}
-			latestUpdate.compareAndSet(now, now+1);
+			finishedUpdate(now);
 			
 			asyncUpdateContentsForUI(new IViewUpdater() {
 				public void updateContentsForUI() {
@@ -1167,7 +1161,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 			// FIX should this be per-project?
 			if (audits > auditThreshold) {
 				SierraServersAutoSync
-						.asyncSyncWithServer(ServerSyncType.BY_SERVER_SETTINGS);
+						.asyncSyncWithServer(ServerSyncType.BY_SERVER_SETTINGS, 5000);
 				return true;
 			}
 		}

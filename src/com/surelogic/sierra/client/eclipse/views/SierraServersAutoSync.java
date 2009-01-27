@@ -24,7 +24,7 @@ public class SierraServersAutoSync {
 	
 	private static AutoJob f_doServerAutoSync = null;
 	
-	static void asyncSyncWithServer(final ServerSyncType type) {
+	static void asyncSyncWithServer(final ServerSyncType type, final int delay) {
 		final long now = System.currentTimeMillis();
 		lastServerUpdateTime.set(now); // Sync >> update
 		System.out.println("Sync at: " + now);
@@ -36,7 +36,7 @@ public class SierraServersAutoSync {
 				if ((group == null) || (group.getResult() != null)) {
 					final SynchronizeAllProjectsAction sync = 
 						new SynchronizeAllProjectsAction(type, 
-								PreferenceConstants.getServerFailureReporting(), false, 5000);
+								PreferenceConstants.getServerFailureReporting(), false, delay);
 					sync.run(null);
 					lastSyncGroup.set(sync.getGroup());
 				} else {
@@ -120,7 +120,7 @@ public class SierraServersAutoSync {
 				}
 			}
 			if (autoSync) {
-				SierraServersAutoSync.asyncSyncWithServer(ServerSyncType.BY_SERVER_SETTINGS);
+				SierraServersAutoSync.asyncSyncWithServer(ServerSyncType.BY_SERVER_SETTINGS, 5000);
 			}
 		}
 	}
