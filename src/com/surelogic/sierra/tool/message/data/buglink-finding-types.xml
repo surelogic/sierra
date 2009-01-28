@@ -2377,6 +2377,7 @@ serializable is generally easy and good defensive programming.</p>]]>
   <findingType>
     <id>SF_SWITCH_FALLTHROUGH</id>
     <artifact tool="FindBugs" mnemonic="SF_SWITCH_FALLTHROUGH"/>
+    <artifact tool="PMD" mnemonic="MissingBreakInSwitch"/>
     <name>Switch fallthrough</name>
     <shortMessage>Switch statement found where one case falls through to the next case.  Did you forget a break or return?</shortMessage>
     <info>
@@ -9864,66 +9865,87 @@ public class StaticField {
   <findingType>
     <id>MissingStaticMethodInNonInstantiatableClass</id>
     <artifact tool="PMD" mnemonic="MissingStaticMethodInNonInstantiatableClass"/>
-    <shortMessage>
-      A class that has private constructors and does not have any
-      static methods or fields cannot be used.
-    </shortMessage>
+    <name>Non-instantiatable class</name>
+    <shortMessage>This class has only private constructors and does not have any static methods of fields.  This class appears to be unusable.</shortMessage>
     <info>
-      A class that has private constructors and does not have any
-      static methods or fields cannot be used.
+<![CDATA[<p>A class that has only private constructors and does not
+have any <code>static</code> methods or fields cannot be used.</p>
+
+<pre>
+/**
+ * This class is unusable, since it cannot be
+ * instantiated (private constructor),
+ * no static method can be called, and
+ * no static field can be accessed.
+ */
+public class Foo {
+  private Foo() {}
+  void foo() {}
+}
+</pre>]]>
     </info>
-    <name>Missing Static Method In Non Instantiatable Class</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AvoidSynchronizedAtMethodLevel</id>
-    <artifact tool="PMD"
-	      mnemonic="AvoidSynchronizedAtMethodLevel">
-    </artifact>
-    <shortMessage>
-      Method level synchronization can backfire when new code is
-      added to the method. Block-level synchronization helps to
-      ensure that only the code that needs synchronization gets
-      it.
-    </shortMessage>
+    <artifact tool="PMD" mnemonic="AvoidSynchronizedAtMethodLevel"/>
+    <name>Avoid synchronized at the method level</name>
+    <shortMessage>Consider finer-grained synchronization than at the method level.</shortMessage>
     <info>
-      Method level synchronization can backfire when new code is
-      added to the method. Block-level synchronization helps to
-      ensure that only the code that needs synchronization gets
-      it.
-    </info>
-    <name>Avoid Synchronized At Method Level</name>
-  </findingType>
-  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-  <findingType>
-    <id>MissingBreakInSwitch</id>
-    <artifact tool="PMD" mnemonic="MissingBreakInSwitch"></artifact>
-    <shortMessage>
-      A switch statement without an enclosed break statement may
-      be a bug.
-    </shortMessage>
-    <info>
-      A switch statement without an enclosed break statement may
-      be a bug.
-    </info>
-    <name>Missing Break In Switch</name>
-  </findingType>
-  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+<![CDATA[<p>Method level synchronization can backfire when new code is
+added to the method. Block-level synchronization helps to ensure that
+only the code that needs synchronization gets it.  Block-level
+synchronization can also help to improve enscapulation.</p>
 
+<pre>
+public class Foo {
+
+  // Try to avoid this
+  synchronized void foo() {
+    ...
+  }
+
+  // Prefer this approach
+  void bar() {
+    synchronized(this) {
+      ...
+    }
+    ...
+  }
+}
+</pre>]]>
+    </info>
+  </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AvoidInstanceofChecksInCatchClause</id>
-    <artifact tool="PMD"
-	      mnemonic="AvoidInstanceofChecksInCatchClause">
-    </artifact>
-    <shortMessage>
-      Each caught exception type should be handled in its own
-      catch clause.
-    </shortMessage>
+    <artifact tool="PMD" mnemonic="AvoidInstanceofChecksInCatchClause"/>
+    <name>Avoid instanceof checks in catch</name>
+    <shortMessage>Place each caught exception in its own catch clause.  Don't use instanceof.</shortMessage>
     <info>
-      Each caught exception type should be handled in its own
-      catch clause.
+<![CDATA[<p>Each caught exception typ should be handled in its own
+catch clause. Do not use instanceof check. For example, replace</p>
+
+<pre>
+try {
+  // do something
+} catch (Exception ee) {
+  if (ee instanceof IOException) {
+    cleanup();
+  }
+}
+</pre>
+
+<p>with</p>
+
+<pre>
+try {
+  // do something
+} catch (IOException ee) {
+  cleanup();
+}
+</pre>]]>
     </info>
-    <name>Avoid instanceof Checks In Catch Clause</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
