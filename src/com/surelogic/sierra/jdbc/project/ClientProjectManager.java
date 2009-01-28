@@ -54,17 +54,40 @@ public final class ClientProjectManager extends ProjectManager {
 	public boolean synchronizeProject(final ConnectedServer server,
 			final String projectName, final SLProgressMonitor monitor)
 			throws ServerMismatchException, SQLException {
-		return !synchronizeProjectWithServer(server, projectName, monitor, false).isEmpty();
+		final SyncInfo info = synchronizeProjectWithServer(server, projectName, monitor, false);
+		if (info == null) {
+			return false;
+		}
+		return info.requiresUpdate();
 	}
 
 	public List<SyncTrailResponse> getProjectUpdates(
 			final ConnectedServer server, final String projectName,
 			final SLProgressMonitor monitor) throws ServerMismatchException,
 			SQLException {
-		return synchronizeProjectWithServer(server, projectName, monitor, true);
+		final SyncInfo info = synchronizeProjectWithServer(server, projectName, monitor, true); 
+		if (info == null) {
+			return Collections.emptyList();
+		}
+		return info.response.getTrails();
 	}
 
-	private List<SyncTrailResponse> synchronizeProjectWithServer(
+	private static class SyncInfo {
+		final SyncRequest request;
+		final SyncResponse response;
+		
+		SyncInfo(SyncRequest req, SyncResponse resp) {
+			request = req;
+			response = resp;
+		}
+
+		public boolean requiresUpdate() {
+			return request.getRevision() != response.getCommitRevision();
+			//return !request.getTrails().isEmpty() || !response.getTrails().isEmpty();
+		}
+	}
+	
+	private SyncInfo synchronizeProjectWithServer(
 			final ConnectedServer server, final String projectName,
 			final SLProgressMonitor monitor, final boolean serverGet)
 			throws ServerMismatchException, SQLException {
@@ -97,7 +120,7 @@ public final class ClientProjectManager extends ProjectManager {
 			set.close();
 		}
 		if (monitor.isCanceled()) {
-			return Collections.emptyList();
+			return null;
 		}
 		monitor.worked(1);
 
@@ -115,7 +138,7 @@ public final class ClientProjectManager extends ProjectManager {
 		}
 		final SyncResponse reply = service.synchronizeProject(request);
 		if (monitor.isCanceled()) {
-			return Collections.emptyList();
+			return null;
 		}
 		monitor.worked(1);
 
@@ -129,7 +152,7 @@ public final class ClientProjectManager extends ProjectManager {
 			findingManager.updateLocalFindings(projectName, reply.getTrails(),
 					monitor);
 			if (monitor.isCanceled()) {
-				return Collections.emptyList();
+				return null;
 			}
 			monitor.worked(1);
 
@@ -156,7 +179,7 @@ public final class ClientProjectManager extends ProjectManager {
 			insertSynchRecord.setLong(idx++, updateCount);
 			insertSynchRecord.execute();
 		}
-		return reply.getTrails();
+		return new SyncInfo(request, reply);
 	}
 
 	@Override
