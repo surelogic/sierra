@@ -759,6 +759,7 @@ Thus in the example above use <code>s.isEmpty()</code>.</p>]]>
   <findingType>
     <id>DM_CONVERT_CASE</id>
     <artifact tool="FindBugs" mnemonic="DM_CONVERT_CASE"/>
+    <artifact tool="PMD" mnemonic="UseLocaleWithCaseConversions"/>
     <name>Use Locale parameterized versions of toUpperCase and toLowerCase methods</name>
     <shortMessage>Consider using the Locale parameterized version of the invoked method.</shortMessage>
     <info>
@@ -5852,11 +5853,10 @@ to break the hard dependency.</p>]]>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>STCAL_STATIC_SIMPLE_DATE_FORMAT_INSTANCE</id>
-    <artifact tool="FindBugs"
-	      mnemonic="STCAL_STATIC_SIMPLE_DATE_FORMAT_INSTANCE">
-    </artifact>
-    <name>Static Simple Data Format Instance</name>
-    <shortMessage>Static DateFormat</shortMessage>
+    <artifact tool="FindBugs" mnemonic="STCAL_STATIC_SIMPLE_DATE_FORMAT_INSTANCE"/>
+    <artifact tool="PMD" mnemonic="UnsynchronizedStaticDateFormatter"/>
+    <name>Static SimpleDateFormat Instance</name>
+    <shortMessage>Static SimpleDateFormat</shortMessage>
     <info>
 <![CDATA[<p>As the JavaDoc states, <code>DateFormat</code> objects are
 inherently unsafe for multithreaded use. Sharing a single instance
@@ -9329,16 +9329,12 @@ ominous but don't have to be a bug.</li>
   <findingType>
     <id>CouplingBetweenObjects</id>
     <artifact tool="PMD" mnemonic="CouplingBetweenObjects"/>
-    <name>Coupling Between Objects</name>
-    <shortMessage>
-      This rule counts unique attributes, local variables and
-      return types within an object. A number higher than
-      specified threshold can indicate a high degree of coupling.
-    </shortMessage>
+    <name>Coupling between objects</name>
+    <shortMessage>This class seems to have a high number of unique attributes, local variables and return types within an object. This can indicate a high degree of coupling.  Can you reduce its coupling?</shortMessage>
     <info>
-      This rule counts unique attributes, local variables and
-      return types within an object. A number higher than
-      specified threshold can indicate a high degree of coupling.
+<![CDATA[<p>This rule counts unique attributes, local variables and
+return types within an object. A number higher than specified
+threshold can indicate a high degree of coupling.</p>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
@@ -9632,196 +9628,242 @@ JDK.  If not then this finding is not an issue.</p>]]>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>NonStaticInitializer</id>
-    <artifact tool="PMD" mnemonic="NonStaticInitializer"></artifact>
-    <shortMessage>
-      A nonstatic initializer block will be called any time a
-      constructor is invoked (just prior to invoking the
-      constructor). While this is a valid language construct, it
-      is rarely used and is confusing.
-    </shortMessage>
+    <artifact tool="PMD" mnemonic="NonStaticInitializer"/>
+    <name>Avoid non-static initializer</name>
+    <shortMessage>Do this code really need to use a non-static initializer block, it is rarely used and is confusing.</shortMessage>
     <info>
-      A nonstatic initializer block will be called any time a
-      constructor is invoked (just prior to invoking the
-      constructor). While this is a valid language construct, it
-      is rarely used and is confusing.
+<![CDATA[<p>A non-static initializer block will be called any time a
+constructor is invoked (just prior to invoking the constructor). While
+this is a valid language construct, it is rarely used and is
+confusing.</p>
+
+<p>It is often possible to move the code in the initializer block into
+a constructor.  Also consider using the <code>this()</code> invocation
+technique to avoid copying of common constructor code.  For example:
+
+<pre>
+class Foo {
+
+  private Foo() {
+    // common code
+  }
+
+  public Foo(String s) {
+    this();
+    // more code
+  }
+}
+</pre>]]>
     </info>
-    <name>Non Static Initializer</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>DefaultLabelNotLastInSwitchStmt</id>
-    <artifact tool="PMD"
-	      mnemonic="DefaultLabelNotLastInSwitchStmt">
-    </artifact>
-    <shortMessage>
-      By convention, the default label should be the last label in
-      a switch statement.
-    </shortMessage>
+    <artifact tool="PMD" mnemonic="DefaultLabelNotLastInSwitchStmt"/>
+    <name>Default label should be last in switch</name>
+    <shortMessage>By convention, the default label should be the last label in a switch statement.</shortMessage>
     <info>
-      By convention, the default label should be the last label in
-      a switch statement.
+<![CDATA[<p>It is considered questionable coding practice to have the
+<code>default</code> label not be last in a <code>switch</code>
+statement.</p>
+
+<pre>
+switch (a) {
+  case 1:
+    // do something
+    break;
+  default:  // the default case should be last, by convention
+    break;
+  case 2:
+    break;
+}
+</pre>]]>
     </info>
-    <name>Default Label Not Last In Switch Statements</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>NonCaseLabelInSwitchStatement</id>
-    <artifact tool="PMD" mnemonic="NonCaseLabelInSwitchStatement">
-    </artifact>
-    <shortMessage>
-      A non-case label (e.g. a named break/continue label) was
-      present in a switch statement. This legal, but confusing. It
-      is easy to mix up the case labels and the non-case labels.
-    </shortMessage>
+    <artifact tool="PMD" mnemonic="NonCaseLabelInSwitchStatement"/>
+    <name>Non-case label in switch</name>
+    <shortMessage>This code contains a non-case label (e.g. a named break/continue label) within a switch statement. This legal, but confusing.</shortMessage>
     <info>
-      A non-case label (e.g. a named break/continue label) was
-      present in a switch statement. This legal, but confusing. It
-      is easy to mix up the case labels and the non-case labels.
+<![CDATA[<p>A non-case label (e.g. a named break/continue label) was
+present in a switch statement. This legal, but confusing. It is easy
+to mix up the case labels and the non-case labels.  It is recommened
+that this code be changed to avoid this confusion.</p>
+
+<pre>
+switch (a) {
+  case 1:
+    // do something
+    break;
+  mylabel: // this is legal, but confusing!
+    break;
+  default:
+    break;
+}
+</pre>]]>
     </info>
-    <name>Non Case Label In Switch Statement</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-
   <findingType>
     <id>ConfusingTernary</id>
-    <artifact tool="PMD" mnemonic="ConfusingTernary"></artifact>
-    <shortMessage>
-      In an &quot;if&quot; expression with an &quot;else&quot;
-      clause, avoid negation in the test. For example, rephrase:
-      if (x != y) diff(); else same(); as: if (x == y) same();
-      else diff(); Most &quot;if (x != y)&quot; cases without an
-      &quot;else&quot; are often return cases, so consistent use
-      of this rule makes the code easier to read. Also, this
-      resolves trivial ordering problems, such as &quot;does the
-      error case go first?&quot; or &quot;does the common case go
-      first?&quot;.
-    </shortMessage>
+    <artifact tool="PMD" mnemonic="ConfusingTernary"/>
+    <name>Confusing negated if</name>
+    <shortMessage>Avoid negation in the test of this if statement.  This can be confusing.</shortMessage>
     <info>
-      In an &quot;if&quot; expression with an &quot;else&quot;
-      clause, avoid negation in the test. For example, rephrase:
-      if (x != y) diff(); else same(); as: if (x == y) same();
-      else diff(); Most &quot;if (x != y)&quot; cases without an
-      &quot;else&quot; are often return cases, so consistent use
-      of this rule makes the code easier to read. Also, this
-      resolves trivial ordering problems, such as &quot;does the
-      error case go first?&quot; or &quot;does the common case go
-      first?&quot;.
+<![CDATA[<p>In an <code>if</code> expression with an<code>else</code>
+clause, avoid negation in the test. For example, rephrase</p>
+
+<pre>
+if (x != y)
+  diff();
+else
+same();
+</pre>
+
+<p>as</p>
+
+<pre>
+if (x == y)
+  same();
+else
+  diff();
+</pre>
+
+<p>Most <code>if (x != y)</code> cases without an <code>else</code>
+are often return cases, so consistent use of this rule makes the code
+easier to read. Also, this resolves trivial ordering problems, such as
+'does the error case go first?' or 'does the common case go
+first?'.</p>]]>
     </info>
-    <name>Confusing Ternary</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>InstantiationToGetClass</id>
-    <artifact tool="PMD" mnemonic="InstantiationToGetClass">
-    </artifact>
-    <shortMessage>
-      Avoid instantiating an object just to call getClass() on it;
-      use the .class public member instead.
-    </shortMessage>
+    <artifact tool="PMD" mnemonic="InstantiationToGetClass"/>
+    <name>Avoid instantiation just to get class</name>
+    <shortMessage>This code instantiates an object just to call getClass() on it; use the .class public member instead.</shortMessage>
     <info>
-      Avoid instantiating an object just to call getClass() on it;
-      use the .class public member instead.
+<![CDATA[<p>Avoid instantiating an object just to call getClass() on
+it; use the .class public member instead.  For example, replace</p>
+
+<pre>
+Class c = new String().getClass();
+</pre>
+
+<p>with this</p>
+
+<pre>
+Class c = String.class;
+</pre>]]>
     </info>
-    <name>Instantiation To Get Class</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>IdempotentOperations</id>
-    <artifact tool="PMD" mnemonic="IdempotentOperations"></artifact>
-    <shortMessage>
-      Avoid idempotent operations - they are have no effect.
-    </shortMessage>
+    <artifact tool="PMD" mnemonic="IdempotentOperations"/>
+    <name>Avoid idempotent operations</name>
+    <shortMessage>This code appears to have no effect.  Remove it or change it to do what is intended.</shortMessage>
     <info>
-      Avoid idempotent operations - they are have no effect.
+<![CDATA[<p>Avoid idempotent operations because they are have no
+effect and can make the code confusing.</p>
+
+<pre>
+int x = 2;
+x = x;   // no effect
+x = x++; // no effect
+</pre>]]>
     </info>
-    <name>Idempotent Operations</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SimpleDateFormatNeedsLocale</id>
-    <artifact tool="PMD" mnemonic="SimpleDateFormatNeedsLocale">
-    </artifact>
-    <shortMessage>
-      Be sure to specify a Locale when creating a new instance of
-      SimpleDateFormat.
-    </shortMessage>
+    <artifact tool="PMD" mnemonic="SimpleDateFormatNeedsLocale"/>
+    <name>Use Locale parameterized version of SimpleDateFormat constructor</name>
+    <shortMessage>It is recommended that you specify a Locale when creating a new instance of SimpleDateFormat.</shortMessage>
     <info>
-      Be sure to specify a Locale when creating a new instance of
-      SimpleDateFormat.
+<![CDATA[<p>Consider specifying a Locale when creating a new instance
+of SimpleDateFormat.</p>
+
+<pre>
+// Should specify Locale.US (or whatever)
+private SimpleDateFormat sdf = new SimpleDateFormat("pattern");
+</pre>]]>
     </info>
-    <name>Simple Date Format Needs Locale</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>ImmutableField</id>
-    <artifact tool="PMD" mnemonic="ImmutableField"></artifact>
-    <shortMessage>
-      Identifies private fields whose values never change once
-      they are initialized either in the declaration of the field
-      or by a constructor. This aids in converting existing
-      classes to immutable classes.
-    </shortMessage>
+    <artifact tool="PMD" mnemonic="ImmutableField"/>
+    <name>Immutable field</name>
+    <shortMessage>This is a private field that never changes once it is initialized.  Consider making it a final field.</shortMessage>
     <info>
-      Identifies private fields whose values never change once
-      they are initialized either in the declaration of the field
-      or by a constructor. This aids in converting existing
-      classes to immutable classes.
+<![CDATA[<p>A private field whose value never changes once it is
+initialized either in the declaration of the field or by a constructor
+can be declared to be <code>final</code>. This aids in converting
+existing classes to immutable classes.</p>
+
+<pre>
+public class Foo {
+  private int x; // could be final
+  public Foo() {
+     x = 7;
+  }
+  public void foo() {
+    int a = x + 2;
+  }
+}
+</pre>]]>
     </info>
-    <name>Immutable Field</name>
-  </findingType>
-  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-  <findingType>
-    <id>UseLocaleWithCaseConversions</id>
-    <artifact tool="PMD" mnemonic="UseLocaleWithCaseConversions">
-    </artifact>
-    <shortMessage>
-      When doing a String.toLowerCase()/toUpperCase() call, use a
-      Locale. This avoids problems with certain locales, i.e.
-      Turkish.
-    </shortMessage>
-    <info>
-      When doing a String.toLowerCase()/toUpperCase() call, use a
-      Locale. This avoids problems with certain locales, i.e.
-      Turkish.
-    </info>
-    <name>Use Locale With Case Conversions</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AvoidProtectedFieldInFinalClass</id>
-    <artifact tool="PMD"
-	      mnemonic="AvoidProtectedFieldInFinalClass">
-    </artifact>
-    <shortMessage>
-      Do not use protected fields in final classes since they
-      cannot be subclassed. Clarify your intent by using private
-      or package access modifiers instead.
-    </shortMessage>
+    <artifact tool="PMD" mnemonic="AvoidProtectedFieldInFinalClass"/>
+    <name>Avoid protected fields in final classes</name>
+    <shortMessage>This field is declared to be protected in a final class.  Consider changing it to be private.</shortMessage>
     <info>
-      Do not use protected fields in final classes since they
-      cannot be subclassed. Clarify your intent by using private
-      or package access modifiers instead.
+<![CDATA[<p>Do not use <code>protected</code> fields in
+<code>final</code> classes since they cannot be subclassed. Clarify
+your intent by changing these fields to use either the
+<code>private</code> or package access (default) modifiers
+instead.</p>
+
+<pre>
+public final class Bar {
+  private int x;   // Ok
+  protected int y; // 'Bar' cannot be subclassed, so should 'y' really private or package visible???
+  ...
+}
+</pre>]]>
     </info>
-    <name>Avoid Protected Field In Final Class</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AssignmentToNonFinalStatic</id>
-    <artifact tool="PMD" mnemonic="AssignmentToNonFinalStatic">
-    </artifact>
-    <shortMessage>
-      Identifies a possible unsafe usage of a static field.
-    </shortMessage>
+    <artifact tool="PMD" mnemonic="AssignmentToNonFinalStatic"/>
+    <name>Assignment to a non-final static field</name>
+    <shortMessage>This assignment to a non-static field may be unsafe. Is this what was intended?</shortMessage>
     <info>
-      Identifies a possible unsafe usage of a static field.
+<![CDATA[<p>Identifies a possible unsafe usage of a static field.
+Consider making this field immutable.  If this field is intended to be
+mutable then ignore this finding.</p>
+
+<pre>
+public class StaticField {
+   static int x;
+   public FinalFields(int y) {
+     x = y; // is this intended?
+   }
+}
+</pre>]]>
     </info>
-    <name>Assignment To Non Final Static</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>MissingStaticMethodInNonInstantiatableClass</id>
-    <artifact tool="PMD"
-	      mnemonic="MissingStaticMethodInNonInstantiatableClass">
-    </artifact>
+    <artifact tool="PMD" mnemonic="MissingStaticMethodInNonInstantiatableClass"/>
     <shortMessage>
       A class that has private constructors and does not have any
       static methods or fields cannot be used.
@@ -10051,26 +10093,6 @@ JDK.  If not then this finding is not an issue.</p>]]>
       poor usage pattern.
     </info>
     <name>Avoid Constants Interface</name>
-  </findingType>
-  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-  <findingType>
-    <id>UnsynchronizedStaticDateFormatter</id>
-    <artifact tool="PMD"
-	      mnemonic="UnsynchronizedStaticDateFormatter">
-    </artifact>
-    <shortMessage>
-      SimpleDateFormat is not synchronized. Sun recomends separate
-      format instances for each thread. If multiple threads must
-      access a static formatter, the formatter must be
-      synchronized either on method or block level.
-    </shortMessage>
-    <info>
-      SimpleDateFormat is not synchronized. Sun recomends separate
-      format instances for each thread. If multiple threads must
-      access a static formatter, the formatter must be
-      synchronized either on method or block level.
-    </info>
-    <name>Unsynchronized Static Date Formatter</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
