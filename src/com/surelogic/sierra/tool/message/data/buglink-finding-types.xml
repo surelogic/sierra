@@ -605,8 +605,7 @@ Specification).</p>]]>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>DM_RUN_FINALIZERS_ON_EXIT</id>
-    <artifact tool="FindBugs"
-	      mnemonic="DM_RUN_FINALIZERS_ON_EXIT"/>
+    <artifact tool="FindBugs" mnemonic="DM_RUN_FINALIZERS_ON_EXIT"/>
     <name>Avoid the dangerous runFinalizersOnExit method</name>
     <shortMessage>Calling dangerous method runFinalizersOnExit could result in erratic behavior or deadlock.</shortMessage>
     <info>
@@ -2608,498 +2607,304 @@ checked by the for loop.</p>]]>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UWF_NULL_FIELD</id>
-    <artifact tool="FindBugs" mnemonic="UWF_NULL_FIELD"></artifact>
-    <shortMessage>Field only ever set to null</shortMessage>
+    <artifact tool="FindBugs" mnemonic="UWF_NULL_FIELD"/>
+    <name>Null-only field</name>
+    <shortMessage>This field is always null. Check for errors or remove the field if it is useless.</shortMessage>
     <info>
-
-      &lt;p&gt; All writes to this field are of the constant value
-      null, and thus all reads of the field will return null.
-      Check for errors, or remove it if it is useless.&lt;/p&gt;
-
+<![CDATA[<p>All writes to this field are the constant value
+<code>null</code>, and thus all reads of the field will return
+<code>null</code>. It is highly likely that there is something muddled
+about this code. Check for errors, or remove the field if it is
+useless.</p>]]>
     </info>
-    <name>Null Field</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UWF_UNWRITTEN_FIELD</id>
-    <artifact tool="FindBugs" mnemonic="UWF_UNWRITTEN_FIELD">
-    </artifact>
-    <shortMessage>Unwritten field</shortMessage>
+    <artifact tool="FindBugs" mnemonic="UWF_UNWRITTEN_FIELD"/>
+    <artifact tool="FindBugs" mnemonic="NP_UNWRITTEN_FIELD"/>
+    <name>Unwritten field</name>
+    <shortMessage>This field is never written to. All reads of it will return the default value. Is this intended?</shortMessage>
     <info>
+<![CDATA[<p>This field is never written to. All reads of it will
+return the default value. Check for errors (e.g., should this field
+have been initialized?), or remove it if it is useless.</p>
 
-      &lt;p&gt; This field is never written.&amp;nbsp; All reads
-      of it will return the default value. Check for errors
-      (should it have been initialized?), or remove it if it is
-      useless.&lt;/p&gt;
-
+<p>If this field is an object reference, i.e., not of a primitive
+type, then it will be <code>null</code> and dereferencing it will
+throw a <code>NullPointerException</code>.]]>
     </info>
-    <name>Unwritten Field</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD</id>
-    <artifact tool="FindBugs"
-	      mnemonic="ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD">
-    </artifact>
-    <shortMessage>
-      Write to static field from instance method
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD"/>
+    <name>Write to a static from an instance method</name>
+    <shortMessage>Write to a static field from an instance method. Is this intended?</shortMessage>
     <info>
-
-      &lt;p&gt; This instance method writes to a static field.
-      This is tricky to get correct if multiple instances are
-      being manipulated, and generally bad practice. &lt;/p&gt;
-
+<![CDATA[<p>This instance method writes to a static field.  This is
+tricky to get correct if multiple instances of this class are being
+manipulated, and generally bad practice.  Also check that this write
+has not created a race condition.</p>]]>
     </info>
-    <name>Write To Static From Instance Method</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>NP_LOAD_OF_KNOWN_NULL_VALUE</id>
-    <artifact tool="FindBugs"
-	      mnemonic="NP_LOAD_OF_KNOWN_NULL_VALUE">
-    </artifact>
+    <artifact tool="FindBugs" mnemonic="NP_LOAD_OF_KNOWN_NULL_VALUE"/>
+    <name>Load Of Known Null Value</name>
     <shortMessage>Load of known null value</shortMessage>
     <info>
+<![CDATA[<p>The variable referenced at this point is known to be
+<code>null</code> due to an earlier check against
+<code>null</code>. Although this is valid, it might be a mistake</p>
 
-      &lt;p&gt; The variable referenced at this point is known to
-      be null due to an earlier check against null. Although this
-      is valid, it might be a mistake (perhaps you intended to
-      refer to a different variable, or perhaps the earlier check
-      to see if the variable is null should have been a check to
-      see if it was nonnull. &lt;/p&gt;
-
+<p>Perhaps you intended to refer to a different variable, or perhaps
+the earlier check to see if the variable is <code>null</code> should
+have been a check to see if it was non-null.</p>]]>
     </info>
-    <name>Load Of Known Null Value</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>NP_IMMEDIATE_DEREFERENCE_OF_READLINE</id>
-    <artifact tool="FindBugs"
-	      mnemonic="NP_IMMEDIATE_DEREFERENCE_OF_READLINE">
-    </artifact>
-    <shortMessage>
-      Immediate dereference of the result of readLine()
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="NP_IMMEDIATE_DEREFERENCE_OF_READLINE"/>
+    <name>Immediate dereference of readLine result</name>
+    <shortMessage>This code immediately dereferences the result of a call to readLine().  This code may throw a NullPointerException.</shortMessage>
     <info>
-
-      &lt;p&gt; The result of invoking readLine() is immediately
-      dereferenced. If there are no more lines of text to read,
-      readLine() will return null and dereferencing that will
-      generate a null pointer exception. &lt;/p&gt;
-
+<![CDATA[<p>The result of invoking <code>readLine()</code> is
+immediately dereferenced by this code. If there are no more lines of
+text to read, <code>readLine()</code> method will return
+<code>null</code> and dereferencing that will throw a
+<code>NullPointerException</code>.</p>]]>
     </info>
-    <name>Immediate Dereference Of Readline</name>
-  </findingType>
-  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-  <findingType>
-    <id>NP_UNWRITTEN_FIELD</id>
-    <artifact tool="FindBugs" mnemonic="NP_UNWRITTEN_FIELD">
-    </artifact>
-    <shortMessage>Read of unwritten field</shortMessage>
-    <info>
-
-      &lt;p&gt; The program is dereferencing a field that does not
-      seem to ever have a non-null value written to it.
-      Dereferencing this value will generate a null pointer
-      exception. &lt;/p&gt;
-
-    </info>
-    <name>Unwritten Field</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SIC_INNER_SHOULD_BE_STATIC</id>
-    <artifact tool="FindBugs"
-	      mnemonic="SIC_INNER_SHOULD_BE_STATIC">
-    </artifact>
-    <shortMessage>Should be a static inner class</shortMessage>
+    <artifact tool="FindBugs" mnemonic="SIC_INNER_SHOULD_BE_STATIC"/>
+    <artifact tool="FindBugs" mnemonic="SIC_INNER_SHOULD_BE_STATIC_ANON"/>
+    <artifact tool="FindBugs" mnemonic="SIC_INNER_SHOULD_BE_STATIC_NEEDS_THIS"/>
+    <name>Inner class should be static</name>
+    <shortMessage>This inner class should be declared to be static.</shortMessage>
     <info>
+<![CDATA[<p>This class is an inner class, but does not use its
+embedded reference to the object which created it. This reference
+makes instances of the inner class larger, and may keep the reference
+to the creator object alive longer than necessary.  If possible, the
+class should be made static.</p>
 
-      &lt;p&gt; This class is an inner class, but does not use its
-      embedded reference to the object which created it.&amp;nbsp;
-      This reference makes the instances of the class larger, and
-      may keep the reference to the creator object alive longer
-      than necessary.&amp;nbsp; If possible, the class should be
-      made static. &lt;/p&gt;
+<p>If the inner class is anonymous then it will need to be named to be
+declared to be <code>static</code>.  This is because anonymous inner
+classes cannot be marked as <code>static</code>.</p>
 
+<p>If a reference to the outer object is required during construction
+of the inner instance, the inner class will need to be refactored so
+as to pass a reference to the outer instance to the constructor for
+the inner class (after construction the outer instance reference
+should no longer be needed).</p>]]>
     </info>
-    <name>Inner Should Be Static</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>NP_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR</id>
-    <artifact tool="FindBugs"
-	      mnemonic="NP_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR">
-    </artifact>
-    <shortMessage>
-      Read of field not initialized in constructor
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="NP_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR"/>
+    <artifact tool="FindBugs" mnemonic="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR"/>
+    <name>Field not initialized in constructor</name>
+    <shortMessage>This code reads a field that is not initialized in any constructor.</shortMessage>
     <info>
+<![CDATA[<p>This is a read of a field is never initialized within any
+constructor, and is therefore could be <code>null</code> after the
+object is initialized. If this field is dereferenced it could cause a
+<code>NullPointerException</code> to be thrown.</p>
 
-      &lt;p&gt; This is a read of a field is never initialized
-      within any constructor, and is therefore could be null after
-      the object is initialized. This might be a coding error, or
-      else the class containing the field is written in a way that
-      depends upon methods being called in some specific order (a
-      little bit dodgy, but not necessarily wrong). &lt;/p&gt;
-
+<p>This might be a coding error, or else the class containing the
+field is written in a way that depends upon methods being called in
+some specific order (perhaps a little bit dodgy, but not necessarily
+wrong).</p>]]>
     </info>
-    <name>Field Not Initialized In Constructor</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
-    <id>UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR</id>
-    <artifact tool="FindBugs"
-	      mnemonic="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR">
-    </artifact>
-    <shortMessage>
-      Field not initialized in constructor
-    </shortMessage>
-    <info>
-
-      &lt;p&gt; This field is never initialized within any
-      constructor, and is therefore could be null after the object
-      is constructed. This could be a either an error or a
-      questionable design, since it means a null pointer exception
-      will be generated if that field is dereferenced before being
-      initialized. &lt;/p&gt;
-
-    </info>
-    <name>Field Not Initialized In Constructor</name>
-  </findingType>
-  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-  <findingType>
-    <id>SIC_INNER_SHOULD_BE_STATIC_ANON</id>
-    <artifact tool="FindBugs"
-	      mnemonic="SIC_INNER_SHOULD_BE_STATIC_ANON">
-    </artifact>
-    <shortMessage>
-      Could be refactored into a named static inner class
-    </shortMessage>
-    <info>
-
-      &lt;p&gt; This class is an inner class, but does not use its
-      embedded reference to the object which created it.&amp;nbsp;
-      This reference makes the instances of the class larger, and
-      may keep the reference to the creator object alive longer
-      than necessary.&amp;nbsp; If possible, the class should be
-      made into a &lt;em&gt;static&lt;/em&gt; inner class. Since
-      anonymous inner classes cannot be marked as static, doing
-      this will requiring refactoring the inner class so that it
-      is a named inner class.&lt;/p&gt;
-
-    </info>
-    <name>Inner Should Be Static Anon</name>
-  </findingType>
-  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-  <findingType>
-    <id>SIC_INNER_SHOULD_BE_STATIC_NEEDS_THIS</id>
-    <artifact tool="FindBugs"
-	      mnemonic="SIC_INNER_SHOULD_BE_STATIC_NEEDS_THIS">
-    </artifact>
-    <shortMessage>
-      Could be refactored into a static inner class
-    </shortMessage>
-    <info>
-
-      &lt;p&gt; This class is an inner class, but does not use its
-      embedded reference to the object which created it except
-      during construction of the inner object.&amp;nbsp; This
-      reference makes the instances of the class larger, and may
-      keep the reference to the creator object alive longer than
-      necessary.&amp;nbsp; If possible, the class should be made
-      into a &lt;em&gt;static&lt;/em&gt; inner class. Since the
-      reference to the outer object is required during
-      construction of the inner instance, the inner class will
-      need to be refactored so as to pass a reference to the outer
-      instance to the constructor for the inner class.&lt;/p&gt;
-
-    </info>
-    <name>Inner Should Be Static Needs This</name>
-  </findingType>
-  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-  <findingType>
-    <id>WaitNotInLoop</id>
+    <id>WA_NOT_IN_LOOP</id>
     <artifact tool="FindBugs" mnemonic="WA_NOT_IN_LOOP"></artifact>
-    <shortMessage>Wait not in loop</shortMessage>
+    <name>Wait outside loop</name>
+    <shortMessage>This call to wait is not in loop. Are you sure the condition waited for is true?</shortMessage>
     <info>
-
-      &lt;p&gt; This method contains a call to
-      &lt;code&gt;java.lang.Object.wait()&lt;/code&gt; which is
-      not in a loop.&amp;nbsp; If the monitor is used for multiple
-      conditions, the condition the caller intended to wait for
-      might not be the one that actually occurred.&lt;/p&gt;
-
+<![CDATA[<p>This method contains a call to
+<code>java.lang.Object.wait()</code> which is not in a loop.  If the
+monitor is used for multiple conditions, the condition the caller
+intended to wait for might not be the one that actually
+occurred.</p>]]>
     </info>
-    <name>Not In Loop</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
-    <id>AwaitNotInLoop</id>
-    <artifact tool="FindBugs" mnemonic="WA_AWAIT_NOT_IN_LOOP">
-    </artifact>
-    <shortMessage>Condition.await() not in loop</shortMessage>
+    <id>WA_AWAIT_NOT_IN_LOOP</id>
+    <artifact tool="FindBugs" mnemonic="WA_AWAIT_NOT_IN_LOOP"/>
+    <name>Await outside loop</name>
+    <shortMessage>This call to Condition.await() is not in a loop.  Are you sure the condition waited for is true?</shortMessage>
     <info>
-
-      &lt;p&gt; This method contains a call to
-      &lt;code&gt;java.util.concurrent.await()&lt;/code&gt; (or
-      variants) which is not in a loop.&amp;nbsp; If the object is
-      used for multiple conditions, the condition the caller
-      intended to wait for might not be the one that actually
-      occurred.&lt;/p&gt;
-
+<![CDATA[<p>This method contains a call to
+<code>java.util.concurrent.Condition.await()</code> (or variants)
+which is not in a loop. If the object is used for multiple conditions,
+the condition the caller intended to wait for might not be the one
+that actually occurred.</p>]]>
     </info>
-    <name>Await Not In Loop</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
-    <id>UseNotifyAllInsteadOfNotify</id>
-    <artifact tool="FindBugs" mnemonic="NO_NOTIFY_NOT_NOTIFYALL">
-    </artifact>
-    <artifact tool="PMD" mnemonic="UseNotifyAllInsteadOfNotify">
-    </artifact>
-    <shortMessage>
-      Using notify() rather than notifyAll()
-    </shortMessage>
+    <id>NO_NOTIFY_NOT_NOTIFYALL</id>
+    <artifact tool="FindBugs" mnemonic="NO_NOTIFY_NOT_NOTIFYALL"/>
+    <artifact tool="PMD" mnemonic="UseNotifyAllInsteadOfNotify"/>
+    <name>Use notifyAll not notify</name>
+    <shortMessage>Consider using notifyAll() rather than notify().</shortMessage>
     <info>
+<![CDATA[<p>This method calls <code>notify()</code> rather than
+<code>notifyAll()</code>. Java monitors are often used for multiple
+conditions. Calling <code>notify()</code> only wakes up one thread,
+meaning that the thread woken up might not be the one waiting for the
+condition that the caller just satisfied.</p>
 
-      &lt;p&gt; This method calls
-      &lt;code&gt;notify()&lt;/code&gt; rather than
-      &lt;code&gt;notifyAll()&lt;/code&gt;.&amp;nbsp; Java
-      monitors are often used for multiple conditions.&amp;nbsp;
-      Calling &lt;code&gt;notify()&lt;/code&gt; only wakes up one
-      thread, meaning that the thread woken up might not be the
-      one waiting for the condition that the caller just
-      satisfied.&lt;/p&gt;
-
-      Thread.notify() awakens a thread monitoring the object. If
-      more than one thread is monitoring, then only one is chosen.
-      The thread chosen is arbitrary; thus it's usually safer to
-      call notifyAll() instead.
-
+<p>The thread chosen is arbitrary (i.e., it is <i>not</i> the first
+thread that waited); thus it's usually safer to call
+<code>notifyAll()</code> instead.</p>]]>
     </info>
-    <name>Notify Not Notifyall</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>RV_CHECK_FOR_POSITIVE_INDEXOF</id>
-    <artifact tool="FindBugs"
-	      mnemonic="RV_CHECK_FOR_POSITIVE_INDEXOF">
-    </artifact>
-    <shortMessage>
-      Method checks to see if result of String.indexOf is positive
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="RV_CHECK_FOR_POSITIVE_INDEXOF"/>
+    <name>Avoid check for positive indexOf</name>
+    <shortMessage>Method checks to see if result of String.indexOf is positive rather than negative.</shortMessage>
     <info>
-
-      &lt;p&gt; The method invokes String.indexOf and checks to
-      see if the result is positive or non-positive. It is much
-      more typical to check to see if the result is negative or
-      non-negative. It is positive only if the substring checked
-      for occurs at some place other than at the beginning of the
-      String.&lt;/p&gt;
-
+<![CDATA[<p>The method invokes <code>String.indexOf</code> and checks
+to see if the result is positive or non-positive. It is much more
+typical to check to see if the result is negative or non-negative.
+The reason for this is that a result of 0 indicates that the substring
+occurs at the beginning of the String&mdash;not that it was not
+found. The result is positive only if the substring checked for occurs
+at some place other than at the beginning of the String.</p>]]>
     </info>
-    <name>Check For Positive Indexof</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>RV_DONT_JUST_NULL_CHECK_READLINE</id>
-    <artifact tool="FindBugs"
-	      mnemonic="RV_DONT_JUST_NULL_CHECK_READLINE">
-    </artifact>
-    <shortMessage>
-      Method discards result of readLine after checking if it is
-      nonnull
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="RV_DONT_JUST_NULL_CHECK_READLINE"/>
+    <name>Line read by readLine ignored</name>
+    <shortMessage>Method discards the result of readLine() after checking if it is non-null. Is it intended to throw away the line just read?</shortMessage>
     <info>
-
-      &lt;p&gt; The value returned by readLine is discarded after
-      checking to see if the return value is non-null. In almost
-      all situations, if the result is non-null, you will want to
-      use that non-null value. Calling readLine again will give
-      you a different line.&lt;/p&gt;
-
+<![CDATA[<p>The value returned by <code>readLine()</code> is discarded
+after checking to see if it is non-null. In almost all situations, if
+the result is non-null, you will want to use that non-null value
+because it represents the line that was read. Note that calling
+<code>readLine</code> again will give you a different line.</p>]]>
     </info>
-    <name>Dont Just Null Check Readline</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>RV_RETURN_VALUE_IGNORED</id>
-    <artifact tool="FindBugs" mnemonic="RV_RETURN_VALUE_IGNORED">
-    </artifact>
-    <shortMessage>Method ignores return value</shortMessage>
+    <artifact tool="FindBugs" mnemonic="RV_RETURN_VALUE_IGNORED"/>
+    <artifact tool="FindBugs" mnemonic="RV_RETURN_VALUE_IGNORED2"/>
+    <name>Immutable object return value ignored</name>
+    <shortMessage>This code ignores the return value of an immutable object.  Is this a mistake?</shortMessage>
     <info>
+<![CDATA[<p>The return value of this method should be checked.  One
+common cause of this warning is to invoke a method on an immutable
+object, thinking that it updates the object. For example, in the
+following code fragment,</p>
 
-      &lt;p&gt; The return value of this method should be checked.
-      One common cause of this warning is to invoke a method on an
-      immutable object, thinking that it updates the object. For
-      example, in the following code fragment,&lt;/p&gt;
-      &lt;blockquote&gt; &lt;pre&gt; String dateString =
-      getHeaderField(name); dateString.trim(); &lt;/pre&gt;
-      &lt;/blockquote&gt; &lt;p&gt;the programmer seems to be
-      thinking that the trim() method will update the String
-      referenced by dateString. But since Strings are immutable,
-      the trim() function returns a new String value, which is
-      being ignored here. The code should be corrected to:
-      &lt;/p&gt; &lt;blockquote&gt; &lt;pre&gt; String dateString
-      = getHeaderField(name); dateString = dateString.trim();
-      &lt;/pre&gt; &lt;/blockquote&gt;
+<pre>
+String dateString = getHeaderField(name);
+dateString.trim();
+</pre>
 
+<p>the programmer seems to be thinking that the <code>trim()</code>
+method will update the String referenced by
+<code>dateString</code>. But since Strings are immutable, the
+<code>trim()</code> function returns a new String value, which is
+being ignored here. The code should be corrected to: </p>
+
+<pre>
+String dateString = getHeaderField(name);
+dateString = dateString.trim();
+</pre>]]>
     </info>
-    <name>Return Value Ignored</name>
-  </findingType>
-  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-  <findingType>
-    <id>RV_RETURN_VALUE_IGNORED2</id>
-    <artifact tool="FindBugs" mnemonic="RV_RETURN_VALUE_IGNORED2">
-    </artifact>
-    <shortMessage>Method ignores return value</shortMessage>
-    <info>
-
-      &lt;p&gt; The return value of this method should be checked.
-      One common cause of this warning is to invoke a method on an
-      immutable object, thinking that it updates the object. For
-      example, in the following code fragment,&lt;/p&gt;
-      &lt;blockquote&gt; &lt;pre&gt; String dateString =
-      getHeaderField(name); dateString.trim(); &lt;/pre&gt;
-      &lt;/blockquote&gt; &lt;p&gt;the programmer seems to be
-      thinking that the trim() method will update the String
-      referenced by dateString. But since Strings are immutable,
-      the trim() function returns a new String value, which is
-      being ignored here. The code should be corrected to:
-      &lt;/p&gt; &lt;blockquote&gt; &lt;pre&gt; String dateString
-      = getHeaderField(name); dateString = dateString.trim();
-      &lt;/pre&gt; &lt;/blockquote&gt;
-
-    </info>
-    <name>Return Value IGNORED2</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>NP_ALWAYS_NULL</id>
     <artifact tool="FindBugs" mnemonic="NP_ALWAYS_NULL"></artifact>
-    <shortMessage>Null pointer dereference</shortMessage>
+    <name>Null dereference</name>
+    <shortMessage>A null pointer is dereferenced here which will throw a NullPointerException at runtime.</shortMessage>
     <info>
-
-      &lt;p&gt; A null pointer is dereferenced here.&amp;nbsp;
-      This will lead to a
-      &lt;code&gt;NullPointerException&lt;/code&gt; when the code
-      is executed.&lt;/p&gt;
-
+<![CDATA[<p>A <code>null</code> pointer is dereferenced here.  This
+will lead to a <code>NullPointerException</code> being thrown when the
+code is executed.</p>]]>
     </info>
-    <name>Always Null</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>NP_STORE_INTO_NONNULL_FIELD</id>
-    <artifact tool="FindBugs"
-	      mnemonic="NP_STORE_INTO_NONNULL_FIELD">
-    </artifact>
-    <shortMessage>
-      Store of null value into field annotated NonNull
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="NP_STORE_INTO_NONNULL_FIELD"/>
+    <name>Store into a @NonNull field</name>
+    <shortMessage>Store of a possible null value into field annotated with @NonNull.</shortMessage>
     <info>
-
-      &lt;p&gt; A value that could be null is stored into a field
-      that has been annotated as NonNull. &lt;/p&gt;
-
+<![CDATA[<p>A value that could be <code>null</code> is stored into a
+field that has been annotated @NonNull.</p>]]>
     </info>
-    <name>Store Into Nonnull Field</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>NP_ALWAYS_NULL_EXCEPTION</id>
-    <artifact tool="FindBugs" mnemonic="NP_ALWAYS_NULL_EXCEPTION">
-    </artifact>
-    <shortMessage>
-      Null pointer dereference in method on exception path
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="NP_ALWAYS_NULL_EXCEPTION"/>
+    <artifact tool="FindBugs" mnemonic="NP_NULL_ON_SOME_PATH_EXCEPTION"/>
+    <name>Null dereference on exceptional path</name>
+    <shortMessage>This code has a null pointer dereference on an exceptional path.</shortMessage>
     <info>
+<![CDATA[<p>A pointer which is <code>null</code> on an exception path
+is dereferenced here. This will lead to a
+<code>NullPointerException</code> being thrown when the code is
+executed. Note that because the analysis currently does not prune
+infeasible exception paths, this may be a false warning.</p>
 
-      &lt;p&gt; A pointer which is null on an exception path is
-      dereferenced here.&amp;nbsp; This will lead to a
-      &lt;code&gt;NullPointerException&lt;/code&gt; when the code
-      is executed.&amp;nbsp; Note that because FindBugs currently
-      does not prune infeasible exception paths, this may be a
-      false warning.&lt;/p&gt;
-
-      &lt;p&gt; Also note that FindBugs considers the default case
-      of a switch statement to be an exception path, since the
-      default case is often infeasible.&lt;/p&gt;
-
+<p>Also note that the analysis considers the default case of a
+<code>switch</code> statement to be an exception path, since the
+default case is often infeasible.</p>]]>
     </info>
-    <name>Always Null Exception</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>NP_NULL_ON_SOME_PATH</id>
     <artifact tool="FindBugs" mnemonic="NP_NULL_ON_SOME_PATH">
     </artifact>
-    <shortMessage>Possible null pointer dereference</shortMessage>
+    <name>Null dereference on some path</name>
+    <shortMessage>This code may dereference a null pointer and throw a NullPointerException.</shortMessage>
     <info>
-
-      &lt;p&gt; A reference value dereferenced here might be null
-      at runtime.&amp;nbsp; This may lead to a
-      &lt;code&gt;NullPointerException&lt;/code&gt; when the code
-      is executed.&lt;/p&gt;
-
+<![CDATA[<p>A reference value dereferenced here might be
+<code>null</code> at runtime. This may lead to a
+<code>NullPointerException</code> being thrown when the code is
+executed.</p>]]>
     </info>
-    <name>Null On Some Path</name>
-  </findingType>
-  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-  <findingType>
-    <id>NP_NULL_ON_SOME_PATH_EXCEPTION</id>
-    <artifact tool="FindBugs"
-	      mnemonic="NP_NULL_ON_SOME_PATH_EXCEPTION">
-    </artifact>
-    <shortMessage>
-      Possible null pointer dereference in method on exception
-      path
-    </shortMessage>
-    <info>
-
-      &lt;p&gt; A reference value which is null on some exception
-      control path is dereferenced here.&amp;nbsp; This may lead
-      to a &lt;code&gt;NullPointerException&lt;/code&gt; when the
-      code is executed.&amp;nbsp; Note that because FindBugs
-      currently does not prune infeasible exception paths, this
-      may be a false warning.&lt;/p&gt;
-
-      &lt;p&gt; Also note that FindBugs considers the default case
-      of a switch statement to be an exception path, since the
-      default case is often infeasible.&lt;/p&gt;
-
-    </info>
-    <name>Null On Some Path Exception</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE</id>
-    <artifact tool="FindBugs"
-	      mnemonic="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE">
-    </artifact>
-    <shortMessage>
-      Possible null pointer dereference due to return value of
-      called method
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE"/>
+    <name>Possible null dereference on some path from return</name>
+    <shortMessage>This code may dereference a null pointer and throw a NullPointerException due to return value of a called method.</shortMessage>
     <info>
+<![CDATA[<p>A reference value which is <code>null</code> on some
+exception control path is dereferenced here. This may lead to a
+<code>NullPointerException</code> when the code is executed.</p>
 
-      &lt;p&gt; A reference value which is null on some exception
-      control path is dereferenced here.&amp;nbsp; This may lead
-      to a &lt;code&gt;NullPointerException&lt;/code&gt; when the
-      code is executed.&amp;nbsp; The value may be null because it
-      was return from a method which is known to return
-      possibly-null values.&lt;/p&gt;
-
+<p>The value may be <code>null</code> because it was returned from a
+method which is known to return possibly-null values.</p>]]>
     </info>
-    <name>Null On Some Path From Return Value</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>NP_NULL_PARAM_DEREF_NONVIRTUAL</id>
-    <artifact tool="FindBugs"
-	      mnemonic="NP_NULL_PARAM_DEREF_NONVIRTUAL">
+    <artifact tool="FindBugs" mnemonic="NP_NULL_PARAM_DEREF_NONVIRTUAL">
     </artifact>
     <shortMessage>
       Non-virtual method call passes null for unconditionally
@@ -10089,7 +9894,7 @@ object directly. Static singletons are usually not needed as only a
 single instance exists anyway. Other possible fixes are to synchronize
 the entire method or to use an initialize-on-demand holder class.  (do
 not use the double-check idiom).  For more information see Bloch's
-<i>Effective Java</i> (second edition) item 48.</p>
+<i>Effective Java</i> (first edition) item 48.</p>
 
 <p>For example, change the below code</p>
 
@@ -10116,7 +9921,24 @@ public static Foo getInstance() {
 </pre>
 
 <p>or <code>synchronize</code> the <code>getInstance()</code>
-method.</p>]]>
+method.</p>
+
+<p>If you are using Java 5 or above a single element <code>enum</code>
+is recommended by Bloch as the best way to implement a singleton. For
+example</p>
+
+<pre>
+public enum Foo {
+  INSTANCE;
+
+  // singleton methods
+  public void m1() { ... }
+}
+</pre>
+
+<p>would be used as <code>Foo.INSTANCE.m1()</code>.  This approach has
+several advantages including built-in serialization machinery and a
+guarantee against multiple instantiation.</p> ]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
