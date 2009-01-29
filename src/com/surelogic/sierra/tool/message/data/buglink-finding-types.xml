@@ -9374,6 +9374,7 @@ Class c = String.class;
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+<!-- TIM I THINK YOU WANTED TO DELETE THIS
   <findingType>
     <id>IdempotentOperations</id>
     <artifact tool="PMD" mnemonic="IdempotentOperations"/>
@@ -9390,6 +9391,7 @@ x = x++; // no effect
 </pre>]]>
     </info>
   </findingType>
+-->
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SimpleDateFormatNeedsLocale</id>
