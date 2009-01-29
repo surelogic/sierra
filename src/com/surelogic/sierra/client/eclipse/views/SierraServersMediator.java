@@ -1065,10 +1065,9 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 					}
 
 					// Check for new local audits
-					final List<FindingAudits> findings = cfm
-							.getNewLocalAudits(name);
+					final int numLocalAudits = cfm.countNewLocalAudits(name);
 
-					// Check for new remote audits
+					// Check for server problems
 					final ConnectedServer server = f_manager.getServer(name);
 					final int numServerProblems = server == null ? -1
 							: ConnectedServerManager.getInstance().getStats(
@@ -1084,7 +1083,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 					final ScanFilterView filter = SettingQueries
 							.scanFilterForProject(name).perform(q);
 					final ProjectStatus s = new ProjectStatus(jp, scan, info,
-							findings, numServerProblems,
+							numLocalAudits, numServerProblems,
 							numProjectProblems, dbInfo, filter);
 					projects.add(s);
 				}
@@ -1676,19 +1675,18 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 			contents.add(scan);
 			// status = status.merge(ChangeStatus.LOCAL);
 		}
-		if (!ps.localFindings.isEmpty()) {
+
+		if (ps.numLocalAudits > 0) {
 			final ServersViewContent audits = new ServersViewContent(root,
 					SLImages.getImage(CommonImages.IMG_SIERRA_STAMP));
 			contents.add(audits);
 
 			final List<ServersViewContent> auditContents = new ArrayList<ServersViewContent>();
-			createAuditItems(audits, auditContents, false, ps.numLocalAudits,
-					ps.localFindings.size(), ps.earliestLocalAudit,
-					ps.latestLocalAudit);
-			createLocalAuditDetails(audits, auditContents, ps.localFindings);
+			createAuditItems(audits, auditContents, ps.numLocalAudits);
 			audits.setChildren(auditContents.toArray(emptyChildren));
 			audits.setChangeStatus(ChangeStatus.LOCAL);
 		}
+
 		if (ps.numServerProblems > 0) {
 			final ServersViewContent problems = new ServersViewContent(root,
 					SLImages.getImage(CommonImages.IMG_WARNING));
@@ -1744,43 +1742,9 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 
 	private ServersViewContent createAuditItems(
 			final ServersViewContent audits,
-			final List<ServersViewContent> contents, final boolean server,
-			final int numAudits, final int findings, final Date earliestA,
-			final Date latestA) {
-		final SimpleDateFormat dateFormat = new SimpleDateFormat(
-				"yyyy/MM/dd 'at' HH:mm:ss");
-
-		if (server) {
-			audits.setText("< " + numAudits + " audit" + s(numAudits) + " on "
-					+ findings + " finding" + s(findings) + " on the server");
-		} else {
-			audits.setText("> " + numAudits + " audit" + s(numAudits) + " on "
-					+ findings + " finding" + s(findings));
-		}
-
-		if (earliestA != null) {
-			createLabel(audits, contents, "Earliest on "
-					+ dateFormat.format(earliestA));
-		}
-		if ((latestA != null) && (earliestA != latestA)) {
-			createLabel(audits, contents, "Latest on "
-					+ dateFormat.format(latestA));
-		}
+			final List<ServersViewContent> contents, final int numAudits) {
+		audits.setText("> " + numAudits + " local audit" + s(numAudits));		
 		return audits;
-	}
-
-	private void createLocalAuditDetails(final ServersViewContent audits,
-			final List<ServersViewContent> contents,
-			final List<FindingAudits> findings) {
-		for (final FindingAudits f : findings) {
-			final ServersViewContent item = new ServersViewContent(audits,
-					SLImages.getImage(CommonImages.IMG_ASTERISK_ORANGE_50));
-			final int num = f.getAudits().size();
-			item.setText(num + " audit" + s(num) + " on finding "
-					+ f.getFindingId());
-			item.setData(f);
-			contents.add(item);
-		}
 	}
 
 	/**
