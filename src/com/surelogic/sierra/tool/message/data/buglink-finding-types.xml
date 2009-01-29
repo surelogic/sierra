@@ -304,9 +304,9 @@ the JarFile between the calls to <code>putNextEntry()</code> and
     <name>Avoid catching IllegalStateMonitorException</name>
     <shortMessage>Dubious code that is catching IllegalMonitorStateException may be masking a design flaw in your code.</shortMessage>
     <info>
-<![CDATA[<p>IllegalMonitorStateException is generally only thrown in
-case of a design flaw in your code&mdash;calling wait or notify on an
-object you do not hold a lock on.</p>
+<![CDATA[<p><code>IllegalMonitorStateException</code> is generally
+only thrown in case of a design flaw in your code&mdash;calling wait
+or notify on an object you do not hold a lock on.</p>
 
 <p>It is recommended that this catch be removed from your code and the
 design flaw fixed.</p>]]>
@@ -872,8 +872,8 @@ on each wrapper type which takes the primitive value. So,</p>
   <findingType>
     <id>DM_MONITOR_WAIT_ON_CONDITION</id>
     <artifact tool="FindBugs" mnemonic="DM_MONITOR_WAIT_ON_CONDITION"/>
-    <name>Monitor wait on a util.concurrent Condition object</name>
-    <shortMessage>Monitor wait() called on a util.concurrent Condition object, use await() instead.</shortMessage>
+    <name>Monitor wait on a util concurrent Condition object</name>
+    <shortMessage>Monitor wait() called on a util concurrent Condition object, use await() instead.</shortMessage>
     <info>
 <![CDATA[<p>This method calls <code>wait()</code> on a
 <code>java.util.concurrent.locks.Condition</code> object.  Waiting for
@@ -2890,7 +2890,7 @@ executed.</p>]]>
   <findingType>
     <id>NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE</id>
     <artifact tool="FindBugs" mnemonic="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE"/>
-    <name>Possible null dereference on some path from return</name>
+    <name>Null dereference on some path from return</name>
     <shortMessage>This code may dereference a null pointer and throw a NullPointerException due to return value of a called method.</shortMessage>
     <info>
 <![CDATA[<p>A reference value which is <code>null</code> on some
@@ -2904,733 +2904,513 @@ method which is known to return possibly-null values.</p>]]>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>NP_NULL_PARAM_DEREF_NONVIRTUAL</id>
-    <artifact tool="FindBugs" mnemonic="NP_NULL_PARAM_DEREF_NONVIRTUAL">
-    </artifact>
-    <shortMessage>
-      Non-virtual method call passes null for unconditionally
-      dereferenced parameter
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="NP_NULL_PARAM_DEREF_NONVIRTUAL"/>
+    <artifact tool="FindBugs" mnemonic="NP_NULL_PARAM_DEREF_ALL_TARGETS_DANGEROUS"/>
+    <artifact tool="FindBugs" mnemonic="NP_NULL_PARAM_DEREF"/>
+    <name>Null derefrence of paparamenterNull Param Deref Nonvirtual</name>
+    <shortMessage>A method call passes null for an unconditionally dereferenced parameter.  This may result in a NullPointerException being thrown if this code is executed.</shortMessage>
     <info>
-
-      &lt;p&gt; A possibly-null value is passed to a method which
-      unconditionally dereferences it. This will almost certainly
-      result in a null pointer exception. &lt;/p&gt;
-
+<![CDATA[<p>A possibly-<code>null</code> value is passed to a method
+which unconditionally dereferences it. This may result in a
+<code>NullPointerException</code> being thrown at runtime if this code
+is executed.</p>]]>
     </info>
-    <name>Null Param Deref Nonvirtual</name>
-  </findingType>
-  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-  <findingType>
-    <id>NP_NULL_PARAM_DEREF_ALL_TARGETS_DANGEROUS</id>
-    <artifact tool="FindBugs"
-	      mnemonic="NP_NULL_PARAM_DEREF_ALL_TARGETS_DANGEROUS">
-    </artifact>
-    <shortMessage>
-      Method call passes null for unconditionally dereferenced
-      parameter
-    </shortMessage>
-    <info>
-
-      &lt;p&gt; A possibly-null value is passed at a call site
-      where all known target methods will unconditionally
-      dereference it. This is very likely to result in a null
-      pointer exception. &lt;/p&gt;
-
-    </info>
-    <name>Null Param Deref All Targets Dangerous</name>
-  </findingType>
-  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-  <findingType>
-    <id>NP_NULL_PARAM_DEREF</id>
-    <artifact tool="FindBugs" mnemonic="NP_NULL_PARAM_DEREF">
-    </artifact>
-    <shortMessage>
-      Method call passes null for unconditionally dereferenced
-      parameter
-    </shortMessage>
-    <info>
-
-      &lt;p&gt; This method call passes a null value to a method
-      which might dereference it unconditionally. &lt;/p&gt;
-
-    </info>
-    <name>Null Param Deref</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>NP_NONNULL_PARAM_VIOLATION</id>
-    <artifact tool="FindBugs"
-	      mnemonic="NP_NONNULL_PARAM_VIOLATION">
-    </artifact>
-    <shortMessage>
-      Method call passes null to a nonnull parameter
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="NP_NONNULL_PARAM_VIOLATION"/>
+    <name>NonNull parameter violation</name>
+    <shortMessage>This method call passes null to a non-null parameter.</shortMessage>
     <info>
-
-      &lt;p&gt; This method passes a null value as the parameter
-      of a method which must be nonnull. Either this parameter has
-      been explicitly marked as @Nonnull, or analysis has
-      determined that this parameter is always deferenced.
-      &lt;/p&gt;
-
+<![CDATA[<p>This method passes a <code>null</code> value as the
+parameter of a method which must be non-null. Either this parameter has
+been explicitly annotated as @NonNull, or the analysis has determined that
+this parameter is always deferenced.</p>]]>
     </info>
-    <name>Nonnull Param Violation</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>NP_NONNULL_RETURN_VIOLATION</id>
-    <artifact tool="FindBugs"
-	      mnemonic="NP_NONNULL_RETURN_VIOLATION">
-    </artifact>
-    <shortMessage>
-      Method may return null, but is declared @NonNull
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="NP_NONNULL_RETURN_VIOLATION"/>
+    <name>NonNull return violation</name>
+    <shortMessage>This method may return null, but its return value is declared @NonNull.</shortMessage>
     <info>
-
-      &lt;p&gt; This method may return a null value, but the
-      method (or a superclass method which it overrides) is
-      declared to return @NonNull. &lt;/p&gt;
-
+<![CDATA[<p>This method may return a <code>null</code> value, but the
+method (or a superclass method which it overrides) is declared to
+return @NonNull.</p>]]>
     </info>
-    <name>Nonnull Return Violation</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>NP_CLONE_COULD_RETURN_NULL</id>
-    <artifact tool="FindBugs"
-	      mnemonic="NP_CLONE_COULD_RETURN_NULL">
-    </artifact>
-    <shortMessage>Clone method may return null</shortMessage>
+    <artifact tool="FindBugs" mnemonic="NP_CLONE_COULD_RETURN_NULL"/>
+    <name>Clone may return null</name>
+    <shortMessage>This clone method may return null. This violates the contract for clone.</shortMessage>
     <info>
+<![CDATA[<p>This clone method seems to return <code>null</code> in
+some circumstances.  This violates the contract for clone because it
+is never allowed to return a <code>null</code> value.</p>
 
-      &lt;p&gt; This clone method seems to return null in some
-      circumstances, but clone is never allowed to return a null
-      value. If you are convinced this path is unreachable, throw
-      an AssertionError instead. &lt;/p&gt;
-
+<p>If you are convinced this path is unreachable, throw an
+<code>AssertionError</code> instead of returning
+<code>null</code>.</p>]]>
     </info>
-    <name>Clone Could Return Null</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>NP_TOSTRING_COULD_RETURN_NULL</id>
-    <artifact tool="FindBugs"
-	      mnemonic="NP_TOSTRING_COULD_RETURN_NULL">
-    </artifact>
-    <shortMessage>toString method may return null</shortMessage>
+    <artifact tool="FindBugs" mnemonic="NP_TOSTRING_COULD_RETURN_NULL"/>
+    <name>ToString may return rull</name>
+    <shortMessage>This toString() method may return null.  This could cause other code to break and is a bad coding practice.</shortMessage>
     <info>
+<![CDATA[<p>This <code>toString()</code> method seems to return
+<code>null</code> in some circumstances. A liberal reading of the
+specification could be interpreted as allowing this, but it is
+probably a very bad idea because it could cause other code to break.</p>
 
-      &lt;p&gt; This toString method seems to return null in some
-      circumstances. A liberal reading of the spec could be
-      interpreted as allowing this, but it is probably a bad idea
-      and could cause other code to break. Return the empty string
-      or some other appropriate string rather than null.
-      &lt;/p&gt;
-
+<p>It is suggested that you return the empty string or some other
+appropriate string rather than <code>null</code>.</p>]]>
     </info>
-    <name>Tostring Could Return Null</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>NP_GUARANTEED_DEREF</id>
-    <artifact tool="FindBugs" mnemonic="NP_GUARANTEED_DEREF">
-    </artifact>
-    <shortMessage>
-      Null value is guaranteed to be dereferenced
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="NP_GUARANTEED_DEREF"/>
+    <name>Null dereference guaranteed on branch</name>
+    <shortMessage>A null value is guaranteed to be dereferenced. This may result in a NullPointerException being thrown if this code is executed.</shortMessage>
     <info>
-
-      &lt;p&gt; There is a statement or branch that if executed
-      guarantees that a value is null at this point, and that
-      value that is guaranteed to be dereferenced (except on
-      forward paths involving runtime exceptions). &lt;/p&gt;
-
+<![CDATA[<p>There is a statement or branch that if executed guarantees
+that a value is <code>null</code> at this point, and that value that
+is guaranteed to be dereferenced (except on forward paths involving
+runtime exceptions). This may result in a
+<code>NullPointerException</code> being thrown at runtime.</p>]]>
     </info>
-    <name>Guaranteed Deref</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>NP_GUARANTEED_DEREF_ON_EXCEPTION_PATH</id>
-    <artifact tool="FindBugs"
-	      mnemonic="NP_GUARANTEED_DEREF_ON_EXCEPTION_PATH">
-    </artifact>
-    <shortMessage>
-      Value is null and guaranteed to be dereferenced on exception
-      path
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="NP_GUARANTEED_DEREF_ON_EXCEPTION_PATH"/>
+    <name>Null defeference guaranteed on exceptional path</name>
+    <shortMessage>A null value is guaranteed to be dereferenced on an exception path. This may result in a NullPointerException being thrown if this code is executed.</shortMessage>
     <info>
-
-      &lt;p&gt; There is a statement or branch on an exception
-      path that if executed guarantees that a value is null at
-      this point, and that value that is guaranteed to be
-      dereferenced (except on forward paths involving runtime
-      exceptions). &lt;/p&gt;
-
+<![CDATA[<p>There is a statement or branch on an exception path that
+if executed guarantees that a value is <code>null</code> at this
+point, and that value that is guaranteed to be dereferenced (except on
+forward paths involving runtime exceptions). This may result in a
+<code>NullPointerException</code> being thrown at runtime.</p></p>]]>
     </info>
-    <name>Guaranteed Deref On Exception Path</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SI_INSTANCE_BEFORE_FINALS_ASSIGNED</id>
-    <artifact tool="FindBugs"
-	      mnemonic="SI_INSTANCE_BEFORE_FINALS_ASSIGNED">
-    </artifact>
-    <shortMessage>
-      Static initializer creates instance before all static final
-      fields assigned
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="SI_INSTANCE_BEFORE_FINALS_ASSIGNED"/>
+    <name>Instance constructed before static finals assigned</name>
+    <shortMessage>This static initializer creates an instance before all static final fields have been assigned.  This could cause errors if the constructors expect the final static fields to have been assigned.</shortMessage>
     <info>
+<![CDATA[<p>The class's static initializer creates an instance of the
+class before all of the static final fields are assigned.</p>
 
-      &lt;p&gt; The class's static initializer creates an instance
-      of the class before all of the static final fields are
-      assigned.&lt;/p&gt;
-
+<p>This could cause subtle behavior problems if the constructors rely
+upon the final static field to have been assigned.  It is recommended
+that this static initizlizer block be moved below the field
+declarations to avoid this problem.</p>]]>
     </info>
-    <name>Instance Before Finals Assigned</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>PZLA_PREFER_ZERO_LENGTH_ARRAYS</id>
     <artifact tool="FindBugs" mnemonic="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
     <artifact tool="PMD" mnemonic="ReturnEmptyArrayRatherThanNull"/>
-    <shortMessage>
-      Consider returning a zero length array rather than null
-    </shortMessage>
+    <name>Return zero length arrays instead of null</name>
+    <shortMessage>Consider returning a zero length array rather than null.</shortMessage>
     <info>
+<![CDATA[<p>It is nearly always a better design to return a length
+zero array rather than a <code>null</code> reference to indicate that
+there are no results (i.e., an empty list of results). This way, no
+explicit check for null is needed by clients of the method.</p>
 
-      &lt;p&gt; It is often a better design to return a length
-      zero array rather than a null reference to indicate that
-      there are no results (i.e., an empty list of results). This
-      way, no explicit check for null is needed by clients of the
-      method.&lt;/p&gt;
+<p>For example, change code similar to</p>
 
-      &lt;p&gt;On the other hand, using null to indicate
-      &quot;there is no answer to this question&quot;, then it is
-      probably appropriate. For example,
-      &lt;code&gt;File.listFiles()&lt;/code&gt; returns an empty
-      list if given a directory containing no files, and returns
-      null if the file is not a directory.&lt;/p&gt;
+<pre>
+public String[] getArrayOfStrings() {
+  // do something
+  return null;
+}
+</pre>
 
+<p>to</p>
+
+<pre>
+public String[] getArrayOfStrings() {
+  // do something
+  return new String[0];
+}
+</pre>
+
+<p>This can be placed into a constant because you only need one
+zero-length array for each type.</p>
+
+<p>On the other hand, using <code>null</code> to indicate "there is no
+answer to this question", then it is probably appropriate. For
+example, <code>File.listFiles()</code> returns an empty list if given
+a directory containing no files, and returns <code>null</code> if the
+file is not a directory.</p>
+
+<p>For more information see Bloch's <i>Effective Java</i> (second
+edition) item 43.</p>]]>
     </info>
-    <name>Prefer Zero Length Arrays</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UCF_USELESS_CONTROL_FLOW</id>
-    <artifact tool="FindBugs" mnemonic="UCF_USELESS_CONTROL_FLOW">
-    </artifact>
-    <shortMessage>Useless control flow</shortMessage>
+    <artifact tool="FindBugs" mnemonic="UCF_USELESS_CONTROL_FLOW"/>
+    <artifact tool="FindBugs" mnemonic="UCF_USELESS_CONTROL_FLOW_NEXT_LINE"/>
+    <name>Useless control flow</name>
+    <shortMessage>The code appears to have useless control flow. Is this intentional or is it a mistake?</shortMessage>
     <info>
+<![CDATA[<p>This method contains a useless control flow statement,
+where control flow continues onto the same place regardless of whether
+or not the branch is taken. For example, this can be caused by having
+an empty statement block for an <code>if</code> statement</p>
 
-      &lt;p&gt; This method contains a useless control flow
-      statement, where control flow continues onto the same place
-      regardless of whether or not the branch is taken. For
-      example, this is caused by having an empty statement block
-      fot an &lt;code&gt;if&lt;/code&gt; statement:&lt;/p&gt;
-      &lt;pre&gt; if (argv.length == 0) { // TODO: handle this
-      case } &lt;/pre&gt;
+<pre>
+if (argv.length == 0) {
+  // TODO: handle this case
+}
+</pre>
 
+<p>or by inadvertently using an empty statement as the body of an
+<code>if</code> statement</p>
+
+<pre>
+if (argv.length == 1);
+  System.out.println("I always run, regardless of indentation" + argv[0]);
+</pre>]]>
     </info>
-    <name>Useless Control Flow</name>
-  </findingType>
-  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-  <findingType>
-    <id>UCF_USELESS_CONTROL_FLOW_NEXT_LINE</id>
-    <artifact tool="FindBugs"
-	      mnemonic="UCF_USELESS_CONTROL_FLOW_NEXT_LINE">
-    </artifact>
-    <shortMessage>Useless control flow to next line</shortMessage>
-    <info>
-
-      &lt;p&gt; This method contains a useless control flow
-      statement in which control flow follows to the same or
-      following line regardless of whether or not the branch is
-      taken. Often, this is caused by inadvertently using an empty
-      statement as the body of an &lt;code&gt;if&lt;/code&gt;
-      statement, e.g.:&lt;/p&gt; &lt;pre&gt; if (argv.length ==
-      1); System.out.println(&quot;Hello, &quot; + argv[0]);
-      &lt;/pre&gt;
-
-    </info>
-    <name>Useless Control Flow Next Line</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE</id>
-    <artifact tool="FindBugs"
-	      mnemonic="RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE">
-    </artifact>
-    <shortMessage>
-      Nullcheck of value previously dereferenced
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE"/>
+    <artifact tool="PMD" mnemonic="MisplacedNullCheck"/>
+    <name>Null check of previously dereferenced value</name>
+    <shortMessage>This null check would have previously thrown a NullPointerException if the value is null. Either the check is redundant or the previous dereference is erroneous.</shortMessage>
     <info>
+<![CDATA[<p>A value is checked here to see whether it is
+<code>null</code>, but this value can't be <code>null</code> because
+it was previously dereferenced and if it were <code>null</code> then a
+<code>NullPointerException</code> would have been thrown at the
+earlier dereference.</p>
 
-      &lt;p&gt; A value is checked here to see whether it is null,
-      but this value can't be null because it was previously
-      dereferenced and if it were null a null pointer exception
-      would have occurred at the earlier dereference. Essentially,
-      this code and the previous dereference disagree as to
-      whether this value is allowed to be null. Either the check
-      is redundant or the previous dereference is
-      erroneous.&lt;/p&gt;
-
+<p>Essentially, this code and the previous dereference disagree as to
+whether this value is allowed to be <code>null</code>. Either the
+check is redundant or the previous dereference is erroneous. Clearly
+some fix to the code is necessary.</p>]]>
     </info>
-    <name>Redundant Nullcheck Would Have Been A NullPointerException</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>RCN_REDUNDANT_NULLCHECK_OF_NULL_VALUE</id>
-    <artifact tool="FindBugs"
-	      mnemonic="RCN_REDUNDANT_NULLCHECK_OF_NULL_VALUE">
-    </artifact>
-    <shortMessage>
-      Redundant nullcheck of value known to be null
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="RCN_REDUNDANT_NULLCHECK_OF_NULL_VALUE"/>
+    <name>Redundant null check of null value</name>
+    <shortMessage>This code contains a redundant null check of a value known to be null. This check can be removed.</shortMessage>
     <info>
-
-      &lt;p&gt; This method contains a redundant check of a known
-      null value against the constant null.&lt;/p&gt;
-
+<![CDATA[<p>This method contains a redundant check of a known null
+value against the constant null. The redundant check can be removed
+from the code.</p>]]>
     </info>
-    <name>Redundant Nullcheck Of Null Value</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE</id>
-    <artifact tool="FindBugs"
-	      mnemonic="RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE">
-    </artifact>
-    <shortMessage>
-      Redundant nullcheck of value known to be non-null
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE"/>
+    <name>Redundant null check Of non-null value</name>
+    <shortMessage>This code contains a redundant null check of a value known to be non-null. This check can be removed.</shortMessage>
     <info>
-
-      &lt;p&gt; This method contains a redundant check of a known
-      non-null value against the constant null.&lt;/p&gt;
-
+<![CDATA[<p>This method contains a redundant check of a known non-null
+value against the constant null. The redundant chec can be removed
+from the code.</p>]]>
     </info>
-    <name>Redundant Nullcheck Of Nonnull Value</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>RCN_REDUNDANT_COMPARISON_TWO_NULL_VALUES</id>
-    <artifact tool="FindBugs"
-	      mnemonic="RCN_REDUNDANT_COMPARISON_TWO_NULL_VALUES">
-    </artifact>
-    <shortMessage>
-      Redundant comparison of two null values
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="RCN_REDUNDANT_COMPARISON_TWO_NULL_VALUES"/>
+    <name>Redundant comparison of two null values</name>
+    <shortMessage>This method contains a redundant comparison of two references known to both be definitely null. Fix this muddled code.</shortMessage>
     <info>
-
-      &lt;p&gt; This method contains a redundant comparison of two
-      references known to both be definitely null.&lt;/p&gt;
-
+<![CDATA[<p>This method contains a redundant comparison of two
+references known to both be definitely <code>null</code>.</p>]]>
     </info>
-    <name>Redundant Comparison Two Null Values</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
-    <id>RedundantComparisonOfNullAndNonnullValue</id>
-    <artifact tool="FindBugs"
-	      mnemonic="RCN_REDUNDANT_COMPARISON_OF_NULL_AND_NONNULL_VALUE">
-    </artifact>
-    <artifact tool="PMD" mnemonic="MisplacedNullCheck"></artifact>
-    <shortMessage>
-      Redundant comparison of non-null value to null
-    </shortMessage>
+    <id>RCN_REDUNDANT_COMPARISON_OF_NULL_AND_NONNULL_VALUE</id>
+    <artifact tool="FindBugs" mnemonic="RCN_REDUNDANT_COMPARISON_OF_NULL_AND_NONNULL_VALUE"/>
+    <name>Redundant comparison of a null and a non-null value</name>
+    <shortMessage>This method contains a redundant comparison of a reference known to be non-null with another reference known to be null. Fix this muddled code.</shortMessage>
     <info>
-      &lt;p&gt; This method contains a reference known to be
-      non-null with another reference known to be null.&lt;/p&gt;
-
-      The null check here is misplaced. if the variable is null
-      you'll get a NullPointerException. Either the check is
-      useless (the variable will never be &quot;null&quot;) or
-      it's incorrect.
+<![CDATA[<p>This method contains a redundant comparison of a reference
+known to be non-<code>null</code> with another reference known to be
+<code>null</code>.</p>]]>
     </info>
-    <name>Redundant Comparison Of Null And Nonnull Value</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UnreleasedLock</id>
-    <artifact tool="FindBugs" mnemonic="UL_UNRELEASED_LOCK">
-    </artifact>
-    <shortMessage>
-      Method does not release lock on all paths
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="UL_UNRELEASED_LOCK"/>
+    <artifact tool="FindBugs" mnemonic="UL_UNRELEASED_LOCK_EXCEPTION_PATH"/>
+    <name>Unreleased util concurrent lock</name>
+    <shortMessage>This method does not release a util concurrent dynamic lock on all paths.</shortMessage>
     <info>
+<![CDATA[<p>This method acquires a <code>java.util.concurrent</code>
+lock, but does not release it on all paths (exceptional or
+unexceptional) out of the method. In general, the correct idiom for
+using a util concurrent lock is</p>
 
-      &lt;p&gt; This method acquires a JSR-166
-      (&lt;code&gt;java.util.concurrent&lt;/code&gt;) lock, but
-      does not release it on all paths out of the method. In
-      general, the correct idiom for using a JSR-166 lock is:
-      &lt;/p&gt; &lt;pre&gt; Lock l = ...; l.lock(); try { // do
-      something } finally { l.unlock(); } &lt;/pre&gt;
-
+<pre>
+Lock l = ...;
+l.lock();
+try {
+  // do something
+} finally {
+  l.unlock();
+}
+</pre>]]>
     </info>
-    <name>Unreleased Lock</name>
-  </findingType>
-  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-  <findingType>
-    <id>UnreleasedLockOnExceptionPath</id>
-    <artifact tool="FindBugs"
-	      mnemonic="UL_UNRELEASED_LOCK_EXCEPTION_PATH">
-    </artifact>
-    <shortMessage>
-      Method does not release lock on all exception paths
-    </shortMessage>
-    <info>
-
-      &lt;p&gt; This method acquires a JSR-166
-      (&lt;code&gt;java.util.concurrent&lt;/code&gt;) lock, but
-      does not release it on all exception paths out of the
-      method. In general, the correct idiom for using a JSR-166
-      lock is: &lt;/p&gt; &lt;pre&gt; Lock l = ...; l.lock(); try
-      { // do something } finally { l.unlock(); } &lt;/pre&gt;
-
-    </info>
-    <name>Unreleased Lock On An Exception Path</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>RC_REF_COMPARISON</id>
-    <artifact tool="FindBugs" mnemonic="RC_REF_COMPARISON">
-    </artifact>
-    <shortMessage>Suspicious reference comparison</shortMessage>
+    <artifact tool="FindBugs" mnemonic="RC_REF_COMPARISON"/>
+    <name>Suspicious reference comparison</name>
+    <shortMessage>This code contains a suspicious reference comparison. Should it be using equals() instead?</shortMessage>
     <info>
-
-      &lt;p&gt; This method compares two reference values using
-      the == or != operator, where the correct way to compare
-      instances of this type is generally with the equals()
-      method. Examples of classes which should generally not be
-      compared by reference are java.lang.Integer,
-      java.lang.Float, etc.&lt;/p&gt;
-
+<![CDATA[<p>This method compares two reference values using the == or
+!= operator, where the correct way to compare instances of this type
+is generally with the <code>equals()</code> method. Examples of
+classes which should generally not be compared by reference are
+<code>java.lang.Integer</code>, <code>java.lang.Float</code>,
+etc.</p>]]>
     </info>
-    <name>Ref Comparison</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>EC_UNRELATED_TYPES</id>
-    <artifact tool="FindBugs" mnemonic="EC_UNRELATED_TYPES">
-    </artifact>
-    <shortMessage>
-      Call to equals() comparing different types
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="EC_UNRELATED_TYPES"/>
+    <artifact tool="FindBugs" mnemonic="EC_UNRELATED_INTERFACES"/>
+    <artifact tool="FindBugs" mnemonic="EC_UNRELATED_CLASS_AND_INTERFACE"/>
+    <name>Avoid calling equals on unrelated types</name>
+    <shortMessage>This code calls equals() comparing two different and unrelated types. Fix this muddled code.</shortMessage>
     <info>
+<![CDATA[<p>This method calls <code>equals()</code> on two references
+of different class types with no common subclasses.  Therefore, the
+objects being compared are unlikely to be members of the same class at
+runtime (unless some application classes were not analyzed, or dynamic
+class loading can occur at runtime).</p>
 
-      &lt;p&gt; This method calls equals(Object) on two references
-      of different class types with no common subclasses.
-      Therefore, the objects being compared are unlikely to be
-      members of the same class at runtime (unless some
-      application classes were not analyzed, or dynamic class
-      loading can occur at runtime). According to the contract of
-      equals(), objects of different classes should always compare
-      as unequal; therefore, according to the contract defined by
-      java.lang.Object.equals(Object), the result of this
-      comparison will always be false at runtime. &lt;/p&gt;
+<p>According to the contract of <code>equals()</code>, objects of
+different classes should always compare as unequal; therefore,
+according to the contract defined by
+<code>java.lang.Object.equals(Object)</code>, the result of this
+comparison will always be false at runtime.</p>
 
+<p>This finding may signpost muddled code that may contain subtle
+errors.</p>]]>
     </info>
-    <name>Unrelated Types</name>
-  </findingType>
-  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-  <findingType>
-    <id>EC_UNRELATED_INTERFACES</id>
-    <artifact tool="FindBugs" mnemonic="EC_UNRELATED_INTERFACES">
-    </artifact>
-    <shortMessage>
-      Call to equals() comparing different interface types
-    </shortMessage>
-    <info>
-
-      &lt;p&gt; This method calls equals(Object) on two references
-      of unrelated interface types, where neither is a subtype of
-      the other, and there are no known non-abstract classes which
-      implement both interfaces. Therefore, the objects being
-      compared are unlikely to be members of the same class at
-      runtime (unless some application classes were not analyzed,
-      or dynamic class loading can occur at runtime). According to
-      the contract of equals(), objects of different classes
-      should always compare as unequal; therefore, according to
-      the contract defined by java.lang.Object.equals(Object), the
-      result of this comparison will always be false at runtime.
-      &lt;/p&gt;
-
-    </info>
-    <name>Unrelated Interfaces</name>
-  </findingType>
-  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-  <findingType>
-    <id>EC_UNRELATED_CLASS_AND_INTERFACE</id>
-    <artifact tool="FindBugs"
-	      mnemonic="EC_UNRELATED_CLASS_AND_INTERFACE">
-    </artifact>
-    <shortMessage>
-      Call to equals() comparing unrelated class and interface
-    </shortMessage>
-    <info>
-
-      &lt;p&gt; This method calls equals(Object) on two
-      references, one of which is a class and the other an
-      interface, where neither the class nor any of its
-      non-abstract subclasses implement the interface. Therefore,
-      the objects being compared are unlikely to be members of the
-      same class at runtime (unless some application classes were
-      not analyzed, or dynamic class loading can occur at
-      runtime). According to the contract of equals(), objects of
-      different classes should always compare as unequal;
-      therefore, according to the contract defined by
-      java.lang.Object.equals(Object), the result of this
-      comparison will always be false at runtime. &lt;/p&gt;
-
-    </info>
-    <name>Unrelated Class And Interface</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>EqualComparisonToNullArgument</id>
-    <artifact tool="FindBugs" mnemonic="EC_NULL_ARG"></artifact>
-    <artifact tool="PMD" mnemonic="EqualsNull"></artifact>
-    <shortMessage>Call to equals() with null argument</shortMessage>
+    <artifact tool="FindBugs" mnemonic="EC_NULL_ARG"/>
+    <artifact tool="PMD" mnemonic="EqualsNull"/>
+    <name>Avoid calling equals with a null argument</name>
+    <shortMessage>This code calls equals() with a null argument.</shortMessage>
     <info>
-
-      &lt;p&gt; This method calls equals(Object), passing a null
-      value as the argument. According to the contract of the
-      equals() method, this call should always return
-      &lt;code&gt;false&lt;/code&gt;.&lt;/p&gt;
-
-      Inexperienced programmers sometimes confuse comparison
-      concepts and use equals() to compare to null.
-
+<![CDATA[<p>This method calls <code>equals(Object)</code>, passing a
+<code>null</code> value as the argument. According to the contract of
+the <code>java.lang.Object.equals(Object)</code> method, this call
+should always return false.</p>
+      
+<p>This finding may signpost muddled code that may contain subtle
+errors. Inexperienced programmers sometimes confuse comparison
+concepts and use <code>equals()</code> to check for a
+<code>null</code> reference.</p>]]>
     </info>
-    <name>Equal Comparison To Null Argument</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
-    <id>MismatchedWait</id>
-    <artifact tool="FindBugs" mnemonic="MWN_MISMATCHED_WAIT">
-    </artifact>
-    <shortMessage>Mismatched wait()</shortMessage>
+    <id>MWN_MISMATCHED_WAIT</id>
+    <artifact tool="FindBugs" mnemonic="MWN_MISMATCHED_WAIT"/>
+    <name>Mismatched wait</name>
+    <shortMessage>This code calls wait() without obviously holding a lock on the object. This could throw IllegalMonitorStateException at runtime.</shortMessage>
     <info>
-
-      &lt;p&gt; This method calls Object.wait() without obviously
-      holding a lock on the object.&amp;nbsp; Calling wait()
-      without a lock held will result in an
-      &lt;code&gt;IllegalMonitorStateException&lt;/code&gt; being
-      thrown.&lt;/p&gt;
-
+<![CDATA[<p>This method calls <code>Object.wait()</code> without
+obviously holding a lock on the object. Calling <code>wait()</code>
+without a lock held will result in an
+<code>IllegalMonitorStateException</code> being thrown at
+runtime.</p>]]>
     </info>
-    <name>Mismatched Wait</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
-    <id>MismatchedNotify</id>
-    <artifact tool="FindBugs" mnemonic="MWN_MISMATCHED_NOTIFY">
-    </artifact>
-    <shortMessage>Mismatched notify()</shortMessage>
+    <id>MWN_MISMATCHED_NOTIFY</id>
+    <artifact tool="FindBugs" mnemonic="MWN_MISMATCHED_NOTIFY"/>
+    <name>Mismatched notify</name>
+    <shortMessage>This code calls notiry() or notifyAll() without obviously holding a lock on the object. This could throw IllegalMonitorStateException at runtime.</shortMessage>
     <info>
-
-      &lt;p&gt; This method calls Object.notify() or
-      Object.notifyAll() without obviously holding a lock on the
-      object.&amp;nbsp; Calling notify() or notifyAll() without a
-      lock held will result in an
-      &lt;code&gt;IllegalMonitorStateException&lt;/code&gt; being
-      thrown.&lt;/p&gt;
-
+<![CDATA[<p>This method calls <code>Object.notify()</code> or
+<code>Object.notifyAll()</code> without obviously holding a lock on
+the object. Calling <code>notify()</code> or </code>notifyAll()</code>
+without a lock held will result in an
+<code>IllegalMonitorStateException</code> being thrown at
+runtime.</p>]]>
     </info>
-    <name>Mismatched Notify</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SA_LOCAL_SELF_ASSIGNMENT</id>
-    <artifact tool="FindBugs" mnemonic="SA_LOCAL_SELF_ASSIGNMENT">
-    </artifact>
-    <shortMessage>Self assignment of local variable</shortMessage>
+    <artifact tool="FindBugs" mnemonic="SA_LOCAL_SELF_ASSIGNMENT"/>
+    <artifact tool="FindBugs" mnemonic="SA_FIELD_SELF_ASSIGNMENT"/>
+    <artifact tool="PMD" mnemonic="IdempotentOperations"/>
+    <name>Self assignment</name>
+    <shortMessage>This code assigns a variable or field to itself. This may indicate a logic error or a typo.</shortMessage>
     <info>
+<![CDATA[<p>This method contains a self assignment of a local variable
+or field. For example, the below code self assigns a local
+variable.</p>
 
-      &lt;p&gt; This method contains a self assignment of a local
-      variable; e.g.&lt;/p&gt; &lt;pre&gt; public void foo() { int
-      x = 3; x = x; } &lt;/pre&gt; &lt;p&gt; Such assignments are
-      useless, and may indicate a logic error or typo. &lt;/p&gt;
+<pre>
+public void foo() {
+  int x = 3;
+  x = x;
+}
+</pre>
 
+<p>The below code self assigns a field.</p>
+
+<pre>
+int x;
+
+public void foo() {
+  x = x;
+}
+</pre>
+
+<p>Such assignments are useless, and may indicate a logic error or
+typo.  One common case where this highlights a logic error is when a
+parameter masks a field and it appears the parameter is being assigned
+to the field but, sadly, the parameter is being assigned to itself.
+An example of this mistake is shown below.</p>
+
+<pre>
+int x;
+
+public void foo(int x) {
+  x = x;
+}
+</pre>]]>
     </info>
-    <name>Local Self Assignment</name>
-  </findingType>
-  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-  <findingType>
-    <id>SA_FIELD_SELF_ASSIGNMENT</id>
-    <artifact tool="FindBugs" mnemonic="SA_FIELD_SELF_ASSIGNMENT">
-    </artifact>
-    <shortMessage>Self assignment of field</shortMessage>
-    <info>
-
-      &lt;p&gt; This method contains a self assignment of a field;
-      e.g. &lt;/p&gt; &lt;pre&gt; int x; public void foo() { x =
-      x; } &lt;/pre&gt; &lt;p&gt;Such assignments are useless, and
-      may indicate a logic error or typo.&lt;/p&gt;
-
-    </info>
-    <name>Field Self Assignment</name>
-  </findingType>
-  <findingType>
-    <id>SA_FIELD_DOUBLE_ASSIGNMENT</id>
-    <artifact tool="FindBugs"
-	      mnemonic="SA_FIELD_DOUBLE_ASSIGNMENT">
-    </artifact>
-    <shortMessage>Double assignment of field</shortMessage>
-    <info>
-
-      &lt;p&gt; This method contains a double assignment of a
-      field; e.g. &lt;/p&gt; &lt;pre&gt; int x,y; public void
-      foo() { x = x = 17; } &lt;/pre&gt; &lt;p&gt;Assigning to a
-      field twice is useless, and may indicate a logic error or
-      typo.&lt;/p&gt;
-
-    </info>
-    <name>Field Double Assignment</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SA_LOCAL_DOUBLE_ASSIGNMENT</id>
-    <artifact tool="FindBugs"
-	      mnemonic="SA_LOCAL_DOUBLE_ASSIGNMENT">
-    </artifact>
-    <shortMessage>Double assignment of local variable</shortMessage>
+    <artifact tool="FindBugs" mnemonic="SA_LOCAL_DOUBLE_ASSIGNMENT"/>
+    <artifact tool="FindBugs" mnemonic="SA_FIELD_DOUBLE_ASSIGNMENT"/>
+    <name>Double assignment</name>
+    <shortMessage>This code contains a double assignment of a variable or field. This may indicate a logic error or a typo.</shortMessage>
     <info>
+<![CDATA[<p> This method contains a double assignment of a local
+variable or a field.  For example, the below code double assigns a
+local variable.</p>
 
-      &lt;p&gt; This method contains a double assignment of a
-      local variable; e.g. &lt;/p&gt; &lt;pre&gt; public void
-      foo() { int x,y; x = x = 17; } &lt;/pre&gt;
-      &lt;p&gt;Assigning the same value to a variable twice is
-      useless, and may indicate a logic error or typo.&lt;/p&gt;
+<pre>
+public void foo() {
+  int x, y;
+  x = x = 17;
+}
+</pre>
 
+<p>The below code double assigns a field.</p>
+
+<pre>
+private int x, y;
+
+public void foo() {
+  x = x = 17;
+}
+</pre>
+
+ <p>Assigning to a local variable or a field twice is useless, and may
+ indicate a logic error or typo.</p>]]>
     </info>
-    <name>Local Double Assignment</name>
-  </findingType>
-  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-  <findingType>
-    <id>SA_FIELD_SELF_COMPUTATION</id>
-    <artifact tool="FindBugs"
-	      mnemonic="SA_FIELD_SELF_COMPUTATION">
-    </artifact>
-    <shortMessage>
-      Nonsensical self computation involving a field (e.g., x
-      &amp; x)
-    </shortMessage>
-    <info>
-
-      &lt;p&gt; This method performs a nonsensical computation of
-      a field with another reference to the same field (e.g.,
-      x&amp;x or x-x). Because of the nature of the computation,
-      this operation doesn't seem to make sense, and may indicate
-      a typo or a logic error. Double check the computation.
-      &lt;/p&gt;
-
-    </info>
-    <name>Field Self Computation</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SA_LOCAL_SELF_COMPUTATION</id>
-    <artifact tool="FindBugs"
-	      mnemonic="SA_LOCAL_SELF_COMPUTATION">
-    </artifact>
-    <shortMessage>
-      Nonsensical self computation involving a variable (e.g., x
-      &amp; x)
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="SA_LOCAL_SELF_COMPUTATION"/>
+    <artifact tool="FindBugs" mnemonic="SA_FIELD_SELF_COMPUTATION"/>
+    <name>Nonsensical computation</name>
+    <shortMessage>This code performs a nonsensical self computation involving a field (e.g., x &amp; x). Is this intentional?</shortMessage>
     <info>
-
-      &lt;p&gt; This method performs a nonsensical computation of
-      a local variable with another reference to the same variable
-      (e.g., x&amp;x or x-x). Because of the nature of the
-      computation, this operation doesn't seem to make sense, and
-      may indicate a typo or a logic error. Double check the
-      computation. &lt;/p&gt;
-
+<![CDATA[<p>This method performs a nonsensical computation of a field
+or local variable with another reference to the same field or local
+variable (e.g., x&amp;x or x-x). Because of the nature of the
+computation, this operation doesn't seem to make sense, and may
+indicate a typo or a logic error. Please double check that the
+computation is intended.</p>]]>
     </info>
-    <name>Local Self Computation</name>
-  </findingType>
-  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-  <findingType>
-    <id>SA_FIELD_SELF_COMPARISON</id>
-    <artifact tool="FindBugs" mnemonic="SA_FIELD_SELF_COMPARISON">
-    </artifact>
-    <shortMessage>
-      Self comparison of field with itself
-    </shortMessage>
-    <info>
-
-      &lt;p&gt; This method compares a field with itself, and may
-      indicate a typo or a logic error. Make sure that you are
-      comparing the right things. &lt;/p&gt;
-
-    </info>
-    <name>Field Self Comparison</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SA_LOCAL_SELF_COMPARISON</id>
-    <artifact tool="FindBugs" mnemonic="SA_LOCAL_SELF_COMPARISON">
-    </artifact>
-    <shortMessage>
-      Self comparison of value with itself
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="SA_LOCAL_SELF_COMPARISON"/>
+    <artifact tool="FindBugs" mnemonic="SA_FIELD_SELF_COMPARISON"/>
+    <name>Self comparison</name>
+    <shortMessage>This code compares a field or local variable with itself. Is this intentional?</shortMessage>
     <info>
-
-      &lt;p&gt; This method compares a local variable with itself,
-      and may indicate a typo or a logic error. Make sure that you
-      are comparing the right things. &lt;/p&gt;
-
+<![CDATA[<p>This method compares a field or local variable with
+itself, and may indicate a typo or a logic error. Make sure that you
+are comparing the right things.</p>]]>
     </info>
-    <name>Local Self Comparison</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>DMI_LONG_BITS_TO_DOUBLE_INVOKED_ON_INT</id>
-    <artifact tool="FindBugs"
-	      mnemonic="DMI_LONG_BITS_TO_DOUBLE_INVOKED_ON_INT">
-    </artifact>
-    <shortMessage>
-      Double.longBitsToDouble invoked on an int
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="DMI_LONG_BITS_TO_DOUBLE_INVOKED_ON_INT"/>
+    <name>Double.longBitsToDouble invoked on int</name>
+    <shortMessage>This code invokes Double.longBitsToDouble int which is unlikely to give the intended result.</shortMessage>
     <info>
-
-      &lt;p&gt; The Double.longBitsToDouble method is invoked, but
-      a 32 bit int value is passed as an argument. This almostly
-      certainly is not intended and is unlikely to give the
-      intended result. &lt;/p&gt;
-
+<![CDATA[<p>The <code>Double.longBitsToDouble</code> method is
+invoked, but a 32-bit int value is passed as an argument. This
+almostly certainly is not intended and is unlikely to give the
+intended result due to the primitive widing conversion which will take
+place.</p>]]>
     </info>
-    <name>Long Bits To Double Invoked On Int</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>DMI_RANDOM_USED_ONLY_ONCE</id>
-    <artifact tool="FindBugs"
-	      mnemonic="DMI_RANDOM_USED_ONLY_ONCE">
-    </artifact>
-    <shortMessage>
-      Random object created and used only once
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="DMI_RANDOM_USED_ONLY_ONCE"/>
+    <name>Random used only once</name>
+    <shortMessage>This code creates a Random object but only uses it once.</shortMessage>
     <info>
+<![CDATA[<p>This code creates a <code>java.util.Random</code> object,
+uses it to generate one random number, and then discards the
+object. This produces mediocre quality random numbers and is
+inefficient. If possible, rewrite the code so that the object is
+created once and saved, and each time a new random number is required
+invoke a method on the existing <code>Random</code> object to obtain
+it.</p>
 
-      &lt;p&gt; This code creates a java.util.Random object, uses
-      it to generate one random number, and then discards the
-      Random object. This produces mediocre quality random numbers
-      and is inefficient. If possible, rewrite the code so that
-      the Random object is created once and saved, and each time a
-      new random number is required invoke a method on the
-      existing Random object to obtain it. &lt;/p&gt;
-
-      &lt;p&gt;If it is important that the generated Random
-      numbers not be guessable, you &lt;em&gt;must&lt;/em&gt; not
-      create a new Random for each random number; the values are
-      too easily guessable. You should strongly consider using a
-      java.security.SecureRandom instead (and avoid allocating a
-      new SecureRandom for each random number needed). &lt;/p&gt;
-
+<p>If it is important that the generated random numbers not be
+guessable, you <em>must</em> not create a new <code>Random</code>
+instance for each random number; the values are too easily
+guessable. You should strongly consider using a
+<code>java.security.SecureRandom</code> instead (and avoid allocating
+a new <code>SecureRandom</code> for each random number needed). </p>]]>
     </info>
-    <name>Random Used Only Once</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
