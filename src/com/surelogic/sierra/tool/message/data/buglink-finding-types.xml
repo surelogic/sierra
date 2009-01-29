@@ -2324,6 +2324,7 @@ runtime.</p>]]>
   <findingType>
     <id>SE_NO_SERIALVERSIONID</id>
     <artifact tool="FindBugs" mnemonic="SE_NO_SERIALVERSIONID"/>
+    <artifact tool="PMD" mnemonic="MissingSerialVersionUID"/>
     <name>No serialVersionUID field defined for serialization</name>
     <shortMessage>Class is Serializable, but it doesn't define a serialVersionUID field.</shortMessage>
     <info>
@@ -9130,38 +9131,65 @@ public class Bar {
   <findingType>
     <id>AssignmentInOperand</id>
     <artifact tool="PMD" mnemonic="AssignmentInOperand"/>
-    <name>Assignment In Operand</name>
-    <shortMessage>
-      Avoid assignments in operands; this can make code more
-      complicated and harder to read.
-    </shortMessage>
+    <name>Avoid assignment in operand</name>
+    <shortMessage>This code makes an assignment in an operand. This has been deemed questionable coding practice because it can be complicated and hard to read.</shortMessage>
     <info>
-      Avoid assignments in operands; this can make code more
-      complicated and harder to read.
+<![CDATA[<p>Avoid assignments in operands; this can make code more
+complicated and harder to read.  Consider changing the below code</p>
+
+<pre>
+int x = 2;
+if ((x = getX()) == 3) {
+  System.out.println("3!");
+}
+</pre>
+
+<p>to</p>
+
+<pre>
+int x = getX();
+if (x == 3) {
+  System.out.println("3!");
+}
+</pre>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AtLeastOneConstructor</id>
     <artifact tool="PMD" mnemonic="AtLeastOneConstructor"/>
-    <name>At Least One Constructor</name>
-    <shortMessage>
-      Each class should declare at least one constructor.
-    </shortMessage>
-    <info>Each class should declare at least one constructor.</info>
+    <name>Have at least one constructor</name>
+    <shortMessage>This class does not have an explicit constructor.  Consider adding one.</shortMessage>
+    <info>
+<![CDATA[<p>This class lacks an explicit constructor. An implicit
+constructor has been generated for it by the compiler. If you consider
+this to be a bad coding practice then add an explicit constructor to
+this class.</p>
+
+<pre>
+public class Foo {
+  // no explicit constructor!  not good!
+}
+</pre>
+]]>
+    </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>DontImportSun</id>
     <artifact tool="PMD" mnemonic="DontImportSun"/>
-    <name>Don't Import sun.* Packages</name>
-    <shortMessage>
-      Avoid importing anything from the 'sun.*' packages. These
-      packages are not portable and are likely to change.
-    </shortMessage>
+    <name>Avoid import from sun.*</name>
+    <shortMessage>This class imports from the sun.* packages. This should be avoided because these packages are not portable and are likely to change.</shortMessage>
     <info>
-      Avoid importing anything from the 'sun.*' packages. These
-      packages are not portable and are likely to change.
+<![CDATA[<p>Avoid importing anything from the 'sun.*' packages because
+these packages are not portable and are likely to change.</p>
+
+<pre>
+import sun.misc.foo;
+public class Foo {
+  ...
+}
+</pre>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
@@ -10003,7 +10031,7 @@ if (x != null && x instanceof Bar) {
     <id>CompareObjectsWithEquals</id>
     <artifact tool="PMD" mnemonic="CompareObjectsWithEquals"/>
     <name>Compare objects with equals not ==</name>
-    <shortMessage>Consider using equals() to compare object references.  Avoid comparing them with ==.</shortMessage>
+    <shortMessage>Consider using equals() to compare object references. Avoid comparing them with ==.</shortMessage>
     <info>
 <![CDATA[<p>It has been determined that it is a questionable code
 practice to compare object references with <code>==<code>, use
@@ -10035,7 +10063,7 @@ just return false.  For example, always use
     <id>UnnecessaryLocalBeforeReturn</id>
     <artifact tool="PMD" mnemonic="UnnecessaryLocalBeforeReturn"/>
     <name>Avoid unnecessary local before return</name>
-    <shortMessage>This code appears to create an unnecessary local variable just to return it.  Consider removing this local variable.</shortMessage>
+    <shortMessage>This code appears to create an unnecessary local variable just to return it. Consider removing this local variable.</shortMessage>
     <info>
 <![CDATA[<p>Avoid unnecessarily creating local variables just to
 return them.</p>
@@ -10143,12 +10171,7 @@ public interface ConstantsInterface {
     <id>PreserveStackTrace</id>
     <artifact tool="PMD" mnemonic="PreserveStackTrace"/>
     <name>Preserve Stack Trace</name>
-    <shortMessage>
-      Throwing a new exception from a catch block without passing
-      the original exception into the new Exception will cause the
-      true stack trace to be lost, and can make it difficult to
-      debug effectively.
-    </shortMessage>
+    <shortMessage>This code throws a new exception from a catch block without passing the original exception into the new exception. This causes the true stack trace to be lost. Consider changing this code.</shortMessage>
     <info>
 <![CDATA[<p>Throwing a new exception from a catch block without
 passing the original exception into the new exception will cause the
@@ -10208,67 +10231,115 @@ if (foo.isEmpty()) {
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>FinalizeOverloaded</id>
-    <artifact tool="PMD" mnemonic="FinalizeOverloaded"></artifact>
-    <shortMessage>
-      Methods named finalize() should not have parameters. It is
-      confusing and probably a bug to overload finalize(). It will
-      not be called by the VM.
-    </shortMessage>
+    <artifact tool="PMD" mnemonic="FinalizeOverloaded"/>
+    <name>Avoid overloading finalize</name>
+    <shortMessage>This method overloads the finalize() method with one that has one or more paramenters. It is not be called by the VM.</shortMessage>
     <info>
-      Methods named finalize() should not have parameters. It is
-      confusing and probably a bug to overload finalize(). It will
-      not be called by the VM.
+<![CDATA[<p>Methods named <code>finalize()</code> should not have
+parameters.  It is easy to confuse such a method with a finalizer and
+could lead to a bug. This method will not be called by the VM.  It is
+recommended that you use another name.</p>
+
+<pre>
+public class Foo {
+  // This method is confusing and might be a bug
+  protected void finalize(int a) {
+    ...
+  }
+}
+</pre>]]>
     </info>
-    <name>Finalize Overloaded</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-
   <findingType>
     <id>DuplicateImports</id>
-    <artifact tool="PMD" mnemonic="DuplicateImports"></artifact>
-    <shortMessage>Avoid duplicate import statements.</shortMessage>
-    <info>Avoid duplicate import statements.</info>
-    <name>Duplicate Imports</name>
+    <artifact tool="PMD" mnemonic="DuplicateImports"/>
+    <artifact tool="PMD" mnemonic="ImportFromSamePackage"/>
+    <name>Avoid duplicate import</name>
+    <shortMessage>This compilation unit has an import that duplicates another import.  Remove the duplication.</shortMessage>
+    <info>
+<![CDATA[<p>It is considered bad practice for a compilation unit to
+contain duplicate import statements.  For example, consider
+changing</p>
+
+<pre>
+import java.util.Set;
+import java.util.*;
+public class Foo {
+  ...
+}
+</pre>
+
+<p>to</p>
+
+<pre>
+import java.util.*;
+public class Foo {
+  ...
+}
+</pre>]]>
+</info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>DontImportJavaLang</id>
-    <artifact tool="PMD" mnemonic="DontImportJavaLang"></artifact>
-    <shortMessage>
-      Avoid importing anything from the package 'java.lang'. These
-      classes are automatically imported (JLS 7.5.3).
-    </shortMessage>
+    <artifact tool="PMD" mnemonic="DontImportJavaLang"/>
+    <name>Never explicitly import from java.lang</name>
+    <shortMessage>This compilation unit explicitly imports part or all of the java.lang package. This package is automatically imported.</shortMessage>
     <info>
-      Avoid importing anything from the package 'java.lang'. These
-      classes are automatically imported (JLS 7.5.3).
+<![CDATA[<p>Never explicitly import anything from the
+<code>java.lang</code> package. Classes in this package are
+automatically imported.  For example, both of the import statements
+shown below are unnecessary and can be removed.</p>
+
+<pre>
+import java.lang.String;
+</pre>
+
+<pre>
+import java.lang.*;
+</pre>
+
+<p>See <a
+href="http://java.sun.com/docs/books/jls/third_edition/html/packages.html#7.5.5">the
+Java Language Specification</a> for further details.</p>]]>
     </info>
-    <name>Don't Import java.lang</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UnusedImports</id>
-    <artifact tool="PMD" mnemonic="UnusedImports"></artifact>
-    <shortMessage>Avoid unused import statements.</shortMessage>
-    <info>Avoid unused import statements.</info>
-    <name>Unused Imports</name>
-  </findingType>
-  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-  <findingType>
-    <id>ImportFromSamePackage</id>
-    <artifact tool="PMD" mnemonic="ImportFromSamePackage">
-    </artifact>
-    <shortMessage>
-      No need to import a type that lives in the same package.
-    </shortMessage>
+    <artifact tool="PMD" mnemonic="UnusedImports"/>
+    <name>Remove unused import</name>
+    <shortMessage>This import is not necessary.  Consider removing it from the compilation unit.</shortMessage>
     <info>
-      No need to import a type that lives in the same package.
+<![CDATA[<p>Imports that are not required by the compilation unit
+create a dependency.  For example, consider the below code.</p>
+
+<pre>
+import org.apache.log4j.Logger;
+public class Foo {
+  public static void main(String[] args) {
+    System.out.println("Hello!");
+  }
+}
+</pre>
+
+<p>This compilation unit will <i>not</i> compile without the Apache
+Log4j Jar on its classpath despite the fact that it never uses the
+imported Log4j <code>Logger</code> class.</p>
+
+<p>Unused or unnecessary imports are considered bad coding practice
+and can create unnecessary coupling between classes.</p>
+
+<p>Many IDEs, such as Eclipse, can help you to automatically remove
+unused imports from your program.</p>]]>
     </info>
-    <name>Import From Same Package</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UseProperClassLoader</id>
-    <artifact tool="PMD" mnemonic="UseProperClassLoader"></artifact>
+    <artifact tool="PMD" mnemonic="UseProperClassLoader"/>
+    <name>Use Proper Class Loader</name>
     <shortMessage>
       In J2EE getClassLoader() might not work as expected. Use
       Thread.currentThread().getContextClassLoader() instead.
@@ -10277,14 +10348,12 @@ if (foo.isEmpty()) {
       In J2EE getClassLoader() might not work as expected. Use
       Thread.currentThread().getContextClassLoader() instead.
     </info>
-    <name>Use Proper Class Loader</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>MDBAndSessionBeanNamingConvention</id>
-    <artifact tool="PMD"
-	      mnemonic="MDBAndSessionBeanNamingConvention">
-    </artifact>
+    <artifact tool="PMD" mnemonic="MDBAndSessionBeanNamingConvention"/>
+    <name>MDB And Session Bean Naming Convention</name>
     <shortMessage>
       The EJB Specification state that any MessageDrivenBean or
       SessionBean should be suffixed by Bean.
@@ -10293,14 +10362,12 @@ if (foo.isEmpty()) {
       The EJB Specification state that any MessageDrivenBean or
       SessionBean should be suffixed by Bean.
     </info>
-    <name>MDB And Session Bean Naming Convention</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>RemoteSessionInterfaceNamingConvention</id>
-    <artifact tool="PMD"
-	      mnemonic="RemoteSessionInterfaceNamingConvention">
-    </artifact>
+    <artifact tool="PMD" mnemonic="RemoteSessionInterfaceNamingConvention"/>
+    <name>Remote Session Interface Naming Convention</name>
     <shortMessage>
       Remote Home interface of a Session EJB should be suffixed by
       'Home'.
@@ -10309,14 +10376,12 @@ if (foo.isEmpty()) {
       Remote Home interface of a Session EJB should be suffixed by
       'Home'.
     </info>
-    <name>Remote Session Interface Naming Convention</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>LocalInterfaceSessionNamingConvention</id>
-    <artifact tool="PMD"
-	      mnemonic="LocalInterfaceSessionNamingConvention">
-    </artifact>
+    <artifact tool="PMD" mnemonic="LocalInterfaceSessionNamingConvention"/>
+    <name>Local Interface Session Naming Convention</name>
     <shortMessage>
       The Local Interface of a Session EJB should be suffixed by
       'Local'.
@@ -10325,13 +10390,12 @@ if (foo.isEmpty()) {
       The Local Interface of a Session EJB should be suffixed by
       'Local'.
     </info>
-    <name>Local Interface Session Naming Convention</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>LocalHomeNamingConvention</id>
-    <artifact tool="PMD" mnemonic="LocalHomeNamingConvention">
-    </artifact>
+    <artifact tool="PMD" mnemonic="LocalHomeNamingConvention"/>
+    <name>Local Home Naming Convention</name>
     <shortMessage>
       The Local Home interface of a Session EJB should be suffixed
       by 'LocalHome'.
@@ -10340,66 +10404,48 @@ if (foo.isEmpty()) {
       The Local Home interface of a Session EJB should be suffixed
       by 'LocalHome'.
     </info>
-    <name>Local Home Naming Convention</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>RemoteInterfaceNamingConvention</id>
-    <artifact tool="PMD"
-	      mnemonic="RemoteInterfaceNamingConvention">
-    </artifact>
+    <artifact tool="PMD" mnemonic="RemoteInterfaceNamingConvention"/>
+    <name>Remote Interface Naming Convention</name>
     <shortMessage>
       Remote Interface of a Session EJB should NOT be suffixed.
     </shortMessage>
     <info>
       Remote Interface of a Session EJB should NOT be suffixed.
     </info>
-    <name>Remote Interface Naming Convention</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>BeanMembersShouldSerialize</id>
-    <artifact tool="PMD" mnemonic="BeanMembersShouldSerialize">
-    </artifact>
-    <shortMessage>
-      If a class is a bean, or is referenced by a bean directly or
-      indirectly it needs to be serializable. Member variables
-      need to be marked as transient, static, or have accessor
-      methods in the class. Marking variables as transient is the
-      safest and easiest modification. Accessor methods should
-      follow the Java naming conventions, i.e.if you have a
-      variable foo, you should provide getFoo and setFoo methods.
-    </shortMessage>
-    <info>
-      If a class is a bean, or is referenced by a bean directly or
-      indirectly it needs to be serializable. Member variables
-      need to be marked as transient, static, or have accessor
-      methods in the class. Marking variables as transient is the
-      safest and easiest modification. Accessor methods should
-      follow the Java naming conventions, i.e.if you have a
-      variable foo, you should provide getFoo and setFoo methods.
-    </info>
+    <artifact tool="PMD" mnemonic="BeanMembersShouldSerialize"/>
     <name>Bean Members Should Serialize</name>
-  </findingType>
-  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-  <findingType>
-    <id>MissingSerialVersionUID</id>
-    <artifact tool="PMD" mnemonic="MissingSerialVersionUID">
-    </artifact>
     <shortMessage>
-      Classes that are serializable should provide a
-      serialVersionUID field.
+      If a class is a bean, or is referenced by a bean directly or
+      indirectly it needs to be serializable. Member variables
+      need to be marked as transient, static, or have accessor
+      methods in the class. Marking variables as transient is the
+      safest and easiest modification. Accessor methods should
+      follow the Java naming conventions, i.e.if you have a
+      variable foo, you should provide getFoo and setFoo methods.
     </shortMessage>
     <info>
-      Classes that are serializable should provide a
-      serialVersionUID field.
+      If a class is a bean, or is referenced by a bean directly or
+      indirectly it needs to be serializable. Member variables
+      need to be marked as transient, static, or have accessor
+      methods in the class. Marking variables as transient is the
+      safest and easiest modification. Accessor methods should
+      follow the Java naming conventions, i.e.if you have a
+      variable foo, you should provide getFoo and setFoo methods.
     </info>
-    <name>Missing Serial Version UID</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>JUnitStaticSuite</id>
-    <artifact tool="PMD" mnemonic="JUnitStaticSuite"></artifact>
+    <artifact tool="PMD" mnemonic="JUnitStaticSuite"/>
+    <name>JUnit Static Suite</name>
     <shortMessage>
       The suite() method in a JUnit test needs to be both public
       and static.
@@ -10408,24 +10454,22 @@ if (foo.isEmpty()) {
       The suite() method in a JUnit test needs to be both public
       and static.
     </info>
-    <name>JUnit Static Suite</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>JUnitSpelling</id>
-    <artifact tool="PMD" mnemonic="JUnitSpelling"></artifact>
+    <artifact tool="PMD" mnemonic="JUnitSpelling"/>
+    <name>JUnit Spelling</name>
     <shortMessage>
       Some JUnit framework methods are easy to misspell.
     </shortMessage>
     <info>Some JUnit framework methods are easy to misspell.</info>
-    <name>JUnit Spelling</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>JUnitAssertionsShouldIncludeMessage</id>
-    <artifact tool="PMD"
-	      mnemonic="JUnitAssertionsShouldIncludeMessage">
-    </artifact>
+    <artifact tool="PMD" mnemonic="JUnitAssertionsShouldIncludeMessage"/>
+    <name>JUnit Assertions Should Include Message</name>
     <shortMessage>
       JUnit assertions should include a message - i.e., use the
       three argument version of assertEquals(), not the two
@@ -10436,13 +10480,12 @@ if (foo.isEmpty()) {
       three argument version of assertEquals(), not the two
       argument version.
     </info>
-    <name>JUnit Assertions Should Include Message</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>JUnitTestsShouldIncludeAssert</id>
-    <artifact tool="PMD" mnemonic="JUnitTestsShouldIncludeAssert">
-    </artifact>
+    <artifact tool="PMD" mnemonic="JUnitTestsShouldIncludeAssert"/>
+    <name>JUnit Tests Should Include Assert</name>
     <shortMessage>
       JUnit tests should include at least one assertion. This
       makes the tests more robust, and using assert with messages
@@ -10453,13 +10496,12 @@ if (foo.isEmpty()) {
       makes the tests more robust, and using assert with messages
       provide the developer a clearer idea of what the test does.
     </info>
-    <name>JUnit Tests Should Include Assert</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>TestClassWithoutTestCases</id>
-    <artifact tool="PMD" mnemonic="TestClassWithoutTestCases">
-    </artifact>
+    <artifact tool="PMD" mnemonic="TestClassWithoutTestCases"/>
+    <name>Test Class Without Test Cases</name>
     <shortMessage>
       Test classes end with the suffix Test. Having a non-test
       class with that name is not a good practice, since most
@@ -10472,13 +10514,12 @@ if (foo.isEmpty()) {
       people will assume it is a test case. Test classes have test
       methods named testXXX.
     </info>
-    <name>Test Class Without Test Cases</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UnnecessaryBooleanAssertion</id>
-    <artifact tool="PMD" mnemonic="UnnecessaryBooleanAssertion">
-    </artifact>
+    <artifact tool="PMD" mnemonic="UnnecessaryBooleanAssertion"/>
+    <name>Unnecessary Boolean Assertion</name>
     <shortMessage>
       A JUnit test assertion with a boolean literal is unnecessary
       since it always will eval to the same thing. Consider using
@@ -10495,14 +10536,12 @@ if (foo.isEmpty()) {
       assertFalse(false). If you just want a test to halt, use the
       fail method.
     </info>
-    <name>Unnecessary Boolean Assertion</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UseAssertEqualsInsteadOfAssertTrue</id>
-    <artifact tool="PMD"
-	      mnemonic="UseAssertEqualsInsteadOfAssertTrue">
-    </artifact>
+    <artifact tool="PMD" mnemonic="UseAssertEqualsInsteadOfAssertTrue"/>
+    <name>Use Assert Equals Instead Of Assert True</name>
     <shortMessage>
       This rule detects JUnit assertions in object equality. These
       assertions should be made by more specific methods, like
@@ -10513,14 +10552,12 @@ if (foo.isEmpty()) {
       assertions should be made by more specific methods, like
       assertEquals.
     </info>
-    <name>Use Assert Equals Instead Of Assert True</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UseAssertSameInsteadOfAssertTrue</id>
-    <artifact tool="PMD"
-	      mnemonic="UseAssertSameInsteadOfAssertTrue">
-    </artifact>
+    <artifact tool="PMD" mnemonic="UseAssertSameInsteadOfAssertTrue"/>
+    <name>Use Assert Same Instead Of Assert True</name>
     <shortMessage>
       This rule detects JUnit assertions in object references
       equality. These assertions should be made by more specific
@@ -10531,14 +10568,12 @@ if (foo.isEmpty()) {
       equality. These assertions should be made by more specific
       methods, like assertSame, assertNotSame.
     </info>
-    <name>Use Assert Same Instead Of Assert True</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UseAssertNullInsteadOfAssertTrue</id>
-    <artifact tool="PMD"
-	      mnemonic="UseAssertNullInsteadOfAssertTrue">
-    </artifact>
+    <artifact tool="PMD" mnemonic="UseAssertNullInsteadOfAssertTrue"/>
+    <name>Use Assert Null Instead Of Assert True</name>
     <shortMessage>
       This rule detects JUnit assertions in object references
       equality. These assertions should be made by more specific
@@ -10549,13 +10584,12 @@ if (foo.isEmpty()) {
       equality. These assertions should be made by more specific
       methods, like assertNull, assertNotNull.
     </info>
-    <name>Use Assert Null Instead Of Assert True</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SimplifyBooleanAssertion</id>
-    <artifact tool="PMD" mnemonic="SimplifyBooleanAssertion">
-    </artifact>
+    <artifact tool="PMD" mnemonic="SimplifyBooleanAssertion"/>
+    <name>Simplify Boolean Assertion</name>
     <shortMessage>
       Avoid negation in an assertTrue or assertFalse test. For
       example, rephrase: assertTrue(!expr); as: assertFalse(expr);
@@ -10564,13 +10598,12 @@ if (foo.isEmpty()) {
       Avoid negation in an assertTrue or assertFalse test. For
       example, rephrase: assertTrue(!expr); as: assertFalse(expr);
     </info>
-    <name>Simplify Boolean Assertion</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UseCorrectExceptionLogging</id>
-    <artifact tool="PMD" mnemonic="UseCorrectExceptionLogging">
-    </artifact>
+    <artifact tool="PMD" mnemonic="UseCorrectExceptionLogging"/>
+    <name>Use Correct Exception Logging</name>
     <shortMessage>
       To make sure the full stacktrace is printed out, use the
       logging statement with 2 arguments: a String and a
@@ -10581,12 +10614,12 @@ if (foo.isEmpty()) {
       logging statement with 2 arguments: a String and a
       Throwable.
     </info>
-    <name>Use Correct Exception Logging</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>ProperLogger</id>
-    <artifact tool="PMD" mnemonic="ProperLogger"></artifact>
+    <artifact tool="PMD" mnemonic="ProperLogger"/>
+    <name>Proper Logger</name>
     <shortMessage>
       A logger should normally be defined private static final and
       have the correct class. Private final Log log; is also
@@ -10601,56 +10634,56 @@ if (foo.isEmpty()) {
       around, with the restriction that the logger needs to be
       passed into the constructor.
     </info>
-    <name>Proper Logger</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>MoreThanOneLogger</id>
-    <artifact tool="PMD" mnemonic="MoreThanOneLogger"></artifact>
+    <artifact tool="PMD" mnemonic="MoreThanOneLogger"/>
+    <name>More Than One Logger</name>
     <shortMessage>
       Normally only one logger is used in each class.
     </shortMessage>
     <info>Normally only one logger is used in each class.</info>
-    <name>More Than One Logger</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>LoggerIsNotStaticFinal</id>
-    <artifact tool="PMD" mnemonic="LoggerIsNotStaticFinal">
-    </artifact>
+    <artifact tool="PMD" mnemonic="LoggerIsNotStaticFinal"/>
+    <name>Logger Is Not Static Final</name>
     <shortMessage>
       In most cases, the Logger can be declared static and final.
     </shortMessage>
     <info>
       In most cases, the Logger can be declared static and final.
     </info>
-    <name>Logger Is Not Static Final</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SystemPrintln</id>
-    <artifact tool="PMD" mnemonic="SystemPrintln"></artifact>
+    <artifact tool="PMD" mnemonic="SystemPrintln"/>
+    <name>Use of System Println</name>
     <shortMessage>
       System.(out|err).print is used, consider using a logger.
     </shortMessage>
     <info>
       System.(out|err).print is used, consider using a logger.
     </info>
-    <name>Use of System Println</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AvoidPrintStackTrace</id>
-    <artifact tool="PMD" mnemonic="AvoidPrintStackTrace"></artifact>
+    <artifact tool="PMD" mnemonic="AvoidPrintStackTrace"/>
+    <name>Avoid Print Stack Trace</name>
     <shortMessage>
       Avoid printStackTrace(); use a logger call instead.
     </shortMessage>
     <info>Avoid printStackTrace(); use a logger call instead.</info>
-    <name>Avoid Print Stack Trace</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>ReplaceVectorWithList</id>
-    <artifact tool="PMD" mnemonic="ReplaceVectorWithList">
-    </artifact>
+    <artifact tool="PMD" mnemonic="ReplaceVectorWithList"/>
+    <name>Replace Vector With List</name>
     <shortMessage>
       Consider replacing Vector usages with the newer
       java.util.ArrayList if expensive threadsafe operation is not
@@ -10661,13 +10694,12 @@ if (foo.isEmpty()) {
       java.util.ArrayList if expensive threadsafe operation is not
       required.
     </info>
-    <name>Replace Vector With List</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>ReplaceHashtableWithMap</id>
-    <artifact tool="PMD" mnemonic="ReplaceHashtableWithMap">
-    </artifact>
+    <artifact tool="PMD" mnemonic="ReplaceHashtableWithMap"/>
+    <name>Replace Hashtable With Map</name>
     <shortMessage>
       Consider replacing this Hashtable with the newer
       java.util.Map
@@ -10676,14 +10708,12 @@ if (foo.isEmpty()) {
       Consider replacing this Hashtable with the newer
       java.util.Map
     </info>
-    <name>Replace Hashtable With Map</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>ReplaceEnumerationWithIterator</id>
-    <artifact tool="PMD"
-	      mnemonic="ReplaceEnumerationWithIterator">
-    </artifact>
+    <artifact tool="PMD" mnemonic="ReplaceEnumerationWithIterator"/>
+    <name>Replace Enumeration With Iterator</name>
     <shortMessage>
       Consider replacing this Enumeration with the newer
       java.util.Iterator
@@ -10692,40 +10722,36 @@ if (foo.isEmpty()) {
       Consider replacing this Enumeration with the newer
       java.util.Iterator
     </info>
-    <name>Replace Enumeration With Iterator</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AvoidEnumAsIdentifier</id>
-    <artifact tool="PMD" mnemonic="AvoidEnumAsIdentifier">
-    </artifact>
+    <artifact tool="PMD" mnemonic="AvoidEnumAsIdentifier"/>
+    <name>Avoid Enum As Identifier</name>
     <shortMessage>
       Finds all places where 'enum' is used as an identifier.
     </shortMessage>
     <info>
       Finds all places where 'enum' is used as an identifier.
     </info>
-    <name>Avoid Enum As Identifier</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AvoidAssertAsIdentifier</id>
-    <artifact tool="PMD" mnemonic="AvoidAssertAsIdentifier">
-    </artifact>
+    <artifact tool="PMD" mnemonic="AvoidAssertAsIdentifier"/>
+    <name>Avoid Assert As Identifier</name>
     <shortMessage>
       Finds all places where 'assert' is used as an identifier.
     </shortMessage>
     <info>
       Finds all places where 'assert' is used as an identifier.
     </info>
-    <name>Avoid Assert As Identifier</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>JUnit4TestShouldUseBeforeAnnotation</id>
-    <artifact tool="PMD"
-	      mnemonic="JUnit4TestShouldUseBeforeAnnotation">
-    </artifact>
+    <artifact tool="PMD" mnemonic="JUnit4TestShouldUseBeforeAnnotation"/>
+    <name>JUnit4Test Should Use Before Annotation</name>
     <shortMessage>
       In JUnit 3, the setUp method was used to set up all data
       entities required in running tests. JUnit 4 skips the setUp
@@ -10738,14 +10764,12 @@ if (foo.isEmpty()) {
       method and executes all methods annotated with @Before
       before all tests
     </info>
-    <name>JUnit4Test Should Use Before Annotation</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>JUnit4TestShouldUseAfterAnnotation</id>
-    <artifact tool="PMD"
-	      mnemonic="JUnit4TestShouldUseAfterAnnotation">
-    </artifact>
+    <artifact tool="PMD" mnemonic="JUnit4TestShouldUseAfterAnnotation"/>
+    <name>JUnit4Test Should Use After Annotation</name>
     <shortMessage>
       In JUnit 3, the tearDown method was used to clean up all
       data entities required in running tests. JUnit 4 skips the
@@ -10758,14 +10782,12 @@ if (foo.isEmpty()) {
       tearDown method and executes all methods annotated with
       @After after running each test
     </info>
-    <name>JUnit4Test Should Use After Annotation</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>JUnit4TestShouldUseTestAnnotation</id>
-    <artifact tool="PMD"
-	      mnemonic="JUnit4TestShouldUseTestAnnotation">
-    </artifact>
+    <artifact tool="PMD" mnemonic="JUnit4TestShouldUseTestAnnotation"/>
+    <name>JUnit4Test Should Use Test Annotation</name>
     <shortMessage>
       In JUnit 3, the framework executed all methods which started
       with the word test as a unit test. In JUnit 4, only methods
@@ -10776,14 +10798,12 @@ if (foo.isEmpty()) {
       with the word test as a unit test. In JUnit 4, only methods
       annotated with the @Test annotation are executed.
     </info>
-    <name>JUnit4Test Should Use Test Annotation</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>JUnit4SuitesShouldUseSuiteAnnotation</id>
-    <artifact tool="PMD"
-	      mnemonic="JUnit4SuitesShouldUseSuiteAnnotation">
-    </artifact>
+    <artifact tool="PMD" mnemonic="JUnit4SuitesShouldUseSuiteAnnotation"/>
+    <name>JUnit4Suites Should Use Suite Annotation</name>
     <shortMessage>
       In JUnit 3, test suites are indicated by the suite() method.
       In JUnit 4, suites are indicated through the
@@ -10794,20 +10814,20 @@ if (foo.isEmpty()) {
       In JUnit 4, suites are indicated through the
       @RunWith(Suite.class) annotation.
     </info>
-    <name>JUnit4Suites Should Use Suite Annotation</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>JUnitUseExpected</id>
-    <artifact tool="PMD" mnemonic="JUnitUseExpected"></artifact>
-    <shortMessage></shortMessage>
-    <info></info>
+    <artifact tool="PMD" mnemonic="JUnitUseExpected"/>
     <name>JUnit Use Expected</name>
+    <shortMessage>TODO</shortMessage>
+    <info>TODO</info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>ShortVariable</id>
-    <artifact tool="PMD" mnemonic="ShortVariable"></artifact>
+    <artifact tool="PMD" mnemonic="ShortVariable"/>
+    <name>Short Variable</name>
     <shortMessage>
       Detects when a field, local, or parameter has a very short
       name.
@@ -10816,12 +10836,12 @@ if (foo.isEmpty()) {
       Detects when a field, local, or parameter has a very short
       name.
     </info>
-    <name>Short Variable</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>LongVariable</id>
-    <artifact tool="PMD" mnemonic="LongVariable"></artifact>
+    <artifact tool="PMD" mnemonic="LongVariable"/>
+    <name>Long Variable</name>
     <shortMessage>
       Detects when a field, formal or local variable is declared
       with a long name.
@@ -10830,32 +10850,32 @@ if (foo.isEmpty()) {
       Detects when a field, formal or local variable is declared
       with a long name.
     </info>
-    <name>Long Variable</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>ShortMethodName</id>
-    <artifact tool="PMD" mnemonic="ShortMethodName"></artifact>
+    <artifact tool="PMD" mnemonic="ShortMethodName"/>
+    <name>Short Method Name</name>
     <shortMessage>
       Detects when very short method names are used.
     </shortMessage>
     <info>Detects when very short method names are used.</info>
-    <name>Short Method Name</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AbstractNaming</id>
-    <artifact tool="PMD" mnemonic="AbstractNaming"></artifact>
+    <artifact tool="PMD" mnemonic="AbstractNaming"/>
+    <name>Abstract Naming</name>
     <shortMessage>
       Abstract classes should be named 'AbstractXXX'.
     </shortMessage>
     <info>Abstract classes should be named 'AbstractXXX'.</info>
-    <name>Abstract Naming</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AvoidDollarSigns</id>
-    <artifact tool="PMD" mnemonic="AvoidDollarSigns"></artifact>
+    <artifact tool="PMD" mnemonic="AvoidDollarSigns"/>
+    <name>Avoid Dollar Signs</name>
     <shortMessage>
       Avoid using dollar signs in variable/method/class/interface
       names.
@@ -10864,14 +10884,12 @@ if (foo.isEmpty()) {
       Avoid using dollar signs in variable/method/class/interface
       names.
     </info>
-    <name>Avoid Dollar Signs</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>MethodWithSameNameAsEnclosingClass</id>
-    <artifact tool="PMD"
-	      mnemonic="MethodWithSameNameAsEnclosingClass">
-    </artifact>
+    <artifact tool="PMD" mnemonic="MethodWithSameNameAsEnclosingClass"/>
+    <name>Method With Same Name As Enclosing Class</name>
     <shortMessage>
       Non-constructor methods should not have the same name as the
       enclosing class.
@@ -10880,14 +10898,12 @@ if (foo.isEmpty()) {
       Non-constructor methods should not have the same name as the
       enclosing class.
     </info>
-    <name>Method With Same Name As Enclosing Class</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-
   <findingType>
     <id>SuspiciousConstantFieldName</id>
-    <artifact tool="PMD" mnemonic="SuspiciousConstantFieldName">
-    </artifact>
+    <artifact tool="PMD" mnemonic="SuspiciousConstantFieldName"/>
+    <name>Suspicious Constant Field Name</name>
     <shortMessage>
       A field name is all in uppercase characters, which in Sun's
       Java naming conventions indicate a constant. However, the
@@ -10898,15 +10914,12 @@ if (foo.isEmpty()) {
       Java naming conventions indicate a constant. However, the
       field is not final.
     </info>
-    <name>Suspicious Constant Field Name</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-
   <findingType>
     <id>AvoidFieldNameMatchingTypeName</id>
-    <artifact tool="PMD"
-	      mnemonic="AvoidFieldNameMatchingTypeName">
-    </artifact>
+    <artifact tool="PMD" mnemonic="AvoidFieldNameMatchingTypeName"/>
+    <name>Avoid Field Name Matching Type Name</name>
     <shortMessage>
       It is somewhat confusing to have a field name matching the
       declaring class name. This probably means that type and or
@@ -10917,14 +10930,12 @@ if (foo.isEmpty()) {
       declaring class name. This probably means that type and or
       field names could be more precise.
     </info>
-    <name>Avoid Field Name Matching Type Name</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AvoidFieldNameMatchingMethodName</id>
-    <artifact tool="PMD"
-	      mnemonic="AvoidFieldNameMatchingMethodName">
-    </artifact>
+    <artifact tool="PMD" mnemonic="AvoidFieldNameMatchingMethodName"/>
+    <name>Avoid Field Name Matching Method Name</name>
     <shortMessage>
       It is somewhat confusing to have a field name with the same
       name as a method. While this is totally legal, having
@@ -10937,12 +10948,12 @@ if (foo.isEmpty()) {
       information (field) and actions (method) is not clear
       naming.
     </info>
-    <name>Avoid Field Name Matching Method Name</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>NoPackage</id>
-    <artifact tool="PMD" mnemonic="NoPackage"></artifact>
+    <artifact tool="PMD" mnemonic="NoPackage"/>
+    <name>No Package</name>
     <shortMessage>
       Detects when a class or interface does not have a package
       definition.
@@ -10951,12 +10962,12 @@ if (foo.isEmpty()) {
       Detects when a class or interface does not have a package
       definition.
     </info>
-    <name>No Package</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>PackageCase</id>
-    <artifact tool="PMD" mnemonic="PackageCase"></artifact>
+    <artifact tool="PMD" mnemonic="PackageCase"/>
+    <name>Package Case</name>
     <shortMessage>
       Detects when a package definition contains upper case
       characters.
@@ -10965,13 +10976,12 @@ if (foo.isEmpty()) {
       Detects when a package definition contains upper case
       characters.
     </info>
-    <name>Package Case</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>MisleadingVariableName</id>
-    <artifact tool="PMD" mnemonic="MisleadingVariableName">
-    </artifact>
+    <artifact tool="PMD" mnemonic="MisleadingVariableName"/>
+    <name>Misleading Variable Name</name>
     <shortMessage>
       Detects when a non-field has a name starting with 'm_'. This
       usually indicates a field and thus is confusing.
@@ -10980,12 +10990,12 @@ if (foo.isEmpty()) {
       Detects when a non-field has a name starting with 'm_'. This
       usually indicates a field and thus is confusing.
     </info>
-    <name>Misleading Variable Name</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>BooleanGetMethodName</id>
-    <artifact tool="PMD" mnemonic="BooleanGetMethodName"></artifact>
+    <artifact tool="PMD" mnemonic="BooleanGetMethodName"/>
+    <name>Boolean Get Method Name</name>
     <shortMessage>
       Looks for methods named 'getX()' with 'boolean' as the
       return type. The convention is to name these methods
@@ -10996,26 +11006,24 @@ if (foo.isEmpty()) {
       return type. The convention is to name these methods
       'isX()'.
     </info>
-    <name>Boolean Get Method Name</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>LocalVariableCouldBeFinal</id>
-    <artifact tool="PMD" mnemonic="LocalVariableCouldBeFinal">
-    </artifact>
+    <artifact tool="PMD" mnemonic="LocalVariableCouldBeFinal"/>
+    <name>Local Variable Could Be Final</name>
     <shortMessage>
       A local variable assigned only once can be declared final.
     </shortMessage>
     <info>
       A local variable assigned only once can be declared final.
     </info>
-    <name>Local Variable Could Be Final</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>MethodArgumentCouldBeFinal</id>
-    <artifact tool="PMD" mnemonic="MethodArgumentCouldBeFinal">
-    </artifact>
+    <artifact tool="PMD" mnemonic="MethodArgumentCouldBeFinal"/>
+    <name>Method Argument Could Be Final</name>
     <shortMessage>
       A method argument that is never assigned can be declared
       final.
@@ -11024,25 +11032,22 @@ if (foo.isEmpty()) {
       A method argument that is never assigned can be declared
       final.
     </info>
-    <name>Method Argument Could Be Final</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AvoidInstantiatingObjectsInLoops</id>
-    <artifact tool="PMD"
-	      mnemonic="AvoidInstantiatingObjectsInLoops">
-    </artifact>
+    <artifact tool="PMD" mnemonic="AvoidInstantiatingObjectsInLoops"/>
+    <name>Avoid Instantiating Objects In Loops</name>
     <shortMessage>
       Detects when a new object is created inside a loop
     </shortMessage>
     <info>Detects when a new object is created inside a loop</info>
-    <name>Avoid Instantiating Objects In Loops</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UseArrayListInsteadOfVector</id>
-    <artifact tool="PMD" mnemonic="UseArrayListInsteadOfVector">
-    </artifact>
+    <artifact tool="PMD" mnemonic="UseArrayListInsteadOfVector"/>
+    <name>Use Array List Instead Of Vector</name>
     <shortMessage>
       ArrayList is a much better Collection implementation than
       Vector.
@@ -11051,12 +11056,12 @@ if (foo.isEmpty()) {
       ArrayList is a much better Collection implementation than
       Vector.
     </info>
-    <name>Use Array List Instead Of Vector</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SimplifyStartsWith</id>
-    <artifact tool="PMD" mnemonic="SimplifyStartsWith"></artifact>
+    <artifact tool="PMD" mnemonic="SimplifyStartsWith"/>
+    <name>Simplify Starts With</name>
     <shortMessage>
       Since it passes in a literal of length 1, this call to
       String.startsWith can be rewritten using String.charAt(0) to
@@ -11067,13 +11072,12 @@ if (foo.isEmpty()) {
       String.startsWith can be rewritten using String.charAt(0) to
       save some time.
     </info>
-    <name>Simplify Starts With</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-
   <findingType>
     <id>UseArraysAsList</id>
-    <artifact tool="PMD" mnemonic="UseArraysAsList"></artifact>
+    <artifact tool="PMD" mnemonic="UseArraysAsList"/>
+    <name>Use Arrays As List</name>
     <shortMessage>
       The class java.util.Arrays has a &quot;asList&quot; method
       that should be use when you want to create a new List from
@@ -11086,12 +11090,12 @@ if (foo.isEmpty()) {
       an array of objects. It is faster than executing a loop to
       cpy all the elements of the array one by one
     </info>
-    <name>Use Arrays As List</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AvoidArrayLoops</id>
-    <artifact tool="PMD" mnemonic="AvoidArrayLoops"></artifact>
+    <artifact tool="PMD" mnemonic="AvoidArrayLoops"/>
+    <name>Avoid Array Loops</name>
     <shortMessage>
       Instead of copying data between two arrays, use
       System.arraycopy method
@@ -11100,24 +11104,22 @@ if (foo.isEmpty()) {
       Instead of copying data between two arrays, use
       System.arraycopy method
     </info>
-    <name>Avoid Array Loops</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UnnecessaryWrapperObjectCreation</id>
-    <artifact tool="PMD"
-	      mnemonic="UnnecessaryWrapperObjectCreation">
-    </artifact>
+    <artifact tool="PMD" mnemonic="UnnecessaryWrapperObjectCreation"/>
+    <name>Unnecessary Wrapper Object Creation</name>
     <shortMessage>
       Parsing method should be called directy instead.
     </shortMessage>
     <info>Parsing method should be called directy instead.</info>
-    <name>Unnecessary Wrapper Object Creation</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AddEmptyString</id>
-    <artifact tool="PMD" mnemonic="AddEmptyString"></artifact>
+    <artifact tool="PMD" mnemonic="AddEmptyString"/>
+    <name>Add Empty String</name>
     <shortMessage>
       Finds empty string literals which are being added. This is
       an inefficient way to convert any type to a String.
@@ -11126,13 +11128,12 @@ if (foo.isEmpty()) {
       Finds empty string literals which are being added. This is
       an inefficient way to convert any type to a String.
     </info>
-    <name>Add Empty String</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AvoidCatchingThrowable</id>
-    <artifact tool="PMD" mnemonic="AvoidCatchingThrowable">
-    </artifact>
+    <artifact tool="PMD" mnemonic="AvoidCatchingThrowable"/>
+    <name>Avoid Catching Throwable</name>
     <shortMessage>
       This is dangerous because it casts too wide a net; it can
       catch things like OutOfMemoryError.
@@ -11141,14 +11142,12 @@ if (foo.isEmpty()) {
       This is dangerous because it casts too wide a net; it can
       catch things like OutOfMemoryError.
     </info>
-    <name>Avoid Catching Throwable</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SignatureDeclareThrowsException</id>
-    <artifact tool="PMD"
-	      mnemonic="SignatureDeclareThrowsException">
-    </artifact>
+    <artifact tool="PMD" mnemonic="SignatureDeclareThrowsException"/>
+    <name>Signature Declare Throws Exception</name>
     <shortMessage>
       It is unclear which exceptions that can be thrown from the
       methods. It might be difficult to document and understand
@@ -11161,13 +11160,12 @@ if (foo.isEmpty()) {
       the vague interfaces. Use either a class derived from
       RuntimeException or a checked exception.
     </info>
-    <name>Signature Declare Throws Exception</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>ExceptionAsFlowControl</id>
-    <artifact tool="PMD" mnemonic="ExceptionAsFlowControl">
-    </artifact>
+    <artifact tool="PMD" mnemonic="ExceptionAsFlowControl"/>
+    <name>Exception As Flow Control</name>
     <shortMessage>
       Using Exceptions as flow control leads to GOTOish code and
       obscures true exceptions when debugging.
@@ -11176,12 +11174,12 @@ if (foo.isEmpty()) {
       Using Exceptions as flow control leads to GOTOish code and
       obscures true exceptions when debugging.
     </info>
-    <name>Exception As Flow Control</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AvoidCatchingNPE</id>
-    <artifact tool="PMD" mnemonic="AvoidCatchingNPE"></artifact>
+    <artifact tool="PMD" mnemonic="AvoidCatchingNPE"/>
+    <name>Avoid Catching NullPointerException</name>
     <shortMessage>
       Code should never throw NPE under normal circumstances. A
       catch block may hide the original error, causing other more
@@ -11192,14 +11190,12 @@ if (foo.isEmpty()) {
       catch block may hide the original error, causing other more
       subtle errors in its wake.
     </info>
-    <name>Avoid Catching NullPointerException</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AvoidThrowingRawExceptionTypes</id>
-    <artifact tool="PMD"
-	      mnemonic="AvoidThrowingRawExceptionTypes">
-    </artifact>
+    <artifact tool="PMD" mnemonic="AvoidThrowingRawExceptionTypes"/>
+    <name>Avoid Throwing Raw Exception Types</name>
     <shortMessage>
       Avoid throwing certain exception types. Rather than throw a
       raw RuntimeException, Throwable, Exception, or Error, use a
@@ -11210,14 +11206,12 @@ if (foo.isEmpty()) {
       raw RuntimeException, Throwable, Exception, or Error, use a
       subclassed exception or error instead.
     </info>
-    <name>Avoid Throwing Raw Exception Types</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AvoidThrowingNullPointerException</id>
-    <artifact tool="PMD"
-	      mnemonic="AvoidThrowingNullPointerException">
-    </artifact>
+    <artifact tool="PMD" mnemonic="AvoidThrowingNullPointerException"/>
+    <name>Avoid Throwing NullPointerException</name>
     <shortMessage>
       Avoid throwing a NullPointerException - it's confusing
       because most people will assume that the virtual machine
@@ -11232,13 +11226,12 @@ if (foo.isEmpty()) {
       instead; this will be clearly seen as a programmer-initiated
       exception.
     </info>
-    <name>Avoid Throwing NullPointerException</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AvoidRethrowingException</id>
-    <artifact tool="PMD" mnemonic="AvoidRethrowingException">
-    </artifact>
+    <artifact tool="PMD" mnemonic="AvoidRethrowingException"/>
+    <name>Avoid Rethrowing Exception</name>
     <shortMessage>
       Catch blocks that merely rethrow a caught exception only add
       to code size and runtime complexity.
@@ -11247,24 +11240,22 @@ if (foo.isEmpty()) {
       Catch blocks that merely rethrow a caught exception only add
       to code size and runtime complexity.
     </info>
-    <name>Avoid Rethrowing Exception</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>DoNotExtendJavaLangError</id>
-    <artifact tool="PMD" mnemonic="DoNotExtendJavaLangError">
-    </artifact>
+    <artifact tool="PMD" mnemonic="DoNotExtendJavaLangError"/>
+    <name>Do Not Extend java.lang.Error</name>
     <shortMessage>
       Errors are system exceptions. Do not extend them.
     </shortMessage>
     <info>Errors are system exceptions. Do not extend them.</info>
-    <name>Do Not Extend java.lang.Error</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AvoidDuplicateLiterals</id>
-    <artifact tool="PMD" mnemonic="AvoidDuplicateLiterals">
-    </artifact>
+    <artifact tool="PMD" mnemonic="AvoidDuplicateLiterals"/>
+    <name>Avoid Duplicate Literals</name>
     <shortMessage>
       Code containing duplicate String literals can usually be
       improved by declaring the String as a constant field.
@@ -11273,13 +11264,12 @@ if (foo.isEmpty()) {
       Code containing duplicate String literals can usually be
       improved by declaring the String as a constant field.
     </info>
-    <name>Avoid Duplicate Literals</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>InefficientStringBuffering</id>
-    <artifact tool="PMD" mnemonic="InefficientStringBuffering">
-    </artifact>
+    <artifact tool="PMD" mnemonic="InefficientStringBuffering"/>
+    <name>Inefficient String Buffering</name>
     <shortMessage>
       Avoid concatenating non literals in a StringBuffer
       constructor or append().
@@ -11288,13 +11278,12 @@ if (foo.isEmpty()) {
       Avoid concatenating non literals in a StringBuffer
       constructor or append().
     </info>
-    <name>Inefficient String Buffering</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UnnecessaryCaseChange</id>
-    <artifact tool="PMD" mnemonic="UnnecessaryCaseChange">
-    </artifact>
+    <artifact tool="PMD" mnemonic="UnnecessaryCaseChange"/>
+    <name>Unnecessary Case Change</name>
     <shortMessage>
       Using equalsIgnoreCase() is faster than using
       toUpperCase/toLowerCase().equals()
@@ -11303,13 +11292,12 @@ if (foo.isEmpty()) {
       Using equalsIgnoreCase() is faster than using
       toUpperCase/toLowerCase().equals()
     </info>
-    <name>Unnecessary Case Change</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UseStringBufferLength</id>
-    <artifact tool="PMD" mnemonic="UseStringBufferLength">
-    </artifact>
+    <artifact tool="PMD" mnemonic="UseStringBufferLength"/>
+    <name>Use String Buffer Length</name>
     <shortMessage>
       Use StringBuffer.length() to determine StringBuffer length
       rather than using
@@ -11322,13 +11310,12 @@ if (foo.isEmpty()) {
       StringBuffer.toString().equals(&quot;&quot;) or
       StringBuffer.toString().length() ==.
     </info>
-    <name>Use String Buffer Length</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AppendCharacterWithChar</id>
-    <artifact tool="PMD" mnemonic="AppendCharacterWithChar">
-    </artifact>
+    <artifact tool="PMD" mnemonic="AppendCharacterWithChar"/>
+    <name>Append Character With Char</name>
     <shortMessage>
       Avoid concatenating characters as strings in
       StringBuffer.append.
@@ -11337,13 +11324,12 @@ if (foo.isEmpty()) {
       Avoid concatenating characters as strings in
       StringBuffer.append.
     </info>
-    <name>Append Character With Char</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>ConsecutiveLiteralAppends</id>
-    <artifact tool="PMD" mnemonic="ConsecutiveLiteralAppends">
-    </artifact>
+    <artifact tool="PMD" mnemonic="ConsecutiveLiteralAppends"/>
+    <name>Consecutive Literal Appends</name>
     <shortMessage>
       Consecutively calling StringBuffer.append with String
       literals
@@ -11352,12 +11338,12 @@ if (foo.isEmpty()) {
       Consecutively calling StringBuffer.append with String
       literals
     </info>
-    <name>Consecutive Literal Appends</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UseIndexOfChar</id>
-    <artifact tool="PMD" mnemonic="UseIndexOfChar"></artifact>
+    <artifact tool="PMD" mnemonic="UseIndexOfChar"/>
+    <name>Use Index Of Char</name>
     <shortMessage>
       Use String.indexOf(char) when checking for the index of a
       single character; it executes faster.
@@ -11366,13 +11352,12 @@ if (foo.isEmpty()) {
       Use String.indexOf(char) when checking for the index of a
       single character; it executes faster.
     </info>
-    <name>Use Index Of Char</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>InefficientEmptyStringCheck</id>
-    <artifact tool="PMD" mnemonic="InefficientEmptyStringCheck">
-    </artifact>
+    <artifact tool="PMD" mnemonic="InefficientEmptyStringCheck"/>
+    <name>Inefficient Empty String Check</name>
     <shortMessage>
       String.trim().length() is an inefficient way to check if a
       String is really empty, as it creates a new String object
@@ -11389,14 +11374,12 @@ if (foo.isEmpty()) {
       Character.isWhitespace() on each character and returning
       false if a non-whitespace character is found.
     </info>
-    <name>Inefficient Empty String Check</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>InsufficientStringBufferDeclaration</id>
-    <artifact tool="PMD"
-	      mnemonic="InsufficientStringBufferDeclaration">
-    </artifact>
+    <artifact tool="PMD" mnemonic="InsufficientStringBufferDeclaration"/>
+    <name>Insufficient String Buffer Declaration</name>
     <shortMessage>
       Failing to pre-size a StringBuffer properly could cause it
       to re-size many times during runtime. This rule checks the
@@ -11417,12 +11400,12 @@ if (foo.isEmpty()) {
       default is assumed if the length of the constructor can not
       be determined.
     </info>
-    <name>Insufficient String Buffer Declaration</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UselessStringValueOf</id>
-    <artifact tool="PMD" mnemonic="UselessStringValueOf"></artifact>
+    <artifact tool="PMD" mnemonic="UselessStringValueOf"/>
+    <name>Useless String.valueOf</name>
     <shortMessage>
       No need to call String.valueOf to append to a string; just
       use the valueOf() argument directly.
@@ -11431,14 +11414,12 @@ if (foo.isEmpty()) {
       No need to call String.valueOf to append to a string; just
       use the valueOf() argument directly.
     </info>
-    <name>Useless String.valueOf</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>StringBufferInstantiationWithChar</id>
-    <artifact tool="PMD"
-	      mnemonic="StringBufferInstantiationWithChar">
-    </artifact>
+    <artifact tool="PMD" mnemonic="StringBufferInstantiationWithChar"/>
+    <name>String Buffer Instantiation With Char</name>
     <shortMessage>
       StringBuffer sb = new StringBuffer('c'); The char will be
       converted into int to intialize StringBuffer size.
@@ -11447,13 +11428,12 @@ if (foo.isEmpty()) {
       StringBuffer sb = new StringBuffer('c'); The char will be
       converted into int to intialize StringBuffer size.
     </info>
-    <name>String Buffer Instantiation With Char</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>ArrayIsStoredDirectly</id>
-    <artifact tool="PMD" mnemonic="ArrayIsStoredDirectly">
-    </artifact>
+    <artifact tool="PMD" mnemonic="ArrayIsStoredDirectly"/>
+    <name>Array Is Stored Directly</name>
     <shortMessage>
       Constructors and methods receiving arrays should clone
       objects and store the copy. This prevents that future
@@ -11464,13 +11444,12 @@ if (foo.isEmpty()) {
       objects and store the copy. This prevents that future
       changes from the user affect the internal functionality.
     </info>
-    <name>Array Is Stored Directly</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-
   <findingType>
     <id>UnusedLocalVariable</id>
-    <artifact tool="PMD" mnemonic="UnusedLocalVariable"></artifact>
+    <artifact tool="PMD" mnemonic="UnusedLocalVariable"/>
+    <name>Unused Local Variable</name>
     <shortMessage>
       Detects when a local variable is declared and/or assigned,
       but not used.
@@ -11479,12 +11458,12 @@ if (foo.isEmpty()) {
       Detects when a local variable is declared and/or assigned,
       but not used.
     </info>
-    <name>Unused Local Variable</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UnusedPrivateMethod</id>
-    <artifact tool="PMD" mnemonic="UnusedPrivateMethod"></artifact>
+    <artifact tool="PMD" mnemonic="UnusedPrivateMethod"/>
+    <name>Unused Private Method</name>
     <shortMessage>
       Unused Private Method detects when a private method is
       declared but is unused.
@@ -11493,13 +11472,12 @@ if (foo.isEmpty()) {
       Unused Private Method detects when a private method is
       declared but is unused.
     </info>
-    <name>Unused Private Method</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UnusedFormalParameter</id>
-    <artifact tool="PMD" mnemonic="UnusedFormalParameter">
-    </artifact>
+    <artifact tool="PMD" mnemonic="UnusedFormalParameter"/>
+    <name>Unused Formal Parameter</name>
     <shortMessage>
       Avoid passing parameters to methods or constructors and then
       not using those parameters.
@@ -11508,14 +11486,12 @@ if (foo.isEmpty()) {
       Avoid passing parameters to methods or constructors and then
       not using those parameters.
     </info>
-    <name>Unused Formal Parameter</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-
   <findingType>
     <id>OverrideBothEqualsAndHashcode</id>
-    <artifact tool="PMD" mnemonic="OverrideBothEqualsAndHashcode">
-    </artifact>
+    <artifact tool="PMD" mnemonic="OverrideBothEqualsAndHashcode"/>
+    <name>Override Both Equals And Hashcode</name>
     <shortMessage>
       Override both public boolean Object.equals(Object other),
       and public int Object.hashCode(), or override neither. Even
@@ -11530,14 +11506,12 @@ if (foo.isEmpty()) {
       consider implementing hashCode and explicitly delegating to
       your superclass.
     </info>
-    <name>Override Both Equals And Hashcode</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AvoidUsingHardCodedIP</id>
-    <artifact tool="PMD"
-	      mnemonic="AvoidUsingHardCodedIP">
-    </artifact>
+    <artifact tool="PMD" mnemonic="AvoidUsingHardCodedIP"/>
+    <name>Avoid Using Hardcoded IP Addresses</name>
     <shortMessage>Avoid using hard-coded IP address</shortMessage>
     <info>
 
@@ -11547,27 +11521,23 @@ if (foo.isEmpty()) {
       &lt;p&gt; . &lt;/p&gt;
 
     </info>
-    <name>Avoid Using Hardcoded IP Addresses</name>
   </findingType>	
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>CheckResultSet</id>
-    <artifact tool="PMD"
-	      mnemonic="CheckResultSet">
-    </artifact>
+    <artifact tool="PMD" mnemonic="CheckResultSet"/>
+    <name>Check Return Values from ResultSet Methods</name>
     <shortMessage>Check the return values from methods on ResultSet</shortMessage>
     <info> &lt;p&gt; Always check the return value from calling 
     ResultSet.{next,previous,first,last}.  If the return value is 'false', 
     the developer should deal with it. &lt;/p&gt;
     </info>
-    <name>Check Return Values from ResultSet Methods</name>
   </findingType>		
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AvoidFinalLocalVariable</id>
-    <artifact tool="PMD"
-	      mnemonic="AvoidFinalLocalVariable">
-    </artifact>
+    <artifact tool="PMD" mnemonic="AvoidFinalLocalVariable"/>
+    <name>Avoid Final Local Variables</name>
     <shortMessage>
       Avoid using final local variables 
     </shortMessage>
@@ -11576,7 +11546,6 @@ if (foo.isEmpty()) {
       &lt;p&gt; Instead, use fields. &lt;/p&gt;
 
     </info>
-    <name>Avoid Final Local Variables</name>
   </findingType>	
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
@@ -11587,14 +11556,24 @@ if (foo.isEmpty()) {
       Avoid using the "short" type
     </shortMessage>
     <info>
+<![CDATA[<p>Java uses the <code>short</code> type to reduce memory
+usage, not to optimize calculation. On the contrary, the JVM does not
+has any arithmetic capabilities with the <code>short</code> type, so
+it must convert the <code>short</code> into <code>int</code>, then do
+the proper calculation and then convert int back to short. Therefore,
+use of the <code>short</code> type may actually be slower than using
+<code>int</code>.</p>
 
-      &lt;p&gt; Java uses the short type to reduce memory usage, not to optimize
-      calculation. On the contrary, the JVM does not has any arithmetic capabilities
-      with the "short" type, so it must convert the short into int, then do the proper 
-      calculation and then convert int back to short. Therefore, use of the "short" type
-      may actually take more time
-      &lt;/p&gt;
+<pre>
+public class UsingShort {
+  private short doNotUseShort = 0;
 
+  public UsingShort() {
+    short shouldNotBeUsed = 1;
+    doNotUseShort += shouldNotBeUsed;
+  }
+}
+</pre>]]>
     </info>
   </findingType>	
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
