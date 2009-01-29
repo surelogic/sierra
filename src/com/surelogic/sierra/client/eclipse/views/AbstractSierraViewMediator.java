@@ -1,6 +1,5 @@
 package com.surelogic.sierra.client.eclipse.views;
 
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Logger;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -19,8 +18,7 @@ public abstract class AbstractSierraViewMediator extends
 	public static final Logger LOG = SLLogger.getLogger();
 
 	protected final IViewCallback f_view;
-	private final AtomicLong latestUpdate = new AtomicLong(System.currentTimeMillis());
-	
+
 	protected AbstractSierraViewMediator(IViewCallback cb) {
 		f_view = cb;
 	}
@@ -46,23 +44,5 @@ public abstract class AbstractSierraViewMediator extends
 			}
 		};
 		job.schedule();
-	}
-	
-	/**	 
-	 * @return the current time
-	 */
-	protected final long startingUpdate() {
-		long now = System.currentTimeMillis();
-		latestUpdate.set(now);
-		return now;
-	}
-	
-	protected final boolean continueUpdate(long startTime) {
-		final long latest = latestUpdate.get();
-		return startTime >= latest;
-	}
-	
-	protected final void finishedUpdate(long startTime) {
-		latestUpdate.compareAndSet(startTime, startTime+1);
 	}
 }
