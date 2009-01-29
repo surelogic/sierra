@@ -8718,7 +8718,7 @@ public class Example {
     <info>
 <![CDATA[<p>It is best to avoid the use of ThreadGroup.  Although it
 is intended to be used in a threaded environment it contains methods
-that are not thread safe.</p>
+that are not thread-safe.</p>
 
 <pre>
 public class Bar {
@@ -9950,176 +9950,199 @@ try {
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AbstractClassWithoutAbstractMethod</id>
-    <artifact tool="PMD"
-	      mnemonic="AbstractClassWithoutAbstractMethod">
-    </artifact>
-    <shortMessage>
-      The abstract class does not contain any abstract methods. An
-      abstract class suggests an incomplete implementation, which
-      is to be completed by subclasses implementing the abstract
-      methods. If the class is intended to be used as a base class
-      only (not to be instantiated direcly) a protected
-      constructor can be provided prevent direct instantiation.
-    </shortMessage>
+    <artifact tool="PMD" mnemonic="AbstractClassWithoutAbstractMethod"/>
+    <name>Abstract class has no abstract methods</name>
+    <shortMessage>This abstract class does not contain any abstract methods.  Is it an incomplete implementation?</shortMessage>
     <info>
-      The abstract class does not contain any abstract methods. An
-      abstract class suggests an incomplete implementation, which
-      is to be completed by subclasses implementing the abstract
-      methods. If the class is intended to be used as a base class
-      only (not to be instantiated direcly) a protected
-      constructor can be provided prevent direct instantiation.
+<![CDATA[<p>This abstract class does not contain any abstract
+methods. An abstract class suggests an incomplete implementation,
+which is to be completed by subclasses implementing the abstract
+methods. If the class is intended to be used as a base class only (not
+to be instantiated direcly) a protected constructor can be provided
+prevent direct instantiation.<p>
+
+<pre>
+public abstract class Foo {
+  void int method1() { ... }
+  void int method2() { ... }
+  // consider using abstract methods or removing
+  // the abstract modifier and adding protected constructors
+}
+</pre>]]>
     </info>
-    <name>Abstract Class Without Abstract Method</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SimplifyConditional</id>
-    <artifact tool="PMD" mnemonic="SimplifyConditional"></artifact>
-    <shortMessage>
-      No need to check for null before an instanceof; the
-      instanceof keyword returns false when given a null argument.
-    </shortMessage>
+    <artifact tool="PMD" mnemonic="SimplifyConditional"/>
+    <name>Unnecessary null check before instanceof</name>
+    <shortMessage>This code checks for null before an instanceof check. The null check can be safely removed.</shortMessage>
     <info>
-      No need to check for null before an instanceof; the
-      instanceof keyword returns false when given a null argument.
+<![CDATA[<p>There is no need to check for a <code>null</code> value
+before an <code>instanceof</code> check.  This is because the
+<code>instanceof</code> keyword returns false when given a
+<code>null</code> argument.  For example, it is safe to change</p>
+
+<pre>
+if (x != null && x instanceof Bar) {
+  // do something
+}
+</pre>
+
+<p>to</p>
+
+<pre>
+if (x != null && x instanceof Bar) {
+  // do something
+}
+</pre>]]>
     </info>
-    <name>Simplify Conditional</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>CompareObjectsWithEquals</id>
-    <artifact tool="PMD" mnemonic="CompareObjectsWithEquals">
-    </artifact>
-    <shortMessage>
-      Use equals() to compare object references; avoid comparing
-      them with ==.
-    </shortMessage>
+    <artifact tool="PMD" mnemonic="CompareObjectsWithEquals"/>
+    <name>Compare objects with equals not ==</name>
+    <shortMessage>Consider using equals() to compare object references.  Avoid comparing them with ==.</shortMessage>
     <info>
-      Use equals() to compare object references; avoid comparing
-      them with ==.
+<![CDATA[<p>It has been determined that it is a questionable code
+practice to compare object references with <code>==<code>, use
+<code>equals()</code> instead.  For example, change <code>a ==
+b</code> to <code>a.equals(b)</code>.</p>
+
+<p>If this practice is followed be sure that the object being
+dereferenced to call <code>equals()</code> (in our example this is
+<code>a</code>) is not <code>null</code>.</p>]]>
     </info>
-    <name>Compare Objects With Equals</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>PositionLiteralsFirstInComparisons</id>
-    <artifact tool="PMD"
-	      mnemonic="PositionLiteralsFirstInComparisons">
-    </artifact>
-    <shortMessage>
-      Position literals first in String comparisons - that way if
-      the String is null you won't get a NullPointerException,
-      it'll just return false.
-    </shortMessage>
+    <artifact tool="PMD" mnemonic="PositionLiteralsFirstInComparisons"/>
+    <name>Position literals first in String comparisons</name>
+    <shortMessage>Position the String literal first in this comparison. This way may throw a NullPointerException.</shortMessage>
     <info>
-      Position literals first in String comparisons - that way if
-      the String is null you won't get a NullPointerException,
-      it'll just return false.
+<![CDATA[<p>Always position literals first in String comparisons.
+This ensures that if the String is <code>null</code> then the
+comparison will not throw a <code>NullPointerException</code>, it'll
+just return false.  For example, always use
+<code>"hello".equals(s)</code> rather than
+<code>s.equals("hello")</code>.</p>]]>
     </info>
-    <name>Position Literals First In Comparisons</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UnnecessaryLocalBeforeReturn</id>
-    <artifact tool="PMD" mnemonic="UnnecessaryLocalBeforeReturn">
-    </artifact>
-    <shortMessage>
-      Avoid unnecessarily creating local variables
-    </shortMessage>
-    <info>Avoid unnecessarily creating local variables</info>
-    <name>Unnecessary Local Before Return</name>
+    <artifact tool="PMD" mnemonic="UnnecessaryLocalBeforeReturn"/>
+    <name>Avoid unnecessary local before return</name>
+    <shortMessage>This code appears to create an unnecessary local variable just to return it.  Consider removing this local variable.</shortMessage>
+    <info>
+<![CDATA[<p>Avoid unnecessarily creating local variables just to
+return them.</p>
+
+<pre>
+public int foo() {
+  int x = doSomething();
+  return x;  // instead, just 'return doSomething();'
+}
+</pre>]]>
+  </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>NonThreadSafeSingleton</id>
-    <artifact tool="PMD" mnemonic="NonThreadSafeSingleton">
-    </artifact>
-    <shortMessage>
-      Non-thread safe singletons can result in bad state changes.
-      Eliminate static singletons if possible by instantiating the
-      object directly. Static singletons are usually not needed as
-      only a single instance exists anyway. Other possible fixes
-      are to synchronize the entire method or to use an
-      initialize-on-demand holder class (do not use the
-      double-check idiom).
-
-      See Effective Java, item 48.
-    </shortMessage>
+    <artifact tool="PMD" mnemonic="NonThreadSafeSingleton"/>
+    <name>Avoid non-thread save singleton</name>
+    <shortMessage>This singleton does not appear to be thread-safe. Consider making it thread-safe.</shortMessage>
     <info>
-      Non-thread safe singletons can result in bad state changes.
-      Eliminate static singletons if possible by instantiating the
-      object directly. Static singletons are usually not needed as
-      only a single instance exists anyway. Other possible fixes
-      are to synchronize the entire method or to use an
-      initialize-on-demand holder class (do not use the
-      double-check idiom).
+<![CDATA[<p>Non-thread-safe singletons can result in bad state
+changes.  Eliminate static singletons if possible by instantiating the
+object directly. Static singletons are usually not needed as only a
+single instance exists anyway. Other possible fixes are to synchronize
+the entire method or to use an initialize-on-demand holder class.  (do
+not use the double-check idiom).  For more information see Bloch's
+<i>Effective Java</i> (second edition) item 48.</p>
 
-      See Effective Java, item 48.
+<p>For example, change the below code</p>
+
+<pre>
+private static Foo foo = null;
+
+// Not thread-safe -- multiple simultaneous callers
+// may see partially initialized objects
+public static Foo getInstance() {
+  if (foo == null)
+    foo = new Foo();
+  return foo;
+}
+</pre>
+
+<p>to</p>
+
+<pre>
+private static final Foo INSTANCE = new Foo();
+
+public static Foo getInstance() {
+  return INSTANCE;
+}
+</pre>
+
+<p>or <code>synchronize</code> the <code>getInstance()</code>
+method.</p>]]>
     </info>
-    <name>Non Thread Safe Singleton</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UncommentedEmptyMethod</id>
-    <artifact tool="PMD" mnemonic="UncommentedEmptyMethod">
-    </artifact>
-    <shortMessage>
-      Uncommented Empty Method finds instances where a method does
-      not contain statements, but there is no comment. By
-      explicitly commenting empty methods it is easier to
-      distinguish between intentional (commented) and
-      unintentional empty methods.
-    </shortMessage>
+    <artifact tool="PMD" mnemonic="UncommentedEmptyMethod"/>
+    <name>Uncommented empty method</name>
+    <shortMessage>This empty method should be commented to indicate that it is intentionally empty.</shortMessage>
     <info>
-      Uncommented Empty Method finds instances where a method does
-      not contain statements, but there is no comment. By
-      explicitly commenting empty methods it is easier to
-      distinguish between intentional (commented) and
-      unintentional empty methods.
+<![CDATA[<p>This method does not contain any statements, but there is
+no comment indicating that this lack of statements is intential. By
+explicitly commenting empty methods it is easier to distinguish
+between intentional (commented) and unintentional empty
+methods.</p>]]>
     </info>
-    <name>Uncommented Empty Method</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UncommentedEmptyConstructor</id>
-    <artifact tool="PMD" mnemonic="UncommentedEmptyConstructor">
-    </artifact>
-    <shortMessage>
-      Uncommented Empty Constructor finds instances where a
-      constructor does not contain statements, but there is no
-      comment. By explicitly commenting empty constructors it is
-      easier to distinguish between intentional (commented) and
-      unintentional empty constructors.
-    </shortMessage>
+    <artifact tool="PMD" mnemonic="UncommentedEmptyConstructor"/>
+    <name>Uncommented empty constructor</name>
+    <shortMessage>This empty constructor should be commented to indicate that it is intentially empty.</shortMessage>
     <info>
-      Uncommented Empty Constructor finds instances where a
-      constructor does not contain statements, but there is no
-      comment. By explicitly commenting empty constructors it is
-      easier to distinguish between intentional (commented) and
-      unintentional empty constructors.
+<![CDATA[<p>This constructor does not contain any statements, but
+there is no comment. By explicitly commenting empty constructors it is
+easier to distinguish between intentional (commented) and
+unintentional empty constructors.</p>]]>
     </info>
-    <name>Uncommented Empty Constructor</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AvoidConstantsInterface</id>
-    <artifact tool="PMD" mnemonic="AvoidConstantsInterface">
-    </artifact>
-    <shortMessage>
-      An interface should be used only to model a behaviour of a
-      class: using an interface as a container of constants is a
-      poor usage pattern.
-    </shortMessage>
+    <artifact tool="PMD" mnemonic="AvoidConstantsInterface"/>
+    <name>Avoid constants-only interface</name>
+    <shortMessage>This interface only acts as a container of constants.  This is a poor usage pattern.</shortMessage>
     <info>
-      An interface should be used only to model a behaviour of a
-      class: using an interface as a container of constants is a
-      poor usage pattern.
+<![CDATA[<p>An interface should be used only to model a behaviour of a
+class: using an interface as a container of constants is a poor usage
+pattern.</p>
+
+<pre>
+// Bad! poor use of an interface
+public interface ConstantsInterface {
+  public static final int CONSTANT1 = 0;
+  public static final String CONSTANT2 = "1";
+}
+</pre>]]>
     </info>
-    <name>Avoid Constants Interface</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>PreserveStackTrace</id>
-    <artifact tool="PMD" mnemonic="PreserveStackTrace"></artifact>
+    <artifact tool="PMD" mnemonic="PreserveStackTrace"/>
+    <name>Preserve Stack Trace</name>
     <shortMessage>
       Throwing a new exception from a catch block without passing
       the original exception into the new Exception will cause the
@@ -10127,32 +10150,62 @@ try {
       debug effectively.
     </shortMessage>
     <info>
-      Throwing a new exception from a catch block without passing
-      the original exception into the new Exception will cause the
-      true stack trace to be lost, and can make it difficult to
-      debug effectively.
+<![CDATA[<p>Throwing a new exception from a catch block without
+passing the original exception into the new exception will cause the
+true stack trace to be lost, and can make it difficult to debug
+effectively.  Ensure that you pass the original exception into the
+constructor of the new exception.  For example, change</p>
+
+<pre>
+try{
+  Integer.parseInt("a");
+} catch(Exception e){
+  throw new Exception(e.getMessage());
+}
+</pre>
+
+<p>to</p>
+
+<pre>
+try{
+  Integer.parseInt("a");
+} catch(Exception e){
+  throw new Exception(e);
+}
+</pre>]]>
     </info>
-    <name>Preserve Stack Trace</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UseCollectionIsEmpty</id>
-    <artifact tool="PMD" mnemonic="UseCollectionIsEmpty"></artifact>
-    <shortMessage>
-      The isEmpty() method on java.util.Collection is provided to
-      see if a collection has any elements. Comparing the value of
-      size() to 0 merely duplicates existing behavior.
-    </shortMessage>
+    <artifact tool="PMD" mnemonic="UseCollectionIsEmpty"/>
+    <name>Use isEmpty to check if a collection is empty</name>
+    <shortMessage>Use the isEmpty() method to see if a java.util.Collection is empty rather than comparing the value of size() to 0.</shortMessage>
     <info>
-      The isEmpty() method on java.util.Collection is provided to
-      see if a collection has any elements. Comparing the value of
-      size() to 0 merely duplicates existing behavior.
+<![CDATA[<p>The <code>isEmpty()</code> method on
+<code>java.util.Collection</code> objects is provided to see if a
+collection has any elements. Comparing the value of
+<code>size()</code> of the collection to 0 merely duplicates existing
+behavior.  For example, change</p>
+
+<pre>
+List foo = getList();
+if (foo.size() == 0) {
+  // do something
+}
+</pre>
+
+<p>to</p>
+
+<pre>
+List foo = getList();
+if (foo.isEmpty()) {
+  // do something
+}
+</pre>]]>
     </info>
-    <name>Use Collection Is Empty</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-
-
   <findingType>
     <id>FinalizeOverloaded</id>
     <artifact tool="PMD" mnemonic="FinalizeOverloaded"></artifact>
