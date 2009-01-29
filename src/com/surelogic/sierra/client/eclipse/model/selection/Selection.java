@@ -414,6 +414,7 @@ public final class Selection extends AbstractDatabaseObserver {
 
 	@Override
 	public void changed() {
+		final long now = startingUpdate();
 		/*
 		 * The database has changed. Refresh this selection if it has any
 		 * filters.
@@ -422,7 +423,7 @@ public final class Selection extends AbstractDatabaseObserver {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
-					refreshFiltersDatabaseJob();
+					refreshFiltersDatabaseJob(now);
 					notifySelectionChanged();
 				} catch (Exception e) {
 					final int errNo = 53;
@@ -443,11 +444,12 @@ public final class Selection extends AbstractDatabaseObserver {
 	 * Blocks until all the queries are completed.
 	 */
 	public void refreshFilters() {
+		final long now = startingUpdate();
 		final Job job = new DatabaseJob("Refresh selection", Job.INTERACTIVE) {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
-					refreshFiltersDatabaseJob();
+					refreshFiltersDatabaseJob(now);
 				} catch (Exception e) {
 					final int errNo = 53;
 					final String msg = I18N.err(errNo);
@@ -468,11 +470,14 @@ public final class Selection extends AbstractDatabaseObserver {
 		}
 	}
 
-	private void refreshFiltersDatabaseJob() {
+	private void refreshFiltersDatabaseJob(final long now) {
 		synchronized (this) {
 			for (Filter filter : f_filters) {
-				filter.refresh();
+				if (continueUpdate(now)) {
+					filter.refresh();
+				}
 			}
+			finishedUpdate(now);
 		}
 	}
 
