@@ -178,7 +178,7 @@ public final class FindingTypeManager {
 		final Set<String> duplicates = new HashSet<String>();
 		final Set<String> categoryDuplicates = new HashSet<String>();
 		final Set<Long> artifactIdSet = new HashSet<Long>();
-		final Set<Long> artifactDuplicates = new HashSet<Long>();
+		final Set<String> artifactDuplicates = new HashSet<String>();
 		final Set<String> invalidArtifacts = new HashSet<String>();
 		final Set<String> invalidTypes = new HashSet<String>();
 		for (final FindingTypes type : types) {
@@ -227,7 +227,8 @@ public final class FindingTypeManager {
 							}
 							for (final long id : typeIds) {
 								if (!artifactIdSet.add(id)) {
-									artifactDuplicates.add(id);
+									artifactDuplicates.add(at.getTool() + ":"
+											+ at.getMnemonic());
 								} else {
 									updateArtifactTypeFindingTypeRelation
 											.setLong(1, fRec.getId());

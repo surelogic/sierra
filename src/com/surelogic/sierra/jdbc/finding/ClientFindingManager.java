@@ -291,15 +291,14 @@ public final class ClientFindingManager extends FindingManager {
 				.prepareStatement("SELECT SCAN_ID FROM LATEST_SCANS WHERE PROJECT = ?");
 		selectOldestScanByProject = conn
 				.prepareStatement("SELECT SCAN_ID FROM OLDEST_SCANS WHERE PROJECT = ?");
-		final String commonForLocalAudits = 
-			" FROM SIERRA_AUDIT A, FINDING F WHERE "
-			+ " F.IS_READ = 'Y' AND A.REVISION IS NULL AND"
-			+ " F.ID = A.FINDING_ID AND F.PROJECT_ID = ?";
+		final String commonForLocalAudits = " FROM SIERRA_AUDIT A, FINDING F WHERE "
+				+ " F.IS_READ = 'Y' AND A.REVISION IS NULL AND"
+				+ " F.ID = A.FINDING_ID AND F.PROJECT_ID = ?";
 		findLocalAudits = conn
-				.prepareStatement("SELECT F.ID,A.DATE_TIME,A.EVENT,A.VALUE" +
-						commonForLocalAudits + " ORDER BY A.FINDING_ID");
-		countLocalAudits = conn
-		        .prepareStatement("SELECT COUNT(A.EVENT)" + commonForLocalAudits);
+				.prepareStatement("SELECT F.ID,A.DATE_TIME,A.EVENT,A.VALUE"
+						+ commonForLocalAudits + " ORDER BY A.FINDING_ID");
+		countLocalAudits = conn.prepareStatement("SELECT COUNT(A.ID)"
+				+ commonForLocalAudits);
 		selectUnrevisionedAudits = conn
 				.prepareStatement("SELECT SA.ID FROM SIERRA_AUDIT SA, FINDING F, PROJECT P WHERE P.NAME = ? AND F.PROJECT_ID = P.ID AND SA.FINDING_ID = F.ID AND SA.REVISION IS NULL");
 		updateUnrevisionedAudit = conn
@@ -737,7 +736,7 @@ public final class ClientFindingManager extends FindingManager {
 			throws SQLException {
 		if (findingIds.isEmpty()) {
 			return;
-		}		
+		}
 		int count = 0;
 		for (final long id : findingIds) {
 			deleteFindingFromOverview.setLong(1, id);
@@ -850,9 +849,10 @@ public final class ClientFindingManager extends FindingManager {
 		}
 	}
 
-	public int countNewLocalAudits(final String projectName) throws SQLException {
-		final ProjectRecord rec = 
-			ProjectRecordFactory.getInstance(conn).newProject();
+	public int countNewLocalAudits(final String projectName)
+			throws SQLException {
+		final ProjectRecord rec = ProjectRecordFactory.getInstance(conn)
+				.newProject();
 		rec.setName(projectName);
 		if (rec.select()) {
 			countLocalAudits.setLong(1, rec.getId());
@@ -861,7 +861,7 @@ public final class ClientFindingManager extends FindingManager {
 				if (set.next()) {
 					final int count = set.getInt(1);
 					if (count > 0) {
-						System.out.println("Count: "+count);
+						System.out.println("Count: " + count);
 					}
 					return count;
 				}
@@ -874,7 +874,7 @@ public final class ClientFindingManager extends FindingManager {
 					+ projectName + " exists.");
 		}
 	}
-	
+
 	public List<FindingAudits> getNewLocalAudits(final String projectName)
 			throws SQLException {
 		final AuditHandler<FindingAudits> handler = new AuditHandler<FindingAudits>() {
