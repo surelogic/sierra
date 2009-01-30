@@ -10618,358 +10618,709 @@ unused imports from your program.</p>]]>
   <findingType>
     <id>UseArrayListInsteadOfVector</id>
     <artifact tool="PMD" mnemonic="UseArrayListInsteadOfVector"/>
-    <name>Use Array List Instead Of Vector</name>
-    <shortMessage>
-      ArrayList is a much better Collection implementation than
-      Vector.
-    </shortMessage>
+    <name>Prefer ArrayList over Vector</name>
+    <shortMessage>This code uses the old Vector collection. Consider updating this to ArrayList (or LinkedList).</shortMessage>
     <info>
-      ArrayList is a much better Collection implementation than
-      Vector.
+<![CDATA[<p>The collections framework was released with JDK 1.2 and
+effectively makes types such as <code>Vector</code>,
+</code>Hashtable</code>, and <code>Enumeration</code> obsolete. Avoid
+using these types in newer code. In general, the performance of the
+new collections will be superior because they do not synchronize each
+of their methods.</p>
+
+<p>If you use this <code>Vector</code> in concurrent code, you can use
+<code>Collections.synchronizedList</code> method to "wrap" a list or
+consider one of the collections provided in the
+<code>java.util.concurrent</code> package.</p>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SimplifyStartsWith</id>
     <artifact tool="PMD" mnemonic="SimplifyStartsWith"/>
-    <name>Simplify Starts With</name>
-    <shortMessage>
-      Since it passes in a literal of length 1, this call to
-      String.startsWith can be rewritten using String.charAt(0) to
-      save some time.
-    </shortMessage>
+    <name>Inefficient use of startsWith</name>
+    <shortMessage>Because it passes in a String literal of length 1, this call to String.startsWith can be rewritten using String.charAt(0) to improve performance.</shortMessage>
     <info>
-      Since it passes in a literal of length 1, this call to
-      String.startsWith can be rewritten using String.charAt(0) to
-      save some time.
+<![CDATA[<p>Because this code passes in a <code>String</code> literal
+of length 1, this call to <code>String.startsWith</code> can be
+rewritten using <code>String.charAt(0)</code> to save some time.</p>
+
+<p>For example, consider changing</p>
+
+<pre>
+boolean checkIt(String x) {
+  return x.startsWith("a");
+}
+</pre>
+
+<p>to</p>
+
+<pre>
+boolean checkIt(String x) {
+  return x.charAt(0) == 'a';
+}
+</pre>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UseArraysAsList</id>
     <artifact tool="PMD" mnemonic="UseArraysAsList"/>
-    <name>Use Arrays As List</name>
-    <shortMessage>
-      The class java.util.Arrays has a &quot;asList&quot; method
-      that should be use when you want to create a new List from
-      an array of objects. It is faster than executing a loop to
-      cpy all the elements of the array one by one
-    </shortMessage>
+    <name>Use Arrays.asList</name>
+    <shortMessage>To create a list from an array consider using Arrays.asList rather than a loop.</shortMessage>
     <info>
-      The class java.util.Arrays has a &quot;asList&quot; method
-      that should be use when you want to create a new List from
-      an array of objects. It is faster than executing a loop to
-      cpy all the elements of the array one by one
+<![CDATA[<p>The class <code>java.util.Arrays</code> has an
+<code>asList</code> method that should be used when you want to create
+a new <code>List</code> from an array of objects. It is faster than
+executing a loop to copy all the elements out of the array one by
+one.</p>
+
+<p>For example, consider the below code</p>
+
+<pre>
+Integer[] intArray = new Integer[100];
+Arrays.fill(intArray, Integer.valueOf(2));
+
+// Bad! creates a copy using a loop
+List&lt;Integer&gt; l1 = new ArrayList&lt;Integer&gt;(100);
+for (int i = 0; i < 100; i++) {
+	l1.add(intArray[i]);
+}
+
+// Changes to this list also modify the array
+List&lt;Integer&gt; l2 = Arrays.asList(intArray);
+
+// This list is a copy (just like 'l1' that was created above)
+List&lt;Integer&gt; l3 = new ArrayList&lt;Integer&gt;(Arrays.asList(intArray));
+
+l2.set(0, Integer.valueOf(10)); // sets the first element of 'intArray' and 'l2'
+System.out.println(Arrays.toString(intArray));
+</pre>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AvoidArrayLoops</id>
     <artifact tool="PMD" mnemonic="AvoidArrayLoops"/>
-    <name>Avoid Array Loops</name>
-    <shortMessage>
-      Instead of copying data between two arrays, use
-      System.arraycopy method
-    </shortMessage>
+    <name>Avoid copying arrays with a loop</name>
+    <shortMessage>This code appears to use a loop to copy data between two arrays. To improve performance, consider using System.arraycopy or one of the methods provide by the Arrays utility class.</shortMessage>
     <info>
-      Instead of copying data between two arrays, use
-      System.arraycopy method
+<![CDATA[<p>Instead of using a loop to copy data between two arrays
+use <code>System.arraycopy</code> or one of the <code>static</code>
+method declared within the <code>Arrays</code> utility class.  This
+can improve the performance of your program.</p>
+
+<p>For example, consider the below code</p>
+
+<pre>
+int[] a = new int[10];
+Arrays.fill(a, 30);
+
+// Bad! uses a loop
+int[] b1 = new int[10];
+for (int i = 0; i < 10; i++) {
+  b1[i] = a[i];
+}
+
+// this is better
+int[] b2 = new int[10];
+System.arraycopy(a, 0, b2, 0, 10);
+
+// this is also better
+int[] b3 = Arrays.copyOf(a, a.length);
+</pre>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UnnecessaryWrapperObjectCreation</id>
     <artifact tool="PMD" mnemonic="UnnecessaryWrapperObjectCreation"/>
-    <name>Unnecessary Wrapper Object Creation</name>
-    <shortMessage>
-      Parsing method should be called directy instead.
-    </shortMessage>
-    <info>Parsing method should be called directy instead.</info>
+    <name>Avoid unnecessary wrapper object creation</name>
+    <shortMessage>This code creates a wrapper object simply to convert from a String to a primitive type or from a primitive type to a String. Use the static parse or toString methods declared on the wrapper types instead.</shortMessage>
+    <info>
+<![CDATA[<p>There is not need to create a wrapper object simply to
+convert from a <code>String</code> to a primitive type. Use the
+<code>static</code> parse methods declared on the wrapper types instead.</p>
+
+<p>There is also no need to create a wrapper object simply to convert
+from a primitive type to a <code>String</code>. Use the
+<code>static</code> <code>toString</code> methods declared on the
+wrapper types instead.</p>
+
+<p>For example, consider the below code.</p>
+
+<pre>
+int i, i2;
+
+i = Integer.valueOf(s).intValue();          // Bad! this wastes an object
+i = Integer.parseInt(s);                    // this is better
+
+i2 = Integer.valueOf(i).intValue();         // Bad! this wastes an object
+i2 = i;                                     // this is better
+
+String s3 = Integer.valueOf(i2).toString(); // Bad! this wastes an object
+s3 = Integer.toString(i2);                  // this is better
+</pre>]]>
+    </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AddEmptyString</id>
     <artifact tool="PMD" mnemonic="AddEmptyString"/>
-    <name>Add Empty String</name>
-    <shortMessage>
-      Finds empty string literals which are being added. This is
-      an inefficient way to convert any type to a String.
-    </shortMessage>
+    <name>Inefficient conversion to a String</name>
+    <shortMessage>This code appears to convert a type to a String using an empty string literal and concatenation. To improve performance, consider using the toString() method on each wrapper type.</shortMessage>
     <info>
-      Finds empty string literals which are being added. This is
-      an inefficient way to convert any type to a String.
+<![CDATA[<p>Using an empty string literal and concatenation is an
+inefficient way to convert any type to a <code>String</code>.  Consider
+using the <code>static</code> <code>toString()</code> method on each
+wrapper type.</p>
+
+<p>For example, consider changing</p>
+
+<pre>
+String s = "" + 123; // Bad!
+</pre>
+
+<p>to</p>
+
+<pre>
+String s = Integer.toString(123);
+</pre>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AvoidCatchingThrowable</id>
     <artifact tool="PMD" mnemonic="AvoidCatchingThrowable"/>
-    <name>Avoid Catching Throwable</name>
-    <shortMessage>
-      This is dangerous because it casts too wide a net; it can
-      catch things like OutOfMemoryError.
-    </shortMessage>
+    <name>Avoid catching Throwable</name>
+    <shortMessage>This code catchs Throwable which is dangerous because it casts too wide of a net. Consider changing this to a more specific exception type that the block is actually designed to handle.</shortMessage>
     <info>
-      This is dangerous because it casts too wide a net; it can
-      catch things like OutOfMemoryError.
+<![CDATA[<p>Catching <code>Throwable</code> is considered dangerous
+because it casts too wide of a net; it can catch things like
+<code>OutOfMemoryError</code> or <code>KernelError</code> that no
+program can recover from.</p>
+
+<p>It is recommended that this catch block be made more specific about
+exactly what exception it is designed to handle.</p>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SignatureDeclareThrowsException</id>
     <artifact tool="PMD" mnemonic="SignatureDeclareThrowsException"/>
-    <name>Signature Declare Throws Exception</name>
-    <shortMessage>
-      It is unclear which exceptions that can be thrown from the
-      methods. It might be difficult to document and understand
-      the vague interfaces. Use either a class derived from
-      RuntimeException or a checked exception.
-    </shortMessage>
+    <name>Avoid methods that throw Exception</name>
+    <shortMessage>This method declares that it may throw any exception. This is overly broad. Consider making this declaration more specific.</shortMessage>
     <info>
-      It is unclear which exceptions that can be thrown from the
-      methods. It might be difficult to document and understand
-      the vague interfaces. Use either a class derived from
-      RuntimeException or a checked exception.
+<![CDATA[<p>It is recommended that this method be more specific about
+what exceptions it may actually throw.  Declaring that a method throws
+<code>Exception</code> is considered overly broad.</p>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>ExceptionAsFlowControl</id>
     <artifact tool="PMD" mnemonic="ExceptionAsFlowControl"/>
-    <name>Exception As Flow Control</name>
-    <shortMessage>
-      Using Exceptions as flow control leads to GOTOish code and
-      obscures true exceptions when debugging.
-    </shortMessage>
+    <name>Avoid using exceptions for flow control</name>
+    <shortMessage>This code appers to use exceptions as control flow. This can lead to poorly preforming GOTO-like code and, in most cases, should be avoided.</shortMessage>
     <info>
-      Using Exceptions as flow control leads to GOTOish code and
-      obscures true exceptions when debugging.
+<![CDATA[<p>Using Exceptions as flow control leads to GOTO-like code
+and obscures true exceptions when debugging. In addition, the
+performance of such code can be half of the performance of code that
+avoids this confusing technique.</p>
+
+<p>For example, the code below has the problem identified by this finding.</p>
+
+<pre>
+void bar() {
+  try {
+    try {
+      // do something
+    } catch (Exception e) {
+      throw new WrapperException(e); // this is essentially a GOTO to the WrapperException catch block
+    }
+  } catch (WrapperException e) {
+    // do something
+  }
+}
+</pre>
+
+<p>Most (but not all) APIs provide ways to avoid using exceptions for
+control flow.</p>
+
+<p>For further information please see Bloch's <i>Effective Java</i>
+(second edition) item 57.</p>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AvoidCatchingNPE</id>
     <artifact tool="PMD" mnemonic="AvoidCatchingNPE"/>
-    <name>Avoid Catching NullPointerException</name>
-    <shortMessage>
-      Code should never throw NPE under normal circumstances. A
-      catch block may hide the original error, causing other more
-      subtle errors in its wake.
-    </shortMessage>
+    <name>Avoid catching NullPointerException</name>
+    <shortMessage>This code catches a NullPointerException. Normal code should not catch this exception. Consider removing the catch block.</shortMessage>
     <info>
-      Code should never throw NPE under normal circumstances. A
-      catch block may hide the original error, causing other more
-      subtle errors in its wake.
+<![CDATA[<p>Code should never throw <code>NullPointerException</code>
+under normal circumstances. Such a catch block may hide the original
+programming error, causing other more subtle errors in its wake.</p>
+
+<p>Consider removing this catch block unless this is test code or some
+other special purpose code.</p>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AvoidThrowingRawExceptionTypes</id>
     <artifact tool="PMD" mnemonic="AvoidThrowingRawExceptionTypes"/>
-    <name>Avoid Throwing Raw Exception Types</name>
-    <shortMessage>
-      Avoid throwing certain exception types. Rather than throw a
-      raw RuntimeException, Throwable, Exception, or Error, use a
-      subclassed exception or error instead.
-    </shortMessage>
+    <name>Avoid throwing raw exception types</name>
+    <shortMessage>This code throws a raw exception type. Consider throwing a subclassed exception or error instead.</shortMessage>
     <info>
-      Avoid throwing certain exception types. Rather than throw a
-      raw RuntimeException, Throwable, Exception, or Error, use a
-      subclassed exception or error instead.
+<![CDATA[<p>Avoid throwing base exception types. Rather than throw a
+raw <code>RuntimeException</code>, <code>Throwable</code>,
+<code>Exception</code>, or <code>Error</code>, use a subclassed
+exception or error instead.</p>
+
+<p>Some commonly reused exceptions are:<p>
+
+<table>
+<tr><td><code>IllegalArgumentException</code></td></tr>
+<tr><td><code>IllegalStateException</code></td></tr>
+<tr><td><code>NullPointerException</code></td></tr>
+<tr><td><code>IndexOutOfBoundsException</code></td></tr>
+<tr><td><code>ConcurrentModificationException</code></td></tr>
+<tr><td><code>UnsupportedOperationException</code></td></tr>
+</table>
+
+<p>For more information please see Bloch's <i>Effective Java</i>
+(second edition) item 60.</p>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AvoidThrowingNullPointerException</id>
     <artifact tool="PMD" mnemonic="AvoidThrowingNullPointerException"/>
-    <name>Avoid Throwing NullPointerException</name>
-    <shortMessage>
-      Avoid throwing a NullPointerException - it's confusing
-      because most people will assume that the virtual machine
-      threw it. Consider using an IllegalArgumentException
-      instead; this will be clearly seen as a programmer-initiated
-      exception.
-    </shortMessage>
+    <name>Avoid throwing NullPointerException</name>
+    <shortMessage>This code explicitly throws a NullPointerException. This can be confusing. Consider throwing IllegalArgumentException instead.</shortMessage>
     <info>
-      Avoid throwing a NullPointerException - it's confusing
-      because most people will assume that the virtual machine
-      threw it. Consider using an IllegalArgumentException
-      instead; this will be clearly seen as a programmer-initiated
-      exception.
+<![CDATA[<p>Avoid throwing a
+<code>NullPointerException</code>;ndash;it's confusing because most
+people will assume that the virtual machine threw it. Consider
+throwing an <code>IllegalArgumentException</code> instead; this will
+be clearly seen as a programmer-initiated exception.</p>
+
+<p>For example, consider changing</p>
+
+<pre>
+public void log(String msg) {
+  if (msg == null) throw new NullPointerException("msg must be non-null");
+  ...
+}
+</pre>
+
+<p>to</p>
+
+<pre>
+public void log(String msg) {
+  if (msg == null) throw new IllegalArgumentException("msg must be non-null");
+  ...
+}
+</pre>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AvoidRethrowingException</id>
     <artifact tool="PMD" mnemonic="AvoidRethrowingException"/>
-    <name>Avoid Rethrowing Exception</name>
-    <shortMessage>
-      Catch blocks that merely rethrow a caught exception only add
-      to code size and runtime complexity.
-    </shortMessage>
+    <name>Avoid rethrowing an exception</name>
+    <shortMessage>This code contains a catch block that seems to merely rethrow a caught exception. Consider removing this catch block.</shortMessage>
     <info>
-      Catch blocks that merely rethrow a caught exception only add
-      to code size and runtime complexity.
+<![CDATA[<p>Catch blocks that merely rethrow a caught exception only
+add to code size and runtime complexity. Consider removing this catch
+block.</p>
+
+<p>For example, consider changing</p>
+
+<pre>
+void bar() {
+  try {
+    // do something
+  }  catch (NullPointerException e) {
+    throw e;
+  }
+}
+</pre>
+
+<p>to</p>
+
+<pre>
+void bar() {
+  // do something
+}
+</pre>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>DoNotExtendJavaLangError</id>
     <artifact tool="PMD" mnemonic="DoNotExtendJavaLangError"/>
-    <name>Do Not Extend java.lang.Error</name>
-    <shortMessage>
-      Errors are system exceptions. Do not extend them.
-    </shortMessage>
-    <info>Errors are system exceptions. Do not extend them.</info>
+    <name>Avoid extending java.lang.Error</name>
+    <shortMessage>This class extends java.lang.Error. The Error type represents system exceptions and probably should not be extended. Consider extending RuntimeException instead.</shortMessage>
+    <info>
+<![CDATA[<p><code>Error</code>s are system exceptions. Do not extend
+them. If you are trying to declare an unchecked exception that your
+program can use then consider extending <code>RuntimeException</code>
+instead.</p>
+
+<p>For example, consider changing</p>
+
+<pre>
+public class Foo extends Error {
+  // Bad!
+}
+</pre>
+
+<p>to</p>
+
+<pre>
+public class Foo extends RuntimeException {
+}
+</pre>]]>
+    </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AvoidDuplicateLiterals</id>
     <artifact tool="PMD" mnemonic="AvoidDuplicateLiterals"/>
-    <name>Avoid Duplicate Literals</name>
-    <shortMessage>
-      Code containing duplicate String literals can usually be
-      improved by declaring the String as a constant field.
-    </shortMessage>
+    <name>Avoid duplicate String literals</name>
+    <shortMessage>This code contains duplicate String literals. Consider declaring the String as a constant field.</shortMessage>
     <info>
-      Code containing duplicate String literals can usually be
-      improved by declaring the String as a constant field.
+<![CDATA[<p>Code containing duplicate <code>String</code> literals can usually be
+improved by declaring the <code>String</code> as a constant field.</p>
+
+<p>For example, consider changing</p>
+
+<pre>
+class Foo {
+  public void bar() {
+    buz("Howdy");
+    buz("Howdy");
+    buz("Howdy");
+    buz("Howdy");
+  }
+
+  public void buz(String msg) {
+    System.out.println(msg);
+  }
+}
+</pre>
+
+<p>to</p>
+
+<pre>
+class Foo {
+  private static final String HOWDY = "Howdy";
+
+  public void bar() {
+    buz(HOWDY);
+    buz(HOWDY);
+    buz(HOWDY);
+    buz(HOWDY);
+  }
+
+  public void buz(String msg) {
+    System.out.println(msg);
+  }
+}
+</pre>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>InefficientStringBuffering</id>
     <artifact tool="PMD" mnemonic="InefficientStringBuffering"/>
-    <name>Inefficient String Buffering</name>
-    <shortMessage>
-      Avoid concatenating non literals in a StringBuffer
-      constructor or append().
-    </shortMessage>
+    <name>Inefficient concatenation in a StringBuffer</name>
+    <shortMessage>This code concatenates non-literals in a StringBuffer constructor or append(). Consider avoiding this to improve performance.</shortMessage>
     <info>
-      Avoid concatenating non literals in a StringBuffer
-      constructor or append().
+<![CDATA[<p>It is best to avoid concatenating non-literals in a
+<code>StringBuffer</code> constructor or </code>append()</code>.</p>
+
+<p>For example, consider changing</p>
+
+<pre>
+StringBuffer sb = new StringBuffer("tmp = " + System.getProperty("java.io.tmpdir"));
+</pre>
+
+<p>to</p>
+
+<pre>
+StringBuffer sb = new StringBuffer("tmp = ");
+sb.append(System.getProperty("java.io.tmpdir"));
+</pre>
+
+<p>If you are using JKD 1.5 or above it is strongly recommended that
+you use <code>StringBuilder</code> rather than
+<code>StringBuffer</code>. In most cases the use of
+<code>StringBuilder</code> will improve code performance by avoid
+unnecessary synchronization.</p>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UnnecessaryCaseChange</id>
     <artifact tool="PMD" mnemonic="UnnecessaryCaseChange"/>
-    <name>Unnecessary Case Change</name>
-    <shortMessage>
-      Using equalsIgnoreCase() is faster than using
-      toUpperCase/toLowerCase().equals()
-    </shortMessage>
+    <name>Unnecessary case change for equality check</name>
+    <shortMessage>This code could be made faster by using equalsIgnoreCase() rather than toUpperCase/toLowerCase().equals().</shortMessage>
     <info>
-      Using equalsIgnoreCase() is faster than using
-      toUpperCase/toLowerCase().equals()
+<![CDATA[<p>Using <code>String.equalsIgnoreCase()</code> is faster
+than using <code>toUpperCase()</code> or <code>toLowerCase()</code>
+followed by a call to <code>equals()</code>. This is because a new
+<code>String</code> does not need to be created.</p>
+
+<p>For example, consider changing</p>
+
+<pre>
+String s = ...
+if (s.toUpperCase.equals("SELECT")) {
+  // do something
+}
+if (s.toUpperCase.equalsIgnoreCase("FROM")) {
+  // do something
+}
+</pre>
+
+<p>to</p>
+
+<pre>
+String s = ...
+if (s.equalsIgnoreCase("SELECT")) {
+  // do something
+}
+if (s.equalsIgnoreCase("FROM")) {
+  // do something
+}
+</pre>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UseStringBufferLength</id>
     <artifact tool="PMD" mnemonic="UseStringBufferLength"/>
-    <name>Use String Buffer Length</name>
-    <shortMessage>
-      Use StringBuffer.length() to determine StringBuffer length
-      rather than using
-      StringBuffer.toString().equals(&quot;&quot;) or
-      StringBuffer.toString().length() ==.
-    </shortMessage>
+    <name>Use StringBuffer.length</name>
+    <shortMessage>It is recommended that you use StringBuffer.length() to determine the length of a StringBuffer.</shortMessage>
     <info>
-      Use StringBuffer.length() to determine StringBuffer length
-      rather than using
-      StringBuffer.toString().equals(&quot;&quot;) or
-      StringBuffer.toString().length() ==.
+<![CDATA[<p>Use <code>StringBuffer.length()</code> to determine the
+length of a StringBuffer rather than convering to a
+<code>String</code> via <code>StringBuffer.toString()</code> and then
+making the check.</p>
+
+<p>For example, consider changing</p>
+
+<pre>
+StringBuffer sb = new StringBuffer();
+...
+if (StringBuffer.toString().equals("")) {
+  // do something
+}
+if (StringBuffer.toString().length() == 3) {
+  // do something
+}
+</pre>
+
+<p>to</p>
+
+<pre>
+StringBuffer sb = new StringBuffer();
+...
+if (StringBuffer.length == 0) {
+  // do something
+}
+if (StringBuffer.length() == 3) {
+  // do something
+}
+</pre>
+
+<p>If you are using JKD 1.5 or above it is strongly recommended that
+you use <code>StringBuilder</code> rather than
+<code>StringBuffer</code>. In most cases the use of
+<code>StringBuilder</code> will improve code performance by avoid
+unnecessary synchronization.</p>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AppendCharacterWithChar</id>
     <artifact tool="PMD" mnemonic="AppendCharacterWithChar"/>
-    <name>Append Character With Char</name>
-    <shortMessage>
-      Avoid concatenating characters as strings in
-      StringBuffer.append.
-    </shortMessage>
+    <name>Avoid appending a char as a String</name>
+    <shortMessage>Avoid concatenating characters as strings with StringBuffer.append calls.</shortMessage>
     <info>
-      Avoid concatenating characters as strings in
-      StringBuffer.append.
+<![CDATA[<p>Avoid concatenating characters as strings with calls to
+the <code>StringBuffer.append</code> method.</p>
+
+<p>For example, consider changing</p>
+
+<pre>
+StringBuffer sb = new StringBuffer();
+sb.append("a"); // Bad!
+</pre>
+
+<p>to</p>
+
+<pre>
+StringBuffer sb = new StringBuffer();
+sb.append('a');
+</pre>
+
+<p>If you are using JKD 1.5 or above it is strongly recommended that
+you use <code>StringBuilder</code> rather than
+<code>StringBuffer</code>. In most cases the use of
+<code>StringBuilder</code> will improve code performance by avoid
+unnecessary synchronization.</p>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>ConsecutiveLiteralAppends</id>
     <artifact tool="PMD" mnemonic="ConsecutiveLiteralAppends"/>
-    <name>Consecutive Literal Appends</name>
-    <shortMessage>
-      Consecutively calling StringBuffer.append with String
-      literals
-    </shortMessage>
+    <name>Consecutive String literal appends</name>
+    <shortMessage>This code makes several consecutively calls to StringBuffer.append with String literals. Consider consolidating all the literals into one.</shortMessage>
     <info>
-      Consecutively calling StringBuffer.append with String
-      literals
+<![CDATA[<p>It is inefficient to repeatably call
+<code>StringBuffer.append(String)</code> with string literals.
+Consider consolidating all the literals into one call.</p>
+
+<p>For example, consider changing</p>
+
+<pre>
+StringBuffer buf = new StringBuffer();
+buf.append("Hello").append(" ").append("World"); // Bad!
+</pre>
+
+<p>to</p>
+
+<pre>
+StringBuffer buf = new StringBuffer();
+buf.append("Hello World");
+</pre>
+
+<p>If you are using JKD 1.5 or above it is strongly recommended that
+you use <code>StringBuilder</code> rather than
+<code>StringBuffer</code>. In most cases the use of
+<code>StringBuilder</code> will improve code performance by avoid
+unnecessary synchronization.</p>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UseIndexOfChar</id>
     <artifact tool="PMD" mnemonic="UseIndexOfChar"/>
-    <name>Use Index Of Char</name>
-    <shortMessage>
-      Use String.indexOf(char) when checking for the index of a
-      single character; it executes faster.
-    </shortMessage>
+    <name>Inefficient use of String.indexOf</name>
+    <shortMessage>This code can improve its performance by using String.indexOf(char) when checking for the index of a single character.</shortMessage>
     <info>
-      Use String.indexOf(char) when checking for the index of a
-      single character; it executes faster.
+<![CDATA[<p>Use <code>String.indexOf(char)</code> rather than
+<code>String.indexOf(String)</code> when checking for the index of a
+single character because it executes faster.</p>
+
+<p>For example, consider changing</p>
+
+<pre>
+if (s.indexOf("d") {  // Bad!
+  // do something
+}
+</pre>
+
+<p>to</p>
+
+<pre>
+if (s.indexOf('d') {
+  // do something
+}
+</pre>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>InefficientEmptyStringCheck</id>
     <artifact tool="PMD" mnemonic="InefficientEmptyStringCheck"/>
-    <name>Inefficient Empty String Check</name>
-    <shortMessage>
-      String.trim().length() is an inefficient way to check if a
-      String is really empty, as it creates a new String object
-      just to check its size. Consider creating a static function
-      that loops through a string, checking
-      Character.isWhitespace() on each character and returning
-      false if a non-whitespace character is found.
-    </shortMessage>
+    <name>Inefficient empty string check</name>
+    <shortMessage>This code is an inefficient approach to check if a string is whitespace-only or empty.  Consider using the StringUtils.isBlank method from Apache Commons Lang library. </shortMessage>
     <info>
-      String.trim().length() is an inefficient way to check if a
-      String is really empty, as it creates a new String object
-      just to check its size. Consider creating a static function
-      that loops through a string, checking
-      Character.isWhitespace() on each character and returning
-      false if a non-whitespace character is found.
+<![CDATA[<p>Using <code>String.trim().length() == 0</code> is an
+inefficient way to check if a <code>String</code> is really empty
+except for whitespace. This is because it creates a new String object
+just to check its size.</p>
+
+<p>One solution is to include the <a
+href="http://commons.apache.org/lang/">Apache Commons Lang</a> library
+in your code and use the <code>StringUtils</code> utility.  The
+<code>isBlank</code> method checks if a string is whitespace, empty,
+or <code>null</code>.  For example, you would change</p>
+
+<pre>
+if (s.trim().length() == 0) { // Bad!
+  // do something
+}
+</pre>
+
+<p>to</p>
+
+<pre>
+if (StringUtils.isBlank(s)) {
+  // do something
+}
+</pre>
+
+<p>If you do not want to use the Apache Commons Lang library then
+consider creating a static function that loops through a string,
+checking <code>Character.isWhitespace()</code> on each character and
+returning false if a non-whitespace character is found.  The code
+Apache uses is</p>
+
+<pre>
+public static boolean isBlank(String str) {
+  int strLen;
+  if (str == null || (strLen = str.length()) == 0) {
+    return true;
+  }
+  for (int i = 0; i < strLen; i++) {
+    if ((Character.isWhitespace(str.charAt(i)) == false)) {
+      return false;
+    }
+  }
+  return true;
+}
+</pre>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>InsufficientStringBufferDeclaration</id>
     <artifact tool="PMD" mnemonic="InsufficientStringBufferDeclaration"/>
-    <name>Insufficient String Buffer Declaration</name>
-    <shortMessage>
-      Failing to pre-size a StringBuffer properly could cause it
-      to re-size many times during runtime. This rule checks the
-      characters that are actually passed into
-      StringBuffer.append(), but represents a best guess
-      &quot;worst case&quot; scenario. An empty StringBuffer
-      constructor initializes the object to 16 characters. This
-      default is assumed if the length of the constructor can not
-      be determined.
-    </shortMessage>
+    <name>Insufficient StringBuffer initial size</name>
+    <shortMessage>This code fails to pre-size a StringBuffer which may cause it to resize many times.  Consider passing a larger initial capacity to the StringBuffer constructor.</shortMessage>
     <info>
-      Failing to pre-size a StringBuffer properly could cause it
-      to re-size many times during runtime. This rule checks the
-      characters that are actually passed into
-      StringBuffer.append(), but represents a best guess
-      &quot;worst case&quot; scenario. An empty StringBuffer
-      constructor initializes the object to 16 characters. This
-      default is assumed if the length of the constructor can not
-      be determined.
+<![CDATA[<p>Failing to pre-size a <code>StringBuffer</code> properly
+can cause it to re-size many times. This rule checks the characters
+that are actually passed into <code>StringBuffer.append()</code>
+method and tries to make a best guess about the "worst case" scenario
+with regard to overall size. An empty <code>StringBuffer</code>
+constructor sets the initial capacity of the object to 16
+characters. This default is assumed if the length of the constructor
+can not be determined.</p>
+
+<pre>
+StringBuffer bad = new StringBuffer();
+bad.append("This is a long string, will exceed the default 16 characters");
+
+StringBuffer good = new StringBuffer(41);
+good.append("This is a long string, which is pre-sized");
+</pre>
+
+<p>Being more accurate with your initial capacity can help to improve
+your program's performance.</p>
+
+<p>If you are using JKD 1.5 or above it is strongly recommended that
+you use <code>StringBuilder</code> rather than
+<code>StringBuffer</code>. In most cases the use of
+<code>StringBuilder</code> will improve code performance by avoid
+unnecessary synchronization.</p>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
@@ -11012,7 +11363,8 @@ public String convert(int i) {
 <code>char</code> causes the <code>char</code> to be converted to an
 <code>int</code> to initialize the <code>StringBuffer</code> size.
 
-<p>For example, if the intent is to place the character in the StringBuffer then change</p>
+<p>For example, if the intent is to place the character in the
+<code>StringBuffer</code> then change</p>
 
 <pre>
 StringBuffer sb = new StringBuffer('c'); // Bad!
@@ -11574,8 +11926,8 @@ long life time).</p>]]>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>IGNORE</id>
-    <artifact tool="FindBugs" mnemonic="UNKNOWN"/>                   <!-- diagnostic -->
-    <artifact tool="PMD" mnemonic="OverrideBothEqualsAndHashcode"/>  <!-- FindBugs splits these w/ better reporting -->
+    <artifact tool="FindBugs" mnemonic="UNKNOWN"/>                   <!-- FindBugs diagnostic -->
+    <artifact tool="PMD" mnemonic="OverrideBothEqualsAndHashcode"/>  <!-- FindBugs splits this up w/ better reporting -->
     <artifact tool="PMD" mnemonic="AvoidFinalLocalVariable"/>        <!-- This is just a bad analysis -->
     <name>Ignored tool artifacts</name>
     <shortMessage>Findings in this finding type can be ignored.</shortMessage>
@@ -11585,4 +11937,5 @@ that Sierra ignores.  The tool artifact may be ignored if another tool
 has a superior analysis or if it is a tool diagnostic report.]]>
     </info>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
 </findingTypes>
