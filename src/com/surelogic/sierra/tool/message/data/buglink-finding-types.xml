@@ -11195,18 +11195,6 @@ if (rst.next()) {
   </findingType>		
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
-    <id>AvoidFinalLocalVariable</id>
-    <artifact tool="PMD" mnemonic="AvoidFinalLocalVariable"/>
-    <name>Avoid final local variables</name>
-    <shortMessage>This is a final local variable. Consider changing it to a field.</shortMessage>
-    <info>
-<![CDATA[<p>This highlights final local variables that you should
-consider changing into field.  However, note that not all final local
-variables can be changed into fields.</p>]]>
-    </info>
-  </findingType>	
-  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-  <findingType>
     <id>AvoidUsingShortType</id>
     <artifact tool="PMD" mnemonic="AvoidUsingShortType"/>
     <name>Avoid using short type</name>
@@ -11586,8 +11574,9 @@ long life time).</p>]]>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>IGNORE</id>
-    <artifact tool="FindBugs" mnemonic="UNKNOWN"/>
-    <artifact tool="PMD" mnemonic="OverrideBothEqualsAndHashcode"/>
+    <artifact tool="FindBugs" mnemonic="UNKNOWN"/>                   <!-- diagnostic -->
+    <artifact tool="PMD" mnemonic="OverrideBothEqualsAndHashcode"/>  <!-- FindBugs splits these w/ better reporting -->
+    <artifact tool="PMD" mnemonic="AvoidFinalLocalVariable"/>        <!-- This is just a bad analysis -->
     <name>Ignored tool artifacts</name>
     <shortMessage>Findings in this finding type can be ignored.</shortMessage>
     <info>
