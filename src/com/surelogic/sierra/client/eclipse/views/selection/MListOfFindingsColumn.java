@@ -152,19 +152,23 @@ public final class MListOfFindingsColumn extends MColumn implements
 				if (f_table != null && f_table.isDisposed()) {
 					getSelection().removeObserver(MListOfFindingsColumn.this);
 				} else {
+					final long now = startingUpdate();
 					final Job job = new DatabaseJob("Refresh list of findings", Job.INTERACTIVE) {
 						@Override
 						protected IStatus run(final IProgressMonitor monitor) {
+							boolean keepGoing = false;
 							try {
-								refreshData();
-								refreshDisplay();
+								keepGoing = refreshData(now);
+								if (keepGoing) {
+									refreshDisplay();
+								}
 							} catch (final Exception e) {
 								final int errNo = 60;
 								final String msg = I18N.err(errNo);
 								return SLEclipseStatusUtility
 										.createErrorStatus(errNo, msg, e);
 							} finally {
-								initOfNextColumnComplete();
+								initOfNextColumnComplete();								
 							}
 							return Status.OK_STATUS;
 						}
@@ -390,7 +394,10 @@ public final class MListOfFindingsColumn extends MColumn implements
 	private final List<FindingData> f_rows = new /* CopyOnWrite */ArrayList<FindingData>();
 	private boolean f_isLimited = false;
 
-	public void refreshData() {
+	/**
+	 * @return true if updating
+	 */
+	public boolean refreshData(final long now) {
 		final String query = getQuery();
 		try {
 			final Connection c = Data.getInstance().readOnlyConnection();
@@ -400,6 +407,9 @@ public final class MListOfFindingsColumn extends MColumn implements
 					if (SLLogger.getLogger().isLoggable(Level.FINE)) {
 						SLLogger.getLogger().fine(
 								"List of findings query: " + query);
+					}
+					if (!continueUpdate(now)) {
+						return false;
 					}
 					final ResultSet rs = st.executeQuery(query);
 					try {
@@ -447,6 +457,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 			SLLogger.getLogger().log(Level.SEVERE,
 					"Query failed to read selected findings", e);
 		}
+		return true;
 	}
 
 	/**

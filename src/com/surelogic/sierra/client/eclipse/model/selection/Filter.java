@@ -21,6 +21,7 @@ import com.surelogic.common.jdbc.JDBCUtils;
 import com.surelogic.common.jdbc.QB;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;
+import com.surelogic.sierra.client.eclipse.model.AbstractUpdatable;
 
 /**
  * Abstract base class for all findings filters. Intended to be subclassed.
@@ -30,7 +31,7 @@ import com.surelogic.sierra.client.eclipse.Data;
  * <p>
  * This class is thread-safe.
  */
-public abstract class Filter {
+public abstract class Filter extends AbstractUpdatable {
 
 	/**
 	 * Gets the factory for this filter.
@@ -164,24 +165,33 @@ public abstract class Filter {
 	 * if the query failed (a bug).
 	 */
 	void refresh() {
+		final long now = startingUpdate();
+		boolean keepGoing = false;
 		try {
 			synchronized (this) {
-				queryCounts();
-				deriveAllValues();
-				filterAllValues();
-				fixupPorousValues();
+				keepGoing = queryCounts(now);
+				if (keepGoing) {
+					deriveAllValues();
+					filterAllValues();
+					fixupPorousValues();
+				}
 			}
 		} catch (Exception e) {
 			notifyFilterQueryFailure(e);
 			return;
 		}
-		notifyFilterChanged();
+		if (keepGoing) {
+			finishedUpdate(now);			
+			notifyFilterChanged();
+		}
 	}
 
 	/**
 	 * Any caller must be holding a lock on <code>this</code>.
+	 * 
+	 * @return true if continuing
 	 */
-	private void queryCounts() throws SQLException {
+	private boolean queryCounts(final long now) throws SQLException {
 		f_counts.clear();
 		int countTotal = 0;
 		final Connection c = Data.getInstance().readOnlyConnection();
@@ -195,7 +205,10 @@ public abstract class Filter {
 									+ " filter counts query: " + query);
 				}
 				// System.out.println(query);
-
+				if (!continueUpdate(now)) {
+					return false;
+				}
+				
 				final ResultSet rs = st.executeQuery(query);
 				try {
 					while (rs.next()) {
@@ -216,6 +229,8 @@ public abstract class Filter {
 			c.close();
 		}
 		f_countTotal = countTotal;
+		
+		return true;
 	}
 
 	protected void grabExtraCountsData(String value, ResultSet rs)

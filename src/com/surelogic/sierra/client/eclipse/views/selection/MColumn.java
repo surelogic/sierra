@@ -7,13 +7,14 @@ import org.eclipse.swt.widgets.Event;
 
 import com.surelogic.common.eclipse.CascadingList;
 import com.surelogic.common.logging.SLLogger;
+import com.surelogic.sierra.client.eclipse.model.AbstractUpdatable;
 import com.surelogic.sierra.client.eclipse.model.selection.Selection;
 
 /**
  * Abstract base class for all mediator columns managed within the
  * {@link FindingsSelectionView}
  */
-public abstract class MColumn {
+public abstract class MColumn extends AbstractUpdatable {
   protected final Logger LOG = SLLogger.getLogger("sierra");
   
 	private final CascadingList f_cascadingList;
