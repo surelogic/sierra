@@ -898,7 +898,7 @@ for this purpose because it avoid several tricky implementation issues
 <![CDATA[<p>If <code>r</code> is a <code>java.util.Random</code>
 object, you can generate a random number from 0 to <code>n</code>-1
 using <code>r.nextInt(n)</code> Rather than using
-<code>(int)(r.nextDouble() * n)<code>.</p>
+<code>(int)(r.nextDouble() * n)</code>.</p>
 
 <p>It is highly recommended that the <code>nextInt</code> method be
 used for this purpose because it avoid several tricky implementation
@@ -3777,42 +3777,49 @@ a new <code>SecureRandom</code> for each random number needed). </p>]]>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UseStringBufferForStringAppends</id>
-    <artifact tool="FindBugs"
-	      mnemonic="SBSC_USE_STRINGBUFFER_CONCATENATION">
-    </artifact>
-    <artifact tool="PMD"
-	      mnemonic="UseStringBufferForStringAppends">
-    </artifact>
-    <shortMessage>
-      Method concatenates strings using + in a loop
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="SBSC_USE_STRINGBUFFER_CONCATENATION"/>
+    <artifact tool="PMD" mnemonic="UseStringBufferForStringAppends"/>
+    <name>Use StringBuffer for String appends</name>
+    <shortMessage>This method concatenates Strings using + in a loop. Consider using StringBuffer to improve performance.</shortMessage>
     <info>
+<![CDATA[<p>The method seems to be building a <code>String</code>
+using concatenation in a loop. In each iteration, the
+<code>String</code> is converted to a
+<code>StringBuffer/StringBuilder</code>, appended to, and converted
+back to a <code>String</code> by the compiler. This can lead to a cost
+quadratic in the number of iterations, as the growing string is
+recopied in each iteration.</p>
 
-      &lt;p&gt; The method seems to be building a String using
-      concatenation in a loop. In each iteration, the String is
-      converted to a StringBuffer/StringBuilder, appended to, and
-      converted back to a String. This can lead to a cost
-      quadratic in the number of iterations, as the growing string
-      is recopied in each iteration. &lt;/p&gt;
+<p>Better performance can be obtained by using a <code>StringBuffer</code> (or
+<code>StringBuilder</code> in Java 1.5) explicitly.</p>
 
-      &lt;p&gt;Better performance can be obtained by using a
-      StringBuffer (or StringBuilder in Java 1.5)
-      explicitly.&lt;/p&gt;
+<p> For example, consider changing</p>
 
-      &lt;p&gt; For example:&lt;/p&gt; &lt;pre&gt; // This is bad
-      String s = &quot;&quot;; for (int i = 0; i &amp;lt;
-      field.length; ++i) { s = s + field[i]; }
+<pre>
+String s = "";
+ for (int i = 0; i &lt; field.length; ++i) {
+  s = s + field[i]; // Bad!
+}
+</pre>
 
-      // This is better StringBuffer buf = new StringBuffer(); for
-      (int i = 0; i &amp;lt; field.length; ++i) {
-      buf.append(field[i]); } String s = buf.toString();
-      &lt;/pre&gt;
+<p>to</p>
 
-      Avoid using += for appending strings. Use StringBuffer
-      instead.
+<pre>
+final StringBuilder buf = new StringBuilder();
+for (int i = 0; i &lt; field.length; ++i) {
+  buf.append(field[i]);
+}
+String s = buf.toString();
+</pre>
 
+<p>Also avoid using <code>+=</code> for appending strings.</p>
+
+<p>If you are using JKD 1.5 or above it is strongly recommended that
+you use <code>StringBuilder</code> rather than
+<code>StringBuffer</code>. In most cases the use of
+<code>StringBuilder</code> will improve code performance by avoid
+unnecessary synchronization.</p>]]>
     </info>
-    <name>Use StringBuffer For String Appends</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
@@ -8173,7 +8180,7 @@ defined in a superclass.</p>
 
 <pre>
 @Override public String foo() {
-  return super.foo();  //Why bother overriding?
+  return super.foo();  // Why bother overriding?
 }
 </pre>
 
@@ -9035,31 +9042,48 @@ public final class Foo {
     <shortMessage>Use boolean expressions directly to simplify your code.</shortMessage>
     <info>
 <![CDATA[<p>Avoid unnecessary comparisons in boolean
-expressions&mdash;this complicates simple code</p>
+expressions&mdash;this complicates simple code.</p>
+
+<p>For example, consider changing</p>
 
 <pre>
 public class Foo {
 
   private int bar = 2;
 
-  public boolean isBarEqualsTo(int x) {
-    // this bit of code
+  public boolean isBarEqualTo(int x) {
     if (bar == x) {
      return true;
     } else {
      return false;
     }
-    // can be simplified to 'return bar == x;'
   }
 
-  // can be simplified to 'private boolean bar = isFoo();'
   private boolean bar = (isFoo() == true);
 
   public isFoo() {
     return false;
   }
 }
-</pre>]]>
+</pre>
+
+<p>to</p>
+
+<pre>
+public class Foo {
+
+  private int bar = 2;
+
+  public boolean isBarEqualTo(int x) {
+    return bar == x;
+  }
+
+  private boolean bar = isFoo();
+
+  public isFoo() {
+    return false;
+  }
+}</pre>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
