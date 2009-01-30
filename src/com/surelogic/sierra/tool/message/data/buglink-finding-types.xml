@@ -254,20 +254,6 @@ understanding of Java semantics.</p>]]>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
-    <id>UNKNOWN</id>
-    <artifact tool="FindBugs" mnemonic="UNKNOWN"/>
-    <name>Unknown FindBugs bug pattern</name>
-    <shortMessage>A warning was recorded for an unknown FindBugs bug pattern.</shortMessage>
-    <info>
-<![CDATA[<p>A warning was recorded, but FindBugs can't find the
-description of this bug pattern and so can't describe it.  This should
-occur only in cases of a bug in FindBugs or its configuration, or
-perhaps if an analysis was generated using a plugin, but that plugin
-is not currently loaded.</p>]]>
-    </info>
-  </findingType>
-  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-  <findingType>
     <id>AM_CREATES_EMPTY_ZIP_FILE_ENTRY</id>
     <artifact tool="FindBugs"
 	      mnemonic="AM_CREATES_EMPTY_ZIP_FILE_ENTRY"/>
@@ -10990,146 +10976,233 @@ unused imports from your program.</p>]]>
   <findingType>
     <id>UselessStringValueOf</id>
     <artifact tool="PMD" mnemonic="UselessStringValueOf"/>
-    <name>Useless String.valueOf</name>
-    <shortMessage>
-      No need to call String.valueOf to append to a string; just
-      use the valueOf() argument directly.
-    </shortMessage>
+    <name>Unnecessary String.valueOf call</name>
+    <shortMessage>This code calls String.valueOf to append to a String. Consider just using the + operator.</shortMessage>
     <info>
-      No need to call String.valueOf to append to a string; just
-      use the valueOf() argument directly.
+<![CDATA[<p>There is no need to call <code>String.valueOf()</code> to
+append to a string.  Just use <code>+</code>.</p>
+
+<p>For example, consider changing the below code</p>
+
+<pre>
+public String convert(int i) {
+  String s = "a" + String.valueOf(i); // Bad!
+  return s;
+}
+</pre>
+
+<p>to</p>
+
+<pre>
+public String convert(int i) {
+  String s = "a" + i;
+  return s;
+}
+</pre>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>StringBufferInstantiationWithChar</id>
     <artifact tool="PMD" mnemonic="StringBufferInstantiationWithChar"/>
-    <name>String Buffer Instantiation With Char</name>
-    <shortMessage>
-      StringBuffer sb = new StringBuffer('c'); The char will be
-      converted into int to intialize StringBuffer size.
-    </shortMessage>
+    <name>Confusing StringBuffer instantiation with char</name>
+    <shortMessage>This code instantiates a StringBuffer object with a char, e.g., StringBuffer sb = new StringBuffer('c').  However, the char will be converted into int to initialize StringBuffer size.</shortMessage>
     <info>
-      StringBuffer sb = new StringBuffer('c'); The char will be
-      converted into int to intialize StringBuffer size.
+<![CDATA[<p>Calling the <code>StringBuffer</code> constructor with a
+<code>char</code> causes the <code>char</code> to be converted to an
+<code>int</code> to initialize the <code>StringBuffer</code> size.
+
+<p>For example, if the intent is to place the character in the StringBuffer then change</p>
+
+<pre>
+StringBuffer sb = new StringBuffer('c'); // Bad!
+</pre>
+
+<p>to</p>
+
+<pre>
+StringBuffer sb = new StringBuffer("c");
+</pre>
+
+<p>If you are using JKD 1.5 or above it is strongly recommended that
+you use <code>StringBuilder</code> rather than
+<code>StringBuffer</code>. In most cases the use of
+<code>StringBuilder</code> will improve code performance by avoid
+unnecessary synchronization.</p>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>ArrayIsStoredDirectly</id>
     <artifact tool="PMD" mnemonic="ArrayIsStoredDirectly"/>
-    <name>Array Is Stored Directly</name>
-    <shortMessage>
-      Constructors and methods receiving arrays should clone
-      objects and store the copy. This prevents that future
-      changes from the user affect the internal functionality.
-    </shortMessage>
+    <name>Avoid storing a passed array</name>
+    <shortMessage>This code takes an array as a parameter and stores it directly to a field. Consider making a defensive copy of the array.</shortMessage>
     <info>
-      Constructors and methods receiving arrays should clone
-      objects and store the copy. This prevents that future
-      changes from the user affect the internal functionality.
+<![CDATA[<p>This code stores an array directly to a field. This makes
+this code susceptible to mutations made by code that still has a
+reference to this array and its contents. Consider making a defensive
+copy of the array and its contents.  this prevents future change by
+outside code from effecting this class.</p>
+
+<p>For example, consider changing</p>
+
+<pre>
+public class Foo {
+  private String [] x;
+
+  public void foo (String [] param) {
+    // Bad!
+    this.x = param;
+  }
+}
+</pre>
+
+<p>to</p>
+
+<pre>
+public class Foo {
+  private String [] x;
+
+  public void foo (String [] param) {
+    this.x = Arrays.copyOf(param, param.length);
+  }
+}</pre>
+
+<p>Note that in this example the contents of the array are immutable
+strings. Hence, we do not need to clone the contents in this example.
+In general, you will need to consider if the contents of the array
+need to be cloned.</p>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UnusedLocalVariable</id>
     <artifact tool="PMD" mnemonic="UnusedLocalVariable"/>
-    <name>Unused Local Variable</name>
-    <shortMessage>
-      Detects when a local variable is declared and/or assigned,
-      but not used.
-    </shortMessage>
+    <name>Unused local variable</name>
+    <shortMessage>This local variable is declared but it is never read. Consider removing it.</shortMessage>
     <info>
-      Detects when a local variable is declared and/or assigned,
-      but not used.
+<![CDATA[<p>This local variable is declared but it is never
+read. Consider removing it from your code.</p>
+
+<p>For example, consider changing</p>
+
+<pre>
+public void doSomething() {
+  int i = 5; // unused
+  System.out.println("doing something");
+}
+</pre>
+
+<p>to</p>
+
+<pre>
+public void doSomething() {
+  System.out.println("doing something");
+}</pre>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UnusedPrivateMethod</id>
     <artifact tool="PMD" mnemonic="UnusedPrivateMethod"/>
-    <name>Unused Private Method</name>
-    <shortMessage>
-      Unused Private Method detects when a private method is
-      declared but is unused.
-    </shortMessage>
+    <name>Unused private method</name>
+    <shortMessage>This private method is unused. Consider removing the method.</shortMessage>
     <info>
-      Unused Private Method detects when a private method is
-      declared but is unused.
+<![CDATA[<p>This private method is not called within this compilation
+unit. Consider removing it from the code.</p>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UnusedFormalParameter</id>
     <artifact tool="PMD" mnemonic="UnusedFormalParameter"/>
-    <name>Unused Formal Parameter</name>
-    <shortMessage>
-      Avoid passing parameters to methods or constructors and then
-      not using those parameters.
-    </shortMessage>
+    <name>Unused parameter</name>
+    <shortMessage>This code accepts a parameter then appears to never use it. Avoid passing parameters to methods or constructors and then
+      not using those parameters. Consider removing the parameter.</shortMessage>
     <info>
-      Avoid passing parameters to methods or constructors and then
-      not using those parameters.
-    </info>
-  </findingType>
-  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-  <findingType>
-    <id>OverrideBothEqualsAndHashcode</id>
-    <artifact tool="PMD" mnemonic="OverrideBothEqualsAndHashcode"/>
-    <name>Override Both Equals And Hashcode</name>
-    <shortMessage>
-      Override both public boolean Object.equals(Object other),
-      and public int Object.hashCode(), or override neither. Even
-      if you are inheriting a hashCode() from a parent class,
-      consider implementing hashCode and explicitly delegating to
-      your superclass.
-    </shortMessage>
-    <info>
-      Override both public boolean Object.equals(Object other),
-      and public int Object.hashCode(), or override neither. Even
-      if you are inheriting a hashCode() from a parent class,
-      consider implementing hashCode and explicitly delegating to
-      your superclass.
+<![CDATA[<p>Avoid passing parameters to methods or constructors and
+then not using those parameters.</p>
+
+<p>For example, consider changing<p>
+
+<pre>
+ private void bar(String howdy) {
+   System.out.println("bar");
+}
+</pre>
+
+<p>to</p>
+
+<pre>
+private void bar() {
+   System.out.println("bar");
+}
+</pre>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AvoidUsingHardCodedIP</id>
     <artifact tool="PMD" mnemonic="AvoidUsingHardCodedIP"/>
-    <name>Avoid Using Hardcoded IP Addresses</name>
+    <name>Avoid hardcoded IP addresses</name>
     <shortMessage>Avoid using hard-coded IP address</shortMessage>
     <info>
+<![CDATA[<p>An application with hard coded IP may become impossible to
+deploy in some cases. It never hurts to externalize IP
+addresses.</p>
 
-      &lt;p&gt; An application with hard coded IP may become impossible to deploy in some cases. 
-      It never hurts to externalize IP addresses. &lt;/p&gt;
-      
-      &lt;p&gt; . &lt;/p&gt;
-
+<pre>
+public class Foo {
+  private final String ip = "127.0.0.1"; // This is a bad idea !
+  ...
+}
+</pre>]]>
     </info>
   </findingType>	
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>CheckResultSet</id>
     <artifact tool="PMD" mnemonic="CheckResultSet"/>
-    <name>Check Return Values from ResultSet Methods</name>
-    <shortMessage>Check the return values from methods on ResultSet</shortMessage>
-    <info> &lt;p&gt; Always check the return value from calling 
-    ResultSet.{next,previous,first,last}.  If the return value is 'false', 
-    the developer should deal with it. &lt;/p&gt;
+    <name>Check return values from ResultSet method calls</name>
+    <shortMessage>This code appears to ignore the the return value from a call on a ResultSet method. The code should deal with this return value explicitly to handle problems.</shortMessage>
+    <info>
+<![CDATA[<p>Always check the return value from calling
+<code>ResultSet.{next,previous,first,last}</code>.  If the return
+value is false, the code should deal with it explicitly.</p>
+
+<p>For example, the below code<p>
+
+<pre>
+// Bad! ignores what 'next()' returns
+Statement stat = conn.createStatement();
+ResultSet rst  = stat.executeQuery("SELECT name FROM person");
+rst.next();  // what if it returns 'false'?
+String firstName = rst.getString(1);
+</pre>
+
+<p>should be changed to</p>
+
+<pre>
+Statement stat = conn.createStatement();
+ResultSet rst  = stat.executeQuery("SELECT name FROM person");
+if (rst.next()) {
+  String firstName = rst.getString(1);
+} else {
+  // here you deal with the error...at least log it and recover
+}
+</pre>]]>
     </info>
   </findingType>		
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AvoidFinalLocalVariable</id>
     <artifact tool="PMD" mnemonic="AvoidFinalLocalVariable"/>
-    <name>Avoid Final Local Variables</name>
-    <shortMessage>
-      Avoid using final local variables 
-    </shortMessage>
+    <name>Avoid final local variables</name>
+    <shortMessage>This is a final local variable. Consider changing it to a field.</shortMessage>
     <info>
-
-      &lt;p&gt; Instead, use fields. &lt;/p&gt;
-
+<![CDATA[<p>This highlights final local variables that you should
+consider changing into field.  However, note that not all final local
+variables can be changed into fields.</p>]]>
     </info>
   </findingType>	
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
@@ -11511,4 +11584,16 @@ long life time).</p>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+  <findingType>
+    <id>IGNORE</id>
+    <artifact tool="FindBugs" mnemonic="UNKNOWN"/>
+    <artifact tool="PMD" mnemonic="OverrideBothEqualsAndHashcode"/>
+    <name>Ignored tool artifacts</name>
+    <shortMessage>Findings in this finding type can be ignored.</shortMessage>
+    <info>
+<![CDATA[This is special finding type that contains all tool artifacts
+that Sierra ignores.  The tool artifact may be ignored if another tool
+has a superior analysis or if it is a tool diagnostic report.]]>
+    </info>
+  </findingType>
 </findingTypes>
