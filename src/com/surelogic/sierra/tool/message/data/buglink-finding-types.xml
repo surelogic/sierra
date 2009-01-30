@@ -9374,25 +9374,6 @@ Class c = String.class;
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-<!-- TIM I THINK YOU WANTED TO DELETE THIS
-  <findingType>
-    <id>IdempotentOperations</id>
-    <artifact tool="PMD" mnemonic="IdempotentOperations"/>
-    <name>Avoid idempotent operations</name>
-    <shortMessage>This code appears to have no effect.  Remove it or change it to do what is intended.</shortMessage>
-    <info>
-<![CDATA[<p>Avoid idempotent operations because they are have no
-effect and can make the code confusing.</p>
-
-<pre>
-int x = 2;
-x = x;   // no effect
-x = x++; // no effect
-</pre>]]>
-    </info>
-  </findingType>
--->
-  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SimpleDateFormatNeedsLocale</id>
     <artifact tool="PMD" mnemonic="SimpleDateFormatNeedsLocale"/>
