@@ -292,7 +292,7 @@ public final class ClientFindingManager extends FindingManager {
 		selectOldestScanByProject = conn
 				.prepareStatement("SELECT SCAN_ID FROM OLDEST_SCANS WHERE PROJECT = ?");
 		final String commonForLocalAudits = " FROM SIERRA_AUDIT A, FINDING F WHERE "
-				+ " F.IS_READ = 'Y' AND A.REVISION IS NULL AND"
+				+ " A.REVISION IS NULL AND"
 				+ " F.ID = A.FINDING_ID AND F.PROJECT_ID = ?";
 		findLocalAudits = conn
 				.prepareStatement("SELECT F.ID,A.DATE_TIME,A.EVENT,A.VALUE"
