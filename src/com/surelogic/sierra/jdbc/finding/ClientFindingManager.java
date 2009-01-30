@@ -860,9 +860,6 @@ public final class ClientFindingManager extends FindingManager {
 			try {
 				if (set.next()) {
 					final int count = set.getInt(1);
-					if (count > 0) {
-						System.out.println("Count: " + count);
-					}
 					return count;
 				}
 				return 0;
