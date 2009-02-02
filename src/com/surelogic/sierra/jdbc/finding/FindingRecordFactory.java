@@ -22,14 +22,14 @@ public final class FindingRecordFactory {
 	private static final String FINDING_DELETE = "DELETE FROM FINDING WHERE ID = ?";
 	private static final String FINDING_UPDATE = "UPDATE FINDING SET UUID = ?, IMPORTANCE = ?, SUMMARY = ? WHERE ID = ?";
 	private static final String INSERT_ARTIFACT_FINDING_RELATION = "INSERT INTO ARTIFACT_FINDING_RELTN (ARTIFACT_ID,FINDING_ID) VALUES (?,?)";
-	private static final String AUDIT_INSERT = "INSERT INTO SIERRA_AUDIT (FINDING_ID,EVENT,USER_ID,DATE_TIME,VALUE,REVISION) VALUES (?,?,?,?,?,?)";
-	private static final String AUDIT_SELECT = "SELECT ID,REVISION FROM SIERRA_AUDIT WHERE FINDING_ID = ? AND EVENT = ? AND USER_ID = ? AND DATE_TIME = ? AND VALUE = ?";
+	private static final String AUDIT_INSERT = "INSERT INTO SIERRA_AUDIT (UUID,FINDING_ID,EVENT,USER_ID,DATE_TIME,VALUE,REVISION) VALUES (?,?,?,?,?,?,?)";
+	private static final String AUDIT_SELECT = "SELECT FINDING_ID,EVENT,USER_ID,DATE_TIME,VALUE,REVISION FROM SIERRA_AUDIT WHERE UUID = ?";
 	private final UpdateRecordMapper matchMap;
 	private final UpdateRecordMapper findingMap;
 	private final RecordMapper artifactFindingMap;
 	private final RecordMapper auditMap;
 
-	private FindingRecordFactory(Connection conn) throws SQLException {
+	private FindingRecordFactory(final Connection conn) throws SQLException {
 		this.matchMap = new UpdateBaseMapper(conn, MATCH_INSERT, MATCH_SELECT,
 				null, MATCH_UPDATE, false);
 		this.findingMap = new UpdateBaseMapper(conn, FINDING_INSERT,
@@ -51,7 +51,7 @@ public final class FindingRecordFactory {
 		return new MatchRecord(matchMap);
 	}
 
-	public static FindingRecordFactory getInstance(Connection conn)
+	public static FindingRecordFactory getInstance(final Connection conn)
 			throws SQLException {
 		return new FindingRecordFactory(conn);
 	}

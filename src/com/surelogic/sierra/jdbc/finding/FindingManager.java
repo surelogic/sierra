@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -278,10 +279,30 @@ public class FindingManager {
 		touchFinding(findingId, time);
 	}
 
+	protected void comment(final String uuid, final Long userId,
+			final Long findingId, final String comment, final Date time,
+			final Long revision) throws SQLException {
+		newAudit(uuid, userId, findingId, comment, AuditEvent.COMMENT, time,
+				revision);
+		touchFinding(findingId, time);
+	}
+
 	protected void setImportance(final Long userId, final Long findingId,
 			final Importance importance, final Date time, final Long revision)
 			throws SQLException {
 		newAudit(userId, findingId, importance.toString(),
+				AuditEvent.IMPORTANCE, time, revision);
+		updateFindingImportance.setInt(1, importance.ordinal());
+		updateFindingImportance.setTimestamp(2, new Timestamp(time.getTime()));
+		updateFindingImportance.setLong(3, findingId);
+		updateFindingImportance.execute();
+		touchFinding(findingId, time);
+	}
+
+	protected void setImportance(final String uuid, final Long userId,
+			final Long findingId, final Importance importance, final Date time,
+			final Long revision) throws SQLException {
+		newAudit(uuid, userId, findingId, importance.toString(),
 				AuditEvent.IMPORTANCE, time, revision);
 		updateFindingImportance.setInt(1, importance.ordinal());
 		updateFindingImportance.setTimestamp(2, new Timestamp(time.getTime()));
@@ -296,10 +317,29 @@ public class FindingManager {
 		touchFinding(findingId, time);
 	}
 
+	protected void markAsRead(final String uuid, final Long userId,
+			final Long findingId, final Date time, final Long revision)
+			throws SQLException {
+		newAudit(uuid, userId, findingId, null, AuditEvent.READ, time, revision);
+		touchFinding(findingId, time);
+	}
+
 	protected void changeSummary(final Long userId, final Long findingId,
 			final String summary, final Date time, final Long revision)
 			throws SQLException {
 		newAudit(userId, findingId, summary, AuditEvent.SUMMARY, time, revision);
+		updateFindingSummary.setString(1, summary);
+		updateFindingSummary.setTimestamp(2, new Timestamp(time.getTime()));
+		updateFindingSummary.setLong(3, findingId);
+		updateFindingSummary.execute();
+		touchFinding(findingId, time);
+	}
+
+	protected void changeSummary(final String uuid, final Long userId,
+			final Long findingId, final String summary, final Date time,
+			final Long revision) throws SQLException {
+		newAudit(uuid, userId, findingId, summary, AuditEvent.SUMMARY, time,
+				revision);
 		updateFindingSummary.setString(1, summary);
 		updateFindingSummary.setTimestamp(2, new Timestamp(time.getTime()));
 		updateFindingSummary.setLong(3, findingId);
@@ -325,19 +365,61 @@ public class FindingManager {
 		touchFinding.execute();
 	}
 
+	/**
+	 * Create a new audit record. This method should be called in response to a
+	 * user action.
+	 * 
+	 * @param userId
+	 * @param findingId
+	 * @param value
+	 * @param event
+	 * @param time
+	 * @param revision
+	 * @throws SQLException
+	 */
 	private void newAudit(final Long userId, final Long findingId,
 			final String value, final AuditEvent event, final Date time,
 			final Long revision) throws SQLException {
 		final AuditRecord record = factory.newAudit();
+		record.setId(UUID.randomUUID().toString());
 		record.setUserId(userId);
 		record.setTimestamp(time);
 		record.setEvent(event);
 		record.setValue(value);
 		record.setFindingId(findingId);
 		record.setRevision(revision);
-		if (!record.select()) {
-			record.insert();
+		record.insert();
+	}
+
+	/**
+	 * Create a new audit record if none exists yet. This method should be
+	 * called if we are adding an audit we heard about from someone else.
+	 * 
+	 * @param uuid
+	 * @param userId
+	 * @param findingId
+	 * @param value
+	 * @param event
+	 * @param time
+	 * @param revision
+	 * @throws SQLException
+	 */
+	private void newAudit(final String uuid, final Long userId,
+			final Long findingId, final String value, final AuditEvent event,
+			final Date time, final Long revision) throws SQLException {
+		final AuditRecord record = factory.newAudit();
+		record.setId(uuid);
+		if (record.select()) {
+			// Do nothing
+			return;
 		}
+		record.setUserId(userId);
+		record.setTimestamp(time);
+		record.setEvent(event);
+		record.setValue(value);
+		record.setFindingId(findingId);
+		record.setRevision(revision);
+		record.insert();
 	}
 
 	/**

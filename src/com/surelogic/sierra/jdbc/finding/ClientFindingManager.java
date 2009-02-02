@@ -295,14 +295,14 @@ public final class ClientFindingManager extends FindingManager {
 				+ " A.REVISION IS NULL AND"
 				+ " F.ID = A.FINDING_ID AND F.PROJECT_ID = ?";
 		findLocalAudits = conn
-				.prepareStatement("SELECT F.ID,A.DATE_TIME,A.EVENT,A.VALUE"
+				.prepareStatement("SELECT A.FINDING_ID,A.UUID,A.DATE_TIME,A.EVENT,A.VALUE"
 						+ commonForLocalAudits + " ORDER BY A.FINDING_ID");
-		countLocalAudits = conn.prepareStatement("SELECT COUNT(A.ID)"
+		countLocalAudits = conn.prepareStatement("SELECT COUNT(A.UUID)"
 				+ commonForLocalAudits);
 		selectUnrevisionedAudits = conn
-				.prepareStatement("SELECT SA.ID FROM SIERRA_AUDIT SA, FINDING F, PROJECT P WHERE P.NAME = ? AND F.PROJECT_ID = P.ID AND SA.FINDING_ID = F.ID AND SA.REVISION IS NULL");
+				.prepareStatement("SELECT SA.UUID FROM SIERRA_AUDIT SA, FINDING F, PROJECT P WHERE P.NAME = ? AND F.PROJECT_ID = P.ID AND SA.FINDING_ID = F.ID AND SA.REVISION IS NULL");
 		updateUnrevisionedAudit = conn
-				.prepareStatement("UPDATE SIERRA_AUDIT SET REVISION = ?, USER_ID = ? WHERE ID = ?");
+				.prepareStatement("UPDATE SIERRA_AUDIT SET REVISION = ?, USER_ID = ? WHERE UUID = ?");
 		selectLocalMerge = conn
 				.prepareStatement("SELECT F.SUMMARY,F.IMPORTANCE,LM.PACKAGE_NAME,LM.CLASS_NAME,LM.HASH,FT.UUID,LM.REVISION"
 						+ "   FROM LOCATION_MATCH LM, FINDING F, FINDING_TYPE FT"
@@ -887,9 +887,9 @@ public final class ClientFindingManager extends FindingManager {
 						audits = new ArrayList<Audit>();
 						results.add(new FindingAudits(newId, audits));
 					}
-					final Audit a = new Audit(set.getTimestamp(idx++),
-							AuditEvent.valueOf(set.getString(idx++)), set
-									.getString(idx++));
+					final Audit a = new Audit(set.getString(idx++), set
+							.getTimestamp(idx++), AuditEvent.valueOf(set
+							.getString(idx++)), set.getString(idx++));
 					audits.add(a);
 				}
 			}
@@ -949,8 +949,9 @@ public final class ClientFindingManager extends FindingManager {
 				trail.setAudits(audits);
 				trails.add(trail);
 			}
-			audits.add(new Audit(set.getTimestamp(idx++), AuditEvent
-					.valueOf(set.getString(idx++)), set.getString(idx++)));
+			audits.add(new Audit(set.getString(idx++), set.getTimestamp(idx++),
+					AuditEvent.valueOf(set.getString(idx++)), set
+							.getString(idx++)));
 		}
 	}
 
@@ -1011,20 +1012,21 @@ public final class ClientFindingManager extends FindingManager {
 				final Long userId = getUserId(a.getUser());
 				switch (a.getEvent()) {
 				case COMMENT:
-					comment(userId, findingId, a.getValue(), a.getTimestamp(),
-							a.getRevision());
+					comment(a.getUuid(), userId, findingId, a.getValue(), a
+							.getTimestamp(), a.getRevision());
 					break;
 				case IMPORTANCE:
-					setImportance(userId, findingId, Importance.valueOf(a
-							.getValue()), a.getTimestamp(), a.getRevision());
-					break;
-				case READ:
-					markAsRead(userId, findingId, a.getTimestamp(), a
+					setImportance(a.getUuid(), userId, findingId, Importance
+							.valueOf(a.getValue()), a.getTimestamp(), a
 							.getRevision());
 					break;
+				case READ:
+					markAsRead(a.getUuid(), userId, findingId,
+							a.getTimestamp(), a.getRevision());
+					break;
 				case SUMMARY:
-					changeSummary(userId, findingId, a.getValue(), a
-							.getTimestamp(), a.getRevision());
+					changeSummary(a.getUuid(), userId, findingId, a.getValue(),
+							a.getTimestamp(), a.getRevision());
 					break;
 				default:
 				}
@@ -1105,7 +1107,7 @@ public final class ClientFindingManager extends FindingManager {
 			while (set.next()) {
 				updateUnrevisionedAudit.setLong(1, commitRevision);
 				updateUnrevisionedAudit.setLong(2, userId);
-				updateUnrevisionedAudit.setLong(3, set.getLong(1));
+				updateUnrevisionedAudit.setString(3, set.getString(1));
 				updateUnrevisionedAudit.execute();
 			}
 		} finally {

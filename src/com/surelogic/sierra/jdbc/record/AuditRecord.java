@@ -1,5 +1,6 @@
 package com.surelogic.sierra.jdbc.record;
 
+import static com.surelogic.common.jdbc.JDBCUtils.getNullableLong;
 import static com.surelogic.common.jdbc.JDBCUtils.setNullableLong;
 import static com.surelogic.common.jdbc.JDBCUtils.setNullableString;
 import static com.surelogic.common.jdbc.JDBCUtils.setNullableTimestamp;
@@ -11,8 +12,9 @@ import java.util.Date;
 
 import com.surelogic.sierra.tool.message.AuditEvent;
 
-public final class AuditRecord extends LongRecord {
+public final class AuditRecord extends AbstractRecord<String> {
 
+	private String uuid;
 	private Long userId;
 	private Long findingId;
 	private Date timestamp;
@@ -20,38 +22,21 @@ public final class AuditRecord extends LongRecord {
 	private AuditEvent event;
 	private Long revision;
 
-	public AuditRecord(RecordMapper mapper) {
+	public AuditRecord(final RecordMapper mapper) {
 		super(mapper);
 	}
 
 	@Override
-	protected int fillWithNk(PreparedStatement st, int idx) throws SQLException {
-		st.setLong(idx++, findingId);
-		st.setString(idx++, event.toString());
-		setNullableLong(idx++, st, userId);
-		setNullableTimestamp(idx++, st, timestamp);
-		setNullableString(idx++, st, value);
-		return idx;
-	}
-
-	@Override
-	protected int fill(PreparedStatement st, int idx) throws SQLException {
-		idx = fillWithNk(st, idx);
-		setNullableLong(idx++, st, revision);
-		return idx;
-	}
-
-	@Override
-	protected int readAttributes(ResultSet set, int idx) throws SQLException {
-		revision = set.getLong(idx++);
-		return idx;
+	protected int fillWithNk(final PreparedStatement st, final int idx)
+			throws SQLException {
+		return fillWithPk(st, idx);
 	}
 
 	public Long getUserId() {
 		return userId;
 	}
 
-	public void setUserId(Long userId) {
+	public void setUserId(final Long userId) {
 		this.userId = userId;
 	}
 
@@ -59,7 +44,7 @@ public final class AuditRecord extends LongRecord {
 		return findingId;
 	}
 
-	public void setFindingId(Long findingId) {
+	public void setFindingId(final Long findingId) {
 		this.findingId = findingId;
 	}
 
@@ -67,7 +52,7 @@ public final class AuditRecord extends LongRecord {
 		return timestamp;
 	}
 
-	public void setTimestamp(Date timestamp) {
+	public void setTimestamp(final Date timestamp) {
 		this.timestamp = timestamp;
 	}
 
@@ -75,7 +60,7 @@ public final class AuditRecord extends LongRecord {
 		return value;
 	}
 
-	public void setValue(String value) {
+	public void setValue(final String value) {
 		this.value = value;
 	}
 
@@ -83,7 +68,7 @@ public final class AuditRecord extends LongRecord {
 		return event;
 	}
 
-	public void setEvent(AuditEvent event) {
+	public void setEvent(final AuditEvent event) {
 		this.event = event;
 	}
 
@@ -91,66 +76,53 @@ public final class AuditRecord extends LongRecord {
 		return revision;
 	}
 
-	public void setRevision(Long revision) {
+	public void setRevision(final Long revision) {
 		this.revision = revision;
 	}
 
 	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((event == null) ? 0 : event.hashCode());
-		result = prime * result
-				+ ((revision == null) ? 0 : revision.hashCode());
-		result = prime * result
-				+ ((timestamp == null) ? 0 : timestamp.hashCode());
-		result = prime * result
-				+ ((findingId == null) ? 0 : findingId.hashCode());
-		result = prime * result + ((userId == null) ? 0 : userId.hashCode());
-		result = prime * result + ((value == null) ? 0 : value.hashCode());
-		return result;
+	protected int fill(final PreparedStatement st, int idx) throws SQLException {
+		idx = fillWithPk(st, idx);
+		st.setLong(idx++, findingId);
+		st.setString(idx++, event.toString());
+		setNullableLong(idx++, st, userId);
+		setNullableTimestamp(idx++, st, timestamp);
+		setNullableString(idx++, st, value);
+		setNullableLong(idx++, st, revision);
+		return idx;
 	}
 
 	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		final AuditRecord other = (AuditRecord) obj;
-		if (event == null) {
-			if (other.event != null)
-				return false;
-		} else if (!event.equals(other.event))
-			return false;
-		if (revision == null) {
-			if (other.revision != null)
-				return false;
-		} else if (!revision.equals(other.revision))
-			return false;
-		if (timestamp == null) {
-			if (other.timestamp != null)
-				return false;
-		} else if (!timestamp.equals(other.timestamp))
-			return false;
-		if (findingId == null) {
-			if (other.findingId != null)
-				return false;
-		} else if (!findingId.equals(other.findingId))
-			return false;
-		if (userId == null) {
-			if (other.userId != null)
-				return false;
-		} else if (!userId.equals(other.userId))
-			return false;
-		if (value == null) {
-			if (other.value != null)
-				return false;
-		} else if (!value.equals(other.value))
-			return false;
-		return true;
+	protected int fillWithPk(final PreparedStatement st, int idx)
+			throws SQLException {
+		st.setString(idx++, uuid);
+		return idx;
+	}
+
+	@Override
+	protected int readAttributes(final ResultSet set, int idx)
+			throws SQLException {
+		findingId = set.getLong(idx++);
+		event = AuditEvent.valueOf(set.getString(idx++));
+		userId = getNullableLong(idx++, set);
+		timestamp = set.getTimestamp(idx++);
+		value = set.getString(idx++);
+		revision = getNullableLong(idx++, set);
+		return idx;
+	}
+
+	@Override
+	protected int readPk(final ResultSet set, int idx) throws SQLException {
+		uuid = set.getString(idx++);
+		return idx;
+	}
+
+	public String getId() {
+		return uuid;
+	}
+
+	public void setId(final String id) {
+		uuid = id;
 	}
 
 }
