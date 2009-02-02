@@ -397,6 +397,8 @@ modern Java programs.</p>]]>
   <findingType>
     <id>NM_FUTURE_KEYWORD_USED_AS_IDENTIFIER</id>
     <artifact tool="FindBugs" mnemonic="NM_FUTURE_KEYWORD_USED_AS_IDENTIFIER"/>
+    <artifact tool="PMD" mnemonic="AvoidAssertAsIdentifier"/>
+    <artifact tool="PMD" mnemonic="AvoidEnumAsIdentifier"/>
     <name>Use of a future keyword as identifier</name>
     <shortMessage>Use of an identifier that is a keyword in later versions of Java.</shortMessage>
     <info>
@@ -3401,378 +3403,405 @@ a new <code>SecureRandom</code> for each random number needed). </p>]]>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>RV_ABSOLUTE_VALUE_OF_RANDOM_INT</id>
-    <artifact tool="FindBugs"
-	      mnemonic="RV_ABSOLUTE_VALUE_OF_RANDOM_INT">
-    </artifact>
-    <shortMessage>
-      Bad attempt to compute absolute value of signed 32-bit
-      random integer
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="RV_ABSOLUTE_VALUE_OF_RANDOM_INT"/>
+    <name>Absolute value of random int</name>
+    <shortMessage>Bad attempt to compute absolute value of signed 32-bit random integer. Use Random.nextInt(int) instead.</shortMessage>
     <info>
+<![CDATA[<p>This code generates a random signed integer and then
+computes the absolute value of that random integer. If the number
+returned by the random number generator is
+<code>Integer.MIN_VALUE</code>, then the result will be negative as
+well because <code>Math.abs(Integer.MIN_VALUE) ==
+Integer.MIN_VALUE</code>).</p>
 
-      &lt;p&gt; This code generates a random signed integer and
-      then computes the absolute value of that random integer. If
-      the number returned by the random number generator is
-      &lt;code&gt;Integer.MIN_VALUE&lt;/code&gt;, then the result
-      will be negative as well (since
-      &lt;code&gt;Math.abs(Integer.MIN_VALUE) ==
-      Integer.MIN_VALUE&lt;/code&gt;). &lt;/p&gt;
+<p>This problem can be avoided by passing a value into the
+<code>nextInt</code> method. For example, if you have</p>
 
+<pre>
+final Random r = new Random();
+</pre>
+
+<p>then change code like this that can generate all positive
+<code>int</code>s as well as <code>Integer.MIN_VALUE</code></p>
+
+<pre>
+// Bad! not always non-negative
+int i = Math.abs(r.nextInt());
+</pre>
+
+<p>to</p>
+
+<pre>
+int i = r.nextInt(Integer.MAX_VALUE);
+</pre>
+
+<p>which will generate a value between 0 (inclusive) and
+<code>Integer.MAX_VALUE</code> (exclusive).  It you want a positive
+value (not including zero) use<p>
+
+<pre>
+int i = r.nextInt(Integer.MAX_VALUE) + 1;
+</pre>
+
+<p>which will generate a value between 1 (inclusive) and
+<code>Integer.MAX_VALUE</code> (inclusive).</p>]]>
     </info>
-    <name>Absolute Value Of Random Int</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>RV_ABSOLUTE_VALUE_OF_HASHCODE</id>
-    <artifact tool="FindBugs"
-	      mnemonic="RV_ABSOLUTE_VALUE_OF_HASHCODE">
-    </artifact>
-    <shortMessage>
-      Bad attempt to compute absolute value of signed 32-bit
-      hashcode
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="RV_ABSOLUTE_VALUE_OF_HASHCODE"/>
+    <name>Absolute value of hashCode</name>
+    <shortMessage>Bad attempt to compute absolute value of signed 32-bit hashcode.</shortMessage>
     <info>
+<![CDATA[<p>This code generates a hashcode and then computes the
+absolute value of that hashcode. If the hashcode is
+<code>Integer.MIN_VALUE</code> (which is possible), then the result
+will be negative as well because <code>Math.abs(Integer.MIN_VALUE) ==
+Integer.MIN_VALUE</code>.</p>
 
-      &lt;p&gt; This code generates a hashcode and then computes
-      the absolute value of that hashcode. If the hashcode is
-      &lt;code&gt;Integer.MIN_VALUE&lt;/code&gt;, then the result
-      will be negative as well (since
-      &lt;code&gt;Math.abs(Integer.MIN_VALUE) ==
-      Integer.MIN_VALUE&lt;/code&gt;). &lt;/p&gt;
+<p>It is likely that this is not what the code intended to do. It
+likely expects the resulting <code>int</code> value to be
+non-negative. If this is the case then the case where the hashcode
+returned is <code>Integer.MIN_VALUE</code> must be considered.  For
+example, you would change</p>
 
+<pre>
+// Bad! not always non-negative
+int i = Math.abs(o.hashCode());
+</pre>
+
+<p>to</p>
+
+<pre>
+int i;
+int hash = o.hashcode();
+if (hash == Integer.MIN_VALUE) {
+  i = 0; // or any non-negative value you like, maybe Integer.MAX_VALUE
+} else {
+  i = Math.abs(hash);
+}
+</pre>
+
+<p>or create a utility method that does this for you.</p>]]>
     </info>
-    <name>Absolute Value Of Hashcode</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>RV_REM_OF_RANDOM_INT</id>
-    <artifact tool="FindBugs" mnemonic="RV_REM_OF_RANDOM_INT">
-    </artifact>
-    <shortMessage>
-      Remainder of 32-bit signed random integer
-    </shortMessage>
-    <info>
-
-      &lt;p&gt; This code generates a random signed integer and
-      then computes the remainder of that value modulo another
-      value. Since the random number can be negative, the result
-      of the remainder operation can also be negative. Be sure
-      this is intended, and strongly consider using the
-      Random.nextInt(int) method instead. &lt;/p&gt;
-
-    </info>
+    <artifact tool="FindBugs" mnemonic="RV_REM_OF_RANDOM_INT"/>
     <name>Rem Of Random Int</name>
+    <shortMessage>Remainder of 32-bit signed random integer</shortMessage>
+    <info>
+<![CDATA[<p>This code generates a random signed integer and then
+computes the remainder of that value modulo another value. Since the
+random number can be negative, the result of the remainder operation
+can also be negative. Be sure this is intended, and strongly consider
+using the <code>Random.nextInt(int)</code> method instead.</p>]]>
+    </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>RV_REM_OF_HASHCODE</id>
-    <artifact tool="FindBugs" mnemonic="RV_REM_OF_HASHCODE">
-    </artifact>
-    <shortMessage>
-      Remainder of hashCode could be negative
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="RV_REM_OF_HASHCODE"/>
+    <name>Remainder of hashCode</name>
+    <shortMessage>Remainder of hashCode could be negative</shortMessage>
     <info>
+<![CDATA[<p>This code computes a hashcode, and then computes the
+remainder of that value modulo another value. Since the resulting
+hashcode can be negative, the result of the remainder operation can
+also be negative.</p>
 
-      &lt;p&gt; This code computes a hashCode, and then computes
-      the remainder of that value modulo another value. Since the
-      hashCode can be negative, the result of the remainder
-      operation can also be negative. &lt;/p&gt; &lt;p&gt;
-      Assuming you want to ensure that the result of your
-      computation is nonnegative, you may need to change your
-      code. If you know the divisor is a power of 2, you can use a
-      bitwise and operator instead (i.e., instead of using
-      &lt;code&gt;x.hashCode()%n&lt;/code&gt;, use
-      &lt;code&gt;x.hashCode()&amp;amp;(n-1)&lt;/code&gt;. This is
-      probably faster than computing the remainder as well. If you
-      don't know that the divisor is a power of 2, take the
-      absolute value of the result of the remainder operation
-      (i.e., use &lt;code&gt;Math.abs(x.hashCode()%n)&lt;/code&gt;
-      &lt;/p&gt;
+<p> Assuming you want to ensure that the result of your computation is
+nonnegative, you may need to change your code. If you know the divisor
+is a power of 2, you can use a bitwise <i>and</i> operator instead.  For example, instead of using</p>
 
+<pre>
+x.hashCode() % n
+</pre>
+
+<p>use</p>
+
+<pre>
+x.hashCode() & (n-1)
+</pre>
+
+<p>This is probably faster than computing the remainder as well. If
+you don't know that the divisor is a power of 2, take the absolute
+value of the result of the remainder operation. For example, use</p>
+
+<pre>
+Math.abs(x.hashCode() % n)
+</pre>]]>
     </info>
-    <name>Rem Of Hashcode</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>INT_BAD_COMPARISON_WITH_NONNEGATIVE_VALUE</id>
-    <artifact tool="FindBugs"
-	      mnemonic="INT_BAD_COMPARISON_WITH_NONNEGATIVE_VALUE">
-    </artifact>
-    <shortMessage>
-      Bad comparison of nonnegative value with negative constant
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="INT_BAD_COMPARISON_WITH_NONNEGATIVE_VALUE"/>
+    <name>Bad comparison with a nonnegative value</name>
+    <shortMessage>Bad comparison of nonnegative value with negative constant.</shortMessage>
     <info>
-
-      &lt;p&gt; This code compares a value that is guaranteed to
-      be non-negative with a negative constant. &lt;/p&gt;
-
+<![CDATA[<p>This code compares a value that is guaranteed to be
+non-negative with a negative constant.  This comparison will always be
+false. Check that this code is correct and consider removing this
+comparison.</p>]]>
     </info>
-    <name>Bad Comparison With Nonnegative Value</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>INT_BAD_COMPARISON_WITH_SIGNED_BYTE</id>
-    <artifact tool="FindBugs"
-	      mnemonic="INT_BAD_COMPARISON_WITH_SIGNED_BYTE">
-    </artifact>
-    <shortMessage>Bad comparison of signed byte</shortMessage>
+    <artifact tool="FindBugs" mnemonic="INT_BAD_COMPARISON_WITH_SIGNED_BYTE"/>
+    <name>Bad comparison with a signed byte</name>
+    <shortMessage>Bad comparison of a signed byte with a value outside its range.</shortMessage>
     <info>
+<![CDATA[<p>Signed bytes can only have a value in the range -128 to
+127. Comparing a signed byte with a value outside that range is
+vacuous and likely to be incorrect. Check that this code is correct
+and consider removing this comparison.</p>
 
-      &lt;p&gt; Signed bytes can only have a value in the range
-      -128 to 127. Comparing a signed byte with a value outside
-      that range is vacuous and likely to be incorrect. To convert
-      a signed byte &lt;code&gt;b&lt;/code&gt; to an unsigned
-      value in the range 0..255, use &lt;code&gt;0xff &amp;
-      b&lt;/code&gt; &lt;/p&gt;
+</p>To convert a signed byte <code>b</code> to an unsigned value in
+the range 0..255, use</p>
 
+<pre>
+0xff & b
+</pre>]]>
     </info>
-    <name>Bad Comparison With Signed Byte</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>INT_VACUOUS_COMPARISON</id>
-    <artifact tool="FindBugs" mnemonic="INT_VACUOUS_COMPARISON">
-    </artifact>
-    <shortMessage>Vacuous comparison of integer value</shortMessage>
+    <artifact tool="FindBugs" mnemonic="INT_VACUOUS_COMPARISON"/>
+    <name>Vacuous comparison with an int</name>
+    <shortMessage>Vacuous comparison of an integer value.</shortMessage>
     <info>
+<![CDATA[<p>There is an integer comparison that always returns the
+same value. For example, the expression</p>
 
-      &lt;p&gt; There is an integer comparison that always returns
-      the same value (e.g., x &lt;= Integer.MAX_VALUE). &lt;/p&gt;
+<pre>
+x &lt;= Integer.MAX_VALUE
+</pre>
 
+<p>will always be true. Check that this code is correct and consider
+removing this comparison.</p>]]>
     </info>
-    <name>Vacuous Comparison</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>INT_BAD_REM_BY_1</id>
-    <artifact tool="FindBugs" mnemonic="INT_BAD_REM_BY_1">
-    </artifact>
-    <shortMessage>Integer remainder modulo 1</shortMessage>
+    <artifact tool="FindBugs" mnemonic="INT_BAD_REM_BY_1"/>
+    <name>Suspicious modulo 1</name>
+    <shortMessage>Integer remainder modulo 1 always results in 0. Is this what was intended?</shortMessage>
     <info>
-
-      &lt;p&gt; Any expression (exp % 1) is guaranteed to always
-      return zero. Did you mean (exp &amp; 1) or (exp % 2)
-      instead? &lt;/p&gt;
-
+<![CDATA[<p>Any expression <code>(exp % 1)</code> is guaranteed to
+always return zero. Did you mean <code>(exp &amp; 1)</code> or
+</code>(exp % 2)</code> instead?</p>]]>
     </info>
-    <name>Bad Rem By 1</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>BIT_IOR_OF_SIGNED_BYTE</id>
-    <artifact tool="FindBugs" mnemonic="BIT_IOR_OF_SIGNED_BYTE">
-    </artifact>
-    <shortMessage>Bitwise OR of signed byte value</shortMessage>
+    <artifact tool="FindBugs" mnemonic="BIT_IOR_OF_SIGNED_BYTE"/>
+    <name>Suspicious bitwise or of signed byte</name>
+    <shortMessage>Suspicious bitwise or of a signed byte value.</shortMessage>
     <info>
+<![CDATA[<p>Loads a value from a byte array and performs a bitwise or
+with that value. Values loaded from a byte array are sign extended to
+32 bits before any any bitwise operations are performed on the
+value. Thus, if <code>b[0]</code> contains the value
+<code>0xff</code>, and <code>x</code> is initially 0, then the code
+<code>((x &lt;&lt; 8) | b[0])</code> will sign extend <code>0xff</code> to
+get <code>0xffffffff</code>, and thus give the value
+<code>0xffffffff</code> as the result.</p>
 
-      &lt;p&gt; Loads a value from a byte array and performs a
-      bitwise OR with that value. Values loaded from a byte array
-      are sign extended to 32 bits before any any bitwise
-      operations are performed on the value. Thus, if
-      &lt;code&gt;b[0]&lt;/code&gt; contains the value
-      &lt;code&gt;0xff&lt;/code&gt;, and
-      &lt;code&gt;x&lt;/code&gt; is initially 0, then the code
-      &lt;code&gt;((x &lt;&lt; 8) | b[0])&lt;/code&gt; will sign
-      extend &lt;code&gt;0xff&lt;/code&gt; to get
-      &lt;code&gt;0xffffffff&lt;/code&gt;, and thus give the value
-      &lt;code&gt;0xffffffff&lt;/code&gt; as the result.
-      &lt;/p&gt;
+<p>In particular, the following code for packing a byte array into an
+int is badly wrong:</p>
 
-      &lt;p&gt;In particular, the following code for packing a
-      byte array into an int is badly wrong: &lt;/p&gt;
-      &lt;code&gt; int result = 0; for(int i = 0; i &lt; 4; i++)
-      result = ((result &lt;&lt; 8) | b[i]); &lt;/code&gt;
+<pre>
+int result = 0;
+for(int i = 0; i < 4; i++)
+  result = ((result &lt;&lt; 8) | b[i]);
+</pre>
 
-      &lt;p&gt;The following idiom will work instead: &lt;/p&gt;
-      &lt;code&gt; int result = 0; for(int i = 0; i &lt; 4; i++)
-      result = ((result &lt;&lt; 8) | (b[i] &amp;amps; 0xff));
-      &lt;/code&gt;
+<p>The following idiom will work instead:</p>
 
-
+<pre>
+int result = 0;
+for(int i = 0; i < 4; i++)
+  result = ((result &lt;&lt; 8) | (b[i] & 0xff));
+</pre>]]>
     </info>
-    <name>Bitwise OR Of Signed Byte</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>BIT_AND</id>
-    <artifact tool="FindBugs" mnemonic="BIT_AND"></artifact>
-    <shortMessage>Incompatible bit masks</shortMessage>
+    <artifact tool="FindBugs" mnemonic="BIT_AND"/>
+    <name>Incompatible bit masks: and</name>
+    <shortMessage>Incompatible bit masks are always unequal.</shortMessage>
     <info>
-
-      &lt;p&gt; This method compares an expression of the form (a
-      &amp;amp; C) to D, which will always compare unequal due to
-      the specific values of constants C and D. This may indicate
-      a logic error or typo.&lt;/p&gt;
-
+<![CDATA[<p>This method compares an expression of the form <code>(a
+&amp; C)</code> to <code>D</code>, which will always compare unequal
+due to the specific values of constants <code>C</code> and
+<code>D</code>. This may indicate a logic error or typo. Check that
+this code is correct and consider removing this comparison.</p>]]>
     </info>
-    <name>Incompatible Bit Masks And</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>BIT_AND_ZZ</id>
-    <artifact tool="FindBugs" mnemonic="BIT_AND_ZZ"></artifact>
-    <shortMessage>
-      Check to see if ((...) &amp; 0) == 0
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="BIT_AND_ZZ"/>
+    <name>Incompatible bit masks and zero</name>
+    <shortMessage>Check to see if ((...) &amp; 0) == 0 which is always true.</shortMessage>
     <info>
-
-      &lt;p&gt; This method compares an expression of the form (a
-      &amp;amp; 0) to 0, which will always compare equal. This may
-      indicate a logic error or typo.&lt;/p&gt;
-
+<![CDATA[<p>This method compares an expression of the form <code>(a
+&amp; 0)</code> to <code>0</code>, which will always compare
+equal. This may indicate a logic error or typo. Check that this code
+is correct and consider removing this comparison.</p>]]>
     </info>
-    <name>Incompatible Bit Masks And Zero</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>BIT_IOR</id>
-    <artifact tool="FindBugs" mnemonic="BIT_IOR"></artifact>
-    <shortMessage>Incompatible bit masks</shortMessage>
+    <artifact tool="FindBugs" mnemonic="BIT_IOR"/>
+    <name>Incompatible bit masks: or</name>
+    <shortMessage>Incompatible bit masks are always unequal.</shortMessage>
     <info>
+<![CDATA[<p>This method compares an expression of the form <code>(a |
+C)</code> to <code>D</code>. which will always compare unequal due to
+the specific values of constants <code>C</code> and
+<code>D</code>. This may indicate a logic error or typo. Check that this code
+is correct and consider removing this comparison.</p>
 
-      &lt;p&gt; This method compares an expression of the form (a
-      | C) to D. which will always compare unequal due to the
-      specific values of constants C and D. This may indicate a
-      logic error or typo.&lt;/p&gt;
-
-      &lt;p&gt; Typically, this bug occurs because the code wants
-      to perform a membership test in a bit set, but uses the
-      bitwise OR operator (&quot;|&quot;) instead of bitwise AND
-      (&quot;&amp;amp;&quot;).&lt;/p&gt;
-
+<p>Typically, this issue occurs because the code wants to perform a
+membership test in a bit set, but uses the bitwise or operator
+(&quot;|&quot;) instead of the bitwise and operator
+(&quot;&amp;&quot;).</p>]]>
     </info>
-    <name>Incompatible Bit Masks OR</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>IncorrectLazyInitializationOfInstance</id>
-    <artifact tool="FindBugs" mnemonic="LI_LAZY_INIT_INSTANCE">
-    </artifact>
-    <shortMessage>
-      Incorrect lazy initialization of instance field
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="LI_LAZY_INIT_INSTANCE"/>
+    <artifact tool="FindBugs" mnemonic="LI_LAZY_INIT_STATIC"/>
+    <name>Incorrect lazy initialization</name>
+    <shortMessage>Incorrect lazy initialization of a field.</shortMessage>
     <info>
+<![CDATA[<p>This method contains an unsynchronized lazy
+initialization of a non-volatile field. Because the compiler or
+processor may reorder instructions, threads are not guaranteed to see
+a completely initialized object, if the method can be called by
+multiple threads.</p>
 
-      &lt;p&gt; This method contains an unsynchronized lazy
-      initialization of a non-volatile field. Because the compiler
-      or processor may reorder instructions, threads are not
-      guaranteed to see a completely initialized object,
-      &lt;em&gt;if the method can be called by multiple
-      threads&lt;/em&gt;. You can make the field volatile to
-      correct the problem. For more information, see the &lt;a
-      href=&quot;http://www.cs.umd.edu/~pugh/java/memoryModel/&quot;&gt;Java
-      Memory Model web site&lt;/a&gt;. &lt;/p&gt;
-
+<p>You can make the field volatile to correct the problem. For more
+information, please see the <a
+href="http://www.cs.umd.edu/~pugh/java/memoryModel/">Java Memory Model
+web site</a>.</p>]]>
     </info>
-    <name>Lazy Init Instance</name>
-  </findingType>
-  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-  <findingType>
-    <id>IncorrectLazyInitializationOfStatic</id>
-    <artifact tool="FindBugs" mnemonic="LI_LAZY_INIT_STATIC">
-    </artifact>
-    <shortMessage>
-      Incorrect lazy initialization of static field
-    </shortMessage>
-    <info>
-
-      &lt;p&gt; This method contains an unsynchronized lazy
-      initialization of a non-volatile static field. Because the
-      compiler or processor may reorder instructions, threads are
-      not guaranteed to see a completely initialized object,
-      &lt;em&gt;if the method can be called by multiple
-      threads&lt;/em&gt;. You can make the field volatile to
-      correct the problem. For more information, see the &lt;a
-      href=&quot;http://www.cs.umd.edu/~pugh/java/memoryModel/&quot;&gt;Java
-      Memory Model web site&lt;/a&gt;. &lt;/p&gt;
-
-    </info>
-    <name>Incorrect Lazy Initialization of Static Field</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AvoidCallingSynchronizedOnLock</id>
-    <artifact tool="FindBugs"
-	      mnemonic="JLM_JSR166_LOCK_MONITORENTER">
-    </artifact>
-    <shortMessage>
-      Synchronization performed on java.util.concurrent Lock
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="JLM_JSR166_LOCK_MONITORENTER"/>
+    <name>Suspicious util concurrent Lock monitor enter</name>
+    <shortMessage>Suspicions intrinsic synchronization performed on a java.util.concurrent Lock object. This is probably a mistake.</shortMessage>
     <info>
+<![CDATA[<p>This method performs synchronization on an
+implementation of <code>java.util.concurrent.locks.Lock</code>.  You
+should use the <code>lock()</code> and <code>unlock()</code> methods
+instead.  For example, change</p>
 
-      &lt;p&gt; This method performs synchronization on an
-      implementation of
-      &lt;code&gt;java.util.concurrent.locks.Lock&lt;/code&gt;.
-      You should use the &lt;code&gt;lock()&lt;/code&gt; and
-      &lt;code&gt;unlock()&lt;/code&gt; methods instead.
-      &lt;/p&gt;
+<pre>
+Lock l = ...;
+synchronized (l) { // Bad!
+  // access the resource protected by this lock.
+}
+</pre>
 
+<p>to</p>
+
+<pre>
+Lock l = ...;
+l.lock();
+try {
+  // access the resource protected by this lock
+} finally {
+  l.unlock();
+}
+</pre>]]>
     </info>
-    <name>JSR166 Lock Monitor Enter</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UPM_UNCALLED_PRIVATE_METHOD</id>
-    <artifact tool="FindBugs"
-	      mnemonic="UPM_UNCALLED_PRIVATE_METHOD">
-    </artifact>
-    <shortMessage>Private method is never called</shortMessage>
+    <artifact tool="FindBugs" mnemonic="UPM_UNCALLED_PRIVATE_METHOD"/>
+    <artifact tool="PMD" mnemonic="UnusedPrivateMethod"/>
+    <name>Uncalled private method</name>
+    <shortMessage>This private method is unused. Consider removing the method.</shortMessage>
     <info>
-
-      &lt;p&gt; This private method is never called. Although it
-      is possible that the method will be invoked through
-      reflection, it is more likely that the method is never used,
-      and should be removed. &lt;/p&gt;
-
+<![CDATA[<p>This private method is never called. Although it is
+possible that the method is invoked through reflection, it is more
+likely that the method is never used, and should be removed.</p>]]>
     </info>
-    <name>Uncalled Private Method</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UMAC_UNCALLABLE_METHOD_OF_ANONYMOUS_CLASS</id>
-    <artifact tool="FindBugs"
-	      mnemonic="UMAC_UNCALLABLE_METHOD_OF_ANONYMOUS_CLASS">
-    </artifact>
-    <shortMessage>
-      Uncallable method defined in anonymous class
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="UMAC_UNCALLABLE_METHOD_OF_ANONYMOUS_CLASS"/>
+    <name>Uncallable method in an anonymous class</name>
+    <shortMessage>Uncallable method defined in anonymous class. Should this method be overriding another method?</shortMessage>
     <info>
+<![CDATA[<p>This anonymous class defines a method that is not directly
+invoked and does not override a method in a superclass. Since methods
+in other classes cannot directly invoke methods declared in an
+anonymous class, it appears that this method is uncallable.</p>
 
-      &lt;p&gt; This anonymous class defined a method that is not
-      directly invoked and does not override a method in a
-      superclass. Since methods in other classes cannot directly
-      invoke methods declared in an anonymous class, it seems that
-      this method is uncallable. The method might simply be dead
-      code, but it is also possible that the method is intended to
-      override a method declared in a superclass, and due to an
-      typo or other error the method does not, in fact, override
-      the method it is intended to. &lt;/p&gt;
-
+<p>The method might simply be dead code, but it is also possible that
+the method is intended to override a method declared in a superclass,
+and due to an typo or other error the method does not, in fact,
+override the method it is intended to.</p>]]>
     </info>
-    <name>Uncallable Method Of Anonymous Class</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>ODR_OPEN_DATABASE_RESOURCE_EXCEPTION_PATH</id>
-    <artifact tool="FindBugs"
-	      mnemonic="ODR_OPEN_DATABASE_RESOURCE_EXCEPTION_PATH">
-    </artifact>
-    <shortMessage>
-      Method may fail to close database resource on exception
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="ODR_OPEN_DATABASE_RESOURCE_EXCEPTION_PATH"/>
+    <name>Open database resource exception path</name>
+    <shortMessage>This method may fail to close a database resource on exception.  Move the close to a finally block.</shortMessage>
     <info>
+<![CDATA[<p>The method creates a database resource (such as a database
+connection or row set), does not assign it to any fields, pass it to
+other methods, or return it, and does not appear to close the object
+on all exceptional paths out of the method.</p>
 
-      &lt;p&gt; The method creates a database resource (such as a
-      database connection or row set), does not assign it to any
-      fields, pass it to other methods, or return it, and does not
-      appear to close the object on all exception paths out of the
-      method.&amp;nbsp; Failure to close database resources on all
-      paths out of a method may result in poor performance, and
-      could cause the application to have problems communicating
-      with the database.&lt;/p&gt;
+<p>Failure to close database resources on all paths out of a method
+may result in poor performance, and could cause the application to
+have problems communicating with the database.</p>
 
+<p>To fix this use a <code>finally</code> block. For example, see the
+code below.<p>
+
+<pre>
+Connection connection = dataSource.getConnection();
+try {
+  Statement statement = connection.createStatement();
+  try {
+    ResultSet resultSet = statement.executeQuery(”some query”);
+    try {
+      // Do stuff with the result set.
+    } finally {
+      resultSet.close();
+    }
+  } finally {
+    statement.close();
+  }
+} finally {
+  connection.close();
+}</pre>
+
+<p>Note that there are some helpful utilities provided by the <a
+href="http://commons.apache.org/dbutils/">Apache Commons DbUtils</a>
+project that may be useful in your program.</p>]]>
     </info>
-    <name>Open Database Resource Exception Path</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
@@ -3869,128 +3898,110 @@ public class Test {
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>IJU_ASSERT_METHOD_INVOKED_FROM_RUN_METHOD</id>
-    <artifact tool="FindBugs"
-	      mnemonic="IJU_ASSERT_METHOD_INVOKED_FROM_RUN_METHOD">
-    </artifact>
-    <shortMessage>
-      JUnit assertion in run method will not be noticed by JUnit
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="IJU_ASSERT_METHOD_INVOKED_FROM_RUN_METHOD"/>
+    <name>Suspicious JUnit assert invoked within Runnable.run</name>
+    <shortMessage>A JUnit assertion in run method in another thread will not be noticed by JUnit. Are you trying to test concurrent code?</shortMessage>
     <info>
+<![CDATA[<p>A JUnit assertion is performed in a run method. This is
+suspicious if the code is running in another thread.</p>
 
-      &lt;p&gt; A JUnit assertion is performed in a run method.
-      Failed JUnit assertions just result in exceptions being
-      thrown. Thus, if this exception occurs in a thread other
-      than the thread that invokes the test method, the exception
-      will terminate the thread but not result in the test
-      failing. &lt;/p&gt;
+<p>Failed JUnit assertions just result in exceptions being
+thrown. Thus, if this exception occurs in a thread other than the
+thread that invokes the test method, the exception will terminate the
+thread but not result in the test failing.</p>
 
+<p>One approach to fix this problem is to save up the test failures
+encountered in the second thread (e.g., in a collection or some other
+scheme) and after the thread has completed report the problems in the
+JUnit thread.</p>]]>
     </info>
-    <name>Assert Method Invoked From Run Method</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>IJU_SETUP_NO_SUPER</id>
-    <artifact tool="FindBugs" mnemonic="IJU_SETUP_NO_SUPER">
-    </artifact>
-    <shortMessage>
-      TestCase implements setUp but doesn't call super.setUp()
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="IJU_SETUP_NO_SUPER"/>
+    <name>SetUp does not call super.setUp</name>
+    <shortMessage>JUnit TestCase implements setUp but doesn't call super.setUp().</shortMessage>
     <info>
-
-      &lt;p&gt; Class is a JUnit TestCase and implements the setUp
-      method. The setUp method should call super.setUp(), but
-      doesn't.&lt;/p&gt;
-
+<![CDATA[<p>This class is a JUnit <code>TestCase</code> and implements
+the <code>setUp</code> method. The <code>setUp</code> method should
+call <code>super.setUp()</code>, but in this case it doesn't.</p>]]>
     </info>
-    <name>Setup No Super</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>IJU_TEARDOWN_NO_SUPER</id>
-    <artifact tool="FindBugs" mnemonic="IJU_TEARDOWN_NO_SUPER">
-    </artifact>
-    <shortMessage>
-      TestCase implements tearDown but doesn't call
-      super.tearDown()
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="IJU_TEARDOWN_NO_SUPER"/>
+    <name>TearDown does not call super.tearDown</name>
+    <shortMessage>TestCase implements tearDown but doesn't call super.tearDown().</shortMessage>
     <info>
-
-      &lt;p&gt; Class is a JUnit TestCase and implements the
-      tearDown method. The tearDown method should call
-      super.tearDown(), but doesn't.&lt;/p&gt;
-
+<![CDATA[<p>This class is a JUnit <code>TestCase</code> and implements
+the <code>tearDown</code> method. The <code>tearDown</code> method
+should call </code>super.tearDown()</code>, but in this case it
+doesn't.</p>]]>
     </info>
-    <name>Teardown No Super</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>IJU_SUITE_NOT_STATIC</id>
-    <artifact tool="FindBugs" mnemonic="IJU_SUITE_NOT_STATIC">
-    </artifact>
-    <shortMessage>
-      TestCase implements a non-static suite method
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="IJU_SUITE_NOT_STATIC"/>
+    <artifact tool="PMD" mnemonic="JUnitStaticSuite"/>
+    <name>TestCase suite is not static</name>
+    <shortMessage>TestCase implements a non-static suite method.</shortMessage>
     <info>
-
-      &lt;p&gt; Class is a JUnit TestCase and implements the
-      suite() method. The suite method should be declared as being
-      static, but isn't.&lt;/p&gt;
-
+<![CDATA[<p>This class is a JUnit <code>TestCase</code> and implements
+the <code>suite()</code> method. The <code>suite</code> method should
+be declared to be <code>static</code>, but isn't.</p>]]>
     </info>
-    <name>Suite Not Static</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>IJU_BAD_SUITE_METHOD</id>
-    <artifact tool="FindBugs" mnemonic="IJU_BAD_SUITE_METHOD">
-    </artifact>
-    <shortMessage>
-      TestCase declares a bad suite method
-    </shortMessage>
-    <info>
-
-      &lt;p&gt; Class is a JUnit TestCase and defines a suite()
-      method. However, the suite method needs to be declared as
-      either &lt;pre&gt;public static junit.framework.Test
-      suite()&lt;/pre&gt; or &lt;pre&gt;public static
-      junit.framework.TestSuite suite()&lt;/pre&gt; &lt;/p&gt;
-
-    </info>
+    <artifact tool="FindBugs" mnemonic="IJU_BAD_SUITE_METHOD"/>
     <name>Bad Suite Method</name>
+    <shortMessage>TestCase declares a bad suite method.</shortMessage>
+    <info>
+<![CDATA[<p>This class is a JUnit <code>TestCase</code> and defines a
+<code>suite()</code> method. However, the <code>suite</code> method
+needs to be declared as either</p>
+
+<pre>
+public static junit.framework.Test suite()
+</pre>
+
+<p>or</p>
+
+<pre>
+public static junit.framework.TestSuite suite()
+</pre>
+
+<p>In this case the <code>suite()</code> method matches neither of
+these two signatures.</p>]]>
+    </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>IJU_NO_TESTS</id>
-    <artifact tool="FindBugs" mnemonic="IJU_NO_TESTS"></artifact>
-    <shortMessage>TestCase has no tests</shortMessage>
+    <artifact tool="FindBugs" mnemonic="IJU_NO_TESTS"/>
+    <name>TestCase with no tests</name>
+    <shortMessage>This TestCase has no tests.</shortMessage>
     <info>
-
-      &lt;p&gt; Class is a JUnit TestCase but has not implemented
-      any test methods&lt;/p&gt;
-
+<![CDATA[<p>This class is a JUnit TestCase but has not implemented any
+test methods.</p>]]>
     </info>
-    <name>No Tests</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>BOA_BADLY_OVERRIDDEN_ADAPTER</id>
-    <artifact tool="FindBugs"
-	      mnemonic="BOA_BADLY_OVERRIDDEN_ADAPTER">
-    </artifact>
-    <shortMessage>
-      Class overrides a method implemented in super class Adapter
-      wrongly
-    </shortMessage>
-    <info>
-
-      &lt;p&gt; This method overrides a method found in a parent
-      class, where that class is an Adapter that implements a
-      listener defined in the java.awt.event or javax.swing.event
-      package. As a result, this method will not get called when
-      the event occurs.&lt;/p&gt;
-
-    </info>
+    <artifact tool="FindBugs" mnemonic="BOA_BADLY_OVERRIDDEN_ADAPTER"/>
     <name>Badly Overridden Adapter</name>
+    <shortMessage>Class overrides a method implemented in super class Adapter wrongly.</shortMessage>
+    <info>
+<![CDATA[<p>This method overrides a method found in a parent class,
+where that class is an Adapter that implements a listener defined in
+the java.awt.event or javax.swing.event package. As a result, this
+method will not get called when the event occurs.</p>]]>
+    </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
@@ -8838,9 +8849,19 @@ public class Foo extends Bar{
 parentheses, making them look like a function call.  Consider removing
 the unnecessary parentheses.</p>
 
+<p>For example, consider changing</p>
+
 <pre>
 public boolean bar() {
-  return (true); // bad
+  return (true); // Bad!
+}
+</pre>
+
+<p>to</p>
+
+<pre>
+public boolean bar() {
+  return true;
 }
 </pre>]]>
     </info>
@@ -9934,162 +9955,219 @@ unused imports from your program.</p>]]>
   <findingType>
     <id>UseProperClassLoader</id>
     <artifact tool="PMD" mnemonic="UseProperClassLoader"/>
-    <name>Use Proper Class Loader</name>
-    <shortMessage>
-      In J2EE getClassLoader() might not work as expected. Use
-      Thread.currentThread().getContextClassLoader() instead.
-    </shortMessage>
+    <name>Use proper class loader</name>
+    <shortMessage>Avoid getClassLoader() in J2EE. Use Thread.currentThread().getContextClassLoader() instead.</shortMessage>
     <info>
-      In J2EE getClassLoader() might not work as expected. Use
-      Thread.currentThread().getContextClassLoader() instead.
+<![CDATA[<p>In J2EE <code>getClassLoader()</code> might not work as
+expected. Therefore, use
+<code>Thread.currentThread().getContextClassLoader()</code>
+instead.</p>
+
+<p>For example, consider changing</p>
+
+<pre>
+ClassLoader cl = Bar.class.getClassLoader();
+</pre>
+
+<p>to</p>
+
+<pre>
+ClassLoader cl = Thread.currentThread().getContextClassLoader();
+</pre>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>MDBAndSessionBeanNamingConvention</id>
     <artifact tool="PMD" mnemonic="MDBAndSessionBeanNamingConvention"/>
-    <name>MDB And Session Bean Naming Convention</name>
-    <shortMessage>
-      The EJB Specification state that any MessageDrivenBean or
-      SessionBean should be suffixed by Bean.
-    </shortMessage>
+    <name>MDB and SessionBean naming convention</name>
+    <shortMessage>This class appears to be a MessageDrivenBean or a SessionBean but is not suffixed by 'Bean'.</shortMessage>
     <info>
-      The EJB Specification state that any MessageDrivenBean or
-      SessionBean should be suffixed by Bean.
+<![CDATA[<p>The EJB Specification states that any
+<code>MessageDrivenBean</code> or <code>SessionBean</code> should be
+suffixed by 'Bean'. For example:</p>
+
+<pre>
+public class SomeBean implements SessionBean { ... }
+</pre>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>RemoteSessionInterfaceNamingConvention</id>
     <artifact tool="PMD" mnemonic="RemoteSessionInterfaceNamingConvention"/>
-    <name>Remote Session Interface Naming Convention</name>
-    <shortMessage>
-      Remote Home interface of a Session EJB should be suffixed by
-      'Home'.
-    </shortMessage>
+    <name>Remote Home naming convention</name>
+    <shortMessage>This class appears to be the Remote Home interface of a Session EJB but is not suffixed by 'Home'.</shortMessage>
     <info>
-      Remote Home interface of a Session EJB should be suffixed by
-      'Home'.
+<![CDATA[<p>The <i>Remote Home</i> interface of a Session EJB should
+be suffixed by 'Home'. For example:</p>
+
+<pre>
+public interface MyBeautifulHome extends javax.ejb.EJBHome { ... }
+</pre>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>LocalInterfaceSessionNamingConvention</id>
     <artifact tool="PMD" mnemonic="LocalInterfaceSessionNamingConvention"/>
-    <name>Local Interface Session Naming Convention</name>
-    <shortMessage>
-      The Local Interface of a Session EJB should be suffixed by
-      'Local'.
-    </shortMessage>
+    <name>Local naming convention</name>
+    <shortMessage>This class appears to be the Local interface of a Session EJB but is not suffixed by 'Local'.</shortMessage>
     <info>
-      The Local Interface of a Session EJB should be suffixed by
-      'Local'.
+<![CDATA[<p>The <i>Local</i> Interface of a Session EJB should be
+suffixed by 'Local'. For example:</p>
+
+<pre>
+public interface MyLocal extends javax.ejb.EJBLocalObject { ... }
+</pre>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>LocalHomeNamingConvention</id>
     <artifact tool="PMD" mnemonic="LocalHomeNamingConvention"/>
-    <name>Local Home Naming Convention</name>
-    <shortMessage>
-      The Local Home interface of a Session EJB should be suffixed
-      by 'LocalHome'.
-    </shortMessage>
+    <name>Local Home naming convention</name>
+    <shortMessage>This class appears to be the Local Home interface of a Session EJB but is not suffixed by 'LocalHome'.</shortMessage>
     <info>
-      The Local Home interface of a Session EJB should be suffixed
-      by 'LocalHome'.
+<![CDATA[<p>The <i>Local Home</i> interface of a Session EJB should be
+suffixed by 'LocalHome'. For example:</p>
+
+<pre>
+public interface MyBeautifulLocalHome extends javax.ejb.EJBLocalHome { ... }
+</pre>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>RemoteInterfaceNamingConvention</id>
     <artifact tool="PMD" mnemonic="RemoteInterfaceNamingConvention"/>
-    <name>Remote Interface Naming Convention</name>
-    <shortMessage>
-      Remote Interface of a Session EJB should NOT be suffixed.
-    </shortMessage>
+    <name>Remote naming convention</name>
+    <shortMessage>The remote interface of a Session EJB should not be suffixed.</shortMessage>
     <info>
-      Remote Interface of a Session EJB should NOT be suffixed.
+<![CDATA[<p>The <i>Remote</i> interface of a Session EJB should NOT be
+suffixed. For example, use</p>
+
+<pre>
+public interface BadSuffix extends javax.ejb.EJBObject { ... }
+</pre>
+
+<p>rather than any of the following:</p>
+
+<pre>
+public interface BadSuffixSession extends javax.ejb.EJBObject { ... }
+
+public interface BadSuffixEJB extends javax.ejb.EJBObject { ... }
+
+public interface BadSuffixBean extends javax.ejb.EJBObject { ... }
+</pre>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>BeanMembersShouldSerialize</id>
     <artifact tool="PMD" mnemonic="BeanMembersShouldSerialize"/>
-    <name>Bean Members Should Serialize</name>
-    <shortMessage>
-      If a class is a bean, or is referenced by a bean directly or
-      indirectly it needs to be serializable. Member variables
-      need to be marked as transient, static, or have accessor
-      methods in the class. Marking variables as transient is the
-      safest and easiest modification. Accessor methods should
-      follow the Java naming conventions, i.e.if you have a
-      variable foo, you should provide getFoo and setFoo methods.
-    </shortMessage>
+    <name>Bean members should serialize</name>
+    <shortMessage>This class is a bean, or is referenced by a bean directly or indirectly. Therefore, it needs to be serializable.</shortMessage>
     <info>
-      If a class is a bean, or is referenced by a bean directly or
-      indirectly it needs to be serializable. Member variables
-      need to be marked as transient, static, or have accessor
-      methods in the class. Marking variables as transient is the
-      safest and easiest modification. Accessor methods should
-      follow the Java naming conventions, i.e.if you have a
-      variable foo, you should provide getFoo and setFoo methods.
-    </info>
-  </findingType>
-  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-  <findingType>
-    <id>JUnitStaticSuite</id>
-    <artifact tool="PMD" mnemonic="JUnitStaticSuite"/>
-    <name>JUnit Static Suite</name>
-    <shortMessage>
-      The suite() method in a JUnit test needs to be both public
-      and static.
-    </shortMessage>
-    <info>
-      The suite() method in a JUnit test needs to be both public
-      and static.
+<![CDATA[<p>If a class is a bean, or is referenced by a bean directly
+or indirectly it needs to be serializable. Member variables need to be
+marked as transient, static, or have accessor methods in the
+class. Marking variables as transient is the safest and easiest
+modification.</p>
+
+<p>Accessor methods should follow the Java naming conventions, i.e.,
+if you have a variable <code>foo</code>, you should provide
+<code>getFoo</code> and <code>setFoo</code> methods.</p>
+
+<p>For example, consider the below code</p>
+
+<pre>
+private transient int someFoo; //good, it's transient
+private static int otherFoo;   // also OK
+private int moreFoo;           // OK, has proper accessors, see below
+private int badFoo;            // Bad! probably should be marked transient
+
+private void setMoreFoo(int moreFoo) {
+  this.moreFoo = moreFoo;
+}
+
+private int getMoreFoo() {
+  return this.moreFoo;
+}
+</pre>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>JUnitSpelling</id>
     <artifact tool="PMD" mnemonic="JUnitSpelling"/>
-    <name>JUnit Spelling</name>
-    <shortMessage>
-      Some JUnit framework methods are easy to misspell.
-    </shortMessage>
-    <info>Some JUnit framework methods are easy to misspell.</info>
+    <name>JUnit spelling</name>
+    <shortMessage>Some JUnit framework methods are easy to misspell. Did you misspell this method's name?</shortMessage>
+    <info>
+<![CDATA[<p>Some JUnit framework methods are easy to misspell.  For
+example, consider the below broken code.</p>
+
+<pre>
+public class Foo extends TestCase {
+  public void setup() { ... }    // oops, should be setUp
+  public void TearDown() { ... } // oops, should be tearDown
+}
+</pre>]]>
+    </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>JUnitAssertionsShouldIncludeMessage</id>
     <artifact tool="PMD" mnemonic="JUnitAssertionsShouldIncludeMessage"/>
-    <name>JUnit Assertions Should Include Message</name>
-    <shortMessage>
-      JUnit assertions should include a message - i.e., use the
-      three argument version of assertEquals(), not the two
-      argument version.
-    </shortMessage>
+    <name>JUnit assertions should include a message</name>
+    <shortMessage>Consider including a message as to what went wrong.</shortMessage>
     <info>
-      JUnit assertions should include a message - i.e., use the
-      three argument version of assertEquals(), not the two
-      argument version.
+<![CDATA[<p>JUnit assertions should include a message, i.e., use the
+three argument version of <code>assertEquals()</code>, not the two
+argument version.</p>
+
+<p>For example, consider changing</p>
+
+<pre>
+assertEquals("foo", "bar");
+</pre>
+
+<p>to</p>
+
+<pre>
+assertEquals("foo is not semantically equal to bar", "foo", "bar");
+</pre>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>JUnitTestsShouldIncludeAssert</id>
     <artifact tool="PMD" mnemonic="JUnitTestsShouldIncludeAssert"/>
-    <name>JUnit Tests Should Include Assert</name>
-    <shortMessage>
-      JUnit tests should include at least one assertion. This
-      makes the tests more robust, and using assert with messages
-      provide the developer a clearer idea of what the test does.
-    </shortMessage>
+    <name>JUnit tests should include asserts</name>
+    <shortMessage>This JUnit test case does not have an assertion. Is this intentional?</shortMessage>
     <info>
-      JUnit tests should include at least one assertion. This
-      makes the tests more robust, and using assert with messages
-      provide the developer a clearer idea of what the test does.
+<![CDATA[<p>JUnit tests should include at least one assertion. This
+makes the tests more robust, and using assert with messages provide
+the developer a clearer idea of what the test does.</p>
+
+<p>For example, consider changing</p>
+
+<pre>
+public void testSomething() {
+  Bar b = findBar();
+  b.work();
+}
+</pre>
+
+<p>to</p>
+
+<pre>
+public void testSomething() {
+  Bar b = findBar();
+  assertNotNull("bar was not able to be found", b);
+  b.work();
+}
+</pre>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
@@ -10097,551 +10175,607 @@ unused imports from your program.</p>]]>
     <id>TestClassWithoutTestCases</id>
     <artifact tool="PMD" mnemonic="TestClassWithoutTestCases"/>
     <name>Test Class Without Test Cases</name>
-    <shortMessage>
-      Test classes end with the suffix Test. Having a non-test
-      class with that name is not a good practice, since most
-      people will assume it is a test case. Test classes have test
-      methods named testXXX.
-    </shortMessage>
+    <shortMessage>Test classes end with the suffix Test. Having a non-test class with that name is not a good practice.</shortMessage>
     <info>
-      Test classes end with the suffix Test. Having a non-test
-      class with that name is not a good practice, since most
-      people will assume it is a test case. Test classes have test
-      methods named testXXX.
+<![CDATA[<p>Test classes end with the suffix <code>Test</code>. Having
+a non-test class with that name is not a good practice, since most
+people will assume it is a test case. Test classes, for JUnit, have
+test methods named <code>test</code><i>x</i>.  Where <i>x</i> is the
+name of the test.</p>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UnnecessaryBooleanAssertion</id>
     <artifact tool="PMD" mnemonic="UnnecessaryBooleanAssertion"/>
-    <name>Unnecessary Boolean Assertion</name>
-    <shortMessage>
-      A JUnit test assertion with a boolean literal is unnecessary
-      since it always will eval to the same thing. Consider using
-      flow control (in case of assertTrue(false) or similar) or
-      simply removing statements like assertTrue(true) and
-      assertFalse(false). If you just want a test to halt, use the
-      fail method.
-    </shortMessage>
+    <name>Unnecessary boolean assertion</name>
+    <shortMessage>Consider reomving assertTrue(true) and assertFalse(false). If you just want a test to halt, use the fail method.</shortMessage>
     <info>
-      A JUnit test assertion with a boolean literal is unnecessary
-      since it always will eval to the same thing. Consider using
-      flow control (in case of assertTrue(false) or similar) or
-      simply removing statements like assertTrue(true) and
-      assertFalse(false). If you just want a test to halt, use the
-      fail method.
-    </info>
-  </findingType>
-  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-  <findingType>
-    <id>UseAssertEqualsInsteadOfAssertTrue</id>
-    <artifact tool="PMD" mnemonic="UseAssertEqualsInsteadOfAssertTrue"/>
-    <name>Use Assert Equals Instead Of Assert True</name>
-    <shortMessage>
-      This rule detects JUnit assertions in object equality. These
-      assertions should be made by more specific methods, like
-      assertEquals.
-    </shortMessage>
-    <info>
-      This rule detects JUnit assertions in object equality. These
-      assertions should be made by more specific methods, like
-      assertEquals.
-    </info>
-  </findingType>
-  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-  <findingType>
-    <id>UseAssertSameInsteadOfAssertTrue</id>
-    <artifact tool="PMD" mnemonic="UseAssertSameInsteadOfAssertTrue"/>
-    <name>Use Assert Same Instead Of Assert True</name>
-    <shortMessage>
-      This rule detects JUnit assertions in object references
-      equality. These assertions should be made by more specific
-      methods, like assertSame, assertNotSame.
-    </shortMessage>
-    <info>
-      This rule detects JUnit assertions in object references
-      equality. These assertions should be made by more specific
-      methods, like assertSame, assertNotSame.
+<![CDATA[<p>A JUnit test assertion with a <code>boolean</code> literal
+is unnecessary since it always will eval to the same thing. Consider
+using flow control, in case of <code>assertTrue(false)</code> or
+similar, or simply removing statements like
+<code>assertTrue(true)</code> and <code>assertFalse(false)</code>. If
+you just want a test to halt, use the <code>fail()</code>
+method.</p>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UseAssertNullInsteadOfAssertTrue</id>
     <artifact tool="PMD" mnemonic="UseAssertNullInsteadOfAssertTrue"/>
-    <name>Use Assert Null Instead Of Assert True</name>
-    <shortMessage>
-      This rule detects JUnit assertions in object references
-      equality. These assertions should be made by more specific
-      methods, like assertNull, assertNotNull.
-    </shortMessage>
+    <artifact tool="PMD" mnemonic="UseAssertSameInsteadOfAssertTrue"/>
+    <artifact tool="PMD" mnemonic="UseAssertEqualsInsteadOfAssertTrue"/>
+    <name>Use specific JUnit methods instead of assertTrue</name>
+    <shortMessage>Check object references using more specific JUnit methods rather than assertTrue.</shortMessage>
     <info>
-      This rule detects JUnit assertions in object references
-      equality. These assertions should be made by more specific
-      methods, like assertNull, assertNotNull.
+<![CDATA[<p>Check object references using <code>assertNull</code>,
+<code>assertNotNull</code>, <code>assertSame</code>,
+<code>assertNotSame</code>, or <code>assertEquals</code> rather than
+<code>assertTrue</code>. This is easier to understand.</p>
+
+<p>For example, change</p>
+
+<pre>
+void testCode() {
+  Object a = doSomething();
+
+  assertTrue(a == null);   // Bad!
+  assertTrue(a != null);   // Bad!
+
+  assertTrue(a == b);      // Bad!
+  assertTrue(a != c);      // Bad!
+
+  assertTrue(a.equals(b)); // Bad!
+}
+</pre>
+
+<p>to</p>
+
+<pre>
+void testCode() {
+  Object a = doSomething();
+
+  assertNull(a);
+  assertNotNull(a);
+
+  assertSame(a, b);
+  assertNotSame(a, c);
+
+  assertEquals(a, b);
+}
+</pre>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SimplifyBooleanAssertion</id>
     <artifact tool="PMD" mnemonic="SimplifyBooleanAssertion"/>
-    <name>Simplify Boolean Assertion</name>
-    <shortMessage>
-      Avoid negation in an assertTrue or assertFalse test. For
-      example, rephrase: assertTrue(!expr); as: assertFalse(expr);
-    </shortMessage>
+    <name>Simplify boolean assertion</name>
+    <shortMessage>Avoid negation in an assertTrue or assertFalse test.</shortMessage>
     <info>
-      Avoid negation in an assertTrue or assertFalse test. For
-      example, rephrase: assertTrue(!expr); as: assertFalse(expr);
+<![CDATA[<p>Avoid negation in an <code>assertTrue</code> or
+<code>assertFalse</code> test. Rephrase <code>assertTrue(!expr)</code>
+as <code>assertFalse(expr)</code>.</p>
+
+<p>For example, change</p>
+
+<pre>
+public void testX() {
+  assertTrue("not empty", !r.isEmpty()); // Bad!
+  assertFalse(!r.isEmpty());             // Bad!
+}
+</pre>
+
+<p>to</p>
+
+<pre>
+public void testX() {
+  assertFalse("not empty", r.isEmpty());
+  assertTrue(r.isEmpty());
+}
+</pre>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UseCorrectExceptionLogging</id>
     <artifact tool="PMD" mnemonic="UseCorrectExceptionLogging"/>
-    <name>Use Correct Exception Logging</name>
-    <shortMessage>
-      To make sure the full stacktrace is printed out, use the
-      logging statement with 2 arguments: a String and a
-      Throwable.
-    </shortMessage>
+    <name>Use informative Exception logging</name>
+    <shortMessage>This code appears to lose information. Consider using the logging statement with 2 arguments: a String and a Throwable.</shortMessage>
     <info>
-      To make sure the full stacktrace is printed out, use the
-      logging statement with 2 arguments: a String and a
-      Throwable.
+<![CDATA[<p>To make sure the full stacktrace is printed out, use the
+logging statement with 2 arguments: a <code>String</code> and a
+<code>Throwable</code>.</p>
+
+<p>For example, consider changing</p>
+
+<pre>
+public class Main {
+  private static final Log _LOG = LogFactory.getLog(Main.class);
+  ...
+  void bar() {
+    try {
+      // do something that can go wrong
+    } catch(Exception e) {
+      _LOG.error(e); // Bad!
+    }
+  }
+}
+</pre>
+
+<p>to</p>
+
+<pre>
+public class Main {
+  private static final Log _LOG = LogFactory.getLog(Main.class);
+  ...
+  void bar() {
+    try {
+      // do something that can go wrong
+    } catch(Exception e) {
+      _LOG.error(e.getMessage(), e);
+    }
+  }
+}
+</pre>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>ProperLogger</id>
     <artifact tool="PMD" mnemonic="ProperLogger"/>
-    <name>Proper Logger</name>
-    <shortMessage>
-      A logger should normally be defined private static final and
-      have the correct class. Private final Log log; is also
-      allowed for rare cases where loggers need to be passed
-      around, with the restriction that the logger needs to be
-      passed into the constructor.
-    </shortMessage>
+    <name>Use the proper logger</name>
+    <shortMessage>Consider declaring your logger to be private static final and ensure it has the correct class.</shortMessage>
     <info>
-      A logger should normally be defined private static final and
-      have the correct class. Private final Log log; is also
-      allowed for rare cases where loggers need to be passed
-      around, with the restriction that the logger needs to be
-      passed into the constructor.
+<![CDATA[<p>A logger should normally be defined to be <code>private
+static final</code> and have the correct class.</p>
+
+<p>A non-static <code>private final</code> logger is also allowed for
+rare cases where loggers need to be passed around, with the
+restriction that the logger needs to be passed into the
+constructor.</p>
+
+<p>For example, consider changing</p>
+
+<pre>
+public class Foo {
+  protected Log LOG = LogFactory.getLog(Testclass.class);
+  ...
+}
+</pre>
+
+<p>to</p>
+
+<pre>
+public class Foo {
+  private static final Log LOG = LogFactory.getLog(Foo.class);
+  ...
+}
+</pre>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>MoreThanOneLogger</id>
     <artifact tool="PMD" mnemonic="MoreThanOneLogger"/>
-    <name>More Than One Logger</name>
-    <shortMessage>
-      Normally only one logger is used in each class.
-    </shortMessage>
-    <info>Normally only one logger is used in each class.</info>
+    <name>Avoid more than one Logger</name>
+    <shortMessage>Normally only one Logger is used in each class. Consider removing a Logger.</shortMessage>
+    <info>
+<![CDATA[<p>This class contains two <code>Logger</code>
+references. Typically only one <code>Logger</code> is used in each
+class.</p>
+
+<p>For example, one of the below loggers should probably be
+removed.</p>
+
+<pre>
+class Foo{
+    private static final Logger LOG = Logger.getLogger(Foo.class.getName());
+    ...
+    private static final Logger LOGGER = Logger.getLogger(Foo.class.getName());
+}
+</pre>]]>
+    </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>LoggerIsNotStaticFinal</id>
     <artifact tool="PMD" mnemonic="LoggerIsNotStaticFinal"/>
-    <name>Logger Is Not Static Final</name>
-    <shortMessage>
-      In most cases, the Logger can be declared static and final.
-    </shortMessage>
+    <name>Logger is not static final</name>
+    <shortMessage>Consider declaring this Logger to be static and final.</shortMessage>
     <info>
-      In most cases, the Logger can be declared static and final.
+<![CDATA[<p>In most cases, the <code>Logger</code> can be declared
+<code>static</code> and <code>final</code>.</p>
+
+<p>For example, consider changing</p>
+
+<pre>
+class Foo{
+  private Logger log = Logger.getLogger(Foo.class.getName());
+  ...
+}
+</pre>
+
+<p>to</p>
+
+<pre>
+class Foo{
+  private static final Logger LOG = Logger.getLogger(Foo.class.getName());
+  ...
+}
+</pre>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SystemPrintln</id>
     <artifact tool="PMD" mnemonic="SystemPrintln"/>
-    <name>Use of System Println</name>
-    <shortMessage>
-      System.(out|err).print is used, consider using a logger.
-    </shortMessage>
+    <name>Use of System.out or System.err println</name>
+    <shortMessage>Avoid calls to System.(out|err).print, consider using a logger.</shortMessage>
     <info>
-      System.(out|err).print is used, consider using a logger.
+<![CDATA[<p>Avoid print calls to <code>System.out</code> or
+<code>System.err</code>, consider using a logger instead.</p>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AvoidPrintStackTrace</id>
     <artifact tool="PMD" mnemonic="AvoidPrintStackTrace"/>
-    <name>Avoid Print Stack Trace</name>
-    <shortMessage>
-      Avoid printStackTrace(); use a logger call instead.
-    </shortMessage>
-    <info>Avoid printStackTrace(); use a logger call instead.</info>
-  </findingType>
-  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-  <findingType>
-    <id>ReplaceVectorWithList</id>
-    <artifact tool="PMD" mnemonic="ReplaceVectorWithList"/>
-    <name>Replace Vector With List</name>
-    <shortMessage>
-      Consider replacing Vector usages with the newer
-      java.util.ArrayList if expensive threadsafe operation is not
-      required.
-    </shortMessage>
+    <name>Avoid calls to printStackTrace</name>
+    <shortMessage>Avoid calls to printStackTrace(); use a logger call instead.</shortMessage>
     <info>
-      Consider replacing Vector usages with the newer
-      java.util.ArrayList if expensive threadsafe operation is not
-      required.
+<![CDATA[<p>Avoid calls to printStackTrace(); use a logger call
+instead.</p>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>ReplaceHashtableWithMap</id>
     <artifact tool="PMD" mnemonic="ReplaceHashtableWithMap"/>
-    <name>Replace Hashtable With Map</name>
-    <shortMessage>
-      Consider replacing this Hashtable with the newer
-      java.util.Map
-    </shortMessage>
+    <name>Replace Hashtable with Map</name>
+    <shortMessage>Consider replacing this Hashtable with the newer java.util.Map.</shortMessage>
     <info>
-      Consider replacing this Hashtable with the newer
-      java.util.Map
+<![CDATA[<p>Consider replacing this <code>Hashtable</code> with the
+newer <code>java.util.Map</code>.</p>
+
+<p>The collections framework was released with JDK 1.2 and effectively
+makes types such as <code>Vector</code>, </code>Hashtable</code>, and
+<code>Enumeration</code> obsolete. Avoid using these types in newer
+code. In general, the performance of the new collections will be
+superior because they do not synchronize each of their methods.</p>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>ReplaceEnumerationWithIterator</id>
     <artifact tool="PMD" mnemonic="ReplaceEnumerationWithIterator"/>
-    <name>Replace Enumeration With Iterator</name>
-    <shortMessage>
-      Consider replacing this Enumeration with the newer
-      java.util.Iterator
-    </shortMessage>
+    <name>Replace Enumeration with Iterator</name>
+    <shortMessage>Consider replacing this Enumeration with the newer java.util.Iterator.</shortMessage>
     <info>
-      Consider replacing this Enumeration with the newer
-      java.util.Iterator
-    </info>
-  </findingType>
-  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-  <findingType>
-    <id>AvoidEnumAsIdentifier</id>
-    <artifact tool="PMD" mnemonic="AvoidEnumAsIdentifier"/>
-    <name>Avoid Enum As Identifier</name>
-    <shortMessage>
-      Finds all places where 'enum' is used as an identifier.
-    </shortMessage>
-    <info>
-      Finds all places where 'enum' is used as an identifier.
-    </info>
-  </findingType>
-  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-  <findingType>
-    <id>AvoidAssertAsIdentifier</id>
-    <artifact tool="PMD" mnemonic="AvoidAssertAsIdentifier"/>
-    <name>Avoid Assert As Identifier</name>
-    <shortMessage>
-      Finds all places where 'assert' is used as an identifier.
-    </shortMessage>
-    <info>
-      Finds all places where 'assert' is used as an identifier.
+<![CDATA[<p>Consider replacing this <code>Enumeration</code> with the
+newer <code>java.util.Iterator</code>.
+
+<p>The collections framework was released with JDK 1.2 and effectively
+makes types such as <code>Vector</code>, </code>Hashtable</code>, and
+<code>Enumeration</code> obsolete. Avoid using these types in newer
+code. In general, the performance of the new collections will be
+superior because they do not synchronize each of their methods.</p>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>JUnit4TestShouldUseBeforeAnnotation</id>
     <artifact tool="PMD" mnemonic="JUnit4TestShouldUseBeforeAnnotation"/>
-    <name>JUnit4Test Should Use Before Annotation</name>
-    <shortMessage>
-      In JUnit 3, the setUp method was used to set up all data
-      entities required in running tests. JUnit 4 skips the setUp
-      method and executes all methods annotated with @Before
-      before all tests
-    </shortMessage>
+    <name>JUnit 4 tests should use the Before annotation</name>
+    <shortMessage>Use the @Before annotation in JUnit 4.</shortMessage>
     <info>
-      In JUnit 3, the setUp method was used to set up all data
-      entities required in running tests. JUnit 4 skips the setUp
-      method and executes all methods annotated with @Before
-      before all tests
+<![CDATA[<p>In JUnit 3, the <code>setUp</code> method was used to set
+up all data entities required in running tests. JUnit 4 skips the
+<code>setUp</code> method and executes all methods annotated with
+<code>@Before</code> before running each test.</p>
+
+<p>For example, change</p>
+
+<pre>
+public void setUp() {
+  // operations to do before running each test
+}
+</pre>
+
+<p>to</p>
+
+<pre>
+@Before public void setUp() {
+  // operations to do before running each test
+}
+</pre>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>JUnit4TestShouldUseAfterAnnotation</id>
     <artifact tool="PMD" mnemonic="JUnit4TestShouldUseAfterAnnotation"/>
-    <name>JUnit4Test Should Use After Annotation</name>
-    <shortMessage>
-      In JUnit 3, the tearDown method was used to clean up all
-      data entities required in running tests. JUnit 4 skips the
-      tearDown method and executes all methods annotated with
-      @After after running each test
-    </shortMessage>
+    <name>JUnit 4 tests should use the After annotation</name>
+    <shortMessage>Use the @After annotation in JUnit 4.</shortMessage>
     <info>
-      In JUnit 3, the tearDown method was used to clean up all
-      data entities required in running tests. JUnit 4 skips the
-      tearDown method and executes all methods annotated with
-      @After after running each test
+<![CDATA[<p>In JUnit 3, the <code>tearDown</code> method was used to
+clean up all data entities required in running tests. JUnit 4 skips
+the <code>tearDown</code> method and executes all methods annotated
+with <code>@After</code> after running each test</p>
+
+<p>For example, change</p>
+
+<pre>
+public void tearDown() {
+  // operations to do after running each test
+}
+</pre>
+
+<p>to</p>
+
+<pre>
+@After public void tearDown() {
+  // operations to do after running each test
+}
+</pre>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>JUnit4TestShouldUseTestAnnotation</id>
     <artifact tool="PMD" mnemonic="JUnit4TestShouldUseTestAnnotation"/>
-    <name>JUnit4Test Should Use Test Annotation</name>
-    <shortMessage>
-      In JUnit 3, the framework executed all methods which started
-      with the word test as a unit test. In JUnit 4, only methods
-      annotated with the @Test annotation are executed.
-    </shortMessage>
+    <name>JUnit 4 tests should use the Test annotation</name>
+    <shortMessage>Use the @Test annotation in JUnit 4.</shortMessage>
     <info>
-      In JUnit 3, the framework executed all methods which started
-      with the word test as a unit test. In JUnit 4, only methods
-      annotated with the @Test annotation are executed.
+<![CDATA[<p>In JUnit 3, the framework executed all methods which
+started with the word <code>test</code> as a unit test. In JUnit 4,
+only methods annotated with the <code>@Test</code> annotation are
+executed.</p>
+
+<p>For example, change</p>
+
+<pre>
+public void testStuff() {
+  // do some testing
+}
+</pre>
+
+<p>to</p>
+
+<pre>
+@Test public void testStuff() {
+  // do some testing
+}
+</pre>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>JUnit4SuitesShouldUseSuiteAnnotation</id>
     <artifact tool="PMD" mnemonic="JUnit4SuitesShouldUseSuiteAnnotation"/>
-    <name>JUnit4Suites Should Use Suite Annotation</name>
-    <shortMessage>
-      In JUnit 3, test suites are indicated by the suite() method.
-      In JUnit 4, suites are indicated through the
-      @RunWith(Suite.class) annotation.
-    </shortMessage>
+    <name>JUnit 4 suites should use the suite annotation</name>
+    <shortMessage>Use @RunWith(Suite.class) annotation rather than a suite() method.</shortMessage>
     <info>
-      In JUnit 3, test suites are indicated by the suite() method.
-      In JUnit 4, suites are indicated through the
-      @RunWith(Suite.class) annotation.
+<![CDATA[<p>In JUnit 3, test suites are indicated by the
+<code>suite()</code> method.  In JUnit 4, suites are indicated through
+the <code>@RunWith(Suite.class)</code> annotation.</p>
+
+<p>For example, in you are using JUnit 4 change</p>
+
+<pre>
+public class BadExample extends TestCase{
+  public static Test suite(){
+    return new Suite();
+  }
+}
+</pre>
+
+<p>to</p>
+
+<pre>
+@RunWith(Suite.class)
+@SuiteClasses( { TestOne.class, TestTwo.class } )
+public class GoodTest {
+}
+</pre>]]>
     </info>
-  </findingType>
-  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-  <findingType>
-    <id>JUnitUseExpected</id>
-    <artifact tool="PMD" mnemonic="JUnitUseExpected"/>
-    <name>JUnit Use Expected</name>
-    <shortMessage>TODO</shortMessage>
-    <info>TODO</info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>ShortVariable</id>
     <artifact tool="PMD" mnemonic="ShortVariable"/>
-    <name>Short Variable</name>
-    <shortMessage>
-      Detects when a field, local, or parameter has a very short
-      name.
-    </shortMessage>
+    <name>Short variable name</name>
+    <shortMessage>Detects when a field, local, or parameter has a very short name.</shortMessage>
     <info>
-      Detects when a field, local, or parameter has a very short
-      name.
+<![CDATA[<p>Detects when a field, local, or parameter has a very short
+name.</p>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>LongVariable</id>
     <artifact tool="PMD" mnemonic="LongVariable"/>
-    <name>Long Variable</name>
-    <shortMessage>
-      Detects when a field, formal or local variable is declared
-      with a long name.
-    </shortMessage>
+    <name>Long variable name</name>
+    <shortMessage>Detects when a field, formal or local variable is declared with a long name.</shortMessage>
     <info>
-      Detects when a field, formal or local variable is declared
-      with a long name.
+<![CDATA[<p>Detects when a field, formal or local variable is declared
+with a long name.</p>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>ShortMethodName</id>
     <artifact tool="PMD" mnemonic="ShortMethodName"/>
-    <name>Short Method Name</name>
-    <shortMessage>
-      Detects when very short method names are used.
-    </shortMessage>
-    <info>Detects when very short method names are used.</info>
+    <name>Short method name</name>
+    <shortMessage>Detects when very short method names are used.</shortMessage>
+    <info>
+<![CDATA[<p>Detects when very short method names are used.</p>]]>
+    </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AbstractNaming</id>
     <artifact tool="PMD" mnemonic="AbstractNaming"/>
-    <name>Abstract Naming</name>
-    <shortMessage>
-      Abstract classes should be named 'AbstractXXX'.
-    </shortMessage>
-    <info>Abstract classes should be named 'AbstractXXX'.</info>
+    <name>Abstract naming</name>
+    <shortMessage>Abstract classes should be named AbstractXXX.</shortMessage>
+    <info>
+<![CDATA[<p>Abstract classes should be named
+<code>Abstract</code><i>x</i>. Where <i>x</i> is the class name. This
+convention can help ro clarify the nature of the class.]]>
+    </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AvoidDollarSigns</id>
     <artifact tool="PMD" mnemonic="AvoidDollarSigns"/>
-    <name>Avoid Dollar Signs</name>
-    <shortMessage>
-      Avoid using dollar signs in variable/method/class/interface
-      names.
-    </shortMessage>
+    <name>Avoid dollar signs</name>
+    <shortMessage>Avoid using dollar signs in variable/method/class/interface names.</shortMessage>
     <info>
-      Avoid using dollar signs in variable/method/class/interface
-      names.
+<![CDATA[<p>Avoid using dollar signs in
+variable/method/class/interface names. Dollar signs are typically only
+used for generated class names.</p>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>MethodWithSameNameAsEnclosingClass</id>
     <artifact tool="PMD" mnemonic="MethodWithSameNameAsEnclosingClass"/>
-    <name>Method With Same Name As Enclosing Class</name>
-    <shortMessage>
-      Non-constructor methods should not have the same name as the
-      enclosing class.
-    </shortMessage>
+    <name>Method with same name as enclosing class</name>
+    <shortMessage>Non-constructor methods should not have the same name as the enclosing class.</shortMessage>
     <info>
-      Non-constructor methods should not have the same name as the
-      enclosing class.
+<![CDATA[<p>Non-constructor methods should not have the same name as
+the enclosing class. Was this method intended to be a
+constructor?</p>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SuspiciousConstantFieldName</id>
     <artifact tool="PMD" mnemonic="SuspiciousConstantFieldName"/>
-    <name>Suspicious Constant Field Name</name>
-    <shortMessage>
-      A field name is all in uppercase characters, which in Sun's
-      Java naming conventions indicate a constant. However, the
-      field is not final.
-    </shortMessage>
+    <name>Suspicious constant field name</name>
+    <shortMessage>This field name is all uppercase characters, which in Sun's Java naming conventions indicate a constant. However, the field is not final.</shortMessage>
     <info>
-      A field name is all in uppercase characters, which in Sun's
-      Java naming conventions indicate a constant. However, the
-      field is not final.
+<![CDATA[<p>A field name of all uppercase characters, by Sun's Java
+naming conventions, indicates a constant. However, this field is not
+<code>final</code>. Should this field be declared to be
+<code>final</code>?</p>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AvoidFieldNameMatchingTypeName</id>
     <artifact tool="PMD" mnemonic="AvoidFieldNameMatchingTypeName"/>
-    <name>Avoid Field Name Matching Type Name</name>
-    <shortMessage>
-      It is somewhat confusing to have a field name matching the
-      declaring class name. This probably means that type and or
-      field names could be more precise.
-    </shortMessage>
+    <name>Avoid field name matching type name</name>
+    <shortMessage>This class uses a name for both a field name and a type name. This can be confusing.</shortMessage>
     <info>
-      It is somewhat confusing to have a field name matching the
-      declaring class name. This probably means that type and or
-      field names could be more precise.
+<![CDATA[<p>It is somewhat confusing to have a field name matching the
+declaring class name. While this is totally legal, this probably means
+that type and or field names could be more precise.</p>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AvoidFieldNameMatchingMethodName</id>
     <artifact tool="PMD" mnemonic="AvoidFieldNameMatchingMethodName"/>
-    <name>Avoid Field Name Matching Method Name</name>
-    <shortMessage>
-      It is somewhat confusing to have a field name with the same
-      name as a method. While this is totally legal, having
-      information (field) and actions (method) is not clear
-      naming.
-    </shortMessage>
+    <name>Avoid field name matching method name</name>
+    <shortMessage>This class uses a name for both a field name and a method name. This can be confusing.</shortMessage>
     <info>
-      It is somewhat confusing to have a field name with the same
-      name as a method. While this is totally legal, having
-      information (field) and actions (method) is not clear
-      naming.
+<![CDATA[<p>It is somewhat confusing to have a field name with the
+same name as a method. While this is totally legal, having information
+(field) and actions (method) with the same name is not as clear as it
+could be.</p>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>NoPackage</id>
     <artifact tool="PMD" mnemonic="NoPackage"/>
-    <name>No Package</name>
-    <shortMessage>
-      Detects when a class or interface does not have a package
-      definition.
-    </shortMessage>
+    <name>No package</name>
+    <shortMessage>This class or interface does not have a package definition and is within the default package. This is not recommended.</shortMessage>
     <info>
-      Detects when a class or interface does not have a package
-      definition.
+<![CDATA[<p>A class or interface that does not have a package
+definition is located within the default package. Placing classes and
+interfaces in the default package is not recommended.</p>
+
+<p>Consider placing this class or interface into a package.]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>PackageCase</id>
     <artifact tool="PMD" mnemonic="PackageCase"/>
-    <name>Package Case</name>
-    <shortMessage>
-      Detects when a package definition contains upper case
-      characters.
-    </shortMessage>
+    <name>Bad package case</name>
+    <shortMessage>This package definition contains upper case characters.  This violates normal package naming convention.</shortMessage>
     <info>
-      Detects when a package definition contains upper case
-      characters.
+<![CDATA[<p>When a package definition contains upper case characters
+this violates package naming conventions.</p>
+
+<p>Consider removing the upper case characters.</p>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>MisleadingVariableName</id>
     <artifact tool="PMD" mnemonic="MisleadingVariableName"/>
-    <name>Misleading Variable Name</name>
-    <shortMessage>
-      Detects when a non-field has a name starting with 'm_'. This
-      usually indicates a field and thus is confusing.
-    </shortMessage>
+    <name>Misleading variable name</name>
+    <shortMessage>This local variable name starts with 'm_'. This convention usually indicates a field and thus is confusing.</shortMessage>
     <info>
-      Detects when a non-field has a name starting with 'm_'. This
-      usually indicates a field and thus is confusing.
+<![CDATA[<p>A a non-field has a name starting with
+<code>m_</code>. This usually indicates a field and thus is
+confusing.</p>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>BooleanGetMethodName</id>
     <artifact tool="PMD" mnemonic="BooleanGetMethodName"/>
-    <name>Boolean Get Method Name</name>
-    <shortMessage>
-      Looks for methods named 'getX()' with 'boolean' as the
-      return type. The convention is to name these methods
-      'isX()'.
-    </shortMessage>
+    <name>Boolean get method name</name>
+    <shortMessage>This boolean getter method is named getX().  Consider renaming this method to isX().</shortMessage>
     <info>
-      Looks for methods named 'getX()' with 'boolean' as the
-      return type. The convention is to name these methods
-      'isX()'.
+<![CDATA[<p>Methods named <code>getX()</code> that return a
+<code>boolean</code> may be misnamed. The convention is to name these
+methods <code>isX()</code>.</p>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>LocalVariableCouldBeFinal</id>
     <artifact tool="PMD" mnemonic="LocalVariableCouldBeFinal"/>
-    <name>Local Variable Could Be Final</name>
-    <shortMessage>
-      A local variable assigned only once can be declared final.
-    </shortMessage>
+    <name>Local variable could be final</name>
+    <shortMessage>This local variable assigned only once can be declared final.</shortMessage>
     <info>
-      A local variable assigned only once can be declared final.
+<![CDATA[<p>A local variable that is assigned only once can be
+declared to be <code>final</code>.]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>MethodArgumentCouldBeFinal</id>
     <artifact tool="PMD" mnemonic="MethodArgumentCouldBeFinal"/>
-    <name>Method Argument Could Be Final</name>
-    <shortMessage>
-      A method argument that is never assigned can be declared
-      final.
-    </shortMessage>
+    <name>Method argument could be final</name>
+    <shortMessage>This method argument is never assigned can be declared final.</shortMessage>
     <info>
-      A method argument that is never assigned can be declared
-      final.
+<![CDATA[<p>A method argument that is never assigned can be declared
+to be <code>final</code>.</p>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AvoidInstantiatingObjectsInLoops</id>
     <artifact tool="PMD" mnemonic="AvoidInstantiatingObjectsInLoops"/>
-    <name>Avoid Instantiating Objects In Loops</name>
-    <shortMessage>
-      Detects when a new object is created inside a loop
-    </shortMessage>
-    <info>Detects when a new object is created inside a loop</info>
+    <name>Avoid instantiating objects in loops</name>
+    <shortMessage>This code is instantiating new objects inside of a loop. Can this be avoided?</shortMessage>
+    <info>
+<![CDATA[<p>Take care when creating new objects inside of a loop as
+this may create a lot of objects. Is this creation intentional?</p>]]>
+    </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UseArrayListInsteadOfVector</id>
     <artifact tool="PMD" mnemonic="UseArrayListInsteadOfVector"/>
+    <artifact tool="PMD" mnemonic="ReplaceVectorWithList"/>
     <name>Prefer ArrayList over Vector</name>
     <shortMessage>This code uses the old Vector collection. Consider updating this to ArrayList (or LinkedList).</shortMessage>
     <info>
@@ -11479,17 +11613,6 @@ public void doSomething() {
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
-    <id>UnusedPrivateMethod</id>
-    <artifact tool="PMD" mnemonic="UnusedPrivateMethod"/>
-    <name>Unused private method</name>
-    <shortMessage>This private method is unused. Consider removing the method.</shortMessage>
-    <info>
-<![CDATA[<p>This private method is not called within this compilation
-unit. Consider removing it from the code.</p>]]>
-    </info>
-  </findingType>
-  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-  <findingType>
     <id>UnusedFormalParameter</id>
     <artifact tool="PMD" mnemonic="UnusedFormalParameter"/>
     <name>Unused parameter</name>
@@ -11728,9 +11851,7 @@ public final class Foo {
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>EmptyMethodInAbstractClassShouldBeAbstract</id>
-    <artifact tool="PMD"
-	      mnemonic="EmptyMethodInAbstractClassShouldBeAbstract">
-    </artifact>
+    <artifact tool="PMD" mnemonic="EmptyMethodInAbstractClassShouldBeAbstract"/>
     <name>Empty method in abstract class should be abstract</name>
     <shortMessage>Consider if an empty method in an abstract class should be abstract.</shortMessage>
     <info>
@@ -11953,6 +12074,7 @@ long life time).</p>]]>
     <artifact tool="FindBugs" mnemonic="UNKNOWN"/>                   <!-- FindBugs diagnostic -->
     <artifact tool="PMD" mnemonic="OverrideBothEqualsAndHashcode"/>  <!-- FindBugs splits this up w/ better reporting -->
     <artifact tool="PMD" mnemonic="AvoidFinalLocalVariable"/>        <!-- This is just a bad analysis -->
+    <artifact tool="PMD" mnemonic="JUnitUseExpected"/>               <!-- Stange PMD analysis -->
     <name>Ignored tool artifacts</name>
     <shortMessage>Findings in this finding type can be ignored.</shortMessage>
     <info>
