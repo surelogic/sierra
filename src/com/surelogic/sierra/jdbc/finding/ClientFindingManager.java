@@ -297,7 +297,7 @@ public final class ClientFindingManager extends FindingManager {
 		findLocalAudits = conn
 				.prepareStatement("SELECT A.FINDING_ID,A.UUID,A.DATE_TIME,A.EVENT,A.VALUE"
 						+ commonForLocalAudits + " ORDER BY A.FINDING_ID");
-		countLocalAudits = conn.prepareStatement("SELECT COUNT(A.UUID)"
+		countLocalAudits = conn.prepareStatement("SELECT COUNT(*)"
 				+ commonForLocalAudits);
 		selectUnrevisionedAudits = conn
 				.prepareStatement("SELECT SA.UUID FROM SIERRA_AUDIT SA, FINDING F, PROJECT P WHERE P.NAME = ? AND F.PROJECT_ID = P.ID AND SA.FINDING_ID = F.ID AND SA.REVISION IS NULL");
