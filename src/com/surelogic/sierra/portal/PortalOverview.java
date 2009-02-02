@@ -21,14 +21,14 @@ public final class PortalOverview {
 
 	private final Connection conn;
 
-	private PortalOverview(Connection conn) {
+	private PortalOverview(final Connection conn) {
 		this.conn = conn;
 	}
 
 	public List<UserOverview> getUserOverviews() throws SQLException {
 
 		final PreparedStatement auditSt = conn
-				.prepareStatement("SELECT U.USER_NAME, MAX(U.IS_ACTIVE), COUNT(DISTINCT A.ID), MAX(R.DATE_TIME) "
+				.prepareStatement("SELECT U.USER_NAME, MAX(U.IS_ACTIVE), COUNT(DISTINCT A.UUID), MAX(R.DATE_TIME) "
 						+ "FROM SIERRA_USER U "
 						+ "LEFT OUTER JOIN SIERRA_AUDIT A ON A.USER_ID = U.ID "
 						+ "LEFT OUTER JOIN REVISION R ON R.REVISION = A.REVISION "
@@ -86,7 +86,7 @@ public final class PortalOverview {
 	public List<ProjectOverview> getProjectOverviews() throws SQLException {
 		final List<ProjectOverview> overview = new ArrayList<ProjectOverview>();
 		final PreparedStatement auditSt = conn
-				.prepareStatement("SELECT P.NAME, COUNT(DISTINCT A.FINDING_ID), COUNT(A.ID)  "
+				.prepareStatement("SELECT P.NAME, COUNT(DISTINCT A.FINDING_ID), COUNT(A.UUID)  "
 						+ "FROM PROJECT P LEFT OUTER JOIN FINDING F ON F.PROJECT_ID = P.ID  "
 						+ "LEFT OUTER JOIN SIERRA_AUDIT A ON A.FINDING_ID = F.ID  "
 						+ "WHERE A.REVISION >= (SELECT MIN(REVISION) FROM REVISION WHERE ? < DATE_TIME) OR A.REVISION IS NULL "
@@ -178,7 +178,7 @@ public final class PortalOverview {
 		return overview;
 	}
 
-	public static PortalOverview getInstance(Connection conn) {
+	public static PortalOverview getInstance(final Connection conn) {
 		return new PortalOverview(conn);
 	}
 
