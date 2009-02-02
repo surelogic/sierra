@@ -71,7 +71,7 @@ public final class ServerFindingManager extends FindingManager {
 						+ "   F.ID = OBS.OBSOLETED_BY_ID");
 
 		selectNewAudits = conn
-				.prepareStatement("SELECT F.ID,A.EVENT,A.VALUE,A.DATE_TIME,A.REVISION,U.USER_NAME"
+				.prepareStatement("SELECT F.ID,A.UUID,A.EVENT,A.VALUE,A.DATE_TIME,A.REVISION,U.USER_NAME"
 						+ "   FROM FINDING F, SIERRA_AUDIT A, SIERRA_USER U"
 						+ "   WHERE"
 						+ "   F.PROJECT_ID = ? AND"
@@ -197,17 +197,20 @@ public final class ServerFindingManager extends FindingManager {
 					final Date time = audit.getTimestamp();
 					switch (audit.getEvent()) {
 					case COMMENT:
-						comment(userId, findingId, value, time, revision);
+						comment(audit.getUuid(), userId, findingId, value,
+								time, revision);
 						break;
 					case IMPORTANCE:
-						setImportance(userId, findingId, Importance
-								.fromValue(value), time, revision);
+						setImportance(audit.getUuid(), userId, findingId,
+								Importance.fromValue(value), time, revision);
 						break;
 					case READ:
-						markAsRead(userId, findingId, time, revision);
+						markAsRead(audit.getUuid(), userId, findingId, time,
+								revision);
 						break;
 					case SUMMARY:
-						changeSummary(userId, findingId, value, time, revision);
+						changeSummary(audit.getUuid(), userId, findingId,
+								value, time, revision);
 					}
 				}
 				uids.add(findingRecord.getUid());
@@ -369,6 +372,7 @@ public final class ServerFindingManager extends FindingManager {
 						audits = trail.getAudits();
 					}
 					final Audit audit = new Audit();
+					audit.setUuid(set.getString(idx++));
 					audit.setEvent(AuditEvent.valueOf(set.getString(idx++)));
 					audit.setValue(set.getString(idx++));
 					audit.setTimestamp(set.getTimestamp(idx++));
