@@ -3146,7 +3146,7 @@ known to be non-<code>null</code> with another reference known to be
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
-    <id>UnreleasedLock</id>
+    <id>UL_UNRELEASED_LOCK</id>
     <artifact tool="FindBugs" mnemonic="UL_UNRELEASED_LOCK"/>
     <artifact tool="FindBugs" mnemonic="UL_UNRELEASED_LOCK_EXCEPTION_PATH"/>
     <name>Unreleased util concurrent lock</name>
@@ -3210,7 +3210,7 @@ errors.</p>]]>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
-    <id>EqualComparisonToNullArgument</id>
+    <id>EC_NULL_ARG</id>
     <artifact tool="FindBugs" mnemonic="EC_NULL_ARG"/>
     <artifact tool="PMD" mnemonic="EqualsNull"/>
     <name>Avoid calling equals with a null argument</name>
@@ -3258,7 +3258,7 @@ runtime.</p>]]>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
-    <id>SA_LOCAL_SELF_ASSIGNMENT</id>
+    <id>SA_SELF_ASSIGNMENT</id>
     <artifact tool="FindBugs" mnemonic="SA_LOCAL_SELF_ASSIGNMENT"/>
     <artifact tool="FindBugs" mnemonic="SA_FIELD_SELF_ASSIGNMENT"/>
     <artifact tool="PMD" mnemonic="IdempotentOperations"/>
@@ -3303,7 +3303,7 @@ public void foo(int x) {
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
-    <id>SA_LOCAL_DOUBLE_ASSIGNMENT</id>
+    <id>SA_DOUBLE_ASSIGNMENT</id>
     <artifact tool="FindBugs" mnemonic="SA_LOCAL_DOUBLE_ASSIGNMENT"/>
     <artifact tool="FindBugs" mnemonic="SA_FIELD_DOUBLE_ASSIGNMENT"/>
     <name>Double assignment</name>
@@ -3680,7 +3680,7 @@ membership test in a bit set, but uses the bitwise or operator
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
-    <id>IncorrectLazyInitializationOfInstance</id>
+    <id>LI_LAZY_INIT</id>
     <artifact tool="FindBugs" mnemonic="LI_LAZY_INIT_INSTANCE"/>
     <artifact tool="FindBugs" mnemonic="LI_LAZY_INIT_STATIC"/>
     <name>Incorrect lazy initialization</name>
@@ -3700,7 +3700,7 @@ web site</a>.</p>]]>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
-    <id>AvoidCallingSynchronizedOnLock</id>
+    <id>JLM_JSR166_LOCK_MONITORENTER</id>
     <artifact tool="FindBugs" mnemonic="JLM_JSR166_LOCK_MONITORENTER"/>
     <name>Suspicious util concurrent Lock monitor enter</name>
     <shortMessage>Suspicions intrinsic synchronization performed on a java.util.concurrent Lock object. This is probably a mistake.</shortMessage>
@@ -3994,56 +3994,40 @@ test methods.</p>]]>
   <findingType>
     <id>BOA_BADLY_OVERRIDDEN_ADAPTER</id>
     <artifact tool="FindBugs" mnemonic="BOA_BADLY_OVERRIDDEN_ADAPTER"/>
-    <name>Badly Overridden Adapter</name>
+    <name>Badly overridden adapter</name>
     <shortMessage>Class overrides a method implemented in super class Adapter wrongly.</shortMessage>
     <info>
-<![CDATA[<p>This method overrides a method found in a parent class,
-where that class is an Adapter that implements a listener defined in
-the java.awt.event or javax.swing.event package. As a result, this
-method will not get called when the event occurs.</p>]]>
+<![CDATA[<p>This method intends to override a method found in a parent
+class, where that class is an Adapter that implements a listener
+defined in the <code>java.awt.event</code> or <code>javax.swing.event</code> package, however,
+it does not override the intended method. As a result, this method
+will not get called when the event occurs.</p>
+
+<p>Consider fixing this method's signature and adding the
+<code>@Override</code> annotation to it.</p>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>BRSA_BAD_RESULTSET_ACCESS</id>
-    <artifact tool="FindBugs"
-	      mnemonic="BRSA_BAD_RESULTSET_ACCESS">
-    </artifact>
-    <shortMessage>
-      Method attempts to access a result set field with index 0
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="BRSA_BAD_RESULTSET_ACCESS"/>
+    <artifact tool="FindBugs" mnemonic="SQL_BAD_RESULTSET_ACCESS"/>
+    <name>Bad ResultSet access</name>
+    <shortMessage>This code attempts to access a ResultSet field with a index of 0. This is always a mistake.</shortMessage>
     <info>
+<![CDATA[<p>A call to <code>get</code><i>x</i> or
+<code>update</code><i>x</i> methods of a result set was made where the
+field index is 0. Because <code>ResultSet</code> fields start at index
+1, this is always a mistake.</p>
 
-      &lt;p&gt; A call to getXXX or updateXXX methods of a result
-      set was made where the field index is 0. As ResultSet fields
-      start at index 1, this is always a mistake.&lt;/p&gt;
-
+<p>It is recommended that this index be changed.</p>]]>
     </info>
-    <name>Bad Resultset Access</name>
-  </findingType>
-  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-  <findingType>
-    <id>SQL_BAD_RESULTSET_ACCESS</id>
-    <artifact tool="FindBugs" mnemonic="SQL_BAD_RESULTSET_ACCESS">
-    </artifact>
-    <shortMessage>
-      Method attempts to access a result set field with index 0
-    </shortMessage>
-    <info>
-
-      &lt;p&gt; A call to getXXX or updateXXX methods of a result
-      set was made where the field index is 0. As ResultSet fields
-      start at index 1, this is always a mistake.&lt;/p&gt;
-
-    </info>
-    <name>Bad Resultset Access</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SQL_BAD_PREPARED_STATEMENT_ACCESS</id>
-    <artifact tool="FindBugs"
-	      mnemonic="SQL_BAD_PREPARED_STATEMENT_ACCESS">
-    </artifact>
+    <artifact tool="FindBugs" mnemonic="SQL_BAD_PREPARED_STATEMENT_ACCESS"/>
+    <name>Bad Prepared Statement Access</name>
     <shortMessage>
       Method attempts to access a prepared statement parameter
       with index 0
@@ -4056,14 +4040,12 @@ method will not get called when the event occurs.</p>]]>
       mistake.&lt;/p&gt;
 
     </info>
-    <name>Bad Prepared Statement Access</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SIO_SUPERFLUOUS_INSTANCEOF</id>
-    <artifact tool="FindBugs"
-	      mnemonic="SIO_SUPERFLUOUS_INSTANCEOF">
-    </artifact>
+    <artifact tool="FindBugs" mnemonic="SIO_SUPERFLUOUS_INSTANCEOF"/>
+    <name>Superfluous instanceof</name>
     <shortMessage>
       Unnecessary type check done using instanceof operator
     </shortMessage>
@@ -4074,14 +4056,12 @@ method will not get called when the event occurs.</p>]]>
       of the type requested. &lt;/p&gt;
 
     </info>
-    <name>Superfluous instanceof</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>BAC_BAD_APPLET_CONSTRUCTOR</id>
-    <artifact tool="FindBugs"
-	      mnemonic="BAC_BAD_APPLET_CONSTRUCTOR">
-    </artifact>
+    <artifact tool="FindBugs" mnemonic="BAC_BAD_APPLET_CONSTRUCTOR"/>
+    <name>Bad Applet Constructor</name>
     <shortMessage>
       Bad Applet Constructor relies on uninitialized AppletStub
     </shortMessage>
@@ -4093,13 +4073,12 @@ method will not get called when the event occurs.</p>]]>
       called, these methods will not perform correctly. &lt;/p&gt;
 
     </info>
-    <name>Bad Applet Constructor</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>EC_ARRAY_AND_NONARRAY</id>
-    <artifact tool="FindBugs" mnemonic="EC_ARRAY_AND_NONARRAY">
-    </artifact>
+    <artifact tool="FindBugs" mnemonic="EC_ARRAY_AND_NONARRAY"/>
+    <name>Array And Nonarray</name>
     <shortMessage>
       equals() used to compare array and nonarray
     </shortMessage>
@@ -4115,13 +4094,12 @@ method will not get called when the event occurs.</p>]]>
       java.util.Arrays.equals(Object[], Object[]). &lt;/p&gt;
 
     </info>
-    <name>Array And Nonarray</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>EC_BAD_ARRAY_COMPARE</id>
-    <artifact tool="FindBugs" mnemonic="EC_BAD_ARRAY_COMPARE">
-    </artifact>
+    <artifact tool="FindBugs" mnemonic="EC_BAD_ARRAY_COMPARE"/>
+    <name>Bad Array Compare</name>
     <shortMessage>
       Invocation of equals() on an array, which is equivalent to
       ==
@@ -4136,13 +4114,12 @@ method will not get called when the event occurs.</p>]]>
       &lt;/p&gt;
 
     </info>
-    <name>Bad Array Compare</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UOE_USE_OBJECT_EQUALS</id>
-    <artifact tool="FindBugs" mnemonic="UOE_USE_OBJECT_EQUALS">
-    </artifact>
+    <artifact tool="FindBugs" mnemonic="UOE_USE_OBJECT_EQUALS"/>
+    <name>Use Object Equals</name>
     <shortMessage>
       Calls to equals on a final class that doesn't override
       Object's version
@@ -4163,14 +4140,12 @@ method will not get called when the event occurs.</p>]]>
       &lt;/p&gt;
 
     </info>
-    <name>Use Object Equals</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>STI_INTERRUPTED_ON_CURRENTTHREAD</id>
-    <artifact tool="FindBugs"
-	      mnemonic="STI_INTERRUPTED_ON_CURRENTTHREAD">
-    </artifact>
+    <artifact tool="FindBugs" mnemonic="STI_INTERRUPTED_ON_CURRENTTHREAD"/>
+    <name>Interrupted On Currentthread</name>
     <shortMessage>
       Unneeded use of currentThread() call, to call interrupted()
     </shortMessage>
@@ -4182,14 +4157,12 @@ method will not get called when the event occurs.</p>]]>
       to use Thread.interrupted(). &lt;/p&gt;
 
     </info>
-    <name>Interrupted On Currentthread</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>STI_INTERRUPTED_ON_UNKNOWNTHREAD</id>
-    <artifact tool="FindBugs"
-	      mnemonic="STI_INTERRUPTED_ON_UNKNOWNTHREAD">
-    </artifact>
+    <artifact tool="FindBugs" mnemonic="STI_INTERRUPTED_ON_UNKNOWNTHREAD"/>
+    <name>Interrupted On Unknown Thread</name>
     <shortMessage>
       Static Thread.interrupted() method invoked on thread
       instance
@@ -4204,14 +4177,12 @@ method will not get called when the event occurs.</p>]]>
       &lt;/p&gt;
 
     </info>
-    <name>Interrupted On Unknown Thread</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>IP_PARAMETER_IS_DEAD_BUT_OVERWRITTEN</id>
-    <artifact tool="FindBugs"
-	      mnemonic="IP_PARAMETER_IS_DEAD_BUT_OVERWRITTEN">
-    </artifact>
+    <artifact tool="FindBugs" mnemonic="IP_PARAMETER_IS_DEAD_BUT_OVERWRITTEN"/>
+    <name>Parameter Is Dead But Overwritten</name>
     <shortMessage>
       A parameter is dead upon entry to a method but overwritten
     </shortMessage>
@@ -4223,13 +4194,12 @@ method will not get called when the event occurs.</p>]]>
       conveyed back to the caller. &lt;/p&gt;
 
     </info>
-    <name>Parameter Is Dead But Overwritten</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>DLS_DEAD_LOCAL_STORE</id>
-    <artifact tool="FindBugs" mnemonic="DLS_DEAD_LOCAL_STORE">
-    </artifact>
+    <artifact tool="FindBugs" mnemonic="DLS_DEAD_LOCAL_STORE"/>
+    <name>Dead Local Store</name>
     <shortMessage>Dead store to local variable</shortMessage>
     <info>
 
@@ -4243,14 +4213,12 @@ method will not get called when the event occurs.</p>]]>
       &lt;/p&gt;
 
     </info>
-    <name>Dead Local Store</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>DLS_DEAD_LOCAL_STORE_OF_NULL</id>
-    <artifact tool="FindBugs"
-	      mnemonic="DLS_DEAD_LOCAL_STORE_OF_NULL">
-    </artifact>
+    <artifact tool="FindBugs" mnemonic="DLS_DEAD_LOCAL_STORE_OF_NULL"/>
+    <name>Dead Local Store Of Null</name>
     <shortMessage>
       Dead store of null to local variable
     </shortMessage>
@@ -4262,13 +4230,12 @@ method will not get called when the event occurs.</p>]]>
       SE 6.0, this is no longer needed or useful. &lt;/p&gt;
 
     </info>
-    <name>Dead Local Store Of Null</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>MF_METHOD_MASKS_FIELD</id>
-    <artifact tool="FindBugs" mnemonic="MF_METHOD_MASKS_FIELD">
-    </artifact>
+    <artifact tool="FindBugs" mnemonic="MF_METHOD_MASKS_FIELD"/>
+    <name>Method Masks Field</name>
     <shortMessage>
       Method defines a variable that obscures a field
     </shortMessage>
@@ -4280,7 +4247,6 @@ method will not get called when the event occurs.</p>]]>
       field, leave the field uninitialized, or both.&lt;/p&gt;
 
     </info>
-    <name>Method Masks Field</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
@@ -4303,8 +4269,8 @@ method will not get called when the event occurs.</p>]]>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>WMI_WRONG_MAP_ITERATOR</id>
-    <artifact tool="FindBugs" mnemonic="WMI_WRONG_MAP_ITERATOR">
-    </artifact>
+    <artifact tool="FindBugs" mnemonic="WMI_WRONG_MAP_ITERATOR"/>
+    <name>Wrong Map Iterator</name>
     <shortMessage>
       Inefficient use of keySet iterator instead of entrySet
       iterator
@@ -4317,14 +4283,12 @@ method will not get called when the event occurs.</p>]]>
       map, to avoid the Map.get(key) lookup.&lt;/p&gt;
 
     </info>
-    <name>Wrong Map Iterator</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>ISC_INSTANTIATE_STATIC_CLASS</id>
-    <artifact tool="FindBugs"
-	      mnemonic="ISC_INSTANTIATE_STATIC_CLASS">
-    </artifact>
+    <artifact tool="FindBugs" mnemonic="ISC_INSTANTIATE_STATIC_CLASS"/>
+    <name>Instantiate Static Class</name>
     <shortMessage>
       Needless instantiation of class that only supplies static
       methods
@@ -4337,13 +4301,12 @@ method will not get called when the event occurs.</p>]]>
       directly using the class name as a qualifier.&lt;/p&gt;
 
     </info>
-    <name>Instantiate Static Class</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>REC_CATCH_EXCEPTION</id>
-    <artifact tool="FindBugs" mnemonic="REC_CATCH_EXCEPTION">
-    </artifact>
+    <artifact tool="FindBugs" mnemonic="REC_CATCH_EXCEPTION"/>
+    <name>Catch Exception</name>
     <shortMessage>
       Exception is caught when Exception is not thrown
     </shortMessage>
@@ -4359,7 +4322,6 @@ method will not get called when the event occurs.</p>]]>
       RuntimeException as well, masking potential bugs. &lt;/p&gt;
 
     </info>
-    <name>Catch Exception</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
@@ -4385,9 +4347,8 @@ precision).</p>]]>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>FE_FLOATING_POINT_EQUALITY</id>
-    <artifact tool="FindBugs"
-	      mnemonic="FE_FLOATING_POINT_EQUALITY">
-    </artifact>
+    <artifact tool="FindBugs" mnemonic="FE_FLOATING_POINT_EQUALITY"/>
+    <name>Floating Point Equality</name>
     <shortMessage>Test for floating point equality</shortMessage>
     <info>
 
@@ -4403,7 +4364,6 @@ precision).</p>]]>
       4.2.4. &lt;/p&gt;
 
     </info>
-    <name>Floating Point Equality</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
@@ -4461,8 +4421,8 @@ to break the hard dependency.</p>]]>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>RI_REDUNDANT_INTERFACES</id>
-    <artifact tool="FindBugs" mnemonic="RI_REDUNDANT_INTERFACES">
-    </artifact>
+    <artifact tool="FindBugs" mnemonic="RI_REDUNDANT_INTERFACES"/>
+    <name>Redundant Interfaces</name>
     <shortMessage>
       Class implements same interface as superclass
     </shortMessage>
@@ -4478,14 +4438,12 @@ to break the hard dependency.</p>]]>
       implementation. &lt;/p&gt;
 
     </info>
-    <name>Redundant Interfaces</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>MTIA_SUSPECT_STRUTS_INSTANCE_FIELD</id>
-    <artifact tool="FindBugs"
-	      mnemonic="MTIA_SUSPECT_STRUTS_INSTANCE_FIELD">
-    </artifact>
+    <artifact tool="FindBugs" mnemonic="MTIA_SUSPECT_STRUTS_INSTANCE_FIELD"/>
+    <name>Suspect Struts Instance Field</name>
     <shortMessage>
       Class extends Struts Action class and uses instance
       variables
@@ -4500,14 +4458,12 @@ to break the hard dependency.</p>]]>
       method local variables. &lt;/p&gt;
 
     </info>
-    <name>Suspect Struts Instance Field</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>MTIA_SUSPECT_SERVLET_INSTANCE_FIELD</id>
-    <artifact tool="FindBugs"
-	      mnemonic="MTIA_SUSPECT_SERVLET_INSTANCE_FIELD">
-    </artifact>
+    <artifact tool="FindBugs" mnemonic="MTIA_SUSPECT_SERVLET_INSTANCE_FIELD"/>
+    <name>Suspect Servlet Instance Field</name>
     <shortMessage>
       Class extends Servlet class and uses instance variables
     </shortMessage>
@@ -4521,13 +4477,12 @@ to break the hard dependency.</p>]]>
       variables. &lt;/p&gt;
 
     </info>
-    <name>Suspect Servlet Instance Field</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>PS_PUBLIC_SEMAPHORES</id>
-    <artifact tool="FindBugs" mnemonic="PS_PUBLIC_SEMAPHORES">
-    </artifact>
+    <artifact tool="FindBugs" mnemonic="PS_PUBLIC_SEMAPHORES"/>
+    <name>Public Semaphores</name>
     <shortMessage>
       Class exposes synchronization and semaphores in its public
       interface
@@ -4545,14 +4500,12 @@ to break the hard dependency.</p>]]>
       to control synchronization. &lt;/p&gt;
 
     </info>
-    <name>Public Semaphores</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>ICAST_INTEGER_MULTIPLY_CAST_TO_LONG</id>
-    <artifact tool="FindBugs"
-	      mnemonic="ICAST_INTEGER_MULTIPLY_CAST_TO_LONG">
-    </artifact>
+    <artifact tool="FindBugs" mnemonic="ICAST_INTEGER_MULTIPLY_CAST_TO_LONG"/>
+    <name>Integer Multiply Cast To Long</name>
     <shortMessage>
       Result of integer multiplication cast to long
     </shortMessage>
@@ -4574,14 +4527,12 @@ to break the hard dependency.</p>]]>
 
 
     </info>
-    <name>Integer Multiply Cast To Long</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>ICAST_INT_CAST_TO_FLOAT_PASSED_TO_ROUND</id>
-    <artifact tool="FindBugs"
-	      mnemonic="ICAST_INT_CAST_TO_FLOAT_PASSED_TO_ROUND">
-    </artifact>
+    <artifact tool="FindBugs" mnemonic="ICAST_INT_CAST_TO_FLOAT_PASSED_TO_ROUND"/>
+    <name>Int Cast To Float Passed To Round</name>
     <shortMessage>
       int value cast to float and then passed to Math.round
     </shortMessage>
@@ -4599,14 +4550,12 @@ to break the hard dependency.</p>]]>
 
 
     </info>
-    <name>Int Cast To Float Passed To Round</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>ICAST_INT_CAST_TO_DOUBLE_PASSED_TO_CEIL</id>
-    <artifact tool="FindBugs"
-	      mnemonic="ICAST_INT_CAST_TO_DOUBLE_PASSED_TO_CEIL">
-    </artifact>
+    <artifact tool="FindBugs" mnemonic="ICAST_INT_CAST_TO_DOUBLE_PASSED_TO_CEIL"/>
+    <name>Int Cast To Double Passed To Math.ceil</name>
     <shortMessage>
       int value cast to double and then passed to Math.ceil
     </shortMessage>
@@ -4624,14 +4573,12 @@ to break the hard dependency.</p>]]>
 
 
     </info>
-    <name>Int Cast To Double Passed To Math.ceil</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>ICAST_IDIV_CAST_TO_DOUBLE</id>
-    <artifact tool="FindBugs"
-	      mnemonic="ICAST_IDIV_CAST_TO_DOUBLE">
-    </artifact>
+    <artifact tool="FindBugs" mnemonic="ICAST_IDIV_CAST_TO_DOUBLE"/>
+    <name>Idiv Cast To Double</name>
     <shortMessage>
       int division result cast to double or float
     </shortMessage>
@@ -4652,14 +4599,12 @@ to break the hard dependency.</p>]]>
       &lt;/pre&gt; &lt;/blockquote&gt;
 
     </info>
-    <name>Idiv Cast To Double</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>J2EE_STORE_OF_NON_SERIALIZABLE_OBJECT_INTO_SESSION</id>
-    <artifact tool="FindBugs"
-	      mnemonic="J2EE_STORE_OF_NON_SERIALIZABLE_OBJECT_INTO_SESSION">
-    </artifact>
+    <artifact tool="FindBugs" mnemonic="J2EE_STORE_OF_NON_SERIALIZABLE_OBJECT_INTO_SESSION"/>
+    <name>Store Of Non Serializable Object Into Session</name>
     <shortMessage>
       Store of non serializable object into HttpSession
     </shortMessage>
@@ -4670,14 +4615,12 @@ to break the hard dependency.</p>]]>
       migrated, an error will result. &lt;/p&gt;
 
     </info>
-    <name>Store Of Non Serializable Object Into Session</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>DMI_NONSERIALIZABLE_OBJECT_WRITTEN</id>
-    <artifact tool="FindBugs"
-	      mnemonic="DMI_NONSERIALIZABLE_OBJECT_WRITTEN">
-    </artifact>
+    <artifact tool="FindBugs" mnemonic="DMI_NONSERIALIZABLE_OBJECT_WRITTEN"/>
+    <name>Nonserializable Object Written</name>
     <shortMessage>
       Non serializable object written to ObjectOutput
     </shortMessage>
@@ -4689,14 +4632,12 @@ to break the hard dependency.</p>]]>
       &lt;/p&gt;
 
     </info>
-    <name>Nonserializable Object Written</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>VA_PRIMITIVE_ARRAY_PASSED_TO_OBJECT_VARARG</id>
-    <artifact tool="FindBugs"
-	      mnemonic="VA_PRIMITIVE_ARRAY_PASSED_TO_OBJECT_VARARG">
-    </artifact>
+    <artifact tool="FindBugs" mnemonic="VA_PRIMITIVE_ARRAY_PASSED_TO_OBJECT_VARARG"/>
+    <name>Primitive Array Passed To Object Vararg</name>
     <shortMessage>
       Primitive array passed to function expecting a variable
       number of object arguments
@@ -4709,14 +4650,12 @@ to break the hard dependency.</p>]]>
       and passes it to the function. &lt;/p&gt;
 
     </info>
-    <name>Primitive Array Passed To Object Vararg</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>BC_EQUALS_METHOD_SHOULD_WORK_FOR_ALL_OBJECTS</id>
-    <artifact tool="FindBugs"
-	      mnemonic="BC_EQUALS_METHOD_SHOULD_WORK_FOR_ALL_OBJECTS">
-    </artifact>
+    <artifact tool="FindBugs" mnemonic="BC_EQUALS_METHOD_SHOULD_WORK_FOR_ALL_OBJECTS"/>
+    <name>Equals Method Should Work For All Objects</name>
     <shortMessage>
       Equals method should not assume anything about the type of
       its argument
@@ -4730,14 +4669,12 @@ to break the hard dependency.</p>]]>
       &lt;code&gt;this&lt;/code&gt;. &lt;/p&gt;
 
     </info>
-    <name>Equals Method Should Work For All Objects</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>BC_BAD_CAST_TO_ABSTRACT_COLLECTION</id>
-    <artifact tool="FindBugs"
-	      mnemonic="BC_BAD_CAST_TO_ABSTRACT_COLLECTION">
-    </artifact>
+    <artifact tool="FindBugs" mnemonic="BC_BAD_CAST_TO_ABSTRACT_COLLECTION"/>
+    <name>Bad Cast To Abstract Collection</name>
     <shortMessage>
       Questionable cast to abstract collection
     </shortMessage>
@@ -4753,14 +4690,12 @@ to break the hard dependency.</p>]]>
       &lt;/p&gt;
 
     </info>
-    <name>Bad Cast To Abstract Collection</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>BC_IMPOSSIBLE_CAST_PRIMITIVE_ARRAY</id>
-    <artifact tool="FindBugs"
-	      mnemonic="BC_IMPOSSIBLE_CAST_PRIMITIVE_ARRAY">
-    </artifact>
+    <artifact tool="FindBugs" mnemonic="BC_IMPOSSIBLE_CAST_PRIMITIVE_ARRAY"/>
+    <name>Impossible Cast Primitive Array</name>
     <shortMessage>
       Impossible cast involving primitive array
     </shortMessage>
@@ -4770,27 +4705,23 @@ to break the hard dependency.</p>]]>
       &lt;/p&gt;
 
     </info>
-    <name>Impossible Cast Primitive Array</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>BC_IMPOSSIBLE_CAST</id>
-    <artifact tool="FindBugs" mnemonic="BC_IMPOSSIBLE_CAST">
-    </artifact>
-    <shortMessage>Impossible cast</shortMessage>
+    <artifact tool="FindBugs" mnemonic="BC_IMPOSSIBLE_CAST"/>
+    <name>Impossible cast</name>
+    <shortMessage>Impossible cast will always throw a ClassCastException. Fix this code.</shortMessage>
     <info>
-
-      &lt;p&gt; This cast will always throw a ClassCastException.
-      &lt;/p&gt;
-
+<![CDATA[<p>This cast will always throw a
+<code>ClassCastException</code>. This code needs to be fixed.</p>]]>
     </info>
-    <name>Impossible Cast</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>NP_NULL_INSTANCEOF</id>
-    <artifact tool="FindBugs" mnemonic="NP_NULL_INSTANCEOF">
-    </artifact>
+    <artifact tool="FindBugs" mnemonic="NP_NULL_INSTANCEOF"/>
+    <name>Null instanceof</name>
     <shortMessage>
       A known null value is checked to see if it is an instance of
       a type
@@ -4803,13 +4734,12 @@ to break the hard dependency.</p>]]>
       some misunderstanding or some other logic error. &lt;/p&gt;
 
     </info>
-    <name>Null instanceof</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>BC_NULL_INSTANCEOF</id>
-    <artifact tool="FindBugs" mnemonic="BC_NULL_INSTANCEOF">
-    </artifact>
+    <artifact tool="FindBugs" mnemonic="BC_NULL_INSTANCEOF"/>
+    <name>Null instanceof</name>
     <shortMessage>
       A known null value is checked to see if it is an instance of
       a type
@@ -4822,13 +4752,12 @@ to break the hard dependency.</p>]]>
       some misunderstanding or some other logic error. &lt;/p&gt;
 
     </info>
-    <name>Null instanceof</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>BC_IMPOSSIBLE_INSTANCEOF</id>
-    <artifact tool="FindBugs" mnemonic="BC_IMPOSSIBLE_INSTANCEOF">
-    </artifact>
+    <artifact tool="FindBugs" mnemonic="BC_IMPOSSIBLE_INSTANCEOF"/>
+    <name>Impossible instanceof</name>
     <shortMessage>instanceof will always return false</shortMessage>
     <info>
 
@@ -4837,12 +4766,12 @@ to break the hard dependency.</p>]]>
       some misunderstanding or some other logic error. &lt;/p&gt;
 
     </info>
-    <name>Impossible instanceof</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>BC_VACUOUS_INSTANCEOF</id>
-    <artifact tool="FindBugs" mnemonic="BC_VACUOUS_INSTANCEOF">
-    </artifact>
+    <artifact tool="FindBugs" mnemonic="BC_VACUOUS_INSTANCEOF"/>
+    <name>Vacuous instanceof</name>
     <shortMessage>instanceof will always return true</shortMessage>
     <info>
 
@@ -4851,13 +4780,12 @@ to break the hard dependency.</p>]]>
       some misunderstanding or some other logic error. &lt;/p&gt;
 
     </info>
-    <name>Vacuous instanceof</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>BC_UNCONFIRMED_CAST</id>
-    <artifact tool="FindBugs" mnemonic="BC_UNCONFIRMED_CAST">
-    </artifact>
+    <artifact tool="FindBugs" mnemonic="BC_UNCONFIRMED_CAST"/>
+    <name>Unconfirmed Cast</name>
     <shortMessage>Unchecked/unconfirmed cast</shortMessage>
     <info>
 
@@ -4867,14 +4795,12 @@ to break the hard dependency.</p>]]>
       cast will not fail. &lt;/p&gt;
 
     </info>
-    <name>Unconfirmed Cast</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>BC_BAD_CAST_TO_CONCRETE_COLLECTION</id>
-    <artifact tool="FindBugs"
-	      mnemonic="BC_BAD_CAST_TO_CONCRETE_COLLECTION">
-    </artifact>
+    <artifact tool="FindBugs" mnemonic="BC_BAD_CAST_TO_CONCRETE_COLLECTION"/>
+    <name>Bad Cast To Concrete Collection</name>
     <shortMessage>
       Questionable cast to concrete collection
     </shortMessage>
@@ -4889,14 +4815,12 @@ to break the hard dependency.</p>]]>
       so, just use the abstract collection class. &lt;/p&gt;
 
     </info>
-    <name>Bad Cast To Concrete Collection</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>RE_POSSIBLE_UNINTENDED_PATTERN</id>
-    <artifact tool="FindBugs"
-	      mnemonic="RE_POSSIBLE_UNINTENDED_PATTERN">
-    </artifact>
+    <artifact tool="FindBugs" mnemonic="RE_POSSIBLE_UNINTENDED_PATTERN"/>
+    <name>Possible Unintended Pattern</name>
     <shortMessage>
       &quot;.&quot; used for regular expression
     </shortMessage>
@@ -4911,14 +4835,12 @@ to break the hard dependency.</p>]]>
       / character. &lt;/p&gt;
 
     </info>
-    <name>Possible Unintended Pattern</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>RE_BAD_SYNTAX_FOR_REGULAR_EXPRESSION</id>
-    <artifact tool="FindBugs"
-	      mnemonic="RE_BAD_SYNTAX_FOR_REGULAR_EXPRESSION">
-    </artifact>
+    <artifact tool="FindBugs" mnemonic="RE_BAD_SYNTAX_FOR_REGULAR_EXPRESSION"/>
+    <name>Bad syntax for regular expression</name>
     <shortMessage>
       Invalid syntax for regular expression
     </shortMessage>
@@ -4930,14 +4852,12 @@ to break the hard dependency.</p>]]>
       executed. &lt;/p&gt;
 
     </info>
-    <name>Bad Syntax For Regular Expression</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>RE_CANT_USE_FILE_SEPARATOR_AS_REGULAR_EXPRESSION</id>
-    <artifact tool="FindBugs"
-	      mnemonic="RE_CANT_USE_FILE_SEPARATOR_AS_REGULAR_EXPRESSION">
-    </artifact>
+    <artifact tool="FindBugs" mnemonic="RE_CANT_USE_FILE_SEPARATOR_AS_REGULAR_EXPRESSION"/>
+    <name>Cant Use File Separator As Regular Expression</name>
     <shortMessage>
       File.separator used for regular expression
     </shortMessage>
@@ -4956,32 +4876,33 @@ to break the hard dependency.</p>]]>
       &lt;/p&gt;
 
     </info>
-    <name>Cant Use File Separator As Regular Expression</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>DLS_OVERWRITTEN_INCREMENT</id>
-    <artifact tool="FindBugs"
-	      mnemonic="DLS_OVERWRITTEN_INCREMENT">
-    </artifact>
+    <artifact tool="FindBugs" mnemonic="DLS_OVERWRITTEN_INCREMENT"/>
+    <name>Overwritten increment</name>
     <shortMessage>Overwritten increment</shortMessage>
     <info>
+<![CDATA[<p>This code performs an increment operation (e.g.,
+<code>i++</code>) and then immediately overwrites it. For example,</p>
 
-      &lt;p&gt; The code performs an increment operation (e.g.,
-      &lt;code&gt;i++&lt;/code&gt;) and then immediately
-      overwrites it. For example, &lt;code&gt;i = i++&lt;/code&gt;
-      immediately overwrites the incremented value with the
-      original value. &lt;/p&gt;
+<pre>
+i = i++;
+</pre>
 
+<p>immediately overwrites the incremented value with
+the original value.</p>
+
+<p>This is probably not what was intended.  Most likely this code
+should be <code>i++</code> (alone) or <code>i = i + 1</code>.</p>]]>
     </info>
-    <name>Overwritten Increment</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>ICAST_QUESTIONABLE_UNSIGNED_RIGHT_SHIFT</id>
-    <artifact tool="FindBugs"
-	      mnemonic="ICAST_QUESTIONABLE_UNSIGNED_RIGHT_SHIFT">
-    </artifact>
+    <artifact tool="FindBugs" mnemonic="ICAST_QUESTIONABLE_UNSIGNED_RIGHT_SHIFT"/>
+    <name>Questionable unsigned right shift</name>
     <shortMessage>
       Unsigned right shift cast to short/byte
     </shortMessage>
@@ -4995,13 +4916,12 @@ to break the hard dependency.</p>]]>
       &lt;/p&gt;
 
     </info>
-    <name>Questionable Unsigned Right Shift</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>ICAST_BAD_SHIFT_AMOUNT</id>
-    <artifact tool="FindBugs" mnemonic="ICAST_BAD_SHIFT_AMOUNT">
-    </artifact>
+    <artifact tool="FindBugs" mnemonic="ICAST_BAD_SHIFT_AMOUNT"/>
+    <name>Bad shift amount</name>
     <shortMessage>
       Integer shift by an amount not in the range 0..31
     </shortMessage>
@@ -5014,14 +4934,12 @@ to break the hard dependency.</p>]]>
       least confusing. &lt;/p&gt;
 
     </info>
-    <name>Bad Shift Amount</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>IM_MULTIPLYING_RESULT_OF_IREM</id>
-    <artifact tool="FindBugs"
-	      mnemonic="IM_MULTIPLYING_RESULT_OF_IREM">
-    </artifact>
+    <artifact tool="FindBugs" mnemonic="IM_MULTIPLYING_RESULT_OF_IREM"/>
+    <name>Multiplying Result Of Int Remainder</name>
     <shortMessage>
       Integer multiply of result of integer remainder
     </shortMessage>
@@ -5033,14 +4951,12 @@ to break the hard dependency.</p>]]>
       is (i % 60) * 1000, not i % (60 * 1000). &lt;/p&gt;
 
     </info>
-    <name>Multiplying Result Of Int Remainder</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>DMI_INVOKING_TOSTRING_ON_ARRAY</id>
-    <artifact tool="FindBugs"
-	      mnemonic="DMI_INVOKING_TOSTRING_ON_ARRAY">
-    </artifact>
+    <artifact tool="FindBugs" mnemonic="DMI_INVOKING_TOSTRING_ON_ARRAY"/>
+    <name>Invoking toString On Array</name>
     <shortMessage>Invocation of toString on an array</shortMessage>
     <info>
 
@@ -5051,39 +4967,39 @@ to break the hard dependency.</p>]]>
       Programming Puzzlers, chapter 3, puzzle 12. &lt;/p&gt;
 
     </info>
-    <name>Invoking toString On Array</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>IM_AVERAGE_COMPUTATION_COULD_OVERFLOW</id>
-    <artifact tool="FindBugs"
-	      mnemonic="IM_AVERAGE_COMPUTATION_COULD_OVERFLOW">
-    </artifact>
-    <shortMessage>
-      Computation of average could overflow
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="IM_AVERAGE_COMPUTATION_COULD_OVERFLOW"/>
+    <name>Average computation could overflow</name>
+    <shortMessage>Computation of average could overflow.</shortMessage>
     <info>
+<![CDATA[<p>This code computes the average of two integers using
+either division or signed right shift, and then uses the result as the
+index of an array. If the values being averaged are very large, this
+can overflow (resulting in the computation of a negative average).</p>
 
-      &lt;p&gt;The code computes the average of two integers using
-      either division or signed right shift, and then uses the
-      result as the index of an array. If the values being
-      averaged are very large, this can overflow (resulting in the
-      computation of a negative average). Assuming that the result
-      is intended to be nonnegative, you can use an unsigned right
-      shift instead. In other words, rather that using
-      &lt;code&gt;(low+high)/2&lt;/code&gt;, use
-      &lt;code&gt;(low+high) &amp;gt;&amp;gt;&amp;gt;
-      1&lt;/code&gt; &lt;/p&gt; &lt;p&gt;This bug exists in many
-      earlier implementations of binary search and merge sort.
-      Martin Buchholz &lt;a
-      href=&quot;http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6412541&quot;&gt;found
-      and fixed it&lt;/a&gt; in the JDK libraries, and Joshua
-      Bloch &lt;a
-      href=&quot;http://googleresearch.blogspot.com/2006/06/extra-extra-read-all-about-it-nearly.html&quot;&gt;widely
-      publicized the bug pattern&lt;/a&gt;. &lt;/p&gt;
+<p>Assuming that the result is intended to be nonnegative, you can use
+an unsigned right shift instead. In other words, rather that using</p>
 
+<pre>
+(low + high) / 2
+</pre>
+
+<p>use</p>
+
+<pre>
+(low + high) gt;&gt;&gt; 1
+</pre>
+
+<p>This bug exists in many earlier implementations of binary search
+and merge sort.  Martin Buchholz <a
+href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6412541">found
+and fixed it</a> in the JDK libraries, and Joshua Bloch <a
+href="http://googleresearch.blogspot.com/2006/06/extra-extra-read-all-about-it-nearly.html">widely
+publicized the bug pattern</a>.</p>]]>
     </info>
-    <name>Average Computation Could Overflow</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
