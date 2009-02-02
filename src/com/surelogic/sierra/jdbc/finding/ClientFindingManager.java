@@ -82,7 +82,8 @@ public final class ClientFindingManager extends FindingManager {
 					st
 							.execute("CREATE GLOBAL TEMPORARY TABLE TEMP_FINDING_IDS (ID NUMBER NOT NULL) ON COMMIT DELETE ROWS");
 				} catch (final SQLException e) {
-					log.log(Level.WARNING, e.getMessage(), e);
+					// FIXME Long-term we want to clean up all of this logic so
+					// that we only instantiate this guy when needed.
 					// Do nothing, the table is probably already there.
 				}
 				tempTableName = "TEMP_FINDING_IDS";
@@ -91,7 +92,8 @@ public final class ClientFindingManager extends FindingManager {
 					st
 							.execute("DECLARE GLOBAL TEMPORARY TABLE TEMP_FINDING_IDS (ID BIGINT NOT NULL) NOT LOGGED");
 				} catch (final SQLException e) {
-					log.log(Level.WARNING, e.getMessage(), e);
+					// FIXME Long-term we want to clean up all of this logic so
+					// that we only instantiate this guy when needed.
 					// Do nothing, the table is probably already there.
 				}
 				tempTableName = "SESSION.TEMP_FINDING_IDS";
