@@ -79,21 +79,23 @@ public final class ClientFindingManager extends FindingManager {
 		try {
 			if (DBType.ORACLE == JDBCUtils.getDb(conn)) {
 				try {
-					st
-							.execute("CREATE GLOBAL TEMPORARY TABLE TEMP_FINDING_IDS (ID NUMBER NOT NULL) ON COMMIT DELETE ROWS");
+					if (!conn.isReadOnly()) {
+						st
+								.execute("CREATE GLOBAL TEMPORARY TABLE TEMP_FINDING_IDS (ID NUMBER NOT NULL) ON COMMIT DELETE ROWS");
+					}
 				} catch (final SQLException e) {
-					// FIXME Long-term we want to clean up all of this logic so
-					// that we only instantiate this guy when needed.
+					log.log(Level.WARNING, e.getMessage(), e);
 					// Do nothing, the table is probably already there.
 				}
 				tempTableName = "TEMP_FINDING_IDS";
 			} else {
 				try {
-					st
-							.execute("DECLARE GLOBAL TEMPORARY TABLE TEMP_FINDING_IDS (ID BIGINT NOT NULL) NOT LOGGED");
+					if (!conn.isReadOnly()) {
+						st
+								.execute("DECLARE GLOBAL TEMPORARY TABLE TEMP_FINDING_IDS (ID BIGINT NOT NULL) NOT LOGGED");
+					}
 				} catch (final SQLException e) {
-					// FIXME Long-term we want to clean up all of this logic so
-					// that we only instantiate this guy when needed.
+					log.log(Level.WARNING, e.getMessage(), e);
 					// Do nothing, the table is probably already there.
 				}
 				tempTableName = "SESSION.TEMP_FINDING_IDS";
