@@ -88,7 +88,6 @@ import com.surelogic.sierra.jdbc.scan.Scans;
 import com.surelogic.sierra.jdbc.settings.ConnectedServer;
 import com.surelogic.sierra.jdbc.settings.ScanFilterView;
 import com.surelogic.sierra.jdbc.settings.SettingQueries;
-import com.surelogic.sierra.tool.message.FilterSet;
 import com.surelogic.sierra.tool.message.ScanFilter;
 
 public final class SierraServersMediator extends AbstractSierraViewMediator
@@ -114,23 +113,12 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 	private Map<String, List<ScanFilter>> localFilters = Collections.emptyMap();
 
 	/**
-	 * This should only be changed in the UI thread
-	 */
-	private Map<ConnectedServer, ServerUpdateStatus> serverUpdates = Collections
-			.emptyMap();
-
-	/**
 	 * A map from a project name to the project info
 	 * 
 	 * Protected by itself This should only be accessed in a database job
 	 * (possibly from multiple threads)
 	 */
 	private final Map<String, ProjectDO> projectMap = new HashMap<String, ProjectDO>();
-
-	/**
-	 * Used in a similar way as responseMap
-	 */
-	private final Map<ConnectedServer, ServerUpdateStatus> serverResponseMap = new HashMap<ConnectedServer, ServerUpdateStatus>();
 
 	private final TreeViewer f_statusTree;
 	private final ActionListener f_serverSyncAction;
@@ -1002,19 +990,24 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 		}
 		if (sort != PreferenceConstants.getServerStatusSort()) {
 			PreferenceConstants.setServerStatusSort(sort);
-			updateContentsInUI(projects, serverUpdates, localFilters);
+			updateContentsInUI(projects, localFilters);
 		}
 	}
 
 	/*
 	 * Below this is the code to update the view from the database
 	 */
-
 	@Override
 	public void changed() {
 		asyncUpdateContents();
 	}
 
+	/*
+	private enum UpdateType {
+		ALL, 
+	}
+	*/
+	
 	private void asyncUpdateContents() {
 		asyncUpdateContentsForUI(new IViewUpdater() {
 			public void updateContentsForUI() {
@@ -1059,7 +1052,6 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 			final Query q = new ConnectionQuery(c);
 			final Scans sm = new Scans(q);
 			final List<ProjectStatus> projects = new ArrayList<ProjectStatus>();
-			final Map<ConnectedServer, ServerUpdateStatus> serverUpdates;
 			final Map<String, List<ScanFilter>> filters;
 			synchronized (projectMap) {
 				for (final IJavaProject jp : JDTUtility.getJavaProjects()) {
@@ -1096,15 +1088,13 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 							numProjectProblems, dbInfo, filter);
 					projects.add(s);
 				}
-				serverUpdates = new HashMap<ConnectedServer, ServerUpdateStatus>(
-						serverResponseMap);
 				filters = SettingQueries.getLocalScanFilters().perform(q);
 			}
 			finishedUpdate(now);
 
 			asyncUpdateContentsForUI(new IViewUpdater() {
 				public void updateContentsForUI() {
-					updateContentsInUI(projects, serverUpdates, filters);
+					updateContentsInUI(projects, filters);
 				}
 			});
 			c.commit();
@@ -1123,11 +1113,9 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 	}
 
 	public void updateContentsInUI(final List<ProjectStatus> projects,
-			final Map<ConnectedServer, ServerUpdateStatus> serverUpdates,
 			final Map<String, List<ScanFilter>> filters) {
 		// No need to synchronize since only updated/viewed in UI thread?
 		this.projects = projects;
-		this.serverUpdates = serverUpdates;
 		this.localFilters = filters;
 
 		final List<ConnectedServer> servers = collectServers().indirect;
@@ -1401,15 +1389,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 		final ServersViewContent serverNode = new ServersViewContent(null,
 				SLImages.getImage(CommonImages.IMG_SIERRA_SERVER));
 		serverNode.setData(server);
-		/*
-		 * if (focus != null && label.equals(focus.getLabel())) { focused =
-		 * item; }
-		 */
-		final ServersViewContent categories = createCategories(serverNode,
-				server);
-		if (categories != null) {
-			serverContent.add(categories);
-		}
+
 		final ServersViewContent scanFilters = createScanFilters(serverNode,
 				server);
 		if (scanFilters != null) {
@@ -1432,76 +1412,21 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 		return serverNode;
 	}
 
-	private static final String delta = ChangeStatus.REMOTE.getLabel();
-
-	private ServersViewContent createCategories(
-			final ServersViewContent serverNode, final ConnectedServer server) {
-		final ServerUpdateStatus update = serverUpdates.get(server);
-		final int numCategories = update == null ? 0 : update
-				.getNumUpdatedFilterSets();
-		if (numCategories > 0) {
-			final ServersViewContent root = new ServersViewContent(serverNode,
-					SLImages.getImage(CommonImages.IMG_FILTER));
-			root.setText(delta + CATEGORIES);
-			ServersViewContent label;
-			if (numCategories > 1) {
-				label = createLabel(root, delta + numCategories
-						+ " categories to update", ChangeStatus.REMOTE);
-			} else {
-				label = createLabel(root, delta + "1 category to update",
-						ChangeStatus.REMOTE);
-			}
-			label.setChangeStatus(ChangeStatus.REMOTE);
-			createChangedCategories(update, label);
-			return root;
-		}
-		return null;
-	}
-
-	private void createChangedCategories(final ServerUpdateStatus update,
-			final ServersViewContent parent) {
-		final List<ServersViewContent> children = new ArrayList<ServersViewContent>();
-		for (final FilterSet f : update.getUpdatedCategories()) {
-			createLabel(parent, children, delta + f.getName(),
-					ChangeStatus.REMOTE);
-		}
-		parent.setChildren(children.toArray(emptyChildren));
-	}
-
 	private ServersViewContent createScanFilters(
 			final ServersViewContent serverNode, final ConnectedServer server) {
-		final ServerUpdateStatus update = serverUpdates.get(server);
 		final List<ScanFilter> filters = localFilters.get(server.getName());
-		if ((update == null || update.getNumScanFilters() == 0)
-				&& (!showFiltersOnServer || filters == null || filters
-						.isEmpty())) {
-			return null;
-		}
-		final int num = update == null ? 0 : update.getNumUpdatedScanFilters();
-		final boolean changed = num > 0;
-		if (!(changed || showFiltersOnServer)) {
+		if (!showFiltersOnServer || filters == null || filters.isEmpty()) {
 			return null;
 		}
 		final ServersViewContent root = new ServersViewContent(serverNode,
 				SLImages.getImage(CommonImages.IMG_FILTER));
-		root.setText(changed ? delta + SCAN_FILTERS : SCAN_FILTERS);
+		root.setText(SCAN_FILTERS);
 
-		final ServersViewContent filterRoot;
-		if (changed) {
-			filterRoot = createLabel(root, delta + num + " scan filter"
-					+ s(num) + " to update", ChangeStatus.REMOTE);
-		} else {
-			filterRoot = root;
-		}
+		final ServersViewContent filterRoot = root;
 		final List<ServersViewContent> children = new ArrayList<ServersViewContent>();
-		for (final ScanFilter f : update != null ? update.getScanFilters()
-				: filters) {
+		for (final ScanFilter f : filters) {
 			ServersViewContent filter;
-			if (update != null && update.isChanged(f)) {
-				filter = createLabel(filterRoot, children, delta + f.getName(),
-						ChangeStatus.REMOTE);
-				// filter.setData(f);
-			} else if (showFiltersOnServer) {
+			if (showFiltersOnServer) {
 				filter = createLabel(filterRoot, children, f.getName(),
 						ChangeStatus.NONE);
 				filter.setData(f);
