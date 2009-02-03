@@ -19,6 +19,8 @@ import com.surelogic.sierra.gwt.client.ui.panel.SearchInputPanel.SearchListener;
 public abstract class SearchPanel<E extends Cacheable, T extends Cache<E>>
 		extends BasicPanel {
 	private static final int ITEMS_PER_PAGE = 25;
+	private static final int MAX_ITEM_LENGTH = 50;
+	private static final String STYLE = "sl-SearchPanel";
 	private final T cache;
 	private final SearchInputPanel searchPanel = new SearchInputPanel();
 	private final SearchResultsPanel results = new SearchResultsPanel();
@@ -27,12 +29,12 @@ public abstract class SearchPanel<E extends Cacheable, T extends Cache<E>>
 	public SearchPanel(final T cache) {
 		super();
 		this.cache = cache;
+		addStyleName(STYLE);
 	}
 
 	@Override
 	protected void onInitialize(final VerticalPanel contentPanel) {
 		contentPanel.add(searchPanel);
-
 		results.initialize();
 		results.setSubsectionStyle(true);
 		contentPanel.add(results);
@@ -116,8 +118,13 @@ public abstract class SearchPanel<E extends Cacheable, T extends Cache<E>>
 				if (isItemVisible(item, query)) {
 					final HorizontalPanel itemPanel = new HorizontalPanel();
 					itemPanel.setWidth("100%");
-					final ContentLink itemUI = new ContentLink(
-							getItemText(item), getItemContent(), item.getUuid());
+					String itemText = getItemText(item);
+					if (itemText.length() > 50) {
+						itemText = itemText.substring(0, MAX_ITEM_LENGTH - 3)
+								+ "...";
+					}
+					final ContentLink itemUI = new ContentLink(itemText,
+							getItemContent(), item.getUuid());
 					itemPanel.add(itemUI);
 					final Widget decorator = getItemDecorator(item);
 					if (decorator != null) {
