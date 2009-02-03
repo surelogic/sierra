@@ -84,6 +84,7 @@ public final class AuditRecord extends AbstractRecord<String> {
 	protected int fill(final PreparedStatement st, int idx) throws SQLException {
 		idx = fillWithPk(st, idx);
 		st.setLong(idx++, findingId);
+		st.setLong(idx++, findingId);
 		st.setString(idx++, event.toString());
 		setNullableLong(idx++, st, userId);
 		setNullableTimestamp(idx++, st, timestamp);

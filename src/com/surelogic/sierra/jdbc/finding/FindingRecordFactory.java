@@ -22,7 +22,7 @@ public final class FindingRecordFactory {
 	private static final String FINDING_DELETE = "DELETE FROM FINDING WHERE ID = ?";
 	private static final String FINDING_UPDATE = "UPDATE FINDING SET UUID = ?, IMPORTANCE = ?, SUMMARY = ? WHERE ID = ?";
 	private static final String INSERT_ARTIFACT_FINDING_RELATION = "INSERT INTO ARTIFACT_FINDING_RELTN (ARTIFACT_ID,FINDING_ID) VALUES (?,?)";
-	private static final String AUDIT_INSERT = "INSERT INTO SIERRA_AUDIT (UUID,FINDING_ID,EVENT,USER_ID,DATE_TIME,VALUE,REVISION) VALUES (?,?,?,?,?,?,?)";
+	private static final String AUDIT_INSERT = "INSERT INTO SIERRA_AUDIT (UUID,FINDING_ID,PROJECT_ID,EVENT,USER_ID,DATE_TIME,VALUE,REVISION) VALUES (?,?,(SELECT PROJECT_ID FROM FINDING WHERE ID = ?),?,?,?,?,?)";
 	private static final String AUDIT_SELECT = "SELECT FINDING_ID,EVENT,USER_ID,DATE_TIME,VALUE,REVISION FROM SIERRA_AUDIT WHERE UUID = ?";
 	private final UpdateRecordMapper matchMap;
 	private final UpdateRecordMapper findingMap;

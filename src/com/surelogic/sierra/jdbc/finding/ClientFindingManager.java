@@ -295,9 +295,8 @@ public final class ClientFindingManager extends FindingManager {
 				.prepareStatement("SELECT SCAN_ID FROM LATEST_SCANS WHERE PROJECT = ?");
 		selectOldestScanByProject = conn
 				.prepareStatement("SELECT SCAN_ID FROM OLDEST_SCANS WHERE PROJECT = ?");
-		final String commonForLocalAudits = " FROM SIERRA_AUDIT A, FINDING F WHERE "
-				+ " A.REVISION IS NULL AND"
-				+ " F.ID = A.FINDING_ID AND F.PROJECT_ID = ?";
+		final String commonForLocalAudits = " FROM SIERRA_AUDIT A WHERE "
+				+ " A.REVISION IS NULL AND A.PROJECT_ID = ?";
 		findLocalAudits = conn
 				.prepareStatement("SELECT A.FINDING_ID,A.UUID,A.DATE_TIME,A.EVENT,A.VALUE"
 						+ commonForLocalAudits + " ORDER BY A.FINDING_ID");
