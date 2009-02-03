@@ -2156,7 +2156,7 @@ is probably what was intended.</p>]]>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
-    <id>SuspiciousEqualsMethodName</id>
+    <id>NM_BAD_EQUAL</id>
     <artifact tool="FindBugs" mnemonic="NM_BAD_EQUAL"/>
     <artifact tool="PMD" mnemonic="SuspiciousEqualsMethodName"/>
     <name>Suspicious equals method name</name>
@@ -3822,7 +3822,7 @@ recopied in each iteration.</p>
 <p>Better performance can be obtained by using a <code>StringBuffer</code> (or
 <code>StringBuilder</code> in Java 1.5) explicitly.</p>
 
-<p> For example, consider changing</p>
+<p>For example, consider changing</p>
 
 <pre>
 String s = "";
@@ -3891,7 +3891,6 @@ public class Test {
     Integer[] b = (Integer[])c.toArray(new Integer[c.size()]);
   }
 }
-
 </pre>]]>
     </info>
   </findingType>
@@ -4016,29 +4015,42 @@ will not get called when the event occurs.</p>
     <shortMessage>This code attempts to access a ResultSet field with a index of 0. This is always a mistake.</shortMessage>
     <info>
 <![CDATA[<p>A call to <code>get</code><i>x</i> or
-<code>update</code><i>x</i> methods of a result set was made where the
-field index is 0. Because <code>ResultSet</code> fields start at index
-1, this is always a mistake.</p>
+<code>update</code><i>x</i> methods of a <code>ResultSet</code> was
+made where the field index is 0. Because <code>ResultSet</code> field indexes
+start at 1, this is always a mistake.</p>
 
-<p>It is recommended that this index be changed.</p>]]>
+<p>For example, the code below is wrong and will always throw an
+<code>SQLException</code>.</p>
+
+<pre>
+ResultSet rs = ...
+rs.getInt(0);
+</pre>
+
+<p>It is recommended that this index be changed to start at 1.</p>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SQL_BAD_PREPARED_STATEMENT_ACCESS</id>
     <artifact tool="FindBugs" mnemonic="SQL_BAD_PREPARED_STATEMENT_ACCESS"/>
-    <name>Bad Prepared Statement Access</name>
-    <shortMessage>
-      Method attempts to access a prepared statement parameter
-      with index 0
-    </shortMessage>
+    <name>Bad PreparedStatement access</name>
+    <shortMessage>This code attempts to access a PreparedStatement parameter with index 0. This is always a mistake.</shortMessage>
     <info>
+<![CDATA[<p>A call to a <code>set</code><i>x</i> method of a
+<code>PreparedStatement</code> was made where the parameter index is
+0. Because <code>PreparedSatement</code> parameter indexes start at 1,
+this is always a mistake.</p>
 
-      &lt;p&gt; A call to a setXXX method of a prepared statement
-      was made where the parameter index is 0. As parameter
-      indexes start at index 1, this is always a
-      mistake.&lt;/p&gt;
+<p>For example, the code below is wrong and will always throw an <code>SQLException</code>.</p>
 
+<pre>
+PreparedStatement ps = ...
+int value = ...
+ps.setInt(0, value);
+</pre>
+
+<p>It is recommended that this index be changed to start at 1.</p>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
@@ -4046,206 +4058,307 @@ field index is 0. Because <code>ResultSet</code> fields start at index
     <id>SIO_SUPERFLUOUS_INSTANCEOF</id>
     <artifact tool="FindBugs" mnemonic="SIO_SUPERFLUOUS_INSTANCEOF"/>
     <name>Superfluous instanceof</name>
-    <shortMessage>
-      Unnecessary type check done using instanceof operator
-    </shortMessage>
+    <shortMessage>Unnecessary type check done using instanceof operator. This check can be removed from the code.</shortMessage>
     <info>
+<![CDATA[<p>This code performes a type check using the
+<code>instanceof</code> operator where it can be statically determined
+that the object is of the type requested.</p>
 
-      &lt;p&gt; Type check performed using the instanceof operator
-      where it can be statically determined whether the object is
-      of the type requested. &lt;/p&gt;
+<p>For example, the code below should be changed from</p>
 
+<pre>
+public Place getPlace(String name) {
+  assert (name != null);
+  Place result = getPlaceByName(name);
+  if (result instanceof Place)  // Bad!
+    return (Place) result;
+  else
+    return null;
+}
+</pre>
+
+<p>to</p>
+
+<pre>
+public Place getPlace(String name) {
+  assert (name != null);
+  return getPlaceByName(name);
+}
+</pre>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>BAC_BAD_APPLET_CONSTRUCTOR</id>
     <artifact tool="FindBugs" mnemonic="BAC_BAD_APPLET_CONSTRUCTOR"/>
-    <name>Bad Applet Constructor</name>
-    <shortMessage>
-      Bad Applet Constructor relies on uninitialized AppletStub
-    </shortMessage>
+    <name>Bad Applet constructor</name>
+    <shortMessage>Bad Applet constructor relies on uninitialized AppletStub. Move this logic into init().</shortMessage>
     <info>
+<![CDATA[<p>This constructor calls methods in the parent
+<code>Applet</code> that rely on the <code>AppletStub</code>. Since
+the <code>AppletStub</code> isn't initialized until the
+<code>init()</code> method of this applet is called, these methods
+will not perform correctly.</p>
 
-      &lt;p&gt; This constructor calls methods in the parent
-      Applet that rely on the AppletStub. Since the AppletStub
-      isn't initialized until the init() method of this applet is
-      called, these methods will not perform correctly. &lt;/p&gt;
-
+<p>It is recommended that this logic be moved from this constructor to
+the <code>init()</code> method.</p>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>EC_ARRAY_AND_NONARRAY</id>
     <artifact tool="FindBugs" mnemonic="EC_ARRAY_AND_NONARRAY"/>
-    <name>Array And Nonarray</name>
-    <shortMessage>
-      equals() used to compare array and nonarray
-    </shortMessage>
+    <name>Nonsensical comparison of array and non-array</name>
+    <shortMessage>This code is using equals() to compare an array with a non-array. This comparison will always be false.</shortMessage>
     <info>
+<![CDATA[<p>This method invokes the <code>equals(Object o)</code>
+method to compare an array with a reference that doesn't seem to be an
+array. If things being compared are of different types, they are
+guaranteed to be unequal and this comparison is almost certainly an
+error.</p>
 
-      &lt;p&gt; This method invokes the .equals(Object o) to
-      compare an array and a reference that doesn't seem to be an
-      array. If things being compared are of different types, they
-      are guaranteed to be unequal and the comparison is almost
-      certainly an error. Even if they are both arrays, the equals
-      method on arrays only determines of the two arrays are the
-      same object. To compare the contents of the arrays, use
-      java.util.Arrays.equals(Object[], Object[]). &lt;/p&gt;
+<p>In the case where they are both arrays (i.e., the analysis is
+wrong), the equals method on arrays only determines if the two arrays
+are the same object (i.e., it just does <code>==</code>). To compare
+the contents of the arrays, use the
+<code>java.util.Arrays.equals(Object[], Object[])</code> method
+instead. For example, consider changing</p>
 
+<pre>
+if (array1.equals(array2)) {
+  // do something
+}
+</pre>
+
+<p>to</p>
+
+<pre>
+if (Arrays.equals(array1, array2)) {
+  // do something
+}
+</pre>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>EC_BAD_ARRAY_COMPARE</id>
     <artifact tool="FindBugs" mnemonic="EC_BAD_ARRAY_COMPARE"/>
-    <name>Bad Array Compare</name>
-    <shortMessage>
-      Invocation of equals() on an array, which is equivalent to
-      ==
-    </shortMessage>
+    <name>Suspicious array comparison</name>
+    <shortMessage>This code is using equals() to compare two arrays, which in this case is equivalent to using ==.  Consider using Arrays.equals() instead.</shortMessage>
     <info>
+<![CDATA[<p>This method invokes the <code>equals(Object o)</code>
+method on an array. Since arrays do not override the equals method of
+<code>Object</code>, calling equals on an array is the same as
+comparing their addresses (i.e., using <code>==</code>). To compare
+the contents of the arrays, use the
+<code>java.util.Arrays.equals(Object[], Object[])</code> method
+instead. For example, consider changing</p>
 
-      &lt;p&gt; This method invokes the .equals(Object o) method
-      on an array. Since arrays do not override the equals method
-      of Object, calling equals on an array is the same as
-      comparing their addresses. To compare the contents of the
-      arrays, use java.util.Arrays.equals(Object[], Object[]).
-      &lt;/p&gt;
+<pre>
+if (array1.equals(array2)) {
+  // do something
+}
+</pre>
 
-    </info>
-  </findingType>
-  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-  <findingType>
-    <id>UOE_USE_OBJECT_EQUALS</id>
-    <artifact tool="FindBugs" mnemonic="UOE_USE_OBJECT_EQUALS"/>
-    <name>Use Object Equals</name>
-    <shortMessage>
-      Calls to equals on a final class that doesn't override
-      Object's version
-    </shortMessage>
-    <info>
+<p>to</p>
 
-      &lt;p&gt; This method invokes the .equals(Object o) method
-      on a final class that doesn't override the equals method in
-      the Object class, effectively making the equals method test
-      for sameness, like ==. It is good to use the .equals method,
-      but you should consider adding an .equals method in this
-      class. &lt;/p&gt; &lt;p&gt;[Bill Pugh]: Sorry, but I
-      strongly disagree that this should be a warning, and I think
-      your code is just fine. Users of your code shouldn't care
-      how you've implemented equals(), and they should never
-      depend on == to compare instances, since that bypasses the
-      libraries ability to control how objects are compared.
-      &lt;/p&gt;
-
+<pre>
+if (Arrays.equals(array1, array2)) {
+  // do something
+}
+</pre>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>STI_INTERRUPTED_ON_CURRENTTHREAD</id>
     <artifact tool="FindBugs" mnemonic="STI_INTERRUPTED_ON_CURRENTTHREAD"/>
-    <name>Interrupted On Currentthread</name>
-    <shortMessage>
-      Unneeded use of currentThread() call, to call interrupted()
-    </shortMessage>
+    <name>Unnecessary use of currentThread to call interrupted</name>
+    <shortMessage>Unnecessary use of Thread.currentThread() simply to call interrupted().  Change to Thread.interrupted().</shortMessage>
     <info>
+<![CDATA[<p>This code invokes the <code>Thread.currentThread()</code>
+method just to call the <code>interrupted()</code> method. Because
+<code>interrupted()</code> is a <code>static</code> method, is more
+simple and clear to use <code>Thread.interrupted()</code> in your
+code.</p>
 
-      &lt;p&gt; This method invokes the Thread.currentThread()
-      call, just to call the interrupted() method. As
-      interrupted() is a static method, is more simple and clear
-      to use Thread.interrupted(). &lt;/p&gt;
+<p>For example, consider changing</p>
 
+<pre>
+if (Thread.currentThread().interrupted()) { // Bad!
+  // do something
+}
+</pre>
+
+<p>to</p>
+
+<pre>
+if (Thread.interrupted()) {
+  // do something
+}
+</pre>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>STI_INTERRUPTED_ON_UNKNOWNTHREAD</id>
     <artifact tool="FindBugs" mnemonic="STI_INTERRUPTED_ON_UNKNOWNTHREAD"/>
-    <name>Interrupted On Unknown Thread</name>
-    <shortMessage>
-      Static Thread.interrupted() method invoked on thread
-      instance
-    </shortMessage>
+    <name>Suspicious interrupted call on an unknown thread</name>
+    <shortMessage>This code invokes the static Thread.interrupted() method on an unknown thread instance. This is likely not doing what the programmer intended.</shortMessage>
     <info>
+<![CDATA[<p>This method invokes the <code>interrupted()</code> method
+on a <code>Thread</code> object that does not appear to be the current
+thread. Because the <code>interrupted()</code> method is static, and
+is defined to always test whether the current thread has been
+interrupted this code is suspicious. Check that this finding is not
+signposting an error.</p>
 
-      &lt;p&gt; This method invokes the Thread.interrupted()
-      method on a Thread object that appears to be a Thread object
-      that is not the current thread. As the interrupted() method
-      is static, the interrupted method will be called on a
-      different object than the one the author intended.
-      &lt;/p&gt;
+<p>If it is intended to test if the current thread has been
+interrupted, then change code like</p>
 
+<pre>
+Thread other = ...
+if (other.interrupted()) { // Bad!
+  // do something
+}
+</pre>
+
+<p>to</p>
+
+<pre>
+if (Thread.interrupted()) {
+  // do something
+}
+</pre>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>IP_PARAMETER_IS_DEAD_BUT_OVERWRITTEN</id>
     <artifact tool="FindBugs" mnemonic="IP_PARAMETER_IS_DEAD_BUT_OVERWRITTEN"/>
-    <name>Parameter Is Dead But Overwritten</name>
-    <shortMessage>
-      A parameter is dead upon entry to a method but overwritten
-    </shortMessage>
+    <name>Dead parameter is overwritten</name>
+    <shortMessage>A parameter that is dead upon entry (i.e., it is never read) to a method is overwritten. Does this code mistakenly believe that a write to the parameter will be conveyed back to the caller?</shortMessage>
     <info>
+<![CDATA[<p>The initial value of this parameter is ignored, but the
+parameter is overwritten here. This often indicates a mistaken belief
+by the programmer that the write to the parameter will be conveyed
+back to the caller.</p>
 
-      &lt;p&gt; The initial value of this parameter is ignored,
-      and the parameter is overwritten here. This often indicates
-      a mistaken belief that the write to the parameter will be
-      conveyed back to the caller. &lt;/p&gt;
+<p>For example, the below program will print <code>3</code> (not <code>4</code>).</p>
 
+<pre>
+public class Foo {
+
+  public static void main(String[] args) {
+    int i = 3;
+    muddled(i);
+    System.out.println(i);
+  }
+
+  public static void muddled(int i) {
+    i = 4;
+  }
+}
+</pre>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>DLS_DEAD_LOCAL_STORE</id>
     <artifact tool="FindBugs" mnemonic="DLS_DEAD_LOCAL_STORE"/>
-    <name>Dead Local Store</name>
-    <shortMessage>Dead store to local variable</shortMessage>
+    <name>Dead local store</name>
+    <shortMessage>Dead store to a local variable. Is something wrong with this code's logic?</shortMessage>
     <info>
+<![CDATA[<p>This instruction assigns a value to a local variable, but
+the value is not read by any subsequent instruction. Often, this
+indicates an error, because the computed value is never used.</p>
 
-      &lt;p&gt; This instruction assigns a value to a local
-      variable, but the value is not read by any subsequent
-      instruction. Often, this indicates an error, because the
-      value computed is never used. &lt;/p&gt; &lt;p&gt; Note that
-      Sun's javac compiler often generates dead stores for final
-      local variables. Because FindBugs is a bytecode-based tool,
-      there is no easy way to eliminate these false positives.
-      &lt;/p&gt;
-
+<p>Note that Sun's javac compiler often generates dead stores for
+final local variables. Because FindBugs analysis done on bytecode,
+there is no easy way to eliminate these false positives.</p>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>DLS_DEAD_LOCAL_STORE_OF_NULL</id>
     <artifact tool="FindBugs" mnemonic="DLS_DEAD_LOCAL_STORE_OF_NULL"/>
-    <name>Dead Local Store Of Null</name>
-    <shortMessage>
-      Dead store of null to local variable
-    </shortMessage>
+    <name>Dead local store of null</name>
+    <shortMessage>Dead store of null to local variable. Is something wrong with this code's logic?</shortMessage>
     <info>
-
-      &lt;p&gt;The code stores null into a local variable, and
-      stored value is not read. This store may have been
-      introduced in assist the garbage collector, but as of Java
-      SE 6.0, this is no longer needed or useful. &lt;/p&gt;
-
+<![CDATA[<p>This code stores <code>null</code> into a local variable,
+and this stored value is not subsequently read. This store may have
+been introduced in assist the garbage collector, but as of Java SE
+6.0, this is no longer needed or useful.  Consider removing this
+assignment.</p>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>MF_METHOD_MASKS_FIELD</id>
     <artifact tool="FindBugs" mnemonic="MF_METHOD_MASKS_FIELD"/>
-    <name>Method Masks Field</name>
-    <shortMessage>
-      Method defines a variable that obscures a field
-    </shortMessage>
+    <name>Method variable masks a field</name>
+    <shortMessage>This method defines a variable name that obscures a field with the same name. Is this intended.</shortMessage>
     <info>
+<![CDATA[<p>This method defines a local variable with the same name as
+a field defined in this class or a superclass. This may cause the
+method to read an uninitialized value from the field, leave the field
+uninitialized, or both.  Consider changing either the variable name or
+the field name to avoid masking.</p>
 
-      &lt;p&gt; This method defines a local variable with the same
-      name as a field in this class or a superclass. This may
-      cause the method to read an uninitialized value from the
-      field, leave the field uninitialized, or both.&lt;/p&gt;
+<p>For example, the below code is broken</p>
 
+<pre>
+class Foo {
+  private int height;
+  private int weight;
+
+  public void setHeight(int height) {
+    height = height; // Bad! self-assignment
+  }
+
+  public void setWeight(int weight) {
+    weight = weight; // Bad! self-assignment
+  }
+}
+</pre>
+
+<p>because it assigns the parameter to the method to itself. To fix it
+remove the masking or qualify with <code>this</code>.</p>
+
+<pre>
+class Foo {
+  private int height;
+  private int weight;
+
+  public void setHeight(int value) {
+    height = value;
+  }
+
+  public void setWeight(int weight) {
+    this.weight = weight;
+  }
+}
+</pre>
+
+<p>Note that a naming convention on fields may used to avoid
+masking. For example all fields could be prefixed with <code>f_</code>
+or <code>m_</code> to clarify the name is a field.  For example, see
+the example below.</p>
+
+<pre>
+class Foo {
+  private int f_height;
+  private int f_weight;
+
+  public void setHeight(int height) {
+    f_height = height;
+  }
+
+  public void setWeight(int weight) {
+    f_weight = weight;
+  }
+}
+</pre>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
@@ -11988,6 +12101,7 @@ long life time).</p>]]>
   <findingType>
     <id>IGNORE</id>
     <artifact tool="FindBugs" mnemonic="UNKNOWN"/>                   <!-- FindBugs diagnostic -->
+    <artifact tool="FindBugs" mnemonic="UOE_USE_OBJECT_EQUALS"/>     <!-- Bill Pugh thinks this is bad, good enough for me -->
     <artifact tool="PMD" mnemonic="OverrideBothEqualsAndHashcode"/>  <!-- FindBugs splits this up w/ better reporting -->
     <artifact tool="PMD" mnemonic="AvoidFinalLocalVariable"/>        <!-- This is just a bad analysis -->
     <artifact tool="PMD" mnemonic="JUnitUseExpected"/>               <!-- Stange PMD analysis -->
