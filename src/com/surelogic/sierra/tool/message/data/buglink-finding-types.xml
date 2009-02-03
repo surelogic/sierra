@@ -2226,7 +2226,7 @@ bytes.</p>]]>
     <id>SE_READ_RESOLVE_MUST_RETURN_OBJECT</id>
     <artifact tool="FindBugs" mnemonic="SE_READ_RESOLVE_MUST_RETURN_OBJECT"/>
     <name>ReadResolve method must declare a return type of Object</name>
-    <shortMessage>The readResolve method must be declared with a return type of Object.</shortMessage>
+    <shortMessage>The readResolve() method must be declared with a return type of Object.</shortMessage>
     <info>
 <![CDATA[<p>In order for the <code>readResolve</code> method to be
 recognized by the serialization mechanism it must declare a return
@@ -2656,8 +2656,9 @@ have been a check to see if it was non-null.</p>]]>
   <findingType>
     <id>NP_IMMEDIATE_DEREFERENCE_OF_READLINE</id>
     <artifact tool="FindBugs" mnemonic="NP_IMMEDIATE_DEREFERENCE_OF_READLINE"/>
-    <name>Immediate dereference of readLine result</name>
-    <shortMessage>This code immediately dereferences the result of a call to readLine().  This code may throw a NullPointerException.</shortMessage>
+    <artifact tool="FindBugs" mnemonic="NP_DEREFERENCE_OF_READLINE_VALUE"/>
+    <name>Ddereference of readLine result</name>
+    <shortMessage>This code dereferences the result of a call to readLine(). This code may throw a NullPointerException.</shortMessage>
     <info>
 <![CDATA[<p>The result of invoking <code>readLine()</code> is
 immediately dereferenced by this code. If there are no more lines of
@@ -4057,6 +4058,7 @@ ps.setInt(0, value);
   <findingType>
     <id>SIO_SUPERFLUOUS_INSTANCEOF</id>
     <artifact tool="FindBugs" mnemonic="SIO_SUPERFLUOUS_INSTANCEOF"/>
+    <artifact tool="FindBugs" mnemonic="BC_VACUOUS_INSTANCEOF"/>
     <name>Superfluous instanceof</name>
     <shortMessage>Unnecessary type check done using instanceof operator. This check can be removed from the code.</shortMessage>
     <info>
@@ -4366,74 +4368,177 @@ class Foo {
     <id>MF_CLASS_MASKS_FIELD</id>
     <artifact tool="FindBugs" mnemonic="MF_CLASS_MASKS_FIELD">
     </artifact>
-    <shortMessage>
-      Class defines field that masks a superclass field
-    </shortMessage>
+    <name>Class masks a superclass field</name>
+    <shortMessage>This class defines field that masks a superclass field. This can be confusing.</shortMessage>
     <info>
+<![CDATA[<p>This class defines a field with the same name as a visible
+instance field in a superclass. This is confusing, and may indicate an
+error if methods update or access one of the fields when they intended
+to work with the other.</p>
 
-      &lt;p&gt; This class defines a field with the same name as a
-      visible instance field in a superclass. This is confusing,
-      and may indicate an error if methods update or access one of
-      the fields when they wanted the other.&lt;/p&gt;
+<p>For example, consider the below code which masks the
+<code>foo</code> field.</p>
 
+<pre>
+class A {
+  protected int foo;
+}
+
+class B extends A {
+  protected int foo;
+  void setFoo(int value) {
+    foo = value; // Bad! writes B.foo not A.foo which may be confusing
+  }
+}
+</pre>]]>
     </info>
-    <name>Class Masks Field</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>WMI_WRONG_MAP_ITERATOR</id>
     <artifact tool="FindBugs" mnemonic="WMI_WRONG_MAP_ITERATOR"/>
-    <name>Wrong Map Iterator</name>
-    <shortMessage>
-      Inefficient use of keySet iterator instead of entrySet
+    <name>Inefficient Map iterator</name>
+    <shortMessage>Inefficient use of keySet() iterator instead of entrySet
       iterator
     </shortMessage>
     <info>
+<![CDATA[<p>This method accesses the value of a <code>Map</code>
+entry, using a key that was retrieved from a <code>keySet()</code>
+iterator. It is more efficient to use an iterator on the
+<code>entrySet()</code> of the map, and to thus avoid the
+<code>Map.get(key)</code> lookup for each key in the map.</p>
 
-      &lt;p&gt; This method accesses the value of a Map entry,
-      using a key that was retrieved from a keySet iterator. It is
-      more efficient to use an iterator on the entrySet of the
-      map, to avoid the Map.get(key) lookup.&lt;/p&gt;
+<p>For example, if you have</p>
 
+<pre>
+Map&lt;String, Integer&gt; nameToCount = new HashMap<String, Integer>();
+</pre>
+
+<p>then you should replace code that looks like</p>
+
+<pre>
+for (final String key : nameToCount.keySet()) {
+  final Integer value = nameToCount.get(key);
+  // do something with 'key' and 'value'
+}
+</pre>
+
+<p>with the more efficient</p>
+
+<pre>
+for (Map.Entry&lt;String, Integer&gt; entry : nameToCount.entrySet()) {
+  final String key = entry.getKey();
+  final Integer value = entry.getValue();
+  // do something with 'key' and 'value'
+}
+</pre>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>ISC_INSTANTIATE_STATIC_CLASS</id>
     <artifact tool="FindBugs" mnemonic="ISC_INSTANTIATE_STATIC_CLASS"/>
-    <name>Instantiate Static Class</name>
-    <shortMessage>
-      Needless instantiation of class that only supplies static
-      methods
-    </shortMessage>
+    <name>Needless instantiation of a static-only class</name>
+    <shortMessage>This code needlessly instantiates a class that only supplies static methods. Remove this instantiation and access the static methods using the class name.</shortMessage>
     <info>
+<![CDATA[<p>This class allocates an object that is based on a class
+that only supplies <code>static</code> methods. This object does not
+need to be created, just access the <code>static</code> methods
+directly using the class name as a qualifier.</p>
 
-      &lt;p&gt; This class allocates an object that is based on a
-      class that only supplies static methods. This object does
-      not need to be created, just access the static methods
-      directly using the class name as a qualifier.&lt;/p&gt;
+<p>In addition, a private constructor should probably be added to the
+class with only <code>static</code> methods so that this needless
+instantiation will cause a compiler error.</p>
 
+<p>For example, consider the below class that contains only a single
+<code>static</code> method.</p>
+
+<pre>
+package com.surelogic;
+
+public class SimpleLogger {
+  public static void log(String s) {
+    System.out.println(s);
+  }
+}
+</pre>
+
+<p>You should change</p>
+
+<pre>
+SimpleLogger log = new SimpleLogger(); // Bad!
+log.log("Starting up...");
+</pre>
+
+<p>to</p>
+
+<pre>
+SimpleLogger.log("Starting up...");
+</pre>
+
+<p>If this is deemed too lengthy then a static import can be used to shorten the calls.  Just add</p>
+
+<pre>
+import static com.surelogic.SimpleLogger.log;
+</pre>
+
+<p>to the compilation unit using the logger and now</p>
+
+<pre>
+log("Starting up...");
+</pre>
+
+<p>will work.</p>
+
+<p>In addition, consider changing the <code>SimpleLogger</code> class to</p>
+
+<pre>
+package com.surelogic;
+
+public class SimpleLogger {
+  public static void log(String s) {
+    System.out.println(s);
+  }
+
+  private SimpleLogger() {
+    // no instances
+  }
+}
+</pre>
+
+<p>to avoid this type of problem appearing again in future code.</p>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>REC_CATCH_EXCEPTION</id>
     <artifact tool="FindBugs" mnemonic="REC_CATCH_EXCEPTION"/>
-    <name>Catch Exception</name>
-    <shortMessage>
-      Exception is caught when Exception is not thrown
-    </shortMessage>
+    <name>Suspicious catch of Exception</name>
+    <shortMessage>Exception is caught when Exception is not thrown. This may mask potential problems.</shortMessage>
     <info>
+<![CDATA[<p>This method uses a <code>try-catch</code> block that
+catches <code>Exception</code> objects, but <code>Exception</code> is
+not thrown within the try block, and <code>RuntimeException</code> is
+not explicitly caught. This may signpost muddled exception handling
+that could mask potential problems.</p>
 
-      &lt;p&gt; This method uses a try-catch block that catches
-      Exception objects, but Exception is not thrown within the
-      try block, and RuntimeException is not explicitly caught. It
-      is a common bug pattern to say try { ... } catch (Exception
-      e) { something } as a shorthand for catching a number of
-      types of exception each of whose catch blocks is identical,
-      but this construct also accidentally catches
-      RuntimeException as well, masking potential bugs. &lt;/p&gt;
+<p>It is a common bug pattern to say</p>
 
+<pre>
+try {
+  // do something
+} catch (Exception e) {
+  // handle some problem
+}
+</pre>
+
+<p>as a shorthand for catching a number of types of exception each of
+whose catch blocks is identical, but this construct also accidentally
+catches <code>RuntimeException</code> as well, masking potential
+bugs.</p>
+
+<p>Examine this code carefully as it is suspicious.  Are all
+<code>RuntimeException</code>s being handled by this code?</p>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
@@ -4461,21 +4566,27 @@ precision).</p>]]>
   <findingType>
     <id>FE_FLOATING_POINT_EQUALITY</id>
     <artifact tool="FindBugs" mnemonic="FE_FLOATING_POINT_EQUALITY"/>
-    <name>Floating Point Equality</name>
-    <shortMessage>Test for floating point equality</shortMessage>
+    <name>Suspicious floating-point equality</name>
+    <shortMessage>Test for floating-point equality. This test may not produce the expected result.</shortMessage>
     <info>
+<![CDATA[<p>This operation compares two floating-point values for
+equality. Because floating-point calculations may involve rounding,
+calculated float and double values may not be accurate.</p>
 
-      &lt;p&gt; This operation compares two floating point values
-      for equality. Because floating point calculations may
-      involve rounding, calculated float and double values may not
-      be accurate. For values that must be precise, such as
-      monetary values, consider using a fixed-precision type such
-      as BigDecimal. For values that need not be precise, consider
-      comparing for equality within some range, for example:
-      &lt;code&gt;if ( Math.abs(x - y) &amp;lt; .0000001
-      )&lt;/code&gt;. See the Java Language Specification, section
-      4.2.4. &lt;/p&gt;
+<p>For values that must be precise, such as monetary values, consider
+using a fixed-precision type such as <code>BigDecimal</code>.</p>
 
+<p>For values that need not be precise, consider comparing for
+equality within some range, for example:
+
+<pre>if (Math.abs(x - y) &lt; .0000001) {
+  // do something
+}
+</pre>
+
+<p>Please see the <a
+href="http://java.sun.com/docs/books/jls/third_edition/html/typesValues.html#4.2.4">Java
+Language Specification section 4.2.4</a> for further details.</p>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
@@ -4523,7 +4634,7 @@ constant. Methods detected are:</p>
     <id>CD_CIRCULAR_DEPENDENCY</id>
     <artifact tool="FindBugs" mnemonic="CD_CIRCULAR_DEPENDENCY"/>
     <name>Circular dependency</name>
-    <shortMessage>Circular dependencies among classes detected.  This signposts a poor design or implementation.</shortMessage>
+    <shortMessage>Circular dependencies among classes detected. This signposts a poor design or implementation.</shortMessage>
     <info>
 <![CDATA[<p>This class has a circular dependency with other
 classes. This makes building these classes difficult, as each is
@@ -4535,83 +4646,102 @@ to break the hard dependency.</p>]]>
   <findingType>
     <id>RI_REDUNDANT_INTERFACES</id>
     <artifact tool="FindBugs" mnemonic="RI_REDUNDANT_INTERFACES"/>
-    <name>Redundant Interfaces</name>
-    <shortMessage>
-      Class implements same interface as superclass
-    </shortMessage>
+    <name>Redundant interfaces</name>
+    <shortMessage>This class implements the same interface as its superclass. Consider removing the redundant implements from this class.</shortMessage>
     <info>
+<![CDATA[<p>This class declares that it implements an interface that
+is also implemented by a superclass. This is redundant, once a
+superclass implements an interface, all subclasses by default also
+implement the interface.  Therefore, you can remove this redundant
+statement.</p>
 
-      &lt;p&gt; This class declares that it implements an
-      interface that is also implemented by a superclass. This is
-      redundant, once a superclass implements an interface, all
-      subclasses by default also implement this interface. It may
-      point out that the inheritance hierarchy has changed since
-      this class was created, and consideration should be taken
-      into account for the ownership of the interface's
-      implementation. &lt;/p&gt;
-
+<p>This issue may point out that the inheritance hierarchy has changed
+since this class was created, and consideration should be made about
+which class should implement the interface.</p>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>MTIA_SUSPECT_STRUTS_INSTANCE_FIELD</id>
     <artifact tool="FindBugs" mnemonic="MTIA_SUSPECT_STRUTS_INSTANCE_FIELD"/>
-    <name>Suspect Struts Instance Field</name>
-    <shortMessage>
-      Class extends Struts Action class and uses instance
-      variables
-    </shortMessage>
+    <name>Suspect Struts instance field</name>
+    <shortMessage>This class extends the Struts Action class and uses instance variables. This is likely to problematic.</shortMessage>
     <info>
-
-      &lt;p&gt; This class extends from a Struts Action class, and
-      uses a instance member variable. Since only one instance of
-      a struts Action class is created by the Struts framework,
-      and used in a multithreaded way, this paradigm is highly
-      discouraged and most likely problematic. Consider only using
-      method local variables. &lt;/p&gt;
-
+<![CDATA[<p>This class extends from a Struts <code>Action</code>
+class, and uses a instance member variable. Since only one instance of
+a struts <code>Action</code> class is created by the Struts framework,
+and used in a multithreaded way, this paradigm is highly discouraged
+and most likely problematic. Consider removing these fields.</p>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>MTIA_SUSPECT_SERVLET_INSTANCE_FIELD</id>
     <artifact tool="FindBugs" mnemonic="MTIA_SUSPECT_SERVLET_INSTANCE_FIELD"/>
-    <name>Suspect Servlet Instance Field</name>
-    <shortMessage>
-      Class extends Servlet class and uses instance variables
-    </shortMessage>
+    <name>Suspect Servlet instance field</name>
+    <shortMessage>This class extends Servlet class and uses instance variables. This is likely to be problematic.</shortMessage>
     <info>
-
-      &lt;p&gt; This class extends from a Servlet class, and uses
-      a instance member variable. Since only one instance of a
-      Servlet class is created by the J2EE framework, and used in
-      a multithreaded way, this paradigm is highly discouraged and
-      most likely problematic. Consider only using method local
-      variables. &lt;/p&gt;
-
+<![CDATA[<p>This class extends from a <code>Servlet</code> class, and
+uses a instance member variable. Since only one instance of a
+<code>Servlet</code> class is created by the container, and used in a
+multithreaded way, this paradigm is highly discouraged and most likely
+problematic. Consider removing these fields.</p>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>PS_PUBLIC_SEMAPHORES</id>
     <artifact tool="FindBugs" mnemonic="PS_PUBLIC_SEMAPHORES"/>
-    <name>Public Semaphores</name>
-    <shortMessage>
-      Class exposes synchronization and semaphores in its public
-      interface
-    </shortMessage>
+    <name>Public semaphores</name>
+    <shortMessage>Class exposes synchronization and semaphores in its public interface.</shortMessage>
     <info>
+<![CDATA[<p>This class uses synchronization along with
+<code>wait()</code>, <code>notify()</code> or <code>notifyAll()</code>
+on itself (the <code>this</code> reference).  Client classes that use
+this class, may, in addition, use an instance of the class as a
+synchronizing object. Because two classes are using the same object
+for synchronization, multithread correctness is suspect. You should
+not synchronize nor call semaphore methods on a public
+reference. Consider using a internal private member variable to
+control synchronization.  For example, consider changing</p>
 
-      &lt;p&gt; This class uses synchronization along with wait(),
-      notify() or notifyAll() on itself (the this reference).
-      Client classes that use this class, may, in addition, use an
-      instance of this class as a synchronizing object. Because
-      two classes are using the same object for synchronization,
-      Multithread correctness is suspect. You should not
-      synchronize nor call semaphore methods on a public
-      reference. Consider using a internal private member variable
-      to control synchronization. &lt;/p&gt;
+<pre>
+public class Foo {
 
+  public synchronized void log(String s) {
+    // do something
+  }
+	
+  public int generate() {
+    synchronized (this) {
+      // do something
+    }
+    return 4;
+  }
+}
+</pre>
+
+<p>to</p>
+
+<pre>
+public class Foo {
+	
+  private final Object lock = new Object();
+
+  public void log(String s) {
+    synchronized (lock) {
+      // do something
+    }
+  }
+	
+  public int generate() {
+    synchronized (lock) {
+      // do something
+    }
+    return 4;
+  }
+}
+</pre>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
@@ -4623,200 +4753,196 @@ to break the hard dependency.</p>]]>
       Result of integer multiplication cast to long
     </shortMessage>
     <info>
+<![CDATA[<p>This code performs integer multiply and then converts
+the result to a long, as in:</p>
 
-      &lt;p&gt; This code performs integer multiply and then
-      converts the result to a long, as in: &lt;code&gt;
-      &lt;pre&gt; long convertDaysToMilliseconds(int days) {
-      return 1000*3600*24*days; } &lt;/pre&gt;&lt;/code&gt; If the
-      multiplication is done using long arithmetic, you can avoid
-      the possibility that the result will overflow. For example,
-      you could fix the above code to: &lt;code&gt; &lt;pre&gt;
-      long convertDaysToMilliseconds(int days) { return
-      1000L*3600*24*days; } &lt;/pre&gt;&lt;/code&gt; or
-      &lt;code&gt; &lt;pre&gt; static final long
-      MILLISECONDS_PER_DAY = 24L*3600*1000; long
-      convertDaysToMilliseconds(int days) { return days *
-      MILLISECONDS_PER_DAY; } &lt;/pre&gt;&lt;/code&gt; &lt;/p&gt;
+<pre>
+long convertDaysToMilliseconds(int days) {
+  return 1000 * 3600 * 24 * days; // Bad! int values may overflow
+}
+</pre>
 
+<p>If the multiplication is done using <code>long</code> arithmetic,
+you can avoid the possibility that the result will overflow. To do
+this change at least one of the values to a <code>long</code>. For
+example, you could fix the above code by making the <code>int</code>
+literal 1000 a <code>long</code> literal as shown below.</p>
 
+<pre>
+long convertDaysToMilliseconds(int days) {
+  return 1000L * 3600 * 24 * days;
+}
+</pre>
+
+<p>or</p>
+
+<pre>
+static final long MILLISECONDS_PER_DAY = 24L * 3600 * 1000;
+
+long convertDaysToMilliseconds(int days) {
+  return days * MILLISECONDS_PER_DAY;
+}
+</pre>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>ICAST_INT_CAST_TO_FLOAT_PASSED_TO_ROUND</id>
     <artifact tool="FindBugs" mnemonic="ICAST_INT_CAST_TO_FLOAT_PASSED_TO_ROUND"/>
-    <name>Int Cast To Float Passed To Round</name>
-    <shortMessage>
-      int value cast to float and then passed to Math.round
-    </shortMessage>
+    <name>Int cast to a float then passed to Math.round</name>
+    <shortMessage>This code casts an int value to a float value and then passes this value to Math.round(). It is likely that this is not what was intended.</shortMessage>
     <info>
+<![CDATA[<p>This code converts an <code>int</code> value to a
+<code>float</code> precision floating-point number and then passes the
+result to the <code>Math.round()</code> function, which returns the
+<code>int</code>/<code>long</code> closest to the argument. This
+operation should always be a no-op, since the converting an integer to
+a <code>float</code> should give a number with no fractional part.</p>
 
-      &lt;p&gt; This code converts an int value to a float
-      precision floating point number and then passing the result
-      to the Math.round() function, which returns the int/long
-      closest to the argument. This operation should always be a
-      no-op, since the converting an integer to a float should
-      give a number with no fractional part. It is likely that the
-      operation that generated the value to be passed to
-      Math.round was intended to be performed using floating point
-      arithmetic. &lt;/p&gt;
-
-
+<p>It is likely that the operation that generated the value to be
+passed to <code>Math.round()</code> was intended to be performed using
+floating-point arithmetic. Check this code carefully for
+errors.</p>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>ICAST_INT_CAST_TO_DOUBLE_PASSED_TO_CEIL</id>
     <artifact tool="FindBugs" mnemonic="ICAST_INT_CAST_TO_DOUBLE_PASSED_TO_CEIL"/>
-    <name>Int Cast To Double Passed To Math.ceil</name>
-    <shortMessage>
-      int value cast to double and then passed to Math.ceil
-    </shortMessage>
+    <name>Int cast to a double then passed to Math.ceil</name>
+    <shortMessage>This code casts an int value to a double value and then passes this value to Math.ceil(). It is likely that this is not what was intended.</shortMessage>
     <info>
+<![CDATA[<p>This code converts an <code>int</code> value to a
+<code>double</code> precision floating-point number and then passes
+the result to the <code>Math.ceil()</code> function, which rounds a
+<code>double</code> to the next higher integer value. This operation
+should always be a no-op, since the converting an integer to a
+<code>double</code> should give a number with no fractional part.</p>
 
-      &lt;p&gt; This code converts an int value to a double
-      precision floating point number and then passing the result
-      to the Math.ceil() function, which rounds a double to the
-      next higher integer value. This operation should always be a
-      no-op, since the converting an integer to a double should
-      give a number with no fractional part. It is likely that the
-      operation that generated the value to be passed to Math.ceil
-      was intended to be performed using double precision floating
-      point arithmetic. &lt;/p&gt;
-
-
+<p>It is likely that the operation that generated the value to be
+passed to <code>Math.ceil()</code> was intended to be performed using
+double precision floating-point arithmetic.  Check this code carefully
+for errors.</p>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>ICAST_IDIV_CAST_TO_DOUBLE</id>
     <artifact tool="FindBugs" mnemonic="ICAST_IDIV_CAST_TO_DOUBLE"/>
-    <name>Idiv Cast To Double</name>
-    <shortMessage>
-      int division result cast to double or float
-    </shortMessage>
+    <name>Integer division result cast to a floating-point type</name>
+    <shortMessage>The result of integer division is cast to a double or float. Should floating-point division have been done instead?</shortMessage>
     <info>
+<![CDATA[<p>This code casts the result of an integer division
+operation to a <code>double</code> or <code>float</code>. Doing
+division on integers truncates the result to the integer value closest
+to zero.</p>
 
-      &lt;p&gt; This code casts the result of an integer division
-      operation to double or float. Doing division on integers
-      truncates the result to the integer value closest to zero.
-      The fact that the result was cast to double suggests that
-      this precision should have been retained. What was probably
-      meant was to cast one or both of the operands to double
-      &lt;em&gt;before&lt;/em&gt; performing the division. Here is
-      an example: &lt;/p&gt; &lt;blockquote&gt; &lt;pre&gt; int x
-      = 2; int y = 5; // Wrong: yields result 0.0 double value1 =
-      x / y;
+<p>The fact that the result was cast to a <code>double</code> suggests
+that this precision should have been used for the division
+operation. What was probably meant was to cast one or both of the
+operands to double <em>before</em> performing the division. Here is an
+example:</p>
 
-      // Right: yields result 0.4 double value2 = x / (double) y;
-      &lt;/pre&gt; &lt;/blockquote&gt;
+<pre>
+int x = 2; int y = 5;
 
+double value1 = x / y;          // Bad! yields 0.0
+
+double value2 = x / (double) y; // Right! yields 0.4
+</pre>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>J2EE_STORE_OF_NON_SERIALIZABLE_OBJECT_INTO_SESSION</id>
     <artifact tool="FindBugs" mnemonic="J2EE_STORE_OF_NON_SERIALIZABLE_OBJECT_INTO_SESSION"/>
-    <name>Store Of Non Serializable Object Into Session</name>
-    <shortMessage>
-      Store of non serializable object into HttpSession
-    </shortMessage>
+    <name>Store of non-serializable Object into HttpSession</name>
+    <shortMessage>This code appears to be storing a non-serializable object into an HttpSession. This may cause an error if the session is passivated.</shortMessage>
     <info>
-
-      &lt;p&gt; This code seems to be storing a non-serializable
-      object into an HttpSession. If this session is passivated or
-      migrated, an error will result. &lt;/p&gt;
-
+<![CDATA[<p>This code seems to be storing a non-serializable object
+into an <code>HttpSession</code>. If this session is passivated or
+migrated, an error will result. Consider making this object
+serializable.</p>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>DMI_NONSERIALIZABLE_OBJECT_WRITTEN</id>
     <artifact tool="FindBugs" mnemonic="DMI_NONSERIALIZABLE_OBJECT_WRITTEN"/>
-    <name>Nonserializable Object Written</name>
-    <shortMessage>
-      Non serializable object written to ObjectOutput
-    </shortMessage>
+    <name>Store of non-serializable Object</name>
+    <shortMessage>This code appears to be writing a non-serializable object to an ObjectOutput instance. This may throw an IOException.</shortMessage>
     <info>
-
-      &lt;p&gt; This code seems to be passing a non-serializable
-      object to the ObjectOutput.writeObject method. If the object
-      is, indeed, non-serializable, an error will result.
-      &lt;/p&gt;
-
+<![CDATA[<p>This code seems to be passing a non-serializable object to
+the <code>ObjectOutput.writeObject()</code> method. If the object is,
+indeed, non-serializable, an error will result. Consider making this
+object serializable.</p>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>VA_PRIMITIVE_ARRAY_PASSED_TO_OBJECT_VARARG</id>
     <artifact tool="FindBugs" mnemonic="VA_PRIMITIVE_ARRAY_PASSED_TO_OBJECT_VARARG"/>
-    <name>Primitive Array Passed To Object Vararg</name>
-    <shortMessage>
-      Primitive array passed to function expecting a variable
-      number of object arguments
-    </shortMessage>
+    <name>Primitive array passed to a vararg</name>
+    <shortMessage>Primitive array passed to function expecting a variable number of object arguments. The array will become one argument which may not be what was intended.</shortMessage>
     <info>
-
-      &lt;p&gt; This code passes a primitive array to a function
-      that takes a variable number of object arguments. This
-      creates an array of length one to hold the primitive array
-      and passes it to the function. &lt;/p&gt;
-
+<![CDATA[<p>This code passes a primitive array to a function that
+takes a variable number of object arguments. This creates an array of
+length one to hold the primitive array and passes it to the
+function. Check this code and ensure that this behavior is
+intentional.</p>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>BC_EQUALS_METHOD_SHOULD_WORK_FOR_ALL_OBJECTS</id>
     <artifact tool="FindBugs" mnemonic="BC_EQUALS_METHOD_SHOULD_WORK_FOR_ALL_OBJECTS"/>
-    <name>Equals Method Should Work For All Objects</name>
-    <shortMessage>
-      Equals method should not assume anything about the type of
-      its argument
-    </shortMessage>
+    <name>Equals should work for all arguments</name>
+    <shortMessage>An equals method should not assume anything about the type of its argument. This code appears to be making assumptions.</shortMessage>
     <info>
+<![CDATA[<p>The <code>equals(Object o)</code> method shouldn't make
+any assumptions about the type of <code>o</code>. It should simply
+return false if <code>o</code> is not the same type as
+<code>this</code>. For example, examine the below code.</p>
 
-      &lt;p&gt; The &lt;code&gt;equals(Object o)&lt;/code&gt;
-      method shouldn't make any assumptions about the type of
-      &lt;code&gt;o&lt;/code&gt;. It should simply return false if
-      &lt;code&gt;o&lt;/code&gt; is not the same type as
-      &lt;code&gt;this&lt;/code&gt;. &lt;/p&gt;
-
+<pre>
+class Foo {
+  @Override public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null) return false;
+    if (getClass() != o.getClass()) return false;  // <-- type check
+    Foo other = (Foo) o;
+    // check semantic equality of 'this' and 'other'
+    ...
+  }
+  ...
+}
+</pre>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>BC_BAD_CAST_TO_ABSTRACT_COLLECTION</id>
     <artifact tool="FindBugs" mnemonic="BC_BAD_CAST_TO_ABSTRACT_COLLECTION"/>
-    <name>Bad Cast To Abstract Collection</name>
-    <shortMessage>
-      Questionable cast to abstract collection
-    </shortMessage>
+    <name>Questionable collection cast</name>
+    <shortMessage>Questionable cast to List, Set, or Map from Collection. Do you need to do this?</shortMessage>
     <info>
-
-      &lt;p&gt; This code casts a Collection to an abstract
-      collection (such as &lt;code&gt;List&lt;/code&gt;,
-      &lt;code&gt;Set&lt;/code&gt;, or
-      &lt;code&gt;Map&lt;/code&gt;). Ensure that you are
-      guaranteed that the object is of the type you are casting
-      to. If all you need is to be able to iterate through a
-      collection, you don't need to cast it to a Set or List.
-      &lt;/p&gt;
-
+<![CDATA[<p>This code casts a <code>Collection</code> to a more
+specific type such as <code>List</code>, <code>Set</code>, or
+<code>Map</code>. Ensure that you are guaranteed that the object is of
+the type you are casting to. If all you need is to be able to iterate
+through a <code>Collection</code>, you don't need to cast it to a
+<code>Set</code> or <code>List</code>.</p>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>BC_IMPOSSIBLE_CAST_PRIMITIVE_ARRAY</id>
     <artifact tool="FindBugs" mnemonic="BC_IMPOSSIBLE_CAST_PRIMITIVE_ARRAY"/>
-    <name>Impossible Cast Primitive Array</name>
-    <shortMessage>
-      Impossible cast involving primitive array
-    </shortMessage>
+    <name>Impossible cast primitive array</name>
+    <shortMessage>This code contains an impossible cast involving a primitive array. It will always throw a ClassCastException.</shortMessage>
     <info>
-
-      &lt;p&gt; This cast will always throw a ClassCastException.
-      &lt;/p&gt;
-
+<![CDATA[<p>This cast will always throw a
+<code>ClassCastException</code>. This code needs to be fixed.</p>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
@@ -4834,36 +4960,17 @@ to break the hard dependency.</p>]]>
   <findingType>
     <id>NP_NULL_INSTANCEOF</id>
     <artifact tool="FindBugs" mnemonic="NP_NULL_INSTANCEOF"/>
-    <name>Null instanceof</name>
-    <shortMessage>
-      A known null value is checked to see if it is an instance of
-      a type
-    </shortMessage>
-    <info>
-
-      &lt;p&gt; This instanceof test will always return false,
-      since the value being checked is guaranteed to be null.
-      Although this is safe, make sure it isn't an indication of
-      some misunderstanding or some other logic error. &lt;/p&gt;
-
-    </info>
-  </findingType>
-  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-  <findingType>
-    <id>BC_NULL_INSTANCEOF</id>
     <artifact tool="FindBugs" mnemonic="BC_NULL_INSTANCEOF"/>
-    <name>Null instanceof</name>
-    <shortMessage>
-      A known null value is checked to see if it is an instance of
-      a type
-    </shortMessage>
+    <name>Suspicious instanceof null</name>
+    <shortMessage>This code checks to see if a known null value an instance of a type. This will always return false. Is this code broken?</shortMessage>
     <info>
+<![CDATA[<p>This <code>instanceof</code> test will always return
+false, because the value being checked is guaranteed to be
+<code>null</code>.</p>
 
-      &lt;p&gt; This instanceof test will always return false,
-      since the value being checked is guaranteed to be null.
-      Although this is safe, make sure it isn't an indication of
-      some misunderstanding or some other logic error. &lt;/p&gt;
-
+<p>Although this is legal code, make sure it isn't an indication of
+some misunderstanding or some other logic error. It is also recommened
+that you consider removing the check.</p>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
@@ -4871,82 +4978,74 @@ to break the hard dependency.</p>]]>
     <id>BC_IMPOSSIBLE_INSTANCEOF</id>
     <artifact tool="FindBugs" mnemonic="BC_IMPOSSIBLE_INSTANCEOF"/>
     <name>Impossible instanceof</name>
-    <shortMessage>instanceof will always return false</shortMessage>
+    <shortMessage>This code contains an instanceof test that will always return false. Is this code broken?</shortMessage>
     <info>
+<![CDATA[<p>This <code>instanceof</code> test will always return
+false.</p>
 
-      &lt;p&gt; This instanceof test will always return false.
-      Although this is safe, make sure it isn't an indication of
-      some misunderstanding or some other logic error. &lt;/p&gt;
-
-    </info>
-  </findingType>
-  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-  <findingType>
-    <id>BC_VACUOUS_INSTANCEOF</id>
-    <artifact tool="FindBugs" mnemonic="BC_VACUOUS_INSTANCEOF"/>
-    <name>Vacuous instanceof</name>
-    <shortMessage>instanceof will always return true</shortMessage>
-    <info>
-
-      &lt;p&gt; This instanceof test will always return true.
-      Although this is safe, make sure it isn't an indication of
-      some misunderstanding or some other logic error. &lt;/p&gt;
-
+<p>Although this is legal code, make sure it isn't an indication of
+some misunderstanding or some other logic error. It is also recommened
+that you consider removing the check.</p>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>BC_UNCONFIRMED_CAST</id>
     <artifact tool="FindBugs" mnemonic="BC_UNCONFIRMED_CAST"/>
-    <name>Unconfirmed Cast</name>
+    <name>Unconfirmed cast</name>
     <shortMessage>Unchecked/unconfirmed cast</shortMessage>
     <info>
+<![CDATA[<p>This cast is unchecked, and not all instances of the type
+casted from can be cast to the type it is being cast to. Ensure that
+your program logic ensures that this cast will not fail, perhaps by
+adding an <code>instanceof</code> check.</p>
 
-      &lt;p&gt; This cast is unchecked, and not all instances of
-      the type casted from can be cast to the type it is being
-      cast to. Ensure that your program logic ensures that this
-      cast will not fail. &lt;/p&gt;
-
+<pre>
+if (o instanceof MyClass) {
+  final MyClass mc = (MyClass) o;
+  // do something
+}
+</pre>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>BC_BAD_CAST_TO_CONCRETE_COLLECTION</id>
     <artifact tool="FindBugs" mnemonic="BC_BAD_CAST_TO_CONCRETE_COLLECTION"/>
-    <name>Bad Cast To Concrete Collection</name>
-    <shortMessage>
-      Questionable cast to concrete collection
-    </shortMessage>
+    <name>Questionable cast to a concrete collection</name>
+    <shortMessage>This code contains a questionable cast to concrete collection.</shortMessage>
     <info>
+<![CDATA[<p>This code casts an abstract collection type, such as
+<code>Collection</code>, <code>List</code>, or <code>Set</code>, to a
+specific concrete implementation type, such as <code>ArrayList</code>
+or <code>HashSet</code>. This might not be correct, and it may make
+your code fragile, since it makes it harder to switch to other
+concrete implementations at a future point.</p>
 
-      &lt;p&gt; This code casts an abstract collection (such as a
-      Collection, List, or Set) to a specific concrete
-      implementation (such as an ArrayList or HashSet). This might
-      not be correct, and it may make your code fragile, since it
-      makes it harder to switch to other concrete implementations
-      at a future point. Unless you have a particular reason to do
-      so, just use the abstract collection class. &lt;/p&gt;
-
+<p>It is recommended that you try to remove this cast from your
+code. Unless you have a sound reason to do so, just interact with the
+abstract collection type.</p>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>RE_POSSIBLE_UNINTENDED_PATTERN</id>
     <artifact tool="FindBugs" mnemonic="RE_POSSIBLE_UNINTENDED_PATTERN"/>
-    <name>Possible Unintended Pattern</name>
-    <shortMessage>
-      &quot;.&quot; used for regular expression
-    </shortMessage>
+    <name>Possible unintended regex pattern</name>
+    <shortMessage>"." is used as a regular expression. Is this what you intended?</shortMessage>
     <info>
+<![CDATA[<p>A <code>String</code> function is being invoked and
+<code>"."</code> is being passed to a parameter that takes a regular
+expression as an argument. Is this what you intended?</p>
 
-      &lt;p&gt; A String function is being invoked and
-      &quot;.&quot; is being passed to a parameter that takes a
-      regular expression as an argument. Is this what you
-      intended? For example s.replaceAll(&quot;.&quot;,
-      &quot;/&quot;) will return a String in which
-      &lt;em&gt;every&lt;/em&gt; character has been replaced by a
-      / character. &lt;/p&gt;
+<p>For example</p>
 
+<pre>
+String r = s.replaceAll(&quot;.&quot;, &quot;/&quot;);
+</pre>
+
+<p>will return a <code>String</code> in which <em>every</em> character
+has been replaced by a <code>/</code> character.</p>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
@@ -4954,16 +5053,12 @@ to break the hard dependency.</p>]]>
     <id>RE_BAD_SYNTAX_FOR_REGULAR_EXPRESSION</id>
     <artifact tool="FindBugs" mnemonic="RE_BAD_SYNTAX_FOR_REGULAR_EXPRESSION"/>
     <name>Bad syntax for regular expression</name>
-    <shortMessage>
-      Invalid syntax for regular expression
-    </shortMessage>
+    <shortMessage>This code uses an invalid regular expression. It will always throw a PatternSyntaxException.</shortMessage>
     <info>
-
-      &lt;p&gt; The code here uses a regular expression that is
-      invalid according to the syntax for regular expressions.
-      This statement will throw a PatternSyntaxException when
-      executed. &lt;/p&gt;
-
+<![CDATA[<p>This code uses a regular expression that is invalid
+according to the syntax for regular expressions.  This statement will
+throw a <code>PatternSyntaxException</code> when executed. Please fix
+this code.</p>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
@@ -4975,19 +5070,20 @@ to break the hard dependency.</p>]]>
       File.separator used for regular expression
     </shortMessage>
     <info>
+<![CDATA[<p>The code here uses <code>File.separator</code> where a
+regular expression is required. This will fail on Windows platforms,
+where the <code>File.separator</code> is a backslash, which is
+interpreted in a regular expression as an escape character.  To fix
+this, on Windows, you need to use two backslashs in a row&mdash;not
+just one.</p>
 
-      &lt;p&gt; The code here uses
-      &lt;code&gt;File.separator&lt;/code&gt; where a regular
-      expression is required. This will fail on Windows platforms,
-      where the &lt;code&gt;File.separator&lt;/code&gt; is a
-      backslash, which is interpreted in a regular expression as
-      an escape character. Amoung other options, you can just use
-      &lt;code&gt;File.separatorChar=='\\' &amp;amp;
-      &quot;\\\\&quot; : File.separator&lt;/code&gt; instead of
-      &lt;code&gt;File.separator&lt;/code&gt;
+<p>One approach to fixing this is to create a constant<p>
 
-      &lt;/p&gt;
+<pre>
+public static final String regExSeparator = File.separatorChar == '\\' ? "\\\\" : File.separator;
+</pre>
 
+<p>which you use instead of <code>File.separator</code>.</p>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
@@ -6232,776 +6328,719 @@ Bug #6178997</a>.</p>]]>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>DL_SYNCHRONIZATION_ON_BOXED_PRIMITIVE</id>
-    <artifact tool="FindBugs"
-	      mnemonic="DL_SYNCHRONIZATION_ON_BOXED_PRIMITIVE">
-    </artifact>
-    <shortMessage>
-      Synchronization on boxed primitive value could lead to deadlock
-    </shortMessage>
-    <info>
-      &lt;p&gt;
-      The code synchronizes on a boxed primitive constant, such as an Integer.
-      &lt;pre&gt;
-      private static Integer count = 0;
-      ...
-      synchronized(count) { 
-      count++;
-      }
-      ...
-      &lt;/pre&gt;
-      &lt;/p&gt;
-      &lt;p&gt;Since Integer objects can be cached and shared,
-      this code could be synchronizing on the same object as other, unrelated code, leading to unresponsiveness
-      and possible deadlock 
-      &lt;/p&gt;
-    </info>
+    <artifact tool="FindBugs" mnemonic="DL_SYNCHRONIZATION_ON_BOXED_PRIMITIVE"/>
     <name>Synchronization on boxed primitive value could lead to deadlock</name>
+    <shortMessage>This code synchronizes on boxed primitive value. This could lead to deadlock. Consider using a util concurrent atomic type instead.</shortMessage>
+    <info>
+<![CDATA[<p>The code synchronizes on a boxed primitive constant, such
+as an Integer.
+
+<pre>
+private static Integer count = 0;
+...
+void m() {
+  synchronized(count) { 
+    count++;
+  }
+  ...
+}
+</pre>
+
+<p>Since Integer objects can be cached and shared, this code could be
+synchronizing on the same object as other, unrelated code, leading to
+unresponsiveness and possible deadlock.</p>
+
+<p>Consider using one of the atomic types provided by the package
+<code>java.util.concurrent.atomic</code>. For example, using
+<code>AtomicInteger</code> the above code would become</p>
+
+<pre>
+private final AtomicInteger count = new AtomicInteger(0);
+...
+void m() {
+  final int incrementedCount = count.incrementAndGet();
+  ...
+}
+</pre>]]>
+    </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>DL_SYNCHRONIZATION_ON_UNSHARED_BOXED_PRIMITIVE</id>
-    <artifact tool="FindBugs"
-	      mnemonic="DL_SYNCHRONIZATION_ON_UNSHARED_BOXED_PRIMITIVE">
+    <artifact tool="FindBugs" mnemonic="DL_SYNCHRONIZATION_ON_UNSHARED_BOXED_PRIMITIVE">
     </artifact>
-    <shortMessage>
-      Synchronization on boxed primitive values
-    </shortMessage>
+    <name>Avoid synchronization on boxed primitive values</name>
+    <shortMessage>This code synchronizes on boxed primitive values. It is recommened that this type of code be avoided.</shortMessage>
     <info>
-      &lt;p&gt; 
-      The code synchronizes on an apparently unshared boxed primitive, 
-      such as an Integer.
-      &lt;pre&gt;
-      private static final Integer fileLock = new Integer(1);
-      ...
-      synchronized(fileLock) { 
-      .. do something ..
-      }
-      ...
-      &lt;/pre&gt;
-      &lt;/p&gt;
-      &lt;p&gt;It would be much better, in this code, to redeclare fileLock as
-      &lt;pre&gt;
-      private static final Object fileLock = new Object();
-      &lt;/pre&gt;
-      The existing code might be OK, but it is confusing and a 
-      future refactoring, such as the "Remove Boxing" refactoring in IntelliJ,
-      might replace this with the use of an intern'd Integer object shared 
-      throughout the JVM, leading to very confusing behavior and potential deadlock.
-      &lt;/p&gt;
+<![CDATA[<p>The code synchronizes on an apparently unshared boxed
+primitive, such as an Integer.</p>
+
+<pre>
+private static final Integer fileLock = new Integer(1);
+...
+void m() {
+  synchronized(fileLock) { 
+    // do something
+  }
+  ...
+}
+</pre>
+
+<p>It would be much better, in this code, to redeclare
+<code>fileLock</code> as</p>
+
+<pre>
+private static final Object fileLock = new Object();
+</pre>
+
+<p>The existing code might be OK, but it is confusing and a future
+refactoring, such as the "Remove Boxing" refactoring in IntelliJ,
+might replace this with the use of an intern'd Integer object shared
+throughout the JVM, leading to very confusing behavior and the
+potential for deadlock.</p>]]>
     </info>
-    <name>Synchronization on boxed primitive values</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>WL_USING_GETCLASS_RATHER_THAN_CLASS_LITERAL</id>
-    <artifact tool="FindBugs"
-	      mnemonic="WL_USING_GETCLASS_RATHER_THAN_CLASS_LITERAL">
-    </artifact>
-    <shortMessage>
-      Synchronization on getClass rather than class literal
-    </shortMessage>
-    <info>
-      &lt;p&gt; 
-      This instance method synchronizes on &lt;code&gt;this.getClass()&lt;/code&gt;. 
-      If this class is subclassed,
-      subclasses will synchronize on the class object for the subclass, 
-      which isn't likely what was intended.
-      For example, consider this code from &lt;code&gt;java.awt.Label&lt;/code&gt;:
-      &lt;pre&gt;
-      private static final String base = "label";
-      private static int nameCounter = 0;
-      String constructComponentName() {
-      synchronized (getClass()) {
-      return base + nameCounter++;
-      }
-      }
-      &lt;/pre&gt;&lt;/p&gt;
-      &lt;p&gt;Subclasses of &lt;code&gt;Label&lt;/code&gt; won't synchronize on the same subclass, 
-      giving rise to a data race.
-      Instead, this code should be synchronizing on &lt;code&gt;Label.class&lt;/code&gt;
-      &lt;pre&gt;
-      private static final String base = "label";
-      private static int nameCounter = 0;
-      String constructComponentName() {
-      synchronized (Label.class) {
-      return base + nameCounter++;
-      }
-      }
-      &lt;/pre&gt;&lt;/p&gt;
-      &lt;p&gt;Bug pattern contributed by Jason Mehrens
-      &lt;/p&gt;
-    </info>
+    <artifact tool="FindBugs" mnemonic="WL_USING_GETCLASS_RATHER_THAN_CLASS_LITERAL"/>
     <name>Synchronization on getClass rather than class literal</name>
+    <shortMessage>This code uses synchronization on getClass (the dynamic class) rather than a class literal. This can create a data race if the class is subclassed.</shortMessage>
+    <info>
+<![CDATA[<p>This instance method synchronizes on
+<code>this.getClass()</code>.  If this class is subclassed, subclasses
+will synchronize on the class object for the subclass, which isn't
+likely what was intended.  For example, consider this code from
+<code>java.awt.Label</code>:</p>
+
+<pre>
+private static final String base = "label";
+private static int nameCounter = 0;
+
+String constructComponentName() {
+  synchronized (getClass()) {
+    return base + nameCounter++;
+  }
+}
+</pre>
+
+<p>Subclasses of <code>Label</code> won't synchronize on the same
+subclass, giving rise to a data race.  Instead, this code should be
+synchronizing on <code>Label.class</code></p>
+
+<pre>
+private static final String base = "label";
+private static int nameCounter = 0;
+
+String constructComponentName() {
+  synchronized (Label.class) {
+    return base + nameCounter++;
+  }
+}
+</pre>
+
+<p>In general, it is almost always a bad idea to synchronize on the
+dynamic class of an object.</p>]]>
+    </info>
   </findingType>	
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>ML_SYNC_ON_FIELD_TO_GUARD_CHANGING_THAT_FIELD</id>
-    <artifact tool="FindBugs"
-	      mnemonic="ML_SYNC_ON_FIELD_TO_GUARD_CHANGING_THAT_FIELD">
-    </artifact>
-    <shortMessage>
-      Synchronization on field in futile attempt to guard that field
-    </shortMessage>
-    <info>
-      &lt;p&gt; 
-      This method synchronizes on a field in what appears to be an attempt
-      to guard against simultaneous updates to that field. But guarding a field
-      gets a lock on the referenced object, not on the field. This may not 
-      provide the mutual exclusion you need, and other threads might 
-      be obtaining locks on the referenced objects (for other purposes). An example
-      of this pattern would be:
-
-      &lt;p&gt;&lt;pre&gt;
-      private Long myNtfSeqNbrCounter = new Long(0);
-      private Long getNotificationSequenceNumber() {
-      Long result = null;
-      synchronized(myNtfSeqNbrCounter) {
-      result = new Long(myNtfSeqNbrCounter.longValue() + 1);
-      myNtfSeqNbrCounter = new Long(result.longValue());
-      }
-      return result;
-      }
-      &lt;/pre&gt;
-      &lt;/p&gt;
-    </info>
+    <artifact tool="FindBugs" mnemonic="ML_SYNC_ON_FIELD_TO_GUARD_CHANGING_THAT_FIELD"/>
     <name>Synchronization on field in futile attempt to guard that field</name>
+    <shortMessage>Synchronization on a mutable field in a futile attempt to guard that field. This code is likely not thread safe.</shortMessage>
+    <info>
+<![CDATA[<p>This method synchronizes on a mutable field in what
+appears to be a misguided attempt to guard against simultaneous
+updates to that field. But guarding a field gets a lock on the
+referenced object, not on the field. This may not provide the mutual
+exclusion you need, and other threads might be obtaining locks on the
+referenced objects (for other purposes). An example of this pattern
+would be:
+
+<pre>
+private Long myNtfSeqNbrCounter = new Long(0);
+private Long getNotificationSequenceNumber() {
+  Long result = null;
+  synchronized(myNtfSeqNbrCounter) {
+    result = new Long(myNtfSeqNbrCounter.longValue() + 1);
+    myNtfSeqNbrCounter = new Long(result.longValue());
+  }
+  return result;
+}
+</pre>
+
+<p>One approach to fixing this problem is to create an immutable object to lock on. For example</p>
+
+<pre>
+private Long myNtfSeqNbrCounter = new Long(0);
+private final Object myNtfSeqNbrCounterLock = new Object();
+
+private Long getNotificationSequenceNumber() {
+  Long result = null;
+  synchronized(myNtfSeqNbrCounterLock) {
+    result = new Long(myNtfSeqNbrCounter.longValue() + 1);
+    myNtfSeqNbrCounter = new Long(result.longValue());
+  }
+  return result;
+}
+</pre>]]>
+    </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>DLS_DEAD_LOCAL_STORE_IN_RETURN</id>
-    <artifact tool="FindBugs"
-	      mnemonic="DLS_DEAD_LOCAL_STORE_IN_RETURN">
-    </artifact>
-    <shortMessage>
-      Useless assignment in return statement
-    </shortMessage>
-    <info>
-      &lt;p&gt; 
-      This statement assigns to a local variable in a return statement. 
-      This assignment has no lasting effect. 
-      Please verify that this statement does the right thing.
-      &lt;/p&gt;
-    </info>
+    <artifact tool="FindBugs" mnemonic="DLS_DEAD_LOCAL_STORE_IN_RETURN"/>
     <name>Useless assignment in return statement</name>
+    <shortMessage>This code contains a useless assignment in a return statement. Is this a mistake?</shortMessage>
+    <info>
+<![CDATA[<p>This statement assigns to a local variable in a
+<code>return</code> statement.  This assignment has no lasting effect.
+Please verify that this statement does the right thing as this could
+signpost a bug.</p>]]>
+    </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-  <!-- For FB 1.3.4 -->
   <findingType>
     <id>XSS_REQUEST_PARAMETER_TO_SEND_ERROR</id>
-    <artifact tool="FindBugs"
-	      mnemonic="XSS_REQUEST_PARAMETER_TO_SEND_ERROR">
-    </artifact>
-    <shortMessage>
-      Servlet reflected cross site scripting vulnerability
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="XSS_REQUEST_PARAMETER_TO_SEND_ERROR"/>
+    <name>Servlet reflected cross-site scripting vulnerability</name>
+    <shortMessage>This Servlet seems to have a cross-site scripting vulnerability. This should be examined carefully and eliminated.</shortMessage>
     <info>
-      &lt;p&gt; 
-      This code directly writes an HTTP parameter to a Server error page 
-      (using HttpServletResponse.sendError). Echoing this untrusted input allows
-      for a reflected cross site scripting vulnerability. 
-      See &lt;a href="http://en.wikipedia.org/wiki/Cross-site_scripting"&gt;
-      http://en.wikipedia.org/wiki/Cross-site_scripting&lt;/a&gt;
-      for more information.&lt;/p&gt;
-      &lt;p&gt;FindBugs looks only for the most blatent, obvious cases of cross site scripting.
+<![CDATA[<p>This code directly writes an HTTP parameter to a server
+error page using <code>HttpServletResponse.sendError</code>. Echoing this
+untrusted input allows for a reflected cross-site scripting
+vulnerability.</p>
+
+<p>For more information please see <a
+href="http://en.wikipedia.org/wiki/Cross-site_scripting">
+http://en.wikipedia.org/wiki/Cross-site_scripting</a>.</p>
+
+<p>This analysis looks only for the most blatent, obvious
+cases of cross-site scripting.</p>]]>
     </info>
-    <name>Servlet reflected cross site scripting vulnerability</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SKIPPED_CLASS_TOO_BIG</id>
-    <artifact tool="FindBugs"
-	      mnemonic="SKIPPED_CLASS_TOO_BIG">
-    </artifact>
-    <shortMessage>
-      Class too big for analysis
-    </shortMessage>
-    <info>
-      &lt;p&gt; 
-      This class is bigger than can be effectively handled, and was not fully analyzed for errors.
-      &lt;/p&gt;
-    </info>
+    <artifact tool="FindBugs" mnemonic="SKIPPED_CLASS_TOO_BIG"/>
     <name>Class too big for analysis</name>
+    <shortMessage>This class is too big for analysis. It could not be checked by FindBugs.</shortMessage>
+    <info>
+<![CDATA[<p>This class is bigger than can be effectively handled, and
+was not fully analyzed for errors by FindBugs.</p>]]>
+    </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>EQ_COMPARING_CLASS_NAMES</id>
-    <artifact tool="FindBugs"
-	      mnemonic="EQ_COMPARING_CLASS_NAMES">
-    </artifact>
-    <shortMessage>
-      equals() compares class names rather than class objects
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="EQ_COMPARING_CLASS_NAMES"/>
+    <name>Equals compars class names</name>
+    <shortMessage>This equals compares class names rather than class objects. Just compare the class objects.</shortMessage>
     <info>
-      &lt;p&gt; 
-      This method checks to see if two objects are the same class by checking to see if the names
-      of their classes are equal. You can have different classes with the same name if they are loaded by
-      different class loaders. Just check to see if the class objects are the same.
-      &lt;/p&gt;
+<![CDATA[<p> This <code>equals</code> method checks to see if two
+objects are the same class by checking to see if the names of their
+classes are equal. You can have different classes with the same name
+if they are loaded by different class loaders. Just check to see if
+the class objects are the same.  For example</p>
+
+<pre>
+this.getClass() == o.getClass()
+</pre>
+
+<p>For more information see Bloch's <i>Effective Java</i> (second
+edition) items 8 and 9.</p>]]>
     </info>
-    <name>Comparing Class Names</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>EQ_UNUSUAL</id>
-    <artifact tool="FindBugs"
-	      mnemonic="EQ_UNUSUAL">
-    </artifact>
-    <shortMessage>
-      Unusual equals() method
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="EQ_UNUSUAL"/>
+    <name>Unusual equals method</name>
+    <shortMessage>This is an unusual equals() method. It might be OK but is worth checking.</shortMessage>
     <info>
-      &lt;p&gt; 
-      This class doesn't do any of the patterns we recognize for checking that the type of the argument 
-      is compatible with the type of the &lt;code&gt;this&lt;/code&gt; object. There might not be anything wrong with
-      this code, but it is worth reviewing
-      &lt;/p&gt;
+<![CDATA[<p>This class doesn't do any of the patterns we recognize
+for checking that the type of the argument is compatible with the type
+of the <code>this</code> object. There might not be anything wrong
+with this code, but it is worth reviewing. </p>
+
+<p>For more information see Bloch's <i>Effective Java</i> (second
+edition) items 8 and 9.</p>]]>
     </info>
-    <name>Unusual equals() method</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>EQ_GETCLASS_AND_CLASS_CONSTANT</id>
-    <artifact tool="FindBugs"
-	      mnemonic="EQ_GETCLASS_AND_CLASS_CONSTANT">
-    </artifact>
-    <shortMessage>
-      equals() method fails for subtypes
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="EQ_GETCLASS_AND_CLASS_CONSTANT"/>
+    <name>Equals fails for subtypes</name>
+    <shortMessage>This equals method will fail for subtypes. Consider making it more robust.</shortMessage>
     <info>
-      &lt;p&gt; 
-      This class has an equals method that will be broken if it is inherited by subclasses.
-      It compares a class literal with the class of the argument (e.g., in class &lt;code&gt;Foo&lt;/code&gt;
-      it might check if &lt;code&gt;Foo.class == o.getClass()&lt;/code&gt;).
-      It is better to check  if  &lt;code&gt;this.getClass() == o.getClass()&lt;/code&gt;.
-      &lt;/p&gt;
+<![CDATA[<p>This class has an <code>equals</code> method that will be
+broken if it is inherited by subclasses.  It compares a class literal
+with the class of the argument, e.g., in class <code>Foo</code> it
+might check if <code>Foo.class == o.getClass()</code>.  It is better
+to check if <code>this.getClass() == o.getClass()</code>.</p>
+
+<p>For more information see Bloch's <i>Effective Java</i> (second
+edition) items 8 and 9.</p>]]>
     </info>
-    <name>equals() fails for subtypes</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>EQ_ALWAYS_TRUE</id>
-    <artifact tool="FindBugs"
-	      mnemonic="EQ_ALWAYS_TRUE">
-    </artifact>
-    <shortMessage>
-      equals() method always returns true
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="EQ_ALWAYS_TRUE"/>
+    <name>Equals always returns true</name>
+    <shortMessage>This equals method always returns true. This violates the symmetric properity of the equals method.</shortMessage>
     <info>
-      &lt;p&gt; 
-      This class defines an equals method that always returns true. This is imaginative, but not very smart.
-      Plus, it means that the equals method is not symmetric.
-      &lt;/p&gt;
+<![CDATA[<p>This class defines an equals method that always returns
+true. This is imaginative, but not very smart. Plus, it means that the
+equals method is not symmetric.  It is not at all clear what
+semantices are intended here and this class will likely cause problems
+if placed inside of a collection.</p>
+
+<p>For more information see Bloch's <i>Effective Java</i> (second
+edition) items 8 and 9.</p>]]>
     </info>
-    <name>equals() always returns true</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>EQ_ALWAYS_FALSE</id>
-    <artifact tool="FindBugs"
-	      mnemonic="EQ_ALWAYS_FALSE">
-    </artifact>
-    <shortMessage>
-      equals() method always returns false
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="EQ_ALWAYS_FALSE"/>
+    <name>Equals always returns false</name>
+    <shortMessage>This equals method always returns false. This violates the reflexive requirement of the equals method.</shortMessage>
     <info>
-      &lt;p&gt; 
-      This class defines an equals method that always returns false. 
-      This means that an object is not equal to itself, and it is impossible to 
-      create useful Maps or Sets of this class. More fundamentally, it means
-      that equals() is not reflexive, one of the requirements of the equals method.&lt;/p&gt;
-      &lt;p&gt;The likely intended semantics are object identity: that an object is equal to itself. 
-      This is the behavior inherited from class &lt;code&gt;Object&lt;/code&gt;. If you need to override an 
-      equals inherited from a different superclass, you can use:
-      &lt;pre&gt;
-      public boolean equals(Object o) { return this == o; }
-      &lt;/pre&gt;
-      &lt;/p&gt;
+<![CDATA[<p>This class defines an <code>equals</code> method that
+always returns false. This means that an object is not equal to
+itself, and it is impossible to create useful <code>Map</code>s or
+<code>Set</code>s of this class.</p>
+
+<p>More fundamentally, it means that <code>equals</code> is not
+reflexive, one of the requirements of the <code>equals</code>
+method.</p>
+
+<p>The likely intended semantics are object identity&mdash;that an
+object is equal to itself.  This is the behavior inherited from
+<code>java.lang.Object</code>. If you need to override an equals
+inherited from a different superclass, you can use:</p>
+
+<pre>
+@Override public boolean equals(Object o) {
+  return this == o;
+}
+</pre>
+
+<p>For more information see Bloch's <i>Effective Java</i> (second
+edition) items 8 and 9.</p>]]>
     </info>
-    <name>equals() always returns false</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>MSF_MUTABLE_SERVLET_FIELD</id>
-    <artifact tool="FindBugs"
-	      mnemonic="MSF_MUTABLE_SERVLET_FIELD">
-    </artifact>
-    <shortMessage>
-      Mutable servlet field
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="MSF_MUTABLE_SERVLET_FIELD"/>
+    <name>Avoid mutable servlet fields</name>
+    <shortMessage>This code contains a mutable servlet field that could cause race conditions. Remove this field or make it immutable.</shortMessage>
     <info>
-      &lt;p&gt; 
-      A web server generally only creates one instance of servlet or jsp class (i.e., treats
-      the class as a Singleton), and will have multiple threads invoke methods on that instance to
-      service multiple simultaneous requests.
-      Thus, having a mutable instance field generally creates race conditions.
-      &lt;/p&gt;
+<![CDATA[<p>A web server generally only creates one instance of a
+servlet or JSP class (i.e., it treats the class as a singleton), and
+will have multiple threads invoke methods on that instance to service
+multiple simultaneous requests.  Thus, having a mutable instance field
+generally creates race conditions. It is recommended that this field
+be removed or made immutable.</p>]]>
     </info>
-    <name>Mutable servlet field</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SE_READ_RESOLVE_IS_STATIC</id>
-    <artifact tool="FindBugs"
-	      mnemonic="SE_READ_RESOLVE_IS_STATIC">
-    </artifact>
-    <shortMessage>
-      readResolve() must not be declared as a static method.
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="SE_READ_RESOLVE_IS_STATIC"/>
+    <name>Ignored static readResolve() method</name>
+    <shortMessage>The readResolve() method must not be declared to be static. It will be ignored by the serialization mechanism.</shortMessage>
     <info>
-      &lt;p&gt; 
-      In order for the readResolve method to be recognized by the serialization
-      mechanism, it must not be declared as a static method.
-      &lt;/p&gt;
+<![CDATA[<p>In order for the <code>readResolve</code> method to be
+recognized by the serialization mechanism, it must not be declared as
+a <code>static</code> method.</p>]]>
     </info>
-    <name>Static readResolve() method</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SE_PRIVATE_READ_RESOLVE_NOT_INHERITED</id>
-    <artifact tool="FindBugs"
-	      mnemonic="SE_PRIVATE_READ_RESOLVE_NOT_INHERITED">
-    </artifact>
-    <shortMessage>
-      private readResolve() not inherited by subclasses
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="SE_PRIVATE_READ_RESOLVE_NOT_INHERITED"/>
+    <name>Private readResolve() is not inherited</name>
+    <shortMessage>private readResolve() is not inherited by subclasses.</shortMessage>
     <info>
-      &lt;p&gt; 
-      This class defines a private readResolve method. Since it is private, 
-      it won't be inherited by subclasses.  This might be intentional and OK, 
-      but should be reviewed to ensure it is what is intended.
-      &lt;/p&gt;
+<![CDATA[<p>This class defines a private <code>readResolve</code>
+method. Since it is private, it won't be inherited by subclasses.</p>
+
+<p>This might be intentional and OK, but should be reviewed to ensure
+it is what is intended.</p>]]>
     </info>
-    <name>Private readResolve() not inherited</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>RpC_REPEATED_CONDITIONAL_TEST</id>
-    <artifact tool="FindBugs"	mnemonic="RpC_REPEATED_CONDITIONAL_TEST"/>
-    <shortMessage>Repeated conditional tests</shortMessage>
+    <artifact tool="FindBugs" mnemonic="RpC_REPEATED_CONDITIONAL_TEST"/>
+    <name>Suspicious repeated conditional test</name>
+    <shortMessage>This repeated conditional test is suspicious and may indicate a typo in the code.</shortMessage>
     <info>
-      <![CDATA[
+<![CDATA[<p>The code contains a conditional test is performed twice,
+one right after the other.  For example</p>
 
-<p>The code contains a conditional test is performed twice, one right after the other
-(e.g., <code>x == 0 || x == 0</code>). Perhaps the second occurrence is intended to be something else
-(e.g., <code>x == 0 || y == 0</code>). 
-</p>
+<pre>
+x == 0 || x == 0
+</pre>
 
-]]>
+<p>Perhaps this is a typo and the the second occurrence is intended to
+be something else, such as</p>
+
+<pre>
+x == 0 || y == 0
+</pre>]]>
     </info>
-    <name>Repeated conditional tests</name>
   </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>DMI_FUTILE_ATTEMPT_TO_CHANGE_MAXPOOL_SIZE_OF_SCHEDULED_THREAD_POOL_EXECUTOR</id>
-    <artifact tool="FindBugs"	mnemonic="DMI_FUTILE_ATTEMPT_TO_CHANGE_MAXPOOL_SIZE_OF_SCHEDULED_THREAD_POOL_EXECUTOR"/>
-    <shortMessage>Futile attempt to change max pool size of ScheduledThreadPoolExecutor</shortMessage>
-    <info>
-      <![CDATA[
-	       
-	       <p>(<a href="http://java.sun.com/javase/6/docs/api/java/util/concurrent/ScheduledThreadPoolExecutor.html">Javadoc</a>)
-	       While ScheduledThreadPoolExecutor inherits from ThreadPoolExecutor, a few of the inherited tuning methods are not useful for it. In particular, because it acts as a fixed-sized pool using corePoolSize threads and an unbounded queue, adjustments to maximumPoolSize have no useful effect.
-	       </p>
-
-
-      ]]>
-    </info>
+    <artifact tool="FindBugs" mnemonic="DMI_FUTILE_ATTEMPT_TO_CHANGE_MAXPOOL_SIZE_OF_SCHEDULED_THREAD_POOL_EXECUTOR"/>
     <name>Futile attempt to change max pool size of ScheduledThreadPoolExecutor</name>
+    <shortMessage>This code seems to make a futile attempt to change the max pool size of a ScheduledThreadPoolExecutor. This is probably a mistake.</shortMessage>
+    <info>
+<![CDATA[<p>While <code>ScheduledThreadPoolExecutor</code> inherits
+from <code>ThreadPoolExecutor</code>, a few of the inherited tuning
+methods are not useful for it. In particular, because it acts as a
+fixed-sized pool using <code>corePoolSize</code> threads and an
+unbounded queue, adjustments to <code>maximumPoolSize</code> have no
+useful effect.</p>
+
+<p>This code appears to be trying to use these useless inherited
+methods.</p>
+
+<p>For more information, please see the corresponding <a
+href="http://java.sun.com/javase/6/docs/api/java/util/concurrent/ScheduledThreadPoolExecutor.html">Javadoc</a>.</p>]]>
+    </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>DMI_SCHEDULED_THREAD_POOL_EXECUTOR_WITH_ZERO_CORE_THREADS</id>
-    <artifact tool="FindBugs"	mnemonic="DMI_SCHEDULED_THREAD_POOL_EXECUTOR_WITH_ZERO_CORE_THREADS"/>
-    <shortMessage>Creation of ScheduledThreadPoolExecutor with zero core threads</shortMessage>
+    <artifact tool="FindBugs" mnemonic="DMI_SCHEDULED_THREAD_POOL_EXECUTOR_WITH_ZERO_CORE_THREADS"/>
+    <name>Avoid creation of ScheduledThreadPoolExecutor with zero core threads</name>
+    <shortMessage>Creation of a ScheduledThreadPoolExecutor with zero core threads. This is probably a mistake.</shortMessage>
     <info>
-      <![CDATA[
-	       
-	       <p>(<a href="http://java.sun.com/javase/6/docs/api/java/util/concurrent/ScheduledThreadPoolExecutor.html#ScheduledThreadPoolExecutor(int)">Javadoc</a>)
-	       A ScheduledThreadPoolExecutor with zero core threads will never execute anything; changes to the max pool size are ignored.
-	       </p>
+<![CDATA[<p>A <code>ScheduledThreadPoolExecutor</code> with zero core
+threads will never execute anything; changes to the max pool size are
+ignored. Check this code carefully and fix this problem.</p>
 
-
-      ]]>
+<p>For more information, please see the corresponding <a
+href="http://java.sun.com/javase/6/docs/api/java/util/concurrent/ScheduledThreadPoolExecutor.html#ScheduledThreadPoolExecutor(int)">Javadoc</a>.</p>]]>
     </info>
-    <name>Creation of ScheduledThreadPoolExecutor with zero core threads</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>DMI_UNSUPPORTED_METHOD</id>
-    <artifact tool="FindBugs"	mnemonic="DMI_UNSUPPORTED_METHOD"/>
-    <shortMessage>Call to unsupported method</shortMessage>
+    <artifact tool="FindBugs" mnemonic="DMI_UNSUPPORTED_METHOD"/>
+    <name>Call to an unsupported method</name>
+    <shortMessage>Call to an unsupported method</shortMessage>
     <info>
-      <![CDATA[
-	       
-	       <p>All targets of this method invocation throw an UnsupportedOperationException.
-	       </p>
-
-
-      ]]>
+<![CDATA[<p>All targets of this method invocation throw an
+<code>UnsupportedOperationException</code>. Examine this code
+carefully and consider if it is correct.</p>]]>
     </info>
-    <name>Call to unsupported method</name>
-  </findingType>
-  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-  <findingType>
-    <id>NP_DEREFERENCE_OF_READLINE_VALUE</id>
-    <artifact tool="FindBugs"	mnemonic="NP_DEREFERENCE_OF_READLINE_VALUE"/>
-    <shortMessage>Dereference of the result of readLine() without nullcheck</shortMessage>
-    <info>
-      <![CDATA[
-
-<p> The result of invoking readLine() is dereferenced without checking to see if the result is null. If there are no more lines of text
-to read, readLine() will return null and dereferencing that will generate a null pointer exception.
-</p>
-
-      ]]>
-    </info>
-    <name>Dereference of the result of readLine() without nullcheck</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>EQ_CHECK_FOR_OPERAND_NOT_COMPATIBLE_WITH_THIS</id>
-    <artifact tool="FindBugs"	mnemonic="EQ_CHECK_FOR_OPERAND_NOT_COMPATIBLE_WITH_THIS"/>
-    <shortMessage>Equals checks for noncompatible operand</shortMessage>
+    <artifact tool="FindBugs" mnemonic="EQ_CHECK_FOR_OPERAND_NOT_COMPATIBLE_WITH_THIS"/>
+    <name>Avoid equals check for incompatible operand</name>
+    <shortMessage>This equals implementation checks to see if the operand is some particular incompatible type. This is not recommended and may create unexpected behaviors.</shortMessage>
     <info>
-      <![CDATA[
+<![CDATA[<p>This equals method is checking to see if the argument is
+some incompatible type (i.e., a class that is neither a supertype nor
+subtype of the class that defines the equals method). For example, the
+<code>Foo</code> class might have an equals method that looks like:
 
-<p> This equals method is checking to see if the argument is some incompatible type
-(i.e., a class that is neither a supertype nor subtype of the class that defines
-the equals method). For example, the Foo class might have an equals method
-that looks like:
+<pre>
+@Override public boolean equals(Object o) {
+  if (o instanceof Foo)
+    return name.equals(((Foo)o).name);
+  else if (o instanceof String)
+    return name.equals(o);
+  else return false;
+</pre>
 
-<p><code><pre>
-public boolean equals(Object o) {
-if (o instanceof Foo)
-return name.equals(((Foo)o).name);
-else if (o instanceof String)
-return name.equals(o);
-else return false;
-</pre></code></p>
-
-<p>This is considered bad practice, as it makes it very hard to implement an equals method that
-is symmetric and transitive. Without those properties, very unexpected behavoirs are possible.
-</p>
-
-      ]]>
+<p>This is considered bad practice, as it makes it very hard to
+implement an equals method that is symmetric and transitive. Without
+those properties, very unexpected behaviors are possible.</p>]]>
     </info>
-    <name>Equals checks for noncompatible operand</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>NP_PARAMETER_MUST_BE_NONNULL_BUT_MARKED_AS_NULLABLE</id>
-    <artifact tool="FindBugs"	mnemonic="NP_PARAMETER_MUST_BE_NONNULL_BUT_MARKED_AS_NULLABLE"/>
-    <shortMessage>Parameter must be nonnull but is marked as nullable</shortMessage>
-    <info>
-      <![CDATA[
-
-<p> This parameter is always used in a way that requires it to be nonnull,
-but the parameter is explicitly annotated as being Nullable. Either the use
-of the parameter or the annotation is wrong.
-</p>
-
-      ]]>
-    </info>
+    <artifact tool="FindBugs" mnemonic="NP_PARAMETER_MUST_BE_NONNULL_BUT_MARKED_AS_NULLABLE"/>
     <name>Parameter must be nonnull but is marked as nullable</name>
+    <shortMessage>This parameter must be nonnull but is marked as nullable. Either the use or the annotation is wrong.</shortMessage>
+    <info>
+<![CDATA[<p>This parameter is always used in a way that requires it to
+be nonnull, but the parameter is explicitly annotated as being
+@Nullable. Either the use of the parameter or the annotation is
+wrong.</p>]]>
+    </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>VA_FORMAT_STRING_BAD_CONVERSION</id>
-    <artifact tool="FindBugs"	mnemonic="VA_FORMAT_STRING_BAD_CONVERSION"/>
-    <shortMessage>The type of a supplied argument doesn't match format specifier</shortMessage>
-    <info>
-      <![CDATA[
-
-<p>
-One of the arguments is uncompatible with the corresponding format string specifier.
-As a result, this will generate a runtime exception when executed.
-For example, <code>String.format("%d", "1")</code> will generate an exception, since
-the String "1" is incompatible with the format specifier %d.
-</p>
-
-      ]]>
-    </info>
+    <artifact tool="FindBugs" mnemonic="VA_FORMAT_STRING_BAD_CONVERSION"/>
     <name>The type of a supplied argument doesn't match format specifier</name>
+    <shortMessage>The type of a supplied argument doesn't match format specifier. This code will always throw an exception at runtime.</shortMessage>
+    <info>
+<![CDATA[<p>One of the arguments is uncompatible with the
+corresponding format string specifier. As a result, this will generate
+a runtime exception when executed. For example,</p>
+
+<pre>
+String.format("%d", "1")
+</pre>
+
+<p>will throw an exception, since the string <code>"1"</code> is
+incompatible with the format specifier <code>%d</code>.</p>]]>
+    </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>VA_FORMAT_STRING_BAD_CONVERSION_TO_BOOLEAN</id>
-    <artifact tool="FindBugs"	mnemonic="VA_FORMAT_STRING_BAD_CONVERSION_TO_BOOLEAN"/>
-    <shortMessage>Non-Boolean argument formatted using %b format specifier</shortMessage>
-    <info>
-      <![CDATA[
-
-<p>
-An argument not of type Boolean is being formatted with a %b format specifier. This won't throw an
-exception; instead, it will print true for any nonnull value, and false for null.
-This feature of format strings is strange, and may not be what you intended.
-</p>
-
-      ]]>
-    </info>
+    <artifact tool="FindBugs" mnemonic="VA_FORMAT_STRING_BAD_CONVERSION_TO_BOOLEAN"/>
     <name>Non-Boolean argument formatted using %b format specifier</name>
+    <shortMessage>A non-Boolean argument is being formatted using %b format specifier. This is probably a typo or a bug.</shortMessage>
+    <info>
+<![CDATA[<p>An argument not of type <code>Boolean</code> is being
+formatted with a <code>%b</code> format specifier. This won't throw an
+exception; instead, it will print <code>true</code> for any nonnull
+value, and <code>false</code> for null.  This feature of format
+strings is strange, and may not be what you intended.</p>]]>
+    </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>VA_FORMAT_STRING_BAD_CONVERSION_FROM_ARRAY</id>
-    <artifact tool="FindBugs"	mnemonic="VA_FORMAT_STRING_BAD_CONVERSION_FROM_ARRAY"/>
+    <artifact tool="FindBugs" mnemonic="VA_FORMAT_STRING_BAD_CONVERSION_FROM_ARRAY"/>
+    <name>Array formatted in useless way using format string</name>
     <shortMessage>Array formatted in useless way using format string</shortMessage>
     <info>
-      <![CDATA[
+<![CDATA[<p>One of the arguments being formatted with a format string
+is an array. This will be formatted using a fairly useless format,
+such as <code>[I@304282</code>, which doesn't actually show the contents of the
+array. This behavior is probably not desired.</p>
 
-<p>
-One of the arguments being formatted with a format string is an array. This will be formatted
-using a fairly useless format, such as [I@304282, which doesn't actually show the contents
-of the array.
-Consider wrapping the array using <code>Arrays.asList(...)</code> before handling it off to a formatted.
-</p>
-
-      ]]>
+<p>Consider wrapping the array using <code>Arrays.asList(...)</code>
+before handling it off to be formatted or using
+<code>Arrays.toString(...)</code>.</p>]]>
     </info>
-    <name>Array formatted in useless way using format string</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>VA_FORMAT_STRING_NO_PREVIOUS_ARGUMENT</id>
-    <artifact tool="FindBugs"	mnemonic="VA_FORMAT_STRING_NO_PREVIOUS_ARGUMENT"/>
-    <shortMessage>No previous argument for format string</shortMessage>
-    <info>
-      <![CDATA[
-
-<p>
-The format string specifies a relative index to request that the argument for the previous format specifier
-be reused. However, there is no previous argument.
-For example, 
-</p>
-<p><code>formatter.format("%&lt;s %s", "a", "b")</code>
-</p>
-<p>would throw a MissingFormatArgumentException when executed.
-</p>
-
-      ]]>
-    </info>
+    <artifact tool="FindBugs" mnemonic="VA_FORMAT_STRING_NO_PREVIOUS_ARGUMENT"/>
     <name>No previous argument for format string</name>
+    <shortMessage>No previous argument for format string. This code will always throw an exception at runtime.</shortMessage>
+    <info>
+<![CDATA[<p>The format string specifies a relative index to request
+that the argument for the previous format specifier be
+reused. However, there is no previous argument.  For example,</p>
+
+<pre>
+formatter.format("%&lt;s %s", "a", "b")
+</pre>
+
+<p>would throw a MissingFormatArgumentException when executed.</p>]]>
+    </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>VA_FORMAT_STRING_BAD_ARGUMENT</id>
-    <artifact tool="FindBugs"	mnemonic="VA_FORMAT_STRING_BAD_ARGUMENT"/>
-    <shortMessage>Format string placeholder incompatible with passed argument</shortMessage>
-    <info>
-      <![CDATA[
-
-<p>
-The format string placeholder is incompatible with the corresponding
-argument. For example,
-<code>
-System.out.println("%d\n", "hello");
-</code>
-<p>The %d placeholder requires a numeric argument, but a string value is
-passed instead. 
-A runtime exception will occur when 
-this statement is executed.
-</p>
-
-      ]]>
-    </info>
+    <artifact tool="FindBugs" mnemonic="VA_FORMAT_STRING_BAD_ARGUMENT"/>
     <name>Format string placeholder incompatible with passed argument</name>
+    <shortMessage>This format string placeholder is incompatible with its passed argument. This code will always throw an exception at runtime.</shortMessage>
+    <info>
+<![CDATA[<p>The format string placeholder is incompatible with the
+corresponding argument. For example,
+
+<pre>
+System.out.println("%d\n", "hello");
+</pre>
+
+<p>The <code>%d</code> placeholder requires a numeric argument, but a
+string value is passed instead.  A runtime exception will occur when
+this statement is executed.</p>]]>
+    </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>VA_FORMAT_STRING_MISSING_ARGUMENT</id>
-    <artifact tool="FindBugs"	mnemonic="VA_FORMAT_STRING_MISSING_ARGUMENT"/>
-    <shortMessage>Format string references missing argument</shortMessage>
+    <artifact tool="FindBugs" mnemonic="VA_FORMAT_STRING_MISSING_ARGUMENT"/>
+    <name>Too few arguments are passed for this format string</name>
+    <shortMessage>This code contains a format string that is passed too few arguments. This code will always throw an exception at runtime.</shortMessage>
     <info>
-      <![CDATA[
-
-<p>
-Not enough arguments are passed to satisfy a placeholder in the format string.
-A runtime exception will occur when 
-this statement is executed.
-</p>
-
-      ]]>
+<![CDATA[<p>Not enough arguments are passed to satisfy a placeholder
+in the format string.  A runtime exception will occur when this
+statement is executed.</p>]]>
     </info>
-    <name>Format string references missing argument</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>VA_FORMAT_STRING_ILLEGAL</id>
-    <artifact tool="FindBugs"	mnemonic="VA_FORMAT_STRING_ILLEGAL"/>
-    <shortMessage>Illegal format string</shortMessage>
-    <info>
-      <![CDATA[
-
-<p>
-The format string is syntactically invalid, 
-and a runtime exception will occur when 
-this statement is executed.
-</p>
-
-      ]]>
-    </info>
+    <artifact tool="FindBugs" mnemonic="VA_FORMAT_STRING_ILLEGAL"/>
     <name>Illegal format string</name>
+    <shortMessage>This code contains an illegal format string. This code will always throw an exception at runtime.</shortMessage>
+    <info>
+<![CDATA[<p>The format string used in this code is syntactically
+invalid, and a runtime exception will occur when this statement is
+executed. Examine and fix this code.</p>]]>
+    </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>VA_FORMAT_STRING_EXTRA_ARGUMENTS_PASSED</id>
-    <artifact tool="FindBugs"	mnemonic="VA_FORMAT_STRING_EXTRA_ARGUMENTS_PASSED"/>
-    <shortMessage>More arguments are passed that are actually used in the format string</shortMessage>
+    <artifact tool="FindBugs" mnemonic="VA_FORMAT_STRING_EXTRA_ARGUMENTS_PASSED"/>
+    <name>More arguments are passed than are actually used in the format string</name>
+    <shortMessage>This code passes more arguments than are actually used in the format string. This is probably a typo or a bug.</shortMessage>
     <info>
-      <![CDATA[
-
-<p>
-A format-string method with a variable number of arguments is called,
-but more arguments are passed than are actually used by the format string.
-This won't cause a runtime exception, but the code may be silently omitting 
-information that was intended to be included in the formatted string.
-</p>
-
-      ]]>
+<![CDATA[<p>A format-string method with a variable number of
+arguments is called, but more arguments are passed than are actually
+used by the format string.  This won't cause a runtime exception, but
+the code may be silently omitting information that was intended to be
+included in the formatted string.  Check this code carefully.</p>]]>
     </info>
-    <name>More arguments are passed that are actually used in the format string</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>BIT_ADD_OF_SIGNED_BYTE</id>
-    <artifact tool="FindBugs"	mnemonic="BIT_ADD_OF_SIGNED_BYTE"/>
-    <shortMessage>Bitwise add of signed byte value</shortMessage>
-    <info>
-      <![CDATA[
-
-<p> Adds a byte value and a value which is known to the 8 lower bits clear.
-Values loaded from a byte array are sign extended to 32 bits
-before any any bitwise operations are performed on the value.
-Thus, if <code>b[0]</code> contains the value <code>0xff</code>, and
-<code>x</code> is initially 0, then the code 
-<code>((x &lt;&lt; 8) + b[0])</code>  will sign extend <code>0xff</code>
-to get <code>0xffffffff</code>, and thus give the value
-<code>0xffffffff</code> as the result.
-</p>
-
-<p>In particular, the following code for packing a byte array into an int is badly wrong: </p>
-<pre>
-int result = 0;
-for(int i = 0; i &lt; 4; i++) 
-result = ((result &lt;&lt; 8) + b[i]);
-</pre>
-
-<p>The following idiom will work instead: </p>
-<pre>
-int result = 0;
-for(int i = 0; i &lt; 4; i++) 
-result = ((result &lt;&lt; 8) + (b[i] &amp; 0xff));
-</pre>
-
-
-      ]]>
-    </info>
+    <artifact tool="FindBugs" mnemonic="BIT_ADD_OF_SIGNED_BYTE"/>
     <name>Bitwise add of signed byte value</name>
+    <shortMessage>This code performs a suspicious bitwise add of signed byte value. Sign extension may cause an unexpected result to be computed.</shortMessage>
+    <info>
+<![CDATA[<p>Adds a byte value and a value which is known to have its 8
+lower bits clear. Values loaded from a byte array are sign extended to
+32 bits before any any bitwise operations are performed on the value.
+Thus, if <code>b[0]</code> contains the value <code>0xff</code>, and
+<code>x</code> is initially 0, then the code <code>((x &lt;&lt; 8) +
+b[0])</code> will sign extend <code>0xff</code> to get
+<code>0xffffffff</code>, and thus give the value
+<code>0xffffffff</code> as the result.</p>
+
+<p>In particular, the following code for packing a <code>byte</code>
+array into an <code>int</code> is badly wrong:</p>
+
+<pre>
+int result = 0;
+for(int i = 0; i &lt; 4; i++) {
+  result = ((result &lt;&lt; 8) + b[i]);
+}
+</pre>
+
+<p>However, the following idiom will work instead:</p>
+
+<pre>
+int result = 0;
+for(int i = 0; i &lt; 4; i++) {
+  result = ((result &lt;&lt; 8) + (b[i] &amp; 0xff));
+}
+</pre>]]>
+    </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>DMI_INVOKING_HASHCODE_ON_ARRAY</id>
-    <artifact tool="FindBugs"	mnemonic="DMI_INVOKING_HASHCODE_ON_ARRAY"/>
-    <shortMessage>Invocation of hashCode on an array</shortMessage>
+    <artifact tool="FindBugs" mnemonic="DMI_INVOKING_HASHCODE_ON_ARRAY"/>
+    <name>Suspicious use hashCode method on an array</name>
+    <shortMessage>This code calls a.hashCode() on an array. Did you mean to call Arrays.hashCode(a)?</shortMessage>
     <info>
-      <![CDATA[
+<![CDATA[<p>This code invokes <code>hashCode()</code> on an array
+type. Calling <code>hashCode()</code> on an array returns the same
+value as <code>System.identityHashCode</code>, and ignores the
+contents and length of the array. Therefore, this code is highly
+suspect and may not do what the programmer intended it to.</p>
 
-<p>
-The code invokes hashCode on an array. Calling hashCode on
-an array returns the same value as System.identityHashCode, and ingores
-the contents and length of the array. If you need a hashCode that
-depends on the contents of an array <code>a</code>, 
-use <code>java.util.Arrays.hashCode(a)</code>.
-
-</p>
-
-      ]]>
+<p>If you need a hashcode that depends on the contents of an array
+<code>a</code>, use <code>java.util.Arrays.hashCode(a)</code>.</p>]]>
     </info>
-    <name>Invocation of hashCode on an array</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>DMI_USING_REMOVEALL_TO_CLEAR_COLLECTION</id>
-    <artifact tool="FindBugs"	mnemonic="DMI_USING_REMOVEALL_TO_CLEAR_COLLECTION"/>
-    <shortMessage>Don't use removeAll to clear a collection</shortMessage>
+    <artifact tool="FindBugs" mnemonic="DMI_USING_REMOVEALL_TO_CLEAR_COLLECTION"/>
+    <name>Avoid c.removeAll(c) to clear a collection</name>
+    <shortMessage>Don't use c.removeAll(c) to clear a collection. Use c.clear() instead.</shortMessage>
     <info>
-      <![CDATA[
-	       
-	       <p> If you want to remove all elements from a collection <code>c</code>, use <code>c.clear</code>,
-	       not <code>c.removeAll(c)</code>.
-	       </p>
-	       
-      ]]>
+<![CDATA[<p>If you want to remove all elements from a collection
+<code>c</code>, use <code>c.clear()</code> rather than
+<code>c.removeAll(c)</code>.</p>]]>
     </info>
-    <name>Don't use removeAll to clear a collection</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>DMI_VACUOUS_SELF_COLLECTION_CALL</id>
-    <artifact tool="FindBugs"	mnemonic="DMI_VACUOUS_SELF_COLLECTION_CALL"/>
-    <shortMessage>Vacuous call to collections</shortMessage>
+    <artifact tool="FindBugs" mnemonic="DMI_VACUOUS_SELF_COLLECTION_CALL"/>
+    <name>Vacuous call to a collection</name>
+    <shortMessage>This code appears to be nonsensical. Consider removing it. It may indicate a type or a bug.</shortMessage>
     <info>
-      <![CDATA[
-	       
-	       <p> This call doesn't make sense. For any collection <code>c</code>, calling <code>c.containsAll(c)</code> should
-	       always be true, and <code>c.retainAll(c)</code> should have no effect.
-	       </p>
-	       
-      ]]>
+<![CDATA[<p>This call doesn't make sense. For any
+<code>Collection</code> <code>c</code>, calling</p>
+
+<pre>
+c.containsAll(c)
+</pre>
+
+<p>should always be true, and</p>
+
+<pre>
+c.retainAll(c)
+</pre>
+
+<p>should have no effect.</p>
+
+<p>This is highly suspicious code that may signpost a bug or a
+typo.</p>]]>
     </info>
-    <name>Vacuous call to collections</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>DMI_COLLECTIONS_SHOULD_NOT_CONTAIN_THEMSELVES</id>
-    <artifact tool="FindBugs"	mnemonic="DMI_COLLECTIONS_SHOULD_NOT_CONTAIN_THEMSELVES"/>
+    <artifact tool="FindBugs" mnemonic="DMI_COLLECTIONS_SHOULD_NOT_CONTAIN_THEMSELVES"/>
+    <name>Collections should not contain themselves</name>
     <shortMessage>Collections should not contain themselves</shortMessage>
     <info>
-      <![CDATA[
-	       
-	       <p> This call to a generic collection's method would only make sense if a collection contained 
-	       itself (e.g., if <code>s.contains(s)</code> were true). This is unlikely to be true and would cause
-	       problems if it were true (such as the computation of the hash code resulting in infinite recursion).
-	       It is likely that the wrong value is being passed as a parameter.
-	       </p>
-	       
-      ]]>
+<![CDATA[<p>This call to a generic collection's method would only make
+sense if a collection contained itself, e.g., if
+<code>s.contains(s)</code> were true. This is unlikely to be true and
+would cause problems if it were true (such as the computation of the
+hash code of such a collection resulting in infinite recursion).  It
+is likely that the wrong value is being passed as a parameter.</p>]]>
     </info>
-    <name>Collections should not contain themselves</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>TQ_EXPLICIT_UNKNOWN_SOURCE_VALUE_REACHES_NEVER_SINK</id>
-    <artifact tool="FindBugs"	mnemonic="TQ_EXPLICIT_UNKNOWN_SOURCE_VALUE_REACHES_NEVER_SINK"/>
-    <shortMessage>Explicit annotation inconsistent with use</shortMessage>
-    <info>
-      <![CDATA[
-	       
-	       <p>
-	       A value is used in a way that requires it to be never be a value denoted by a type qualifier, but
-	       there is an explicit annotation stating that it is not known where the value is prohibited from having that type qualifier.
-	       Either the usage or the annotation is incorrect.
-	       </p>
-	       
-      ]]>
-    </info>
+    <artifact tool="FindBugs" mnemonic="TQ_EXPLICIT_UNKNOWN_SOURCE_VALUE_REACHES_NEVER_SINK"/>
     <name>Explicit annotation inconsistent with use</name>
+    <shortMessage>Explicit annotation is inconsistent with use.</shortMessage>
+    <info>
+<![CDATA[<p>A value is used in a way that requires it to be never be a
+value denoted by a type qualifier, but there is an explicit annotation
+stating that it is not known where the value is prohibited from having
+that type qualifier. Either the usage or the annotation is
+incorrect.</p>]]>
+    </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>TQ_EXPLICIT_UNKNOWN_SOURCE_VALUE_REACHES_ALWAYS_SINK</id>
-    <artifact tool="FindBugs"	mnemonic="TQ_EXPLICIT_UNKNOWN_SOURCE_VALUE_REACHES_ALWAYS_SINK"/>
-    <shortMessage>Explicit annotation inconsistent with use</shortMessage>
-    <info>
-      <![CDATA[
-	       
-	       <p>
-	       A value is used in a way that requires it to be always be a value denoted by a type qualifier, but
-	       there is an explicit annotation stating that it is not known where the value is required to have that type qualifier.
-	       Either the usage or the annotation is incorrect.
-	       </p>
-	       
-      ]]>
-    </info>
+    <artifact tool="FindBugs" mnemonic="TQ_EXPLICIT_UNKNOWN_SOURCE_VALUE_REACHES_ALWAYS_SINK"/>
     <name>Explicit annotation inconsistent with use</name>
+    <shortMessage>Explicit annotation is inconsistent with use.</shortMessage>
+    <info>
+<![CDATA[<p>A value is used in a way that requires it to be always be
+a value denoted by a type qualifier, but there is an explicit
+annotation stating that it is not known where the value is required to
+have that type qualifier. Either the usage or the annotation is
+incorrect.</p>]]>
+    </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
