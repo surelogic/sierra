@@ -1156,7 +1156,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 			// FIX should this be per-project?
 			if (audits > auditThreshold) {
 				SierraServersAutoSync.asyncSyncWithServer(
-						ServerSyncType.BY_SERVER_SETTINGS, 5000);
+						ServerSyncType.BY_SERVER_SETTINGS, 2000);
 				return true;
 			}
 		}

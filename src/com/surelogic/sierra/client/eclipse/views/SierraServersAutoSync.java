@@ -120,7 +120,7 @@ public class SierraServersAutoSync {
 				}
 			}
 			if (autoSync) {
-				SierraServersAutoSync.asyncSyncWithServer(ServerSyncType.BY_SERVER_SETTINGS, 5000);
+				SierraServersAutoSync.asyncSyncWithServer(ServerSyncType.BY_SERVER_SETTINGS, 2000);
 			}
 		}
 	}
