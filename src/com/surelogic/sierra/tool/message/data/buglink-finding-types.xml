@@ -508,7 +508,7 @@ error or cause unexpected behavior.</p>
   <findingType>
     <id>DMI_COLLECTION_OF_URLS</id>
     <artifact tool="FindBugs" mnemonic="DMI_COLLECTION_OF_URLS"/>
-    <name>Avoid a collection Of URLs</name>
+    <name>Avoid collections of URLs</name>
     <shortMessage>Maps and sets of URLs can be horrible performance hogs.</shortMessage>
     <info>
 <![CDATA[ <p>This method or field is or uses a <code>Map</code> or
@@ -577,10 +577,10 @@ public @interface Deprecated {}
     <id>DM_EXIT</id>
     <artifact tool="FindBugs" mnemonic="DM_EXIT"/>
     <artifact tool="PMD" mnemonic="DoNotCallSystemExit"/>
-    <name>Avoid calling System.exit(...)</name>
-    <shortMessage>Calling System.exit(...) may make it difficult for your code to be invoked by other code.</shortMessage>
+    <name>Avoid calling System.exit()</name>
+    <shortMessage>Calling System.exit() may make it difficult for your code to be invoked by other code.</shortMessage>
     <info>
-<![CDATA[<p>Invoking <code>System.exit(...)</code> shuts down the
+<![CDATA[<p>Invoking <code>System.exit()</code> shuts down the
 entire Java virtual machine. This should only been done when it is
 appropriate. Such calls make it hard or impossible for your code to be
 invoked by other code. Consider throwing a
@@ -595,8 +595,8 @@ Specification).</p>]]>
   <findingType>
     <id>DM_RUN_FINALIZERS_ON_EXIT</id>
     <artifact tool="FindBugs" mnemonic="DM_RUN_FINALIZERS_ON_EXIT"/>
-    <name>Avoid the dangerous runFinalizersOnExit method</name>
-    <shortMessage>Calling dangerous method runFinalizersOnExit could result in erratic behavior or deadlock.</shortMessage>
+    <name>Avoid the dangerous runFinalizersOnExit() method</name>
+    <shortMessage>Calling dangerous method runFinalizersOnExit() could result in erratic behavior or deadlock.</shortMessage>
     <info>
 <![CDATA[<p><em>Never call System.runFinalizersOnExit or
 Runtime.runFinalizersOnExit for any reason: they are among the most
@@ -819,7 +819,7 @@ Double(d).intValue()</code>). Just perform direct primitive coercion
     <id>DM_BOXED_PRIMITIVE_TOSTRING</id>
     <artifact tool="FindBugs" mnemonic="DM_BOXED_PRIMITIVE_TOSTRING"/>
     <artifact tool="PMD" mnemonic="UnnecessaryConversionTemporary"/>
-    <name>Boxed primitive used just to call toString</name>
+    <name>Boxed primitive used just to call toString()</name>
     <shortMessage>Method allocates a boxed primitive just to call toString.</shortMessage>
     <info>
 <![CDATA[<p>A boxed primitive is allocated just to call toString(). It
@@ -858,7 +858,7 @@ on each wrapper type which takes the primitive value. So,</p>
   <findingType>
     <id>DM_MONITOR_WAIT_ON_CONDITION</id>
     <artifact tool="FindBugs" mnemonic="DM_MONITOR_WAIT_ON_CONDITION"/>
-    <name>Monitor wait on a util concurrent Condition object</name>
+    <name>Monitor wait() on a util concurrent Condition object</name>
     <shortMessage>Monitor wait() called on a util concurrent Condition object, use await() instead.</shortMessage>
     <info>
 <![CDATA[<p>This method calls <code>wait()</code> on a
@@ -892,8 +892,8 @@ for this purpose because it avoid several tricky implementation issues
   <findingType>
     <id>DM_NEXTINT_VIA_NEXTDOUBLE</id>
     <artifact tool="FindBugs" mnemonic="DM_NEXTINT_VIA_NEXTDOUBLE"/>
-    <name>Use nextInt not nextDouble to generate a random integer</name>
-    <shortMessage>Use the nextInt method of Random rather than nextDouble to generate a random integer.</shortMessage>
+    <name>Use nextInt() not nextDouble() to generate a random integer</name>
+    <shortMessage>Use the nextInt() method of Random rather than nextDouble() to generate a random integer.</shortMessage>
     <info>
 <![CDATA[<p>If <code>r</code> is a <code>java.util.Random</code>
 object, you can generate a random number from 0 to <code>n</code>-1
@@ -909,8 +909,8 @@ issues (for more information see its method documentation).</p>]]>
   <findingType>
     <id>SQL_NONCONSTANT_STRING_PASSED_TO_EXECUTE</id>
     <artifact tool="FindBugs" mnemonic="SQL_NONCONSTANT_STRING_PASSED_TO_EXECUTE"/>
-    <name>Nonconstant String passed to execute may be vulnerable to SQL injection</name>
-    <shortMessage>A Nonconstant string passed to execute method on an SQL statement.  This may be vulnerable to SQL injection.</shortMessage>
+    <name>Nonconstant String passed to execute() may be vulnerable to SQL injection</name>
+    <shortMessage>A Nonconstant string passed to execute() method on an SQL statement.  This may be vulnerable to SQL injection.</shortMessage>
     <info>
 <![CDATA[<p>The method invokes the execute method on an SQL statement
 with a <code>String</code> that seems to be dynamically
@@ -937,7 +937,7 @@ undesirable.</p>]]>
     <id>DM_USELESS_THREAD</id>
     <artifact tool="FindBugs" mnemonic="DM_USELESS_THREAD"/>
     <name>Useless thread</name>
-    <shortMessage>A thread was created using the default empty run method.  Delete this thread.</shortMessage>
+    <shortMessage>A thread was created using the default empty run() method.  Delete this thread.</shortMessage>
     <info>
 <![CDATA[<p>This method creates a thread without specifying a run
 method either by deriving from (i.e., subclassing) the
@@ -1052,7 +1052,7 @@ program.</p>]]>
     <id>FI_USELESS</id>
     <artifact tool="FindBugs" mnemonic="FI_USELESS"/>
     <artifact tool="PMD" mnemonic="FinalizeOnlyCallsSuperFinalize"/>
-    <name>Finalize only calls super.finalize()</name>
+    <name>Finalize() only calls super.finalize()</name>
     <shortMessage>Finalizer does nothing but call its superclass finalizer.  Consider removing this method.</shortMessage>
     <info>
 <![CDATA[<p>The only thing this <code>finalize()</code> method does
@@ -1068,7 +1068,7 @@ program.</p>]]>
     <id>FI_MISSING_SUPER_CALL</id>
     <artifact tool="FindBugs" mnemonic="FI_MISSING_SUPER_CALL"/>
     <artifact tool="PMD" mnemonic="FinalizeDoesNotCallSuperFinalize"/>
-    <name>Finalize does not call super finalize</name>
+    <name>Finalize() does not call super.finalize()</name>
     <shortMessage>Finalizer does not call the superclass finalizer as its last operation.  Add a call to super.finalize() to this method.</shortMessage>
     <info>
 <![CDATA[<p>This <code>finalize()</code> method does not make a call
@@ -1130,7 +1130,7 @@ not equal when compared normally. Don't do it.</p>]]>
     <artifact tool="FindBugs" mnemonic="EQ_SELF_NO_OBJECT"/>
     <artifact tool="FindBugs" mnemonic="EQ_ABSTRACT_SELF"/>
     <artifact tool="FindBugs" mnemonic="EQ_OTHER_USE_OBJECT"/>
-    <name>Equals defined that does not override Object.equals</name>
+    <name>Equals() defined that does not override Object.equals</name>
     <shortMessage>Covariant equals() method defined, Object.equals(Object) inherited.</shortMessage>
     <info>
 <![CDATA[<p>This class defines a covariant version of the
@@ -1158,7 +1158,7 @@ confusion.</p>]]>
   <findingType>
     <id>EQ_OVERRIDING_EQUALS_NOT_SYMMETRIC</id>
     <artifact tool="FindBugs" mnemonic="EQ_OVERRIDING_EQUALS_NOT_SYMMETRIC"/>
-    <name>Overriding equals not symmetric</name>
+    <name>Overriding equals() not symmetric</name>
     <shortMessage>Equals method overrides equals in superclass and may not be symmetric.</shortMessage>
     <info>
 <![CDATA[<p>This class defines an equals method that overrides an
@@ -1213,7 +1213,7 @@ null check.</p>]]>
     <id>NP_EQUALS_SHOULD_HANDLE_NULL_ARGUMENT</id>
     <artifact tool="FindBugs" mnemonic="NP_EQUALS_SHOULD_HANDLE_NULL_ARGUMENT"/>
     <artifact tool="FindBugs" mnemonic="NP_DOES_NOT_HANDLE_NULL"/>
-    <name>Equals should handle null argument</name>
+    <name>Equals() should handle null argument</name>
     <shortMessage>This equals() method does not check for null argument.  This contract violation should be fixed.</shortMessage>
     <info>
 <![CDATA[<p>This implementation of <code>equals(Object)</code>
@@ -1229,7 +1229,7 @@ passed a <code>null</code> value.</p>]]>
     <id>CO_SELF_NO_OBJECT</id>
     <artifact tool="FindBugs" mnemonic="CO_SELF_NO_OBJECT"/>
     <artifact tool="FindBugs" mnemonic="CO_ABSTRACT_SELF"/>
-    <name>Covariant compareTo method</name>
+    <name>Covariant compareTo() method</name>
     <shortMessage>Covariant compareTo() method defined.</shortMessage>
     <info>
 <![CDATA[<p>This class defines a covariant version of
@@ -1263,7 +1263,7 @@ this problem of highest importance.]]>
     <id>HE_HASHCODE_NO_EQUALS</id>
     <artifact tool="FindBugs" mnemonic="HE_HASHCODE_NO_EQUALS"/>
     <artifact tool="FindBugs" mnemonic="HE_HASHCODE_USE_OBJECT_EQUALS"/>
-    <name>Defines hash code but inherits equals</name>
+    <name>Defines hashCode() but inherits equals()</name>
     <shortMessage>Class defines hashCode() but inherits equals().</shortMessage>
     <info>
 <![CDATA[<p>This class defines a <code>hashCode()</code> method but
@@ -1277,7 +1277,7 @@ object's identity is based on criteria more complicated than simple
 reference equality.</p>
 
 <p>If you don't think instances of this class will ever be inserted
-into a HashMap/HashTable, the recommended <code>hashCode</code>
+into a HashMap/Hashtable, the recommended <code>hashCode</code>
 implementation to use is:</p>
 
 <pre>
@@ -1337,7 +1337,7 @@ Bloch's <i>Effective Java</i> (second edition).</p>]]>
     <id>HE_EQUALS_NO_HASHCODE</id>
     <artifact tool="FindBugs" mnemonic="HE_EQUALS_NO_HASHCODE"/>
     <artifact tool="FindBugs" mnemonic="HE_EQUALS_USE_HASHCODE"/>
-    <name>Defines equals but inherits hash code</name>
+    <name>Defines equals() but inherits hashCode()</name>
     <shortMessage>Class defines equals() but inherits hashCode().</shortMessage>
     <info>
 <![CDATA[<p> This class overrides <code>equals(Object)</code>, but
@@ -1350,7 +1350,7 @@ VM).  Therefore, the class is likely to violate the invariant that
 equal objects must have equal hashcodes.</p>
 
 <p>If you don't think instances of this class will ever be inserted
-into a HashMap/HashTable, the recommended <code>hashCode</code>
+into a HashMap/Hashtable, the recommended <code>hashCode</code>
 implementation to use is:</p>
 
 <pre>
@@ -1390,7 +1390,7 @@ VM).  Therefore, the class is likely to violate the invariant that
 equal objects must have equal hashcodes.</p>
 
 <p>If you don't think instances of this class will ever be inserted
-into a HashMap/HashTable, the recommended <code>hashCode</code>
+into a HashMap/Hashtable, the recommended <code>hashCode</code>
 implementation to use is:</p>
 
 <pre>
@@ -1496,8 +1496,8 @@ that this class faithfully implements that intent.</p>]]>
   <findingType>
     <id>NN_NAKED_NOTIFY</id>
     <artifact tool="FindBugs" mnemonic="NN_NAKED_NOTIFY"/>
-    <name>Naked notify</name>
-    <shortMessage>Naked notify, no apparent change has been made to mutable object state.</shortMessage>
+    <name>Naked notify()</name>
+    <shortMessage>Naked notify(), no apparent change has been made to mutable object state.</shortMessage>
     <info>
 <![CDATA[<p> A call to <code>notify()</code> or
 <code>notifyAll()</code> was made without any (apparent) accompanying
@@ -1584,8 +1584,8 @@ situations.</p>]]>
   <findingType>
     <id>RU_INVOKE_RUN</id>
     <artifact tool="FindBugs" mnemonic="RU_INVOKE_RUN"/>
-    <name>Invokes run on a thread</name>
-    <shortMessage>Invokes run on a thread, it is likely that this code intended to invoke start instead.</shortMessage>
+    <name>Invokes run() on a thread</name>
+    <shortMessage>Invokes run() on a thread, it is likely that this code intended to invoke start() instead.</shortMessage>
     <info>
 <![CDATA[<p>This method explicitly invokes <code>run()</code> on an
 object. In general, classes implement the <code>Runnable</code>
@@ -1670,7 +1670,7 @@ Java Language Specification</a> for further details.</p>]]>
   <findingType>
     <id>TLW_TWO_LOCK_WAIT</id>
     <artifact tool="FindBugs" mnemonic="TLW_TWO_LOCK_WAIT"/>
-    <name>Two lock wait</name>
+    <name>Two lock wait()</name>
     <shortMessage>Wait with two locks held.  Only one lock released by the wait.</shortMessage>
     <info>
 <![CDATA[<p>Waiting on a monitor while two locks are held may cause
@@ -1685,7 +1685,7 @@ especially if there is also a warning about a two lock notify.</p>]]>
   <findingType>
     <id>TLW_TWO_LOCK_NOTIFY</id>
     <artifact tool="FindBugs" mnemonic="TLW_TWO_LOCK_NOTIFY"/>
-    <name>Two lock notify</name>
+    <name>Two lock notify()</name>
     <shortMessage>Notify with two locks held.</shortMessage>
     <info>
 <![CDATA[<p>The code calls <code>notify()</code> or
@@ -1703,7 +1703,7 @@ bug is quite high.</p>]]>
   <findingType>
     <id>UW_UNCOND_WAIT</id>
     <artifact tool="FindBugs" mnemonic="UW_UNCOND_WAIT"/>
-    <name>Unconditional wait</name>
+    <name>Unconditional wait()</name>
     <shortMessage>Unconditional wait could cause your code to hang</shortMessage>
     <info>
 <![CDATA[<p>This method contains a call to
@@ -1795,7 +1795,7 @@ objects.</p>]]>
   <findingType>
     <id>IT_NO_SUCH_ELEMENT</id>
     <artifact tool="FindBugs" mnemonic="IT_NO_SUCH_ELEMENT"/>
-    <name>Next must throw NoSuchElementException</name>
+    <name>Next() must throw NoSuchElementException</name>
     <shortMessage>The next() method implementation in this class should throw NoSuchElementException exception when there are no more elements to return.</shortMessage>
     <info>
 <![CDATA[<p>This class implements the <code>java.util.Iterator</code>
@@ -2127,7 +2127,7 @@ method due to backwards compatibility, deprecate the method.</p>]]>
     <id>SuspiciousHashcodeMethodName</id>
     <artifact tool="FindBugs" mnemonic="NM_LCASE_HASHCODE"/>
     <artifact tool="PMD" mnemonic="SuspiciousHashcodeMethodName"/>
-    <name>Suspicious hashcode method name</name>
+    <name>Suspicious hashcode() method name</name>
     <shortMessage>Class defines hashcode(); should it be hashCode()?</shortMessage>
     <info>
 <![CDATA[<p>This class defines a method called
@@ -2144,7 +2144,7 @@ the <code>hashCode</code> method.</p>]]>
   <findingType>
     <id>NM_LCASE_TOSTRING</id>
     <artifact tool="FindBugs" mnemonic="NM_LCASE_TOSTRING"/>
-    <name>Suspicious tostring method name</name>
+    <name>Suspicious tostring() method name</name>
     <shortMessage>Class defines tostring(); should it be toString()?</shortMessage>
     <info>
 <![CDATA[<p>This class defines a method called
@@ -2158,7 +2158,7 @@ is probably what was intended.</p>]]>
     <id>NM_BAD_EQUAL</id>
     <artifact tool="FindBugs" mnemonic="NM_BAD_EQUAL"/>
     <artifact tool="PMD" mnemonic="SuspiciousEqualsMethodName"/>
-    <name>Suspicious equals method name</name>
+    <name>Suspicious equal() method name</name>
     <shortMessage>Class defines equal(); should it be equals()?</shortMessage>
     <info>
 <![CDATA[<p>This class defines a method
@@ -2185,8 +2185,8 @@ class.</p>
   <findingType>
     <id>RR_NOT_CHECKED</id>
     <artifact tool="FindBugs" mnemonic="RR_NOT_CHECKED"/>
-    <name>Read return value not checked</name>
-    <shortMessage>Method ignores results of one of the variants of the java.io.InputStream read method.</shortMessage>
+    <name>Read() return value not checked</name>
+    <shortMessage>Method ignores results of one of the variants of the java.io.InputStream read() method.</shortMessage>
     <info>
 <![CDATA[<p>This method ignores the return value of one of the
 variants of <code>java.io.InputStream.read()</code> which can return
@@ -2203,8 +2203,8 @@ data requested, causing the program to fail only sporadically.</p>]]>
   <findingType>
     <id>SR_NOT_CHECKED</id>
     <artifact tool="FindBugs" mnemonic="SR_NOT_CHECKED"/>
-    <name>Skip return value not checked</name>
-    <shortMessage>Method ignores results of one of the variants of the java.io.InputStream skip method.</shortMessage>
+    <name>Skip() return value not checked</name>
+    <shortMessage>Method ignores results of one of the variants of the java.io.InputStream skip() method.</shortMessage>
     <info>
 <![CDATA[<p>This method ignores the return value of
 <code>java.io.InputStream.skip()</code> which can skip multiple
@@ -2224,10 +2224,10 @@ bytes.</p>]]>
   <findingType>
     <id>SE_READ_RESOLVE_MUST_RETURN_OBJECT</id>
     <artifact tool="FindBugs" mnemonic="SE_READ_RESOLVE_MUST_RETURN_OBJECT"/>
-    <name>ReadResolve method must declare a return type of Object</name>
+    <name>ReadResolve() method must declare a return type of Object</name>
     <shortMessage>The readResolve() method must be declared with a return type of Object.</shortMessage>
     <info>
-<![CDATA[<p>In order for the <code>readResolve</code> method to be
+<![CDATA[<p>In order for the <code>readResolve()</code> method to be
 recognized by the serialization mechanism it must declare a return
 type of <code>java.lang.Object</code>.</p>]]>
     </info>
@@ -2389,7 +2389,7 @@ a break or return at the end of the previous case.</p>]]>
   <findingType>
     <id>WS_WRITEOBJECT_SYNC</id>
     <artifact tool="FindBugs" mnemonic="WS_WRITEOBJECT_SYNC"/>
-    <name>Suspicious writeObject is the only synchronized method</name>
+    <name>Suspicious writeObject() is the only synchronized method</name>
     <shortMessage>Suspicious that the writeObject() method is synchronized but nothing else is.</shortMessage>
     <info>
 <![CDATA[<p>This class has a <code>writeObject()</code> method which
@@ -2402,7 +2402,7 @@ implemented correctly.</p>]]>
   <findingType>
     <id>RS_READOBJECT_SYNC</id>
     <artifact tool="FindBugs" mnemonic="RS_READOBJECT_SYNC"/>
-    <name>Suspicious synchronized readObject method</name>
+    <name>Suspicious synchronized readObject() method</name>
     <shortMessage>Suspicious that the readObject() method is synchronized, it probably does not need to be.</shortMessage>
     <info>
 <![CDATA[<p>This serializable class defines a
@@ -2531,7 +2531,7 @@ runtime when it is serialized.</p>]]>
   <findingType>
     <id>SC_START_IN_CTOR</id>
     <artifact tool="FindBugs" mnemonic="SC_START_IN_CTOR"/>
-    <name>Thread start in constructor</name>
+    <name>Thread start() call in constructor</name>
     <shortMessage>This constructor invokes Thread.start() which is highly dubious.</shortMessage>
     <info>
 <![CDATA[<p>The constructor starts a thread. This is likely to be
@@ -2639,8 +2639,8 @@ has not created a race condition.</p>]]>
   <findingType>
     <id>NP_LOAD_OF_KNOWN_NULL_VALUE</id>
     <artifact tool="FindBugs" mnemonic="NP_LOAD_OF_KNOWN_NULL_VALUE"/>
-    <name>Load Of Known Null Value</name>
-    <shortMessage>Load of known null value</shortMessage>
+    <name>Load of a known null value</name>
+    <shortMessage>The variable referenced at this point is known to be null. Is this a mistake?</shortMessage>
     <info>
 <![CDATA[<p>The variable referenced at this point is known to be
 <code>null</code> due to an earlier check against
@@ -2656,7 +2656,7 @@ have been a check to see if it was non-null.</p>]]>
     <id>NP_IMMEDIATE_DEREFERENCE_OF_READLINE</id>
     <artifact tool="FindBugs" mnemonic="NP_IMMEDIATE_DEREFERENCE_OF_READLINE"/>
     <artifact tool="FindBugs" mnemonic="NP_DEREFERENCE_OF_READLINE_VALUE"/>
-    <name>Dereference of readLine result</name>
+    <name>Dereference of readLine() result</name>
     <shortMessage>This code dereferences the result of a call to readLine(). This code may throw a NullPointerException.</shortMessage>
     <info>
 <![CDATA[<p>The result of invoking <code>readLine()</code> is
@@ -2715,8 +2715,8 @@ wrong).</p>]]>
   <findingType>
     <id>WA_NOT_IN_LOOP</id>
     <artifact tool="FindBugs" mnemonic="WA_NOT_IN_LOOP"></artifact>
-    <name>Wait outside loop</name>
-    <shortMessage>This call to wait is not in loop. Are you sure the condition waited for is true?</shortMessage>
+    <name>Wait() outside loop</name>
+    <shortMessage>This call to wait() is not in loop. Are you sure the condition waited for is true?</shortMessage>
     <info>
 <![CDATA[<p>This method contains a call to
 <code>java.lang.Object.wait()</code> which is not in a loop.  If the
@@ -2729,7 +2729,7 @@ occurred.</p>]]>
   <findingType>
     <id>WA_AWAIT_NOT_IN_LOOP</id>
     <artifact tool="FindBugs" mnemonic="WA_AWAIT_NOT_IN_LOOP"/>
-    <name>Await outside loop</name>
+    <name>Await() outside loop</name>
     <shortMessage>This call to Condition.await() is not in a loop.  Are you sure the condition waited for is true?</shortMessage>
     <info>
 <![CDATA[<p>This method contains a call to
@@ -2744,7 +2744,7 @@ that actually occurred.</p>]]>
     <id>NO_NOTIFY_NOT_NOTIFYALL</id>
     <artifact tool="FindBugs" mnemonic="NO_NOTIFY_NOT_NOTIFYALL"/>
     <artifact tool="PMD" mnemonic="UseNotifyAllInsteadOfNotify"/>
-    <name>Use notifyAll not notify</name>
+    <name>Use notifyAll() not notify()</name>
     <shortMessage>Consider using notifyAll() rather than notify().</shortMessage>
     <info>
 <![CDATA[<p>This method calls <code>notify()</code> rather than
@@ -2762,8 +2762,8 @@ thread that waited); thus it's usually safer to call
   <findingType>
     <id>RV_CHECK_FOR_POSITIVE_INDEXOF</id>
     <artifact tool="FindBugs" mnemonic="RV_CHECK_FOR_POSITIVE_INDEXOF"/>
-    <name>Avoid check for positive indexOf</name>
-    <shortMessage>Method checks to see if result of String.indexOf is positive rather than negative.</shortMessage>
+    <name>Avoid check for positive indexOf()</name>
+    <shortMessage>Method checks to see if result of String.indexOf() is positive rather than negative.</shortMessage>
     <info>
 <![CDATA[<p>The method invokes <code>String.indexOf</code> and checks
 to see if the result is positive or non-positive. It is much more
@@ -2778,7 +2778,7 @@ at some place other than at the beginning of the String.</p>]]>
   <findingType>
     <id>RV_DONT_JUST_NULL_CHECK_READLINE</id>
     <artifact tool="FindBugs" mnemonic="RV_DONT_JUST_NULL_CHECK_READLINE"/>
-    <name>Line read by readLine ignored</name>
+    <name>Line read by readLine() ignored</name>
     <shortMessage>Method discards the result of readLine() after checking if it is non-null. Is it intended to throw away the line just read?</shortMessage>
     <info>
 <![CDATA[<p>The value returned by <code>readLine()</code> is discarded
@@ -2933,7 +2933,7 @@ return @NonNull.</p>]]>
   <findingType>
     <id>NP_CLONE_COULD_RETURN_NULL</id>
     <artifact tool="FindBugs" mnemonic="NP_CLONE_COULD_RETURN_NULL"/>
-    <name>Clone may return null</name>
+    <name>Clone() may return null</name>
     <shortMessage>This clone method may return null. This violates the contract for clone.</shortMessage>
     <info>
 <![CDATA[<p>This clone method seems to return <code>null</code> in
@@ -2949,7 +2949,7 @@ is never allowed to return a <code>null</code> value.</p>
   <findingType>
     <id>NP_TOSTRING_COULD_RETURN_NULL</id>
     <artifact tool="FindBugs" mnemonic="NP_TOSTRING_COULD_RETURN_NULL"/>
-    <name>ToString may return null</name>
+    <name>ToString() may return null</name>
     <shortMessage>This toString() method may return null.  This could cause other code to break and is a bad coding practice.</shortMessage>
     <info>
 <![CDATA[<p>This <code>toString()</code> method seems to return
@@ -3113,7 +3113,7 @@ from the code.</p>]]>
   <findingType>
     <id>RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE</id>
     <artifact tool="FindBugs" mnemonic="RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE"/>
-    <name>Redundant null check Of non-null value</name>
+    <name>Redundant null check of non-null value</name>
     <shortMessage>This code contains a redundant null check of a value known to be non-null. This check can be removed.</shortMessage>
     <info>
 <![CDATA[<p>This method contains a redundant check of a known non-null
@@ -3189,7 +3189,7 @@ etc.</p>]]>
     <artifact tool="FindBugs" mnemonic="EC_UNRELATED_TYPES"/>
     <artifact tool="FindBugs" mnemonic="EC_UNRELATED_INTERFACES"/>
     <artifact tool="FindBugs" mnemonic="EC_UNRELATED_CLASS_AND_INTERFACE"/>
-    <name>Avoid calling equals on unrelated types</name>
+    <name>Avoid calling equals() on unrelated types</name>
     <shortMessage>This code calls equals() comparing two different and unrelated types. Fix this muddled code.</shortMessage>
     <info>
 <![CDATA[<p>This method calls <code>equals()</code> on two references
@@ -3213,7 +3213,7 @@ errors.</p>]]>
     <id>EC_NULL_ARG</id>
     <artifact tool="FindBugs" mnemonic="EC_NULL_ARG"/>
     <artifact tool="PMD" mnemonic="EqualsNull"/>
-    <name>Avoid calling equals with a null argument</name>
+    <name>Avoid calling equals() with a null argument</name>
     <shortMessage>This code calls equals() with a null argument.</shortMessage>
     <info>
 <![CDATA[<p>This method calls <code>equals(Object)</code>, passing a
@@ -3231,7 +3231,7 @@ concepts and use <code>equals()</code> to check for a
   <findingType>
     <id>MWN_MISMATCHED_WAIT</id>
     <artifact tool="FindBugs" mnemonic="MWN_MISMATCHED_WAIT"/>
-    <name>Mismatched wait</name>
+    <name>Mismatched wait()</name>
     <shortMessage>This code calls wait() without obviously holding a lock on the object. This could throw IllegalMonitorStateException at runtime.</shortMessage>
     <info>
 <![CDATA[<p>This method calls <code>Object.wait()</code> without
@@ -3245,7 +3245,7 @@ runtime.</p>]]>
   <findingType>
     <id>MWN_MISMATCHED_NOTIFY</id>
     <artifact tool="FindBugs" mnemonic="MWN_MISMATCHED_NOTIFY"/>
-    <name>Mismatched notify</name>
+    <name>Mismatched notify()</name>
     <shortMessage>This code calls notify() or notifyAll() without obviously holding a lock on the object. This could throw IllegalMonitorStateException at runtime.</shortMessage>
     <info>
 <![CDATA[<p>This method calls <code>Object.notify()</code> or
@@ -3367,8 +3367,8 @@ are comparing the right things.</p>]]>
   <findingType>
     <id>DMI_LONG_BITS_TO_DOUBLE_INVOKED_ON_INT</id>
     <artifact tool="FindBugs" mnemonic="DMI_LONG_BITS_TO_DOUBLE_INVOKED_ON_INT"/>
-    <name>Double.longBitsToDouble invoked on int</name>
-    <shortMessage>This code invokes Double.longBitsToDouble int which is unlikely to give the intended result.</shortMessage>
+    <name>Double.longBitsToDouble() invoked on an int</name>
+    <shortMessage>This code invokes Double.longBitsToDouble() passing an int argument which is unlikely to give the intended result.</shortMessage>
     <info>
 <![CDATA[<p>The <code>Double.longBitsToDouble</code> method is
 invoked, but a 32-bit int value is passed as an argument. This
@@ -3451,7 +3451,7 @@ int i = r.nextInt(Integer.MAX_VALUE) + 1;
   <findingType>
     <id>RV_ABSOLUTE_VALUE_OF_HASHCODE</id>
     <artifact tool="FindBugs" mnemonic="RV_ABSOLUTE_VALUE_OF_HASHCODE"/>
-    <name>Absolute value of hashCode</name>
+    <name>Absolute value of hashCode()</name>
     <shortMessage>Bad attempt to compute absolute value of signed 32-bit hashcode.</shortMessage>
     <info>
 <![CDATA[<p>This code generates a hashcode and then computes the
@@ -3490,8 +3490,8 @@ if (hash == Integer.MIN_VALUE) {
   <findingType>
     <id>RV_REM_OF_RANDOM_INT</id>
     <artifact tool="FindBugs" mnemonic="RV_REM_OF_RANDOM_INT"/>
-    <name>Rem Of Random Int</name>
-    <shortMessage>Remainder of 32-bit signed random integer</shortMessage>
+    <name>Remainder of a random int</name>
+    <shortMessage>Remainder of 32-bit signed random integer. Use Random.nextInt(int) instead.</shortMessage>
     <info>
 <![CDATA[<p>This code generates a random signed integer and then
 computes the remainder of that value modulo another value. Since the
@@ -3504,8 +3504,8 @@ using the <code>Random.nextInt(int)</code> method instead.</p>]]>
   <findingType>
     <id>RV_REM_OF_HASHCODE</id>
     <artifact tool="FindBugs" mnemonic="RV_REM_OF_HASHCODE"/>
-    <name>Remainder of hashCode</name>
-    <shortMessage>Remainder of hashCode could be negative</shortMessage>
+    <name>Remainder of hashCode()</name>
+    <shortMessage>Remainder of hashCode() could be negative</shortMessage>
     <info>
 <![CDATA[<p>This code computes a hashcode, and then computes the
 remainder of that value modulo another value. Since the resulting
@@ -3702,7 +3702,7 @@ web site</a>.</p>]]>
   <findingType>
     <id>JLM_JSR166_LOCK_MONITORENTER</id>
     <artifact tool="FindBugs" mnemonic="JLM_JSR166_LOCK_MONITORENTER"/>
-    <name>Suspicious util concurrent Lock monitor enter</name>
+    <name>Suspicious util concurrent Lock monitor use</name>
     <shortMessage>Suspicions intrinsic synchronization performed on a java.util.concurrent Lock object. This is probably a mistake.</shortMessage>
     <info>
 <![CDATA[<p>This method performs synchronization on an
@@ -3856,7 +3856,7 @@ unnecessary synchronization.</p>]]>
     <artifact tool="FindBugs" mnemonic="ITA_INEFFICIENT_TO_ARRAY"/>
     <artifact tool="PMD" mnemonic="ClassCastExceptionWithToArray"/>
     <artifact tool="PMD" mnemonic="OptimizableToArrayCall"/>
-    <name>Questionable use of toArray</name>
+    <name>Questionable use of toArray()</name>
     <shortMessage>Method uses toArray() with no argument or a zero-length array argument. The no argument call may result in a ClassCastException.</shortMessage>
     <info>
 <![CDATA[<p>This method uses the <code>toArray()</code> method of a
@@ -3898,7 +3898,7 @@ public class Test {
   <findingType>
     <id>IJU_ASSERT_METHOD_INVOKED_FROM_RUN_METHOD</id>
     <artifact tool="FindBugs" mnemonic="IJU_ASSERT_METHOD_INVOKED_FROM_RUN_METHOD"/>
-    <name>Suspicious JUnit assert invoked within Runnable.run</name>
+    <name>Suspicious JUnit assertion within Runnable.run()</name>
     <shortMessage>A JUnit assertion in run method in another thread will not be noticed by JUnit. Are you trying to test concurrent code?</shortMessage>
     <info>
 <![CDATA[<p>A JUnit assertion is performed in a run method. This is
@@ -3919,7 +3919,7 @@ JUnit thread.</p>]]>
   <findingType>
     <id>IJU_SETUP_NO_SUPER</id>
     <artifact tool="FindBugs" mnemonic="IJU_SETUP_NO_SUPER"/>
-    <name>SetUp does not call super.setUp</name>
+    <name>SetUp() does not call super.setUp()</name>
     <shortMessage>JUnit TestCase implements setUp but doesn't call super.setUp().</shortMessage>
     <info>
 <![CDATA[<p>This class is a JUnit <code>TestCase</code> and implements
@@ -3931,7 +3931,7 @@ call <code>super.setUp()</code>, but in this case it doesn't.</p>]]>
   <findingType>
     <id>IJU_TEARDOWN_NO_SUPER</id>
     <artifact tool="FindBugs" mnemonic="IJU_TEARDOWN_NO_SUPER"/>
-    <name>TearDown does not call super.tearDown</name>
+    <name>TearDown() does not call super.tearDown()</name>
     <shortMessage>TestCase implements tearDown but doesn't call super.tearDown().</shortMessage>
     <info>
 <![CDATA[<p>This class is a JUnit <code>TestCase</code> and implements
@@ -3957,8 +3957,8 @@ be declared to be <code>static</code>, but isn't.</p>]]>
   <findingType>
     <id>IJU_BAD_SUITE_METHOD</id>
     <artifact tool="FindBugs" mnemonic="IJU_BAD_SUITE_METHOD"/>
-    <name>Bad Suite Method</name>
-    <shortMessage>TestCase declares a bad suite method.</shortMessage>
+    <name>Bad suite() method signature</name>
+    <shortMessage>TestCase declares a bad suite() method. Its signature appears to be wrong.</shortMessage>
     <info>
 <![CDATA[<p>This class is a JUnit <code>TestCase</code> and defines a
 <code>suite()</code> method. However, the <code>suite</code> method
@@ -3994,7 +3994,7 @@ test methods.</p>]]>
     <id>BOA_BADLY_OVERRIDDEN_ADAPTER</id>
     <artifact tool="FindBugs" mnemonic="BOA_BADLY_OVERRIDDEN_ADAPTER"/>
     <name>Badly overridden adapter</name>
-    <shortMessage>Class overrides a method implemented in super class Adapter wrongly.</shortMessage>
+    <shortMessage>Class overrides a method implemented in super class adapter wrongly.</shortMessage>
     <info>
 <![CDATA[<p>This method intends to override a method found in a parent
 class, where that class is an Adapter that implements a listener
@@ -4174,7 +4174,7 @@ if (Arrays.equals(array1, array2)) {
   <findingType>
     <id>STI_INTERRUPTED_ON_CURRENTTHREAD</id>
     <artifact tool="FindBugs" mnemonic="STI_INTERRUPTED_ON_CURRENTTHREAD"/>
-    <name>Unnecessary use of currentThread to call interrupted</name>
+    <name>Unnecessary use of currentThread() to call interrupted()</name>
     <shortMessage>Unnecessary use of Thread.currentThread() simply to call interrupted().  Change to Thread.interrupted().</shortMessage>
     <info>
 <![CDATA[<p>This code invokes the <code>Thread.currentThread()</code>
@@ -4204,8 +4204,8 @@ if (Thread.interrupted()) {
   <findingType>
     <id>STI_INTERRUPTED_ON_UNKNOWNTHREAD</id>
     <artifact tool="FindBugs" mnemonic="STI_INTERRUPTED_ON_UNKNOWNTHREAD"/>
-    <name>Suspicious interrupted call on an unknown thread</name>
-    <shortMessage>This code invokes the static Thread.interrupted() method on an unknown thread instance. This is likely not doing what the programmer intended.</shortMessage>
+    <name>Suspicious interrupted() call on an unknown Thread</name>
+    <shortMessage>This code invokes the static Thread.interrupted() method on an unknown Thread instance. This is likely not doing what the programmer intended.</shortMessage>
     <info>
 <![CDATA[<p>This method invokes the <code>interrupted()</code> method
 on a <code>Thread</code> object that does not appear to be the current
@@ -4396,7 +4396,7 @@ class B extends A {
   <findingType>
     <id>WMI_WRONG_MAP_ITERATOR</id>
     <artifact tool="FindBugs" mnemonic="WMI_WRONG_MAP_ITERATOR"/>
-    <name>Inefficient Map iterator</name>
+    <name>Inefficient Map iteration</name>
     <shortMessage>Inefficient use of keySet() iterator instead of entrySet() iterator.</shortMessage>
     <info>
 <![CDATA[<p>This method accesses the value of a <code>Map</code>
@@ -4745,10 +4745,8 @@ public class Foo {
   <findingType>
     <id>ICAST_INTEGER_MULTIPLY_CAST_TO_LONG</id>
     <artifact tool="FindBugs" mnemonic="ICAST_INTEGER_MULTIPLY_CAST_TO_LONG"/>
-    <name>Integer Multiply Cast To Long</name>
-    <shortMessage>
-      Result of integer multiplication cast to long
-    </shortMessage>
+    <name>Integer multiplication result cast to long</name>
+    <shortMessage>This code casts the result of integer multiplication to a long. This might overflow.</shortMessage>
     <info>
 <![CDATA[<p>This code performs integer multiply and then converts
 the result to a long, as in:</p>
@@ -4786,7 +4784,7 @@ long convertDaysToMilliseconds(int days) {
   <findingType>
     <id>ICAST_INT_CAST_TO_FLOAT_PASSED_TO_ROUND</id>
     <artifact tool="FindBugs" mnemonic="ICAST_INT_CAST_TO_FLOAT_PASSED_TO_ROUND"/>
-    <name>Int cast to a float then passed to Math.round</name>
+    <name>Int cast to a float then passed to Math.round()</name>
     <shortMessage>This code casts an int value to a float value and then passes this value to Math.round(). It is likely that this is not what was intended.</shortMessage>
     <info>
 <![CDATA[<p>This code converts an <code>int</code> value to a
@@ -4806,7 +4804,7 @@ errors.</p>]]>
   <findingType>
     <id>ICAST_INT_CAST_TO_DOUBLE_PASSED_TO_CEIL</id>
     <artifact tool="FindBugs" mnemonic="ICAST_INT_CAST_TO_DOUBLE_PASSED_TO_CEIL"/>
-    <name>Int cast to a double then passed to Math.ceil</name>
+    <name>Int cast to a double then passed to Math.ceil()</name>
     <shortMessage>This code casts an int value to a double value and then passes this value to Math.ceil(). It is likely that this is not what was intended.</shortMessage>
     <info>
 <![CDATA[<p>This code converts an <code>int</code> value to a
@@ -4893,7 +4891,7 @@ intentional.</p>]]>
   <findingType>
     <id>BC_EQUALS_METHOD_SHOULD_WORK_FOR_ALL_OBJECTS</id>
     <artifact tool="FindBugs" mnemonic="BC_EQUALS_METHOD_SHOULD_WORK_FOR_ALL_OBJECTS"/>
-    <name>Equals should work for all arguments</name>
+    <name>Equals() should work for all arguments</name>
     <shortMessage>An equals method should not assume anything about the type of its argument. This code appears to be making assumptions.</shortMessage>
     <info>
 <![CDATA[<p>The <code>equals(Object o)</code> method shouldn't make
@@ -4920,7 +4918,7 @@ class Foo {
   <findingType>
     <id>BC_BAD_CAST_TO_ABSTRACT_COLLECTION</id>
     <artifact tool="FindBugs" mnemonic="BC_BAD_CAST_TO_ABSTRACT_COLLECTION"/>
-    <name>Questionable collection cast</name>
+    <name>Questionable Collection cast</name>
     <shortMessage>Questionable cast to List, Set, or Map from Collection. Do you need to do this?</shortMessage>
     <info>
 <![CDATA[<p>This code casts a <code>Collection</code> to a more
@@ -5028,7 +5026,7 @@ abstract collection type.</p>]]>
   <findingType>
     <id>RE_POSSIBLE_UNINTENDED_PATTERN</id>
     <artifact tool="FindBugs" mnemonic="RE_POSSIBLE_UNINTENDED_PATTERN"/>
-    <name>Possible unintended regex pattern</name>
+    <name>Suspicious regex pattern</name>
     <shortMessage>"." is used as a regular expression. Is this what you intended?</shortMessage>
     <info>
 <![CDATA[<p>A <code>String</code> function is being invoked and
@@ -5049,7 +5047,7 @@ has been replaced by a <code>/</code> character.</p>]]>
   <findingType>
     <id>RE_BAD_SYNTAX_FOR_REGULAR_EXPRESSION</id>
     <artifact tool="FindBugs" mnemonic="RE_BAD_SYNTAX_FOR_REGULAR_EXPRESSION"/>
-    <name>Bad syntax for regular expression</name>
+    <name>Bad syntax for regex</name>
     <shortMessage>This code uses an invalid regular expression. It will always throw a PatternSyntaxException.</shortMessage>
     <info>
 <![CDATA[<p>This code uses a regular expression that is invalid
@@ -5062,10 +5060,8 @@ this code.</p>]]>
   <findingType>
     <id>RE_CANT_USE_FILE_SEPARATOR_AS_REGULAR_EXPRESSION</id>
     <artifact tool="FindBugs" mnemonic="RE_CANT_USE_FILE_SEPARATOR_AS_REGULAR_EXPRESSION"/>
-    <name>Cant Use File Separator As Regular Expression</name>
-    <shortMessage>
-      File.separator used for regular expression
-    </shortMessage>
+    <name>Bad use of File.separator for regex</name>
+    <shortMessage>This code uses File.separator for a regular expression. This will fail on Windows platforms.</shortMessage>
     <info>
 <![CDATA[<p>The code here uses <code>File.separator</code> where a
 regular expression is required. This will fail on Windows platforms,
@@ -5088,7 +5084,7 @@ public static final String regExSeparator = File.separatorChar == '\\' ? "\\\\" 
     <id>DLS_OVERWRITTEN_INCREMENT</id>
     <artifact tool="FindBugs" mnemonic="DLS_OVERWRITTEN_INCREMENT"/>
     <name>Overwritten increment</name>
-    <shortMessage>Overwritten increment</shortMessage>
+    <shortMessage>This code preforms an increments operation and then immediately overwrites it. Is this a mistake?</shortMessage>
     <info>
 <![CDATA[<p>This code performs an increment operation (e.g.,
 <code>i++</code>) and then immediately overwrites it. For example,</p>
@@ -5136,8 +5132,7 @@ isn't want was expected, and it at least confusing.</p>]]>
     <id>IM_MULTIPLYING_RESULT_OF_IREM</id>
     <artifact tool="FindBugs" mnemonic="IM_MULTIPLYING_RESULT_OF_IREM"/>
     <name>Multiplying result of an int remainder</name>
-    <shortMessage>Integer multiply of result of integer remainder
-    </shortMessage>
+    <shortMessage>Integer multiply of result of an integer remainder operation. Is this a mistake?</shortMessage>
     <info>
 <![CDATA[<p>The code multiplies the result of an integer remaining by
 an integer constant. Be sure you don't have your operator precedence
@@ -5165,12 +5160,12 @@ i % (60 * 1000)
     <id>DMI_INVOKING_TOSTRING_ON_ARRAY</id>
     <artifact tool="FindBugs" mnemonic="DMI_INVOKING_TOSTRING_ON_ARRAY"/>
     <artifact tool="FindBugs" mnemonic="DMI_INVOKING_TOSTRING_ON_ANONYMOUS_ARRAY"/>
-    <name>Invoking toString On Array</name>
-    <shortMessage>Invocation of toString on an array produces a useless result. Did you mean to use Arrays.toString?</shortMessage>
+    <name>Invoking toString() on array</name>
+    <shortMessage>Invocation of toString() on an array produces a useless result. Did you mean to use Arrays.toString()?</shortMessage>
     <info>
-<![CDATA[<p>The code invokes <code>toString</code> on an array, which will generate
+<![CDATA[<p>The code invokes <code>toString()</code> on an array, which will generate
 a fairly useless result such as <code>[C@16f0472</code>.  Consider
-using the <code>Arrays.toString</code> method to convert the array
+using the <code>Arrays.toString()</code> method to convert the array
 into a readable String that also shows the contents of the array.</p>
 
 <p>For more information on this issue see puzzle 12 of Bloch and
@@ -5182,7 +5177,7 @@ Gafter's <i>Java Puzzlers</i>.</p>]]>
     <id>IM_AVERAGE_COMPUTATION_COULD_OVERFLOW</id>
     <artifact tool="FindBugs" mnemonic="IM_AVERAGE_COMPUTATION_COULD_OVERFLOW"/>
     <name>Average computation could overflow</name>
-    <shortMessage>Computation of average could overflow.</shortMessage>
+    <shortMessage>This code contains a computation that could overflow.</shortMessage>
     <info>
 <![CDATA[<p>This code computes the average of two integers using
 either division or signed right shift, and then uses the result as the
@@ -5270,7 +5265,7 @@ expected range of 0..11 to a method.  Please fix this code.</p>]]>
   <findingType>
     <id>DMI_USELESS_SUBSTRING</id>
     <artifact tool="FindBugs" mnemonic="DMI_USELESS_SUBSTRING"/>
-    <name>Useless substring</name>
+    <name>Useless substring(0)</name>
     <shortMessage>This code calls substring(0), which returns the original value. It may signpost a typo or a bug.</shortMessage>
     <info>
 <![CDATA[<p>This code invokes <code>substring(0)</code> on a
@@ -5283,8 +5278,8 @@ errors.</p>]]>
   <findingType>
     <id>DMI_CALLING_NEXT_FROM_HASNEXT</id>
     <artifact tool="FindBugs" mnemonic="DMI_CALLING_NEXT_FROM_HASNEXT"/>
-    <name>Never call next from hasNext</name>
-    <shortMessage>The hasNext method in this code invokes next which is almost certainly wrong.</shortMessage>
+    <name>Never call next() from hasNext()</name>
+    <shortMessage>The hasNext() method in this code invokes next() which is almost certainly wrong.</shortMessage>
     <info>
 <![CDATA[<p>In this iterator implementation the <code>hasNext()</code>
 method invokes the <code>next()</code> method.  This is almost
@@ -5395,7 +5390,7 @@ muddled understanding of the Java programming language.</p>]]>
   <findingType>
     <id>USM_USELESS_ABSTRACT_METHOD</id>
     <artifact tool="FindBugs" mnemonic="USM_USELESS_ABSTRACT_METHOD"/>
-    <name>Useless Abstract Method</name>
+    <name>Useless abstract method</name>
     <shortMessage>Abstract method is already defined in an implemented interface. Remove this method.</shortMessage>
     <info>
 <![CDATA[<p>This abstract method is already defined in an interface
@@ -5408,7 +5403,7 @@ removed, as it provides no additional value.</p>]]>
     <id>CI_CONFUSED_INHERITANCE</id>
     <artifact tool="FindBugs" mnemonic="CI_CONFUSED_INHERITANCE"/>
     <name>Confused inheritance</name>
-    <shortMessage>Class is final but declares protected field.</shortMessage>
+    <shortMessage>Class is final but declares at least one protected field.</shortMessage>
     <info>
 <![CDATA[<p>This class is declared to be <code>final</code>, but it
 declares fields to be <code>protected</code>. Since the class is
@@ -5517,7 +5512,7 @@ Bug #6178997</a>.</p>]]>
   <findingType>
     <id>DoesntOverrideEquals</id>
     <artifact tool="FindBugs" mnemonic="EQ_DOESNT_OVERRIDE_EQUALS"/>
-    <name>Doesn't override equals</name>
+    <name>Doesn't override equals()</name>
     <shortMessage>This class doesn't override equals in its superclass. Is this a mistake?</shortMessage>
     <info>
 <![CDATA[<p>This class extends a class that defines an
@@ -5911,7 +5906,7 @@ for more information about this vulnerability.</p>]]>
   <findingType>
     <id>EqualsDoesntOverrideInherited</id>
     <artifact tool="FindBugs" mnemonic="EQ_OTHER_NO_OBJECT"/>
-    <name>Equals doesn't override inherited equals(Object)</name>
+    <name>Equals() doesn't override inherited equals(Object)</name>
     <shortMessage>This code defines an equals() method that doesn't override the inherited equals(Object) method. Is this a mistake?</shortMessage>
     <info>
 <![CDATA[<p>This class defines an <code>equals()</code> method, that
@@ -6140,7 +6135,7 @@ potential for deadlock.</p>]]>
   <findingType>
     <id>WL_USING_GETCLASS_RATHER_THAN_CLASS_LITERAL</id>
     <artifact tool="FindBugs" mnemonic="WL_USING_GETCLASS_RATHER_THAN_CLASS_LITERAL"/>
-    <name>Synchronization on getClass rather than class literal</name>
+    <name>Synchronization on getClass() rather than a class literal</name>
     <shortMessage>This code uses synchronization on getClass (the dynamic class) rather than a class literal. This can create a data race if the class is subclassed.</shortMessage>
     <info>
 <![CDATA[<p>This instance method synchronizes on
@@ -6271,7 +6266,7 @@ was not fully analyzed for errors by FindBugs.</p>]]>
   <findingType>
     <id>EQ_COMPARING_CLASS_NAMES</id>
     <artifact tool="FindBugs" mnemonic="EQ_COMPARING_CLASS_NAMES"/>
-    <name>Equals compares class names</name>
+    <name>Equals() compares class names</name>
     <shortMessage>This equals compares class names rather than class objects. Just compare the class objects.</shortMessage>
     <info>
 <![CDATA[<p> This <code>equals</code> method checks to see if two
@@ -6292,7 +6287,7 @@ edition) items 8 and 9.</p>]]>
   <findingType>
     <id>EQ_UNUSUAL</id>
     <artifact tool="FindBugs" mnemonic="EQ_UNUSUAL"/>
-    <name>Unusual equals method</name>
+    <name>Unusual equals() method</name>
     <shortMessage>This is an unusual equals() method. It might be OK but is worth checking.</shortMessage>
     <info>
 <![CDATA[<p>This class doesn't do any of the patterns we recognize
@@ -6308,7 +6303,7 @@ edition) items 8 and 9.</p>]]>
   <findingType>
     <id>EQ_GETCLASS_AND_CLASS_CONSTANT</id>
     <artifact tool="FindBugs" mnemonic="EQ_GETCLASS_AND_CLASS_CONSTANT"/>
-    <name>Equals fails for subtypes</name>
+    <name>Equals() fails for subtypes</name>
     <shortMessage>This equals method will fail for subtypes. Consider making it more robust.</shortMessage>
     <info>
 <![CDATA[<p>This class has an <code>equals</code> method that will be
@@ -6325,7 +6320,7 @@ edition) items 8 and 9.</p>]]>
   <findingType>
     <id>EQ_ALWAYS_TRUE</id>
     <artifact tool="FindBugs" mnemonic="EQ_ALWAYS_TRUE"/>
-    <name>Equals always returns true</name>
+    <name>Equals() always returns true</name>
     <shortMessage>This equals method always returns true. This violates the symmetric property of the equals method.</shortMessage>
     <info>
 <![CDATA[<p>This class defines an equals method that always returns
@@ -6342,7 +6337,7 @@ edition) items 8 and 9.</p>]]>
   <findingType>
     <id>EQ_ALWAYS_FALSE</id>
     <artifact tool="FindBugs" mnemonic="EQ_ALWAYS_FALSE"/>
-    <name>Equals always returns false</name>
+    <name>Equals() always returns false</name>
     <shortMessage>This equals method always returns false. This violates the reflexive requirement of the equals method.</shortMessage>
     <info>
 <![CDATA[<p>This class defines an <code>equals</code> method that
@@ -6484,7 +6479,7 @@ carefully and consider if it is correct.</p>]]>
   <findingType>
     <id>EQ_CHECK_FOR_OPERAND_NOT_COMPATIBLE_WITH_THIS</id>
     <artifact tool="FindBugs" mnemonic="EQ_CHECK_FOR_OPERAND_NOT_COMPATIBLE_WITH_THIS"/>
-    <name>Avoid equals check for incompatible operand</name>
+    <name>Avoid equals() check for incompatible operand</name>
     <shortMessage>This equals implementation checks to see if the operand is some particular incompatible type. This is not recommended and may create unexpected behaviors.</shortMessage>
     <info>
 <![CDATA[<p>This equals method is checking to see if the argument is
@@ -6684,7 +6679,7 @@ for(int i = 0; i &lt; 4; i++) {
   <findingType>
     <id>DMI_INVOKING_HASHCODE_ON_ARRAY</id>
     <artifact tool="FindBugs" mnemonic="DMI_INVOKING_HASHCODE_ON_ARRAY"/>
-    <name>Suspicious use hashCode method on an array</name>
+    <name>Suspicious use hashCode() method on an array</name>
     <shortMessage>This code calls a.hashCode() on an array. Did you mean to call Arrays.hashCode(a)?</shortMessage>
     <info>
 <![CDATA[<p>This code invokes <code>hashCode()</code> on an array
@@ -6880,17 +6875,21 @@ satisfy the boolean expression.</p>]]>
   <findingType>
     <id>ThreadEffectsAnalysis_noThreadsDrop</id> 
     <artifact tool="JSure" mnemonic="ThreadEffectsAnalysis_noThreadsDrop"/>
-    <shortMessage>TBD</shortMessage>
-    <info>TBD</info>
     <name>No Threads Started</name>
+    <shortMessage>No Threads Started</shortMessage>
+    <info>
+<![CDATA[<p>No threads are started.</p>]]>
+    </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>ThreadEffectsAnalysis_threadEffectDrop</id> 
     <artifact tool="JSure" mnemonic="ThreadEffectsAnalysis_threadEffectDrop"/>
     <name>Illegal Thread Effects</name>
-    <shortMessage>TBD</shortMessage>
-    <info>TBD</info>
+    <shortMessage>Illegal Thread Effects</shortMessage>
+    <info>
+<![CDATA[<p>Illegal thread effects.</p>]]>
+    </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
@@ -7817,7 +7816,7 @@ public class JumbledIncrementerRule1 {
   <findingType>
     <id>ForLoopShouldBeWhileLoop</id>
     <artifact tool="PMD" mnemonic="ForLoopShouldBeWhileLoop"/>
-    <name>For should be while</name>
+    <name>For should be a while</name>
     <shortMessage>This for loop can be simplified to a while loop.</shortMessage>
     <info>
 <![CDATA[
@@ -7865,7 +7864,7 @@ Gafter's <i>Java Puzzlers</i>.</p>]]>
   <findingType>
     <id>UnnecessaryReturn</id>
     <artifact tool="PMD" mnemonic="UnnecessaryReturn"/>
-    <name>Unnecessary Return</name>
+    <name>Unnecessary return</name>
     <shortMessage>Avoid unnecessary return statements</shortMessage>
     <info>
 <![CDATA[<p>It is questionable coding practice to place a return
@@ -8287,7 +8286,7 @@ for (e ; e ; e)
   <findingType>
     <id>CloneThrowsCloneNotSupportedException</id>
     <artifact tool="PMD" mnemonic="CloneThrowsCloneNotSupportedException"/>
-    <name>Clone method signature must include throws CloneNotSupportedException</name>
+    <name>Clone() method signature must include throws CloneNotSupportedException</name>
     <shortMessage>This clone method does not declare that it can throw CloneNotSupportedException.  Its signature appears to be wrong.</shortMessage>
     <info>
 <![CDATA[<p>The method clone has the wrong signature, it should throw
@@ -9191,7 +9190,7 @@ first?'.</p>]]>
   <findingType>
     <id>InstantiationToGetClass</id>
     <artifact tool="PMD" mnemonic="InstantiationToGetClass"/>
-    <name>Avoid instantiation just to get class</name>
+    <name>Avoid instantiation to call getClass()</name>
     <shortMessage>This code instantiates an object just to call getClass() on it; use the .class public member instead.</shortMessage>
     <info>
 <![CDATA[<p>Avoid instantiating an object just to call getClass() on
@@ -9433,7 +9432,7 @@ if (x != null && x instanceof Bar) {
   <findingType>
     <id>CompareObjectsWithEquals</id>
     <artifact tool="PMD" mnemonic="CompareObjectsWithEquals"/>
-    <name>Compare objects with equals not ==</name>
+    <name>Compare objects with equals() not ==</name>
     <shortMessage>Consider using equals() to compare object references. Avoid comparing them with ==.</shortMessage>
     <info>
 <![CDATA[<p>It has been determined that it is a questionable code
@@ -9465,7 +9464,7 @@ just return false.  For example, always use
   <findingType>
     <id>UnnecessaryLocalBeforeReturn</id>
     <artifact tool="PMD" mnemonic="UnnecessaryLocalBeforeReturn"/>
-    <name>Avoid unnecessary local before return</name>
+    <name>Avoid unnecessary local variable before return</name>
     <shortMessage>This code appears to create an unnecessary local variable just to return it. Consider removing this local variable.</shortMessage>
     <info>
 <![CDATA[<p>Avoid unnecessarily creating local variables just to
@@ -9590,7 +9589,7 @@ public interface ConstantsInterface {
   <findingType>
     <id>PreserveStackTrace</id>
     <artifact tool="PMD" mnemonic="PreserveStackTrace"/>
-    <name>Preserve Stack Trace</name>
+    <name>Preserve original stack trace</name>
     <shortMessage>This code throws a new exception from a catch block without passing the original exception into the new exception. This causes the true stack trace to be lost. Consider changing this code.</shortMessage>
     <info>
 <![CDATA[<p>Throwing a new exception from a catch block without
@@ -9622,7 +9621,7 @@ try{
   <findingType>
     <id>UseCollectionIsEmpty</id>
     <artifact tool="PMD" mnemonic="UseCollectionIsEmpty"/>
-    <name>Use isEmpty to check if a collection is empty</name>
+    <name>Use isEmpty() to check if a collection is empty</name>
     <shortMessage>Use the isEmpty() method to see if a java.util.Collection is empty rather than comparing the value of size() to 0.</shortMessage>
     <info>
 <![CDATA[<p>The <code>isEmpty()</code> method on
@@ -9652,7 +9651,7 @@ if (foo.isEmpty()) {
   <findingType>
     <id>FinalizeOverloaded</id>
     <artifact tool="PMD" mnemonic="FinalizeOverloaded"/>
-    <name>Avoid overloading finalize</name>
+    <name>Avoid overloading finalize()</name>
     <shortMessage>This method overloads the finalize() method with one that has one or more parameters. It is not be called by the VM.</shortMessage>
     <info>
 <![CDATA[<p>Methods named <code>finalize()</code> should not have
@@ -9978,7 +9977,7 @@ public void testSomething() {
   <findingType>
     <id>TestClassWithoutTestCases</id>
     <artifact tool="PMD" mnemonic="TestClassWithoutTestCases"/>
-    <name>Test Class Without Test Cases</name>
+    <name>Test class without test cases</name>
     <shortMessage>Test classes end with the suffix Test. Having a non-test class with that name is not a good practice.</shortMessage>
     <info>
 <![CDATA[<p>Test classes end with the suffix <code>Test</code>. Having
@@ -10010,7 +10009,7 @@ method.</p>]]>
     <artifact tool="PMD" mnemonic="UseAssertNullInsteadOfAssertTrue"/>
     <artifact tool="PMD" mnemonic="UseAssertSameInsteadOfAssertTrue"/>
     <artifact tool="PMD" mnemonic="UseAssertEqualsInsteadOfAssertTrue"/>
-    <name>Use specific JUnit methods instead of assertTrue</name>
+    <name>Use specific JUnit methods instead of assertTrue()</name>
     <shortMessage>Check object references using more specific JUnit methods rather than assertTrue.</shortMessage>
     <info>
 <![CDATA[<p>Check object references using <code>assertNull</code>,
@@ -10056,7 +10055,7 @@ void testCode() {
     <id>SimplifyBooleanAssertion</id>
     <artifact tool="PMD" mnemonic="SimplifyBooleanAssertion"/>
     <name>Simplify boolean assertion</name>
-    <shortMessage>Avoid negation in an assertTrue or assertFalse test.</shortMessage>
+    <shortMessage>Avoid negation in an assertTrue() or assertFalse() tests.</shortMessage>
     <info>
 <![CDATA[<p>Avoid negation in an <code>assertTrue</code> or
 <code>assertFalse</code> test. Rephrase <code>assertTrue(!expr)</code>
@@ -10215,7 +10214,7 @@ class Foo{
   <findingType>
     <id>SystemPrintln</id>
     <artifact tool="PMD" mnemonic="SystemPrintln"/>
-    <name>Use of System.out or System.err println</name>
+    <name>Use of System.out or System.err println()</name>
     <shortMessage>Avoid calls to System.(out|err).print, consider using a logger.</shortMessage>
     <info>
 <![CDATA[<p>Avoid print calls to <code>System.out</code> or
@@ -10226,7 +10225,7 @@ class Foo{
   <findingType>
     <id>AvoidPrintStackTrace</id>
     <artifact tool="PMD" mnemonic="AvoidPrintStackTrace"/>
-    <name>Avoid calls to printStackTrace</name>
+    <name>Avoid calls to printStackTrace()</name>
     <shortMessage>Avoid calls to printStackTrace(); use a logger call instead.</shortMessage>
     <info>
 <![CDATA[<p>Avoid calls to printStackTrace(); use a logger call
@@ -10271,7 +10270,7 @@ superior because they do not synchronize each of their methods.</p>]]>
   <findingType>
     <id>JUnit4TestShouldUseBeforeAnnotation</id>
     <artifact tool="PMD" mnemonic="JUnit4TestShouldUseBeforeAnnotation"/>
-    <name>JUnit 4 tests should use the Before annotation</name>
+    <name>JUnit 4 tests should use @Before</name>
     <shortMessage>Use the @Before annotation in JUnit 4.</shortMessage>
     <info>
 <![CDATA[<p>In JUnit 3, the <code>setUp</code> method was used to set
@@ -10300,7 +10299,7 @@ public void setUp() {
   <findingType>
     <id>JUnit4TestShouldUseAfterAnnotation</id>
     <artifact tool="PMD" mnemonic="JUnit4TestShouldUseAfterAnnotation"/>
-    <name>JUnit 4 tests should use the After annotation</name>
+    <name>JUnit 4 tests should use @After</name>
     <shortMessage>Use the @After annotation in JUnit 4.</shortMessage>
     <info>
 <![CDATA[<p>In JUnit 3, the <code>tearDown</code> method was used to
@@ -10329,7 +10328,7 @@ public void tearDown() {
   <findingType>
     <id>JUnit4TestShouldUseTestAnnotation</id>
     <artifact tool="PMD" mnemonic="JUnit4TestShouldUseTestAnnotation"/>
-    <name>JUnit 4 tests should use the Test annotation</name>
+    <name>JUnit 4 tests should use @Test</name>
     <shortMessage>Use the @Test annotation in JUnit 4.</shortMessage>
     <info>
 <![CDATA[<p>In JUnit 3, the framework executed all methods which
@@ -10534,7 +10533,7 @@ confusing.</p>]]>
   <findingType>
     <id>BooleanGetMethodName</id>
     <artifact tool="PMD" mnemonic="BooleanGetMethodName"/>
-    <name>Boolean get method name</name>
+    <name>Use isX() not getX()</name>
     <shortMessage>This boolean getter method is named getX().  Consider renaming this method to isX().</shortMessage>
     <info>
 <![CDATA[<p>Methods named <code>getX()</code> that return a
@@ -10600,11 +10599,11 @@ consider one of the collections provided in the
   <findingType>
     <id>SimplifyStartsWith</id>
     <artifact tool="PMD" mnemonic="SimplifyStartsWith"/>
-    <name>Inefficient use of startsWith</name>
-    <shortMessage>Because it passes in a String literal of length 1, this call to String.startsWith can be rewritten using String.charAt(0) to improve performance.</shortMessage>
+    <name>Inefficient use of startsWith()</name>
+    <shortMessage>Because it passes in a String literal of length 1, this call to String.startsWith() can be rewritten using String.charAt(0) to improve performance.</shortMessage>
     <info>
 <![CDATA[<p>Because this code passes in a <code>String</code> literal
-of length 1, this call to <code>String.startsWith</code> can be
+of length 1, this call to <code>String.startsWith()</code> can be
 rewritten using <code>String.charAt(0)</code> to save some time.</p>
 
 <p>For example, consider changing</p>
@@ -10628,8 +10627,8 @@ boolean checkIt(String x) {
   <findingType>
     <id>UseArraysAsList</id>
     <artifact tool="PMD" mnemonic="UseArraysAsList"/>
-    <name>Use Arrays.asList</name>
-    <shortMessage>To create a list from an array consider using Arrays.asList rather than a loop.</shortMessage>
+    <name>Use Arrays.asList()</name>
+    <shortMessage>To create a list from an array consider using Arrays.asList() rather than a loop.</shortMessage>
     <info>
 <![CDATA[<p>The class <code>java.util.Arrays</code> has an
 <code>asList</code> method that should be used when you want to create
@@ -10891,7 +10890,7 @@ public void log(String msg) {
   <findingType>
     <id>AvoidRethrowingException</id>
     <artifact tool="PMD" mnemonic="AvoidRethrowingException"/>
-    <name>Avoid rethrowing an exception</name>
+    <name>Avoid rethrowing</name>
     <shortMessage>This code contains a catch block that seems to merely rethrow a caught exception. Consider removing this catch block.</shortMessage>
     <info>
 <![CDATA[<p>Catch blocks that merely rethrow a caught exception only
@@ -10998,7 +10997,7 @@ class Foo {
   <findingType>
     <id>InefficientStringBuffering</id>
     <artifact tool="PMD" mnemonic="InefficientStringBuffering"/>
-    <name>Inefficient concatenation in a StringBuffer</name>
+    <name>Inefficient StringBuffer concatenation</name>
     <shortMessage>This code concatenates non-literals in a StringBuffer constructor or append(). Consider avoiding this to improve performance.</shortMessage>
     <info>
 <![CDATA[<p>It is best to avoid concatenating non-literals in a
@@ -11065,7 +11064,7 @@ if (s.equalsIgnoreCase("FROM")) {
   <findingType>
     <id>UseStringBufferLength</id>
     <artifact tool="PMD" mnemonic="UseStringBufferLength"/>
-    <name>Use StringBuffer.length</name>
+    <name>Use StringBuffer.length()</name>
     <shortMessage>It is recommended that you use StringBuffer.length() to determine the length of a StringBuffer.</shortMessage>
     <info>
 <![CDATA[<p>Use <code>StringBuffer.length()</code> to determine the
@@ -11173,7 +11172,7 @@ unnecessary synchronization.</p>]]>
   <findingType>
     <id>UseIndexOfChar</id>
     <artifact tool="PMD" mnemonic="UseIndexOfChar"/>
-    <name>Inefficient use of String.indexOf</name>
+    <name>Inefficient use of String.indexOf()</name>
     <shortMessage>This code can improve its performance by using String.indexOf(char) when checking for the index of a single character.</shortMessage>
     <info>
 <![CDATA[<p>Use <code>String.indexOf(char)</code> rather than
@@ -11289,8 +11288,8 @@ unnecessary synchronization.</p>]]>
   <findingType>
     <id>UselessStringValueOf</id>
     <artifact tool="PMD" mnemonic="UselessStringValueOf"/>
-    <name>Unnecessary String.valueOf call</name>
-    <shortMessage>This code calls String.valueOf to append to a String. Consider just using the + operator.</shortMessage>
+    <name>Unnecessary String.valueOf() call</name>
+    <shortMessage>This code calls String.valueOf() to append to a String. Consider just using the + operator.</shortMessage>
     <info>
 <![CDATA[<p>There is no need to call <code>String.valueOf()</code> to
 append to a string.  Just use <code>+</code>.</p>
@@ -11500,10 +11499,8 @@ if (rst.next()) {
   <findingType>
     <id>AvoidUsingShortType</id>
     <artifact tool="PMD" mnemonic="AvoidUsingShortType"/>
-    <name>Avoid using short type</name>
-    <shortMessage>
-      Avoid using the "short" type
-    </shortMessage>
+    <name>Avoid using short</name>
+    <shortMessage>Avoid using the short type as it can adversely impact the performance of your code.</shortMessage>
     <info>
 <![CDATA[<p>Java uses the <code>short</code> type to reduce memory
 usage, not to optimize calculation. On the contrary, the JVM does not
