@@ -227,10 +227,12 @@ public final class MarkersHandler extends AbstractDatabaseObserver implements
 									elementName.length() - 5);
 							String projectName = f_selectedFile.getProject()
 									.getName();
+							
+							final long now = this.startingUpdate();
 							Job queryMarkersJob = new QueryMarkersJob(
 									"Querying markers for " + className,
 									projectName, className, packageName,
-									f_selectedFile);
+									f_selectedFile, now);
 							queryMarkersJob.schedule();
 
 						} catch (JavaModelException e) {
@@ -446,18 +448,23 @@ public final class MarkersHandler extends AbstractDatabaseObserver implements
 		private final String f_packageName;
 		private final String f_className;
 		private final IFile f_currentFile;
+		private final long f_startTime;
 
 		public QueryMarkersJob(String name, String projectName,
-				String className, String packageName, IFile currentFile) {
+				String className, String packageName, IFile currentFile, long now) {
 			super(name, DECORATE);
 			f_className = className;
 			f_packageName = packageName;
 			f_projectName = projectName;
 			f_currentFile = currentFile;
+			f_startTime = now;
 		}
 
 		@Override
 		protected IStatus run(IProgressMonitor monitor) {
+			if (!continueUpdate(f_startTime)) {
+				return Status.OK_STATUS;
+			}
 			try {
 				Connection conn = Data.getInstance().readOnlyConnection();
 				try {
@@ -479,6 +486,8 @@ public final class MarkersHandler extends AbstractDatabaseObserver implements
 								+ (System.currentTimeMillis() - start));
 
 					if (f_overview != null) {
+						finishedUpdate(f_startTime);
+						
 						final UIJob job = new SLUIJob() {
 							@Override
 							public IStatus runInUIThread(
