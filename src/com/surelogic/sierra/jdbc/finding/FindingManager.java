@@ -81,7 +81,7 @@ public class FindingManager {
 		obsoleteFinding = conn
 				.prepareStatement("UPDATE FINDING SET OBSOLETED_BY_ID = ?, OBSOLETED_BY_REVISION = ? WHERE ID = ?");
 		latestAuditRevision = conn
-				.prepareStatement("SELECT MAX(A.REVISION) FROM PROJECT P, FINDING F, SIERRA_AUDIT A WHERE P.NAME = ? AND F.PROJECT_ID = P.ID AND A.FINDING_ID = F.ID");
+				.prepareStatement("SELECT MAX(A.REVISION) FROM PROJECT P, SIERRA_AUDIT A WHERE P.NAME = ? AND A.PROJECT_ID = P.ID");
 		deleteMatches = conn
 				.prepareStatement("DELETE FROM LOCATION_MATCH WHERE PROJECT_ID = (SELECT P.ID FROM PROJECT P WHERE P.NAME = ?)");
 		deleteFindings = conn
