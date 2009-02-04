@@ -27,11 +27,17 @@ public interface IDatabaseObserver {
 	void databaseDeleted();
 
 	/**
-	 * Notification that the client database has been synchronized with a Sierra
+	 * Notification that the client database has been synchronized with a Buglink
 	 * server.
 	 */
 	void serverSynchronized();
 
+	/**
+	 * Notification that the client database has been synchronized with a team
+	 * server.
+	 */
+	void projectSynchronized();
+	
 	/**
 	 * Notification that a finding has been mutated.
 	 */

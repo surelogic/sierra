@@ -906,7 +906,7 @@ public class FindingDetailsMediator extends AbstractSierraViewMediator
 	}
 
 	@Override
-	public void serverSynchronized() {
+	public void projectSynchronized() {
 		findingMutated();
 	}
 }

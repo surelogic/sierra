@@ -130,7 +130,7 @@ public class SynchronizeProjectJob extends AbstractServerProjectJob {
 				return Status.CANCEL_STATUS;
 			} else {
 				if (updated) {
-					DatabaseHub.getInstance().notifyServerSynchronized();
+					DatabaseHub.getInstance().notifyProjectSynchronized();
 				}
 				return Status.OK_STATUS;
 			}

@@ -92,6 +92,11 @@ public final class SynchronizeMediator extends AbstractSierraViewMediator {
 	public void serverSynchronized() {
 		asyncUpdateContents();
 	}
+	
+	@Override
+	public void projectSynchronized() {
+		asyncUpdateContents();
+	}
 
 	private void asyncUpdateContents() {
 		final Job job = new DatabaseJob(

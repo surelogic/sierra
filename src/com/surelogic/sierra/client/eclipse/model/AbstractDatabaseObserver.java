@@ -21,6 +21,10 @@ implements IDatabaseObserver {
 	public void serverSynchronized() {
 		// Do nothing
 	}
+	
+	public void projectSynchronized() {
+		// Do nothing
+	}
 
 	public void findingMutated() {
 		// Do nothing

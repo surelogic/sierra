@@ -189,11 +189,8 @@ public final class BuglinkData extends DatabaseObservable<IBuglinkDataObserver>
 		return f_findingTypes.get(findingType);
 	}
 
-	/*
-	 * Track changes to the database that can mutate the set of projects.
-	 */
 	@Override
-	public void changed() {
+	public void serverSynchronized() {
 		refresh();
 	}
 }

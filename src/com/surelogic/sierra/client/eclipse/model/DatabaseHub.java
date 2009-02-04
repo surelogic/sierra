@@ -63,6 +63,17 @@ public final class DatabaseHub {
 			o.changed();
 		}
 	}
+	
+	public void notifyProjectSynchronized() {
+		if (SLLogger.getLogger().isLoggable(Level.FINE)) {
+			SLLogger.getLogger().log(Level.FINE,
+					"DatabaseHub notifyProjectSynchronized() to " + f_observers);
+		}
+		for (final IDatabaseObserver o : f_observers) {
+			o.projectSynchronized();
+			o.changed();
+		}
+	}
 
 	public void notifyFindingMutated() {
 		if (SLLogger.getLogger().isLoggable(Level.FINE)) {
