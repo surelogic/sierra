@@ -303,7 +303,7 @@ public final class ClientFindingManager extends FindingManager {
 		countLocalAudits = conn.prepareStatement("SELECT COUNT(*)"
 				+ commonForLocalAudits);
 		selectUnrevisionedAudits = conn
-				.prepareStatement("SELECT SA.UUID FROM SIERRA_AUDIT SA, FINDING F, PROJECT P WHERE P.NAME = ? AND F.PROJECT_ID = P.ID AND SA.FINDING_ID = F.ID AND SA.REVISION IS NULL");
+				.prepareStatement("SELECT SA.UUID FROM SIERRA_AUDIT SA, PROJECT P WHERE P.NAME = ? AND SA.PROJECT_ID = P.ID AND SA.REVISION IS NULL");
 		updateUnrevisionedAudit = conn
 				.prepareStatement("UPDATE SIERRA_AUDIT SET REVISION = ?, USER_ID = ? WHERE UUID = ?");
 		selectLocalMerge = conn
