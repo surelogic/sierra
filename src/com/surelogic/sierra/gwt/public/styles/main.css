@@ -513,8 +513,9 @@ img {
 
 /* SL Content Link */
 .sl-ContentLink {
-	/* width: 100%; */
+	/*	width: 100%;  */
 	white-space: nowrap;
+	overflow: hidden;
 }
 
 /* SL FormDialog */
