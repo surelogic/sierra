@@ -28,9 +28,11 @@ method.</p>]]>
     <shortMessage>Useless/vacuous call to EasyMock method.</shortMessage>
     <info>
 <![CDATA[<p>This call doesn't pass any objects to the EasyMock method,
-so the call doesn't do anything.</p> <p>EasyMock provides Mock Objects
-for interfaces in JUnit tests by generating them on the fly using
-Java's proxy mechanism.  For more information please visit <a
+so the call doesn't do anything.</p>
+
+<p>EasyMock provides Mock Objects for interfaces in JUnit tests by
+generating them on the fly using Java's proxy mechanism.  For more
+information please visit <a
 href="http://www.easymock.org/">www.easymock.org</a>.</p>]]>
     </info>
   </findingType>
@@ -158,8 +160,7 @@ public class GUI extends JFrame {
     });
   }
 }
-</pre>
-]]>
+</pre>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
@@ -287,7 +288,7 @@ the JarFile between the calls to <code>putNextEntry()</code> and
   <findingType>
     <id>IMSE_DONT_CATCH_IMSE</id>
     <artifact tool="FindBugs" mnemonic="IMSE_DONT_CATCH_IMSE"/>
-    <name>Avoid catching IllegalStateMonitorException</name>
+    <name>Avoid catching IllegalMonitorStateException</name>
     <shortMessage>Dubious code that is catching IllegalMonitorStateException may be masking a design flaw in your code.</shortMessage>
     <info>
 <![CDATA[<p><code>IllegalMonitorStateException</code> is generally
@@ -402,7 +403,7 @@ modern Java programs.</p>]]>
     <name>Use of a future keyword as identifier</name>
     <shortMessage>Use of an identifier that is a keyword in later versions of Java.</shortMessage>
     <info>
-<![CDATA[<p>The identifier is a word that is reserversed as a keyword
+<![CDATA[<p>The identifier is a word that is reserved as a keyword
 in later versions of Java, and your code will need to be changed in
 order for it to compile in later versions of Java.</p>]]>
     </info>
@@ -486,7 +487,7 @@ block.</p>]]>
 <![CDATA[<p>This class is annotated with the
 <code>net.jcip.annotations.Immutable</code> annotation, and the rules
 for that annotation require that all fields are final.  This class is
-in voilation of those rules.</p>]]>
+in violation of those rules.</p>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
@@ -699,10 +700,7 @@ above to create <code>Boolean</code> objects instead.</p>]]>
     <artifact tool="PMD" mnemonic="LongInstantiation"/>
     <artifact tool="PMD" mnemonic="ShortInstantiation"/>
     <name>Inefficient number constructor</name>
-    <shortMessage>
-      Method invokes inefficient number constructor; use static
-      valueOf instead
-    </shortMessage>
+    <shortMessage>This code invokes inefficient number constructor. Use static valueOf instead.</shortMessage>
     <info>
 <![CDATA[<p>Using <code>new Integer(int)</code> (or any number
 constructor such as <code>new Double(double)</code>) is guaranteed to
@@ -1131,6 +1129,7 @@ not equal when compared normally. Don't do it.</p>]]>
     <artifact tool="FindBugs" mnemonic="EQ_SELF_USE_OBJECT"/>
     <artifact tool="FindBugs" mnemonic="EQ_SELF_NO_OBJECT"/>
     <artifact tool="FindBugs" mnemonic="EQ_ABSTRACT_SELF"/>
+    <artifact tool="FindBugs" mnemonic="EQ_OTHER_USE_OBJECT"/>
     <name>Equals defined that does not override Object.equals</name>
     <shortMessage>Covariant equals() method defined, Object.equals(Object) inherited.</shortMessage>
     <info>
@@ -1319,7 +1318,7 @@ in classes such as <code>PriorityQueue</code>. In Java 5 the
 <code>compareTo</code> method, while in Java 6 it uses the
 <code>equals</code> method.
 
-<p>From the JavaDoc for the <code>compareTo</code> method in the
+<p>From the Javadoc for the <code>compareTo</code> method in the
 <code>Comparable</code> interface:</p>
 
 <blockquote> It is strongly recommended, but not strictly required
@@ -1796,8 +1795,8 @@ objects.</p>]]>
   <findingType>
     <id>IT_NO_SUCH_ELEMENT</id>
     <artifact tool="FindBugs" mnemonic="IT_NO_SUCH_ELEMENT"/>
-    <name>Next must throw NoSuchElement</name>
-    <shortMessage>The next() method implementation in this class should throw NoSuchElement exception when there are no more elements to return.</shortMessage>
+    <name>Next must throw NoSuchElementException</name>
+    <shortMessage>The next() method implementation in this class should throw NoSuchElementException exception when there are no more elements to return.</shortMessage>
     <info>
 <![CDATA[<p>This class implements the <code>java.util.Iterator</code>
 interface. However, its <code>next()</code> method is not capable of
@@ -1815,7 +1814,7 @@ more elements to return.</p>]]>
     <name>Synchronization on a shared constant</name>
     <shortMessage>Synchronization on a shared constant could lead to deadlock.</shortMessage>
     <info>
-<![CDATA[<p>The code synchronizes on a shared primative constant, such
+<![CDATA[<p>The code synchronizes on a shared primitive constant, such
 as an interned String.</p>
 
 <pre>
@@ -2118,7 +2117,7 @@ defined in. It is likely that this was intended to be a
 constructor.</p>
 
 <p>If it was intended to be a constructor, remove the declaration of a
-void return value. If you had accidently defined this method, realized
+void return value. If you had accidentally defined this method, realized
 the mistake, defined a proper constructor but can't get rid of this
 method due to backwards compatibility, deprecate the method.</p>]]>
     </info>
@@ -2436,7 +2435,7 @@ this purpose it should probably be renamed to avoid confusion.</p>]]>
   <findingType>
     <id>SE_NONFINAL_SERIALVERSIONID</id>
     <artifact tool="FindBugs" mnemonic="SE_NONFINAL_SERIALVERSIONID"/>
-    <name>Non-final serialVirsionUID field</name>
+    <name>Non-final serialVersionUID field</name>
     <shortMessage>The serialVersionUID is not final, but it should be.</shortMessage>
     <info>
 <![CDATA[<p>This class defines a <code>serialVersionUID</code> field
@@ -2657,7 +2656,7 @@ have been a check to see if it was non-null.</p>]]>
     <id>NP_IMMEDIATE_DEREFERENCE_OF_READLINE</id>
     <artifact tool="FindBugs" mnemonic="NP_IMMEDIATE_DEREFERENCE_OF_READLINE"/>
     <artifact tool="FindBugs" mnemonic="NP_DEREFERENCE_OF_READLINE_VALUE"/>
-    <name>Ddereference of readLine result</name>
+    <name>Dereference of readLine result</name>
     <shortMessage>This code dereferences the result of a call to readLine(). This code may throw a NullPointerException.</shortMessage>
     <info>
 <![CDATA[<p>The result of invoking <code>readLine()</code> is
@@ -2896,8 +2895,8 @@ method which is known to return possibly-null values.</p>]]>
     <artifact tool="FindBugs" mnemonic="NP_NULL_PARAM_DEREF_NONVIRTUAL"/>
     <artifact tool="FindBugs" mnemonic="NP_NULL_PARAM_DEREF_ALL_TARGETS_DANGEROUS"/>
     <artifact tool="FindBugs" mnemonic="NP_NULL_PARAM_DEREF"/>
-    <name>Null derefrence of paparamenterNull Param Deref Nonvirtual</name>
-    <shortMessage>A method call passes null for an unconditionally dereferenced parameter.  This may result in a NullPointerException being thrown if this code is executed.</shortMessage>
+    <name>Null dereference of paramenter</name>
+    <shortMessage>A method call passes null for an unconditionally dereferenced parameter. This may result in a NullPointerException being thrown if this code is executed.</shortMessage>
     <info>
 <![CDATA[<p>A possibly-<code>null</code> value is passed to a method
 which unconditionally dereferences it. This may result in a
@@ -2915,7 +2914,7 @@ is executed.</p>]]>
 <![CDATA[<p>This method passes a <code>null</code> value as the
 parameter of a method which must be non-null. Either this parameter has
 been explicitly annotated as @NonNull, or the analysis has determined that
-this parameter is always deferenced.</p>]]>
+this parameter is always dereferenced.</p>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
@@ -2950,7 +2949,7 @@ is never allowed to return a <code>null</code> value.</p>
   <findingType>
     <id>NP_TOSTRING_COULD_RETURN_NULL</id>
     <artifact tool="FindBugs" mnemonic="NP_TOSTRING_COULD_RETURN_NULL"/>
-    <name>ToString may return rull</name>
+    <name>ToString may return null</name>
     <shortMessage>This toString() method may return null.  This could cause other code to break and is a bad coding practice.</shortMessage>
     <info>
 <![CDATA[<p>This <code>toString()</code> method seems to return
@@ -2980,7 +2979,7 @@ runtime exceptions). This may result in a
   <findingType>
     <id>NP_GUARANTEED_DEREF_ON_EXCEPTION_PATH</id>
     <artifact tool="FindBugs" mnemonic="NP_GUARANTEED_DEREF_ON_EXCEPTION_PATH"/>
-    <name>Null defeference guaranteed on exceptional path</name>
+    <name>Null dereference guaranteed on exceptional path</name>
     <shortMessage>A null value is guaranteed to be dereferenced on an exception path. This may result in a NullPointerException being thrown if this code is executed.</shortMessage>
     <info>
 <![CDATA[<p>There is a statement or branch on an exception path that
@@ -3002,7 +3001,7 @@ class before all of the static final fields are assigned.</p>
 
 <p>This could cause subtle behavior problems if the constructors rely
 upon the final static field to have been assigned.  It is recommended
-that this static initizlizer block be moved below the field
+that this static initializer block be moved below the field
 declarations to avoid this problem.</p>]]>
     </info>
   </findingType>
@@ -3118,7 +3117,7 @@ from the code.</p>]]>
     <shortMessage>This code contains a redundant null check of a value known to be non-null. This check can be removed.</shortMessage>
     <info>
 <![CDATA[<p>This method contains a redundant check of a known non-null
-value against the constant null. The redundant chec can be removed
+value against the constant null. The redundant check can be removed
 from the code.</p>]]>
     </info>
   </findingType>
@@ -3247,7 +3246,7 @@ runtime.</p>]]>
     <id>MWN_MISMATCHED_NOTIFY</id>
     <artifact tool="FindBugs" mnemonic="MWN_MISMATCHED_NOTIFY"/>
     <name>Mismatched notify</name>
-    <shortMessage>This code calls notiry() or notifyAll() without obviously holding a lock on the object. This could throw IllegalMonitorStateException at runtime.</shortMessage>
+    <shortMessage>This code calls notify() or notifyAll() without obviously holding a lock on the object. This could throw IllegalMonitorStateException at runtime.</shortMessage>
     <info>
 <![CDATA[<p>This method calls <code>Object.notify()</code> or
 <code>Object.notifyAll()</code> without obviously holding a lock on
@@ -3373,8 +3372,8 @@ are comparing the right things.</p>]]>
     <info>
 <![CDATA[<p>The <code>Double.longBitsToDouble</code> method is
 invoked, but a 32-bit int value is passed as an argument. This
-almostly certainly is not intended and is unlikely to give the
-intended result due to the primitive widing conversion which will take
+almost certainly is not intended and is unlikely to give the
+intended result due to the primitive widening conversion which will take
 place.</p>]]>
     </info>
   </findingType>
@@ -3844,7 +3843,7 @@ String s = buf.toString();
 
 <p>Also avoid using <code>+=</code> for appending strings.</p>
 
-<p>If you are using JKD 1.5 or above it is strongly recommended that
+<p>If you are using JDK 1.5 or above it is strongly recommended that
 you use <code>StringBuilder</code> rather than
 <code>StringBuffer</code>. In most cases the use of
 <code>StringBuilder</code> will improve code performance by avoid
@@ -4062,7 +4061,7 @@ ps.setInt(0, value);
     <name>Superfluous instanceof</name>
     <shortMessage>Unnecessary type check done using instanceof operator. This check can be removed from the code.</shortMessage>
     <info>
-<![CDATA[<p>This code performes a type check using the
+<![CDATA[<p>This code performs a type check using the
 <code>instanceof</code> operator where it can be statically determined
 that the object is of the type requested.</p>
 
@@ -4398,9 +4397,7 @@ class B extends A {
     <id>WMI_WRONG_MAP_ITERATOR</id>
     <artifact tool="FindBugs" mnemonic="WMI_WRONG_MAP_ITERATOR"/>
     <name>Inefficient Map iterator</name>
-    <shortMessage>Inefficient use of keySet() iterator instead of entrySet
-      iterator
-    </shortMessage>
+    <shortMessage>Inefficient use of keySet() iterator instead of entrySet() iterator.</shortMessage>
     <info>
 <![CDATA[<p>This method accesses the value of a <code>Map</code>
 entry, using a key that was retrieved from a <code>keySet()</code>
@@ -4700,7 +4697,7 @@ problematic. Consider removing these fields.</p>]]>
 on itself (the <code>this</code> reference).  Client classes that use
 this class, may, in addition, use an instance of the class as a
 synchronizing object. Because two classes are using the same object
-for synchronization, multithread correctness is suspect. You should
+for synchronization, multithreaded correctness is suspect. You should
 not synchronize nor call semaphore methods on a public
 reference. Consider using a internal private member variable to
 control synchronization.  For example, consider changing</p>
@@ -4969,7 +4966,7 @@ false, because the value being checked is guaranteed to be
 <code>null</code>.</p>
 
 <p>Although this is legal code, make sure it isn't an indication of
-some misunderstanding or some other logic error. It is also recommened
+some misunderstanding or some other logic error. It is also recommended
 that you consider removing the check.</p>]]>
     </info>
   </findingType>
@@ -4984,7 +4981,7 @@ that you consider removing the check.</p>]]>
 false.</p>
 
 <p>Although this is legal code, make sure it isn't an indication of
-some misunderstanding or some other logic error. It is also recommened
+some misunderstanding or some other logic error. It is also recommended
 that you consider removing the check.</p>]]>
     </info>
   </findingType>
@@ -5167,6 +5164,7 @@ i % (60 * 1000)
   <findingType>
     <id>DMI_INVOKING_TOSTRING_ON_ARRAY</id>
     <artifact tool="FindBugs" mnemonic="DMI_INVOKING_TOSTRING_ON_ARRAY"/>
+    <artifact tool="FindBugs" mnemonic="DMI_INVOKING_TOSTRING_ON_ANONYMOUS_ARRAY"/>
     <name>Invoking toString On Array</name>
     <shortMessage>Invocation of toString on an array produces a useless result. Did you mean to use Arrays.toString?</shortMessage>
     <info>
@@ -5295,7 +5293,7 @@ supposed to change the state of the iterator, and the
 <code>next()</code> method is supposed to change the state of the
 iterator.</p>
 
-<p>Please examine the specification for an interator and fix this
+<p>Please examine the specification for an iterator and fix this
 code.</p>]]>
     </info>
   </findingType>
@@ -5363,7 +5361,7 @@ will allow the compiler to treat this as a normal access.</p>]]>
     <name>XML factory bypass</name>
     <shortMessage>This code directly allocates a specific implementation of and XML interface. Should you be using a factory?</shortMessage>
     <info>
-<![CDATA[<p> This method allocates a specific implementation of an xml
+<![CDATA[<p> This method allocates a specific implementation of an XML
 interface. It is preferable to use the supplied factory classes to
 create these objects so that the implementation can be changed at
 runtime. See </p>
@@ -5471,7 +5469,7 @@ objects with the same type as the method argument used here.</p>]]>
     <shortMessage>This code contains a static Calendar instance. This may cause erratic behavior in your application.</shortMessage>
     <info>
 <![CDATA[<p><code>Calendar</code> instances are inherently unsafe for
-multihtreaded use. Sharing a single instance across thread boundaries
+multithreaded use. Sharing a single instance across thread boundaries
 without proper synchronization will result in erratic behavior of the
 application. Under JDK 1.4 problems seem to surface less often than
 under Java 5 where you will probably see random
@@ -5499,7 +5497,7 @@ bug #6178997</a>.</p>]]>
     <name>Avoid static SimpleDateFormat instances</name>
     <shortMessage>This code contains a static SimpleDateFormat instance. This may cause erratic behavior in your application.</shortMessage>
     <info>
-<![CDATA[<p>As the JavaDoc states, <code>DateFormat</code> objects are
+<![CDATA[<p>As the Javadoc states, <code>DateFormat</code> objects are
 inherently unsafe for multithreaded use. Sharing a single instance
 across thread boundaries without proper synchronization will result in
 erratic behavior of the application.</p>
@@ -5542,12 +5540,13 @@ edition) items 8 and 9.</p>]]>
   <findingType>
     <id>SameSimpleNameAsInterface</id>
     <artifact tool="FindBugs" mnemonic="NM_SAME_SIMPLE_NAME_AS_INTERFACE"/>
-    <name>Avoid same simple name as an interface</name>
-    <shortMessage>Class names shouldn't shadow the simple name of implemented interfaces.</shortMessage>
+    <artifact tool="FindBugs" mnemonic="NM_SAME_SIMPLE_NAME_AS_SUPERCLASS"/>
+    <name>Avoid same simple name as interface/class</name>
+    <shortMessage>Class names shouldn't shadow the simple name of implemented interfaces or extended classes. This can be confusing.</shortMessage>
     <info>
 <![CDATA[<p>This class/interface has a simple name that is identical
-to that of an implemented/extended interface, except that the
-interface is in a different package For example</p>
+to that of an implemented/extended interface/class, except that the
+interface/class is in a different package. For example</p>
 
 <pre>
 package org.alpha;
@@ -5559,671 +5558,508 @@ class Foo extends org.beta.Foo implements org.gamma.Foo {
 
 <p>This can be exceptionally confusing, create lots of situations in
 which you have to look at import statements to resolve references, and
-creates many opportunities to accidently define methods that do not
+creates many opportunities to accidentally define methods that do not
 override methods in their superclasses.</p>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
-    <id>SameSimpleNameAsSuperclass</id>
-    <artifact tool="FindBugs"
-	      mnemonic="NM_SAME_SIMPLE_NAME_AS_SUPERCLASS">
-    </artifact>
-    <shortMessage>
-      Class names shouldn't shadow simple name of superclass
-    </shortMessage>
-    <info>
-
-      &lt;p&gt; This class has a simple name that is identical to
-      that of its superclass, except that its superclass is in a
-      different package (e.g., &lt;code&gt;alpha.Foo&lt;/code&gt;
-      extends &lt;code&gt;beta.Foo&lt;/code&gt;). This can be
-      exceptionally confusing, create lots of situations in which
-      you have to look at import statements to resolve references
-      and creates many opportunities to accidently define methods
-      that do not override methods in their superclasses.
-      &lt;/p&gt;
-
-    </info>
-    <name>Same Simple Name As Superclass</name>
-  </findingType>
-  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-  <findingType>
     <id>WrongPackage</id>
-    <artifact tool="FindBugs" mnemonic="NM_WRONG_PACKAGE">
-    </artifact>
-    <shortMessage>
-      Method doesn't override method in superclass due to wrong
-      package for parameter
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="NM_WRONG_PACKAGE"/>
+    <artifact tool="FindBugs" mnemonic="NM_WRONG_PACKAGE_INTENTIONAL"/>
+    <name>No override due to wrong package for a parameter</name>
+    <shortMessage>Method doesn't override a method in a superclass due to the wrong package for parameter. Is this a mistake?</shortMessage>
     <info>
+<![CDATA[<p>The method in the subclass doesn't override a similar
+method in a superclass because the type of a parameter doesn't exactly
+match the type of the corresponding parameter in the superclass. For
+example, if you have</p>
 
-      &lt;p&gt; The method in the subclass doesn't override a
-      similar method in a superclass because the type of a
-      parameter doesn't exactly match the type of the
-      corresponding parameter in the superclass. For example, if
-      you have:&lt;/p&gt;
+<pre>
+import org.alpha.Foo;
 
-      &lt;blockquote&gt; &lt;pre&gt; import alpha.Foo; public
-      class A { public int f(Foo x) { return 17; } } ---- import
-      beta.Foo; public class B extends A { public int f(Foo x) {
-      return 42; } } &lt;/pre&gt; &lt;/blockquote&gt;
+public class A {
+  public int f(Foo x) {
+    return 17;
+  }
+}
+</pre>
 
-      &lt;p&gt;The &lt;code&gt;f(Foo)&lt;/code&gt; method defined
-      in class &lt;code&gt;B&lt;/code&gt; doesn't override the
-      &lt;code&gt;f(Foo)&lt;/code&gt; method defined in class
-      &lt;code&gt;A&lt;/code&gt;, because the argument types are
-      &lt;code&gt;Foo&lt;/code&gt;'s from different packages.
-      &lt;/p&gt;
+<p>and</p>
 
+<pre>
+import org.beta.Foo;
+
+public class B extends A {
+  public int f(Foo x) { // Bad!
+    return 42;
+  }
+}
+</pre>
+
+<p>The <code>f(Foo)</code> method defined in class <code>B</code>
+doesn't override the <code>f(Foo)</code> method defined in class
+<code>A</code>, because the argument types are <code>Foo</code>'s from
+different packages.</p>
+
+<p>In JDK 1.5 or above it is possible to have the compiler warn about
+this problem by annotating the <code>f(Foo)</code> method in
+<code>B</code> with @Override.  The below would not compile due to
+this issue.</p>
+
+<pre>
+import org.beta.Foo;
+
+public class B extends A {
+  @Override public int f(Foo x) {
+    return 42;
+  }
+}
+</pre>]]>
     </info>
-    <name>Wrong Package</name>
-  </findingType>
-   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
- <findingType>
-    <id>WrongPackageIntentional</id>
-    <artifact tool="FindBugs"
-	      mnemonic="NM_WRONG_PACKAGE_INTENTIONAL">
-    </artifact>
-    <shortMessage>
-      Method doesn't override method in superclass due to wrong
-      package for parameter
-    </shortMessage>
-    <info>
-
-      &lt;p&gt; The method in the subclass doesn't override a
-      similar method in a superclass because the type of a
-      parameter doesn't exactly match the type of the
-      corresponding parameter in the superclass. For example, if
-      you have:&lt;/p&gt;
-
-      &lt;blockquote&gt; &lt;pre&gt; import alpha.Foo; public
-      class A { public int f(Foo x) { return 17; } } ---- import
-      beta.Foo; public class B extends A { public int f(Foo x) {
-      return 42; } public int f(alpha.Foo x) { return 27; } }
-      &lt;/pre&gt; &lt;/blockquote&gt;
-
-      &lt;p&gt;The &lt;code&gt;f(Foo)&lt;/code&gt; method defined
-      in class &lt;code&gt;B&lt;/code&gt; doesn't override the
-      &lt;code&gt;f(Foo)&lt;/code&gt; method defined in class
-      &lt;code&gt;A&lt;/code&gt;, because the argument types are
-      &lt;code&gt;Foo&lt;/code&gt;'s from different packages.
-      &lt;/p&gt;
-
-      &lt;p&gt;In this case, the subclass does define a method
-      with a signature identical to the method in the superclass,
-      so this is presumably understood. However, such methods are
-      exceptionally confusing. You should strongly consider
-      removing or deprecating the method with the similar but not
-      identical signature. &lt;/p&gt;
-
-    </info>
-    <name>Wrong Package Intentional</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>ReturnValueIgnoredBadPractice</id>
-    <artifact tool="FindBugs"
-	      mnemonic="RV_RETURN_VALUE_IGNORED_BAD_PRACTICE">
-    </artifact>
-    <shortMessage>Method ignores return value</shortMessage>
+    <artifact tool="FindBugs" mnemonic="RV_RETURN_VALUE_IGNORED_BAD_PRACTICE"/>
+    <name>Ignored return value</name>
+    <shortMessage>This code ignores the return value of a invoked method. This is a bad practice. Did the method accomplish what it was suppose to?</shortMessage>
     <info>
-
-      &lt;p&gt; This method returns a value that is not checked.
-      For example, the &lt;code&gt;File.delete()&lt;/code&gt;
-      method returns false if the file could not be successfully
-      deleted (rather than throwing an Exception). If you don't
-      check the result, you won't notice if the method invocation
-      signals unexpected behavior by returning an atypical return
-      value.
-
+<![CDATA[<p>This method returns a value that is not checked.  For
+example, the <code>File.delete()</code> method returns
+<code>false</code> if the file could not be successfully deleted
+rather than throwing an Exception. If you don't check the result,
+you won't notice if the method invocation signals unexpected behavior
+by returning an atypical return value.</p>]]>
     </info>
-    <name>Return Value Ignored Bad Practice</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>ExceptionNotThrown</id>
-    <artifact tool="FindBugs" mnemonic="RV_EXCEPTION_NOT_THROWN">
-    </artifact>
-    <shortMessage>
-      Exception created and dropped rather than thrown
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="RV_EXCEPTION_NOT_THROWN"/>
+    <name>Exception not thrown</name>
+    <shortMessage>Exception created and dropped rather than thrown. Did you forget to throw the exception?</shortMessage>
     <info>
+<![CDATA[<p>This code creates an exception (or error) object, but
+doesn't do anything with it. For example, something like </p>
 
-      &lt;p&gt; This code creates an exception (or error) object,
-      but doesn't do anything with it. For example, something like
-      &lt;/p&gt; &lt;blockquote&gt; &lt;pre&gt; if (x &lt; 0) new
-      IllegalArgumentException(&quot;x must be nonnegative&quot;);
-      &lt;/pre&gt; &lt;/blockquote&gt; &lt;p&gt;It was probably
-      the intent of the programmer to throw the created
-      exception:&lt;/p&gt; &lt;blockquote&gt; &lt;pre&gt; if (x
-      &lt; 0) throw new IllegalArgumentException(&quot;x must be
-      nonnegative&quot;); &lt;/pre&gt; &lt;/blockquote&gt;
+<pre>
+if (x < 0) {
+  new IllegalArgumentException("x must be nonnegative");
+}
+</pre>
 
+<p>In this type of situation, it was probably the intent of the
+programmer to throw the created exception.  For example</p>
+
+<pre>
+if (x < 0) {
+  throw new IllegalArgumentException("x must be nonnegative");
+}
+</pre>]]>
     </info>
-    <name>Exception Not Thrown</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>UnrelatedTypesUsingPointerEquality</id>
-    <artifact tool="FindBugs"
-	      mnemonic="EC_UNRELATED_TYPES_USING_POINTER_EQUALITY">
-    </artifact>
-    <shortMessage>
-      Using pointer equality to compare different types
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="EC_UNRELATED_TYPES_USING_POINTER_EQUALITY"/>
+    <name>Unrelated types compared using ==</name>
+    <shortMessage>This code appears to be using pointer equality to compare different types. Is this a logic error?</shortMessage>
     <info>
+<![CDATA[<p>This method uses using pointer equality to compare two
+references that seem to be of different types. The result of this
+comparison will always be <code>false</code> at runtime.</p>
 
-      &lt;p&gt; This method uses using pointer equality to compare
-      two references that seem to be of different types. The
-      result of this comparison will always be false at runtime.
-      &lt;/p&gt;
-
+<p>Examine this code carefully for logic errors.</p>]]>
     </info>
-    <name>Unrelated Types Using Pointer Equality</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>BitSignedCheck</id>
-    <artifact tool="FindBugs" mnemonic="BIT_SIGNED_CHECK">
-    </artifact>
-    <shortMessage>Check for sign of bitwise operation</shortMessage>
+    <artifact tool="FindBugs" mnemonic="BIT_SIGNED_CHECK"/>
+    <artifact tool="FindBugs" mnemonic="BIT_SIGNED_CHECK_HIGH_BIT"/>
+    <name>Signed check of bitwise operation</name>
+    <shortMessage>This code checks for the sign of bitwise operation. Consider using != 0 instead.</shortMessage>
     <info>
+<![CDATA[<p>This code uses an expression such as</p>
 
-      &lt;p&gt; This method compares an expression such as
-      &lt;pre&gt;((event.detail &amp; SWT.SELECTED) &gt;
-      0)&lt;/pre&gt;. Using bit arithmetic and then comparing with
-      the greater than operator can lead to unexpected results (of
-      course depending on the value of SWT.SELECTED). If
-      SWT.SELECTED is a negative number, this is a candidate for a
-      bug. Even when SWT.SELECTED is not negative, it seems good
-      practice to use '!= 0' instead of '&gt; 0'. &lt;/p&gt;
-      &lt;p&gt; &lt;em&gt;Boris Bokowski&lt;/em&gt; &lt;/p&gt;
+<pre>
+((event.detail &amp; SWT.SELECTED) &gt; 0)
+</pre>
 
+<p>Using bit arithmetic and then comparing the result with the
+greater-than operator can lead to unexpected results.  The result
+depends on the value of SWT.SELECTED. If SWT.SELECTED is a negative
+number, then this code may not behave as expected. Even when
+SWT.SELECTED is not negative, it is good practice to use</p>
+
+<pre>
+((event.detail &amp; SWT.SELECTED) != 0)
+</pre>
+
+<p>instead of <code>&gt; 0</code>.</p>]]>
     </info>
-    <name>Signed Check</name>
-  </findingType>
-  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-  <findingType>
-    <id>BitSignedCheckHighBit</id>
-    <artifact tool="FindBugs"
-	      mnemonic="BIT_SIGNED_CHECK_HIGH_BIT">
-    </artifact>
-    <shortMessage>Check for sign of bitwise operation</shortMessage>
-    <info>
-
-      &lt;p&gt; This method compares an expression such as
-      &lt;pre&gt;((event.detail &amp; SWT.SELECTED) &gt;
-      0)&lt;/pre&gt;. Using bit arithmetic and then comparing with
-      the greater than operator can lead to unexpected results (of
-      course depending on the value of SWT.SELECTED). If
-      SWT.SELECTED is a negative number, this is a candidate for a
-      bug. Even when SWT.SELECTED is not negative, it seems good
-      practice to use '!= 0' instead of '&gt; 0'. &lt;/p&gt;
-      &lt;p&gt; &lt;em&gt;Boris Bokowski&lt;/em&gt; &lt;/p&gt;
-
-    </info>
-    <name>Signed Check High Bit</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>LazyInitUpdateStatic</id>
-    <artifact tool="FindBugs"
-	      mnemonic="LI_LAZY_INIT_UPDATE_STATIC">
-    </artifact>
-    <shortMessage>
-      Incorrect lazy initialization and update of static field
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="LI_LAZY_INIT_UPDATE_STATIC"/>
+    <name>Lazy initialization and update of a static field</name>
+    <shortMessage>Incorrect lazy initialization and update of static field. This code may not be safe.</shortMessage>
     <info>
-
-      &lt;p&gt; This method contains an unsynchronized lazy
-      initialization of a static field. After the field is set,
-      the object stored into that location is further accessed.
-      The setting of the field is visible to other threads as soon
-      as it is set. If the futher accesses in the method that set
-      the field serve to initialize the object, then you have a
-      &lt;em&gt;very serious&lt;/em&gt; multithreading bug, unless
-      something else prevents any other thread from accessing the
-      stored object until it is fully initialized. &lt;/p&gt;
-
+<![CDATA[<p>This method contains an unsynchronized lazy initialization
+of a static field. After the field is set, the object stored into that
+location is further accessed.  The setting of the field is visible to
+other threads as soon as it is set. If the further accesses in the
+method that set the field serve to initialize the object, then you
+have a <em>very serious</em> multithreading bug, unless something else
+prevents any other thread from accessing the stored object until it is
+fully initialized.</p>]]>
     </info>
-    <name>Lazy Init Update Static</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>DeadStoreOfClassLiteral</id>
-    <artifact tool="FindBugs"
-	      mnemonic="DLS_DEAD_STORE_OF_CLASS_LITERAL">
-    </artifact>
-    <shortMessage>Dead store of class literal</shortMessage>
+    <artifact tool="FindBugs" mnemonic="DLS_DEAD_STORE_OF_CLASS_LITERAL"/>
+    <name>Dead store of class literal</name>
+    <shortMessage>Dead store of a class literal. Are you trying to force class initialization?</shortMessage>
     <info>
+<![CDATA[<p>This instruction assigns a class literal to a variable and
+then never uses it. The behavior of this code differs in Java 1.4 and
+in Java 5. In Java 1.4 and earlier, a reference to
+<code>Foo.class</code> would force the static initializer for
+<code>Foo</code> to be executed, if it has not been executed
+already. In Java 5 and later, it does not.</p>
 
-      &lt;p&gt; This instruction assigns a class literal to a
-      variable and then never uses it. &lt;a
-      href=&quot;//java.sun.com/j2se/1.5.0/compatibility.html#literal&quot;&gt;The
-      behavior of this differs in Java 1.4 and in Java
-      5.&lt;/a&gt; In Java 1.4 and earlier, a reference to
-      &lt;code&gt;Foo.class&lt;/code&gt; would force the static
-      initializer for &lt;code&gt;Foo&lt;/code&gt; to be executed,
-      if it has not been executed already. In Java 5 and later, it
-      does not. &lt;/p&gt; &lt;p&gt;See Sun's &lt;a
-      href=&quot;//java.sun.com/j2se/1.5.0/compatibility.html#literal&quot;&gt;article
-      on Java SE compatibility&lt;/a&gt; for more details and
-      examples, and suggestions on how to force class
-      initialization in Java 5. &lt;/p&gt;
-
+<p>For more information please see Sun's <a
+href="http://java.sun.com/j2se/1.5.0/compatibility.html#literal">article
+on Java SE compatibility</a> for more details and examples, and
+suggestions on how to force class initialization in Java 5.</p>]]>
     </info>
-    <name>Dead Store Of Class Literal</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AlwaysValueUsedWhereNeverRequired</id>
-    <artifact tool="FindBugs"
-	      mnemonic="TQ_ALWAYS_VALUE_USED_WHERE_NEVER_REQUIRED">
-    </artifact>
-    <shortMessage>
-      Value annotated as carrying a type qualifier used where a
-      value that must not carry that qualifier is required
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="TQ_ALWAYS_VALUE_USED_WHERE_NEVER_REQUIRED"/>
+    <name>Always value used where never required</name>
+    <shortMessage>A value annotated as carrying a type qualifier is used where a value that must not carry that qualifier is required.</shortMessage>
     <info>
+<![CDATA[<p>A value specified as carrying a type qualifier annotation
+is consumed in a location or locations requiring that the value not
+carry that annotation.</p>
 
-      &lt;p&gt; A value specified as carrying a type qualifier
-      annotation is consumed in a location or locations requiring
-      that the value not carry that annotation. &lt;/p&gt;
+<p>More precisely, a value annotated with a type qualifier specifying
+<code>when=ALWAYS</code> is guaranteed to reach a use or uses where the same type
+qualifier specifies <code>when=NEVER</code>.</p>
 
-      &lt;p&gt; More precisely, a value annotated with a type
-      qualifier specifying when=ALWAYS is guaranteed to reach a
-      use or uses where the same type qualifier specifies
-      when=NEVER. &lt;/p&gt;
+<p>For example, say that <code>@NonNegative</code> is a nickname for
+the type qualifier annotation
+<code>@Negative(when=When.NEVER)</code>. The following code will
+generate this warning because the return statement requires a
+<code>@NonNegative</code> value, but receives one that is marked as <code>@Negative</code>.</p>
 
-      &lt;p&gt; For example, say that @NonNegative is a nickname
-      for the type qualifier annotation
-      @Negative(when=When.NEVER). The following code will generate
-      this warning because the return statement requires a
-      @NonNegative value, but receives one that is marked as
-      @Negative. &lt;/p&gt; &lt;blockquote&gt; &lt;pre&gt; public
-      @NonNegative Integer example(@Negative Integer value) {
-      return value; } &lt;/pre&gt; &lt;/blockquote&gt;
-
+<pre>
+public @NonNegative Integer example(@Negative Integer value) {
+  return value;
+}
+</pre>]]>
     </info>
-    <name>Always Value Used Where Never Required</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>NeverValueUsedWhereAlwaysRequired</id>
-    <artifact tool="FindBugs"
-	      mnemonic="TQ_NEVER_VALUE_USED_WHERE_ALWAYS_REQUIRED">
-    </artifact>
-    <shortMessage>
-      Value annotated as never carrying a type qualifier used
-      where value carrying that qualifier is required
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="TQ_NEVER_VALUE_USED_WHERE_ALWAYS_REQUIRED"/>
+    <name>Never value used where always required</name>
+    <shortMessage>A value annotated as never carrying a type qualifier is used where a value carrying that qualifier is required.</shortMessage>
     <info>
+<![CDATA[<p>A value specified as not carrying a type qualifier
+annotation is guaranteed to be consumed in a location or locations
+requiring that the value does carry that annotation.</p>
 
-      &lt;p&gt; A value specified as not carrying a type qualifier
-      annotation is guaranteed to be consumed in a location or
-      locations requiring that the value does carry that
-      annotation. &lt;/p&gt;
+<p>More precisely, a value annotated with a type qualifier specifying
+<code>when=NEVER</code> is guaranteed to reach a use or uses where the
+same type qualifier specifies <code>when=ALWAYS</code>.</p>
 
-      &lt;p&gt; More precisely, a value annotated with a type
-      qualifier specifying when=NEVER is guaranteed to reach a use
-      or uses where the same type qualifier specifies when=ALWAYS.
-      &lt;/p&gt;
+<p>For example, say that <code>@NonNegative</code> is a nickname for
+the type qualifier annotation
+<code>@Negative(when=When.NEVER)</code>. The following code will
+generate this warning because the return statement requires a
+<code>@Negative</code> value, but receives one that is marked as <code>@NonNegative</code>.</p>
 
-      &lt;p&gt; TODO: example &lt;/p&gt;
-
+<pre>
+public @Negative Integer example(@NonNegative Integer value) {
+  return value;
+}
+</pre>]]>
     </info>
-    <name>Never Value Used Where Always Required</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>MaybeSourceValueReachesAlwaysSink</id>
-    <artifact tool="FindBugs"
-	      mnemonic="TQ_MAYBE_SOURCE_VALUE_REACHES_ALWAYS_SINK">
-    </artifact>
-    <shortMessage>
-      Value that might not carry a type qualifier reaches a use
-      requiring that type qualifier
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="TQ_MAYBE_SOURCE_VALUE_REACHES_ALWAYS_SINK"/>
+    <name>Maybe source value reaches always sink</name>
+    <shortMessage>A value that might not carry a type qualifier reaches a use requiring that type qualifier.</shortMessage>
     <info>
+<![CDATA[<p>A value that might not carry a type qualifier annotation
+reaches a use which requires that annotation.</p>
 
-      &lt;p&gt; A value that might not carry a type qualifier
-      annotation reaches a use which requires that annotation.
-      &lt;/p&gt;
+<p>For example, consider the following method:</p>
 
-      &lt;p&gt; For example, consider the following method:
-      &lt;/p&gt; &lt;blockquote&gt; &lt;pre&gt; public @Untainted
-      Object mustReturnUntainted(Object unknown) { return unknown;
-      } &lt;/pre&gt; &lt;/blockquote&gt; &lt;p&gt; The
-      &lt;code&gt;mustReturnUntainted&lt;/code&gt; method is
-      required to return a value carrying the @Untainted
-      annotation, but a value not known to carry that annotation
-      is returned. &lt;/p&gt;
+<pre>
+public @Untainted Object mustReturnUntainted(Object unknown) {
+  return unknown;
+}
+</pre>
 
+<p>The <code>mustReturnUntainted</code> method is required to return a
+value carrying the <code>@Untainted</code> annotation, but a value not
+known to carry that annotation is returned.</p>]]>
     </info>
-    <name>Maybe Source Value Reaches Always Sink</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>MaybeSourceValueReachesNeverSink</id>
-    <artifact tool="FindBugs"
-	      mnemonic="TQ_MAYBE_SOURCE_VALUE_REACHES_NEVER_SINK">
-    </artifact>
-    <shortMessage>
-      Unknown value reaches a use which forbids values carrying
-      type qualifier annotation
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="TQ_MAYBE_SOURCE_VALUE_REACHES_NEVER_SINK"/>
+    <name>Maybe source value reaches never sink</name>
+    <shortMessage>An unknown value reaches a use which forbids values carrying type qualifier annotation.</shortMessage>
     <info>
-
-      &lt;p&gt; A value which might carry a type qualifier
-      annotation reaches a use which forbids values carrying that
-      annotation. &lt;/p&gt;
-
-      &lt;p&gt; TODO: example. &lt;/p&gt;
-
+<![CDATA[<p>A value which might carry a type qualifier annotation
+reaches a use which forbids values carrying that annotation.</p>]]>
     </info>
-    <name>Maybe Source Value Reaches Never Sink</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-
-  <!-- For FB 1.3.1 -->
   <findingType>
     <id>BooleanMethodReturnsNull</id>
-    <artifact tool="FindBugs"
-	      mnemonic="NP_BOOLEAN_RETURN_NULL">
-    </artifact>
-    <shortMessage>
-      Method with Boolean return type returns explicit null
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="NP_BOOLEAN_RETURN_NULL"/>
+    <name>Boolean-typed method returns null</name>
+    <shortMessage>A method with Boolean return type returns an explicit null value. This is a poor practice.</shortMessage>
     <info>
-
-      &lt;p&gt; This method can be invoked as though it returned a value of type boolean, and
-      the compiler will insert automatic unboxing of the Boolean value. If a null value is returned,
-      this will result in a NullPointerException. &lt;/p&gt;
-
+<![CDATA[<p>This method seems to be able to return
+<code>null</code>. This is considered a bad practice because it can be
+invoked as though it returned a value of type <code>boolean</code>,
+and the compiler will insert automatic unboxing of the
+<code>Boolean</code> value. If a <code>null</code> value is returned,
+a <code>NullPointerException</code> will be thrown when unboxing
+occurs.</p>]]>
     </info>
-    <name>Boolean-typed Method Returns Null</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AppendingToObjectOutputStream</id>
-    <artifact tool="FindBugs"
-	      mnemonic="IO_APPENDING_TO_OBJECT_OUTPUT_STREAM">
-    </artifact>
-    <shortMessage>
-      Appending to an ObjectOutputStream
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="IO_APPENDING_TO_OBJECT_OUTPUT_STREAM"/>
+    <name>Suspicious attempt to append to an ObjectOutputStream</name>
+    <shortMessage>This code appears to be trying to append to an ObjectOutputStream. This may not work, check this code carefully.</shortMessage>
     <info>
+<![CDATA[<p>This code opens a file in append mode and then wraps the
+result in an <code>ObjectOutputStream</code>.  This approach does not
+allow you to append to an existing object output stream stored in the
+file. If you want to be able to append to an existing object output
+stream, you need to keep the object output stream open.</p>
 
-      &lt;p&gt; This code opens a file in append mode and that wraps the result in an object output stream. 
-      This won't allow you to append to an existing object output stream stored in a file. If you want to be
-      able to append to an object output stream, you need to keep the object output stream open. &lt;/p&gt;
-
-      &lt;p&gt; The only situation in which opening a file in append mode and the writing an object output stream
-      could work is if on reading the file you plan to open it in random access mode and seek to the byte offset
-      where the append started. &lt;/p&gt;
-
+<p>The only situation in which opening a file in append mode and then
+writing an object output stream could work is if on reading the file
+you plan to open it in random access mode and seek to the byte offset
+where the append started.</p>]]>
     </info>
-    <name>Appending To ObjectOutputStream</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>FormatStringArgsMismatch</id>
-    <artifact tool="FindBugs"
-	      mnemonic="VA_FORMAT_STRING_ARG_MISMATCH">
-    </artifact>
-    <shortMessage>
-      Number of format-string arguments does not correspond to number of placeholders
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="VA_FORMAT_STRING_ARG_MISMATCH"/>
+    <name>Mismatch of format string arguments and placeholder</name>
+    <shortMessage>The number of format-string arguments does not correspond to number of placeholders. Is this a coding error?</shortMessage>
     <info>
-
-      &lt;p&gt; A format-string method with a variable number of arguments is called,
-      but the number of arguments passed does not match with the number of
-      % placeholders in the format string.  This is probably not what the
-      author intended.. &lt;/p&gt;
-
+<![CDATA[<p>This code calls a format-string method with a variable
+number of arguments, but the number of arguments passed does not match
+with the number of <code>%</code> placeholders in the format string.
+This is probably not what the author intended. Examine this code
+carefully and fix the mistake.</p> ]]>
     </info>
-    <name>Mismatch Of Number Of Args For Format String</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-  <findingType>
-    <id>InvokingToStringOnArray</id>
-    <artifact tool="FindBugs"
-	      mnemonic="DMI_INVOKING_TOSTRING_ON_ANONYMOUS_ARRAY">
-    </artifact>
-    <shortMessage>
-      Invocation of toString() on an array
-    </shortMessage>
-    <info>
-
-      &lt;p&gt; The code invokes toString on an array, which will generate a fairly useless result
-      such as [C@16f0472. Consider using Arrays.toString to convert the array into a readable
-      String that gives the contents of the array. 
-      See Programming Puzzlers, chapter 3, puzzle 12. &lt;/p&gt;
-
-    </info>
-    <name>Invocation Of toString() On Array</name>
-  </findingType>
-  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-  <!-- For FB 1.3.2 -->
   <findingType>
     <id>HttpParameterWrittenToServlet</id>
-    <artifact tool="FindBugs"
-	      mnemonic="XSS_REQUEST_PARAMETER_TO_SERVLET_WRITER">
-    </artifact>
-    <shortMessage>
-      HTTP parameter directly written to Servlet output
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="XSS_REQUEST_PARAMETER_TO_SERVLET_WRITER"/>
+    <name>Servlet cross-site scripting vulnerability</name>
+    <shortMessage>HTTP parameter directly written to Servlet output. This could create a security vulnerability.</shortMessage>
     <info>
+<![CDATA[<p>This code directly writes an HTTP parameter to Servlet
+output, which may create the possibility for a cross-site scripting
+vulnerability.</p>
 
-      &lt;p&gt; This code directly writes an HTTP parameter to Servlet output, which allows for a cross site scripting
-      vunerability. See &lt;a href="http://en.wikipedia.org/wiki/Cross-site_scripting"&gt;http://en.wikipedia.org/wiki/Cross-site_scripting&lt;/a&gt;
-      for more information. &lt;/p&gt;
-
+<p>Please see <a
+href="http://en.wikipedia.org/wiki/Cross-site_scripting">http://en.wikipedia.org/wiki/Cross-site_scripting</a>
+for more information about this vulnerability.</p>]]>
     </info>
-    <name>Servlet cross site scripting vulnerability</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>HttpParameterWrittenToJSP</id>
-    <artifact tool="FindBugs"
-	      mnemonic="XSS_REQUEST_PARAMETER_TO_JSP_WRITER">
-    </artifact>
-    <shortMessage>
-      HTTP parameter directly written to JSP output
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="XSS_REQUEST_PARAMETER_TO_JSP_WRITER"/>
+    <name>JSP cross-site scripting vulnerability</name>
+    <shortMessage>An HTTP parameter directly written to JSP output. This could create a security vulnerability.</shortMessage>
     <info>
+<![CDATA[<p>This code directly writes an HTTP parameter to JSP output,
+which may create the possibility for a cross-site scripting vulnerability.</p>
 
-      &lt;p&gt; This code directly writes an HTTP parameter to JSP output, which allows for a cross site scripting
-      vunerability. See &lt;a href="http://en.wikipedia.org/wiki/Cross-site_scripting"&gt;http://en.wikipedia.org/wiki/Cross-site_scripting&lt;/a&gt;
-      for more information. &lt;/p&gt;
-
+<p>Please see <a
+href="http://en.wikipedia.org/wiki/Cross-site_scripting">http://en.wikipedia.org/wiki/Cross-site_scripting</a>
+for more information about this vulnerability.</p>]]>
     </info>
-    <name>JSP cross site scripting vulnerability</name>
-  </findingType>
-  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-  <findingType>
-    <id>EqualsDoesntOverride</id>
-    <artifact tool="FindBugs"
-	      mnemonic="EQ_OTHER_USE_OBJECT">
-    </artifact>
-    <shortMessage>
-      equals() method defined that doesn't override Object.equals(Object)
-    </shortMessage>
-    <info>
-
-      &lt;p&gt; This class defines an &lt;code&gt;equals()&lt;/code&gt;
-      method, that doesn't override the normal &lt;code&gt;equals(Object)&lt;/code&gt; method
-      defined in the base &lt;code&gt;java.lang.Object&lt;/code&gt; class.
-      The class should probably define a &lt;code&gt;boolean equals(Object)&lt;/code&gt; 
-      method. &lt;/p&gt;
-
-    </info>
-    <name>equals() doesn't override Object.equals(Object)</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>EqualsDoesntOverrideInherited</id>
-    <artifact tool="FindBugs"
-	      mnemonic="EQ_OTHER_NO_OBJECT">
-    </artifact>
-    <shortMessage>
-      equals() method defined that doesn't override inherited equals(Object)
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="EQ_OTHER_NO_OBJECT"/>
+    <name>Equals doesn't override inherited equals(Object)</name>
+    <shortMessage>This code defines an equals() method that doesn't override the inherited equals(Object) method. Is this a mistake?</shortMessage>
     <info>
-
-      &lt;p&gt; This class defines an &lt;code&gt;equals()&lt;/code&gt;
-      method, that doesn't override the normal &lt;code&gt;equals(Object)&lt;/code&gt; method
-      defined in the base &lt;code&gt;java.lang.Object&lt;/code&gt; class.
-      Instead, it inherits an &lt;code&gt;equals(Object)&lt;/code&gt; method from a superclass.
-      The class should probably define a &lt;code&gt;boolean equals(Object)&lt;/code&gt; 
-      method. &lt;/p&gt;
-
+<![CDATA[<p>This class defines an <code>equals()</code> method, that
+doesn't override the normal <code>equals(Object)</code> method defined
+by <code>java.lang.Object</code>. Instead, it inherits an
+<code>equals(Object)</code> method from a superclass.  The class
+should probably define a <code>boolean equals(Object)</code>
+method.</p>]]>
     </info>
-    <name>equals() doesn't override inherited equals(Object)</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>NP_NULL_ON_SOME_PATH_MIGHT_BE_INFEASIBLE</id>
-    <artifact tool="FindBugs"
-	      mnemonic="NP_NULL_ON_SOME_PATH_MIGHT_BE_INFEASIBLE">
-    </artifact>
-    <shortMessage>
-      Possible null pointer dereference on path that might be infeasible
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="NP_NULL_ON_SOME_PATH_MIGHT_BE_INFEASIBLE"/>
+    <name>Possible null dereference on an infeasible path</name>
+    <shortMessage>This code contains a null pointer dereference on path that seems infeasible. Check that this code is correct.</shortMessage>
     <info>
+<![CDATA[<p>There is a branch of statements that, <em>if
+executed</em>, guarantees that a <code>null</code> value will be
+dereferenced, which would generate a <code>NullPointerException</code>
+when the code is executed.</p>
 
-      &lt;p&gt; This class defines an &lt;code&gt;equals()&lt;/code&gt;
-      method, that doesn't override the normal &lt;code&gt;equals(Object)&lt;/code&gt; method
-      defined in the base &lt;code&gt;java.lang.Object&lt;/code&gt; class.
-      Instead, it inherits an &lt;code&gt;equals(Object)&lt;/code&gt; method from a superclass.
-      The class should probably define a &lt;code&gt;boolean equals(Object)&lt;/code&gt; 
-      method. &lt;/p&gt;
-
+</p>Of course, the problem might be that the branch or statement is
+infeasible and that the null pointer exception can't ever be executed;
+deciding that is beyond the ability of the analysis. Due to the fact
+that this value had been previously tested for nullness, this is a
+definite possibility.</p>]]>
     </info>
-    <name>Possible null dereference on potentially infeasible path</name>
   </findingType>	
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-  <!-- For FB 1.3.3 -->
   <findingType>
     <id>HRS_REQUEST_PARAMETER_TO_HTTP_HEADER</id>
-    <artifact tool="FindBugs"
-	      mnemonic="HRS_REQUEST_PARAMETER_TO_HTTP_HEADER">
-    </artifact>
-    <shortMessage>
-      HTTP parameter directly written to HTTP header output
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="HRS_REQUEST_PARAMETER_TO_HTTP_HEADER"/>
+    <name>HTTP response splitting vulnerability</name>
+    <shortMessage>This code takes an HTTP parameter and writes it directly to the HTTP header output. This could create a security vulnerability.</shortMessage>
     <info>
-      &lt;p&gt; This code directly writes an HTTP parameter to an HTTP header, 
-      which allows for a HTTP response splitting vulnerability. 
-      See &lt;a href="http://en.wikipedia.org/wiki/HTTP_response_splitting"&gt;
-      http://en.wikipedia.org/wiki/HTTP_response_splitting&lt;/a&gt;
-      for more information.&lt;/p&gt;
+<![CDATA[<p>This code directly writes an HTTP parameter to an HTTP
+header, which allows for a HTTP response splitting vulnerability.</p>
+
+<p>Please see <a
+href="http://en.wikipedia.org/wiki/HTTP_response_splitting">
+http://en.wikipedia.org/wiki/HTTP_response_splitting</a> for more
+information about this issue.</p>]]>
     </info>
-    <name>HTTP Response splitting vulnerability</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>HRS_REQUEST_PARAMETER_TO_COOKIE</id>
-    <artifact tool="FindBugs"
-	      mnemonic="HRS_REQUEST_PARAMETER_TO_COOKIE">
-    </artifact>
-    <shortMessage>
-      HTTP cookie formed from untrusted input
-    </shortMessage>
-    <info>
-      &lt;p&gt; 
-      This code constructs an HTTP Cookie using an untrusted HTTP parameter. 
-      If this cookie is added to an HTTP response, 
-      it will allow a HTTP response splitting vulnerability. 
-      See &lt;a href="http://en.wikipedia.org/wiki/HTTP_response_splitting"&gt;
-      http://en.wikipedia.org/wiki/HTTP_response_splitting&lt;/a&gt;
-      for more information.
-      &lt;/p&gt;
-    </info>
+    <artifact tool="FindBugs" mnemonic="HRS_REQUEST_PARAMETER_TO_COOKIE"/>
     <name>HTTP cookie formed from untrusted input</name>
+    <shortMessage>This code forms an HTTP cookie formed from untrusted input. This could create a security vulnerability.</shortMessage>
+    <info>
+<![CDATA[<p>This code constructs an HTTP cookie using an untrusted
+HTTP parameter. If this cookie is added to an HTTP response, it will
+allow a HTTP response splitting vulnerability.</p>
+
+<p>Please see <a
+href="http://en.wikipedia.org/wiki/HTTP_response_splitting">
+http://en.wikipedia.org/wiki/HTTP_response_splitting</a> for more
+information about this issue.</p>]]>
+    </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>CN_IMPLEMENTS_CLONE_BUT_NOT_CLONEABLE</id>
-    <artifact tool="FindBugs"
-	      mnemonic="CN_IMPLEMENTS_CLONE_BUT_NOT_CLONEABLE">
-    </artifact>
-    <shortMessage>
-      Class defines clone() but doesn't implement Cloneable
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="CN_IMPLEMENTS_CLONE_BUT_NOT_CLONEABLE"/>
+    <name>Class defines clone but does not implement Cloneable</name>
+    <shortMessage>This class defines clone() but doesn't implement Cloneable. Is this intended?</shortMessage>
     <info>
-      &lt;p&gt; 
-      This class defines a clone() method but the class doesn't implement Cloneable.
-      There are some situations in which this is OK (e.g., you want to control how subclasses 
-      can clone themselves), but just make sure that this is what you intended.
-      &lt;/p&gt;
+<![CDATA[<p>This class defines a <code>clone()</code> method but does
+not implement <code>Cloneable</code>. There are some situations in
+which this is OK (e.g., you want to control how subclasses can clone
+themselves), but just make sure that this is what you intended.</p>]]>
     </info>
-    <name>Class defines clone() but doesn't implement Cloneable</name>
   </findingType>	
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>DMI_CONSTANT_DB_PASSWORD</id>
-    <artifact tool="FindBugs"
-	      mnemonic="DMI_CONSTANT_DB_PASSWORD">
-    </artifact>
-    <shortMessage>
-      Hardcoded constant database password
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="DMI_CONSTANT_DB_PASSWORD"/>
+    <name>Hardcoded database password</name>
+    <shortMessage>This code uses a hardcoded constant password to connect to a database. Is this database secured?</shortMessage>
     <info>
-      &lt;p&gt; 
-      This code creates a database connect using a hardcoded, 
-      constant password. Anyone with access to either the source code
-      or the compiled code can easily learn the password.
-      &lt;/p&gt;
+<![CDATA[<p>This code creates a database connection using a hardcoded,
+constant password. Anyone with access to either the source code or the
+compiled code can easily learn the password. Check this code carefully
+as it may indicate a security problem with this code and its runtime
+environment.</p>]]>
     </info>
-    <name>Hardcoded constant database password</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>DMI_EMPTY_DB_PASSWORD</id>
-    <artifact tool="FindBugs"
-	      mnemonic="DMI_EMPTY_DB_PASSWORD">
-    </artifact>
-    <shortMessage>
-      Empty database password
-    </shortMessage>
-    <info>
-      &lt;p&gt; 
-      This code creates a database connect using a blank or empty password. 
-      This indicates that the database is not protected by a password. 
-      &lt;/p&gt;
-    </info>
+    <artifact tool="FindBugs" mnemonic="DMI_EMPTY_DB_PASSWORD"/>
     <name>Empty database password</name>
+    <shortMessage>This code uses an empty password to connect to a database. Is this database secured?</shortMessage>
+    <info>
+<![CDATA[<p>This code creates a database connection using a blank or
+empty password. This may indicate that the database is not protected
+by a password. Check this code carefully as it may indicate a security
+problem with this code and its runtime environment.</p>]]>
+    </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>DL_SYNCHRONIZATION_ON_BOOLEAN</id>
-    <artifact tool="FindBugs"
-	      mnemonic="DL_SYNCHRONIZATION_ON_BOOLEAN">
-    </artifact>
-    <shortMessage>
-      Synchronization on Boolean could lead to deadlock
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="DL_SYNCHRONIZATION_ON_BOOLEAN"/>
+    <name>Synchronization on Boolean could deadlock</name>
+    <shortMessage>Synchronization on a Boolean value could lead to deadlock.</shortMessage>
     <info>
-      &lt;p&gt; The code synchronizes on a boxed primitive constant, such as an Boolean.
-      &lt;pre&gt;
-      private static Boolean inited = Boolean.FALSE;
-      ...
-      synchronized(inited) { 
-      if (!inited) {
+<![CDATA[<p>This code code synchronizes on a boxed primitive constant,
+such as an Boolean.</p>
+
+<pre>
+private static Boolean inited = Boolean.FALSE;
+...
+public void m() {
+  ...
+  synchronized(inited) { // Bad!
+    if (!inited) {
       init();
       inited = BOOLEAN.TRUE;
-      }
-      }
-      ...
-      &lt;/pre&gt;
-      &lt;/p&gt;
-      &lt;p&gt; Since there normally exist only two Boolean objects, 
-      this code could be synchronizing on the same object as other, unrelated code, 
-      leading to unresponsiveness and possible deadlock &lt;/p&gt;			
+    }
+  }
+}
+</pre>
+
+<p>Since there normally exist only two <code>Boolean</code> objects,
+this code could be synchronizing on the same object as other,
+unrelated code, leading to unresponsiveness and possible deadlock.</p>
+
+<p>For the example code above it is highly recommended that an
+<code>AtomicBoolean</code> from the
+<code>java.util.concurrent.atomic</code> package be used. For
+example,<p>
+
+<pre>
+import java.util.concurrent.atomic.AtomicBoolean;
+
+private final AtomicBoolean inited = new AtomicBoolean(false);
+...
+public void m() {
+  ...		
+  if (inited.compareAndSet(false, true)) {
+    init();
+  }
+}
+</pre>]]>
     </info>
-    <name>Synchronization on Boolean could lead to deadlock</name>
   </findingType>	
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
@@ -6270,7 +6106,7 @@ void m() {
     <artifact tool="FindBugs" mnemonic="DL_SYNCHRONIZATION_ON_UNSHARED_BOXED_PRIMITIVE">
     </artifact>
     <name>Avoid synchronization on boxed primitive values</name>
-    <shortMessage>This code synchronizes on boxed primitive values. It is recommened that this type of code be avoided.</shortMessage>
+    <shortMessage>This code synchronizes on boxed primitive values. It is recommended that this type of code be avoided.</shortMessage>
     <info>
 <![CDATA[<p>The code synchronizes on an apparently unshared boxed
 primitive, such as an Integer.</p>
@@ -6416,7 +6252,7 @@ vulnerability.</p>
 href="http://en.wikipedia.org/wiki/Cross-site_scripting">
 http://en.wikipedia.org/wiki/Cross-site_scripting</a>.</p>
 
-<p>This analysis looks only for the most blatent, obvious
+<p>This analysis looks only for the most blatant, obvious
 cases of cross-site scripting.</p>]]>
     </info>
   </findingType>
@@ -6435,7 +6271,7 @@ was not fully analyzed for errors by FindBugs.</p>]]>
   <findingType>
     <id>EQ_COMPARING_CLASS_NAMES</id>
     <artifact tool="FindBugs" mnemonic="EQ_COMPARING_CLASS_NAMES"/>
-    <name>Equals compars class names</name>
+    <name>Equals compares class names</name>
     <shortMessage>This equals compares class names rather than class objects. Just compare the class objects.</shortMessage>
     <info>
 <![CDATA[<p> This <code>equals</code> method checks to see if two
@@ -6490,12 +6326,12 @@ edition) items 8 and 9.</p>]]>
     <id>EQ_ALWAYS_TRUE</id>
     <artifact tool="FindBugs" mnemonic="EQ_ALWAYS_TRUE"/>
     <name>Equals always returns true</name>
-    <shortMessage>This equals method always returns true. This violates the symmetric properity of the equals method.</shortMessage>
+    <shortMessage>This equals method always returns true. This violates the symmetric property of the equals method.</shortMessage>
     <info>
 <![CDATA[<p>This class defines an equals method that always returns
 true. This is imaginative, but not very smart. Plus, it means that the
 equals method is not symmetric.  It is not at all clear what
-semantices are intended here and this class will likely cause problems
+semantics are intended here and this class will likely cause problems
 if placed inside of a collection.</p>
 
 <p>For more information see Bloch's <i>Effective Java</i> (second
@@ -6690,7 +6526,7 @@ wrong.</p>]]>
     <name>The type of a supplied argument doesn't match format specifier</name>
     <shortMessage>The type of a supplied argument doesn't match format specifier. This code will always throw an exception at runtime.</shortMessage>
     <info>
-<![CDATA[<p>One of the arguments is uncompatible with the
+<![CDATA[<p>One of the arguments is incompatible with the
 corresponding format string specifier. As a result, this will generate
 a runtime exception when executed. For example,</p>
 
@@ -8289,7 +8125,7 @@ public class Bar {
 }
 </pre>
 
-<p>A better framework is provied by the util concurrent library found
+<p>A better framework is provided by the util concurrent library found
 in the <code>java.util.concurrent</code> package.  This library was
 added to JDK 1.5.  In particular, the <code>Exceutor</code> framework
 is worth considering.</p>]]>
@@ -9083,7 +8919,7 @@ public class Foo {
     <shortMessage>This switch statement should have a default label.</shortMessage>
     <info>
 <![CDATA[<p>It has been deemed questionable coding practice to not
-have a <code>default</code> lable for each <code>switch</code>.</p>
+have a <code>default</code> label for each <code>switch</code>.</p>
 
 <pre>
 int x = 2;
@@ -9101,8 +8937,8 @@ switch (x) {
     <name>Avoid deeply nested if statements</name>
     <shortMessage>This is a deeply nested if that may be hard to read. Can the level of nesting be reduced?</shortMessage>
     <info>
-<![CDATA[<p>Deeply nested if statments have been deemed to be
-questional coding practice because they can be hard to read.</p>]]>
+<![CDATA[<p>Deeply nested if statements have been deemed to be
+questionable coding practice because they can be hard to read.</p>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
@@ -9302,7 +9138,7 @@ switch (a) {
     <info>
 <![CDATA[<p>A non-case label (e.g. a named break/continue label) was
 present in a switch statement. This legal, but confusing. It is easy
-to mix up the case labels and the non-case labels.  It is recommened
+to mix up the case labels and the non-case labels.  It is recommended
 that this code be changed to avoid this confusion.</p>
 
 <pre>
@@ -9490,7 +9326,7 @@ public class Foo {
 <![CDATA[<p>Method level synchronization can backfire when new code is
 added to the method. Block-level synchronization helps to ensure that
 only the code that needs synchronization gets it.  Block-level
-synchronization can also help to improve enscapulation.</p>
+synchronization can also help to improve encapsulation.</p>
 
 <pre>
 public class Foo {
@@ -9518,7 +9354,7 @@ public class Foo {
     <name>Avoid instanceof checks in catch</name>
     <shortMessage>Place each caught exception in its own catch clause.  Don't use instanceof.</shortMessage>
     <info>
-<![CDATA[<p>Each caught exception typ should be handled in its own
+<![CDATA[<p>Each caught exception type should be handled in its own
 catch clause. Do not use instanceof check. For example, replace</p>
 
 <pre>
@@ -9553,7 +9389,7 @@ try {
 methods. An abstract class suggests an incomplete implementation,
 which is to be completed by subclasses implementing the abstract
 methods. If the class is intended to be used as a base class only (not
-to be instantiated direcly) a protected constructor can be provided
+to be instantiated directly) a protected constructor can be provided
 prevent direct instantiation.<p>
 
 <pre>
@@ -9711,7 +9547,7 @@ guarantee against multiple instantiation.</p> ]]>
     <shortMessage>This empty method should be commented to indicate that it is intentionally empty.</shortMessage>
     <info>
 <![CDATA[<p>This method does not contain any statements, but there is
-no comment indicating that this lack of statements is intential. By
+no comment indicating that this lack of statements is intentional. By
 explicitly commenting empty methods it is easier to distinguish
 between intentional (commented) and unintentional empty
 methods.</p>]]>
@@ -9722,7 +9558,7 @@ methods.</p>]]>
     <id>UncommentedEmptyConstructor</id>
     <artifact tool="PMD" mnemonic="UncommentedEmptyConstructor"/>
     <name>Uncommented empty constructor</name>
-    <shortMessage>This empty constructor should be commented to indicate that it is intentially empty.</shortMessage>
+    <shortMessage>This empty constructor should be commented to indicate that it is intentionally empty.</shortMessage>
     <info>
 <![CDATA[<p>This constructor does not contain any statements, but
 there is no comment. By explicitly commenting empty constructors it is
@@ -9737,7 +9573,7 @@ unintentional empty constructors.</p>]]>
     <name>Avoid constants-only interface</name>
     <shortMessage>This interface only acts as a container of constants.  This is a poor usage pattern.</shortMessage>
     <info>
-<![CDATA[<p>An interface should be used only to model a behaviour of a
+<![CDATA[<p>An interface should be used only to model a behavior of a
 class: using an interface as a container of constants is a poor usage
 pattern.</p>
 
@@ -9817,7 +9653,7 @@ if (foo.isEmpty()) {
     <id>FinalizeOverloaded</id>
     <artifact tool="PMD" mnemonic="FinalizeOverloaded"/>
     <name>Avoid overloading finalize</name>
-    <shortMessage>This method overloads the finalize() method with one that has one or more paramenters. It is not be called by the VM.</shortMessage>
+    <shortMessage>This method overloads the finalize() method with one that has one or more parameters. It is not be called by the VM.</shortMessage>
     <info>
 <![CDATA[<p>Methods named <code>finalize()</code> should not have
 parameters.  It is easy to confuse such a method with a finalizer and
@@ -10157,10 +9993,10 @@ name of the test.</p>]]>
     <id>UnnecessaryBooleanAssertion</id>
     <artifact tool="PMD" mnemonic="UnnecessaryBooleanAssertion"/>
     <name>Unnecessary boolean assertion</name>
-    <shortMessage>Consider reomving assertTrue(true) and assertFalse(false). If you just want a test to halt, use the fail method.</shortMessage>
+    <shortMessage>Consider removing assertTrue(true) and assertFalse(false). If you just want a test to halt, use the fail method.</shortMessage>
     <info>
 <![CDATA[<p>A JUnit test assertion with a <code>boolean</code> literal
-is unnecessary since it always will eval to the same thing. Consider
+is unnecessary since it always will evaluate to the same thing. Consider
 using flow control, in case of <code>assertTrue(false)</code> or
 similar, or simply removing statements like
 <code>assertTrue(true)</code> and <code>assertFalse(false)</code>. If
@@ -10590,7 +10426,7 @@ with a long name.</p>]]>
     <info>
 <![CDATA[<p>Abstract classes should be named
 <code>Abstract</code><i>x</i>. Where <i>x</i> is the class name. This
-convention can help ro clarify the nature of the class.]]>
+convention can help to clarify the nature of the class.]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
@@ -10919,7 +10755,7 @@ String s = Integer.toString(123);
     <id>AvoidCatchingThrowable</id>
     <artifact tool="PMD" mnemonic="AvoidCatchingThrowable"/>
     <name>Avoid catching Throwable</name>
-    <shortMessage>This code catchs Throwable which is dangerous because it casts too wide of a net. Consider changing this to a more specific exception type that the block is actually designed to handle.</shortMessage>
+    <shortMessage>This code catches Throwable which is dangerous because it casts too wide of a net. Consider changing this to a more specific exception type that the block is actually designed to handle.</shortMessage>
     <info>
 <![CDATA[<p>Catching <code>Throwable</code> is considered dangerous
 because it casts too wide of a net; it can catch things like
@@ -10947,7 +10783,7 @@ what exceptions it may actually throw.  Declaring that a method throws
     <id>ExceptionAsFlowControl</id>
     <artifact tool="PMD" mnemonic="ExceptionAsFlowControl"/>
     <name>Avoid using exceptions for flow control</name>
-    <shortMessage>This code appers to use exceptions as control flow. This can lead to poorly preforming GOTO-like code and, in most cases, should be avoided.</shortMessage>
+    <shortMessage>This code appears to use exceptions as control flow. This can lead to poorly preforming GOTO-like code and, in most cases, should be avoided.</shortMessage>
     <info>
 <![CDATA[<p>Using Exceptions as flow control leads to GOTO-like code
 and obscures true exceptions when debugging. In addition, the
@@ -11233,7 +11069,7 @@ if (s.equalsIgnoreCase("FROM")) {
     <shortMessage>It is recommended that you use StringBuffer.length() to determine the length of a StringBuffer.</shortMessage>
     <info>
 <![CDATA[<p>Use <code>StringBuffer.length()</code> to determine the
-length of a StringBuffer rather than convering to a
+length of a StringBuffer rather than converting to a
 <code>String</code> via <code>StringBuffer.toString()</code> and then
 making the check.</p>
 
@@ -11720,7 +11556,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class ThrDeux {
   private final AtomicInteger counter = new AtomicInteger(1);
-  private final AtomicReference<String> var = new AtomicReference<String>("Hi");
+  private final AtomicReference&lt;String&gt; var = new AtomicReference&lt;String&gt;("Hi");
 }
 </pre>]]>
     </info>
