@@ -10,7 +10,6 @@ import org.eclipse.jdt.core.IJavaProject;
 
 import com.surelogic.sierra.jdbc.project.ProjectDO;
 import com.surelogic.sierra.jdbc.scan.ScanInfo;
-import com.surelogic.sierra.jdbc.settings.ScanFilterView;
 
 class ProjectStatus {
 	final IJavaProject project;
@@ -25,7 +24,7 @@ class ProjectStatus {
 	final int numProjectProblems;
 	final int numServerProblems;
 	final ProjectDO localDBInfo;
-	final ScanFilterView filter;
+	final String filterName;
 	
 	public ProjectStatus(IJavaProject jp) {
 		this(jp, null, null, 0, 0, 0, null, null);
@@ -34,7 +33,7 @@ class ProjectStatus {
 	public ProjectStatus(IJavaProject jp, File scan, ScanInfo info, 
 			             int numLocalAudits,
 			             int numServerProblems, int numProjectProblems,
-			             ProjectDO dbInfo, ScanFilterView filter) {
+			             ProjectDO dbInfo, String filterName) {
 		project = jp;
 		name = jp.getElementName();
 		scanDoc = scan;
@@ -43,7 +42,7 @@ class ProjectStatus {
 		this.numServerProblems = numServerProblems;
 		this.numProjectProblems = numProjectProblems;
 		localDBInfo = dbInfo;
-		this.filter = filter;
+		this.filterName = filterName;
 	}
 	
 }

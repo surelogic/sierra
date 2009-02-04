@@ -86,7 +86,6 @@ import com.surelogic.sierra.jdbc.project.ProjectDO;
 import com.surelogic.sierra.jdbc.scan.ScanInfo;
 import com.surelogic.sierra.jdbc.scan.Scans;
 import com.surelogic.sierra.jdbc.settings.ConnectedServer;
-import com.surelogic.sierra.jdbc.settings.ScanFilterView;
 import com.surelogic.sierra.jdbc.settings.SettingQueries;
 import com.surelogic.sierra.tool.message.ScanFilter;
 
@@ -1081,11 +1080,11 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 					final File scan = NewScan.getScanDocumentFile(name);
 					final ScanInfo info = sm.getLatestScanInfo(name);
 					final ProjectDO dbInfo = projectMap.get(name);
-					final ScanFilterView filter = SettingQueries
-							.scanFilterForProject(name).perform(q);
+					final String filterName = SettingQueries
+							.scanFilterNameForProject(name).perform(q);
 					final ProjectStatus s = new ProjectStatus(jp, scan, info,
 							numLocalAudits, numServerProblems,
-							numProjectProblems, dbInfo, filter);
+							numProjectProblems, dbInfo, filterName);
 					projects.add(s);
 				}
 				filters = SettingQueries.getLocalScanFilters().perform(q);
@@ -1651,12 +1650,12 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 		 * ps.localDBInfo.getScanFilter()); scanFilter.setData(ps.localDBInfo);
 		 * }
 		 */
-		if (ps.filter != null) {
+		if (ps.filterName != null) {
 			final ServersViewContent scanFilter = new ServersViewContent(root,
 					SLImages.getImage(CommonImages.IMG_FILTER));
 			contents.add(scanFilter);
-			scanFilter.setText("Scan filter: " + ps.filter.getName());
-			scanFilter.setData(ps.filter);
+			scanFilter.setText("Scan filter: " + ps.filterName);
+			scanFilter.setData(ps.filterName);
 		}
 
 		// Also sets status
