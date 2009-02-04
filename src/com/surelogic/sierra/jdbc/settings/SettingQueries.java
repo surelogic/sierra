@@ -315,6 +315,18 @@ public class SettingQueries {
 		};
 	}
 
+	public static final DBQuery<String> scanFilterNameForProject(final String projectName) {
+		return new DBQuery<String>() {
+			public String perform(final Query q) {
+				final ScanFilters filters = new ScanFilters(q);
+				final ScanFilterDO sf = filters
+						.getScanFilterByProject(projectName);
+				// Not using ScanFilterView due to overhead of getting all the details
+				return sf.getName();
+			}
+		};
+	}
+	
 	/**
 	 * Record the scan filter used to generate a particular scan.
 	 * 
