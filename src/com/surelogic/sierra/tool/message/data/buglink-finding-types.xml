@@ -5112,18 +5112,13 @@ should be <code>i++</code> (alone) or <code>i = i + 1</code>.</p>]]>
     <id>ICAST_QUESTIONABLE_UNSIGNED_RIGHT_SHIFT</id>
     <artifact tool="FindBugs" mnemonic="ICAST_QUESTIONABLE_UNSIGNED_RIGHT_SHIFT"/>
     <name>Questionable unsigned right shift</name>
-    <shortMessage>
-      Unsigned right shift cast to short/byte
-    </shortMessage>
+    <shortMessage>Unsigned right shift cast to short/byte.</shortMessage>
     <info>
-
-      &lt;p&gt; The code performs an unsigned right shift, whose
-      result is then cast to a short or byte, which discards the
-      upper bits of the result. Since the upper bits are
-      discarded, there may be no difference between a signed and
-      unsigned right shift (depending upon the size of the shift).
-      &lt;/p&gt;
-
+<![CDATA[<p>The code performs an unsigned right shift, whose result is
+then cast to a short or byte, which discards the upper bits of the
+result. Since the upper bits are discarded, there may be no difference
+between a signed and unsigned right shift (depending upon the size of
+the shift).</p>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
@@ -5131,34 +5126,41 @@ should be <code>i++</code> (alone) or <code>i = i + 1</code>.</p>]]>
     <id>ICAST_BAD_SHIFT_AMOUNT</id>
     <artifact tool="FindBugs" mnemonic="ICAST_BAD_SHIFT_AMOUNT"/>
     <name>Bad shift amount</name>
-    <shortMessage>
-      Integer shift by an amount not in the range 0..31
-    </shortMessage>
+    <shortMessage>This code performs an integer shift by an amount not in the range 0..31.</shortMessage>
     <info>
-
-      &lt;p&gt; The code performs an integer shift by a constant
-      amount outside the range 0..31. The effect of this is to use
-      the lower 5 bits of the integer value to decide how much to
-      shift by. This probably isn't want was expected, and it at
-      least confusing. &lt;/p&gt;
-
+<![CDATA[<p>The code performs an integer shift by a constant amount
+outside the range 0..31. The effect of this is to use the lower 5 bits
+of the integer value to decide how much to shift by. This probably
+isn't want was expected, and it at least confusing.</p>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>IM_MULTIPLYING_RESULT_OF_IREM</id>
     <artifact tool="FindBugs" mnemonic="IM_MULTIPLYING_RESULT_OF_IREM"/>
-    <name>Multiplying Result Of Int Remainder</name>
-    <shortMessage>
-      Integer multiply of result of integer remainder
+    <name>Multiplying result of an int remainder</name>
+    <shortMessage>Integer multiply of result of integer remainder
     </shortMessage>
     <info>
+<![CDATA[<p>The code multiplies the result of an integer remaining by
+an integer constant. Be sure you don't have your operator precedence
+confused. For example</p>
 
-      &lt;p&gt; The code multiplies the result of an integer
-      remaining by an integer constant. Be sure you don't have
-      your operator precedence confused. For example i % 60 * 1000
-      is (i % 60) * 1000, not i % (60 * 1000). &lt;/p&gt;
+<pre>
+i % 60 * 1000
+</pre>
 
+<p>is</p>
+
+<pre>
+(i % 60) * 1000
+</pre>
+
+<p>not</p>
+
+<pre>
+i % (60 * 1000)
+</pre>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
@@ -5166,15 +5168,15 @@ should be <code>i++</code> (alone) or <code>i = i + 1</code>.</p>]]>
     <id>DMI_INVOKING_TOSTRING_ON_ARRAY</id>
     <artifact tool="FindBugs" mnemonic="DMI_INVOKING_TOSTRING_ON_ARRAY"/>
     <name>Invoking toString On Array</name>
-    <shortMessage>Invocation of toString on an array</shortMessage>
+    <shortMessage>Invocation of toString on an array produces a useless result. Did you mean to use Arrays.toString?</shortMessage>
     <info>
+<![CDATA[<p>The code invokes <code>toString</code> on an array, which will generate
+a fairly useless result such as <code>[C@16f0472</code>.  Consider
+using the <code>Arrays.toString</code> method to convert the array
+into a readable String that also shows the contents of the array.</p>
 
-      &lt;p&gt; The code invokes toString on an array, which will
-      generate a fairly useless result such as [C@16f0472.
-      Consider using Arrays.toString to convert the array into a
-      readable String that gives the contents of the array. See
-      Programming Puzzlers, chapter 3, puzzle 12. &lt;/p&gt;
-
+<p>For more information on this issue see puzzle 12 of Bloch and
+Gafter's <i>Java Puzzlers</i>.</p>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
@@ -5213,366 +5215,289 @@ publicized the bug pattern</a>.</p>]]>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>IM_BAD_CHECK_FOR_ODD</id>
-    <artifact tool="FindBugs" mnemonic="IM_BAD_CHECK_FOR_ODD">
-    </artifact>
-    <shortMessage>
-      Check for oddness that won't work for negative numbers
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="IM_BAD_CHECK_FOR_ODD"/>
+    <name>Bad check for odd</name>
+    <shortMessage>This code performs a check for oddness that won't work for negative values.</shortMessage>
     <info>
+<![CDATA[<p>The code uses <code>x % 2 == 1</code> to check to see if a
+value is odd, but this won't work for negative numbers.  For example,
+<code>(-5) % 2 == -1</code> (not <code>1</code>). If this code is trying to check for
+oddness, consider using
 
-      &lt;p&gt; The code uses x % 2 == 1 to check to see if a
-      value is odd, but this won't work for negative numbers
-      (e.g., (-5) % 2 == -1). If this code is intending to check
-      for oddness, consider using x &amp; 1 == 1, or x % 2 != 0.
-      &lt;/p&gt;
+<pre>
+x &amp; 1 == 1
+</pre>
 
+<p>or</p>
+
+<pre>
+x % 2 != 0
+</pre>
+
+<p>both of which avoid this issue.</p>]]>
     </info>
-    <name>Bad Check For Odd</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>DMI_HARDCODED_ABSOLUTE_FILENAME</id>
-    <artifact tool="FindBugs"
-	      mnemonic="DMI_HARDCODED_ABSOLUTE_FILENAME">
-    </artifact>
-    <shortMessage>
-      Code contains a hard coded reference to an absolute pathname
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="DMI_HARDCODED_ABSOLUTE_FILENAME"/>
+    <name>Hardcoded absolute filename</name>
+    <shortMessage>This code contains a hard coded reference to an absolute pathname. This can make your code difficult to deploy.</shortMessage>
     <info>
+<![CDATA[<p>This code constructs a File object using a hard coded to
+an absolute pathname. For example</p>
 
-      &lt;p&gt;This code constructs a File object using a hard
-      coded to an absolute pathname (e.g., &lt;code&gt;new
-      File(&quot;/home/dannyc/workspace/j2ee/src/share/com/sun/enterprise/deployment&quot;);&lt;/code&gt;
-      &lt;/p&gt;
+<pre>
+new File("/home/dannyc/workspace/j2ee/src/share/com/sun/enterprise/deployment");
+</pre>
 
+<p>This can strongly tie the code the environment it is developed
+within and make it more difficult to deploy.  Consider moving this
+file reference into a properties file or use some other more flexible
+scheme.</p>]]>
     </info>
-    <name>Hardcoded Absolute Filename</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>DMI_BAD_MONTH</id>
-    <artifact tool="FindBugs" mnemonic="DMI_BAD_MONTH"></artifact>
-    <shortMessage>Bad constant value for month</shortMessage>
+    <artifact tool="FindBugs" mnemonic="DMI_BAD_MONTH"/>
+    <name>Bad month value</name>
+    <shortMessage>Bad constant value for month passed. This is likely a typo or a bug.</shortMessage>
     <info>
-
-      &lt;p&gt; This code passes a constant month value outside
-      the expected range of 0..11 to a method. &lt;/p&gt;
-
+<![CDATA[<p>This code passes a constant month value outside the
+expected range of 0..11 to a method.  Please fix this code.</p>]]>
     </info>
-    <name>Bad Month</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>DMI_USELESS_SUBSTRING</id>
-    <artifact tool="FindBugs" mnemonic="DMI_USELESS_SUBSTRING">
-    </artifact>
-    <shortMessage>
-      Invocation of substring(0), which returns the original value
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="DMI_USELESS_SUBSTRING"/>
+    <name>Useless substring</name>
+    <shortMessage>This code calls substring(0), which returns the original value. It may signpost a typo or a bug.</shortMessage>
     <info>
-
-      &lt;p&gt; This code invokes substring(0) on a String, which
-      returns the original value. &lt;/p&gt;
-
+<![CDATA[<p>This code invokes <code>substring(0)</code> on a
+<code>String</code>, which returns the original value. This is likely
+a mistake and this code should be examined carefully for logic
+errors.</p>]]>
     </info>
-    <name>Useless Substring</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>DMI_CALLING_NEXT_FROM_HASNEXT</id>
-    <artifact tool="FindBugs"
-	      mnemonic="DMI_CALLING_NEXT_FROM_HASNEXT">
-    </artifact>
-    <shortMessage>hasNext method invokes next</shortMessage>
+    <artifact tool="FindBugs" mnemonic="DMI_CALLING_NEXT_FROM_HASNEXT"/>
+    <name>Never call next from hasNext</name>
+    <shortMessage>The hasNext method in this code invokes next which is almost certainly wrong.</shortMessage>
     <info>
+<![CDATA[<p>In this iterator implementation the <code>hasNext()</code>
+method invokes the <code>next()</code> method.  This is almost
+certainly wrong, since the <code>hasNext()</code> method is not
+supposed to change the state of the iterator, and the
+<code>next()</code> method is supposed to change the state of the
+iterator.</p>
 
-      &lt;p&gt; The hasNext() method invokes the next() method.
-      This is almost certainly wrong, since the hasNext() method
-      is not supposed to change the state of the iterator, and the
-      next method is supposed to change the state of the iterator.
-      &lt;/p&gt;
-
+<p>Please examine the specification for an interator and fix this
+code.</p>]]>
     </info>
-    <name>Calling Next From hasNext</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AvoidCallingSleepWithLockHeld</id>
-    <artifact tool="FindBugs" mnemonic="SWL_SLEEP_WITH_LOCK_HELD">
-    </artifact>
-    <shortMessage>
-      Method calls Thread.sleep() with a lock held
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="SWL_SLEEP_WITH_LOCK_HELD"/>
+    <name>Avoid sleeping with a lock held</name>
+    <shortMessage>This code calls Thread.sleep() with a lock held which may impact performance and scalability.</shortMessage>
     <info>
+<![CDATA[<p>This code appears to call <code>Thread.sleep()</code> with
+a lock held.  This may result in very poor performance and
+scalability, or a deadlock, since other threads may be waiting to
+acquire the lock.</p>
 
-      &lt;p&gt; This method calls Thread.sleep() with a lock held.
-      This may result in very poor performance and scalability, or
-      a deadlock, since other threads may be waiting to acquire
-      the lock. It is a much better idea to call wait() on the
-      lock, which releases the lock and allows other threads to
-      run. &lt;/p&gt;
-
+<p>If you must hold a lock, it is a much better idea to call
+<code>wait()</code> on the lock, which releases the lock and allows
+other threads to run. In addition consider using the classes in the
+<code>java.util.concurrent</code> package.</p>]]>
     </info>
-    <name>Sleep With Lock Held</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>DB_DUPLICATE_BRANCHES</id>
-    <artifact tool="FindBugs" mnemonic="DB_DUPLICATE_BRANCHES">
-    </artifact>
-    <shortMessage>
-      Method uses the same code for two branches
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="DB_DUPLICATE_BRANCHES"/>
+    <name>Duplicate branches</name>
+    <shortMessage>This code uses the same logic for two branches. Is this a coding mistake?</shortMessage>
     <info>
-
-      &lt;p&gt; This method uses the same code to implement two
-      branches of a conditional branch. Check to ensure that this
-      isn't a coding mistake. &lt;/p&gt;
-
+<![CDATA[<p>This method uses the same code to implement two branches
+of a conditional branch. Check this logic carefully to ensure that
+this isn't a coding mistake.</p>]]>
     </info>
-    <name>Duplicate Branches</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>DB_DUPLICATE_SWITCH_CLAUSES</id>
-    <artifact tool="FindBugs"
-	      mnemonic="DB_DUPLICATE_SWITCH_CLAUSES">
-    </artifact>
-    <shortMessage>
-      Method uses the same code for two switch clauses
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="DB_DUPLICATE_SWITCH_CLAUSES"/>
+    <name>Duplicate switch clauses</name>
+    <shortMessage>This code uses the same logic for two switch clauses. Is this a coding mistake?</shortMessage>
     <info>
-
-      &lt;p&gt; This method uses the same code to implement two
-      clauses of a switch statement. This could be a case of
-      duplicate code, but it might also indicate a coding mistake.
-      &lt;/p&gt;
-
+<![CDATA[<p>This method uses the same code to implement two clauses of
+a switch statement. This could be a case of duplicate code, but it
+might also indicate a coding mistake.</p>]]>
     </info>
-    <name>Duplicate Switch Clauses</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>IMA_INEFFICIENT_MEMBER_ACCESS</id>
-    <artifact tool="FindBugs"
-	      mnemonic="IMA_INEFFICIENT_MEMBER_ACCESS">
-    </artifact>
-    <shortMessage>
-      Method accesses a private member variable of owning class
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="IMA_INEFFICIENT_MEMBER_ACCESS"/>
+    <name>Inefficient member access</name>
+    <shortMessage>Method accesses a private member variable of owning class. This may be inefficient.</shortMessage>
     <info>
-
-      &lt;p&gt; This method of an inner class reads from or writes
-      to a private member variable of the owning class, or calls a
-      private method of the owning class. The compiler must
-      generate a special method to access this private member,
-      causing this to be less efficient. Relaxing the protection
-      of the member variable or method will allow the compiler to
-      treat this as a normal access. &lt;/p&gt;
-
+<![CDATA[<p>This method of an inner class reads from or writes to a
+private member variable of the owning class, or calls a private method
+of the owning class. The compiler must generate a special method to
+access this private member, causing this code to be less
+efficient. Relaxing the protection of the member variable or method
+will allow the compiler to treat this as a normal access.</p>]]>
     </info>
-    <name>Inefficient Member Access</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>XFB_XML_FACTORY_BYPASS</id>
-    <artifact tool="FindBugs" mnemonic="XFB_XML_FACTORY_BYPASS">
-    </artifact>
-    <shortMessage>
-      Method directly allocates a specific implementation of xml
-      interfaces
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="XFB_XML_FACTORY_BYPASS"/>
+    <name>XML factory bypass</name>
+    <shortMessage>This code directly allocates a specific implementation of and XML interface. Should you be using a factory?</shortMessage>
     <info>
+<![CDATA[<p> This method allocates a specific implementation of an xml
+interface. It is preferable to use the supplied factory classes to
+create these objects so that the implementation can be changed at
+runtime. See </p>
 
-      &lt;p&gt; This method allocates a specific implementation of
-      an xml interface. It is preferable to use the supplied
-      factory classes to create these objects so that the
-      implementation can be changed at runtime. See &lt;/p&gt;
-      &lt;ul&gt;
-      &lt;li&gt;javax.xml.parsers.DocumentBuilderFactory&lt;/li&gt;
-      &lt;li&gt;javax.xml.parsers.SAXParserFactory&lt;/li&gt;
-      &lt;li&gt;javax.xml.transform.TransformerFactory&lt;/li&gt;
-      &lt;li&gt;org.w3c.dom.Document.create&lt;i&gt;XXXX&lt;/i&gt;&lt;/li&gt;
-      &lt;/ul&gt; &lt;p&gt;for details.&lt;/p&gt;
+<ul>
+  <li>javax.xml.parsers.DocumentBuilderFactory</li>
+  <li>javax.xml.parsers.SAXParserFactory</li>
+  <li>javax.xml.transform.TransformerFactory</li>
+  <li>org.w3c.dom.Document.create<i>XXXX</i></li>
+</ul>
 
+<p>for details.</p>]]>
     </info>
-    <name>XML Factory Bypass</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>USM_USELESS_SUBCLASS_METHOD</id>
-    <artifact tool="FindBugs"
-	      mnemonic="USM_USELESS_SUBCLASS_METHOD">
-    </artifact>
-    <shortMessage>
-      Method superfluously delegates to parent class method
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="USM_USELESS_SUBCLASS_METHOD"/>
+    <name>Useless subclass method</name>
+    <shortMessage>Method superfluously delegates to parent class method. Remove this method.</shortMessage>
     <info>
+<![CDATA[<p>This derived method merely calls the same superclass
+method passing in the exact parameters received.  This method can be
+removed, as it provides no additional value.</p>
 
-      &lt;p&gt; This derived method merely calls the same
-      superclass method passing in the exact parameters received.
-      This method can be removed, as it provides no additional
-      value. &lt;/p&gt;
-
+<p>Examine this code carefully as this type of mistake may signpost a
+muddled understanding of the Java programming language.</p>]]>
     </info>
-    <name>Useless Subclass Method</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>USM_USELESS_ABSTRACT_METHOD</id>
-    <artifact tool="FindBugs"
-	      mnemonic="USM_USELESS_ABSTRACT_METHOD">
-    </artifact>
-    <shortMessage>
-      Abstract Method is already defined in implemented interface
-    </shortMessage>
-    <info>
-
-      &lt;p&gt; This abstract method is already defined in an
-      interface that is implemented by this abstract class. This
-      method can be removed, as it provides no additional value.
-      &lt;/p&gt;
-
-    </info>
+    <artifact tool="FindBugs" mnemonic="USM_USELESS_ABSTRACT_METHOD"/>
     <name>Useless Abstract Method</name>
+    <shortMessage>Abstract method is already defined in an implemented interface. Remove this method.</shortMessage>
+    <info>
+<![CDATA[<p>This abstract method is already defined in an interface
+that is implemented by this abstract class. This method can be
+removed, as it provides no additional value.</p>]]>
+    </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>CI_CONFUSED_INHERITANCE</id>
-    <artifact tool="FindBugs" mnemonic="CI_CONFUSED_INHERITANCE">
-    </artifact>
-    <shortMessage>
-      Class is final but declares protected field
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="CI_CONFUSED_INHERITANCE"/>
+    <name>Confused inheritance</name>
+    <shortMessage>Class is final but declares protected field.</shortMessage>
     <info>
+<![CDATA[<p>This class is declared to be <code>final</code>, but it
+declares fields to be <code>protected</code>. Since the class is
+<code>final</code>, it can not be subclassed, and the use of
+<code>protected</code> is confusing.</p>
 
-      &lt;p&gt; This class is declared to be final, but declares
-      fields to be protected. Since the class is final, it can not
-      be derived from, and the use of protected is confusing. The
-      access modifier for the field should be changed to private
-      or public to represent the true use for the field.
-      &lt;/p&gt;
-
+<p>The access modifier for the field should be changed to
+<code>private</code> or <code>public</code> to represent the actual
+intended use for the field.</p>]]>
     </info>
-    <name>Confused Inheritance</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>QBA_QUESTIONABLE_BOOLEAN_ASSIGNMENT</id>
-    <artifact tool="FindBugs"
-	      mnemonic="QBA_QUESTIONABLE_BOOLEAN_ASSIGNMENT">
-    </artifact>
-    <shortMessage>
-      Method assigns boolean literal in boolean expression
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="QBA_QUESTIONABLE_BOOLEAN_ASSIGNMENT"/>
+    <name>Questionable boolean assignment</name>
+    <shortMessage>This code assigns boolean literal in boolean expression. Is this a mistake? Did you mean ==?</shortMessage>
     <info>
-
-      &lt;p&gt; This method assigns a literal boolean value (true
-      or false) to a boolean variable inside an if or while
-      expression. Most probably this was supposed to be a boolean
-      comparison using ==, not an assignment using =. &lt;/p&gt;
-
+<![CDATA[<p>This method assigns a literal boolean value (true or
+false) to a boolean variable inside an <code>if</code> or
+<code>while</code> expression. Most probably this is a mistake and the
+code was supposed to be a boolean comparison using <code>==</code>,
+not an assignment using <code>=</code>.</p>]]>
     </info>
-    <name>Questionable Boolean Assignment</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>VR_UNRESOLVABLE_REFERENCE</id>
-    <artifact tool="FindBugs"
-	      mnemonic="VR_UNRESOLVABLE_REFERENCE">
-    </artifact>
-    <shortMessage>
-      Class makes reference to unresolvable class or method
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="VR_UNRESOLVABLE_REFERENCE"/>
+    <name>Unresolvable reference</name>
+    <shortMessage>This class makes reference to unresolvable class or method.</shortMessage>
     <info>
-
-      &lt;p&gt; This class makes a reference to a class or method
-      that can not be resolved using against the libraries it is
-      being analyzed with. &lt;/p&gt;
-
+<![CDATA[<p>This class makes a reference to a class or method that can
+not be resolved using against the libraries it is being analyzed
+with. This may be caused if the analysis was not told about the
+program's entire classpath.</p>]]>
     </info>
-    <name>Unresolvable Reference</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>GC_UNRELATED_TYPES</id>
-    <artifact tool="FindBugs" mnemonic="GC_UNRELATED_TYPES">
-    </artifact>
-    <shortMessage>
-      No relationship between generic parameter and method
-      argument
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="GC_UNRELATED_TYPES"/>
+    <name>Unrelated types</name>
+    <shortMessage>No relationship between a generic parameter and this method argument.</shortMessage>
     <info>
-
-      &lt;p&gt; This call to a generic container's method contains
-      an argument with a different class type from that of the
-      container's parameter. Therefore, it is unlikely that the
-      container contains any objects with the same type as the
-      method argument used here. &lt;/p&gt;
-
+<![CDATA[<p>This call to a generic container's method contains an
+argument with a different class type from that of the container's
+parameter. Therefore, it is unlikely that the container contains any
+objects with the same type as the method argument used here.</p>]]>
     </info>
-    <name>Unrelated Types</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>AvoidStaticCalendar</id>
-    <artifact tool="FindBugs"
-	      mnemonic="STCAL_STATIC_CALENDAR_INSTANCE">
-    </artifact>
-    <shortMessage>Static Calendar</shortMessage>
+    <artifact tool="FindBugs" mnemonic="STCAL_STATIC_CALENDAR_INSTANCE"/>
+    <artifact tool="FindBugs" mnemonic="STCAL_INVOKE_ON_STATIC_CALENDAR_INSTANCE"/>
+    <name>Avoid static Calendar instances</name>
+    <shortMessage>This code contains a static Calendar instance. This may cause erratic behavior in your application.</shortMessage>
     <info>
+<![CDATA[<p><code>Calendar</code> instances are inherently unsafe for
+multihtreaded use. Sharing a single instance across thread boundaries
+without proper synchronization will result in erratic behavior of the
+application. Under JDK 1.4 problems seem to surface less often than
+under Java 5 where you will probably see random
+<code>ArrayIndexOutOfBoundsExceptions</code> or
+<code>IndexOutOfBoundsExceptions</code> in
+<code>sun.util.calendar.BaseCalendar.getCalendarDateFromFixedDate()</code>.</p>
 
-      &lt;p&gt;Even though the JavaDoc does not contain a hint
-      about it, Calendars are inherently unsafe for multihtreaded
-      use. Sharing a single instance across thread boundaries
-      without proper synchronization will result in erratic
-      behavior of the application. Under 1.4 problems seem to
-      surface less often than under Java 5 where you will probably
-      see random ArrayIndexOutOfBoundsExceptions or
-      IndexOutOfBoundsExceptions in
-      sun.util.calendar.BaseCalendar.getCalendarDateFromFixedDate().&lt;/p&gt;
-      &lt;p&gt;You may also experience serialization
-      problems.&lt;/p&gt; &lt;p&gt;Using an instance field is
-      recommended.&lt;/p&gt; &lt;p&gt;For more information on this
-      see &lt;a
-      href=&quot;http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6231579&quot;&gt;Sun
-      Bug #6231579&lt;/a&gt; and &lt;a
-      href=&quot;http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6178997&quot;&gt;Sun
-      Bug #6178997&lt;/a&gt;.&lt;/p&gt;
+<p>You may also experience serialization problems.</p>
 
+<p>Using an instance field is recommended.</p>
+
+<p>For more information on this issue please see <a
+href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6231579">Sun
+bug #6231579</a> and <a
+href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6178997">Sun
+bug #6178997</a>.</p>]]>
     </info>
-    <name>Static Calendar Instance</name>
-  </findingType>
-  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-  <findingType>
-    <id>CallToStaticCalendar</id>
-    <artifact tool="FindBugs"
-	      mnemonic="STCAL_INVOKE_ON_STATIC_CALENDAR_INSTANCE">
-    </artifact>
-    <shortMessage>Call to static Calendar</shortMessage>
-    <info>
-
-      &lt;p&gt;Even though the JavaDoc does not contain a hint
-      about it, Calendars are inherently unsafe for multihtreaded
-      use. The detector has found a call to an instance of
-      Calendar that has been obtained via a static field. This
-      looks suspicous.&lt;/p&gt; &lt;p&gt;For more information on
-      this see &lt;a
-      href=&quot;http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6231579&quot;&gt;Sun
-      Bug #6231579&lt;/a&gt; and &lt;a
-      href=&quot;http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6178997&quot;&gt;Sun
-      Bug #6178997&lt;/a&gt;.&lt;/p&gt;
-
-    </info>
-    <name>Invoke On Static Calendar Instance</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>STCAL_STATIC_SIMPLE_DATE_FORMAT_INSTANCE</id>
     <artifact tool="FindBugs" mnemonic="STCAL_STATIC_SIMPLE_DATE_FORMAT_INSTANCE"/>
+    <artifact tool="FindBugs" mnemonic="STCAL_INVOKE_ON_STATIC_DATE_FORMAT_INSTANCE"/>
     <artifact tool="PMD" mnemonic="UnsynchronizedStaticDateFormatter"/>
-    <name>Static SimpleDateFormat Instance</name>
-    <shortMessage>Static SimpleDateFormat</shortMessage>
+    <name>Avoid static SimpleDateFormat instances</name>
+    <shortMessage>This code contains a static SimpleDateFormat instance. This may cause erratic behavior in your application.</shortMessage>
     <info>
 <![CDATA[<p>As the JavaDoc states, <code>DateFormat</code> objects are
 inherently unsafe for multithreaded use. Sharing a single instance
@@ -5592,76 +5517,51 @@ Bug #6178997</a>.</p>]]>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
-    <id>CallToStaticDateFormat</id>
-    <artifact tool="FindBugs"
-	      mnemonic="STCAL_INVOKE_ON_STATIC_DATE_FORMAT_INSTANCE">
-    </artifact>
-    <shortMessage>Call to static DateFormat</shortMessage>
-    <info>
-
-      &lt;p&gt;As the JavaDoc states, DateFormats are inherently
-      unsafe for multithreaded use. The detector has found a call
-      to an instance of DateFormat that has been obtained via a
-      static field. This looks suspicous.&lt;/p&gt; &lt;p&gt;For
-      more information on this see &lt;a
-      href=&quot;http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6231579&quot;&gt;Sun
-      Bug #6231579&lt;/a&gt; and &lt;a
-      href=&quot;http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6178997&quot;&gt;Sun
-      Bug #6178997&lt;/a&gt;.&lt;/p&gt;
-
-    </info>
-    <name>Invoke On Static Date Format Instance</name>
-  </findingType>
-  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-  <!-- FindBugs 1.3.0 Upgrade -->
-  <findingType>
     <id>DoesntOverrideEquals</id>
-    <artifact tool="FindBugs"
-	      mnemonic="EQ_DOESNT_OVERRIDE_EQUALS">
-    </artifact>
-    <shortMessage>
-      Class doesn't override equals in superclass
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="EQ_DOESNT_OVERRIDE_EQUALS"/>
+    <name>Doesn't override equals</name>
+    <shortMessage>This class doesn't override equals in its superclass. Is this a mistake?</shortMessage>
     <info>
+<![CDATA[<p>This class extends a class that defines an
+<code>equals</code> method.  The class adds fields, but doesn't define
+an <code>equals</code> method itself. Thus, equality on instances of
+this class will ignore the identity of the subclass and the added
+fields.</p>
 
-      &lt;p&gt; This class extends a class that defines an equals
-      method and adds fields, but doesn't define an equals method
-      itself. Thus, equality on instances of this class will
-      ignore the identity of the subclass and the added fields. Be
-      sure this is what is intended, and that you don't need to
-      override the equals method. Even if you don't need to
-      override the equals method, consider overriding it anyone to
-      document the fact that the equals method for the subclass
-      just return the result of invoking super.equals(o).
+<p>Be sure this is what is intended, and that you don't need to
+override the <code>equals</code> method. Even if you don't need to
+override the equals method, consider overriding it anyone to document
+the fact that the equals method for the subclass just return the
+result of invoking <code>super.equals(o)</code>.</p>
 
+<p>For more information see Bloch's <i>Effective Java</i> (second
+edition) items 8 and 9.</p>]]>
     </info>
-    <name>Doesn't Override Equals</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>SameSimpleNameAsInterface</id>
-    <artifact tool="FindBugs"
-	      mnemonic="NM_SAME_SIMPLE_NAME_AS_INTERFACE">
-    </artifact>
-    <shortMessage>
-      Class names shouldn't shadow simple name of implemented
-      interface
-    </shortMessage>
+    <artifact tool="FindBugs" mnemonic="NM_SAME_SIMPLE_NAME_AS_INTERFACE"/>
+    <name>Avoid same simple name as an interface</name>
+    <shortMessage>Class names shouldn't shadow the simple name of implemented interfaces.</shortMessage>
     <info>
+<![CDATA[<p>This class/interface has a simple name that is identical
+to that of an implemented/extended interface, except that the
+interface is in a different package For example</p>
 
-      &lt;p&gt; This class/interface has a simple name that is
-      identical to that of an implemented/extended interface,
-      except that the interface is in a different package (e.g.,
-      &lt;code&gt;alpha.Foo&lt;/code&gt; extends
-      &lt;code&gt;beta.Foo&lt;/code&gt;). This can be
-      exceptionally confusing, create lots of situations in which
-      you have to look at import statements to resolve references
-      and creates many opportunities to accidently define methods
-      that do not override methods in their superclasses.
-      &lt;/p&gt;
+<pre>
+package org.alpha;
 
+class Foo extends org.beta.Foo implements org.gamma.Foo {
+  ...
+}
+</pre>
+
+<p>This can be exceptionally confusing, create lots of situations in
+which you have to look at import statements to resolve references, and
+creates many opportunities to accidently define methods that do not
+override methods in their superclasses.</p>]]>
     </info>
-    <name>Same Simple Name As Interface</name>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
