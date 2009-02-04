@@ -7087,10 +7087,10 @@ single thread while it executes.</p>]]>
   <findingType>
     <id>LockAnalysis_ds_SynchronizedMethodWarningDetails</id>
     <artifact tool="JSure" mnemonic="LockAnalysis_ds_SynchronizedMethodWarningDetails"/>
-    <name>Unidentified Lock: this</name>
-    <shortMessage>Unidentified Lock: this.</shortMessage>
+    <name>Unidentified lock: this</name>
+    <shortMessage>Unidentified lock: this.</shortMessage>
     <info>
-<![CDATA[<p>Unidentified Lock: <code>this</code></p>]]>
+<![CDATA[<p>Unidentified lock: <code>this</code></p>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
