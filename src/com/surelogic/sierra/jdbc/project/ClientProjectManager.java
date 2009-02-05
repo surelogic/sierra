@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import com.surelogic.common.jdbc.JDBCUtils;
@@ -15,6 +16,8 @@ import com.surelogic.sierra.jdbc.settings.ConnectedServer;
 import com.surelogic.sierra.tool.message.ServerMismatchException;
 import com.surelogic.sierra.tool.message.SierraService;
 import com.surelogic.sierra.tool.message.SierraServiceClient;
+import com.surelogic.sierra.tool.message.SyncProjectRequest;
+import com.surelogic.sierra.tool.message.SyncProjectResponse;
 import com.surelogic.sierra.tool.message.SyncRequest;
 import com.surelogic.sierra.tool.message.SyncResponse;
 import com.surelogic.sierra.tool.message.SyncTrailRequest;
@@ -33,7 +36,7 @@ public final class ClientProjectManager extends ProjectManager {
 		super(conn);
 		findingManager = ClientFindingManager.getInstance(conn);
 		insertSynchRecord = conn
-				.prepareStatement("INSERT INTO SYNCH (PROJECT_ID,DATE_TIME,COMMIT_REVISION,PRIOR_REVISION,COMMIT_COUNT,UPDATE_COUNT) VALUES (?,?,?,?,?,?)");
+				.prepareStatement("INSERT INTO SYNCH (PROJECT_ID,DATE_TIME,COMMIT_REVISION,PRIOR_REVISION,COMMIT_COUNT,UPDATE_COUNT) VALUES ((SELECT ID FROM PROJECT WHERE NAME = ?),?,?,?,?,?)");
 		deleteSynchByProject = conn
 				.prepareStatement("DELETE FROM SYNCH WHERE PROJECT_ID = ?");
 		selectServerUid = conn
@@ -48,13 +51,25 @@ public final class ClientProjectManager extends ProjectManager {
 		return findingManager;
 	}
 
+	public boolean synchronizeProjects(final ConnectedServer server,
+			final List<String> projectNames, final SLProgressMonitor monitor)
+			throws ServerMismatchException, SQLException {
+		final SyncInfo info = synchronizeProjectsWithServer(server,
+				projectNames, monitor, false);
+		if (info == null) {
+			return false;
+		}
+		return info.requiresUpdate();
+	}
+
 	/**
 	 * @return true if updated
 	 */
 	public boolean synchronizeProject(final ConnectedServer server,
 			final String projectName, final SLProgressMonitor monitor)
 			throws ServerMismatchException, SQLException {
-		final SyncInfo info = synchronizeProjectWithServer(server, projectName, monitor, false);
+		final SyncProjectInfo info = synchronizeProjectWithServer(server,
+				projectName, monitor, false);
 		if (info == null) {
 			return false;
 		}
@@ -65,78 +80,100 @@ public final class ClientProjectManager extends ProjectManager {
 			final ConnectedServer server, final String projectName,
 			final SLProgressMonitor monitor) throws ServerMismatchException,
 			SQLException {
-		final SyncInfo info = synchronizeProjectWithServer(server, projectName, monitor, true); 
+		final SyncProjectInfo info = synchronizeProjectWithServer(server,
+				projectName, monitor, true);
 		if (info == null) {
 			return Collections.emptyList();
 		}
 		return info.response.getTrails();
 	}
 
-	private static class SyncInfo {
-		final SyncRequest request;
-		final SyncResponse response;
-		
-		SyncInfo(SyncRequest req, SyncResponse resp) {
+	private static class SyncProjectInfo {
+		final SyncProjectRequest request;
+		final SyncProjectResponse response;
+
+		SyncProjectInfo(final SyncProjectRequest req,
+				final SyncProjectResponse resp) {
 			request = req;
 			response = resp;
 		}
 
 		public boolean requiresUpdate() {
 			return request.getRevision() != response.getCommitRevision();
-			//return !request.getTrails().isEmpty() || !response.getTrails().isEmpty();
+			// return !request.getTrails().isEmpty() ||
+			// !response.getTrails().isEmpty();
 		}
 	}
-	
-	private SyncInfo synchronizeProjectWithServer(
+
+	private static class SyncInfo {
+		final SyncRequest request;
+		final SyncResponse response;
+
+		SyncInfo(final SyncRequest req, final SyncResponse resp) {
+			request = req;
+			response = resp;
+		}
+
+		public boolean requiresUpdate() {
+			final Iterator<SyncProjectResponse> respIter = response
+					.getProjects().iterator();
+			for (final SyncProjectRequest syncProjectRequest : request
+					.getProjects()) {
+				if (syncProjectRequest.getRevision() != respIter.next()
+						.getCommitRevision()) {
+					return true;
+				}
+			}
+			return false;
+		}
+	}
+
+	private SyncInfo synchronizeProjectsWithServer(
+			final ConnectedServer server, final List<String> projectNames,
+			final SLProgressMonitor monitor, final boolean serverGet)
+			throws ServerMismatchException, SQLException {
+		if (projectNames.isEmpty()) {
+			throw new IllegalArgumentException(
+					"You must specify at least one project to synchronize on");
+		}
+		final SierraService service = SierraServiceClient.create(server
+				.getLocation());
+		final SyncRequest request = new SyncRequest();
+		for (final String projectName : projectNames) {
+			request.getProjects().add(
+					getSyncProjectRequest(server, projectName, monitor,
+							serverGet));
+		}
+		final SyncResponse reply = service.synchronize(request);
+		final Iterator<String> namesIter = projectNames.iterator();
+		final Iterator<SyncProjectRequest> requestIter = request.getProjects()
+				.iterator();
+		for (final SyncProjectResponse projectReply : reply.getProjects()) {
+			updateProject(server, namesIter.next(), requestIter.next(),
+					projectReply, monitor);
+		}
+		if (monitor.isCanceled()) {
+			return null;
+		}
+		return new SyncInfo(request, reply);
+	}
+
+	private SyncProjectInfo synchronizeProjectWithServer(
 			final ConnectedServer server, final String projectName,
 			final SLProgressMonitor monitor, final boolean serverGet)
 			throws ServerMismatchException, SQLException {
 		final SierraService service = SierraServiceClient.create(server
 				.getLocation());
-
-		// Look up project. If it doesn't exist, create it and relate it to the
-		// server.
-		final ProjectRecord p = projectFactory.newProject();
-		p.setName(projectName);
-		if (!p.select()) {
-			p.insert();
-		}
-
-		// Resolve the server uid. If one isn't associated with this project,
-		// then do so now.
-		selectServerUid.setLong(1, p.getId());
-		final ResultSet set = selectServerUid.executeQuery();
-		String serverUid;
-		try {
-			if (set.next()) {
-				serverUid = set.getString(1);
-			} else {
-				serverUid = server.getUuid();
-				insertServerUid.setLong(1, p.getId());
-				insertServerUid.setString(2, serverUid);
-				insertServerUid.execute();
-			}
-		} finally {
-			set.close();
-		}
 		if (monitor.isCanceled()) {
 			return null;
 		}
+		final SyncProjectRequest request = getSyncProjectRequest(server,
+				projectName, monitor, serverGet);
 		monitor.worked(1);
 
 		// Commit audits
 		monitor.subTask("Sending local updates to the server.");
-		final SyncRequest request = new SyncRequest();
-		request.setProject(projectName);
-		request.setServer(serverUid);
-		request.setRevision(findingManager.getLatestAuditRevision(projectName));
-		if (serverGet) {
-			request.setTrails(Collections.<SyncTrailRequest> emptyList());
-		} else {
-			request.setTrails(findingManager.getNewLocalAuditTrails(
-					projectName, monitor));
-		}
-		final SyncResponse reply = service.synchronizeProject(request);
+		final SyncProjectResponse reply = service.synchronizeProject(request);
 		if (monitor.isCanceled()) {
 			return null;
 		}
@@ -145,41 +182,95 @@ public final class ClientProjectManager extends ProjectManager {
 		new Projects(conn).updateProjectFilter(projectName, reply
 				.getScanFilter());
 		if (!serverGet) {
-			monitor.subTask("Writing remote updates into local database.");
-			findingManager.updateLocalAuditRevision(projectName, server
-					.getLocation().getUser(), reply.getCommitRevision(),
-					monitor);
-			findingManager.updateLocalFindings(projectName, reply.getTrails(),
-					monitor);
-			if (monitor.isCanceled()) {
-				return null;
-			}
-			monitor.worked(1);
-
-			// Update settings
-			// TODO
-			monitor.subTask("Checking for updated settings for project "
-					+ projectName);
-			monitor.worked(1);
-			int idx = 1;
-			insertSynchRecord.setLong(idx++, p.getId());
-			insertSynchRecord.setTimestamp(idx++, JDBCUtils.now());
-			insertSynchRecord.setLong(idx++, findingManager
-					.getLatestAuditRevision(projectName));
-			insertSynchRecord.setLong(idx++, request.getRevision());
-			int commitCount = 0;
-			int updateCount = 0;
-			for (final SyncTrailRequest req : request.getTrails()) {
-				commitCount += req.getAudits().size();
-			}
-			for (final SyncTrailResponse rep : reply.getTrails()) {
-				updateCount += rep.getAudits().size();
-			}
-			insertSynchRecord.setLong(idx++, commitCount);
-			insertSynchRecord.setLong(idx++, updateCount);
-			insertSynchRecord.execute();
+			updateProject(server, projectName, request, reply, monitor);
 		}
-		return new SyncInfo(request, reply);
+		if (monitor.isCanceled()) {
+			return null;
+		}
+		return new SyncProjectInfo(request, reply);
+	}
+
+	private SyncProjectRequest getSyncProjectRequest(
+			final ConnectedServer server, final String projectName,
+			final SLProgressMonitor monitor, final boolean serverGet)
+			throws SQLException {
+		// Look up project. If it doesn't exist, create it and relate it to
+		// the server.
+		final ProjectRecord p = projectFactory.newProject();
+		p.setName(projectName);
+		if (!p.select()) {
+			p.insert();
+		}
+		// Resolve the server uid. If one isn't associated with this
+		// project, then do so now.
+		selectServerUid.setLong(1, p.getId());
+		final ResultSet set = selectServerUid.executeQuery();
+		try {
+			if (set.next()) {
+				if (!server.getUuid().equals(set.getString(1))) {
+					throw new IllegalArgumentException(
+							String
+									.format(
+											"The project %s is already associated with a different server than %s.",
+											projectName, server.getUuid()));
+				}
+			} else {
+				insertServerUid.setLong(1, p.getId());
+				insertServerUid.setString(2, server.getUuid());
+				insertServerUid.execute();
+			}
+		} finally {
+			set.close();
+		}
+		final SyncProjectRequest request = new SyncProjectRequest();
+		request.setProject(projectName);
+		request.setServer(server.getUuid());
+		request.setRevision(findingManager.getLatestAuditRevision(projectName));
+		if (serverGet) {
+			request.setTrails(Collections.<SyncTrailRequest> emptyList());
+		} else {
+			request.setTrails(findingManager.getNewLocalAuditTrails(
+					projectName, monitor));
+		}
+		return request;
+	}
+
+	private void updateProject(final ConnectedServer server,
+			final String projectName, final SyncProjectRequest request,
+			final SyncProjectResponse reply, final SLProgressMonitor monitor)
+			throws SQLException {
+		monitor.subTask("Writing remote updates into local database.");
+		findingManager.updateLocalAuditRevision(projectName, server
+				.getLocation().getUser(), reply.getCommitRevision(), monitor);
+		findingManager.updateLocalFindings(projectName, reply.getTrails(),
+				monitor);
+		if (monitor.isCanceled()) {
+			return;
+		}
+		monitor.worked(1);
+
+		// Update settings
+		// TODO
+		monitor.subTask("Checking for updated settings for project "
+				+ projectName);
+		monitor.worked(1);
+		int idx = 1;
+		insertSynchRecord.setString(idx++, projectName);
+		insertSynchRecord.setTimestamp(idx++, JDBCUtils.now());
+		insertSynchRecord.setLong(idx++, findingManager
+				.getLatestAuditRevision(projectName));
+		insertSynchRecord.setLong(idx++, request.getRevision());
+		int commitCount = 0;
+		int updateCount = 0;
+		for (final SyncTrailRequest req : request.getTrails()) {
+			commitCount += req.getAudits().size();
+		}
+		for (final SyncTrailResponse rep : reply.getTrails()) {
+			updateCount += rep.getAudits().size();
+		}
+		insertSynchRecord.setLong(idx++, commitCount);
+		insertSynchRecord.setLong(idx++, updateCount);
+		insertSynchRecord.execute();
 	}
 
 	@Override
