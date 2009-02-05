@@ -21,6 +21,9 @@ public interface SierraService extends Service {
 	 */
 	Timeseries getTimeseries(TimeseriesRequest request);
 
+	SyncResponse synchronize(SyncRequest request)
+			throws ServerMismatchException;
+
 	/**
 	 * Synchronize the projects between a client and server.
 	 * 
@@ -28,7 +31,7 @@ public interface SierraService extends Service {
 	 * @return
 	 * @throws ServerMismatchException
 	 */
-	SyncResponse synchronizeProject(SyncRequest request)
+	SyncProjectResponse synchronizeProject(SyncProjectRequest request)
 			throws ServerMismatchException;
 
 }
