@@ -62,13 +62,13 @@ public class ScanFilterPreferencePage extends PreferencePage implements
 		IWorkbenchPreferencePage {
 
 	private static class FindingTypeRow {
-		private String findingTypeUUID;
+		private String findingTypeId;
 		private String findingTypeName;
 		private String findingTypeDescription;
 
 		@Override
 		public String toString() {
-			return "[Finding type: id=" + findingTypeUUID + " name="
+			return "[Finding type: id=" + findingTypeId + " name="
 					+ findingTypeName + " description="
 					+ findingTypeDescription + "]";
 		}
@@ -110,17 +110,17 @@ public class ScanFilterPreferencePage extends PreferencePage implements
 	}
 
 	private void applyChanges() {
-		final List<String> filterUUIDExcludes = new ArrayList<String>();
-		final List<String> filterUUIDIncludes = new ArrayList<String>();
+		final List<String> filterIdExcludes = new ArrayList<String>();
+		final List<String> filterIdIncludes = new ArrayList<String>();
 		for (final TreeItem item : f_findingTypes.getItems()) {
 			/*
-			 * All of these should have the UUID string as data.
+			 * All of these should have the finding type id string as data.
 			 */
-			final String uuid = (String) item.getData();
+			final String id = (String) item.getData();
 			if (item.getChecked()) {
-				filterUUIDIncludes.add(uuid);
+				filterIdIncludes.add(id);
 			} else {
-				filterUUIDExcludes.add(uuid);
+				filterIdExcludes.add(id);
 			}
 		}
 		if (SLLogger.getLogger().isLoggable(Level.FINEST)) {
@@ -137,8 +137,8 @@ public class ScanFilterPreferencePage extends PreferencePage implements
 			try {
 				final PrintWriter p = new PrintWriter(output);
 				try {
-					for (final String uuid : filterUUIDExcludes) {
-						p.println(uuid);
+					for (final String id : filterIdExcludes) {
+						p.println(id);
 					}
 				} finally {
 					p.close();
@@ -148,12 +148,13 @@ public class ScanFilterPreferencePage extends PreferencePage implements
 						"IO failure writing " + output + " filter set file", e);
 			}
 		}
-		final Job job = new DatabaseJob("Updating Global Sierra Settings", Job.INTERACTIVE) {
+		final Job job = new DatabaseJob("Updating Global Sierra Settings",
+				Job.INTERACTIVE) {
 			@Override
 			protected IStatus run(final IProgressMonitor monitor) {
 				monitor.beginTask("Updating Global Sierra Settings",
 						IProgressMonitor.UNKNOWN);
-				return updateSettings(filterUUIDIncludes);
+				return updateSettings(filterIdIncludes);
 			}
 		};
 		job.schedule();
@@ -162,7 +163,7 @@ public class ScanFilterPreferencePage extends PreferencePage implements
 	private Composite f_panel = null;
 	private Tree f_findingTypes = null;
 	private Browser f_detailsText = null;
-	private String f_selectedFindingTypeUUID = null;
+	private String f_selectedFindingTypeId = null;
 
 	@Override
 	protected Control createContents(final Composite parent) {
@@ -187,17 +188,18 @@ public class ScanFilterPreferencePage extends PreferencePage implements
 				if (items.length > 0) {
 					final Object rawData = items[0].getData();
 					if (rawData instanceof String) {
-						final String findingTypeUUID = (String) rawData;
+						final String findingTypeId = (String) rawData;
 						clearHTMLDescription = false;
 						/*
 						 * The below check avoids lots of extra queries since
 						 * this event is invoked when the selection changes and
 						 * when a check box is checked.
 						 */
-						if (!findingTypeUUID.equals(f_selectedFindingTypeUUID)) {
-							f_selectedFindingTypeUUID = findingTypeUUID;
+						if (!findingTypeId.equals(f_selectedFindingTypeId)) {
+							f_selectedFindingTypeId = findingTypeId;
 							final Job job = new DatabaseJob(
-									"Querying Sierra Artifact Type Description", Job.INTERACTIVE) {
+									"Querying Sierra Artifact Type Description",
+									Job.INTERACTIVE) {
 								@Override
 								protected IStatus run(
 										final IProgressMonitor monitor) {
@@ -205,7 +207,7 @@ public class ScanFilterPreferencePage extends PreferencePage implements
 											.beginTask(
 													"Querying Sierra Artifact Type Description",
 													IProgressMonitor.UNKNOWN);
-									return queryFindingTypeHTMLDescriptionOf(findingTypeUUID);
+									return queryFindingTypeHTMLDescriptionOf(findingTypeId);
 								}
 							};
 							job.schedule();
@@ -232,26 +234,20 @@ public class ScanFilterPreferencePage extends PreferencePage implements
 		});
 
 		final Menu contextMenu = new Menu(f_findingTypes.getShell(), SWT.POP_UP);
-		createMenuItem(contextMenu, "Select All").addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event event) {
-				setTypes(true);
-			}			
-		});		
-		createMenuItem(contextMenu, "Unselect All").addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event event) {
-				setTypes(false);
-			}			
-		});
+		createMenuItem(contextMenu, "Select All").addListener(SWT.Selection,
+				new Listener() {
+					public void handleEvent(Event event) {
+						setTypes(true);
+					}
+				});
+		createMenuItem(contextMenu, "Unselect All").addListener(SWT.Selection,
+				new Listener() {
+					public void handleEvent(Event event) {
+						setTypes(false);
+					}
+				});
 		f_findingTypes.setMenu(contextMenu);
-		/*
-		f_findingTypes.addListener(SWT.MenuDetect, new Listener() {
-			public void handleEvent(Event event) {
-				// TODO Auto-generated method stub
-				
-			}			
-		});
-		*/
-		
+
 		final TreeColumn treeColumn = new TreeColumn(f_findingTypes, SWT.NONE);
 		treeColumn.setText("Finding Type");
 		treeColumn.setWidth(300);
@@ -303,7 +299,7 @@ public class ScanFilterPreferencePage extends PreferencePage implements
 		return item;
 	}
 
-	private final List<FindingTypeRow> f_artifactList = new ArrayList<FindingTypeRow>();
+	private final List<FindingTypeRow> f_findingTypeList = new ArrayList<FindingTypeRow>();
 
 	// List of included finding types
 	private final List<String> f_filterList = new ArrayList<String>();
@@ -312,18 +308,18 @@ public class ScanFilterPreferencePage extends PreferencePage implements
 	 * Must be called from a database job.
 	 */
 	private IStatus queryTableContents() {
-		f_artifactList.clear();
+		f_findingTypeList.clear();
 		try {
 			Data.getInstance().withReadOnly(new NullDBQuery() {
 				@Override
 				public void doPerform(final Query q) {
-					f_artifactList.addAll(q.statement("query.00002",
+					f_findingTypeList.addAll(q.statement("query.00002",
 							new RowHandler<FindingTypeRow>() {
 								public FindingTypeRow handle(final Row r) {
 									final FindingTypeRow row = new FindingTypeRow();
 									row.findingTypeName = r.nextString();
 									row.findingTypeDescription = r.nextString();
-									row.findingTypeUUID = r.nextString();
+									row.findingTypeId = r.nextString();
 									return row;
 								}
 							}).call());
@@ -418,12 +414,12 @@ public class ScanFilterPreferencePage extends PreferencePage implements
 		if (f_findingTypes.isDisposed()) {
 			return;
 		}
-		for (final FindingTypeRow row : f_artifactList) {
+		for (final FindingTypeRow row : f_findingTypeList) {
 			final TreeItem item = new TreeItem(f_findingTypes, SWT.NONE);
 			item.setText(0, row.findingTypeName);
 			item.setText(1, row.findingTypeDescription);
-			item.setData(row.findingTypeUUID);
-			item.setChecked(f_filterList.contains(row.findingTypeUUID));
+			item.setData(row.findingTypeId);
+			item.setChecked(f_filterList.contains(row.findingTypeId));
 		}
 		getShell().layout();
 	}
@@ -506,20 +502,21 @@ public class ScanFilterPreferencePage extends PreferencePage implements
 	}
 
 	private void setTypes(boolean state) {
-		for(TreeItem item : f_findingTypes.getItems()) {
-			setItemChecked(item, state);	
+		for (TreeItem item : f_findingTypes.getItems()) {
+			setItemChecked(item, state);
 		}
 	}
+
 	private void setItemChecked(TreeItem item, boolean state) {
 		if (item == null) {
 			return;
 		}
-		item.setChecked(state);	
-		
+		item.setChecked(state);
+
 		if (item.getItems() == null) {
 			return;
 		}
-		for(TreeItem sub : item.getItems()) {
+		for (TreeItem sub : item.getItems()) {
 			setItemChecked(sub, state);
 		}
 	}
