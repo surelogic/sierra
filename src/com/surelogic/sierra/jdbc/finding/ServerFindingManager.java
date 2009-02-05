@@ -30,7 +30,7 @@ import com.surelogic.sierra.tool.message.AuditTrail;
 import com.surelogic.sierra.tool.message.Importance;
 import com.surelogic.sierra.tool.message.Match;
 import com.surelogic.sierra.tool.message.Merge;
-import com.surelogic.sierra.tool.message.SyncResponse;
+import com.surelogic.sierra.tool.message.SyncProjectResponse;
 import com.surelogic.sierra.tool.message.SyncTrailResponse;
 import com.surelogic.sierra.tool.message.TrailObsoletion;
 
@@ -321,9 +321,9 @@ public final class ServerFindingManager extends FindingManager {
 		return trails;
 	}
 
-	public SyncResponse getAuditUpdates(final String project,
+	public SyncProjectResponse getAuditUpdates(final String project,
 			final long revision) throws SQLException {
-		final SyncResponse response = new SyncResponse();
+		final SyncProjectResponse response = new SyncProjectResponse();
 		final List<SyncTrailResponse> trails = response.getTrails();
 		final ProjectRecord projectRecord = ProjectRecordFactory.getInstance(
 				conn).newProject();
