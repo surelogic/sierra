@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 
 import com.surelogic.common.eclipse.jobs.DatabaseJob;
 import com.surelogic.common.eclipse.jobs.SLProgressMonitorWrapper;
@@ -25,6 +26,8 @@ public final class ImportScanDocumentJob extends DatabaseJob {
 		super("Loading "
 				+ (proj != null ? "scan document for " + proj : scanDocument
 						.getName()));
+		setPriority(Job.DECORATE);
+		
 		f_scanDocument = scanDocument;
 		if (proj == null) {
 			final String fileName = f_scanDocument.getName();

@@ -56,6 +56,7 @@ public class NewPartialScan extends AbstractScan<ICompilationUnit> {
 		public ImportPartialScanDocumentJob(ConfigCompilationUnit ccu) {
 			super("Loading partial scan document for "
 					+ ccu.getConfig().getProject());
+			setPriority(Job.DECORATE);			
 			config = ccu;
 		}
 
