@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -81,8 +82,9 @@ public class SchemaUtil {
 		final Query q = new ConnectionQuery(c);
 		final ScanFilters filters = new ScanFilters(q);
 		if (filters.getScanFilter(SettingQueries.LOCAL_UUID) == null) {
-			final Set<String> excluded = SettingQueries
+			final Set<String> included = SettingQueries
 					.getSureLogicDefaultScanFilters();
+			final Set<String> exists = new HashSet<String>();
 			final ScanFilterDO filter = new ScanFilterDO();
 			filter.setName(SettingQueries.LOCAL_NAME);
 			filter.setUid(SettingQueries.LOCAL_UUID);
@@ -91,9 +93,17 @@ public class SchemaUtil {
 			for (final String type : q.statement(
 					"FindingTypes.listFindingTypes", new StringRowHandler())
 					.call()) {
-				if (!excluded.contains(type)) {
+				if (included.contains(type)) {
+					exists.add(type);
 					typeFs.add(new TypeFilterDO(type, null, false));
 				}
+			}
+			if (!exists.equals(included)) {
+				throw new IllegalStateException(
+						String
+								.format(
+										"The following finding types do not exist in the database: %s",
+										included.removeAll(exists)));
 			}
 			filters.writeScanFilter(filter);
 		}
