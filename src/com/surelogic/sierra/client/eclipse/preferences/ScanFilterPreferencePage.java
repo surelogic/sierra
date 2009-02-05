@@ -137,7 +137,7 @@ public class ScanFilterPreferencePage extends PreferencePage implements
 			try {
 				final PrintWriter p = new PrintWriter(output);
 				try {
-					for (final String id : filterIdExcludes) {
+					for (final String id : filterIdIncludes) {
 						p.println(id);
 					}
 				} finally {
