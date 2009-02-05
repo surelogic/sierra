@@ -925,7 +925,7 @@ undesirable.</p>]]>
   <findingType>
     <id>DM_USELESS_THREAD</id>
     <artifact tool="FindBugs" mnemonic="DM_USELESS_THREAD"/>
-    <name>Useless thread</name>
+    <name>Useless Thread</name>
     <shortMessage>A thread was created using the default empty run() method.  Delete this thread.</shortMessage>
     <info>
 <![CDATA[<p>This method creates a thread without specifying a run
@@ -7217,7 +7217,7 @@ class Test {
   <findingType>
     <id>UnusedNullCheckInEquals</id>
     <artifact tool="PMD" mnemonic="UnusedNullCheckInEquals"/>
-    <name>Unused null check in equals</name>
+    <name>Unused null check before equals()</name>
     <shortMessage>After checking an object reference for null, you should invoke equals() on that object rather than passing it to another object's equals() method.</shortMessage>
     <info>
 <![CDATA[<p>After checking an object reference for <code>null</code>,
