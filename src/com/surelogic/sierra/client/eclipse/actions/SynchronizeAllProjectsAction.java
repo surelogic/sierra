@@ -1,6 +1,6 @@
 package com.surelogic.sierra.client.eclipse.actions;
 
-import java.util.Set;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.eclipse.jface.action.IAction;
@@ -12,7 +12,7 @@ import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import com.surelogic.common.eclipse.SWTUtility;
 import com.surelogic.sierra.client.eclipse.jobs.ServerProjectGroupJob;
 import com.surelogic.sierra.client.eclipse.jobs.SynchronizeJob;
-import com.surelogic.sierra.client.eclipse.jobs.SynchronizeProjectJob;
+import com.surelogic.sierra.client.eclipse.jobs.SynchronizeProjectsJob;
 import com.surelogic.sierra.client.eclipse.model.ConnectedServerManager;
 import com.surelogic.sierra.client.eclipse.model.ServerSyncType;
 import com.surelogic.sierra.client.eclipse.preferences.ServerFailureReport;
@@ -68,7 +68,6 @@ public class SynchronizeAllProjectsAction implements
 		setTime();
 
 		int totalDelay = 0;
-		final Set<ConnectedServer> unconnectedServers = manager.getServers();
 		for (final ConnectedServer server : manager.getServers()) {
 			final int delay = totalDelay;
 			final ServerActionOnAProject serverAction = new ServerActionOnAProject() {
@@ -82,28 +81,25 @@ public class SynchronizeAllProjectsAction implements
 			};
 			promptAndSchedule(null, server, serverAction);
 			totalDelay += delayInSec;
-		}
-		if (f_syncType.syncProjects()) {
-			for (final String projectName : manager.getConnectedProjects()) {
-				final ConnectedServer server = manager.getServer(projectName);
-				unconnectedServers.remove(server);
-
-				if (f_syncType.syncByServerSettings()
-						&& !server.getLocation().isAutoSync()) {
-					continue;
+			if (f_syncType.syncProjects()
+					&& (server.getLocation().isAutoSync() || !f_syncType
+							.syncByServerSettings())) {
+				final List<String> projectsConnectedTo = manager
+						.getProjectsConnectedTo(server);
+				if (!projectsConnectedTo.isEmpty()) {
+					final ServerActionOnAProject serverProjectsAction = new ServerActionOnAProject() {
+						@Override
+						public void run(final String projectName,
+								final ConnectedServer server, final Shell shell) {
+							final SynchronizeProjectsJob job = new SynchronizeProjectsJob(
+									joinJob, server, projectsConnectedTo,
+									force, f_strategy);
+							job.schedule(delay);
+						}
+					};
+					promptAndSchedule(null, server, serverProjectsAction);
+					totalDelay += delayInSec;
 				}
-				final int delay = totalDelay;
-				final ServerActionOnAProject serverAction = new ServerActionOnAProject() {
-					@Override
-					public void run(final String projectName,
-							final ConnectedServer server, final Shell shell) {
-						final SynchronizeProjectJob job = new SynchronizeProjectJob(
-								joinJob, projectName, server, force, f_strategy);
-						job.schedule(delay);
-					}
-				};
-				promptAndSchedule(projectName, server, serverAction);
-				totalDelay += delayInSec;
 			}
 		}
 		group = joinJob;
