@@ -745,7 +745,7 @@ Thus in the example above use <code>s.isEmpty()</code>.</p>]]>
     <id>DM_CONVERT_CASE</id>
     <artifact tool="FindBugs" mnemonic="DM_CONVERT_CASE"/>
     <artifact tool="PMD" mnemonic="UseLocaleWithCaseConversions"/>
-    <name>Use Locale parameterized versions of toUpperCase and toLowerCase methods</name>
+    <name>Use Locale parameterized versions of toUpperCase() and toLowerCase() methods</name>
     <shortMessage>Consider using the Locale parameterized version of the invoked method.</shortMessage>
     <info>
 <![CDATA[<p>A String is being converted to upper or lowercase, using
