@@ -398,27 +398,16 @@ modern Java programs.</p>]]>
   <findingType>
     <id>NM_FUTURE_KEYWORD_USED_AS_IDENTIFIER</id>
     <artifact tool="FindBugs" mnemonic="NM_FUTURE_KEYWORD_USED_AS_IDENTIFIER"/>
+    <artifact tool="FindBugs" mnemonic="NM_FUTURE_KEYWORD_USED_AS_MEMBER_IDENTIFIER"/>
     <artifact tool="PMD" mnemonic="AvoidAssertAsIdentifier"/>
     <artifact tool="PMD" mnemonic="AvoidEnumAsIdentifier"/>
     <name>Use of a future keyword as identifier</name>
     <shortMessage>Use of an identifier that is a keyword in later versions of Java.</shortMessage>
     <info>
-<![CDATA[<p>The identifier is a word that is reserved as a keyword
-in later versions of Java, and your code will need to be changed in
-order for it to compile in later versions of Java.</p>]]>
-    </info>
-  </findingType>
-  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-  <findingType>
-    <id>NM_FUTURE_KEYWORD_USED_AS_MEMBER_IDENTIFIER</id>
-    <artifact tool="FindBugs" mnemonic="NM_FUTURE_KEYWORD_USED_AS_MEMBER_IDENTIFIER"/>
-    <name>Use of a future keyword as a member identifier</name>
-    <shortMessage>Use of an identifier that is a keyword in later versions of Java.</shortMessage>
-    <info>
-<![CDATA[<p>This identifier is a word that is used as a keyword in
-later versions of Java. This code, and any code that references this
-API, will need to be changed in order for it to compile in later
-versions of Java.</p>]]>
+<![CDATA[<p>This identifier is a word that is reserved as a keyword in
+later versions of Java, and your code will need to be changed in order
+for it to compile in later versions of Java. It is recommended that
+you change this identifier as soon as possible.</p>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
@@ -1112,7 +1101,7 @@ program.</p>]]>
   <findingType>
     <id>EQ_DONT_DEFINE_EQUALS_FOR_ENUM</id>
     <artifact tool="FindBugs" mnemonic="EQ_DONT_DEFINE_EQUALS_FOR_ENUM"/>
-    <name>Don't define equals()for enum</name>
+    <name>Don't define equals() for enum</name>
     <shortMessage>Covariant equals() method defined for enum.  This is a bad practice.</shortMessage>
     <info>
 <![CDATA[<p>This class defines an enumeration, and equality on
@@ -1158,8 +1147,8 @@ confusion.</p>]]>
   <findingType>
     <id>EQ_OVERRIDING_EQUALS_NOT_SYMMETRIC</id>
     <artifact tool="FindBugs" mnemonic="EQ_OVERRIDING_EQUALS_NOT_SYMMETRIC"/>
-    <name>Overriding equals() not symmetric</name>
-    <shortMessage>Equals method overrides equals in superclass and may not be symmetric.</shortMessage>
+    <name>Equals() override is not symmetric</name>
+    <shortMessage>Method overrides equals() in superclass and may not be symmetric.</shortMessage>
     <info>
 <![CDATA[<p>This class defines an equals method that overrides an
 equals method in a superclass. Both equals methods methods use
@@ -1378,7 +1367,7 @@ of Bloch's <i>Effective Java</i> (second edition).</p>]]>
   <findingType>
     <id>HE_INHERITS_EQUALS_USE_HASHCODE</id>
     <artifact tool="FindBugs" mnemonic="HE_INHERITS_EQUALS_USE_HASHCODE"/>
-    <name>Inherits equals but uses hash code</name>
+    <name>Inherits equals() but uses hashCode()</name>
     <shortMessage>Class inherits equals() but uses Object.hashCode().</shortMessage>
     <info>
 <![CDATA[<p>This class inherits <code>equals(Object)</code> from an
@@ -1484,7 +1473,7 @@ thread-safe.</p>
 <p>Note that there are various sources of inaccuracy in this
 detector; for example, the detector cannot statically detect all
 situations in which a lock is held.  Also, even when the detector is
-accurate in distinguishing locked vs. unlocked accesses, the code in
+accurate in distinguishing locked versus unlocked accesses, the code in
 question may still be correct.</p>
 
 <p>To address this issue you must determine what the programmer
@@ -1880,9 +1869,9 @@ static class (e.g., <code>MyClass.class</code>).</p>]]>
     <shortMessage>Field should should be moved out of an interface and made package protected to avoid malicious mutation.</shortMessage>
     <info>
 <![CDATA[<p>A final static field that is defined in an interface
-references a mutable object such as an array or hashtable. This
-mutable object could be changed by malicious code or by accident from
-another package.</p>
+references a mutable object such as an array or
+<code>Hashtable</code>. This mutable object could be changed by
+malicious code or by accident from another package.</p>
 
 <p>To solve this, the field needs to be moved to a class and made
 package protected to avoid this vulnerability.</p>]]>
@@ -2109,8 +2098,9 @@ differences.</p>]]>
   <findingType>
     <id>NM_METHOD_CONSTRUCTOR_CONFUSION</id>
     <artifact tool="FindBugs" mnemonic="NM_METHOD_CONSTRUCTOR_CONFUSION"/>
-    <name>Method vs constructor confusion</name>
-    <shortMessage>Apparent method versus constructor confusion.</shortMessage>
+    <artifact tool="PMD" mnemonic="MethodWithSameNameAsEnclosingClass"/>
+    <name>Method versus constructor confusion</name>
+    <shortMessage>Apparent method versus constructor confusion. Was this method intended to be a constructor?</shortMessage>
     <info>
 <![CDATA[<p>This regular method has the same name as the class it is
 defined in. It is likely that this was intended to be a
@@ -5194,7 +5184,7 @@ an unsigned right shift instead. In other words, rather that using</p>
 <p>use</p>
 
 <pre>
-(low + high) gt;&gt;&gt; 1
+(low + high) &gt;&gt;&gt; 1
 </pre>
 
 <p>This bug exists in many earlier implementations of binary search
@@ -5369,21 +5359,6 @@ runtime. See </p>
 </ul>
 
 <p>for details.</p>]]>
-    </info>
-  </findingType>
-  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-  <findingType>
-    <id>USM_USELESS_SUBCLASS_METHOD</id>
-    <artifact tool="FindBugs" mnemonic="USM_USELESS_SUBCLASS_METHOD"/>
-    <name>Useless subclass method</name>
-    <shortMessage>Method superfluously delegates to parent class method. Remove this method.</shortMessage>
-    <info>
-<![CDATA[<p>This derived method merely calls the same superclass
-method passing in the exact parameters received.  This method can be
-removed, as it provides no additional value.</p>
-
-<p>Examine this code carefully as this type of mistake may signpost a
-muddled understanding of the Java programming language.</p>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
@@ -6957,7 +6932,7 @@ public class Foo {
     <name>Empty switch</name>
     <shortMessage>It is questionable coding practice to have an empty switch statement.</shortMessage>
     <info>
-<![CDATA[[<p>This <code>switch</code> statement is empty. Consider
+<![CDATA[<p>This <code>switch</code> statement is empty. Consider
 removing it from the code.</p>
 
 <pre>
@@ -7171,6 +7146,7 @@ has no side-effects.</p>]]>
   <findingType>
     <id>UselessOverridingMethod</id>
     <artifact tool="PMD" mnemonic="UselessOverridingMethod"/>
+    <artifact tool="FindBugs" mnemonic="USM_USELESS_SUBCLASS_METHOD"/>
     <name>Useless overriding method</name>
     <shortMessage>This overriding method merely calls the same method defined in a superclass. It should simply inherit the method.</shortMessage>
     <info>
@@ -7184,7 +7160,7 @@ defined in a superclass.</p>
 </pre>
 
 <p>It is strongly recommended that you remove this method and simply
-inherit the method from the superclass.  This problem may indicate a
+inherit the method from the superclass. This problem may indicate a
 lack of understanding about how inheritance works in the Java
 programming language.</p>]]>
     </info>
@@ -8352,7 +8328,7 @@ clause, avoid negation in the test. For example, rephrase</p>
 if (x != y)
   diff();
 else
-same();
+  same();
 </pre>
 
 <p>as</p>
@@ -8621,7 +8597,7 @@ if (x != null && x instanceof Bar) {
     <shortMessage>Consider using equals() to compare object references. Avoid comparing them with ==.</shortMessage>
     <info>
 <![CDATA[<p>It has been determined that it is a questionable code
-practice to compare object references with <code>==<code>, use
+practice to compare object references with <code>==</code>, use
 <code>equals()</code> instead.  For example, change <code>a ==
 b</code> to <code>a.equals(b)</code>.</p>
 
@@ -9413,7 +9389,8 @@ class Foo{
     <name>Avoid calls to printStackTrace()</name>
     <shortMessage>Avoid calls to printStackTrace(); use a logger call instead.</shortMessage>
     <info>
-<![CDATA[<p>Avoid calls to printStackTrace(); use a logger call
+<![CDATA[<p>Avoid calls to <code>printStackTrace()</code> which dumps
+the trace to <code>System.out</code>, consider using a logger call
 instead.</p>]]>
     </info>
   </findingType>
@@ -9623,18 +9600,6 @@ convention can help to clarify the nature of the class.]]>
 <![CDATA[<p>Avoid using dollar signs in
 variable/method/class/interface names. Dollar signs are typically only
 used for generated class names.</p>]]>
-    </info>
-  </findingType>
-  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-  <findingType>
-    <id>MethodWithSameNameAsEnclosingClass</id>
-    <artifact tool="PMD" mnemonic="MethodWithSameNameAsEnclosingClass"/>
-    <name>Method with same name as enclosing class</name>
-    <shortMessage>Non-constructor methods should not have the same name as the enclosing class.</shortMessage>
-    <info>
-<![CDATA[<p>Non-constructor methods should not have the same name as
-the enclosing class. Was this method intended to be a
-constructor?</p>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
