@@ -98,7 +98,7 @@ public class ScanFilterPreferencePage extends PreferencePage implements
 		final Set<String> filter = SettingQueries
 				.getSureLogicDefaultScanFilters();
 		for (final TreeItem item : f_findingTypes.getItems()) {
-			item.setChecked(!filter.contains(item.getData()));
+			item.setChecked(filter.contains(item.getData()));
 		}
 		super.performDefaults();
 	}
@@ -236,13 +236,13 @@ public class ScanFilterPreferencePage extends PreferencePage implements
 		final Menu contextMenu = new Menu(f_findingTypes.getShell(), SWT.POP_UP);
 		createMenuItem(contextMenu, "Select All").addListener(SWT.Selection,
 				new Listener() {
-					public void handleEvent(Event event) {
+					public void handleEvent(final Event event) {
 						setTypes(true);
 					}
 				});
 		createMenuItem(contextMenu, "Unselect All").addListener(SWT.Selection,
 				new Listener() {
-					public void handleEvent(Event event) {
+					public void handleEvent(final Event event) {
 						setTypes(false);
 					}
 				});
@@ -293,8 +293,8 @@ public class ScanFilterPreferencePage extends PreferencePage implements
 		return f_panel;
 	}
 
-	private MenuItem createMenuItem(final Menu contextMenu, String text) {
-		MenuItem item = new MenuItem(contextMenu, SWT.PUSH);
+	private MenuItem createMenuItem(final Menu contextMenu, final String text) {
+		final MenuItem item = new MenuItem(contextMenu, SWT.PUSH);
 		item.setText(text);
 		return item;
 	}
@@ -501,13 +501,13 @@ public class ScanFilterPreferencePage extends PreferencePage implements
 		setDescription("Use this page to select rules to include from the scan.");
 	}
 
-	private void setTypes(boolean state) {
-		for (TreeItem item : f_findingTypes.getItems()) {
+	private void setTypes(final boolean state) {
+		for (final TreeItem item : f_findingTypes.getItems()) {
 			setItemChecked(item, state);
 		}
 	}
 
-	private void setItemChecked(TreeItem item, boolean state) {
+	private void setItemChecked(final TreeItem item, final boolean state) {
 		if (item == null) {
 			return;
 		}
@@ -516,7 +516,7 @@ public class ScanFilterPreferencePage extends PreferencePage implements
 		if (item.getItems() == null) {
 			return;
 		}
-		for (TreeItem sub : item.getItems()) {
+		for (final TreeItem sub : item.getItems()) {
 			setItemChecked(sub, state);
 		}
 	}
