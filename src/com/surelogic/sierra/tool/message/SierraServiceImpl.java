@@ -159,8 +159,17 @@ public class SierraServiceImpl extends SecureServiceServlet implements
 				});
 	}
 
-	public SyncResponse synchronizeProject(final SyncRequest request)
+	public SyncResponse synchronize(final SyncRequest request)
 			throws ServerMismatchException {
+		final SyncResponse reply = new SyncResponse();
+		for (final SyncProjectRequest req : request.getProjects()) {
+			reply.getProjects().add(synchronizeProject(req));
+		}
+		return reply;
+	}
+
+	public SyncProjectResponse synchronizeProject(
+			final SyncProjectRequest request) throws ServerMismatchException {
 		final String serverUid = request.getServer();
 		final String project = request.getProject();
 		final List<SyncTrailRequest> trails = request.getTrails();
@@ -199,9 +208,9 @@ public class SierraServiceImpl extends SecureServiceServlet implements
 			}
 		};
 		final long revision = request.getRevision();
-		final UserTransaction<SyncResponse> readChanges = new UserTransaction<SyncResponse>() {
+		final UserTransaction<SyncProjectResponse> readChanges = new UserTransaction<SyncProjectResponse>() {
 
-			public SyncResponse perform(final Connection conn,
+			public SyncProjectResponse perform(final Connection conn,
 					final Server server, final User user) throws Exception {
 				final ProjectRecord projectRecord = ProjectRecordFactory
 						.getInstance(conn).newProject();
@@ -227,13 +236,13 @@ public class SierraServiceImpl extends SecureServiceServlet implements
 					+ " does not match the server's uid: " + localUid);
 		}
 		return ConnectionFactory.getInstance().withUserTransaction(
-				new UserTransaction<SyncResponse>() {
+				new UserTransaction<SyncProjectResponse>() {
 
-					public SyncResponse perform(final Connection conn,
+					public SyncProjectResponse perform(final Connection conn,
 							final Server server, final User user)
 							throws Exception {
-						final SyncResponse response = readChanges.perform(conn,
-								server, user);
+						final SyncProjectResponse response = readChanges
+								.perform(conn, server, user);
 						if (trails != null && !trails.isEmpty()) {
 							response.setCommitRevision(commitChanges.perform(
 									conn, server, user));
@@ -267,4 +276,5 @@ public class SierraServiceImpl extends SecureServiceServlet implements
 					"teamserver"));
 		}
 	}
+
 }
