@@ -106,11 +106,14 @@ public abstract class AbstractScan<T extends IJavaElement> {
 					public IStatus runInWorkspace(IProgressMonitor monitor)
 							throws CoreException {
 						try {
-							boolean built = checkIfBuilt(elements);
-							Collection<String> erroneous = JDTUtility
-									.findCompilationErrors(elements);
+							boolean built = checkIfBuilt(elements);							
+							Collection<String> erroneous = 
+								JDTUtility.findCompilationErrors(elements, monitor);
 							boolean compiled = erroneous.isEmpty();
-
+							if (monitor.isCanceled()) {
+								return Status.CANCEL_STATUS;
+							}
+							
 							if (saved & built & compiled) {
 								final StringBuilder sb = computeLabel(names);
 								// TODO ^ merge w/ showStartBalloon?
