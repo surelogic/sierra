@@ -1002,11 +1002,9 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 	}
 
 	/*
-	private enum UpdateType {
-		ALL, 
-	}
-	*/
-	
+	 * private enum UpdateType { ALL, }
+	 */
+
 	private void asyncUpdateContents() {
 		asyncUpdateContentsForUI(new IViewUpdater() {
 			public void updateContentsForUI() {
@@ -1042,7 +1040,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 	}
 
 	private void updateContents(final long now) throws Exception {
-		final Connection c = Data.getInstance().readOnlyConnection();
+		final Connection c = Data.getInstance().transactionConnection();
 		Exception exc = null;
 		try {
 			final ClientProjectManager cpm = ClientProjectManager
