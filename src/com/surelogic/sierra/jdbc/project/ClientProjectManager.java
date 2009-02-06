@@ -178,9 +178,6 @@ public final class ClientProjectManager extends ProjectManager {
 			return null;
 		}
 		monitor.worked(1);
-
-		new Projects(conn).updateProjectFilter(projectName, reply
-				.getScanFilter());
 		if (!serverGet) {
 			updateProject(server, projectName, request, reply, monitor);
 		}
@@ -240,6 +237,8 @@ public final class ClientProjectManager extends ProjectManager {
 			final SyncProjectResponse reply, final SLProgressMonitor monitor)
 			throws SQLException {
 		monitor.subTask("Writing remote updates into local database.");
+		new Projects(conn).updateProjectFilter(projectName, reply
+				.getScanFilter());
 		findingManager.updateLocalAuditRevision(projectName, server
 				.getLocation().getUser(), reply.getCommitRevision(), monitor);
 		findingManager.updateLocalFindings(projectName, reply.getTrails(),
