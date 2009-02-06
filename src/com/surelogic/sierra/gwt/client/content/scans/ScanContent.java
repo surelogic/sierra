@@ -147,8 +147,11 @@ public class ScanContent extends ContentComposite {
 				settings.setSettingValue("scan", uuid);
 				settings.setSettingValue("importance", importances);
 				settings.setSettingValue("package", packages);
-				chartPanel.add(new ContentBlockPanel(new ReportTableBlock(
-						settings)));
+				final ContentBlockPanel tablePanel = new ContentBlockPanel(
+						new ReportTableBlock(settings));
+				tablePanel.initialize();
+				tablePanel.getTitlePanel().setVisible(false);
+				chartPanel.add(tablePanel);
 			} else {
 				chartPanel.add(ChartBuilder.report(
 						ReportCache.scanImportancesByCategory()).width(800)
@@ -161,7 +164,11 @@ public class ScanContent extends ContentComposite {
 				settings.setSettingValue("importance", importances);
 				settings.setSettingValue("package", packages);
 				settings.setSettingValue("category", categories);
-				chartPanel.add(new ReportTableBlock(settings));
+				final ContentBlockPanel tablePanel = new ContentBlockPanel(
+						new ReportTableBlock(settings));
+				tablePanel.initialize();
+				tablePanel.getTitlePanel().setVisible(false);
+				chartPanel.add(tablePanel);
 			}
 
 		}
