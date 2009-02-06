@@ -52,7 +52,7 @@ public class SynchronizeProjectsJob extends AbstractServerProjectJob {
 	public SynchronizeProjectsJob(final ServerProjectGroupJob family,
 			final ConnectedServer server, final List<String> projects,
 			final boolean force, final ServerFailureReport strategy) {
-		super(family, "Synchronizing BugLink data for server '"
+		super(family, "Synchronizing ScanLink data for server '"
 				+ server.getName() + "'", server, null, strategy);
 		f_force = force;
 		f_projects = projects;
