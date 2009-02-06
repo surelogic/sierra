@@ -153,4 +153,71 @@ public class ReportSettings implements Serializable {
 		}
 		return copy;
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((description == null) ? 0 : description.hashCode());
+		result = prime * result + ((report == null) ? 0 : report.hashCode());
+		result = prime
+				* result
+				+ ((settings == null || settings.isEmpty()) ? 0 : settings
+						.hashCode());
+		result = prime * result + ((title == null) ? 0 : title.hashCode());
+		result = prime * result + ((uuid == null) ? 0 : uuid.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(final Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		final ReportSettings other = (ReportSettings) obj;
+		if (description == null) {
+			if (other.description != null) {
+				return false;
+			}
+		} else if (!description.equals(other.description)) {
+			return false;
+		}
+		if (report == null) {
+			if (other.report != null) {
+				return false;
+			}
+		} else if (!report.equals(other.report)) {
+			return false;
+		}
+		if (settings == null || settings.isEmpty()) {
+			if (other.settings != null && !other.settings.isEmpty()) {
+				return false;
+			}
+		} else if (!settings.equals(other.settings)) {
+			return false;
+		}
+		if (title == null) {
+			if (other.title != null) {
+				return false;
+			}
+		} else if (!title.equals(other.title)) {
+			return false;
+		}
+		if (uuid == null) {
+			if (other.uuid != null) {
+				return false;
+			}
+		} else if (!uuid.equals(other.uuid)) {
+			return false;
+		}
+		return true;
+	}
+
 }
