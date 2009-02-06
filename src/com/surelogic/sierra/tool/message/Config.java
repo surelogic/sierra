@@ -403,6 +403,9 @@ public class Config {
 	}
 	
 	public void addTarget(ToolTarget t) {
+	  if (t == null) {
+		  return;
+	  }
 	  if (t.getType() == IToolTarget.Type.AUX) {
 	    if (targetsAdded == null) {
 	      targetsAdded = new HashSet<ToolTarget>();
