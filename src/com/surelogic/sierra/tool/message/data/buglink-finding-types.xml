@@ -3797,7 +3797,6 @@ project that may be useful in your program.</p>]]>
   <findingType>
     <id>UseStringBufferForStringAppends</id>
     <artifact tool="FindBugs" mnemonic="SBSC_USE_STRINGBUFFER_CONCATENATION"/>
-    <artifact tool="PMD" mnemonic="UseStringBufferForStringAppends"/>
     <name>Use StringBuffer for String appends</name>
     <shortMessage>This method concatenates Strings using + in a loop. Consider using StringBuffer to improve performance.</shortMessage>
     <info>
@@ -11027,6 +11026,7 @@ long life time).</p>]]>
     <artifact tool="PMD" mnemonic="OverrideBothEqualsAndHashcode"/>  <!-- FindBugs splits this up w/ better reporting -->
     <artifact tool="PMD" mnemonic="AvoidFinalLocalVariable"/>        <!-- This is just a bad analysis -->
     <artifact tool="PMD" mnemonic="JUnitUseExpected"/>               <!-- Stange PMD analysis -->
+    <artifact tool="PMD" mnemonic="UseStringBufferForStringAppends"/><!-- Bad analysis, doesn't understand one expression + on Strings is OK -->
     <name>Ignored tool artifacts</name>
     <shortMessage>Findings in this finding type can be ignored.</shortMessage>
     <info>
