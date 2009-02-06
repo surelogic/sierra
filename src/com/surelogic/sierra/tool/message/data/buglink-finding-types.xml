@@ -8358,12 +8358,22 @@ it; use the .class public member instead.  For example, replace</p>
 
 <pre>
 Class c = new String().getClass();
+Class ca = new String[0].getClass();
 </pre>
 
 <p>with this</p>
 
 <pre>
 Class c = String.class;
+Class ca = String[].class;
+</pre>
+
+<p>In addition, if you do need the variables, you can now use the type
+parameter on the <code>Class</code> type as shown below.</p>
+
+<pre>
+Class&lt;String&gt; c1 = String.class;
+Class&lt;String[]&gt; ca1 = String[].class;
 </pre>]]>
     </info>
   </findingType>
