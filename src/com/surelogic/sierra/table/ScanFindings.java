@@ -15,7 +15,6 @@ import com.surelogic.sierra.gwt.client.data.ColumnDataType;
 import com.surelogic.sierra.gwt.client.data.ReportSettings;
 import com.surelogic.sierra.gwt.client.data.ReportTable;
 import com.surelogic.sierra.tool.message.Importance;
-import com.surelogic.sierra.util.Dates;
 
 public class ScanFindings implements IDatabaseTable {
 
@@ -25,18 +24,15 @@ public class ScanFindings implements IDatabaseTable {
 			final Connection conn) throws SQLException {
 		final ReportTable table = new ReportTable();
 		table.getHeaders().addAll(
-				Arrays.asList(new String[] { "Id", "Package", "Compilation",
-						"Line", "Finding Type", "Tool", "Examined",
-						"Last Changed", "Importance", "Artifacts", "Comments",
-						"Summary" }));
+				Arrays.asList(new String[] { "Id", "Compilation", "Line",
+						"Importance", "Summary" }));
 		table.getColumns().addAll(
 				Arrays.asList(new ColumnDataType[] { ColumnDataType.LINK,
-						ColumnDataType.TEXT, ColumnDataType.TEXT, ColumnDataType.NUMBER,
-						ColumnDataType.TEXT, ColumnDataType.TEXT, ColumnDataType.TEXT,
-						ColumnDataType.DATE, ColumnDataType.TEXT, ColumnDataType.NUMBER,
-						ColumnDataType.NUMBER, ColumnDataType.TEXT }));
+						ColumnDataType.TEXT, ColumnDataType.NUMBER,
+						ColumnDataType.TEXT, ColumnDataType.TEXT, }));
 		final String scan = report.getSettingValue("scan", 0);
-		final List<String> importanceList = report.getSettingValue("importance");
+		final List<String> importanceList = report
+				.getSettingValue("importance");
 		final List<String> packages = report.getSettingValue("package");
 		if (scan != null) {
 			if ((scan != null) && !(scan.length() == 0)) {
@@ -79,12 +75,10 @@ public class ScanFindings implements IDatabaseTable {
 										tableRow.add(id);
 										table.getLinks().add(
 												"finding/finding=" + id);
-										for (int i = 0; i < 6; i++) {
-											tableRow.add(row.nextString());
-										}
-										tableRow.add(Dates.format(row
-												.nextDate()));
-										for (int i = 0; i < 4; i++) {
+										final String comp = row.nextString()
+												+ "." + row.nextString();
+										tableRow.add(comp);
+										for (int i = 0; i < 3; i++) {
 											tableRow.add(row.nextString());
 										}
 										table.getData().add(tableRow);
