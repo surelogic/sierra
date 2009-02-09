@@ -64,19 +64,9 @@ public class Server_0000 implements SchemaAction {
 		} finally {
 			userGroupSt.close();
 		}
-		Statement st = c.createStatement();
+		final Statement st = c.createStatement();
 		try {
 			st.execute("INSERT INTO QUALIFIER(NAME) VALUES('__ALL_SCANS__')");
-		} finally {
-			st.close();
-		}
-		st = c.createStatement();
-		try {
-			st
-					.execute("INSERT INTO SERVER_LOCATION (PROTOCOL,HOST,PORT,CONTEXT_PATH,SERVER_USER,PASSWORD,AUTOSYNC,UUID,SAVEPASS,TEAMSERVER) "
-							+ " VALUES ('http','buglink.org',13376,'/sl/','buglink-user','bl!uzer','Y','9a997ac4-ec2b-4d02-869a-423999fecfed','Y','N')");
-			st
-					.execute("INSERT INTO SERVER_IDENTITY (UUID,NAME,REVISION) VALUES ('9a997ac4-ec2b-4d02-869a-423999fecfed','buglink',0)");
 		} finally {
 			st.close();
 		}
