@@ -3,6 +3,7 @@ package com.surelogic.sierra.gwt.client.service;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.surelogic.sierra.gwt.client.data.EmailInfo;
 import com.surelogic.sierra.gwt.client.data.ServerInfo;
+import com.surelogic.sierra.gwt.client.data.Status;
 
 public interface ManageServerServiceAsync {
 
@@ -14,5 +15,5 @@ public interface ManageServerServiceAsync {
 
 	void setEmail(EmailInfo email, AsyncCallback<ServerInfo> callback);
 
-	void testAdminEmail(AsyncCallback<Void> callback);
+	void testAdminEmail(AsyncCallback<Status> callback);
 }

@@ -21,11 +21,13 @@ import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.service.ManageServerServiceAsync;
 import com.surelogic.sierra.gwt.client.service.ServiceHelper;
 import com.surelogic.sierra.gwt.client.service.callback.StandardCallback;
+import com.surelogic.sierra.gwt.client.service.callback.StatusCallback;
 import com.surelogic.sierra.gwt.client.ui.StatusBox;
 
 public final class SettingsContent extends ContentComposite {
 	private static final SettingsContent instance = new SettingsContent();
-
+	private static final Status requiredFields = new Status(false,
+			"Please fill out all of the required fields.");
 	private final TextBox siteNameTextBox = new TextBox();
 	private final Button updateSiteSettings = new Button("Update Site Settings");
 	private final HTML currentVersion = new HTML();
@@ -132,15 +134,20 @@ public final class SettingsContent extends ContentComposite {
 						getString(smtpUserTextBox), getString(smtpPassTextBox),
 						getString(serverEmailTextBox),
 						getString(adminEmailTextBox));
-				msService.setEmail(email, new StandardCallback<ServerInfo>() {
-					@Override
-					protected void doSuccess(final ServerInfo result) {
-						updateInfo(result);
-						status.setStatus(new Status(true,
-								"Information updated."));
-					}
+				if (email.isValid()) {
+					msService.setEmail(email,
+							new StandardCallback<ServerInfo>() {
+								@Override
+								protected void doSuccess(final ServerInfo result) {
+									updateInfo(result);
+									status.setStatus(new Status(true,
+											"Information updated."));
+								}
 
-				});
+							});
+				} else {
+					status.setStatus(requiredFields);
+				}
 			}
 		});
 		testEmailButton.addClickListener(new ClickListener() {
@@ -151,25 +158,27 @@ public final class SettingsContent extends ContentComposite {
 						getString(smtpUserTextBox), getString(smtpPassTextBox),
 						getString(serverEmailTextBox),
 						getString(adminEmailTextBox));
-				msService.setEmail(email, new StandardCallback<ServerInfo>() {
-					@Override
-					protected void doSuccess(final ServerInfo result) {
+				if (email.isValid()) {
+					msService.setEmail(email,
+							new StandardCallback<ServerInfo>() {
+								@Override
+								protected void doSuccess(final ServerInfo result) {
+									status.setStatus(new Status(false,
+											"Sending test message..."));
+									msService
+											.testAdminEmail(new StatusCallback() {
+												@Override
+												protected void doStatus(
+														final Status st) {
+													status.setStatus(st);
+												}
+											});
+								}
 
-						msService.testAdminEmail(new StandardCallback<Void>() {
-							@Override
-							protected void doSuccess(final Void result) {
-								status.setStatus(Status
-										.success("Test email sent."));
-							}
-
-						});
-						status
-								.setStatus(new Status(
-										true,
-										"If notification is set up correctly, you should receive an email at the given address."));
-					}
-
-				});
+							});
+				} else {
+					status.setStatus(requiredFields);
+				}
 			}
 		});
 	}

@@ -19,8 +19,8 @@ public class EmailInfo implements Serializable {
 	public EmailInfo() {
 	}
 
-	public EmailInfo(String host, String port, String user, String pass,
-			String fromEmail, String adminEmail) {
+	public EmailInfo(final String host, final String port, final String user,
+			final String pass, final String fromEmail, final String adminEmail) {
 		this.host = host;
 		this.port = port;
 		this.user = user;
@@ -33,7 +33,7 @@ public class EmailInfo implements Serializable {
 		return adminEmail;
 	}
 
-	public void setAdminEmail(String adminEmail) {
+	public void setAdminEmail(final String adminEmail) {
 		this.adminEmail = adminEmail;
 	}
 
@@ -41,7 +41,7 @@ public class EmailInfo implements Serializable {
 		return fromEmail;
 	}
 
-	public void setFromEmail(String fromEmail) {
+	public void setFromEmail(final String fromEmail) {
 		this.fromEmail = fromEmail;
 	}
 
@@ -49,7 +49,7 @@ public class EmailInfo implements Serializable {
 		return host;
 	}
 
-	public void setHost(String host) {
+	public void setHost(final String host) {
 		this.host = host;
 	}
 
@@ -57,7 +57,7 @@ public class EmailInfo implements Serializable {
 		return port;
 	}
 
-	public void setPort(String port) {
+	public void setPort(final String port) {
 		this.port = port;
 	}
 
@@ -65,7 +65,7 @@ public class EmailInfo implements Serializable {
 		return pass;
 	}
 
-	public void setPass(String pass) {
+	public void setPass(final String pass) {
 		this.pass = pass;
 	}
 
@@ -73,8 +73,14 @@ public class EmailInfo implements Serializable {
 		return user;
 	}
 
-	public void setUser(String user) {
+	public void setUser(final String user) {
 		this.user = user;
+	}
+
+	public boolean isValid() {
+		return port != null && host != null && fromEmail != null
+				&& adminEmail != null && !port.isEmpty() && !host.isEmpty()
+				&& !adminEmail.isEmpty() && !fromEmail.isEmpty();
 	}
 
 }
