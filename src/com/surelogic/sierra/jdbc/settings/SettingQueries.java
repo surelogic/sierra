@@ -237,10 +237,10 @@ public class SettingQueries {
 	 * 
 	 * @return
 	 */
-	public static final DBQuery<Map<String, List<ScanFilter>>> getLocalScanFilters() {
-		return new DBQuery<Map<String, List<ScanFilter>>>() {
-			public Map<String, List<ScanFilter>> perform(final Query q) {
-				final Map<String, List<ScanFilter>> m = new HashMap<String, List<ScanFilter>>();
+	public static final DBQuery<Map<NamedServer, List<ScanFilter>>> getLocalScanFilters() {
+		return new DBQuery<Map<NamedServer, List<ScanFilter>>>() {
+			public Map<NamedServer, List<ScanFilter>> perform(final Query q) {
+				final Map<NamedServer, List<ScanFilter>> m = new HashMap<NamedServer, List<ScanFilter>>();
 				final ScanFilters filters = new ScanFilters(q);
 				final List<ScanFilterDO> sfs = filters.listScanFilters();
 				final Map<String, ScanFilterDO> dos = new HashMap<String, ScanFilterDO>(
@@ -250,21 +250,21 @@ public class SettingQueries {
 				}
 				q.prepared("ServerLocations.serverScanFilters",
 						new NullRowHandler() {
-							String label;
+							NamedServer label;
 							List<ScanFilter> sfs;
 
 							@Override
 							protected void doHandle(final Row r) {
-								final String l = r.nextString();
-								final String serverUuid = r.nextString();
+								final NamedServer l = new NamedServer(r
+										.nextString(), r.nextString());
 								final String uuid = r.nextString();
 								if (!l.equals(label)) {
 									label = l;
 									sfs = new ArrayList<ScanFilter>();
 									m.put(l, sfs);
 								}
-								sfs.add(ScanFilters.convert(dos.get(uuid),
-										serverUuid));
+								sfs.add(ScanFilters.convert(dos.get(uuid), l
+										.getUuid()));
 							}
 						}).call();
 				return m;
@@ -315,18 +315,20 @@ public class SettingQueries {
 		};
 	}
 
-	public static final DBQuery<String> scanFilterNameForProject(final String projectName) {
+	public static final DBQuery<String> scanFilterNameForProject(
+			final String projectName) {
 		return new DBQuery<String>() {
 			public String perform(final Query q) {
 				final ScanFilters filters = new ScanFilters(q);
 				final ScanFilterDO sf = filters
 						.getScanFilterByProject(projectName);
-				// Not using ScanFilterView due to overhead of getting all the details
+				// Not using ScanFilterView due to overhead of getting all the
+				// details
 				return sf.getName();
 			}
 		};
 	}
-	
+
 	/**
 	 * Record the scan filter used to generate a particular scan.
 	 * 
