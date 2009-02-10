@@ -6,9 +6,11 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 import com.surelogic.common.jdbc.FutureDatabaseException;
+import com.surelogic.common.jdbc.TransactionException;
 import com.surelogic.sierra.gwt.SierraServiceServlet;
 import com.surelogic.sierra.gwt.client.data.EmailInfo;
 import com.surelogic.sierra.gwt.client.data.ServerInfo;
+import com.surelogic.sierra.gwt.client.data.Status;
 import com.surelogic.sierra.gwt.client.service.ManageServerService;
 import com.surelogic.sierra.jdbc.server.Notification;
 import com.surelogic.sierra.jdbc.server.Server;
@@ -59,39 +61,57 @@ public class ManageServerServiceImpl extends SierraServiceServlet implements
 	}
 
 	public ServerInfo setEmail(final EmailInfo info) {
-		return performAdmin(false, new UserTransaction<ServerInfo>() {
+		if (info.isValid()) {
+			return performAdmin(false, new UserTransaction<ServerInfo>() {
 
-			public ServerInfo perform(final Connection conn,
-					final Server server, final User user) throws SQLException {
-				final String portStr = info.getPort();
-				final Integer port = portStr == null ? null : Integer
-						.valueOf(portStr);
-				server.setNotification(new Notification(info.getHost(), port,
-						info.getUser(), info.getPass(), info.getAdminEmail(),
-						info.getServerEmail()));
-				return readServerInfo(server);
-			}
-		});
+				public ServerInfo perform(final Connection conn,
+						final Server server, final User user)
+						throws SQLException {
+					final String portStr = info.getPort();
+					final Integer port = portStr == null ? null : Integer
+							.valueOf(portStr);
+					server.setNotification(new Notification(info.getHost(),
+							port, info.getUser(), info.getPass(), info
+									.getAdminEmail(), info.getServerEmail()));
+					return readServerInfo(server);
+				}
+			});
+		} else {
+			return null;
+		}
 	}
 
-	public void testAdminEmail() {
-		performAdmin(true, new UserTransaction<Void>() {
+	public Status testAdminEmail() {
+		try {
+			performAdmin(true, new UserTransaction<Void>() {
 
-			public Void perform(final Connection conn, final Server server,
-					final User user) throws Exception {
-				final String name = server.getName();
-				server
-						.notifyAdmin(
-								String.format(
-										"Sierra Team Server %s Email Test",
-										name),
-								String
-										.format(
-												"If you received this email, server exception notification is configured properly for %s",
-												name));
-				return null;
-			}
-		});
+				public Void perform(final Connection conn, final Server server,
+						final User user) throws Exception {
+					final String name = server.getName();
+					server
+							.notifyAdmin(
+									String
+											.format(
+													"Sierra Team Server '%s' Email Test",
+													name),
+									String
+											.format(
+													"If you received this email, server exception notification is configured properly for '%s'",
+													name));
+					return null;
+				}
+			});
+			return new Status(
+					true,
+					"Test message sent.  If your notification settings are correct, you should receive a message shortly.");
+		} catch (final TransactionException e) {
+			return new Status(
+					false,
+					String
+							.format(
+									"An error occurred while trying to send a test message.  See the server log for more details: %s",
+									e.getMessage()));
+		}
 	}
 
 	private ServerInfo readServerInfo(final Server server) throws SQLException {

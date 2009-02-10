@@ -1,7 +1,10 @@
 package com.surelogic.sierra.servlets;
 
-import com.surelogic.sierra.message.srpc.*;
-import com.surelogic.sierra.tool.registration.*;
+import com.surelogic.sierra.message.srpc.SRPCServlet;
+import com.surelogic.sierra.tool.registration.ProductInfo;
+import com.surelogic.sierra.tool.registration.ProductRegistrationInfo;
+import com.surelogic.sierra.tool.registration.Registration;
+import com.surelogic.sierra.tool.registration.RegistrationResponse;
 
 /**
  * Implementation of {@link Registration}.
