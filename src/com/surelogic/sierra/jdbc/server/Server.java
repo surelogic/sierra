@@ -20,6 +20,7 @@ import javax.mail.MessagingException;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
+import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
@@ -172,10 +173,14 @@ public class Server {
 	 * @param message
 	 *            email body
 	 * @throws SQLException
+	 * @throws MessagingException
+	 * @throws AddressException
+	 * @throws MessagingException
+	 * @throws AddressException
 	 * 
 	 */
 	public void notifyAdmin(final String subject, final String message)
-			throws SQLException {
+			throws SQLException, MessagingException {
 		final Notification n = getNotification();
 		if (n != null) {
 			final String to = n.getToEmail();
@@ -208,20 +213,15 @@ public class Server {
 					auth = null;
 				}
 				final Session session = Session.getInstance(props, auth);
-				try {
-					final MimeMessage msg = new MimeMessage(session);
-					msg.setSender(new InternetAddress(((from == null) || (from
-							.length() == 0)) ? to : from));
-					msg.setRecipient(Message.RecipientType.TO,
-							new InternetAddress(to));
-					msg.setSubject(subject);
-					msg.setSentDate(new Date());
-					msg.setContent(message, "text/plain");
-					Transport.send(msg);
-				} catch (final MessagingException mex) {
-					log.log(Level.SEVERE,
-							"Mail notification of exception failed.", mex);
-				}
+				final MimeMessage msg = new MimeMessage(session);
+				msg.setSender(new InternetAddress(((from == null) || (from
+						.length() == 0)) ? to : from));
+				msg.setRecipient(Message.RecipientType.TO, new InternetAddress(
+						to));
+				msg.setSubject(subject);
+				msg.setSentDate(new Date());
+				msg.setContent(message, "text/plain");
+				Transport.send(msg);
 			}
 		}
 	}

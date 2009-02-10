@@ -7,6 +7,8 @@ import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.mail.MessagingException;
+
 import com.surelogic.common.derby.LazyPreparedStatementConnection;
 import com.surelogic.common.jdbc.ConnectionQuery;
 import com.surelogic.common.jdbc.DBQuery;
@@ -208,6 +210,8 @@ public class ServerConnection {
 			p.flush();
 			server.notifyAdmin(userName + " reports: " + message, s.toString());
 		} catch (final SQLException e) {
+			log.log(Level.SEVERE, e.getMessage(), e);
+		} catch (final MessagingException e) {
 			log.log(Level.SEVERE, e.getMessage(), e);
 		}
 	}
