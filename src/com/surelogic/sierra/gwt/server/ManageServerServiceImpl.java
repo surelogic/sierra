@@ -79,10 +79,16 @@ public class ManageServerServiceImpl extends SierraServiceServlet implements
 
 			public Void perform(final Connection conn, final Server server,
 					final User user) throws Exception {
+				final String name = server.getName();
 				server
 						.notifyAdmin(
-								"This is a test.",
-								"If you received this email, server exception notification is configured properly.");
+								String.format(
+										"Sierra Team Server %s Email Test",
+										name),
+								String
+										.format(
+												"If you received this email, server exception notification is configured properly for %s",
+												name));
 				return null;
 			}
 		});
