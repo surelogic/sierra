@@ -341,7 +341,7 @@ public class ScanFilters {
 		for (final CategoryFilterDO c : data.getCategories()) {
 			final CategoryFilter cf = new CategoryFilter();
 			cf.setUid(c.getUid());
-			c.setImportance(cf.getImportance());
+			cf.setImportance(c.getImportance());
 			cSet.add(cf);
 		}
 		final List<TypeFilter> tSet = filter.getTypeFilter();
