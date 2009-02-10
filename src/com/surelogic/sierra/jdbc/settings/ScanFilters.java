@@ -130,7 +130,7 @@ public class ScanFilters {
 				for (final CategoryFilterDO cat : settings.getCategories()) {
 					insertCategoryFilter.call(settingsRec.getId(),
 							cat.getUid(),
-							cat.getImportance() == null ? Nulls.STRING : cat
+							cat.getImportance() == null ? Nulls.INT : cat
 									.getImportance().ordinal());
 				}
 				for (final TypeFilterDO type : settings.getFilterTypes()) {
@@ -178,8 +178,8 @@ public class ScanFilters {
 				.prepared("ScanFilters.insertCategoryFilter");
 		for (final CategoryFilterDO cat : settings.getCategories()) {
 			insertCategoryFilter.call(settingsRec.getId(), cat.getUid(), cat
-					.getImportance() == null ? Nulls.STRING : cat
-					.getImportance());
+					.getImportance() == null ? Nulls.INT : cat.getImportance()
+					.ordinal());
 		}
 		for (final TypeFilterDO type : settings.getFilterTypes()) {
 			insertTypeFilter.call(settingsRec.getId(), type.getFindingType(),
