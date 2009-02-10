@@ -86,6 +86,7 @@ import com.surelogic.sierra.jdbc.project.ProjectDO;
 import com.surelogic.sierra.jdbc.scan.ScanInfo;
 import com.surelogic.sierra.jdbc.scan.Scans;
 import com.surelogic.sierra.jdbc.settings.ConnectedServer;
+import com.surelogic.sierra.jdbc.settings.NamedServer;
 import com.surelogic.sierra.jdbc.settings.SettingQueries;
 import com.surelogic.sierra.tool.message.ScanFilter;
 
@@ -109,7 +110,8 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 	/**
 	 * This should only be changed in the UI thread
 	 */
-	private Map<String, List<ScanFilter>> localFilters = Collections.emptyMap();
+	private Map<NamedServer, List<ScanFilter>> localFilters = Collections
+			.emptyMap();
 
 	/**
 	 * A map from a project name to the project info
@@ -1049,7 +1051,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 			final Query q = new ConnectionQuery(c);
 			final Scans sm = new Scans(q);
 			final List<ProjectStatus> projects = new ArrayList<ProjectStatus>();
-			final Map<String, List<ScanFilter>> filters;
+			final Map<NamedServer, List<ScanFilter>> filters;
 			synchronized (projectMap) {
 				for (final IJavaProject jp : JDTUtility.getJavaProjects()) {
 					if (!continueUpdate(now)) {
@@ -1110,7 +1112,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 	}
 
 	public void updateContentsInUI(final List<ProjectStatus> projects,
-			final Map<String, List<ScanFilter>> filters) {
+			final Map<NamedServer, List<ScanFilter>> filters) {
 		// No need to synchronize since only updated/viewed in UI thread?
 		this.projects = projects;
 		this.localFilters = filters;
@@ -1353,10 +1355,11 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 	}
 
 	private void createUnknownServers(final List<ServersViewContent> content) {
-		for (final Map.Entry<String, List<ScanFilter>> e : localFilters
+		for (final Map.Entry<NamedServer, List<ScanFilter>> e : localFilters
 				.entrySet()) {
-			final String label = e.getKey();
-			final ConnectedServer server = f_manager.getServerByUuid(label);
+			final NamedServer label = e.getKey();
+			final ConnectedServer server = f_manager.getServerByUuid(label
+					.getUuid());
 			if (server != null) {
 				// Already known, so already handled elsewhere
 				continue;
@@ -1374,7 +1377,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 						children, name, ChangeStatus.NONE);
 				filter.setData(f);
 			}
-			serverRoot.setText(label);
+			serverRoot.setText(label.getName());
 			serverRoot.setChildren(children.toArray(emptyChildren));
 			serverRoot.setData(filters);
 		}
@@ -1411,7 +1414,8 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 
 	private ServersViewContent createScanFilters(
 			final ServersViewContent serverNode, final ConnectedServer server) {
-		final List<ScanFilter> filters = localFilters.get(server.getName());
+		final List<ScanFilter> filters = localFilters.get(new NamedServer(
+				server.getName(), server.getUuid()));
 		if (!showFiltersOnServer || filters == null || filters.isEmpty()) {
 			return null;
 		}
@@ -1467,11 +1471,11 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 		content.add(filterRoot);
 
 		final List<ServersViewContent> children = new ArrayList<ServersViewContent>();
-		for (final Map.Entry<String, List<ScanFilter>> e : localFilters
+		for (final Map.Entry<NamedServer, List<ScanFilter>> e : localFilters
 				.entrySet()) {
-			final String server = e.getKey();
+			final NamedServer server = e.getKey();
 			for (final ScanFilter f : e.getValue()) {
-				final String name = f.getName() + " (" + server + ")";
+				final String name = f.getName() + " (" + server.getName() + ")";
 				final ServersViewContent filter = createLabel(filterRoot,
 						children, name, ChangeStatus.NONE);
 				filter.setData(f);
