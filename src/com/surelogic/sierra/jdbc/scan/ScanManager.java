@@ -536,10 +536,6 @@ public final class ScanManager {
 									idx = 1;
 									updateArtifactScan.setLong(idx++, oldest
 											.getId());
-									updateArtifactScan.setLong(idx++, latest
-											.getId());
-									updateArtifactScan.setLong(idx++,
-											artifactId);
 									updateArtifactScan.setLong(idx++,
 											artifactId);
 									updateArtifactScan.execute();
