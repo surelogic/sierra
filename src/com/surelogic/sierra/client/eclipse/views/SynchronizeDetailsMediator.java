@@ -45,7 +45,7 @@ public class SynchronizeDetailsMediator extends AbstractSierraViewMediator {
 	}
 
 	public String getHelpId() {
-		return "com.surelogic.sierra.client.eclipse.view-synchronize-history";
+		return "com.surelogic.sierra.client.eclipse.view-synchronize-history-details";
 	}
 
 	public String getNoDataI18N() {

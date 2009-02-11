@@ -232,7 +232,6 @@
 		<category name="Sierra" id="com.surelogic.sierra.client.eclipse">
 		</category>
 
-
 		<!-- UI for entering ad hoc queries -->
 		<view allowMultiple="false" category="com.surelogic.sierra.client.eclipse"
 			class="com.surelogic.sierra.client.eclipse.views.adhoc.QueryEditorView"
