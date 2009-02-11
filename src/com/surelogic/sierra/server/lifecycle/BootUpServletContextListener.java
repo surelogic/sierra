@@ -126,8 +126,14 @@ public class BootUpServletContextListener implements ServletContextListener {
 
 	private void clearCache() {
 		final File cacheDir = FileUtility.getSierraTeamServerCacheDirectory();
-		FileUtility.recursiveDelete(cacheDir);
-		SLLogger.getLogger().log(Level.INFO,
-				"Cache cleared from " + cacheDir.getAbsolutePath());
+		if (FileUtility.recursiveDelete(cacheDir)) {
+			SLLogger.getLogger().log(Level.INFO,
+					"Cache cleared from " + cacheDir.getAbsolutePath());
+		} else {
+			SLLogger.getLogger().log(
+					Level.INFO,
+					"Cache was not cleared (maybe it did not exist) from "
+							+ cacheDir.getAbsolutePath());
+		}
 	}
 }
