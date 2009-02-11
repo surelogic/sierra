@@ -1618,10 +1618,12 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 			}
 			contents.add(scan);
 			// status = status.merge(ChangeStatus.LOCAL);
+		/*
 		} else {
 			ServersViewContent scan = new ServersViewContent(root, null);
 			scan.setText("Needs a local scan");
 			contents.add(scan);
+		*/
 		}
 
 		if (ps.numLocalAudits > 0) {
