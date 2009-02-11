@@ -291,7 +291,7 @@
 			class="com.surelogic.sierra.client.eclipse.views.SynchronizeDetailsView"
 			id="com.surelogic.sierra.client.eclipse.views.SynchronizeDetailsView"
 			icon="platform:/plugin/com.surelogic.common/src/com/surelogic/common/images/comment.gif"
-			name="Synchronize Details">
+			name="Synchronize History Details">
 		</view>
 	</extension>
 
