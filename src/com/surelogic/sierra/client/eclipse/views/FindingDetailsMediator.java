@@ -370,12 +370,37 @@ public class FindingDetailsMediator extends AbstractSierraViewMediator
 
 		final Listener commentListener = new Listener() {
 			public void handleEvent(final Event event) {
-				final String commentText = f_commentText.getText();
-				if (commentText == null || commentText.trim().equals("")) {
-					return;
-				}
-				FindingMutationUtility.asyncComment(f_finding.getFindingId(),
-						commentText);
+				f_commentButton.setEnabled(false);
+				/*
+				 * All this job stuff is to try and avoid pressing the button
+				 * twice and getting a double comment. It simple disables the
+				 * button and runs a job.
+				 * 
+				 * The job then does the work and submits a second job to enable
+				 * the button after a slight delay.
+				 */
+				final UIJob job = new SLUIJob() {
+					@Override
+					public IStatus runInUIThread(IProgressMonitor monitor) {
+						final String commentText = f_commentText.getText();
+						if (!(commentText == null || commentText.trim().equals(
+								""))) {
+							FindingMutationUtility.asyncComment(f_finding
+									.getFindingId(), commentText);
+						}
+						final UIJob job = new SLUIJob() {
+							@Override
+							public IStatus runInUIThread(
+									IProgressMonitor monitor) {
+								f_commentButton.setEnabled(true);
+								return Status.OK_STATUS;
+							}
+						};
+						job.schedule(10);
+						return Status.OK_STATUS;
+					}
+				};
+				job.schedule();
 			}
 		};
 		f_commentText.addListener(SWT.KeyDown, new Listener() {
