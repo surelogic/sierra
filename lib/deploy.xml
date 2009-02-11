@@ -15,7 +15,7 @@
 		<copy file="./lib/mail.jar" todir="../jetty/lib/ext/" />
 		<copy file="../sierra-portal-servlets/lib/jcommon-1.0.12.jar" todir="../sierra-portal/lib/web-dependencies/" />
 		<copy file="../sierra-portal-servlets/lib/jfreechart-1.0.9.jar" todir="../sierra-portal/lib/web-dependencies/" />
-		<copy file="../sierra-portal-servlets/lib/commons-lang-2.3.jar" todir="../sierra-portal/lib/web-dependencies/" />
+		<copy file="../sierra-portal-servlets/lib/commons-lang-2.4.jar" todir="../sierra-portal/lib/web-dependencies/" />
 		<copy file="../sierra-message/srpc/commons-codec-1.3.jar" todir="../sierra-portal/lib/web-dependencies/"/>
 		<copy file="../sierra-message/srpc/commons-httpclient-3.1.jar" todir="../sierra-portal/lib/web-dependencies/"/>
 		<copy file="../sierra-message/srpc/commons-logging-1.1.1.jar" todir="../sierra-portal/lib/web-dependencies/"/>			
