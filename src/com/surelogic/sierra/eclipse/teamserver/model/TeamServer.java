@@ -267,10 +267,6 @@ public final class TeamServer {
 		// Ensure the local team server directory exists for logging
 		FileUtility.getSierraLocalTeamServerDirectory();
 
-		// Clear out the cache
-		FileUtility.recursiveDelete(FileUtility
-				.getSierraTeamServerCacheDirectory());
-
 		CommandlineJava command = getJettyTemplate();
 
 		command.setMaxmemory(PreferenceConstants.getServerMemoryMB() + "m");
