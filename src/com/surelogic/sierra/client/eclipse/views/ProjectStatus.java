@@ -26,8 +26,8 @@ class ProjectStatus {
 	final ProjectDO localDBInfo;
 	final String filterName;
 	
-	public ProjectStatus(IJavaProject jp) {
-		this(jp, null, null, 0, 0, 0, null, null);
+	public ProjectStatus(IJavaProject jp, String filterName) {
+		this(jp, null, null, 0, 0, 0, null, filterName);
 	}
 	
 	public ProjectStatus(IJavaProject jp, File scan, ScanInfo info, 

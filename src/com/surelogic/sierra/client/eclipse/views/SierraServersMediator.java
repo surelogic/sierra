@@ -1061,7 +1061,12 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 					}
 					final String name = jp.getElementName();
 					if (!Projects.getInstance().contains(name)) {
-						continue; // Not scanned
+						if (ConnectedServerManager.getInstance().isConnected(name)) {
+							final String filterName = 
+								SettingQueries.scanFilterNameForProject(name).perform(q);
+							projects.add(new ProjectStatus(jp, filterName));
+						} 
+						continue; // Not scanned						
 					}
 
 					// Check for new local audits
@@ -1504,7 +1509,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 					// No scan data?
 					final ServersViewContent root = createProjectItem(parent,
 							server, projectName);
-					root.setData(new ProjectStatus(jp));
+					root.setData(new ProjectStatus(jp, "*unknown*"));
 					content.add(root);
 
 					createLabel(root, "Needs a local scan");
@@ -1613,6 +1618,10 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 			}
 			contents.add(scan);
 			// status = status.merge(ChangeStatus.LOCAL);
+		} else {
+			ServersViewContent scan = new ServersViewContent(root, null);
+			scan.setText("Needs a local scan");
+			contents.add(scan);
 		}
 
 		if (ps.numLocalAudits > 0) {
