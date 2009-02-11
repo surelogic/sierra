@@ -2,6 +2,7 @@ package com.surelogic.sierra.client.eclipse.dialogs;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -68,7 +69,7 @@ public final class JavaProjectSelectionDialog extends Dialog {
 			if (openJavaProjects.isEmpty()) {
 				final UIJob job = new SLUIJob() {
 					@Override
-					public IStatus runInUIThread(IProgressMonitor monitor) {
+					public IStatus runInUIThread(final IProgressMonitor monitor) {
 						final Shell shell = PlatformUI.getWorkbench()
 								.getActiveWorkbenchWindow().getShell();
 						final String msg = I18N
@@ -86,7 +87,7 @@ public final class JavaProjectSelectionDialog extends Dialog {
 				final List<IJavaProject> mutableProjectList = new ArrayList<IJavaProject>();
 				final UIJob job = new SLUIJob() {
 					@Override
-					public IStatus runInUIThread(IProgressMonitor monitor) {
+					public IStatus runInUIThread(final IProgressMonitor monitor) {
 						final Shell shell = PlatformUI.getWorkbench()
 								.getActiveWorkbenchWindow().getShell();
 						final JavaProjectSelectionDialog dialog = new JavaProjectSelectionDialog(
@@ -101,7 +102,7 @@ public final class JavaProjectSelectionDialog extends Dialog {
 						return Status.OK_STATUS;
 					}
 				};
-				IStatus status = job.runInUIThread(null);
+				final IStatus status = job.runInUIThread(null);
 				if (status == Status.CANCEL_STATUS) {
 					return Collections.emptyList();
 				} else {
@@ -112,32 +113,38 @@ public final class JavaProjectSelectionDialog extends Dialog {
 		return initiallySelectedJavaProjects;
 	}
 
-	private JavaProjectSelectionDialog(Shell parentShell, String label,
-			String shellTitle, Image shellImage,
-			List<IJavaProject> openJavaProjects,
-			List<IJavaProject> initiallySelectedJavaProjects,
-			List<IJavaProject> mutableProjectList) {
+	private JavaProjectSelectionDialog(final Shell parentShell,
+			final String label, final String shellTitle,
+			final Image shellImage, final List<IJavaProject> openJavaProjects,
+			final List<IJavaProject> initiallySelectedJavaProjects,
+			final List<IJavaProject> mutableProjectList) {
 		super(parentShell);
 		this.f_label = label;
 		setShellStyle(getShellStyle() | SWT.RESIZE | SWT.MAX);
 		f_shellTitle = shellTitle;
 		f_shellImage = shellImage;
 		f_openJavaProjects = openJavaProjects;
+		Collections.sort(f_openJavaProjects, new Comparator<IJavaProject>() {
+			public int compare(final IJavaProject o1, final IJavaProject o2) {
+				return String.CASE_INSENSITIVE_ORDER.compare(o1.getProject()
+						.getName(), o2.getProject().getName());
+			}
+		});
 		f_initiallySelectedJavaProjects = initiallySelectedJavaProjects;
 		f_selectedProjects = mutableProjectList;
 	}
 
 	@Override
-	protected final void configureShell(Shell newShell) {
+	protected final void configureShell(final Shell newShell) {
 		super.configureShell(newShell);
 		newShell.setImage(f_shellImage);
 		newShell.setText(f_shellTitle);
 	}
 
 	@Override
-	protected Control createDialogArea(Composite parent) {
-		Composite panel = (Composite) super.createDialogArea(parent);
-		GridLayout gridLayout = new GridLayout();
+	protected Control createDialogArea(final Composite parent) {
+		final Composite panel = (Composite) super.createDialogArea(parent);
+		final GridLayout gridLayout = new GridLayout();
 		panel.setLayout(gridLayout);
 
 		final Label label = new Label(panel, SWT.WRAP);
@@ -149,9 +156,9 @@ public final class JavaProjectSelectionDialog extends Dialog {
 		data.heightHint = 200;
 		f_projectTable.setLayoutData(data);
 
-		boolean onlyOne = f_openJavaProjects.size() == 1;
-		for (IJavaProject jp : f_openJavaProjects) {
-			TableItem item = new TableItem(f_projectTable, SWT.NONE);
+		final boolean onlyOne = f_openJavaProjects.size() == 1;
+		for (final IJavaProject jp : f_openJavaProjects) {
+			final TableItem item = new TableItem(f_projectTable, SWT.NONE);
 			item.setText(jp.getElementName());
 			item.setImage(SLImages.getImage(CommonImages.IMG_PROJECT));
 			item.setData(jp);
@@ -162,7 +169,7 @@ public final class JavaProjectSelectionDialog extends Dialog {
 		}
 
 		f_projectTable.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event event) {
+			public void handleEvent(final Event event) {
 				setOKState();
 			}
 		});
@@ -178,7 +185,7 @@ public final class JavaProjectSelectionDialog extends Dialog {
 		allButton.setText("Select All");
 		allButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true));
 		allButton.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event event) {
+			public void handleEvent(final Event event) {
 				selectAll();
 			}
 		});
@@ -187,7 +194,7 @@ public final class JavaProjectSelectionDialog extends Dialog {
 		noneButton
 				.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true));
 		noneButton.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event event) {
+			public void handleEvent(final Event event) {
 				deselectAll();
 			}
 		});
@@ -199,8 +206,8 @@ public final class JavaProjectSelectionDialog extends Dialog {
 		check.setSelection(PreferenceConstants
 				.alwaysAllowUserToSelectProjectsToScan());
 		check.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event event) {
-				boolean show = !PreferenceConstants
+			public void handleEvent(final Event event) {
+				final boolean show = !PreferenceConstants
 						.alwaysAllowUserToSelectProjectsToScan();
 				PreferenceConstants
 						.setAlwaysAllowUserToSelectProjectsToScan(show);
@@ -212,7 +219,7 @@ public final class JavaProjectSelectionDialog extends Dialog {
 	}
 
 	@Override
-	protected final Control createContents(Composite parent) {
+	protected final Control createContents(final Composite parent) {
 		final Control contents = super.createContents(parent);
 		setOKState();
 		return contents;
@@ -224,7 +231,7 @@ public final class JavaProjectSelectionDialog extends Dialog {
 		 */
 		f_selectedProjects.clear();
 		if (f_projectTable != null && !f_projectTable.isDisposed()) {
-			for (TableItem item : f_projectTable.getItems()) {
+			for (final TableItem item : f_projectTable.getItems()) {
 				if (item.getChecked()) {
 					f_selectedProjects.add((IJavaProject) item.getData());
 				}
@@ -239,7 +246,7 @@ public final class JavaProjectSelectionDialog extends Dialog {
 
 	private void selectAll() {
 		if (f_projectTable != null && !f_projectTable.isDisposed()) {
-			for (TableItem item : f_projectTable.getItems()) {
+			for (final TableItem item : f_projectTable.getItems()) {
 				item.setChecked(true);
 			}
 			setOKState();
@@ -248,7 +255,7 @@ public final class JavaProjectSelectionDialog extends Dialog {
 
 	private void deselectAll() {
 		if (f_projectTable != null && !f_projectTable.isDisposed()) {
-			for (TableItem item : f_projectTable.getItems()) {
+			for (final TableItem item : f_projectTable.getItems()) {
 				item.setChecked(false);
 			}
 			setOKState();
