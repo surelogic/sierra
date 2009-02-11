@@ -283,7 +283,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 			@Override
 			public void run() {
 				SierraServersAutoSync
-						.asyncSyncWithServer(ServerSyncType.ALL, 0);
+						.asyncSyncWithServer(ServerSyncType.ALL, 0, ServerFailureReport.SHOW_DIALOG);
 			}
 		};
 		view.addToActionBar(f_serverSyncAction);

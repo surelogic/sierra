@@ -14,6 +14,7 @@ import com.surelogic.sierra.client.eclipse.jobs.*;
 import com.surelogic.sierra.client.eclipse.model.ConnectedServerManager;
 import com.surelogic.sierra.client.eclipse.model.ServerSyncType;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
+import com.surelogic.sierra.client.eclipse.preferences.ServerFailureReport;
 import com.surelogic.sierra.jdbc.settings.ConnectedServer;
 
 public class SierraServersAutoSync {
@@ -23,8 +24,14 @@ public class SierraServersAutoSync {
 	private static final AtomicReference<ServerProjectGroupJob> lastSyncGroup = new AtomicReference<ServerProjectGroupJob>();
 	
 	private static AutoJob f_doServerAutoSync = null;
-	
+
 	static void asyncSyncWithServer(final ServerSyncType type, final int delay) {
+		asyncSyncWithServer(type, delay, PreferenceConstants.getServerFailureReporting());
+	}
+	
+		
+	static void asyncSyncWithServer(final ServerSyncType type, final int delay, 
+			                        final ServerFailureReport reporting) {
 		final long now = System.currentTimeMillis();
 		lastServerUpdateTime.set(now); // Sync >> update
 		System.out.println("Sync at: " + now);
@@ -35,8 +42,7 @@ public class SierraServersAutoSync {
 				final Job group = lastSyncGroup.get();
 				if ((group == null) || (group.getResult() != null)) {
 					final SynchronizeAllProjectsAction sync = 
-						new SynchronizeAllProjectsAction(type, 
-								PreferenceConstants.getServerFailureReporting(), false, delay);
+						new SynchronizeAllProjectsAction(type, reporting, false, delay);
 					sync.run(null);
 					lastSyncGroup.set(sync.getGroup());
 				} else {
