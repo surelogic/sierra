@@ -18,7 +18,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 				.getPreferenceStore();
 		store.setDefault(PreferenceConstants.P_SERVER_STAYS_RUNNING, true);
 		store.setDefault(PreferenceConstants.P_LOG_VISIBLE, false);
-		store.setDefault(PreferenceConstants.P_LOG_SHOWING, 1);
+		store.setDefault(PreferenceConstants.P_LOG_SHOWING, 0);
 		store.setDefault(PreferenceConstants.P_PORT, 13376);
 		store.setDefault(PreferenceConstants.P_SERVER_MEMORY_MB, 1024);
 		store.setDefault(PreferenceConstants.P_SERVER_LOGGING_LEVEL, Level.INFO

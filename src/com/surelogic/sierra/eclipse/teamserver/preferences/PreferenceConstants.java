@@ -34,10 +34,15 @@ public class PreferenceConstants {
 	}
 
 	/*
-	 * Values: 0 = Jetty log; 1 = Portal log; 2 = Services log.
+	 * Values: 0 = Jetty console log; 1 = Jetty request log.
 	 */
 	public static final String P_LOG_SHOWING = "com.surelogic.sierra.eclipse.teamserver.logShowning";
 
+	/**
+	 * The log that is showing.
+	 * 
+	 * @return 0 for Jetty console log, 1 for Jetty request log.
+	 */
 	public static int getLogShowing() {
 		return Activator.getDefault().getPluginPreferences().getInt(
 				P_LOG_SHOWING);

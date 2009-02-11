@@ -28,9 +28,6 @@ public class TeamServerView extends ViewPart {
 
 	private TeamServerMediator f_mediator = null;
 
-	public TeamServerView() {
-	}
-
 	public void createPartControl(Composite parent) {
 		GridData data;
 
@@ -118,12 +115,23 @@ public class TeamServerView extends ViewPart {
 			}
 		};
 		menu.add(showLogAction);
+		final Action deleteServerDbAction = new Action(
+				"Wipe Local Team Server Database", Action.AS_PUSH_BUTTON) {
+			@Override
+			public void run() {
+				if (f_mediator != null) {
+					f_mediator.deleteServerDb();
+				}
+			}
+		};
+		menu.add(deleteServerDbAction);
 		menu.add(new Separator());
 		menu.add(new PreferenceAction("Preferences..."));
 
 		f_mediator = new TeamServerMediator(command, status, portLabel, port,
 				trafficLight, jettyConsoleLogItem, jettyRequestLogItem,
-				logGroup, logText, toggleLogVisibilityMenuItem, showLogAction);
+				logGroup, logText, toggleLogVisibilityMenuItem, showLogAction,
+				deleteServerDbAction);
 		f_mediator.init();
 	}
 

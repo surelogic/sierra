@@ -13,6 +13,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
@@ -34,6 +35,7 @@ import org.eclipse.ui.browser.IWebBrowser;
 import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
 import org.eclipse.ui.progress.UIJob;
 
+import com.surelogic.common.FileUtility;
 import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.common.eclipse.dialogs.ErrorDialogUtility;
 import com.surelogic.common.eclipse.jobs.SLUIJob;
@@ -63,6 +65,7 @@ public final class TeamServerMediator implements ITeamServerObserver {
 	private final Text f_logText;
 	private final MenuItem f_toggleLogVisibilityMenuItem;
 	private final Action f_showLogAction;
+	private final Action f_deleteServerDbAction;
 
 	private final String f_ipAddress;
 
@@ -133,7 +136,8 @@ public final class TeamServerMediator implements ITeamServerObserver {
 	TeamServerMediator(Button command, Link status, Label portLabel, Text port,
 			Canvas trafficLight, ToolItem jettyConsoleLogItem,
 			ToolItem jettyRequestLogItem, Group logGroup, Text logText,
-			MenuItem toggleLogVisibilityMenuItem, Action showLogAction) {
+			MenuItem toggleLogVisibilityMenuItem, Action showLogAction,
+			Action deleteServerDb) {
 		f_command = command;
 		f_status = status;
 		f_portLabel = portLabel;
@@ -145,6 +149,7 @@ public final class TeamServerMediator implements ITeamServerObserver {
 		f_logText = logText;
 		f_toggleLogVisibilityMenuItem = toggleLogVisibilityMenuItem;
 		f_showLogAction = showLogAction;
+		f_deleteServerDbAction = deleteServerDb;
 
 		f_teamServer = new TeamServer(PreferenceConstants.getPort(), f_executor);
 		f_jettyConsoleLog = new JettyConsoleLog(f_executor);
@@ -279,6 +284,7 @@ public final class TeamServerMediator implements ITeamServerObserver {
 			f_command.setText("Stop Server");
 			f_command.setVisible(true);
 			f_command.setEnabled(true);
+			f_deleteServerDbAction.setEnabled(false);
 
 			hostPortHelper(false);
 
@@ -288,6 +294,7 @@ public final class TeamServerMediator implements ITeamServerObserver {
 			f_command.setText("Start Server");
 			f_command.setVisible(true);
 			f_command.setEnabled(true);
+			f_deleteServerDbAction.setEnabled(true);
 
 			hostPortHelper(true);
 
@@ -296,6 +303,7 @@ public final class TeamServerMediator implements ITeamServerObserver {
 		} else {
 			f_command.setEnabled(false);
 			f_command.setVisible(false);
+			f_deleteServerDbAction.setEnabled(false);
 
 			hostPortHelper(false);
 
@@ -323,6 +331,15 @@ public final class TeamServerMediator implements ITeamServerObserver {
 	void toggleLogVisibility() {
 		PreferenceConstants.setLogVisible(!PreferenceConstants.isLogVisible());
 		adjustLogVisibility();
+	}
+
+	void deleteServerDb() {
+		if (MessageDialog.openConfirm(f_command.getShell(), I18N
+				.msg("sierra.eclipse.teamserver.confirmDataWipe.title"), I18N
+				.msg("sierra.eclipse.teamserver.confirmDataWipe.msg"))) {
+			FileUtility.recursiveDelete(FileUtility
+					.getSierraLocalTeamServerDirectory());
+		}
 	}
 
 	private void adjustLogVisibility() {
@@ -396,7 +413,8 @@ public final class TeamServerMediator implements ITeamServerObserver {
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				final int errNo = 94;
 				final String msg = I18N.err(errNo, exitValue, consoleMsg);
-				final IStatus reason = SLEclipseStatusUtility.createWarningStatus(errNo, msg);
+				final IStatus reason = SLEclipseStatusUtility
+						.createWarningStatus(errNo, msg);
 				ErrorDialogUtility.open(null, "Startup Failure", reason);
 				return Status.OK_STATUS;
 			}
