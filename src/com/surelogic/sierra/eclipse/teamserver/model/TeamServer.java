@@ -25,7 +25,7 @@ import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.eclipse.teamserver.preferences.PreferenceConstants;
 
 public final class TeamServer {
-	
+
 	private static final Logger LOG = SLLogger.getLogger();
 
 	private static final String LOCALHOST = "localhost";
@@ -82,8 +82,8 @@ public final class TeamServer {
 	 * This flag indicates that this has positively detected a running team
 	 * server. It is only updated periodically.
 	 * <p>
-	 * It is not useful to use this flag to detect that a team server is <i>not</i>
-	 * running.
+	 * It is not useful to use this flag to detect that a team server is
+	 * <i>not</i> running.
 	 * <p>
 	 * All accesses must be protected by a lock on <code>this</code>.
 	 */
@@ -96,8 +96,8 @@ public final class TeamServer {
 	 * This method is not a reliable means of determining that a team server is
 	 * <i>not</i> running. Use {@link #isNotRunning()} for this purpose.
 	 * 
-	 * @return <code>true</code> if this has positively detected a running
-	 *         team server, <code>false</code> otherwise.
+	 * @return <code>true</code> if this has positively detected a running team
+	 *         server, <code>false</code> otherwise.
 	 */
 	public synchronized boolean isRunning() {
 		return f_isRunning;
@@ -266,6 +266,10 @@ public final class TeamServer {
 	public void start() {
 		// Ensure the local team server directory exists for logging
 		FileUtility.getSierraLocalTeamServerDirectory();
+
+		// Clear out the cache
+		FileUtility.recursiveDelete(FileUtility
+				.getSierraTeamServerCacheDirectory());
 
 		CommandlineJava command = getJettyTemplate();
 
