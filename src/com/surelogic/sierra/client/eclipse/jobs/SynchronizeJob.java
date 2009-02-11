@@ -84,10 +84,18 @@ public class SynchronizeJob extends AbstractServerProjectJob {
 		}
 	}
 
-	private IStatus synchronize(final DBTransaction<IStatus> sync,
+	private IStatus synchronize(final DBTransaction<Boolean> sync,
 			final SLProgressMonitor slMonitor) {
 		try {
-			return Data.getInstance().withTransaction(sync);
+			final boolean updated = Data.getInstance().withTransaction(sync);
+			if (slMonitor.isCanceled()) {
+				return Status.CANCEL_STATUS;
+			} else {
+				if (updated) {
+					DatabaseHub.getInstance().notifyServerSynchronized();
+				}
+				return Status.OK_STATUS;
+			}
 		} catch (final TransactionException e) {
 			final Throwable cause = e.getCause();
 			TroubleshootConnection troubleshoot = null;
@@ -118,41 +126,41 @@ public class SynchronizeJob extends AbstractServerProjectJob {
 		}
 	}
 
-	private class SyncTransaction implements DBTransaction<IStatus> {
+	private class SyncTransaction implements DBTransaction<Boolean> {
 		private final SLProgressMonitor slMonitor;
 
 		SyncTransaction(final SLProgressMonitor slMonitor) {
 			this.slMonitor = slMonitor;
 		}
 
-		public IStatus perform(final Connection conn) throws Exception {
+		public Boolean perform(final Connection conn) throws Exception {
 			final Query q = new ConnectionQuery(conn);
 			SettingQueries.updateServerInfo(getServer().getLocation()).perform(
 					q);
 			boolean updated = false;
 			if (joinJob == null || joinJob.process(getServer())) {
 				final ServerLocation loc = getServer().getLocation();
-				ListCategoryResponse categories = SettingQueries.retrieveCategories(loc,
-						SettingQueries.categoryRequest().perform(q)).perform(q);
-				ServerScanFilterInfo filters = SettingQueries.retrieveScanFilters(loc,
-						SettingQueries.scanFilterRequest().perform(q)).perform(
-						q);
-				updated = !filters.getDeletions().isEmpty() ||
-		                  !filters.getScanFilters().isEmpty() ||
-					      !categories.getDeletions().isEmpty() ||
-				          !categories.getFilterSets().isEmpty();
+				final ListCategoryResponse categories = SettingQueries
+						.retrieveCategories(loc,
+								SettingQueries.categoryRequest().perform(q))
+						.perform(q);
+				final ServerScanFilterInfo filters = SettingQueries
+						.retrieveScanFilters(loc,
+								SettingQueries.scanFilterRequest().perform(q))
+						.perform(q);
+				updated = !filters.getDeletions().isEmpty()
+						|| !filters.getScanFilters().isEmpty()
+						|| !categories.getDeletions().isEmpty()
+						|| !categories.getFilterSets().isEmpty();
 				slMonitor.worked(1);
 			}
 			ConnectedServerManager.getInstance().getStats(getServer())
 					.markAsConnected();
 			if (slMonitor.isCanceled()) {
 				conn.rollback();
-				return Status.CANCEL_STATUS;
+				return false;
 			} else {
-				if (updated) {
-					DatabaseHub.getInstance().notifyServerSynchronized();
-				}
-				return Status.OK_STATUS;
+				return updated;
 			}
 		}
 	}
