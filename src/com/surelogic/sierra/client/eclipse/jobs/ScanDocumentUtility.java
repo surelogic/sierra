@@ -97,6 +97,7 @@ public final class ScanDocumentUtility {
 			log.info("Loading partial scan document " + scanDocument);
 		}
 		Throwable exc = null;
+		monitor.begin();
 		try {
 			final Connection conn = Data.getInstance().transactionConnection();
 			try {
@@ -141,6 +142,8 @@ public final class ScanDocumentUtility {
 		} catch (final SQLException e) {
 			// Could not get a valid connection
 			throw new IllegalStateException(e);
+		} finally {
+			monitor.done();
 		}
 	}
 
@@ -214,6 +217,8 @@ public final class ScanDocumentUtility {
 		} catch (final SQLException e) {
 			// Could not get a valid connection
 			throw new IllegalStateException(e);
+		} finally {
+			monitor.done();
 		}
 	}
 }
