@@ -140,6 +140,15 @@ public final class ConnectedServerManager extends
 		return servers;
 	}
 
+	public void clear() {
+		synchronized (this) {
+			f_focus = null;
+			f_servers.clear();
+			f_projectNameToServer.clear();
+		}
+		saveAndNotifyObservers();
+	}
+	
 	/**
 	 * Deletes the passed server from the set of servers managed by this model.
 	 * 
