@@ -372,6 +372,9 @@ public final class ClientFindingManager extends FindingManager {
 		monitor.begin(findingIds.size());
 		final Timestamp now = JDBCUtils.now();
 		for (final Long findingId : findingIds) {
+			if (monitor.isCanceled()) {
+				return;
+			}
 			checkFinding(findingId);
 			setImportance(null, findingId, importance, now, null);
 			int idx = 1;
