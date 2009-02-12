@@ -59,7 +59,7 @@ public abstract class AbstractSierraView<M extends IViewMediator> extends
 	}
 
 	@Override
-	public final void createPartControl(Composite parent) {
+	public final void createPartControl(final Composite parent) {
 		final PageBook pages = f_pages = new PageBook(parent, SWT.NONE);
 		final Link noDataPage = new Link(pages, SWT.WRAP);
 		final Link waitingForDataPage = new Link(pages, SWT.WRAP);
