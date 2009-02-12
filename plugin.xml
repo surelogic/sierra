@@ -147,7 +147,7 @@
 				id="com.surelogic.sierra.client.eclipse.actions.SynchronizeAllProjectsAction"
 				icon="platform:/plugin/com.surelogic.common/src/com/surelogic/common/images/sierra_sync.gif"
 				label="Synchronize All" menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/server"
-				helpContextId="menu-synchronize-all-connected-projects">
+				helpContextId="menu-synchronize-all">
 			</action>
 			<action
 				class="com.surelogic.sierra.client.eclipse.actions.ConfigureTeamServersAction"

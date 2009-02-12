@@ -51,23 +51,24 @@ public abstract class AbstractSierraView<M extends IViewMediator> extends
 	protected M f_mediator;
 
 	protected AbstractSierraView(int numDataPages) {
-	  f_dataPages = new Composite[numDataPages];
+		f_dataPages = new Composite[numDataPages];
 	}
+
 	protected AbstractSierraView() {
-	  this(1);
+		this(1);
 	}
-	
+
 	@Override
 	public final void createPartControl(Composite parent) {
 		final PageBook pages = f_pages = new PageBook(parent, SWT.NONE);
 		final Link noDataPage = new Link(pages, SWT.WRAP);
 		final Link waitingForDataPage = new Link(pages, SWT.WRAP);
-		for(int i=f_dataPages.length-1; i>=0; i--) {
-		  final Composite actualPage = new Composite(pages, SWT.NO_FOCUS);
-		  actualPage.setLayout(new FillLayout());
-		  f_dataPages[i] = actualPage;
+		for (int i = f_dataPages.length - 1; i >= 0; i--) {
+			final Composite actualPage = new Composite(pages, SWT.NO_FOCUS);
+			actualPage.setLayout(new FillLayout());
+			f_dataPages[i] = actualPage;
 		}
-		f_waitingForDataPage = waitingForDataPage;	
+		f_waitingForDataPage = waitingForDataPage;
 		f_noDataPage = noDataPage;
 		f_dataPage = f_dataPages[0];
 
@@ -87,7 +88,7 @@ public abstract class AbstractSierraView<M extends IViewMediator> extends
 		mediator.init();
 
 		waitingForDataPage.setText("Waiting for data...");
-		
+
 		noDataPage.setText(I18N.msg(mediator.getNoDataI18N()));
 		final Listener noDataListener = mediator.getNoDataListener();
 		if (noDataListener != null)
@@ -98,7 +99,6 @@ public abstract class AbstractSierraView<M extends IViewMediator> extends
 		 */
 		getSite().getWorkbenchWindow().getWorkbench().getHelpSystem().setHelp(
 				parent, mediator.getHelpId());
-		// parent.layout(true, true);
 	}
 
 	protected Action createPreferencesAction() {
@@ -106,9 +106,9 @@ public abstract class AbstractSierraView<M extends IViewMediator> extends
 	}
 
 	protected M createMorePartControls(Composite[] parents) {
-	  return createMorePartControls(parents[0]);
+		return createMorePartControls(parents[0]);
 	}
-	
+
 	protected abstract M createMorePartControls(Composite parent);
 
 	public final void hasData(boolean data) {
@@ -118,41 +118,38 @@ public abstract class AbstractSierraView<M extends IViewMediator> extends
 			f_pages.showPage(f_noDataPage);
 		}
 	}
-	
+
 	/**
-	 * Note that this should be negated, since it doesn't
-	 * take the wait state into account
+	 * Note that this should be negated, since it doesn't take the wait state
+	 * into account
 	 */
 	public final boolean matchesStatus(boolean showing) {
-	  return matchesStatus(showing, 0);
+		return matchesStatus(showing, 0);
 	}
-	
+
 	public final boolean matchesStatus(boolean showing, int dataIndex) {
-	  if (showing) {
-	    /*
-	    Control actualPage = f_pages.getPage();
-	    for(Control page : f_dataPages) {
-	      if (actualPage == page) {
-	        return true;
-	      }
-	    }
-	    return false;
-	    */
-	    return f_pages.getPage() == f_dataPages[dataIndex];
-	  }
+		if (showing) {
+			/*
+			 * Control actualPage = f_pages.getPage(); for(Control page :
+			 * f_dataPages) { if (actualPage == page) { return true; } } return
+			 * false;
+			 */
+			return f_pages.getPage() == f_dataPages[dataIndex];
+		}
 		return f_pages.getPage() == f_noDataPage;
 	}
-	 
-  public final void setDataPage(int i) {
-    final Control oldPage = f_dataPage;
-    final Control newPage = f_dataPages[i];
-    if (oldPage != newPage) {
-      f_dataPage = newPage;
-      if (f_pages.getPage() == oldPage) {
-        f_pages.showPage(newPage);
-      }
-    }
-  }
+
+	public final void setDataPage(int i) {
+		final Control oldPage = f_dataPage;
+		final Control newPage = f_dataPages[i];
+		if (oldPage != newPage) {
+			f_dataPage = newPage;
+			if (f_pages.getPage() == oldPage) {
+				f_pages.showPage(newPage);
+			}
+		}
+	}
+
 	public final void setStatus(Status s) {
 		switch (s) {
 		default:
@@ -167,7 +164,7 @@ public abstract class AbstractSierraView<M extends IViewMediator> extends
 			break;
 		}
 	}
-	
+
 	public final Status getStatus() {
 		if (f_pages.getPage() == f_noDataPage) {
 			return Status.NO_DATA;
