@@ -1822,7 +1822,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 
 	void addScanFilterMenuItems(final Menu contextMenu) {
 		final MenuItem getResultFilters = AbstractSierraView.createMenuItem(
-				contextMenu, "Copy to Local Scan Filter...", (Image) null);
+				contextMenu, "Copy to Local Scan Filter", (Image) null);
 		getResultFilters.addListener(SWT.Selection, f_getResultFiltersAction);
 	}
 
