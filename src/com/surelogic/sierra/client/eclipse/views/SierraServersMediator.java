@@ -282,8 +282,8 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 
 			@Override
 			public void run() {
-				SierraServersAutoSync
-						.asyncSyncWithServer(ServerSyncType.ALL, 0, ServerFailureReport.SHOW_DIALOG);
+				SierraServersAutoSync.asyncSyncWithServer(ServerSyncType.ALL,
+						0, ServerFailureReport.SHOW_DIALOG);
 			}
 		};
 		view.addToActionBar(f_serverSyncAction);
@@ -938,12 +938,11 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 
 	@Override
 	public void dispose() {
-		// f_statusTree.dispose();
 		super.dispose();
 	}
 
 	public void setFocus() {
-		// f_statusTree.setFocus();
+		f_statusTree.getControl().setFocus();
 	}
 
 	public void notify(final ConnectedServerManager manager) {
@@ -953,14 +952,6 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 	public void notify(final Projects p) {
 		asyncUpdateContents();
 	}
-
-	/*
-	 * private static boolean same(TableItem[] items, String[] labels) { if
-	 * (items.length != labels.length) return false; for (int i = 0; i <
-	 * labels.length; i++) { boolean same =
-	 * items[i].getText().equals(labels[i]); if (!same) return false; } return
-	 * true; }
-	 */
 
 	private static void openInBrowser(final ConnectedServer server) {
 		if (server == null) {
@@ -1061,12 +1052,13 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 					}
 					final String name = jp.getElementName();
 					if (!Projects.getInstance().contains(name)) {
-						if (ConnectedServerManager.getInstance().isConnected(name)) {
-							final String filterName = 
-								SettingQueries.scanFilterNameForProject(name).perform(q);
+						if (ConnectedServerManager.getInstance().isConnected(
+								name)) {
+							final String filterName = SettingQueries
+									.scanFilterNameForProject(name).perform(q);
 							projects.add(new ProjectStatus(jp, filterName));
-						} 
-						continue; // Not scanned						
+						}
+						continue; // Not scanned
 					}
 
 					// Check for new local audits
@@ -1618,12 +1610,10 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 			}
 			contents.add(scan);
 			// status = status.merge(ChangeStatus.LOCAL);
-		/*
-		} else {
-			ServersViewContent scan = new ServersViewContent(root, null);
-			scan.setText("Needs a local scan");
-			contents.add(scan);
-		*/
+			/*
+			 * } else { ServersViewContent scan = new ServersViewContent(root,
+			 * null); scan.setText("Needs a local scan"); contents.add(scan);
+			 */
 		}
 
 		if (ps.numLocalAudits > 0) {
