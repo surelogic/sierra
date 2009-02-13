@@ -28,6 +28,7 @@ import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.IWorkbenchPage;
 
+import com.surelogic.common.CommonImages;
 import com.surelogic.common.eclipse.AuditTrail;
 import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.common.eclipse.TableUtility;
@@ -35,7 +36,6 @@ import com.surelogic.common.eclipse.ViewUtility;
 import com.surelogic.common.eclipse.dialogs.ErrorDialogUtility;
 import com.surelogic.common.eclipse.logging.SLEclipseStatusUtility;
 import com.surelogic.common.i18n.I18N;
-import com.surelogic.common.images.CommonImages;
 import com.surelogic.sierra.tool.message.Importance;
 
 public class FindingDetailsView extends

@@ -13,10 +13,10 @@ import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 
+import com.surelogic.common.CommonImages;
 import com.surelogic.common.XUtil;
 import com.surelogic.common.eclipse.CascadingList;
 import com.surelogic.common.eclipse.SLImages;
-import com.surelogic.common.images.CommonImages;
 import com.surelogic.sierra.client.eclipse.jsure.ImportJSureAction;
 import com.surelogic.sierra.client.eclipse.views.AbstractSierraView;
 import com.surelogic.sierra.client.eclipse.wizards.FindingSearchExportWizard;

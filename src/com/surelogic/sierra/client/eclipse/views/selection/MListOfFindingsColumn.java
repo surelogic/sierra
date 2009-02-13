@@ -43,6 +43,7 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.progress.UIJob;
 
+import com.surelogic.common.CommonImages;
 import com.surelogic.common.StringComparators;
 import com.surelogic.common.eclipse.CascadingList;
 import com.surelogic.common.eclipse.JDTUtility;
@@ -53,7 +54,6 @@ import com.surelogic.common.eclipse.jobs.DatabaseJob;
 import com.surelogic.common.eclipse.jobs.SLUIJob;
 import com.surelogic.common.eclipse.logging.SLEclipseStatusUtility;
 import com.surelogic.common.i18n.I18N;
-import com.surelogic.common.images.CommonImages;
 import com.surelogic.common.jdbc.QB;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;

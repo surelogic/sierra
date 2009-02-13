@@ -2,8 +2,8 @@ package com.surelogic.sierra.client.eclipse.views;
 
 import org.eclipse.swt.graphics.Image;
 
+import com.surelogic.common.CommonImages;
 import com.surelogic.common.eclipse.SLImages;
-import com.surelogic.common.images.CommonImages;
 import com.surelogic.sierra.client.eclipse.views.SierraServersMediator.ChangeStatus;
 import com.surelogic.sierra.client.eclipse.views.SierraServersMediator.ServerStatus;
 import com.surelogic.sierra.jdbc.settings.ConnectedServer;

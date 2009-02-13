@@ -8,8 +8,8 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
 
 
+import com.surelogic.common.CommonImages;
 import com.surelogic.common.eclipse.SLImages;
-import com.surelogic.common.images.CommonImages;
 import com.surelogic.sierra.client.eclipse.model.selection.SelectionManager;
 import com.surelogic.sierra.client.eclipse.model.selection.SelectionPersistence;
 

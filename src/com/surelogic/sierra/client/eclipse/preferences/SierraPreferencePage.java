@@ -17,13 +17,13 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 
+import com.surelogic.common.CommonImages;
 import com.surelogic.common.FileUtility;
 import com.surelogic.common.eclipse.MemoryUtility;
 import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.common.eclipse.dialogs.ChangeDataDirectoryDialog;
 import com.surelogic.common.eclipse.preferences.AbstractLicensePreferencePage;
 import com.surelogic.common.i18n.I18N;
-import com.surelogic.common.images.CommonImages;
 import com.surelogic.sierra.client.eclipse.Activator;
 import com.surelogic.sierra.tool.message.Importance;
 

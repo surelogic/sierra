@@ -4,8 +4,8 @@ import java.util.Set;
 
 import org.eclipse.swt.graphics.Image;
 
+import com.surelogic.common.CommonImages;
 import com.surelogic.common.eclipse.SLImages;
-import com.surelogic.common.images.CommonImages;
 import com.surelogic.sierra.client.eclipse.jsure.*;
 import com.surelogic.sierra.tool.message.AssuranceType;
 

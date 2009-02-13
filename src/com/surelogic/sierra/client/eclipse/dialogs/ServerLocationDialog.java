@@ -20,10 +20,10 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+import com.surelogic.common.CommonImages;
 import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.common.eclipse.SWTUtility;
 import com.surelogic.common.i18n.I18N;
-import com.surelogic.common.images.CommonImages;
 import com.surelogic.sierra.client.eclipse.jobs.ValidateServerLocationJob;
 import com.surelogic.sierra.client.eclipse.model.ConnectedServerManager;
 import com.surelogic.sierra.jdbc.settings.ConnectedServer;

@@ -27,10 +27,10 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.UIJob;
 
+import com.surelogic.common.CommonImages;
 import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.common.eclipse.jobs.SLUIJob;
 import com.surelogic.common.i18n.I18N;
-import com.surelogic.common.images.CommonImages;
 import com.surelogic.sierra.client.eclipse.jobs.DeleteDatabaseJob;
 import com.surelogic.sierra.client.eclipse.jobs.DeleteProjectDataJob;
 import com.surelogic.sierra.client.eclipse.model.IProjectsObserver;

@@ -5,8 +5,8 @@ import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IImportWizard;
 import org.eclipse.ui.IWorkbench;
 
+import com.surelogic.common.CommonImages;
 import com.surelogic.common.eclipse.SLImages;
-import com.surelogic.common.images.CommonImages;
 
 public class FindingSearchImportWizard extends Wizard implements IImportWizard {
 	private FindingSearchImportPage f_mainPage;

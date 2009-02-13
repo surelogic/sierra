@@ -4,8 +4,8 @@ import java.util.List;
 
 import org.eclipse.jdt.core.IJavaProject;
 
+import com.surelogic.common.CommonImages;
 import com.surelogic.common.eclipse.SLImages;
-import com.surelogic.common.images.CommonImages;
 import com.surelogic.sierra.client.eclipse.dialogs.JavaProjectSelectionDialog;
 
 public class SynchronizeProjectDialogAction extends SynchronizeProjectAction {

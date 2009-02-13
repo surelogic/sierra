@@ -44,6 +44,7 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.progress.UIJob;
 
+import com.surelogic.common.CommonImages;
 import com.surelogic.common.eclipse.AuditTrail;
 import com.surelogic.common.eclipse.FocusAction;
 import com.surelogic.common.eclipse.HTMLPrinter;
@@ -55,7 +56,6 @@ import com.surelogic.common.eclipse.jobs.DatabaseJob;
 import com.surelogic.common.eclipse.jobs.SLUIJob;
 import com.surelogic.common.eclipse.logging.SLEclipseStatusUtility;
 import com.surelogic.common.i18n.I18N;
-import com.surelogic.common.images.CommonImages;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.StyleSheetHelper;
