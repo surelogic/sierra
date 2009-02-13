@@ -578,6 +578,7 @@ public final class SettingsServiceImpl extends SierraServiceServlet implements
 				new UserQuery<Status>() {
 					public Status perform(final Query q, final Server s,
 							final User u) {
+						s.nextRevision();
 						final ScanFilters filters = new ScanFilters(q);
 						filters.setDefaultScanFilter(f.getUuid());
 						return Status.success("Default scan filter saved.");
@@ -656,6 +657,7 @@ public final class SettingsServiceImpl extends SierraServiceServlet implements
 				new UserQuery<Status>() {
 					public Status perform(final Query query,
 							final Server server, final User user) {
+						server.nextRevision();
 						new Projects(query).updateProjectFilter(project,
 								scanFilter);
 						return Status.success();
