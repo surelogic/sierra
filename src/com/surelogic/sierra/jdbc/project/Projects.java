@@ -49,7 +49,8 @@ public final class Projects {
 	 */
 	public String updateProjectFilter(final String project,
 			final String scanFilterUuid) {
-		final String old = getProjectFilter(project);
+		final String old = q.prepared("ScanFilters.selectDefault",
+				new StringResultHandler()).call();
 		q.prepared("Projects.deleteScanFilter").call(project);
 		final ScanFilterRecord r = q.record(ScanFilterRecord.class);
 		r.setUid(scanFilterUuid);
