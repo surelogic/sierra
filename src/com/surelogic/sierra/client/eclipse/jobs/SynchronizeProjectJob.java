@@ -78,10 +78,17 @@ public class SynchronizeProjectJob extends AbstractServerProjectJob {
 		}
 	}
 
-	private IStatus synchronize(final DBTransaction<IStatus> sync,
+	private IStatus synchronize(final DBTransaction<Boolean> sync,
 			final SLProgressMonitor slMonitor) {
 		try {
-			return Data.getInstance().withTransaction(sync);
+			final boolean updated = Data.getInstance().withTransaction(sync);
+			if (updated) {
+				DatabaseHub.getInstance().notifyProjectSynchronized();
+			}
+			if (slMonitor.isCanceled()) {
+				return Status.CANCEL_STATUS;
+			}
+			return Status.OK_STATUS;
 		} catch (final TransactionException e) {
 			final Throwable cause = e.getCause();
 			TroubleshootConnection troubleshoot = null;
@@ -112,28 +119,23 @@ public class SynchronizeProjectJob extends AbstractServerProjectJob {
 		}
 	}
 
-	private class SyncTransaction implements DBTransaction<IStatus> {
+	private class SyncTransaction implements DBTransaction<Boolean> {
 		private final SLProgressMonitor slMonitor;
 
 		SyncTransaction(final SLProgressMonitor slMonitor) {
 			this.slMonitor = slMonitor;
 		}
 
-		public IStatus perform(final Connection conn) throws Exception {
-			final boolean updated = 
-				ClientProjectManager.getInstance(conn).synchronizeProject(
-					getServer(), f_projectName, slMonitor);
+		public Boolean perform(final Connection conn) throws Exception {
+			final boolean updated = ClientProjectManager.getInstance(conn)
+					.synchronizeProject(getServer(), f_projectName, slMonitor);
 			ConnectedServerManager.getInstance().getStats(getServer())
 					.markAsConnected();
 			if (slMonitor.isCanceled()) {
 				conn.rollback();
-				return Status.CANCEL_STATUS;
-			} else {
-				if (updated) {
-					DatabaseHub.getInstance().notifyProjectSynchronized();
-				}
-				return Status.OK_STATUS;
+				return false;
 			}
+			return updated;
 		}
 	}
 
