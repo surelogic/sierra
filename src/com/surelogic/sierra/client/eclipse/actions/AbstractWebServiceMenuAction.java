@@ -6,6 +6,8 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
 import com.surelogic.common.eclipse.ViewUtility;
@@ -29,8 +31,8 @@ public abstract class AbstractWebServiceMenuAction extends
 		final ConnectedServerManager manager = ConnectedServerManager
 				.getInstance();
 		ConnectedServer unconnectedProjectsServer = null;
-		final Shell shell = PlatformUI.getWorkbench()
-				.getActiveWorkbenchWindow().getShell();
+		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		final Shell shell = window == null ? null : window.getShell();
 		final ServerProjectGroupJob family = new ServerProjectGroupJob(manager
 				.getServers());
 		final ServerActionOnAProject serverAction = new ServerActionOnAProject() {
