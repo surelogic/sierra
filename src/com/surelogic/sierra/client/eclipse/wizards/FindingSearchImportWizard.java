@@ -16,7 +16,6 @@ public class FindingSearchImportWizard extends Wizard implements IImportWizard {
 		return f_mainPage.importSearches();
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public void addPages() {
 		f_mainPage = new FindingSearchImportPage();

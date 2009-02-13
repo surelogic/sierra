@@ -11,7 +11,6 @@ import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.model.ConnectedServerManager;
 import com.surelogic.sierra.client.eclipse.model.DatabaseHub;
-import com.surelogic.sierra.client.eclipse.model.Projects;
 
 public final class DeleteDatabaseJob extends DatabaseJob {
 
@@ -26,7 +25,7 @@ public final class DeleteDatabaseJob extends DatabaseJob {
 				monitor, msg);
 		slMonitor.begin();
 		ConnectedServerManager.getInstance().clear();
-		//Projects.getInstance().clear();
+		// Projects.getInstance().clear();
 		Data.getInstance().destroy();
 		DatabaseHub.getInstance().notifyDatabaseDeleted();
 		SLLogger.getLogger().info("The client database has been deleted");
