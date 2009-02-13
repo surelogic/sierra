@@ -91,40 +91,32 @@ public final class ClientProjectManager extends ProjectManager {
 	private static class SyncProjectInfo {
 		final SyncProjectRequest request;
 		final SyncProjectResponse response;
+		private boolean updated;
 
 		SyncProjectInfo(final SyncProjectRequest req,
-				final SyncProjectResponse resp) {
+				final SyncProjectResponse resp, final boolean updated) {
 			request = req;
 			response = resp;
 		}
 
 		public boolean requiresUpdate() {
-			return request.getRevision() != response.getCommitRevision();
-			// return !request.getTrails().isEmpty() ||
-			// !response.getTrails().isEmpty();
+			return updated;
 		}
 	}
 
 	private static class SyncInfo {
 		final SyncRequest request;
 		final SyncResponse response;
+		private boolean updated;
 
-		SyncInfo(final SyncRequest req, final SyncResponse resp) {
+		SyncInfo(final SyncRequest req, final SyncResponse resp,
+				final boolean updated) {
 			request = req;
 			response = resp;
 		}
 
 		public boolean requiresUpdate() {
-			final Iterator<SyncProjectResponse> respIter = response
-					.getProjects().iterator();
-			for (final SyncProjectRequest syncProjectRequest : request
-					.getProjects()) {
-				if (syncProjectRequest.getRevision() != respIter.next()
-						.getCommitRevision()) {
-					return true;
-				}
-			}
-			return false;
+			return updated;
 		}
 	}
 
@@ -148,14 +140,15 @@ public final class ClientProjectManager extends ProjectManager {
 		final Iterator<String> namesIter = projectNames.iterator();
 		final Iterator<SyncProjectRequest> requestIter = request.getProjects()
 				.iterator();
+		boolean updated = false;
 		for (final SyncProjectResponse projectReply : reply.getProjects()) {
-			updateProject(server, namesIter.next(), requestIter.next(),
-					projectReply, monitor);
+			updated |= updateProject(server, namesIter.next(), requestIter
+					.next(), projectReply, monitor);
 		}
 		if (monitor.isCanceled()) {
 			return null;
 		}
-		return new SyncInfo(request, reply);
+		return new SyncInfo(request, reply, updated);
 	}
 
 	private SyncProjectInfo synchronizeProjectWithServer(
@@ -178,13 +171,15 @@ public final class ClientProjectManager extends ProjectManager {
 			return null;
 		}
 		monitor.worked(1);
+		boolean updated = false;
 		if (!serverGet) {
-			updateProject(server, projectName, request, reply, monitor);
+			updated = updateProject(server, projectName, request, reply,
+					monitor);
 		}
 		if (monitor.isCanceled()) {
 			return null;
 		}
-		return new SyncProjectInfo(request, reply);
+		return new SyncProjectInfo(request, reply, updated);
 	}
 
 	private SyncProjectRequest getSyncProjectRequest(
@@ -232,19 +227,21 @@ public final class ClientProjectManager extends ProjectManager {
 		return request;
 	}
 
-	private void updateProject(final ConnectedServer server,
+	private boolean updateProject(final ConnectedServer server,
 			final String projectName, final SyncProjectRequest request,
 			final SyncProjectResponse reply, final SLProgressMonitor monitor)
 			throws SQLException {
 		monitor.subTask("Writing remote updates into local database.");
-		new Projects(conn).updateProjectFilter(projectName, reply
-				.getScanFilter());
+		final boolean updated = new Projects(conn).updateProjectFilter(
+				projectName, reply.getScanFilter()).equals(
+				reply.getScanFilter())
+				&& reply.getCommitRevision() == request.getRevision();
 		findingManager.updateLocalAuditRevision(projectName, server
 				.getLocation().getUser(), reply.getCommitRevision(), monitor);
 		findingManager.updateLocalFindings(projectName, reply.getTrails(),
 				monitor);
 		if (monitor.isCanceled()) {
-			return;
+			return false;
 		}
 		monitor.worked(1);
 
@@ -270,6 +267,7 @@ public final class ClientProjectManager extends ProjectManager {
 		insertSynchRecord.setLong(idx++, commitCount);
 		insertSynchRecord.setLong(idx++, updateCount);
 		insertSynchRecord.execute();
+		return updated;
 	}
 
 	@Override

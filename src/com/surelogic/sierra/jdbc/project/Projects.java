@@ -39,8 +39,17 @@ public final class Projects {
 		}).call();
 	}
 
-	public void updateProjectFilter(final String project,
+	/**
+	 * Updates the existing project's scan filter. Returns the uuid of the old
+	 * scan filter.
+	 * 
+	 * @param project
+	 * @param scanFilterUuid
+	 * @return
+	 */
+	public String updateProjectFilter(final String project,
 			final String scanFilterUuid) {
+		final String old = getProjectFilter(project);
 		q.prepared("Projects.deleteScanFilter").call(project);
 		final ScanFilterRecord r = q.record(ScanFilterRecord.class);
 		r.setUid(scanFilterUuid);
@@ -48,6 +57,7 @@ public final class Projects {
 			q.prepared("Projects.insertScanFilter").call(project,
 					scanFilterUuid);
 		}
+		return old;
 	}
 
 	public String getProjectFilter(final String project) {
