@@ -91,12 +91,13 @@ public final class ClientProjectManager extends ProjectManager {
 	private static class SyncProjectInfo {
 		final SyncProjectRequest request;
 		final SyncProjectResponse response;
-		private boolean updated;
+		private final boolean updated;
 
 		SyncProjectInfo(final SyncProjectRequest req,
 				final SyncProjectResponse resp, final boolean updated) {
 			request = req;
 			response = resp;
+			this.updated = updated;
 		}
 
 		public boolean requiresUpdate() {
@@ -107,12 +108,13 @@ public final class ClientProjectManager extends ProjectManager {
 	private static class SyncInfo {
 		final SyncRequest request;
 		final SyncResponse response;
-		private boolean updated;
+		private final boolean updated;
 
 		SyncInfo(final SyncRequest req, final SyncResponse resp,
 				final boolean updated) {
 			request = req;
 			response = resp;
+			this.updated = updated;
 		}
 
 		public boolean requiresUpdate() {
