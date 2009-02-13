@@ -35,13 +35,13 @@ import org.eclipse.ui.browser.IWebBrowser;
 import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
 import org.eclipse.ui.progress.UIJob;
 
+import com.surelogic.common.CommonImages;
 import com.surelogic.common.FileUtility;
 import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.common.eclipse.dialogs.ErrorDialogUtility;
 import com.surelogic.common.eclipse.jobs.SLUIJob;
 import com.surelogic.common.eclipse.logging.SLEclipseStatusUtility;
 import com.surelogic.common.i18n.I18N;
-import com.surelogic.common.images.CommonImages;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.eclipse.teamserver.dialogs.ServerStaysRunningWarning;
 import com.surelogic.sierra.eclipse.teamserver.model.IServerLogObserver;
