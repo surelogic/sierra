@@ -232,7 +232,7 @@ public final class ClientProjectManager extends ProjectManager {
 			final SyncProjectResponse reply, final SLProgressMonitor monitor)
 			throws SQLException {
 		monitor.subTask("Writing remote updates into local database.");
-		final boolean updated = reply.getScanFilter().equals(
+		final boolean updated = !reply.getScanFilter().equals(
 				new Projects(conn).updateProjectFilter(projectName, reply
 						.getScanFilter()))
 				&& reply.getCommitRevision() == request.getRevision();
