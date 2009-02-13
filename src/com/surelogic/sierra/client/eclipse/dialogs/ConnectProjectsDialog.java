@@ -1,13 +1,15 @@
 package com.surelogic.sierra.client.eclipse.dialogs;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
@@ -22,14 +24,19 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.progress.UIJob;
 
 import com.surelogic.common.CommonImages;
 import com.surelogic.common.eclipse.JDTUtility;
 import com.surelogic.common.eclipse.SLImages;
+import com.surelogic.common.eclipse.jobs.SLUIJob;
+import com.surelogic.common.i18n.I18N;
 import com.surelogic.sierra.client.eclipse.actions.SynchronizeProjectAction;
 import com.surelogic.sierra.client.eclipse.model.ConnectedServerManager;
 import com.surelogic.sierra.client.eclipse.model.Projects;
 import com.surelogic.sierra.jdbc.settings.ConnectedServer;
+import com.surelogic.sierra.tool.message.*;
 
 public final class ConnectProjectsDialog extends Dialog {
     private final boolean disallowUnscannedProjects = false;
@@ -184,13 +191,58 @@ public final class ConnectProjectsDialog extends Dialog {
 					}
 				}
 			}
-			for (IJavaProject p : f_unconnectedProjects) {
-				f_manager.connect(p.getElementName(), f_server);
-			}
-			
-			if (f_syncToggle.getSelection()) {
-				new SynchronizeProjectAction().run(f_unconnectedProjects);
-			}
+			final List<IJavaProject> projects = new ArrayList<IJavaProject>(f_unconnectedProjects);
+			final boolean sync = f_syncToggle.getSelection();
+			final Job job = new Job("Connecting projects") {
+				@Override
+				protected IStatus run(IProgressMonitor monitor) {
+					ServerInfoService s = ServerInfoServiceClient.create(f_server.getLocation());
+					ServerInfoReply reply = s.getServerInfo(new ServerInfoRequest());
+					if (reply == null || reply.getUid() == null) {
+						showMessageDialog("Bad response", 
+								          "The server does not seem to be responding properly.");
+						return Status.CANCEL_STATUS;
+					}
+					if (!reply.getUid().equals(f_server.getUuid())) {
+						showMessageDialog("Server mismatch",
+								          "The project(s) could not be connected, because the server has changed.");
+						return Status.CANCEL_STATUS;
+					}
+					for (IJavaProject p : projects) {
+						f_manager.connect(p.getElementName(), f_server);
+					}
+					
+					if (sync) {
+						final UIJob job = new SLUIJob() {
+							@Override
+							public IStatus runInUIThread(final IProgressMonitor monitor) {
+								new SynchronizeProjectAction().run(projects);
+								return Status.OK_STATUS;
+							}
+						};
+						job.schedule();
+					}
+					return Status.OK_STATUS;
+				}
+				
+			};
+			job.schedule();
 		}
+	}
+	
+	void showMessageDialog(final String title, final String msg) {
+		final UIJob job = new SLUIJob() {
+			@Override
+			public IStatus runInUIThread(final IProgressMonitor monitor) {
+				final Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+				final MessageDialog dialog = new MessageDialog(shell,
+						title, null, msg,
+						MessageDialog.INFORMATION,
+						new String[] { "OK" }, 0);
+				dialog.open();
+				return Status.OK_STATUS;
+			}
+		};
+		job.schedule();
 	}
 }
