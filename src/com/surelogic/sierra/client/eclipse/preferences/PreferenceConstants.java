@@ -1,6 +1,5 @@
 package com.surelogic.sierra.client.eclipse.preferences;
 
-import com.surelogic.common.XUtil;
 import com.surelogic.sierra.client.eclipse.Activator;
 import com.surelogic.sierra.client.eclipse.views.ServerStatusSort;
 import com.surelogic.sierra.tool.message.Importance;
@@ -10,14 +9,18 @@ import com.surelogic.sierra.tool.message.Importance;
  */
 public class PreferenceConstants {
 
-	public static final String P_SIERRA_ALWAYS_SAVE_RESOURCES = "com.surelogic.sierra.always-save-resources";
+	private static final String PREFIX = "com.surelogic.sierra.";
+
+	public static final String P_SIERRA_ALWAYS_SAVE_RESOURCES = PREFIX
+			+ "always-save-resources";
 
 	public static boolean alwaysSaveResources() {
 		return Activator.getDefault().getPluginPreferences().getBoolean(
 				P_SIERRA_ALWAYS_SAVE_RESOURCES);
 	}
 
-	public static final String P_SIERRA_DELETE_DB_ON_STARTUP = "com.surelogic.sierra.delete-db-on-startup";
+	public static final String P_SIERRA_DELETE_DB_ON_STARTUP = PREFIX
+			+ "delete-db-on-startup";
 
 	public static boolean deleteDatabaseOnStartup() {
 		return Activator.getDefault().getPluginPreferences().getBoolean(
@@ -30,7 +33,7 @@ public class PreferenceConstants {
 				P_SIERRA_DELETE_DB_ON_STARTUP, deleteDatabaseOnStartup);
 	}
 
-	public static final String P_SIERRA_BALLOON_FLAG = "com.surelogic.sierra.balloon-flag";
+	public static final String P_SIERRA_BALLOON_FLAG = PREFIX + "balloon-flag";
 
 	public static boolean showBalloonNotifications() {
 		if (Activator.getDefault() == null) {
@@ -40,39 +43,28 @@ public class PreferenceConstants {
 				P_SIERRA_BALLOON_FLAG);
 	}
 
-	public static final String P_RUN_FINDBUGS = "com.surelogic.sierra.runFindBugs";
+	public static final String P_RUN_FINDBUGS = PREFIX + "run-FindBugs";
 
 	public static boolean runFindBugs() {
 		return Activator.getDefault().getPluginPreferences().getBoolean(
 				P_RUN_FINDBUGS);
 	}
 
-	public static final String P_RUN_PMD = "com.surelogic.sierra.runPMD";
+	public static final String P_RUN_PMD = PREFIX + "run-PMD";
 
 	public static boolean runPMD() {
 		return Activator.getDefault().getPluginPreferences().getBoolean(
 				P_RUN_PMD);
 	}
 
-	public static final String P_RUN_RECKONER = "com.surelogic.sierra.runReckoner";
+	public static final String P_RUN_RECKONER = PREFIX + "run-Reckoner";
 
 	public static boolean runReckoner() {
 		return Activator.getDefault().getPluginPreferences().getBoolean(
 				P_RUN_RECKONER);
 	}
 
-	public static final String P_RUN_CHECKSTYLE = "com.surelogic.sierra.runCheckStyle";
-
-	public static boolean runCheckStyle() {
-		if (XUtil.useExperimental()) {
-			return Activator.getDefault().getPluginPreferences().getBoolean(
-					P_RUN_CHECKSTYLE);
-		} else {
-			return false;
-		}
-	}
-
-	public static final String P_SIERRA_SHOW_MARKERS = "com.surelogic.sierra.show-markers";
+	public static final String P_SIERRA_SHOW_MARKERS = PREFIX + "show-markers";
 
 	public static boolean showMarkers() {
 		return Activator.getDefault().getPluginPreferences().getBoolean(
@@ -84,7 +76,8 @@ public class PreferenceConstants {
 				P_SIERRA_SHOW_MARKERS, visible);
 	}
 
-	public static final String P_SIERRA_SHOW_JSURE_FINDINGS = "com.surelogic.sierra.show-jsure-findings";
+	public static final String P_SIERRA_SHOW_JSURE_FINDINGS = PREFIX
+			+ "show-jsure-findings";
 
 	public static boolean showJSureFindings() {
 		return Activator.getDefault().getPluginPreferences().getBoolean(
@@ -96,7 +89,8 @@ public class PreferenceConstants {
 				P_SIERRA_SHOW_JSURE_FINDINGS, visible);
 	}
 
-	public static final String P_SIERRA_SHOW_MARKERS_AT_OR_ABOVE_IMPORTANCE = "com.surelogic.sierra.show-markers-at-or-above-importance";
+	public static final String P_SIERRA_SHOW_MARKERS_AT_OR_ABOVE_IMPORTANCE = PREFIX
+			+ "show-markers-at-or-above-importance";
 
 	public static Importance showMarkersAtOrAboveImportance() {
 		final String resultString = Activator.getDefault()
@@ -106,14 +100,15 @@ public class PreferenceConstants {
 		return result;
 	}
 
-	public static final String P_FINDINGS_LIST_LIMIT = "com.surelogic.sierra.findings-list-limit";
+	public static final String P_FINDINGS_LIST_LIMIT = PREFIX
+			+ "findings-list-limit";
 
 	public static int getFindingsListLimit() {
 		return Activator.getDefault().getPluginPreferences().getInt(
 				P_FINDINGS_LIST_LIMIT);
 	}
 
-	public static final String P_TOOL_MEMORY_MB = "com.surelogic.sierra.tool-memory-mb";
+	public static final String P_TOOL_MEMORY_MB = PREFIX + "tool-memory-mb";
 
 	public static int getToolMemoryMB() {
 		return Activator.getDefault().getPluginPreferences().getInt(
@@ -125,7 +120,8 @@ public class PreferenceConstants {
 				P_TOOL_MEMORY_MB, mb);
 	}
 
-	public static final String P_WARN_MAXIMUM_FINDINGS_SHOWN = "com.surelogic.common.eclipse.warn-maximum-findings-shown";
+	public static final String P_WARN_MAXIMUM_FINDINGS_SHOWN = PREFIX
+			+ "warn-maximum-findings-shown";
 
 	public static boolean warnAboutMaximumFindingsShown() {
 		return Activator.getDefault().getPluginPreferences().getBoolean(
@@ -137,7 +133,8 @@ public class PreferenceConstants {
 				P_WARN_MAXIMUM_FINDINGS_SHOWN, value);
 	}
 
-	public static final String P_SELECT_PROJECTS_TO_SCAN = "com.surelogic.common.eclipse.always-allow-user-to-select-projects-to-scan";
+	public static final String P_SELECT_PROJECTS_TO_SCAN = PREFIX
+			+ "always-allow-user-to-select-projects-to-scan";
 
 	public static boolean alwaysAllowUserToSelectProjectsToScan() {
 		return Activator.getDefault().getPluginPreferences().getBoolean(
@@ -149,7 +146,8 @@ public class PreferenceConstants {
 				P_SELECT_PROJECTS_TO_SCAN, value);
 	}
 
-	public static final String P_OMIT_EMPTY_SYNCHRONIZE_ENTRIES = "com.surelogic.common.eclipse.omit-empty-synchronize-entries";
+	public static final String P_OMIT_EMPTY_SYNCHRONIZE_ENTRIES = PREFIX
+			+ "omit-empty-synchronize-entries";
 
 	public static boolean hideEmptySynchronizeEntries() {
 		return Activator.getDefault().getPluginPreferences().getBoolean(
@@ -161,7 +159,8 @@ public class PreferenceConstants {
 				P_OMIT_EMPTY_SYNCHRONIZE_ENTRIES, value);
 	}
 
-	public static final String P_SERVER_STATUS_SORT = "com.surelogic.common.eclipse.server-status-sort";
+	public static final String P_SERVER_STATUS_SORT = PREFIX
+			+ "server-status-sort";
 
 	public static ServerStatusSort getServerStatusSort() {
 		String sort = Activator.getDefault().getPluginPreferences().getString(
@@ -177,7 +176,8 @@ public class PreferenceConstants {
 	/**
 	 * Period in minutes of automatic server interaction.
 	 */
-	public static final String P_SERVER_INTERACTION_PERIOD_IN_MINUTES = "com.surelogic.common.eclipse.server-interaction-period-in-minutes";
+	public static final String P_SERVER_INTERACTION_PERIOD_IN_MINUTES = PREFIX
+			+ "server-interaction-period-in-minutes";
 
 	public static int getServerInteractionPeriodInMinutes() {
 		if (Activator.getDefault() == null) {
@@ -195,7 +195,8 @@ public class PreferenceConstants {
 	/**
 	 * Threshold of # of unsynchronized audits for triggering a sync.
 	 */
-	public static final String P_SERVER_INTERACTION_AUDIT_THRESHOLD = "com.surelogic.common.eclipse.server-interaction-audit-threshold";
+	public static final String P_SERVER_INTERACTION_AUDIT_THRESHOLD = PREFIX
+			+ "server-interaction-audit-threshold";
 
 	public static int getServerInteractionAuditThreshold() {
 		return Activator.getDefault().getPluginPreferences().getInt(
@@ -207,7 +208,8 @@ public class PreferenceConstants {
 				P_SERVER_INTERACTION_AUDIT_THRESHOLD, value);
 	}
 
-	public static final String P_SERVER_INTERACTION_RETRY_THRESHOLD = "com.surelogic.common.eclipse.server-interaction-retry-limit";
+	public static final String P_SERVER_INTERACTION_RETRY_THRESHOLD = PREFIX
+			+ "server-interaction-retry-limit";
 
 	public static int getServerInteractionRetryThreshold() {
 		return Activator.getDefault().getPluginPreferences().getInt(
@@ -222,7 +224,8 @@ public class PreferenceConstants {
 	/**
 	 * Setting to control reporting of failures during automatic synchronization
 	 */
-	public static final String P_SERVER_FAILURE_REPORTING = "com.surelogic.sierra.server-failure-reporting";
+	public static final String P_SERVER_FAILURE_REPORTING = PREFIX
+			+ "server-failure-reporting";
 
 	public static ServerFailureReport getServerFailureReporting() {
 		final String resultString = Activator.getDefault()
@@ -236,4 +239,31 @@ public class PreferenceConstants {
 		Activator.getDefault().getPluginPreferences().setValue(
 				P_SERVER_FAILURE_REPORTING, s.toString());
 	}
+
+	public static final String P_PROMPT_PERSPECTIVE_SWITCH = PREFIX
+			+ "perspective-switch-prompt";
+
+	public static boolean getPromptForPerspectiveSwitch() {
+		return Activator.getDefault().getPluginPreferences().getBoolean(
+				P_PROMPT_PERSPECTIVE_SWITCH);
+	}
+
+	public static void setPromptForPerspectiveSwitch(boolean value) {
+		Activator.getDefault().getPluginPreferences().setValue(
+				P_PROMPT_PERSPECTIVE_SWITCH, value);
+	}
+
+	public static final String P_AUTO_PERSPECTIVE_SWITCH = PREFIX
+			+ "perspective.switch.auto";
+
+	public static boolean getAutoPerspectiveSwitch() {
+		return Activator.getDefault().getPluginPreferences().getBoolean(
+				P_AUTO_PERSPECTIVE_SWITCH);
+	}
+
+	public static void setAutoPerspectiveSwitch(boolean value) {
+		Activator.getDefault().getPluginPreferences().setValue(
+				P_AUTO_PERSPECTIVE_SWITCH, value);
+	}
+
 }

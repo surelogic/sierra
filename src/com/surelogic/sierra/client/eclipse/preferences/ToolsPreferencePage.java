@@ -36,7 +36,6 @@ public class ToolsPreferencePage extends PreferencePage implements
 	private static final String FINDBUGS_INFO = "<A HREF=\"http://findbugs.sourceforge.net\">FindBugs</A> is a static analysis tool created at University of Maryland for finding bugs in Java code.";
 	private static final String PMD_INFO = "<A HREF=\"http://pmd.sourceforge.net\">PMD</A> is a static analysis tool to look for multiple issues like potential bugs, dead, duplicate and sub-optimal code, and over-complicated expressions.";
 	private static final String RECKONER_INFO = "<A HREF=\"http://www.surelogic.com\">Reckoner</A> is a static analysis tool created by SureLogic, Inc. that collects metrics about Java code.";
-	private static final String CHECKSTYLE_INFO = "<A HREF=\"http://checkstyle.sourceforge.net\">CheckStyle</A> is a static analysis tool that identifies stylistic issues within Java code.";
 	private static final String TAB_SPACE = "\t";
 
 	private BooleanFieldEditor f_runFindbugsFlag;
@@ -118,17 +117,6 @@ public class ToolsPreferencePage extends PreferencePage implements
 		f_runReckonerFlag.load();
 
 		addSpacedText(toolsGroup, RECKONER_INFO);
-
-		if (XUtil.useExperimental()) {
-			f_runCheckStyleFlag = new BooleanFieldEditor(
-					PreferenceConstants.P_RUN_CHECKSTYLE, "CheckStyle\u2122",
-					toolsGroup);
-			f_runCheckStyleFlag.setPage(this);
-			f_runCheckStyleFlag.setPreferenceStore(getPreferenceStore());
-			f_runCheckStyleFlag.load();
-
-			addSpacedText(toolsGroup, CHECKSTYLE_INFO);
-		}
 
 		final Composite warning = new Composite(panel, SWT.NONE);
 		warning.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false,

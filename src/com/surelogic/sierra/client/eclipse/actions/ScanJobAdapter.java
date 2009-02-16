@@ -10,6 +10,7 @@ import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 
 import com.surelogic.common.eclipse.BalloonUtility;
 import com.surelogic.common.logging.SLLogger;
+import com.surelogic.sierra.client.eclipse.dialogs.ConfirmPerspectiveSwitch;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
 
 /**
@@ -55,6 +56,7 @@ class ScanJobAdapter extends JobChangeAdapter {
 			if (fineIsLoggable) {
 				LOG.fine("Completed " + scan + " for " + f_scanName);
 			}
+			ConfirmPerspectiveSwitch.submitUIJob();
 			if (PreferenceConstants.showBalloonNotifications())
 				BalloonUtility.showMessage("Sierra " + scan + " completed on "
 						+ f_scanName, "You may now examine the results.");

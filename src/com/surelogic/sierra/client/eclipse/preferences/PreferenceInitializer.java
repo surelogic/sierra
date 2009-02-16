@@ -19,11 +19,12 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		store.setDefault(PreferenceConstants.P_SIERRA_DELETE_DB_ON_STARTUP,
 				false);
 		store.setDefault(PreferenceConstants.P_SIERRA_BALLOON_FLAG, true);
+		store.setDefault(PreferenceConstants.P_PROMPT_PERSPECTIVE_SWITCH, true);
+		store.setDefault(PreferenceConstants.P_AUTO_PERSPECTIVE_SWITCH, true);
 		store
 				.setDefault(
 						PreferenceConstants.P_SIERRA_SHOW_MARKERS_AT_OR_ABOVE_IMPORTANCE,
 						Importance.HIGH.toString());
-		store.setDefault(PreferenceConstants.P_RUN_CHECKSTYLE, false);
 		store.setDefault(PreferenceConstants.P_RUN_FINDBUGS, true);
 		store.setDefault(PreferenceConstants.P_RUN_PMD, true);
 		store.setDefault(PreferenceConstants.P_RUN_RECKONER, true);

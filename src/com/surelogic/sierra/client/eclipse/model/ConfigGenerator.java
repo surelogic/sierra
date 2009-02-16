@@ -370,7 +370,7 @@ public final class ConfigGenerator {
 	}
 
 	/**
-	 * Generates a comma separated string of the exluded tools
+	 * Generates a comma separated string of the excluded tools
 	 * 
 	 * @return
 	 */
@@ -382,11 +382,6 @@ public final class ConfigGenerator {
 
 		if (!PreferenceConstants.runFindBugs()) {
 			excludedTools.append("findbugs, ");
-			f_numberofExcludedTools++;
-		}
-
-		if (!PreferenceConstants.runCheckStyle()) {
-			excludedTools.append("checkstyle, ");
 			f_numberofExcludedTools++;
 		}
 
