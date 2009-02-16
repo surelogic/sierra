@@ -358,7 +358,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 		prototypes.add(new ColumnData("Finding Type") {
 			@Override
 			String getText(final FindingData data) {
-				return data.f_findingType;
+				return data.f_findingTypeName;
 			}
 		});
 		/*
