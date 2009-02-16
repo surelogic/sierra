@@ -41,8 +41,6 @@
 	  </copy>
 	  
 		<jar destfile="./lib/sierra-jdbc.jar" basedir="../sierra-jdbc/bin" />
-	  <mkdir dir="./lib/jdbc"/>
-		<copy file="../sierra-jdbc/lib/mail.jar" todir="./lib/jdbc" />
 	  
 		<jar destfile="./lib/sierra-message.jar" basedir="../sierra-message/bin" />
 	  <mkdir dir="./lib/message"/>
