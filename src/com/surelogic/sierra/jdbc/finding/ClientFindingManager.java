@@ -184,7 +184,7 @@ public final class ClientFindingManager extends FindingManager {
 						+ "     L.RELATION_TYPE = O.RELATION_TYPE  AND L.SCAN_ID = ? "
 						+ " WHERE L.CHILD_FINDING_ID IS NULL");
 		populateFindingOverviewCurrentFindings = conn
-				.prepareStatement("INSERT INTO FINDINGS_OVERVIEW (FINDING_ID,PROJECT_ID,AUDITED,LAST_CHANGED,IMPORTANCE,STATUS,LINE_OF_CODE,ARTIFACT_COUNT,AUDIT_COUNT,PROJECT,PACKAGE,CLASS,FINDING_TYPE,TOOL,SUMMARY,CU,ASSURANCE_TYPE)"
+				.prepareStatement("INSERT INTO FINDINGS_OVERVIEW (FINDING_ID,PROJECT_ID,AUDITED,LAST_CHANGED,IMPORTANCE,STATUS,LINE_OF_CODE,ARTIFACT_COUNT,AUDIT_COUNT,PROJECT,PACKAGE,CLASS,FINDING_TYPE,FINDING_TYPE_NAME,TOOL,SUMMARY,CU,ASSURANCE_TYPE)"
 						+ " SELECT F.ID,F.PROJECT_ID,"
 						+ "        CASE WHEN F.IS_READ = 'Y' THEN 'Yes' ELSE 'No' END,"
 						+ "        F.LAST_CHANGED,"
@@ -206,6 +206,7 @@ public final class ClientFindingManager extends FindingManager {
 						+ "        LM.PACKAGE_NAME,"
 						+ "        LM.CLASS_NAME,"
 						+ "        FT.UUID,"
+						+ "        FT.NAME,"
 						+ "        SO.TOOL,"
 						+ "        F.SUMMARY,"
 						+ "        SO.CU,"
@@ -225,7 +226,7 @@ public final class ClientFindingManager extends FindingManager {
 						+ "    INNER JOIN LOCATION_MATCH LM ON LM.FINDING_ID = F.ID"
 						+ "    INNER JOIN FINDING_TYPE FT ON FT.ID = LM.FINDING_TYPE_ID");
 		populateFindingOverviewFixedFindings = conn
-				.prepareStatement("INSERT INTO FINDINGS_OVERVIEW (FINDING_ID,PROJECT_ID,AUDITED,LAST_CHANGED,IMPORTANCE,STATUS,LINE_OF_CODE,ARTIFACT_COUNT,AUDIT_COUNT,PROJECT,PACKAGE,CLASS,FINDING_TYPE,TOOL,SUMMARY,CU,ASSURANCE_TYPE)"
+				.prepareStatement("INSERT INTO FINDINGS_OVERVIEW (FINDING_ID,PROJECT_ID,AUDITED,LAST_CHANGED,IMPORTANCE,STATUS,LINE_OF_CODE,ARTIFACT_COUNT,AUDIT_COUNT,PROJECT,PACKAGE,CLASS,FINDING_TYPE,FINDING_TYPE_NAME,TOOL,SUMMARY,CU,ASSURANCE_TYPE)"
 						+ " SELECT F.ID,F.PROJECT_ID,"
 						+ "        CASE WHEN F.IS_READ = 'Y' THEN 'Yes' ELSE 'No' END,"
 						+ "        F.LAST_CHANGED,"
@@ -244,6 +245,7 @@ public final class ClientFindingManager extends FindingManager {
 						+ "        LM.PACKAGE_NAME,"
 						+ "        LM.CLASS_NAME,"
 						+ "        FT.UUID,"
+						+ "        FT.NAME,"
 						+ "        SO.TOOL,"
 						+ "        F.SUMMARY,"
 						+ "        SO.CU,"
