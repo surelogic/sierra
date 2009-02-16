@@ -86,6 +86,7 @@ public class SierraScan extends Javac {
 		System.out.println(destDir.getAbsolutePath());
 
 		if (compileList.length > 0) {
+			//log("Java version = "+System.getProperty("java.version"));
 			log("Scanning " + compileList.length + " source file"
 					+ (compileList.length == 1 ? "" : "s")
 			// + (destDir != null ? " to " + destDir : "")
