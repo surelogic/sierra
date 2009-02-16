@@ -237,7 +237,7 @@ public final class ClientProjectManager extends ProjectManager {
 		final boolean updated = !reply.getScanFilter().equals(
 				new Projects(conn).updateProjectFilter(projectName, reply
 						.getScanFilter()))
-				&& reply.getCommitRevision() == request.getRevision();
+				|| reply.getCommitRevision() != request.getRevision();
 		findingManager.updateLocalAuditRevision(projectName, server
 				.getLocation().getUser(), reply.getCommitRevision(), monitor);
 		findingManager.updateLocalFindings(projectName, reply.getTrails(),
