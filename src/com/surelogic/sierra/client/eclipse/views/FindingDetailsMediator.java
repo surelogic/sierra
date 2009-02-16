@@ -611,6 +611,8 @@ public class FindingDetailsMediator extends AbstractSierraViewMediator
 		final StringBuffer b = new StringBuffer();
 		HTMLPrinter.insertPageProlog(b, 0, f_BackgroundColorRGB,
 				StyleSheetHelper.getInstance().getStyleSheet());
+		b.append("<b>Finding Type: ").append(f_finding.getFindingTypeName())
+				.append("</b>");
 		final String details = f_finding.getFindingTypeDetail();
 		b.append(details);
 		f_detailsText.setText(b.toString());
