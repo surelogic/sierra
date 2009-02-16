@@ -361,6 +361,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 				return data.f_findingType;
 			}
 		});
+		/*
 		prototypes.add(new ColumnData("Finding Category") {
 			@Override
 			String getText(final FindingData data) {
@@ -369,6 +370,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 				return "";
 			}
 		});
+		*/
 		prototypes.add(new ColumnData("Tool") {
 			@Override
 			String getText(final FindingData data) {
@@ -807,7 +809,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 						saveColumnAppearance(data, tc);
 					}
 				}
-			});
+			});			
 			order[data.getIndex()] = i;
 			i++;
 		}

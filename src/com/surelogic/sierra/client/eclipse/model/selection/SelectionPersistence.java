@@ -184,6 +184,7 @@ public final class SelectionPersistence {
 		private Selection f_workingSelection = null;
 		private String f_selectionName = null;
 		private Filter f_filter = null;
+		private boolean f_useColumnData = true;
 
 		@Override
 		public void startElement(String uri, String localName, String name,
@@ -231,7 +232,7 @@ public final class SelectionPersistence {
 					SLLogger.getLogger().log(Level.SEVERE,
 							POROUS + " found in XML but filter is null");
 				}
-			} else if (name.equals(COLUMN)) {
+			} else if (f_useColumnData && name.equals(COLUMN)) {
 				final String id = attributes.getValue(NAME);
 				for (Column c : f_workingSelection.getColumns()) {
 					if (c.getName().equals(id)) {
@@ -239,14 +240,32 @@ public final class SelectionPersistence {
 						final String width = attributes.getValue(WIDTH);
 						final String sort = attributes.getValue(SORT);
 						final String index = attributes.getValue(INDEX);
+						final int i = Integer.parseInt(index);
+						if (i >= f_workingSelection.getNumColumns()) {
+							// Bad column data
+							f_useColumnData = false;
+							resetColumns(f_workingSelection.getColumns());
+							return;
+						}
 						c.configure(viz != null, Integer.parseInt(width),
-								ColumnSort.valueOf(sort), Integer
-										.parseInt(index));
+								ColumnSort.valueOf(sort), i);
 					}
 				}
 			}
 		}
 
+		private void resetColumns(Iterable<Column> columns) {
+			int i = 0;
+			for (Column c : columns) {
+				if ("Summary".equals(c.getName())) {
+					c.configure(true, 200, ColumnSort.SORT_UP, i);
+				} else {
+					c.configure(false, 0, ColumnSort.UNSORTED, i);
+				}
+				i++;
+			}			
+		}
+		
 		@Override
 		public void endElement(String uri, String localName, String name)
 				throws SAXException {
