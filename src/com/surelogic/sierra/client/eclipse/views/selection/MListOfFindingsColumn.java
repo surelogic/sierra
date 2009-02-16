@@ -74,9 +74,9 @@ import com.surelogic.sierra.tool.message.Importance;
 public final class MListOfFindingsColumn extends MColumn implements
 		ISelectionObserver {
 	/**
-	 * @see http
-	 *      ://publicobject.com/glazedlists/documentation/swt_virtual_tables.
-	 *      html
+	 * For more information please see <a href=
+	 * "http://publicobject.com/glazedlists/documentation/swt_virtual_tables.html"
+	 * >SWT virtual tables</a>.
 	 */
 	private static final boolean USE_VIRTUAL = true;
 
@@ -191,7 +191,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 		String f_packageName;
 		int f_lineNumber;
 		String f_typeName;
-		String f_findingTypeId;
+		String f_findingTypeName;
 		String f_toolName;
 		AssuranceType f_assuranceType;
 		int index;
@@ -200,7 +200,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 		public String toString() {
 			// FIX f_assuranceType
 			return "finding_id=" + f_findingId + " [" + f_importance
-					+ "] of type " + f_findingTypeId + " \"" + f_summary
+					+ "] of type " + f_findingTypeName + " \"" + f_summary
 					+ "\" in " + f_projectName + " " + f_packageName + "."
 					+ f_typeName + " at line " + f_lineNumber + " from "
 					+ f_toolName;
@@ -297,7 +297,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 			@Override
 			Image getImage(final FindingData data) {
 				if (data.f_assuranceType != null) {
-					return JSureUtil.getImageFor(data.f_findingTypeId,
+					return JSureUtil.getImageFor(data.f_findingTypeName,
 							data.f_assuranceType);
 				}
 				return Utility.getImageFor(data.f_importance);
@@ -357,7 +357,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 		prototypes.add(new ColumnData("Finding Type") {
 			@Override
 			String getText(final FindingData data) {
-				return data.f_findingTypeId;
+				return data.f_findingTypeName;
 			}
 		});
 		prototypes.add(new ColumnData("Finding Category") {
@@ -392,7 +392,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 	}
 
 	private final ReadWriteLock rowsLock = new ReentrantReadWriteLock();
-	private final List<FindingData> f_rows = new /* CopyOnWrite */ArrayList<FindingData>();
+	private final List<FindingData> f_rows = new ArrayList<FindingData>();
 	private boolean f_isLimited = false;
 
 	/**
@@ -432,7 +432,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 								data.f_packageName = rs.getString(5);
 								data.f_typeName = rs.getString(6);
 								data.f_lineNumber = rs.getInt(7);
-								data.f_findingTypeId = rs.getString(8);
+								data.f_findingTypeName = rs.getString(8);
 								data.f_toolName = rs.getString(9);
 
 								final String aType = rs.getString(10);
@@ -1061,7 +1061,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 						}
 						// Otherwise, it's all the same so far
 
-						final String findingType = data.f_findingTypeId;
+						final String findingType = data.f_findingTypeName;
 						if (findingTypeSoFar == null) {
 							findingTypeSoFar = findingType;
 						} else if (!findingTypeSoFar.equals(findingType)) {
@@ -1143,7 +1143,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 					protected void handleFinding(final MenuItem item,
 							final FindingData data) {
 						FindingMutationUtility.asyncFilterFindingTypeFromScans(
-								data.f_findingId, data.f_findingTypeId);
+								data.f_findingId, data.f_findingTypeName);
 					}
 
 					@Override
@@ -1155,7 +1155,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 						if (ids.size() > 1) {
 							FindingMutationUtility
 									.asyncFilterFindingTypeFromScans(
-											ids.get(0), data.f_findingTypeId);
+											ids.get(0), data.f_findingTypeName);
 						}
 						/*
 						 * FindingMutationUtility.asyncFilterFindingTypeFromScans
