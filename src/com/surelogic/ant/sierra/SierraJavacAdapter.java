@@ -17,7 +17,7 @@ import org.apache.tools.ant.taskdefs.compilers.*;
 import org.apache.tools.ant.types.*;
 import org.apache.tools.ant.util.StringUtils;
 
-import com.surelogic.common.SLProgressMonitor;
+import com.surelogic.common.jobs.*;
 import com.surelogic.sierra.tool.*;
 import com.surelogic.sierra.tool.message.Config;
 import com.surelogic.sierra.tool.targets.*;
@@ -245,27 +245,7 @@ public class SierraJavacAdapter extends DefaultCompilerAdapter {
 		return null;
 	}
 
-	class Monitor implements SLProgressMonitor {
-		public void beginTask(String name, int totalWork) {
-			// TODO Auto-generated method stub
-
-		}
-
-		public void done() {
-			// TODO Auto-generated method stub
-
-		}
-
-		public void error(String msg) {
-			// TODO Auto-generated method stub
-
-		}
-
-		public void error(String msg, Throwable t) {
-			// TODO Auto-generated method stub
-
-		}
-
+	class Monitor extends NullSLProgressMonitor {
 		public void failed(String msg) {
 			System.err.println(msg);
 		}
@@ -275,16 +255,6 @@ public class SierraJavacAdapter extends DefaultCompilerAdapter {
 			t.printStackTrace(System.err);
 		}
 
-		public Throwable getFailureTrace() {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		public void internalWorked(double work) {
-			// TODO Auto-generated method stub
-
-		}
-
 		public boolean isCanceled() {
 			return !keepRunning;
 		}
@@ -292,21 +262,5 @@ public class SierraJavacAdapter extends DefaultCompilerAdapter {
 		public void setCanceled(boolean value) {
 			keepRunning = false;
 		}
-
-		public void setTaskName(String name) {
-			// TODO Auto-generated method stub
-
-		}
-
-		public void subTask(String name) {
-			//System.out.println("Subtask: "+name);
-		}
-
-		public void worked(int work) {
-			// TODO Auto-generated method stub
-
-		}
-
 	}
-
 }
