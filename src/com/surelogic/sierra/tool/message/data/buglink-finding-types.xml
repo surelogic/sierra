@@ -10021,7 +10021,7 @@ exception or error instead.</p>
     <shortMessage>This code explicitly throws a NullPointerException. This can be confusing. Consider throwing IllegalArgumentException instead.</shortMessage>
     <info>
 <![CDATA[<p>Avoid throwing a
-<code>NullPointerException</code>;ndash;it's confusing because most
+<code>NullPointerException</code>&mdash;it's confusing because most
 people will assume that the virtual machine threw it. Consider
 throwing an <code>IllegalArgumentException</code> instead; this will
 be clearly seen as a programmer-initiated exception.</p>
