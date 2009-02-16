@@ -191,6 +191,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 		String f_packageName;
 		int f_lineNumber;
 		String f_typeName;
+		String f_findingType;
 		String f_findingTypeName;
 		String f_toolName;
 		AssuranceType f_assuranceType;
@@ -200,7 +201,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 		public String toString() {
 			// FIX f_assuranceType
 			return "finding_id=" + f_findingId + " [" + f_importance
-					+ "] of type " + f_findingTypeName + " \"" + f_summary
+					+ "] of type " + f_findingType + " \"" + f_summary
 					+ "\" in " + f_projectName + " " + f_packageName + "."
 					+ f_typeName + " at line " + f_lineNumber + " from "
 					+ f_toolName;
@@ -297,7 +298,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 			@Override
 			Image getImage(final FindingData data) {
 				if (data.f_assuranceType != null) {
-					return JSureUtil.getImageFor(data.f_findingTypeName,
+					return JSureUtil.getImageFor(data.f_findingType,
 							data.f_assuranceType);
 				}
 				return Utility.getImageFor(data.f_importance);
@@ -357,7 +358,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 		prototypes.add(new ColumnData("Finding Type") {
 			@Override
 			String getText(final FindingData data) {
-				return data.f_findingTypeName;
+				return data.f_findingType;
 			}
 		});
 		prototypes.add(new ColumnData("Finding Category") {
@@ -432,10 +433,11 @@ public final class MListOfFindingsColumn extends MColumn implements
 								data.f_packageName = rs.getString(5);
 								data.f_typeName = rs.getString(6);
 								data.f_lineNumber = rs.getInt(7);
-								data.f_findingTypeName = rs.getString(8);
-								data.f_toolName = rs.getString(9);
+								data.f_findingType = rs.getString(8);
+								data.f_findingTypeName = rs.getString(9);
+								data.f_toolName = rs.getString(10);
 
-								final String aType = rs.getString(10);
+								final String aType = rs.getString(11);
 								data.f_assuranceType = AssuranceType
 										.fromFlag(aType);
 								data.index = i;
@@ -1061,7 +1063,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 						}
 						// Otherwise, it's all the same so far
 
-						final String findingType = data.f_findingTypeName;
+						final String findingType = data.f_findingType;
 						if (findingTypeSoFar == null) {
 							findingTypeSoFar = findingType;
 						} else if (!findingTypeSoFar.equals(findingType)) {
@@ -1143,7 +1145,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 					protected void handleFinding(final MenuItem item,
 							final FindingData data) {
 						FindingMutationUtility.asyncFilterFindingTypeFromScans(
-								data.f_findingId, data.f_findingTypeName);
+								data.f_findingId, data.f_findingType);
 					}
 
 					@Override
@@ -1155,7 +1157,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 						if (ids.size() > 1) {
 							FindingMutationUtility
 									.asyncFilterFindingTypeFromScans(
-											ids.get(0), data.f_findingTypeName);
+											ids.get(0), data.f_findingType);
 						}
 						/*
 						 * FindingMutationUtility.asyncFilterFindingTypeFromScans
