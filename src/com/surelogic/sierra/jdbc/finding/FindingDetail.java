@@ -21,10 +21,6 @@ public final class FindingDetail {
 	private final String findingTypeDetail;
 	private final String findingTypeName;
 
-	public String getFindingTypeName() {
-		return findingTypeName;
-	}
-
 	private final List<AuditDetail> audits;
 	private final List<ArtifactDetail> artifacts;
 
@@ -145,6 +141,10 @@ public final class FindingDetail {
 
 	public String getFindingTypeDetail() {
 		return findingTypeDetail;
+	}
+
+	public String getFindingTypeName() {
+		return findingTypeName;
 	}
 
 	public List<AuditDetail> getAudits() {
