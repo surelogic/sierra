@@ -32,6 +32,8 @@ public class SierraPreferencePage extends AbstractLicensePreferencePage {
 	static private final String TOOL_MB_LABEL = "sierra.eclipse.preference.page.toolMemoryPreferenceLabel";
 
 	private BooleanFieldEditor f_balloonFlag;
+	private BooleanFieldEditor f_promptPerspectiveSwitch;
+	private BooleanFieldEditor f_autoPerspectiveSwitch;
 	private BooleanFieldEditor f_selectProjectsToScan;
 	private BooleanFieldEditor f_showJSureResultsFlag;
 	private BooleanFieldEditor f_showMarkersInJavaEditorFlag;
@@ -106,6 +108,26 @@ public class SierraPreferencePage extends AbstractLicensePreferencePage {
 		f_balloonFlag.setPage(this);
 		f_balloonFlag.setPreferenceStore(getPreferenceStore());
 		f_balloonFlag.load();
+
+		f_promptPerspectiveSwitch = new BooleanFieldEditor(
+				PreferenceConstants.P_PROMPT_PERSPECTIVE_SWITCH,
+				I18N
+						.msg("sierra.eclipse.preference.page.promptPerspectiveSwitch"),
+				diGroup);
+		f_promptPerspectiveSwitch.fillIntoGrid(diGroup, 2);
+		f_promptPerspectiveSwitch.setPage(this);
+		f_promptPerspectiveSwitch.setPreferenceStore(getPreferenceStore());
+		f_promptPerspectiveSwitch.load();
+
+		f_autoPerspectiveSwitch = new BooleanFieldEditor(
+				PreferenceConstants.P_AUTO_PERSPECTIVE_SWITCH,
+				I18N
+						.msg("sierra.eclipse.preference.page.autoPerspectiveSwitch"),
+				diGroup);
+		f_autoPerspectiveSwitch.fillIntoGrid(diGroup, 2);
+		f_autoPerspectiveSwitch.setPage(this);
+		f_autoPerspectiveSwitch.setPreferenceStore(getPreferenceStore());
+		f_autoPerspectiveSwitch.load();
 
 		f_selectProjectsToScan = new BooleanFieldEditor(
 				PreferenceConstants.P_SELECT_PROJECTS_TO_SCAN,
@@ -228,6 +250,8 @@ public class SierraPreferencePage extends AbstractLicensePreferencePage {
 	@Override
 	protected void performDefaults() {
 		f_balloonFlag.loadDefault();
+		f_promptPerspectiveSwitch.loadDefault();
+		f_autoPerspectiveSwitch.loadDefault();
 		f_selectProjectsToScan.loadDefault();
 		f_showJSureResultsFlag.loadDefault();
 		f_showMarkersInJavaEditorFlag.loadDefault();
@@ -243,6 +267,8 @@ public class SierraPreferencePage extends AbstractLicensePreferencePage {
 	@Override
 	public boolean performOk() {
 		f_balloonFlag.store();
+		f_promptPerspectiveSwitch.store();
+		f_autoPerspectiveSwitch.store();
 		f_selectProjectsToScan.store();
 		f_showJSureResultsFlag.store();
 		f_showMarkersInJavaEditorFlag.store();
