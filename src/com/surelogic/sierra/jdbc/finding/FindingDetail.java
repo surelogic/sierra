@@ -19,6 +19,12 @@ public final class FindingDetail {
 
 	private final FindingOverview overview;
 	private final String findingTypeDetail;
+	private final String findingTypeName;
+
+	public String getFindingTypeName() {
+		return findingTypeName;
+	}
+
 	private final List<AuditDetail> audits;
 	private final List<ArtifactDetail> artifacts;
 
@@ -27,7 +33,7 @@ public final class FindingDetail {
 		final Statement st = conn.createStatement();
 		try {
 			ResultSet set = st
-					.executeQuery("SELECT FT.INFO,FO.FINDING_ID,FO.AUDITED,FO.LAST_CHANGED,FO.IMPORTANCE,FO.STATUS,FO.LINE_OF_CODE,FO.ARTIFACT_COUNT,FO.AUDIT_COUNT,FO.PROJECT,FO.PACKAGE,FO.CLASS,FO.CU,FO.FINDING_TYPE,FO.TOOL,FO.SUMMARY,FO.Assurance_Type"
+					.executeQuery("SELECT FT.INFO,FT.NAME,FO.FINDING_ID,FO.AUDITED,FO.LAST_CHANGED,FO.IMPORTANCE,FO.STATUS,FO.LINE_OF_CODE,FO.ARTIFACT_COUNT,FO.AUDIT_COUNT,FO.PROJECT,FO.PACKAGE,FO.CLASS,FO.CU,FO.FINDING_TYPE,FO.TOOL,FO.SUMMARY,FO.Assurance_Type"
 							+ "   FROM FINDINGS_OVERVIEW FO, LOCATION_MATCH LM, FINDING_TYPE FT"
 							+ "   WHERE FO.FINDING_ID = "
 							+ findingId
@@ -35,6 +41,7 @@ public final class FindingDetail {
 			if (set.next()) {
 				int idx = 1;
 				findingTypeDetail = set.getString(idx++);
+				findingTypeName = set.getString(idx++);
 				overview = new FindingOverview(set, idx);
 				audits = AuditDetail.getDetails(conn, findingId);
 				artifacts = new ArrayList<ArtifactDetail>();
