@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="test-ant" default="scan" basedir=".">
+  <!-- These are the definitions needed to run Sierra.
+       You should only need to change sl.home to match where you've
+       unzipped Sierra
+    -->
+  <property name="sl.home" value="c:/work/workspace/sierra-ant" />
+  <property name="sl.lib" value="${sl.home}/lib" />
+  
+  <path id="sl.classpath">
+      <fileset dir="${sl.lib}" includes="**/*.jar"/>
+  </path>
+  
+  <taskdef name="sierra-scan" 
+           classname="com.surelogic.ant.sierra.SierraScan"
+           classpathref="sl.classpath"/>
+  <taskdef name="sierra-publish" 
+           classname="com.surelogic.ant.sierra.SierraPublish"
+           classpathref="sl.classpath"/>  
+  
+  <!-- These are the jars needed to compile (and thus scan) Tomcat -->
+  <property name="wsdl.lib" value="${basedir}/repository/wsdl4j-1.5.1.jar"/>
+  <property name="jax.lib" value="${basedir}/repository/jaxrpc.jar"/>
+  <property name="jdt.plugin" value="${basedir}/repository/eclipse/plugins/org.eclipse.jdt.core_3.2.3.v_686_R32x.jar"/>
+  <property name="ant.plugin" value="${basedir}/repository/eclipse/plugins/org.apache.ant_1.6.5/lib/ant.jar"/>
+
+  <!-- sets the standard DSTAMP, TSTAMP, and TODAY properties -->
+  <tstamp/>
+  
+	<target name="scan">	  	  
+	  <sierra-scan 
+	       home="${sl.home}"
+	       srcdir="${basedir}/java;${basedir}/webapps/examples/WEB-INF/classes"
+         destdir="${basedir}/.settings/output"
+	       excludes="**/.svn/**,org/apache/tomcat/util/net/puretls/**"
+         classpath="${wsdl.lib};${jax.lib};${jdt.plugin};${ant.plugin}"
+         source="1.5"
+         document="tomcat6-${DSTAMP}${TSTAMP}"
+	       projectname="tomcat6">
+    </sierra-scan>
+	  <sierra-publish 
+         host="localhost"
+	       secure="false"
+	       port="13376"
+	       contextPath="/sl/"
+	       user="admin"
+	       password="adminadmin"
+         document="tomcat6-${DSTAMP}${TSTAMP}"
+	  />
+	</target>
+</project>
