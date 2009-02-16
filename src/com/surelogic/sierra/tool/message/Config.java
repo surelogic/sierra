@@ -36,14 +36,14 @@ public class Config {
 	private String complianceLevel = null;
 	private String sourceLevel = null;
 	private String targetLevel = null;
-	
+
 	/**
 	 * In MB
 	 */
 	private int memorySize = 1024;
-	
+
 	// Map from plugin id to their locations
-	private final Map<String,String> pluginDirs = new HashMap<String,String>();
+	private final Map<String, String> pluginDirs = new HashMap<String, String>();
 
 	// directory to store tool output in
 	private File destDirectory = null;
@@ -66,12 +66,12 @@ public class Config {
 
 	// Whether the tools are run in multiple threads
 	private boolean multithreaded = false;
-	
+
 	private List<URI> paths = new ArrayList<URI>();
 
 	private List<ToolTarget> targets = new ArrayList<ToolTarget>();
 	private Set<ToolTarget> targetsAdded = null;
-	
+
 	public Config() {
 		// Nothing to do
 	}
@@ -97,19 +97,19 @@ public class Config {
 	}
 
 	public int getMemorySize() {
-	  return memorySize;
+		return memorySize;
 	}
-	
+
 	public void setMemorySize(int size) {
-	  memorySize = (size > 0) ? size : 1024;
+		memorySize = (size > 0) ? size : 1024;
 	}
-	
+
 	public String getTestCode() {
-	  return testCode;
+		return testCode;
 	}
 
 	public void setTestCode(String code) {
-	  testCode = code;
+		testCode = code;
 	}
 
 	public void setProject(String project) {
@@ -147,33 +147,33 @@ public class Config {
 	public void setToolsDirectory(File toolsDirectory) {
 		this.toolsDirectory = toolsDirectory;
 	}
-	
-	public Map<String,String> getPluginDirs() {
-    return pluginDirs;
-  }
-	
-	public void setPluginDirs(Map<String,String> dirs) {
-	  this.pluginDirs.clear();
-	  this.pluginDirs.putAll(dirs);
+
+	public Map<String, String> getPluginDirs() {
+		return pluginDirs;
+	}
+
+	public void setPluginDirs(Map<String, String> dirs) {
+		this.pluginDirs.clear();
+		this.pluginDirs.putAll(dirs);
 	}
 
 	public void putPluginDir(String id, String location) {
-	  pluginDirs.put(id, location);
+		pluginDirs.put(id, location);
 	}
-	
+
 	public String getPluginDir(String id) {
-	  return getPluginDir(id, true);
+		return getPluginDir(id, true);
 	}
-	
+
 	public String getPluginDir(String id, boolean required) {
-	  String loc = pluginDirs.get(id);
-	  if (required && loc == null) {
-	    LOG.warning("No location for "+id);		
-	    return null;
-	  }
-	  return loc;
+		String loc = pluginDirs.get(id);
+		if (required && loc == null) {
+			LOG.warning("No location for " + id);
+			return null;
+		}
+		return loc;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -307,6 +307,14 @@ public class Config {
 		return excludedToolsList;
 	}
 
+	public final boolean isToolExcluded(String toolName) {
+		if (excludedToolsList == null)
+			return false;
+		else {
+			return !excludedToolsList.contains(toolName);
+		}
+	}
+
 	/**
 	 * @param excludedToolsList
 	 *            the excludedToolsList to set
@@ -391,75 +399,74 @@ public class Config {
 	}
 
 	public void addToClassPath(URI path) {
-	  paths.add(path);
+		paths.add(path);
 	}
-	
+
 	public void setPaths(List<URI> p) {
-	  paths = p;
+		paths = p;
 	}
-	
+
 	public List<URI> getPaths() {
-	  return paths;
+		return paths;
 	}
-	
+
 	public void addTarget(ToolTarget t) {
-	  if (t == null) {
-		  return;
-	  }
-	  if (t.getType() == IToolTarget.Type.AUX) {
-	    if (targetsAdded == null) {
-	      targetsAdded = new HashSet<ToolTarget>();
-	    }
-	    else if (targetsAdded.contains(t)) {
-	      return;
-	    }
-	    targetsAdded.add(t);
-	  }
-	  targets.add(t);
+		if (t == null) {
+			return;
+		}
+		if (t.getType() == IToolTarget.Type.AUX) {
+			if (targetsAdded == null) {
+				targetsAdded = new HashSet<ToolTarget>();
+			} else if (targetsAdded.contains(t)) {
+				return;
+			}
+			targetsAdded.add(t);
+		}
+		targets.add(t);
 	}
-	
+
 	public void setTargets(List<ToolTarget> t) {
-	  targets = t;  
+		targets = t;
 	}
-	
+
 	public List<ToolTarget> getTargets() {
-	  return targets;
+		return targets;
 	}
 
-  public boolean hasNothingToScan() {
-    for(ToolTarget t : targets) {
-      switch (t.getType()) {
-        case BINARY:
-        case SOURCE:
-          return false;
-        default:
-          continue;
-      }
-    }
-    return true;
-  }
+	public boolean hasNothingToScan() {
+		for (ToolTarget t : targets) {
+			switch (t.getType()) {
+			case BINARY:
+			case SOURCE:
+				return false;
+			default:
+				continue;
+			}
+		}
+		return true;
+	}
 
-  public void setComplianceLevel(String option) {
-	  complianceLevel = option;
-  }
+	public void setComplianceLevel(String option) {
+		complianceLevel = option;
+	}
 
-  public void setSourceLevel(String option) {
-	  sourceLevel = option;
-  }
+	public void setSourceLevel(String option) {
+		sourceLevel = option;
+	}
 
-  public void setTargetLevel(String option) {
-	  targetLevel = option;
-  }
-  
-  public String getComplianceLevel() {
-	  return complianceLevel;
-  }
+	public void setTargetLevel(String option) {
+		targetLevel = option;
+	}
 
-  public String getSourceLevel() {
-	  return sourceLevel;
-  }
+	public String getComplianceLevel() {
+		return complianceLevel;
+	}
 
-  public String getTargetLevel() {
-	  return targetLevel;
-  }
+	public String getSourceLevel() {
+		return sourceLevel;
+	}
+
+	public String getTargetLevel() {
+		return targetLevel;
+	}
 }
