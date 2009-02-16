@@ -9,7 +9,7 @@ import java.util.List;
 
 import org.apache.tools.ant.*;
 
-import com.surelogic.sierra.jdbc.server.TransactionException;
+import com.surelogic.common.jdbc.TransactionException;
 import com.surelogic.sierra.tool.SierraToolConstants;
 import com.surelogic.sierra.tool.message.*;
 
@@ -89,8 +89,9 @@ public class SierraPublish extends Task {
 		try {
 			run = warehouse.fetchScan(scanDoc, true);
 
-			SierraServerLocation location = 
-				new SierraServerLocation(getHost(), isSecure(), getPort(), getContextPath(), getUser(), getPassword());
+			ServerLocation location = 
+				new ServerLocation(getHost(), isSecure(), getPort(), getContextPath(), 
+						           getUser(), getPassword(), false, false);
 
 			SierraService ts = SierraServiceClient.create(location);
 
