@@ -153,7 +153,8 @@ public final class MListOfFindingsColumn extends MColumn implements
 					getSelection().removeObserver(MListOfFindingsColumn.this);
 				} else {
 					final long now = startingUpdate();
-					final Job job = new DatabaseJob("Refresh list of findings", Job.INTERACTIVE) {
+					final Job job = new DatabaseJob("Refresh list of findings",
+							Job.INTERACTIVE) {
 						@Override
 						protected IStatus run(final IProgressMonitor monitor) {
 							boolean keepGoing = false;
@@ -168,7 +169,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 								return SLEclipseStatusUtility
 										.createErrorStatus(errNo, msg, e);
 							} finally {
-								initOfNextColumnComplete();								
+								initOfNextColumnComplete();
 							}
 							return Status.OK_STATUS;
 						}
@@ -991,7 +992,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 
 		final MenuItem filterFindingTypeFromScans = new MenuItem(menu, SWT.PUSH);
 		filterFindingTypeFromScans
-				.setText("Filter Finding Type From Future Scans");
+				.setText("Filter Findings Of This Type From Future Local Scans");
 
 		new MenuItem(menu, SWT.SEPARATOR);
 
@@ -1087,14 +1088,9 @@ public final class MListOfFindingsColumn extends MColumn implements
 					quickAudit.setData(itemIndices);
 					if ("".equals(currentFindingType)) {
 						filterFindingTypeFromScans.setEnabled(false);
-						filterFindingTypeFromScans
-								.setText("Filter Selected Findings From Future Scans");
 					} else {
 						filterFindingTypeFromScans.setEnabled(true);
 						filterFindingTypeFromScans.setData(itemIndices);
-						filterFindingTypeFromScans.setText("Filter All '"
-								+ currentFindingType
-								+ "' Findings From Future Scans");
 					}
 				}
 			}
