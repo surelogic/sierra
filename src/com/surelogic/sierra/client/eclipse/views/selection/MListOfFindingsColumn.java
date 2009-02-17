@@ -195,7 +195,11 @@ public final class MListOfFindingsColumn extends MColumn implements
 		String f_findingTypeName;
 		String f_toolName;
 		AssuranceType f_assuranceType;
-		int index;
+		int index; 
+
+		public FindingData(int i) {
+			index = i;
+		}
 
 		@Override
 		public String toString() {
@@ -423,10 +427,10 @@ public final class MListOfFindingsColumn extends MColumn implements
 
 						final int findingsListLimit = PreferenceConstants
 								.getFindingsListLimit();
+						int i = 0;
 						while (rs.next()) {
-							final int i = f_rows.size();
 							if (i < findingsListLimit) {
-								final FindingData data = new FindingData();
+								final FindingData data = new FindingData(i);
 								data.f_summary = rs.getString(1);
 								data.f_importance = Importance.valueOf(rs
 										.getString(2).toUpperCase());
@@ -442,8 +446,8 @@ public final class MListOfFindingsColumn extends MColumn implements
 								final String aType = rs.getString(11);
 								data.f_assuranceType = AssuranceType
 										.fromFlag(aType);
-								data.index = i;
 								f_rows.add(data);
+								i++;
 							} else {
 								f_isLimited = true;
 								break;
@@ -575,8 +579,9 @@ public final class MListOfFindingsColumn extends MColumn implements
 					public void handleEvent(final Event event) {
 						final TableItem item = (TableItem) event.item;
 						final int index = event.index;
-						final FindingData data = f_rows.get(index);
-						initTableItem(event.index, data, item, false);
+						final FindingData data = f_rows.get(index);						
+						// 1-indexed
+						initTableItem(event.index, data, item);
 					}
 				});
 			}
@@ -646,13 +651,13 @@ public final class MListOfFindingsColumn extends MColumn implements
 					final boolean rowSelected = selected.contains(data) || data.f_findingId == f_selectedFindingId;					
 					if (!USE_VIRTUAL) {
 						final TableItem item = new TableItem(f_table, SWT.NONE);
-						initTableItem(i, data, item, rowSelected);
+						initTableItem(i, data, item);
 						selectionFound |= rowSelected;
 					}
 					// Only needed if virtual
 					// Sets up the table to show the previous selection
 					else if (rowSelected) {
-						initTableItem(i, data, f_table.getItem(i), true);
+						selectItem(i, data);
 						selectionFound = true;
 					}
 					i++;
@@ -672,8 +677,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 
 							final FindingData newData = rows.get(data);
 							if (newData != null) {
-								initTableItem(newData.index, newData, f_table
-										.getItem(newData.index), true);
+								selectItem(newData.index, newData);
 								break;
 							}
 						}
@@ -709,6 +713,16 @@ public final class MListOfFindingsColumn extends MColumn implements
 			} finally {
 				rowsLock.readLock().unlock();
 			}
+		}
+	}
+
+	private void selectItem(int i, FindingData data) {
+		if (i != -1) {
+			f_table.select(i);
+			f_table.showSelection();
+			
+			// avoid scroll bar position being to the right
+			f_table.showColumn(f_table.getColumn(0));
 		}
 	}
 
@@ -762,6 +776,12 @@ public final class MListOfFindingsColumn extends MColumn implements
 		}
 		// System.out.println("Sort order = "+c);
 		Collections.sort(f_rows, c);
+		// Update row indices
+		int i = 0;
+		for(FindingData data : f_rows) {
+			data.index = i;
+			i++;
+		}
 	}
 
 	private boolean createTableColumns = false;
@@ -928,7 +948,6 @@ public final class MListOfFindingsColumn extends MColumn implements
 		int longest = 0;
 		FindingData longestData = null;
 		int longestIndex = -1;
-		int i = 0;
 		gc.setFont(f_table.getFont());
 		for (final FindingData data : f_rows) {
 			final Point size = gc.textExtent(cd.getText(data));
@@ -938,9 +957,8 @@ public final class MListOfFindingsColumn extends MColumn implements
 			if (width > longest) {
 				longest = width;
 				longestData = data;
-				longestIndex = i;
+				longestIndex = data.index;
 			}
-			i++;
 		}
 		gc.dispose();
 		imageForGC.dispose();
@@ -949,8 +967,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 				LOG.warning("Got index outside of table: " + longestIndex
 						+ ", " + f_table.getItemCount());
 			} else {
-				initTableItem(longestIndex, longestData, f_table
-						.getItem(longestIndex), false);
+				initTableItem(longestIndex, longestData, f_table.getItem(longestIndex));
 			}
 		}
 
@@ -963,12 +980,12 @@ public final class MListOfFindingsColumn extends MColumn implements
 	}
 
 	private void initTableItem(final int i, final FindingData data, 
-			                   final TableItem item, boolean selected) {
+			                   final TableItem item) {
 		if (i != data.index) {
 			// Now set, because we're sorting
-			data.index = i;
-			// throw new IllegalArgumentException(i+" != data.index:
-			// "+data.index);
+			
+			// FIX data.index = i;			
+			throw new IllegalArgumentException(i+" != data.index: "+data.index);
 		}
 		item.setData(data);
 
@@ -983,9 +1000,6 @@ public final class MListOfFindingsColumn extends MColumn implements
 			 * if (tc.getResizable()) { numVisible++; }
 			 */
 			j++;
-		}
-		if (selected) {
-			f_table.select(i);
 		}
 	}
 
