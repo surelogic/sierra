@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Sierra Eclipse Client
+Bundle-Name: Sierra Client
 Bundle-SymbolicName: com.surelogic.sierra.client.eclipse;singleton:=true
 Bundle-Vendor: SureLogic, Inc.
 Bundle-Version: 2.2.0.qualifier
