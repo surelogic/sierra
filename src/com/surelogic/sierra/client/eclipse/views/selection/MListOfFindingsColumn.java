@@ -645,24 +645,24 @@ public final class MListOfFindingsColumn extends MColumn implements
 					f_table.setItemCount(f_rows.size());
 				}
 
-				boolean selectionFound = false;
+				FindingData lastSelected = null;
 				int i = 0;
 				for (final FindingData data : f_rows) {
 					final boolean rowSelected = selected.contains(data) || data.f_findingId == f_selectedFindingId;					
 					if (!USE_VIRTUAL) {
 						final TableItem item = new TableItem(f_table, SWT.NONE);
 						initTableItem(i, data, item);
-						selectionFound |= rowSelected;
+						lastSelected = data;
 					}
 					// Only needed if virtual
 					// Sets up the table to show the previous selection
 					else if (rowSelected) {
 						selectItem(i, data);
-						selectionFound = true;
+						lastSelected = data;
 					}
 					i++;
 				}
-				if (!selectionFound) {
+				if (lastSelected == null) {
 					// Look for a near-selection
 					FindingData data = null;
 					if (!nearSelected.isEmpty()) {
@@ -678,15 +678,21 @@ public final class MListOfFindingsColumn extends MColumn implements
 							final FindingData newData = rows.get(data);
 							if (newData != null) {
 								selectItem(newData.index, newData);
-								selectionFound = true;
+								lastSelected = newData;
 								break;
 							}
 						}
 					}
-					f_selectedFindingId = (data == null) ? -1 : data.f_findingId;
 				}
 				nearSelected.clear();
 
+				if (lastSelected != null) {
+					f_selectedFindingId = lastSelected.f_findingId;
+					FindingDetailsView.findingSelected(lastSelected.f_findingId, false);
+				} else {
+					f_selectedFindingId = -1;
+				}
+				
 				/*
 				 * for (TableColumn c : f_table.getColumns()) { c.pack(); }
 				 */
@@ -710,7 +716,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 				if (SystemUtils.IS_OS_WINDOWS_XP) {
 					f_table.setRedraw(true);
 				}
-				if (selectionFound) {					
+				if (lastSelected != null) {					
 					final UIJob job = new SLUIJob() {
 						@Override
 						public IStatus runInUIThread(final IProgressMonitor monitor) {
