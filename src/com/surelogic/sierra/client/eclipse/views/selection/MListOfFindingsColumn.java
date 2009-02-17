@@ -678,12 +678,12 @@ public final class MListOfFindingsColumn extends MColumn implements
 							final FindingData newData = rows.get(data);
 							if (newData != null) {
 								selectItem(newData.index, newData);
+								selectionFound = true;
 								break;
 							}
 						}
 					}
-					f_selectedFindingId = (data == null) ? -1
-							: data.f_findingId;
+					f_selectedFindingId = (data == null) ? -1 : data.f_findingId;
 				}
 				nearSelected.clear();
 
@@ -710,6 +710,19 @@ public final class MListOfFindingsColumn extends MColumn implements
 				if (SystemUtils.IS_OS_WINDOWS_XP) {
 					f_table.setRedraw(true);
 				}
+				if (selectionFound) {					
+					final UIJob job = new SLUIJob() {
+						@Override
+						public IStatus runInUIThread(final IProgressMonitor monitor) {
+							f_table.showSelection();
+							
+							// avoid scroll bar position being to the right
+							f_table.showColumn(f_table.getColumn(0));
+							return Status.OK_STATUS;
+						}
+					};
+					job.schedule();
+				}				
 			} finally {
 				rowsLock.readLock().unlock();
 			}
@@ -719,10 +732,6 @@ public final class MListOfFindingsColumn extends MColumn implements
 	private void selectItem(int i, FindingData data) {
 		if (i != -1) {
 			f_table.select(i);
-			f_table.showSelection();
-			
-			// avoid scroll bar position being to the right
-			f_table.showColumn(f_table.getColumn(0));
 		}
 	}
 
