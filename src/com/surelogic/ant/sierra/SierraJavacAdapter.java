@@ -9,7 +9,7 @@ package com.surelogic.ant.sierra;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
-//import java.util.StringTokenizer;
+import java.util.StringTokenizer;
 
 import org.apache.commons.lang.SystemUtils;
 import org.apache.tools.ant.*;
@@ -33,11 +33,16 @@ public class SierraJavacAdapter extends DefaultCompilerAdapter {
 		scan = sierraScan;
 	}
 
-	public boolean execute() throws BuildException {
+	public boolean execute() throws BuildException {	
 		/*
-		checkClassPath("sun.boot.class.path");
-		checkClassPath("java.class.path");
+		for(Object key : System.getProperties().keySet()) {
+			System.out.println("Key: "+key);
+		}
 		*/
+		if (false) {
+			checkClassPath("sun.boot.class.path");
+			checkClassPath("java.class.path");
+		}
 		try {
 			Config config = createConfig();
 			ToolUtil.scan(config, new Monitor(), true);
@@ -48,15 +53,14 @@ public class SierraJavacAdapter extends DefaultCompilerAdapter {
 		return true;
 	}
 
-	/*
 	private void checkClassPath(String key) {
 		StringTokenizer st = new StringTokenizer(System.getProperty(key), 
 				                                 File.pathSeparator);
 		while (st.hasMoreTokens()) {
-			System.out.println(st.nextToken());
+			System.out.println(key+": "+st.nextToken());
 		}
 	}
-    */
+    
 	private Config createConfig() throws IOException {
 		Config config = new Config();
 		config.setProject(scan.getProjectName());
@@ -90,6 +94,7 @@ public class SierraJavacAdapter extends DefaultCompilerAdapter {
 		config.putPluginDir(SierraToolConstants.JUNIT4_PLUGIN_ID,
 				libHome+"junit");		
 		if (SystemUtils.IS_JAVA_1_5) {
+			System.out.println("Home: "+scan.getHome());
 			config.putPluginDir(SierraToolConstants.JAVA5_PLUGIN_ID,
 					            scan.getHome());		
 		}
