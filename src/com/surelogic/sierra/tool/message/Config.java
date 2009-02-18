@@ -307,10 +307,10 @@ public class Config {
 		return excludedToolsList;
 	}
 
-	public final boolean isToolExcluded(String toolName) {
+	public final boolean isToolIncluded(String toolName) {
 		if (excludedToolsList == null)
-			return false;
-		else {
+			return true;
+		else {	
 			return !excludedToolsList.contains(toolName);
 		}
 	}
