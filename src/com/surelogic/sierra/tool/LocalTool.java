@@ -14,7 +14,6 @@ import org.apache.commons.lang.SystemUtils;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.types.*;
 
-import com.surelogic.common.jobs.*;
 import com.surelogic.common.jobs.remote.RemoteSLJobException;
 import com.surelogic.common.jobs.remote.TestCode;
 import com.surelogic.sierra.tool.jobs.AbstractLocalSLJob;
@@ -242,6 +241,10 @@ public class LocalTool extends AbstractTool {
 				file.deleteOnExit();
 
 				OutputStream out = new FileOutputStream(file);
+				if (marshaller == null) {
+					System.out.println("Couldn't create config file");
+					return null;
+				}
 				marshaller.marshal(config, out);
 				out.close();
 
@@ -318,6 +321,11 @@ public class LocalTool extends AbstractTool {
 					continue;
 				}
 				addPluginToPath(debug, proj, path, id);
+			}
+			if (false) {
+				for(String elt : path.list()) {
+					System.out.println("Path: "+elt);
+				}
 			}
 		}
 
