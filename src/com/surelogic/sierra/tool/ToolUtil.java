@@ -23,15 +23,15 @@ public class ToolUtil {
 			return new LocalTool(debug);
 		}
 		final MultiTool t = new MultiTool(true);
-		if (!config.isToolExcluded("findbugs")) {
+		if (config.isToolIncluded("findbugs")) {
 			t.addTool(new FindBugs1_3_7Tool(config
 					.getPluginDir(SierraToolConstants.FB_PLUGIN_ID), debug));
 		}
-		if (!config.isToolExcluded("pmd")) {
+		if (config.isToolIncluded("pmd")) {
 			t.addTool(new PMD4_2_4Tool(debug));
 			t.addTool(new CPD4_1Tool(debug));
 		}
-		if (!config.isToolExcluded("reckoner")) {
+		if (config.isToolIncluded("reckoner")) {
 			t.addTool(new Reckoner1_0Tool(debug));
 		}
 		return t;
@@ -39,13 +39,13 @@ public class ToolUtil {
 
 	public static int getNumTools(Config config) {
 		int count = 0;
-		if (!config.isToolExcluded("findbugs")) {
+		if (config.isToolIncluded("findbugs")) {
 			count++;
 		}
-		if (!config.isToolExcluded("pmd")) {
+		if (config.isToolIncluded("pmd")) {
 			count += 2;
 		}
-		if (!config.isToolExcluded("reckoner")) {
+		if (config.isToolIncluded("reckoner")) {
 			count++;
 		}
 		return count;
