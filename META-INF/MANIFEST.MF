@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Sierra Analysis Tool Integration
 Bundle-SymbolicName: com.surelogic.sierra.tool;singleton:=true
-Bundle-Version: 2.2.0.qualifier
+Bundle-Version: 2.2.1.qualifier
 Require-Bundle: com.surelogic.common,
  com.surelogic.sierra.message,
  com.surelogic.sierra.pmd,
