@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Sierra Message Specifications
 Bundle-SymbolicName: com.surelogic.sierra.message
-Bundle-Version: 2.2.0.qualifier
+Bundle-Version: 2.2.1.qualifier
 Bundle-Vendor: SureLogic, Inc.
 Export-Package: com.surelogic.sierra.tool.message,
  com.surelogic.sierra.tool.message.data,
