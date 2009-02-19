@@ -13,13 +13,10 @@
   <path id="sl.classpath">
       <fileset dir="${sl.lib}" includes="**/*.jar"/>
   </path>
-  
-  <taskdef name="sierra-scan" 
-           classname="com.surelogic.ant.sierra.SierraScan"
-           classpathref="sl.classpath"/>
-  <taskdef name="sierra-publish" 
-           classname="com.surelogic.ant.sierra.SierraPublish"
-           classpathref="sl.classpath"/>  
+
+  <taskdef resource="com/surelogic/ant/sierra/ant.properties">
+      <classpath refid="sl.classpath"/>
+  </taskdef>
   
   <!-- 2. These are jars used to compile (and thus scan) SmallWorld 
       
