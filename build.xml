@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="build-ant-task" default="clean-build">
+<project name="build-ant-task" default="all">
 	<description>Build for SL Ant tasks</description>
 
   <target name="all" depends="clean,build,zip"/>
@@ -64,8 +64,7 @@
 	  
 	<target name="zip">
 	  <zip destfile="./sierra-ant.zip" basedir=".."
-	       includes="sierra-ant/lib/**/*.jar"
-	  />
+	       includes="sierra-ant/lib/**/*.jar, sierra-ant/README.txt, sierra-ant/build-tomcat.xml, sierra-ant/test-build.xml"/>
 	</target>
 </project>
 	  
