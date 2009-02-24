@@ -9,6 +9,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/sierra-fb"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/sierra-metrics"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/sierra-pmd"/>
-	<classpathentry kind="var" path="ANT_HOME/ant.jar"/>
+	<classpathentry kind="lib" path="ant.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
