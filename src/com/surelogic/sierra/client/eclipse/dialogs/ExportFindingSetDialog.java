@@ -21,7 +21,7 @@ import org.eclipse.swt.widgets.Text;
 import com.surelogic.common.CommonImages;
 import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.sierra.client.eclipse.jobs.ExportFindingSetInCSVFormatJob;
-import com.surelogic.sierra.client.eclipse.jobs.ExportFindingSetInXMLFormatJob;
+import com.surelogic.sierra.client.eclipse.jobs.ExportFindingSetInHTMLFormatJob;
 import com.surelogic.sierra.client.eclipse.jobs.ExportFindingSetJob;
 
 public final class ExportFindingSetDialog extends Dialog {
@@ -30,24 +30,25 @@ public final class ExportFindingSetDialog extends Dialog {
 
 	private Text f_exportFilenameText;
 	private Button f_csvFormat;
-	private Button f_xmlFormat;
+	private Button f_htmlFormat;
 
-	public ExportFindingSetDialog(Shell shell, String listOfFindingsQuery) {
+	public ExportFindingSetDialog(final Shell shell,
+			final String listOfFindingsQuery) {
 		super(shell);
 		assert listOfFindingsQuery != null;
 		f_listOfFindingsQuery = listOfFindingsQuery;
 	}
 
 	@Override
-	protected void configureShell(Shell newShell) {
+	protected void configureShell(final Shell newShell) {
 		super.configureShell(newShell);
 		newShell.setImage(SLImages.getImage(CommonImages.IMG_EXPORT));
 		newShell.setText("Export Findings");
 	}
 
 	@Override
-	protected Control createDialogArea(Composite parent) {
-		Composite panel = (Composite) super.createDialogArea(parent);
+	protected Control createDialogArea(final Composite parent) {
+		final Composite panel = (Composite) super.createDialogArea(parent);
 		final GridLayout gridLayout = new GridLayout();
 		gridLayout.numColumns = 3;
 		panel.setLayout(gridLayout);
@@ -70,26 +71,27 @@ public final class ExportFindingSetDialog extends Dialog {
 		f_csvFormat.setText("Comma Separated Values (CSV)");
 		f_csvFormat.setSelection(true);
 		f_csvFormat.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event event) {
-				changeFileExtension("xml", "csv");
+			public void handleEvent(final Event event) {
+				changeFileExtension("html", "csv");
 			}
 		});
 
-		f_xmlFormat = new Button(g, SWT.RADIO);
-		f_xmlFormat.setText("XML for Excel 2007");
-		f_xmlFormat.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event event) {
-				changeFileExtension("csv", "xml");
+		f_htmlFormat = new Button(g, SWT.RADIO);
+		f_htmlFormat.setText("HTML Table");
+		f_htmlFormat.setSelection(false);
+		f_htmlFormat.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(final Event event) {
+				changeFileExtension("csv", "html");
 			}
 		});
 
-		Label buildfilenameLabel = new Label(panel, SWT.NONE);
+		final Label buildfilenameLabel = new Label(panel, SWT.NONE);
 		buildfilenameLabel.setText("Export file:");
 
 		f_exportFilenameText = new Text(panel, SWT.SINGLE | SWT.BORDER);
 		f_exportFilenameText.setText(System.getProperty("user.home")
 				+ System.getProperty("file.separator") + "findings.csv");
-		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL
+		final GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL
 				| GridData.GRAB_HORIZONTAL);
 		f_exportFilenameText.setLayoutData(data);
 
@@ -100,7 +102,7 @@ public final class ExportFindingSetDialog extends Dialog {
 		browseButton.addListener(SWT.Selection, new Listener() {
 			private FileDialog fd;
 
-			public void handleEvent(Event event) {
+			public void handleEvent(final Event event) {
 				if (fd == null) {
 					fd = new FileDialog(getShell(), SWT.SAVE);
 					fd.setText("Destination File");
@@ -110,7 +112,7 @@ public final class ExportFindingSetDialog extends Dialog {
 							"XML Files (*.xml)", "All Files (*.*)" });
 				}
 				final String fileName = f_exportFilenameText.getText();
-				int i = fileName.lastIndexOf(System
+				final int i = fileName.lastIndexOf(System
 						.getProperty("file.separator"));
 				if (i != -1) {
 					final String path = fileName.substring(0, i);
@@ -139,9 +141,8 @@ public final class ExportFindingSetDialog extends Dialog {
 				job = new ExportFindingSetInCSVFormatJob(f_listOfFindingsQuery,
 						exportfile);
 			} else {
-				// XML format
-				job = new ExportFindingSetInXMLFormatJob(f_listOfFindingsQuery,
-						exportfile);
+				job = new ExportFindingSetInHTMLFormatJob(
+						f_listOfFindingsQuery, exportfile);
 			}
 			job.setUser(true);
 			job.schedule();
@@ -149,8 +150,9 @@ public final class ExportFindingSetDialog extends Dialog {
 		super.okPressed();
 	}
 
-	private void changeFileExtension(String from, String to) {
-		StringBuilder b = new StringBuilder(f_exportFilenameText.getText());
+	private void changeFileExtension(final String from, final String to) {
+		final StringBuilder b = new StringBuilder(f_exportFilenameText
+				.getText());
 		if (b.toString().endsWith(from)) {
 			b.replace(b.length() - from.length(), b.length(), to);
 		}
