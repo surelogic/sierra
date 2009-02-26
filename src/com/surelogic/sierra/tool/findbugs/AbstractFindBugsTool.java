@@ -31,18 +31,20 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
 	protected AbstractFindBugsTool(String version, String fbDir, boolean debug) {
 		super("FindBugs", version, "FindBugs (TM)", "", debug);
 		this.fbDir = fbDir;
-		/* Code to get meta-data from FindBugs
-		for(Plugin plugin : iterable(DetectorFactoryCollection.instance().pluginIterator())) {
-			System.out.println(plugin.getPluginId());
-			for(BugCode code : iterable(plugin.bugCodeIterator())) {				
+		
+		// Code to get meta-data from FindBugs
+		if (false) {
+			for(Plugin plugin : iterable(DetectorFactoryCollection.instance().pluginIterator())) {
+				System.out.println(plugin.getPluginId());				
+				for(BugCode code : iterable(plugin.bugCodeIterator())) {				
+				}
+				for(BugPattern pattern : iterable(plugin.bugPatternIterator())) {
+				}
+				for(DetectorFactory factory : iterable(plugin.detectorFactoryIterator())) {
+					// Actual detector
+				}
 			}
-			for(BugPattern pattern : iterable(plugin.bugPatternIterator())) {
-			}
-			for(DetectorFactory factory : iterable(plugin.detectorFactoryIterator())) {
-				// Actual detector
-			}
-		}
-		*/
+		}		
 	}
 
 	protected IToolInstance create(String name, final ArtifactGenerator generator,
