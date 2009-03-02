@@ -67,6 +67,7 @@ public class SierraJavacAdapter extends DefaultCompilerAdapter {
 		setupConfig(config, false);
 		logAndAddFilesToCompile(config);
 
+		config.setVerbose(verbose);
 		setMemorySize(config);
 		config.setJavaVendor(System.getProperty("java.vendor"));
 		config.setJavaVersion(System.getProperty("java.version"));
