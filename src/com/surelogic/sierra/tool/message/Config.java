@@ -37,6 +37,8 @@ public class Config {
 	private String sourceLevel = null;
 	private String targetLevel = null;
 
+	private boolean verbose = false;
+	
 	/**
 	 * In MB
 	 */
@@ -104,6 +106,14 @@ public class Config {
 		memorySize = (size > 0) ? size : 1024;
 	}
 
+	public final boolean isVerbose() {
+		return verbose;
+	}
+
+	public final void setVerbose(boolean verbose) {
+		this.verbose = verbose;
+	}
+	
 	public String getTestCode() {
 		return testCode;
 	}
