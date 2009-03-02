@@ -23,17 +23,19 @@ public abstract class AbstractLocalSLJob extends AbstractSLJob {
     protected static final Logger LOG = SLLogger.getLogger();
 	private static final int FIRST_LINES = 3;
 	
+	protected final boolean verbose;
 	protected final int work;
 	protected final TestCode testCode;
 	protected final int memorySize;
 	protected final SLStatus.Builder status   = new SLStatus.Builder();
 	private Stack<SubSLProgressMonitor> tasks = new Stack<SubSLProgressMonitor>();
 	
-	protected AbstractLocalSLJob(String name, int work, TestCode code, int memSize) {
+	protected AbstractLocalSLJob(String name, int work, TestCode code, int memSize, boolean verbose) {
 		super(name);
 		this.work  = work;
 		testCode   = code;
 		memorySize = memSize;
+		this.verbose = verbose;
 	}
 
 	protected RemoteSLJobException newException(int number, Object... args) {
@@ -113,7 +115,7 @@ public abstract class AbstractLocalSLJob extends AbstractSLJob {
 	}
 	
 	public SLStatus run(final SLProgressMonitor topMonitor) {
-		final boolean debug = LOG.isLoggable(Level.FINE);
+		final boolean debug = verbose && LOG.isLoggable(Level.FINE);
 		CommandlineJava cmdj = new CommandlineJava();
 		setupJVM(debug, cmdj);
 
@@ -144,7 +146,9 @@ public abstract class AbstractLocalSLJob extends AbstractSLJob {
 					}
 				}
 			}
-			System.out.println("First line = " + firstLine);
+			if (verbose) {
+				System.out.println("First line = " + firstLine);
+			}
 
 			if (firstLine == null) {
 				throw newException(RemoteSLJobConstants.ERROR_NO_OUTPUT_FROM_JOB);
@@ -161,7 +165,7 @@ public abstract class AbstractLocalSLJob extends AbstractSLJob {
 			topMonitor.begin(work);
 			
 			String line = br.readLine();
-			loop: while (line != null) {
+			while (line != null) {
 				final SLProgressMonitor monitor = 
 					tasks.isEmpty() ? topMonitor : tasks.peek();
 				
@@ -180,7 +184,9 @@ public abstract class AbstractLocalSLJob extends AbstractSLJob {
 						Remote cmd   = Remote.valueOf(first);
 						switch (cmd) {
 						case TASK:
-							System.out.println(line);
+							if (verbose) {
+								System.out.println(line);
+							}
 							final String task = st.nextToken();
 							final String work = st.nextToken();
 							// LOG.info(task+": "+work);
@@ -196,11 +202,15 @@ public abstract class AbstractLocalSLJob extends AbstractSLJob {
 									.trim()));
 							break;
 						case WARNING:
-							System.out.println(line);
+							if (verbose) {
+								System.out.println(line);
+							}
 							copyException(cmd, st.nextToken(), br);
 							break;
 						case FAILED:
-							System.out.println(line);
+							if (verbose) {
+								System.out.println(line);
+							}
 							String msg = copyException(cmd, st.nextToken(), br);
 							System.out.println("Terminating run");
 							p.destroy();
@@ -212,7 +222,9 @@ public abstract class AbstractLocalSLJob extends AbstractSLJob {
 							}
 							throw new RuntimeException(msg);
 						case DONE:
-							System.out.println(line);
+							if (verbose) {
+								System.out.println(line);
+							}
 							tasks.pop();
 							/*
 							if (tasks.isEmpty()) {
@@ -222,12 +234,14 @@ public abstract class AbstractLocalSLJob extends AbstractSLJob {
 							*/
 							break;
 						default:
-							System.out.println(line);
+							if (verbose) {
+								System.out.println(line);
+							}
 						}
-					} else {
+					} else if (verbose) {
 						System.out.println(line);
 					}
-				} else {
+				} else if (verbose) {
 					System.out.println(line);
 				}
 				line = br.readLine();
@@ -319,7 +333,9 @@ public abstract class AbstractLocalSLJob extends AbstractSLJob {
 		int value;
 		try {
 			value = p.exitValue();
-			System.out.println("Process result after waiting = " + value);
+			if (verbose) {
+				System.out.println("Process result after waiting = " + value);
+			}
 		} catch (IllegalThreadStateException e) {
 			// Not done yet
 			final Thread currentThread = Thread.currentThread();

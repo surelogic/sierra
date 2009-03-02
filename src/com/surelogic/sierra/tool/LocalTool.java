@@ -78,14 +78,12 @@ public class LocalTool extends AbstractTool {
 
 	private class LocalInstance extends AbstractLocalSLJob implements
 			IToolInstance {
-		final boolean debug;
 		final Config config;
 
 		LocalInstance(boolean debug, Config c) {
 			super("Local", ToolUtil.getNumTools(c), 
 					       TestCode.getTestCode(c.getTestCode()), 
-					       c.getMemorySize());
-			this.debug = debug;
+					       c.getMemorySize(), debug && c.isVerbose());
 			config = c;
 		}
 
