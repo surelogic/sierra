@@ -1,9 +1,3 @@
-/*
- * Created on Jan 18, 2008
- *
- * TODO To change the template for this generated file go to
- * Window - Preferences - Java - Code Generation - Code and Comments
- */
 package com.surelogic.ant.sierra;
 
 import java.io.File;
@@ -99,7 +93,7 @@ public class SierraJavacAdapter extends DefaultCompilerAdapter {
 			config.putPluginDir(SierraToolConstants.JAVA5_PLUGIN_ID,
 					            scan.getHome());		
 		}
-		System.out.println("Using source level "+scan.getSource());
+		//System.out.println("Using source level "+scan.getSource());
 		config.setSourceLevel(scan.getSource());
 		
 		File scanDocument = new File(scan.getDocument() + 

@@ -1,6 +1,3 @@
-/*
- * Created on Jan 17, 2008
- */
 package com.surelogic.ant.sierra;
 
 import java.io.File;
@@ -10,23 +7,22 @@ import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Javac;
 import org.apache.tools.ant.taskdefs.compilers.CompilerAdapter;
 
-
 public class SierraScan extends Javac {
 	/**
 	 * The location of sierra-ant
 	 */
 	private String home;
-	
+
 	/**
 	 * The intended location of the resulting scan document
 	 */
 	private String document;
-	
+
 	/**
 	 * The name of the project being scanned
 	 */
 	private String project;
-	
+
 	public String getHome() {
 		return home;
 	}
@@ -34,7 +30,7 @@ public class SierraScan extends Javac {
 	public void setHome(String home) {
 		this.home = home;
 	}
-	
+
 	public String getProjectName() {
 		return project;
 	}
@@ -42,7 +38,7 @@ public class SierraScan extends Javac {
 	public void setProjectName(String p) {
 		this.project = p;
 	}
-	
+
 	public String getDocument() {
 		return document;
 	}
@@ -50,15 +46,9 @@ public class SierraScan extends Javac {
 	public void setDocument(String doc) {
 		this.document = doc;
 	}
-	
+
 	@Override
 	protected void scanDir(File srcDir, File destDir, String[] files) {
-		/*
-		 * GlobPatternMapper m = new GlobPatternMapper(); m.setFrom("*.java");
-		 * m.setTo("*.class"); SourceFileScanner sfs = new
-		 * SourceFileScanner(this); File[] newFiles = sfs.restrictAsFiles(files,
-		 * srcDir, destDir, m);
-		 */
 		File[] newFiles = new File[files.length];
 		int i = 0;
 		for (String name : files) {
@@ -83,14 +73,11 @@ public class SierraScan extends Javac {
 	@Override
 	protected void compile() {
 		File destDir = this.getDestdir();
-		System.out.println(destDir.getAbsolutePath());
 
 		if (compileList.length > 0) {
-			//log("Java version = "+System.getProperty("java.version"));
 			log("Scanning " + compileList.length + " source file"
-					+ (compileList.length == 1 ? "" : "s")
-			// + (destDir != null ? " to " + destDir : "")
-			);
+					+ (compileList.length == 1 ? "" : "s") + " in "
+					+ destDir.getAbsolutePath());
 
 			if (listFiles) {
 				for (int i = 0; i < compileList.length; i++) {

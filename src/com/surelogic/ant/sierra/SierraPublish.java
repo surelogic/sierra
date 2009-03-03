@@ -1,6 +1,3 @@
-/*
- * Created on Jan 17, 2008
- */
 package com.surelogic.ant.sierra;
 
 import java.io.File;
@@ -13,8 +10,8 @@ import com.surelogic.common.jdbc.TransactionException;
 import com.surelogic.sierra.tool.SierraToolConstants;
 import com.surelogic.sierra.tool.message.*;
 
-
 public class SierraPublish extends Task {
+
 	/***************************************************************************
 	 * Ant Task Attributes
 	 **************************************************************************/
@@ -22,17 +19,17 @@ public class SierraPublish extends Task {
 	private String user;
 
 	private String password;
-	
+
 	private String host;
-	
+
 	private boolean secure = false;
-	
+
 	private int port = 13376;
-	
-	private String contextPath = "/sl/";	
+
+	private String contextPath = "/sl/";
 
 	private final List<String> timeseries = new ArrayList<String>();
-	
+
 	private String document;
 
 	private static boolean notEmpty(String s) {
@@ -40,17 +37,19 @@ public class SierraPublish extends Task {
 	}
 
 	@Override
-    public void execute() throws BuildException
-    {
-		if (notEmpty(getHost()) && notEmpty(getContextPath()) && notEmpty(getUser()) && getPassword() != null) {
-			File doc = new File(getDocument() + SierraToolConstants.PARSED_FILE_SUFFIX);
+	public void execute() throws BuildException {
+		if (notEmpty(getHost()) && notEmpty(getContextPath())
+				&& notEmpty(getUser()) && getPassword() != null) {
+			File doc = new File(getDocument()
+					+ SierraToolConstants.PARSED_FILE_SUFFIX);
 			if (doc.exists()) {
 				long start = System.currentTimeMillis();
 				uploadRunDocument(doc);
 				long end = System.currentTimeMillis();
-				System.out.println("Upload took "+(end-start)+" ms");
+				log("Uploading complete (" + (end - start) + " ms)",
+						org.apache.tools.ant.Project.MSG_INFO);
 				return;
-			} 
+			}
 		}
 		StringBuilder sb = new StringBuilder("Bad argument to SierraPublish\n");
 		sb.append("host = '").append(getHost()).append("'\n");
@@ -71,8 +70,8 @@ public class SierraPublish extends Task {
 		sb.append("'\n");
 		sb.append("document = '").append(getDocument()).append("'\n");
 		throw new BuildException(sb.toString());
-    }
-	
+	}
+
 	/**
 	 * Modified from SierraAnalysis.uploadRunDocument()
 	 * 
@@ -82,29 +81,29 @@ public class SierraPublish extends Task {
 	 * @param config
 	 */
 	private void uploadRunDocument(final File scanDoc) {
-		log("Uploading the Run document to " + getHost()
-				+ "...", org.apache.tools.ant.Project.MSG_INFO);
+		log("Uploading the scan document " + scanDoc.getAbsolutePath() + " to "
+				+ getHost(), org.apache.tools.ant.Project.MSG_INFO);
 		MessageWarehouse warehouse = MessageWarehouse.getInstance();
 		Scan run;
 		try {
 			run = warehouse.fetchScan(scanDoc, true);
 
-			ServerLocation location = 
-				new ServerLocation(getHost(), isSecure(), getPort(), getContextPath(), 
-						           getUser(), getPassword(), false, false);
+			ServerLocation location = new ServerLocation(getHost(), isSecure(),
+					getPort(), getContextPath(), getUser(), getPassword(),
+					false, false);
 
 			SierraService ts = SierraServiceClient.create(location);
 
 			if (getTimeseries().isEmpty()) {
 				// Use server default
-				run.getConfig().setTimeseries(null); 
+				run.getConfig().setTimeseries(null);
 			} else {
 				// Verify the timeseries
 				List<String> list = ts.getTimeseries(new TimeseriesRequest())
-				.getTimeseries();
+						.getTimeseries();
 				if (list == null || list.isEmpty()) {
 					throw new BuildException(
-					"The target build server does not have any valid timeseries to publish to.");
+							"The target build server does not have any valid timeseries to publish to.");
 				}
 				if (!list.containsAll(getTimeseries())) {
 					StringBuilder sb = new StringBuilder();
@@ -126,11 +125,10 @@ public class SierraPublish extends Task {
 					+ " is not the same version as the server.", e);
 		}
 	}
-	
+
 	/***************************************************************************
 	 * Getters and Setters for attributes
 	 **************************************************************************/
-
 
 	public String getUser() {
 		return user;
@@ -147,7 +145,7 @@ public class SierraPublish extends Task {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	
+
 	public String getHost() {
 		return host;
 	}
@@ -193,7 +191,7 @@ public class SierraPublish extends Task {
 	 */
 	public final void setTimeseries(String timeseries) {
 		this.timeseries.clear();
-		
+
 		String[] strings = timeseries.split(",");
 		for (String timeseriesName : strings) {
 			String trimmed = timeseriesName.trim();
@@ -202,7 +200,7 @@ public class SierraPublish extends Task {
 			}
 		}
 	}
-	
+
 	public String getDocument() {
 		return document;
 	}
