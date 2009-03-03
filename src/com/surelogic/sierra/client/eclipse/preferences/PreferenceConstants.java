@@ -1,5 +1,6 @@
 package com.surelogic.sierra.client.eclipse.preferences;
 
+import com.surelogic.common.eclipse.preferences.IPreferenceConstants;
 import com.surelogic.sierra.client.eclipse.Activator;
 import com.surelogic.sierra.client.eclipse.views.ServerStatusSort;
 import com.surelogic.sierra.tool.message.Importance;
@@ -7,7 +8,7 @@ import com.surelogic.sierra.tool.message.Importance;
 /**
  * Constant definitions for plug-in preferences
  */
-public class PreferenceConstants {
+public class PreferenceConstants implements IPreferenceConstants {
 
 	private static final String PREFIX = "com.surelogic.sierra.";
 
@@ -243,12 +244,12 @@ public class PreferenceConstants {
 	public static final String P_PROMPT_PERSPECTIVE_SWITCH = PREFIX
 			+ "perspective-switch-prompt";
 
-	public static boolean getPromptForPerspectiveSwitch() {
+	public boolean getPromptForPerspectiveSwitch() {
 		return Activator.getDefault().getPluginPreferences().getBoolean(
 				P_PROMPT_PERSPECTIVE_SWITCH);
 	}
 
-	public static void setPromptForPerspectiveSwitch(boolean value) {
+	public void setPromptForPerspectiveSwitch(boolean value) {
 		Activator.getDefault().getPluginPreferences().setValue(
 				P_PROMPT_PERSPECTIVE_SWITCH, value);
 	}
@@ -256,14 +257,19 @@ public class PreferenceConstants {
 	public static final String P_AUTO_PERSPECTIVE_SWITCH = PREFIX
 			+ "perspective.switch.auto";
 
-	public static boolean getAutoPerspectiveSwitch() {
+	public boolean getAutoPerspectiveSwitch() {
 		return Activator.getDefault().getPluginPreferences().getBoolean(
 				P_AUTO_PERSPECTIVE_SWITCH);
 	}
 
-	public static void setAutoPerspectiveSwitch(boolean value) {
+	public void setAutoPerspectiveSwitch(boolean value) {
 		Activator.getDefault().getPluginPreferences().setValue(
 				P_AUTO_PERSPECTIVE_SWITCH, value);
 	}
 
+	private PreferenceConstants() {
+		// Nothing to do
+	}
+	
+	public static final PreferenceConstants prototype = new PreferenceConstants();
 }

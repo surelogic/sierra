@@ -56,7 +56,7 @@ class ScanJobAdapter extends JobChangeAdapter {
 			if (fineIsLoggable) {
 				LOG.fine("Completed " + scan + " for " + f_scanName);
 			}
-			ConfirmPerspectiveSwitch.submitUIJob();
+			ConfirmPerspectiveSwitch.prototype.submitUIJob();
 			if (PreferenceConstants.showBalloonNotifications())
 				BalloonUtility.showMessage("Sierra " + scan + " completed on "
 						+ f_scanName, "You may now examine the results.");
