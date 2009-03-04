@@ -20,7 +20,7 @@ public class SierraPublish extends Task {
 
 	private String password;
 
-	private String host;
+	private String host = "localhost";
 
 	private boolean secure = false;
 
