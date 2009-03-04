@@ -81,7 +81,7 @@ public class LocalTool extends AbstractTool {
 		final Config config;
 
 		LocalInstance(boolean debug, Config c) {
-			super("Local", ToolUtil.getNumTools(c), 
+			super("Sierra tool", ToolUtil.getNumTools(c), 
 					       TestCode.getTestCode(c.getTestCode()), 
 					       c.getMemorySize(), debug && c.isVerbose());
 			config = c;

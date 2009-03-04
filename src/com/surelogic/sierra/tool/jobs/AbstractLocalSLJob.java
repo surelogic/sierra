@@ -87,8 +87,8 @@ public abstract class AbstractLocalSLJob extends AbstractSLJob {
 			SubSLProgressMonitor mon = tasks.peek();
 			label = mon.getName();
 		}
-		StringBuilder sb = new StringBuilder(label + ' ' + type);
-		System.out.println(msg);
+		StringBuilder sb = new StringBuilder(label + ' ' + type.toString().toLowerCase());
+		System.out.println("Sierra tool "+type.toString().toLowerCase()+":"+msg);
 		sb.append(": ").append(msg).append('\n');
 
 		String line = br.readLine();
