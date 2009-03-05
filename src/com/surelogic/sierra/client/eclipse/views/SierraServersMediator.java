@@ -39,8 +39,6 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
@@ -350,7 +348,6 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 
 		f_serverConnectAction = new ServerActionListener(
 				"No server to connect to, or no project to connect") {
-			boolean f_syncAfterConnect = true;
 
 			private List<IJavaProject> collectProjects() {
 				final ProjectStatusCollector<IJavaProject> projects = new ProjectStatusCollector<IJavaProject>() {
@@ -417,27 +414,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 				} else {
 					final ServerSelectionDialog dialog = new ServerSelectionDialog(
 							f_statusTree.getTree().getShell(), projects.get(0)
-									.getElementName()) {
-						@Override
-						protected void addToEntryPanel(
-								final Composite entryPanel) {
-							super.addToEntryPanel(entryPanel);
-
-							final Button syncToggle = new Button(entryPanel,
-									SWT.CHECK);
-							syncToggle
-									.setText("Synchronize newly connected projects on finish");
-							syncToggle.setSelection(true);
-							syncToggle.addListener(SWT.Selection,
-									new Listener() {
-										public void handleEvent(
-												final Event event) {
-											f_syncAfterConnect = syncToggle
-													.getSelection();
-										}
-									});
-						}
-					};
+									.getElementName());
 					dialog.setUseForAllUnconnectedProjects(true);
 					if (dialog.open() == Window.CANCEL) {
 						return;
@@ -448,9 +425,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 					}
 					doConnect(server, projects);
 
-					if (f_syncAfterConnect) {
-						new SynchronizeProjectAction().run(projects);
-					}
+					new SynchronizeProjectAction().run(projects);
 				}
 			}
 		};
