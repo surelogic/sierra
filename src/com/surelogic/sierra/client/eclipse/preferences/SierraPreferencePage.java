@@ -14,7 +14,6 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
-import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 
 import com.surelogic.common.CommonImages;
@@ -22,18 +21,14 @@ import com.surelogic.common.FileUtility;
 import com.surelogic.common.eclipse.MemoryUtility;
 import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.common.eclipse.dialogs.ChangeDataDirectoryDialog;
-import com.surelogic.common.eclipse.preferences.AbstractLicensePreferencePage;
+import com.surelogic.common.eclipse.preferences.AbstractCommonPreferencePage;
 import com.surelogic.common.i18n.I18N;
-import com.surelogic.sierra.client.eclipse.Activator;
 import com.surelogic.sierra.tool.message.Importance;
 
-public class SierraPreferencePage extends AbstractLicensePreferencePage {
-
+public class SierraPreferencePage extends AbstractCommonPreferencePage {
 	static private final String TOOL_MB_LABEL = "sierra.eclipse.preference.page.toolMemoryPreferenceLabel";
 
 	private BooleanFieldEditor f_balloonFlag;
-	private BooleanFieldEditor f_promptPerspectiveSwitch;
-	private BooleanFieldEditor f_autoPerspectiveSwitch;
 	private BooleanFieldEditor f_selectProjectsToScan;
 	private BooleanFieldEditor f_showJSureResultsFlag;
 	private BooleanFieldEditor f_showMarkersInJavaEditorFlag;
@@ -44,9 +39,8 @@ public class SierraPreferencePage extends AbstractLicensePreferencePage {
 	private ScaleFieldEditor f_toolMemoryMB;
 	private Label f_dataDirectory;
 
-	public void init(IWorkbench workbench) {
-		setPreferenceStore(Activator.getDefault().getPreferenceStore());
-		setDescription(I18N.msg("sierra.eclipse.preference.page.title.msg"));
+	public SierraPreferencePage() {
+		super("sierra.eclipse.", PreferenceConstants.prototype);
 	}
 
 	@Override
@@ -109,25 +103,7 @@ public class SierraPreferencePage extends AbstractLicensePreferencePage {
 		f_balloonFlag.setPreferenceStore(getPreferenceStore());
 		f_balloonFlag.load();
 
-		f_promptPerspectiveSwitch = new BooleanFieldEditor(
-				PreferenceConstants.P_PROMPT_PERSPECTIVE_SWITCH,
-				I18N
-						.msg("sierra.eclipse.preference.page.promptPerspectiveSwitch"),
-				diGroup);
-		f_promptPerspectiveSwitch.fillIntoGrid(diGroup, 2);
-		f_promptPerspectiveSwitch.setPage(this);
-		f_promptPerspectiveSwitch.setPreferenceStore(getPreferenceStore());
-		f_promptPerspectiveSwitch.load();
-
-		f_autoPerspectiveSwitch = new BooleanFieldEditor(
-				PreferenceConstants.P_AUTO_PERSPECTIVE_SWITCH,
-				I18N
-						.msg("sierra.eclipse.preference.page.autoPerspectiveSwitch"),
-				diGroup);
-		f_autoPerspectiveSwitch.fillIntoGrid(diGroup, 2);
-		f_autoPerspectiveSwitch.setPage(this);
-		f_autoPerspectiveSwitch.setPreferenceStore(getPreferenceStore());
-		f_autoPerspectiveSwitch.load();
+		setupForPerspectiveSwitch(diGroup);
 
 		f_selectProjectsToScan = new BooleanFieldEditor(
 				PreferenceConstants.P_SELECT_PROJECTS_TO_SCAN,
@@ -250,8 +226,6 @@ public class SierraPreferencePage extends AbstractLicensePreferencePage {
 	@Override
 	protected void performDefaults() {
 		f_balloonFlag.loadDefault();
-		f_promptPerspectiveSwitch.loadDefault();
-		f_autoPerspectiveSwitch.loadDefault();
 		f_selectProjectsToScan.loadDefault();
 		f_showJSureResultsFlag.loadDefault();
 		f_showMarkersInJavaEditorFlag.loadDefault();
@@ -267,8 +241,6 @@ public class SierraPreferencePage extends AbstractLicensePreferencePage {
 	@Override
 	public boolean performOk() {
 		f_balloonFlag.store();
-		f_promptPerspectiveSwitch.store();
-		f_autoPerspectiveSwitch.store();
 		f_selectProjectsToScan.store();
 		f_showJSureResultsFlag.store();
 		f_showMarkersInJavaEditorFlag.store();
