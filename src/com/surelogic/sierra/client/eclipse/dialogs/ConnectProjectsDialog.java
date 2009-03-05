@@ -1,6 +1,10 @@
 package com.surelogic.sierra.client.eclipse.dialogs;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -31,16 +35,18 @@ import com.surelogic.common.CommonImages;
 import com.surelogic.common.eclipse.JDTUtility;
 import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.common.eclipse.jobs.SLUIJob;
-import com.surelogic.common.i18n.I18N;
 import com.surelogic.sierra.client.eclipse.actions.SynchronizeProjectAction;
 import com.surelogic.sierra.client.eclipse.model.ConnectedServerManager;
 import com.surelogic.sierra.client.eclipse.model.Projects;
 import com.surelogic.sierra.jdbc.settings.ConnectedServer;
-import com.surelogic.sierra.tool.message.*;
+import com.surelogic.sierra.tool.message.ServerInfoReply;
+import com.surelogic.sierra.tool.message.ServerInfoRequest;
+import com.surelogic.sierra.tool.message.ServerInfoService;
+import com.surelogic.sierra.tool.message.ServerInfoServiceClient;
 
 public final class ConnectProjectsDialog extends Dialog {
-    private final boolean disallowUnscannedProjects = false;
-	
+	private final boolean disallowUnscannedProjects = false;
+
 	private final ConnectedServerManager f_manager = ConnectedServerManager
 			.getInstance();
 
@@ -57,22 +63,24 @@ public final class ConnectProjectsDialog extends Dialog {
 			throw new IllegalStateException(
 					"server of focus must be non-null (bug)");
 		List<IJavaProject> projects = JDTUtility.getJavaProjects();
-		List<String> scannedProjects = disallowUnscannedProjects ? Projects.getInstance().getProjectNames() : null;
+		List<String> scannedProjects = disallowUnscannedProjects ? Projects
+				.getInstance().getProjectNames() : null;
 		Iterator<IJavaProject> it = projects.iterator();
 		while (it.hasNext()) {
 			final String projectName = it.next().getElementName();
 			if (f_manager.isConnected(projectName)) {
 				it.remove();
 			}
-			if (disallowUnscannedProjects && !scannedProjects.contains(projectName)) {
+			if (disallowUnscannedProjects
+					&& !scannedProjects.contains(projectName)) {
 				it.remove();
 			}
 		}
 		Collections.sort(projects, new Comparator<IJavaProject>() {
-			public int compare(IJavaProject o1, IJavaProject o2) {				
+			public int compare(IJavaProject o1, IJavaProject o2) {
 				return o1.getElementName().compareTo(o2.getElementName());
 			}
-			
+
 		});
 		f_unconnectedProjects = projects;
 	}
@@ -91,36 +99,47 @@ public final class ConnectProjectsDialog extends Dialog {
 
 		final Group projectGroup = new Group(panel, SWT.NONE);
 		data = new GridData(SWT.FILL, SWT.FILL, true, true);
-		data.heightHint = 300;
+		data.heightHint = 200;
 		projectGroup.setLayoutData(data);
 		projectGroup.setText("Unconnected Projects");
 		projectGroup.setLayout(new FillLayout());
 
-		final Table projectList = new Table(projectGroup, SWT.CHECK);
+		final Table projectTable = new Table(projectGroup, SWT.CHECK);
 
 		for (IJavaProject p : f_unconnectedProjects) {
-			TableItem item = new TableItem(projectList, SWT.NONE);
+			TableItem item = new TableItem(projectTable, SWT.NONE);
 			item.setText(p.getElementName());
 			item.setData(p);
 			item.setImage(SLImages.getImage(CommonImages.IMG_PROJECT));
 		}
 
-		final Button exportAllToggle = new Button(panel, SWT.CHECK);
-		exportAllToggle.setText("Connect all projects to '"
-				+ f_server.getName() + "'");
-		exportAllToggle.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false,
+		final Composite allNonePanel = new Composite(panel, SWT.NONE);
+		allNonePanel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,
 				false));
-		
-		final Button syncToggle = new Button(panel, SWT.CHECK);
-		syncToggle.setText("Synchronize newly connected projects on finish");
-		syncToggle.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false,
-				false));
-		syncToggle.setSelection(true);
+		final GridLayout allNoneLayout = new GridLayout();
+		allNoneLayout.numColumns = 2;
+		allNoneLayout.makeColumnsEqualWidth = true;
+		allNonePanel.setLayout(allNoneLayout);
+		final Button allButton = new Button(allNonePanel, SWT.PUSH);
+		allButton.setText("Select All");
+		allButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true));
+		final Button noneButton = new Button(allNonePanel, SWT.PUSH);
+		noneButton.setText("Deselect All");
+		noneButton
+				.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true));
 
-		f_mediator = new Mediator(exportAllToggle, syncToggle, projectGroup, projectList);
+		f_mediator = new Mediator(allButton, noneButton, projectTable);
 		f_mediator.init();
 
 		return panel;
+	}
+
+	@Override
+	protected final Control createContents(final Composite parent) {
+		final Control contents = super.createContents(parent);
+		if (f_mediator != null)
+			f_mediator.setOKState();
+		return contents;
 	}
 
 	@Override
@@ -137,107 +156,119 @@ public final class ConnectProjectsDialog extends Dialog {
 		super.okPressed();
 	}
 
-	public void setOKEnabled(boolean enabled) {
-		Button ok = getButton(IDialogConstants.OK_ID);
-		ok.setEnabled(enabled);
-	}
-
 	private class Mediator {
 
-		private final Button f_exportAllToggle;
+		private final Button f_allButton;
 
-		private final Button f_syncToggle;
-		
-		private final Group f_projectGroup;
+		private final Button f_noneButton;
 
-		private final Table f_queryTable;
+		private final Table f_projectTable;
 
-		private boolean f_connectAll;
-
-		Mediator(Button exportAllToggle, Button syncToggle, Group projectGroup, Table queryTable) {
-			f_exportAllToggle = exportAllToggle;
-			f_syncToggle = syncToggle;
-			f_connectAll = f_exportAllToggle.getSelection();
-			f_projectGroup = projectGroup;
-			f_queryTable = queryTable;
-			setDialogState();
+		Mediator(Button allButton, Button noneButton, Table projectTable) {
+			f_allButton = allButton;
+			f_noneButton = noneButton;
+			f_projectTable = projectTable;
 		}
 
-		void init() {
-			f_exportAllToggle.addListener(SWT.Selection, new Listener() {
+		private void init() {
+			f_allButton.addListener(SWT.Selection, new Listener() {
 				public void handleEvent(Event event) {
-					f_connectAll = f_exportAllToggle.getSelection();
-					if (f_connectAll) {
-						// FIX what about unselect all?
-						for (TableItem item : f_queryTable.getItems()) {
-							item.setChecked(true);
-						}
-					}
-					setDialogState();
+					setCheckedAll(true);
+				}
+			});
+			f_noneButton.addListener(SWT.Selection, new Listener() {
+				public void handleEvent(Event event) {
+					setCheckedAll(false);
+				}
+			});
+			f_projectTable.addListener(SWT.Selection, new Listener() {
+				public void handleEvent(final Event event) {
+					setOKState();
 				}
 			});
 		}
 
-		private void setDialogState() {
-			f_projectGroup.setEnabled(!f_connectAll);
-			f_queryTable.setEnabled(!f_connectAll);
-		}
-
-		void okPressed() {
-			if (!f_connectAll) {
-				for (TableItem item : f_queryTable.getItems()) {
-					if (!item.getChecked()) {
-						f_unconnectedProjects.remove(item.getData());
+		private final void setOKState() {
+			/*
+			 * Is anything checked?
+			 */
+			boolean isAnythingChecked = false;
+			if (f_projectTable != null && !f_projectTable.isDisposed()) {
+				for (final TableItem item : f_projectTable.getItems()) {
+					if (item.getChecked()) {
+						isAnythingChecked = true;
+						break;
 					}
 				}
+				/*
+				 * Set the state of the OK button.
+				 */
+				getButton(IDialogConstants.OK_ID).setEnabled(isAnythingChecked);
 			}
-			final List<IJavaProject> projects = new ArrayList<IJavaProject>(f_unconnectedProjects);
-			final boolean sync = f_syncToggle.getSelection();
-			final Job job = new Job("Connecting projects") {
+		}
+
+		private void setCheckedAll(final boolean value) {
+			for (TableItem item : f_projectTable.getItems()) {
+				item.setChecked(value);
+			}
+			setOKState();
+		}
+
+		private void okPressed() {
+			for (TableItem item : f_projectTable.getItems()) {
+				if (!item.getChecked()) {
+					f_unconnectedProjects.remove(item.getData());
+				}
+			}
+			final List<IJavaProject> projects = new ArrayList<IJavaProject>(
+					f_unconnectedProjects);
+			final Job job = new Job("Connecting projects to "
+					+ f_server.getName()) {
 				@Override
 				protected IStatus run(IProgressMonitor monitor) {
-					ServerInfoService s = ServerInfoServiceClient.create(f_server.getLocation());
-					ServerInfoReply reply = s.getServerInfo(new ServerInfoRequest());
+					ServerInfoService s = ServerInfoServiceClient
+							.create(f_server.getLocation());
+					ServerInfoReply reply = s
+							.getServerInfo(new ServerInfoRequest());
 					if (reply == null || reply.getUid() == null) {
-						showMessageDialog("Bad response", 
-								          "The server does not seem to be responding properly.");
+						showMessageDialog("Bad response",
+								"The server does not seem to be responding properly.");
 						return Status.CANCEL_STATUS;
 					}
 					if (!reply.getUid().equals(f_server.getUuid())) {
 						showMessageDialog("Server mismatch",
-								          "The project(s) could not be connected, because the server has changed.");
+								"The project(s) could not be connected, because the server has changed.");
 						return Status.CANCEL_STATUS;
 					}
 					for (IJavaProject p : projects) {
 						f_manager.connect(p.getElementName(), f_server);
 					}
-					
-					if (sync) {
-						final UIJob job = new SLUIJob() {
-							@Override
-							public IStatus runInUIThread(final IProgressMonitor monitor) {
-								new SynchronizeProjectAction().run(projects);
-								return Status.OK_STATUS;
-							}
-						};
-						job.schedule();
-					}
+
+					final UIJob syncJob = new SLUIJob() {
+						@Override
+						public IStatus runInUIThread(
+								final IProgressMonitor monitor) {
+							new SynchronizeProjectAction().run(projects);
+							return Status.OK_STATUS;
+						}
+					};
+					syncJob.schedule();
 					return Status.OK_STATUS;
 				}
-				
+
 			};
 			job.schedule();
 		}
 	}
-	
-	void showMessageDialog(final String title, final String msg) {
+
+	private void showMessageDialog(final String title, final String msg) {
 		final UIJob job = new SLUIJob() {
 			@Override
 			public IStatus runInUIThread(final IProgressMonitor monitor) {
-				final Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-				final MessageDialog dialog = new MessageDialog(shell,
-						title, null, msg,
-						MessageDialog.INFORMATION,
+				final Shell shell = PlatformUI.getWorkbench()
+						.getActiveWorkbenchWindow().getShell();
+				final MessageDialog dialog = new MessageDialog(shell, title,
+						null, msg, MessageDialog.INFORMATION,
 						new String[] { "OK" }, 0);
 				dialog.open();
 				return Status.OK_STATUS;
