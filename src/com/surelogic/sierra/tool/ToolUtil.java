@@ -3,6 +3,7 @@ package com.surelogic.sierra.tool;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -22,10 +23,14 @@ public class ToolUtil {
 		if (runRemotely) {
 			return new LocalTool(debug);
 		}
+		return createTools(config);
+	}
+		
+	public static MultiTool createTools(Config config) {
+		final boolean debug = LOG.isLoggable(Level.FINE);
 		final MultiTool t = new MultiTool(true);
 		if (config.isToolIncluded("findbugs")) {
-			t.addTool(new FindBugs1_3_7Tool(config
-					.getPluginDir(SierraToolConstants.FB_PLUGIN_ID), debug));
+			t.addTool(new FindBugs1_3_7Tool(config.getPluginDir(SierraToolConstants.FB_PLUGIN_ID), debug));
 		}
 		if (config.isToolIncluded("pmd")) {
 			t.addTool(new PMD4_2_4Tool(debug));
@@ -36,7 +41,15 @@ public class ToolUtil {
 		}
 		return t;
 	}
-
+	
+	public static Set<ArtifactType> getArtifactTypes() {
+		// All tools included by default
+		Config config = new Config(); 
+		// FIX not needed?
+		// config.putPluginDir(SierraToolConstants.FB_PLUGIN_ID, ???);
+		return createTools(config).getArtifactTypes();
+	}
+	
 	public static int getNumTools(Config config) {
 		int count = 0;
 		if (config.isToolIncluded("findbugs")) {

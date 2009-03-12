@@ -7,7 +7,7 @@ import com.surelogic.common.jobs.*;
 import com.surelogic.sierra.tool.message.ArtifactGenerator;
 import com.surelogic.sierra.tool.targets.IToolTarget;
 
-public class MultiTool extends AbstractTool {
+public class MultiTool extends AbstractTool implements Iterable<ITool> {
 	protected List<ITool> tools = new ArrayList<ITool>();
 
 	public MultiTool(boolean debug) {
@@ -15,6 +15,10 @@ public class MultiTool extends AbstractTool {
 				debug);
 	}
 
+	public Iterator<ITool> iterator() {
+		return tools.iterator();
+	}
+	
 	public Set<ArtifactType> getArtifactTypes() {
 		Set<ArtifactType> merged = new HashSet<ArtifactType>();
 		for(ITool t : tools) {

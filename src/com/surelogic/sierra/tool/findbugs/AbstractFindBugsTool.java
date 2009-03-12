@@ -19,8 +19,6 @@ import edu.umd.cs.findbugs.classfile.MethodDescriptor;
 import edu.umd.cs.findbugs.config.UserPreferences;
 
 public abstract class AbstractFindBugsTool extends AbstractTool {
-	final String fbDir;
-
 	static <T> Iterable<T> iterable(final Iterator<T> it) {
 		return new Iterable<T>() {
 			public Iterator<T> iterator() {
@@ -31,7 +29,6 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
 	
 	protected AbstractFindBugsTool(String version, String fbDir, boolean debug) {
 		super("FindBugs", version, "FindBugs (TM)", "", debug);
-		this.fbDir = fbDir;	
 	}
 
 	public final Set<ArtifactType> getArtifactTypes() {
