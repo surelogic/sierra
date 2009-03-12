@@ -11,6 +11,7 @@ import com.surelogic.common.jobs.SLProgressMonitor;
 import com.surelogic.common.jobs.SLStatus;
 import com.surelogic.sierra.tool.AbstractTool;
 import com.surelogic.sierra.tool.AbstractToolInstance;
+import com.surelogic.sierra.tool.ArtifactType;
 import com.surelogic.sierra.tool.IToolInstance;
 import com.surelogic.sierra.tool.message.ArtifactGenerator;
 import com.surelogic.sierra.tool.message.IdentifierType;
@@ -25,6 +26,10 @@ public abstract class AbstractCPDTool extends AbstractTool {
 		super("CPD", version, "CPD", "", debug);
 	}
 
+	public Set<ArtifactType> getArtifactTypes() {
+	  return Collections.emptySet();
+	}
+	
 	@Override
 	protected IToolInstance create(String name, ArtifactGenerator generator, boolean close) {
 		return new AbstractToolInstance(debug, this, generator, close) {

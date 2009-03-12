@@ -154,7 +154,7 @@ public abstract class AbstractToolInstance extends AbstractSLJob implements IToo
     return tool.getVersion();
   } 
   
-  public final Set<String> getArtifactTypes() {
+  public final Set<ArtifactType> getArtifactTypes() {
     return tool.getArtifactTypes();
   }
   

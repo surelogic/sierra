@@ -17,15 +17,34 @@ import com.surelogic.common.*;
 import com.surelogic.common.jobs.SLProgressMonitor;
 import com.surelogic.common.jobs.SLStatus;
 import com.surelogic.sierra.tool.*;
+import com.surelogic.sierra.tool.ArtifactType;
 import com.surelogic.sierra.tool.message.*;
 import com.surelogic.sierra.tool.message.ArtifactGenerator.*;
 import com.surelogic.sierra.tool.targets.IToolTarget;
 
 public abstract class AbstractPMDTool extends AbstractTool {
+	private static final String rulesets = "all.xml"; // location of the XML rule file
+	
 	public AbstractPMDTool(String version, boolean debug) {
 		super("PMD", version, "PMD", "", debug);
 	}
 
+	public final Set<ArtifactType> getArtifactTypes() {
+		Set<ArtifactType> types = new HashSet<ArtifactType>();
+		// only the default rules
+		final RuleSetFactory ruleSetFactory = new RuleSetFactory(); 
+		try {
+			RuleSet ruleset = ruleSetFactory.createSingleRuleSet(rulesets);
+			for(Rule r : ruleset.getRules()) {
+				types.add(new ArtifactType(getName(), getVersion(), 
+						                   r.getRuleSetName(), r.getName(), r.getRuleSetName()));				
+			}
+		} catch (RuleSetNotFoundException e) {
+			LOG.log(Level.SEVERE, "Couldn't find "+rulesets, e);
+		}
+		return types;
+	}
+	
 	protected final IToolInstance create(String name, final ArtifactGenerator generator,
 			boolean close) {
 		return new AbstractToolInstance(debug, this, generator, close) {
@@ -54,7 +73,6 @@ public abstract class AbstractPMDTool extends AbstractTool {
 				} else {
 					sourceType = SourceType.JAVA_14;
 				}
-				String rulesets = "all.xml"; // location of the XML rule file
 				RuleContext ctx = new RuleContext(); // info about what's
 				// getting scanned
 				RuleSetFactory ruleSetFactory = new RuleSetFactory(); // only

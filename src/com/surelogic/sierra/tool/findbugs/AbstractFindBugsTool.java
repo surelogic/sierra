@@ -8,6 +8,7 @@ import java.util.logging.Level;
 import com.surelogic.common.*;
 import com.surelogic.common.jobs.*;
 import com.surelogic.sierra.tool.*;
+import com.surelogic.sierra.tool.ArtifactType;
 import com.surelogic.sierra.tool.message.*;
 import com.surelogic.sierra.tool.message.ArtifactGenerator.*;
 import com.surelogic.sierra.tool.targets.*;
@@ -30,23 +31,31 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
 	
 	protected AbstractFindBugsTool(String version, String fbDir, boolean debug) {
 		super("FindBugs", version, "FindBugs (TM)", "", debug);
-		this.fbDir = fbDir;
-		
-		// Code to get meta-data from FindBugs
-		if (false) {
-			for(Plugin plugin : iterable(DetectorFactoryCollection.instance().pluginIterator())) {
-				System.out.println(plugin.getPluginId());				
-				for(BugCode code : iterable(plugin.bugCodeIterator())) {				
-				}
-				for(BugPattern pattern : iterable(plugin.bugPatternIterator())) {
-				}
-				for(DetectorFactory factory : iterable(plugin.detectorFactoryIterator())) {
-					// Actual detector
-				}
-			}
-		}		
+		this.fbDir = fbDir;	
 	}
 
+	public final Set<ArtifactType> getArtifactTypes() {
+		Set<ArtifactType> types = new HashSet<ArtifactType>();
+		// Code to get meta-data from FindBugs
+		for(Plugin plugin : iterable(DetectorFactoryCollection.instance().pluginIterator())) {
+			final String pluginId = plugin.getPluginId();				
+			/*
+			for(BugCode code : iterable(plugin.bugCodeIterator())) {				
+			}
+			*/
+			for(BugPattern pattern : iterable(plugin.bugPatternIterator())) {				
+				types.add(new ArtifactType(getName(), getVersion(), pluginId, 
+						                   pattern.getType(), pattern.getCategory()));
+			}
+			/*
+			for(DetectorFactory factory : iterable(plugin.detectorFactoryIterator())) {
+				// Actual detector
+			}
+			*/
+		}
+		return types;
+	}
+	
 	protected IToolInstance create(String name, final ArtifactGenerator generator,
 			boolean close) {
 		//Removed to avoid problem with duplicate detector factories

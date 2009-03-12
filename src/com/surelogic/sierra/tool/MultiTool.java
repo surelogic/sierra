@@ -15,8 +15,12 @@ public class MultiTool extends AbstractTool {
 				debug);
 	}
 
-	public Set<String> getArtifactTypes() {
-		return Collections.emptySet();
+	public Set<ArtifactType> getArtifactTypes() {
+		Set<ArtifactType> merged = new HashSet<ArtifactType>();
+		for(ITool t : tools) {
+			merged.addAll(t.getArtifactTypes());
+		}
+		return merged;
 	}
 
 	protected IToolInstance create(String name, ArtifactGenerator generator,

@@ -14,6 +14,7 @@ import com.surelogic.sierra.metrics.Reckoner;
 import com.surelogic.sierra.metrics.model.Metrics;
 import com.surelogic.sierra.tool.AbstractTool;
 import com.surelogic.sierra.tool.AbstractToolInstance;
+import com.surelogic.sierra.tool.ArtifactType;
 import com.surelogic.sierra.tool.IToolInstance;
 import com.surelogic.sierra.tool.message.ArtifactGenerator;
 import com.surelogic.sierra.tool.message.MetricBuilder;
@@ -23,7 +24,7 @@ public class Reckoner1_0Tool extends AbstractTool {
     super("Reckoner", "1.0", "Reckoner", "", debug);
   }
 
-  public Set<String> getArtifactTypes() {
+  public Set<ArtifactType> getArtifactTypes() {
     return Collections.emptySet();
   }
   

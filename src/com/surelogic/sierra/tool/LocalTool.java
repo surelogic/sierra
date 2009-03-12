@@ -56,7 +56,7 @@ public class LocalTool extends AbstractTool {
 				"Local tool for running other tools in another JVM", debug);
 	}
 
-	public Set<String> getArtifactTypes() {
+	public Set<ArtifactType> getArtifactTypes() {
 		return Collections.emptySet();
 	}
 
@@ -335,7 +335,7 @@ public class LocalTool extends AbstractTool {
 			throw new UnsupportedOperationException();
 		}
 
-		public Set<String> getArtifactTypes() {
+		public Set<ArtifactType> getArtifactTypes() {
 			return Collections.emptySet();
 		}
 
