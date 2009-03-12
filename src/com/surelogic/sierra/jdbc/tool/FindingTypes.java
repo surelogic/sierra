@@ -59,6 +59,12 @@ public class FindingTypes {
 				.call(id);
 	}
 
+	public List<ArtifactTypeDO> getToolArtifacts(final String tool,
+			final String version) {
+		return q.prepared("FindingTypes.artifactsByTool",
+				new ArtifactTypeDOHandler()).call(tool, version);
+	}
+
 	private static class FindingTypeDOHandler extends
 			SingleRowHandler<FindingTypeDO> {
 		@Override
