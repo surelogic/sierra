@@ -18,7 +18,7 @@ import edu.umd.cs.findbugs.classfile.ClassDescriptor;
 import edu.umd.cs.findbugs.classfile.MethodDescriptor;
 import edu.umd.cs.findbugs.config.UserPreferences;
 
-public abstract class AbstractFindBugsTool extends AbstractTool {
+public class AbstractFindBugsTool extends AbstractTool {
 	static <T> Iterable<T> iterable(final Iterator<T> it) {
 		return new Iterable<T>() {
 			public Iterator<T> iterator() {
@@ -27,10 +27,10 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
 		};
 	}
 	
-	protected AbstractFindBugsTool(String version, String fbDir, boolean debug) {
-		super("FindBugs", version, "FindBugs (TM)", "", debug);
+	public AbstractFindBugsTool(String fbDir, boolean debug) {		
+		super("FindBugs", Version.RELEASE_BASE, "FindBugs (TM)", "", debug);
 	}
-
+	
 	public final Set<ArtifactType> getArtifactTypes() {
 		Set<ArtifactType> types = new HashSet<ArtifactType>();
 		// Code to get meta-data from FindBugs
@@ -167,7 +167,9 @@ public abstract class AbstractFindBugsTool extends AbstractTool {
 		};
 	}
 
-	protected abstract IFindBugsEngine createEngine();
+	protected IFindBugsEngine createEngine() {
+		return new FindBugs2();
+	}
 
 	static class Screener implements IClassScreener {
 		public boolean matches(String fileName) {

@@ -22,11 +22,11 @@ import com.surelogic.sierra.tool.message.*;
 import com.surelogic.sierra.tool.message.ArtifactGenerator.*;
 import com.surelogic.sierra.tool.targets.IToolTarget;
 
-public abstract class AbstractPMDTool extends AbstractTool {
+public class AbstractPMDTool extends AbstractTool {
 	private static final String rulesets = "all.xml"; // location of the XML rule file
 	
-	public AbstractPMDTool(String version, boolean debug) {
-		super("PMD", version, "PMD", "", debug);
+	public AbstractPMDTool(boolean debug) {
+		super("PMD", PMD.VERSION, "PMD", "", debug);
 	}
 
 	public final Set<ArtifactType> getArtifactTypes() {

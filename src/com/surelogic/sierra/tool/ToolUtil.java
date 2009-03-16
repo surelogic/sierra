@@ -30,10 +30,11 @@ public class ToolUtil {
 		final boolean debug = LOG.isLoggable(Level.FINE);
 		final MultiTool t = new MultiTool(true);
 		if (config.isToolIncluded("findbugs")) {
-			t.addTool(new FindBugs1_3_7Tool(config.getPluginDir(SierraToolConstants.FB_PLUGIN_ID), debug));
+			final String fbDir = config.getPluginDir(SierraToolConstants.FB_PLUGIN_ID);
+			t.addTool(new AbstractFindBugsTool(fbDir, debug));
 		}
 		if (config.isToolIncluded("pmd")) {
-			t.addTool(new PMD4_2_4Tool(debug));
+			t.addTool(new AbstractPMDTool(debug));
 			t.addTool(new CPD4_1Tool(debug));
 		}
 		if (config.isToolIncluded("reckoner")) {
