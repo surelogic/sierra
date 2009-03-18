@@ -9,7 +9,11 @@ import org.eclipse.swt.graphics.Image;
 import com.surelogic.common.CommonImages;
 import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.common.jdbc.ConnectionQuery;
+import com.surelogic.common.jdbc.Query;
+import com.surelogic.sierra.jdbc.settings.Categories;
+import com.surelogic.sierra.jdbc.settings.CategoryDO;
 import com.surelogic.sierra.jdbc.tool.ArtifactTypeDO;
+import com.surelogic.sierra.jdbc.tool.FindingTypeDO;
 import com.surelogic.sierra.jdbc.tool.FindingTypes;
 import com.surelogic.sierra.tool.*;
 import com.surelogic.sierra.tool.message.Config;
@@ -40,8 +44,12 @@ public final class Utility {
 		try {
 			// Get known artifact types
 			final Connection c = Data.getInstance().readOnlyConnection();
-			final FindingTypes ft = new FindingTypes(new ConnectionQuery(c));
-			final Config config = new Config();		
+			final Query q = new ConnectionQuery(c);
+			final FindingTypes ft = new FindingTypes(q);
+			final Config config = new Config();					
+			config.putPluginDir(SierraToolConstants.FB_PLUGIN_ID, 
+					            com.surelogic.common.eclipse.Activator.getDefault().getDirectoryOf(SierraToolConstants.FB_PLUGIN_ID));
+			
 			final Set<ArtifactType> knownTypes = new HashSet<ArtifactType>();
 			for(ITool t : ToolUtil.createTools(config)) {
 				List<ArtifactTypeDO> temp = ft.getToolArtifactTypes(t.getName(), t.getVersion());
@@ -49,7 +57,7 @@ public final class Utility {
 					knownTypes.add(new ArtifactType(a.getTool(), a.getVersion(), "", a.getMnemonic(), ""));
 				}				                          
 			}
-			final Set<ArtifactType> types = ToolUtil.getArtifactTypes();
+			final Set<ArtifactType> types = ToolUtil.getArtifactTypes(config);
 			final List<ArtifactType> unknown = new ArrayList<ArtifactType>();
 			for(ArtifactType a : types) {
 				if (!knownTypes.contains(a)) {
@@ -61,7 +69,21 @@ public final class Utility {
 			} else {
 				Collections.sort(unknown);
 				for(ArtifactType a : unknown) {
-					System.out.println("Couldn't find "+a.type+" for "+a.tool+", v"+a.version);
+					//SLLogger.getLogger().warning("Couldn't find "+a.type+" for "+a.tool+", v"+a.version);					
+					System.out.println("Couldn't find "+a.type+" for "+a.tool+", v"+a.version);	
+				}				
+				// Find/define finding types
+				List<FindingTypeDO> ftypes = ft.listFindingTypes();
+				for(FindingTypeDO f : ftypes) {
+					// Search?
+					f.getName();
+				}
+				
+				// Find/create categories -- can be modified later				
+				final Categories categories = new Categories(q);
+				List<CategoryDO> cats = categories.listCategories();
+				for(CategoryDO cdo : cats) {
+					cdo.getName();
 				}
 			}
 			// FIX Show dialog
