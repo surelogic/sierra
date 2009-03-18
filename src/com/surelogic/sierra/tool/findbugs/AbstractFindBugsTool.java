@@ -19,6 +19,13 @@ import edu.umd.cs.findbugs.classfile.MethodDescriptor;
 import edu.umd.cs.findbugs.config.UserPreferences;
 
 public class AbstractFindBugsTool extends AbstractTool {
+	public static void init(String fbDir) {
+		System.setProperty("findbugs.home", fbDir);
+		//System.out.println("FB = "+System.getProperty("findbugs.home"));
+		//System.setProperty("findbugs.debug", "true");
+		//System.setProperty("findbugs.debug.PluginLoader", "true");
+	}
+	
 	static <T> Iterable<T> iterable(final Iterator<T> it) {
 		return new Iterable<T>() {
 			public Iterator<T> iterator() {
@@ -28,7 +35,7 @@ public class AbstractFindBugsTool extends AbstractTool {
 	}
 	
 	public AbstractFindBugsTool(String fbDir, boolean debug) {		
-		super("FindBugs", Version.RELEASE_BASE, "FindBugs (TM)", "", debug);
+		super("FindBugs", "1.3.7"/*Version.RELEASE_BASE*/, "FindBugs (TM)", "", debug);
 	}
 	
 	public final Set<ArtifactType> getArtifactTypes() {
