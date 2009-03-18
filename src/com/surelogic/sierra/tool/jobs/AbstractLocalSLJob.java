@@ -42,25 +42,28 @@ public abstract class AbstractLocalSLJob extends AbstractSLJob {
 		throw new RemoteSLJobException(number, args);
 	}
 	
-	protected void addToPath(Project proj, Path path, String name) {
-		addToPath(proj, path, name, true);
+	protected boolean addToPath(Project proj, Path path, String name) {
+		return addToPath(proj, path, new File(name), true);
+	}
+	
+	protected boolean addToPath(Project proj, Path path, String name, boolean required) {
+		return addToPath(proj, path, new File(name), required);
 	}
 
-	protected boolean addToPath(Project proj, Path path, String name,
+	protected boolean addToPath(Project proj, Path path, File f,
 			boolean required) {
-		final File f = new File(name);
 		final boolean exists = f.exists();
 		if (!exists) {
 			if (required) {
 				throw newException(
 						RemoteSLJobConstants.ERROR_CODE_MISSING_FOR_JOB,
-						name);
+						f.getAbsolutePath());
 			}
 		} else if (TestCode.MISSING_CODE.equals(testCode)) {
 			throw newException(
-					RemoteSLJobConstants.ERROR_CODE_MISSING_FOR_JOB, name);
+					RemoteSLJobConstants.ERROR_CODE_MISSING_FOR_JOB, f.getAbsolutePath());
 		} else {
-			path.add(new Path(proj, name));
+			path.add(new Path(proj, f.getAbsolutePath()));
 		}
 		return exists;
 	}
