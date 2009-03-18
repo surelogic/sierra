@@ -79,7 +79,14 @@ public class RemoteTool extends AbstractRemoteSLJob {
 		final ITool t = ToolUtil.create(config, false);
 		System.out.println("Java version: " + config.getJavaVersion());
 		System.out.println("Rules file: " + config.getPmdRulesFile());
-
+		/*
+		System.out.println("Classpath: "+System.getProperty("java.class.path"));
+		for(ArtifactType at : t.getArtifactTypes()) {
+			if ("PMD".equals(at.tool) && at.plugin.contains("de.bsd")) {
+				System.out.println("Found "+at.type);
+			}
+		}
+		*/
 		final IToolInstance ti = t.create(config);
 		checkInput(br, mon, "Created tool instance");
 		return ti;
