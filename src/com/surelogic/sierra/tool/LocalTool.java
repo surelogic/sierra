@@ -83,7 +83,7 @@ public class LocalTool extends AbstractTool {
 		LocalInstance(boolean debug, Config c) {
 			super("Sierra tool", ToolUtil.getNumTools(c), 
 					       TestCode.getTestCode(c.getTestCode()), 
-					       c.getMemorySize(), debug && c.isVerbose());
+					       c.getMemorySize(), true || debug && c.isVerbose());
 			config = c;
 		}
 
@@ -320,10 +320,20 @@ public class LocalTool extends AbstractTool {
 				}
 				addPluginToPath(debug, proj, path, id);
 			}
+			
+			addToolPluginJars(debug, proj, path);
+			
 			if (false) {
 				for(String elt : path.list()) {
 					System.out.println("Path: "+elt);
 				}
+			}
+		}
+
+		private void addToolPluginJars(boolean debug, Project proj, Path path) {
+			MultiTool tools = ToolUtil.createTools(config);
+			for(File jar : tools.getRequiredJars()) {
+				addToPath(proj, path, jar, true);			
 			}
 		}
 
@@ -337,6 +347,10 @@ public class LocalTool extends AbstractTool {
 
 		public Set<ArtifactType> getArtifactTypes() {
 			return Collections.emptySet();
+		}
+		
+		public List<File> getRequiredJars() {
+			return Collections.emptyList();
 		}
 
 		public String getHtmlDescription() {

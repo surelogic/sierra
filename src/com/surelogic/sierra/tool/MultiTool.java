@@ -1,5 +1,6 @@
 package com.surelogic.sierra.tool;
 
+import java.io.File;
 import java.net.URI;
 import java.util.*;
 
@@ -23,6 +24,15 @@ public class MultiTool extends AbstractTool implements Iterable<ITool> {
 		Set<ArtifactType> merged = new HashSet<ArtifactType>();
 		for(ITool t : tools) {
 			merged.addAll(t.getArtifactTypes());
+		}
+		return merged;
+	}
+	
+	@Override
+	public List<File> getRequiredJars() {
+		List<File> merged = new ArrayList<File>();
+		for(ITool t : tools) {
+			merged.addAll(t.getRequiredJars());
 		}
 		return merged;
 	}

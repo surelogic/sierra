@@ -1,6 +1,9 @@
 package com.surelogic.sierra.tool;
 
+import java.io.File;
 import java.net.URI;
+import java.util.Collections;
+import java.util.List;
 import java.util.logging.Logger;
 
 import com.surelogic.common.logging.SLLogger;
@@ -71,4 +74,8 @@ public abstract class AbstractTool implements ITool {
   }
   
   protected abstract IToolInstance create(String name, ArtifactGenerator generator, boolean close);
+  
+  public List<File> getRequiredJars() {
+	  return Collections.emptyList();
+  }
 }

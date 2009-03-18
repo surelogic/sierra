@@ -1,5 +1,6 @@
 package com.surelogic.sierra.tool;
 
+import java.io.File;
 import java.util.*;
 
 import com.surelogic.sierra.tool.message.ArtifactGenerator;
@@ -37,6 +38,11 @@ public interface ITool {
    * for db bootstrapping
    */
   Set<ArtifactType> getArtifactTypes();
+  
+  /**
+   * Returns a list of jars required by the tool(s)
+   */
+  List<File> getRequiredJars();
   
   /**
    * Creates an instance of the tool to do one scan

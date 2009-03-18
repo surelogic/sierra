@@ -158,6 +158,10 @@ public abstract class AbstractToolInstance extends AbstractSLJob implements IToo
     return tool.getArtifactTypes();
   }
   
+  public List<File> getRequiredJars() {
+	return tool.getRequiredJars();
+  }
+  
   public final IToolInstance create(final Config config) {
     throw new UnsupportedOperationException("Instances can't create other instances");
   }

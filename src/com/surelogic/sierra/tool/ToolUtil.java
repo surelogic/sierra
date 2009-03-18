@@ -7,6 +7,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.surelogic.common.FileUtility;
 import com.surelogic.common.jobs.*;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.tool.findbugs.*;
@@ -30,7 +31,9 @@ public class ToolUtil {
 		final boolean debug = LOG.isLoggable(Level.FINE);
 		final MultiTool t = new MultiTool(true);
 		if (config.isToolIncluded("findbugs")) {
-			final String fbDir = config.getPluginDir(SierraToolConstants.FB_PLUGIN_ID);
+			//final String fbDir = config.getPluginDir(SierraToolConstants.FB_PLUGIN_ID);
+			final String fbDir = FileUtility.getSierraDataDirectory().getAbsolutePath();
+			AbstractFindBugsTool.init(fbDir);
 			t.addTool(new AbstractFindBugsTool(fbDir, debug));
 		}
 		if (config.isToolIncluded("pmd")) {
@@ -43,11 +46,7 @@ public class ToolUtil {
 		return t;
 	}
 	
-	public static Set<ArtifactType> getArtifactTypes() {
-		// All tools included by default
-		Config config = new Config(); 
-		// FIX not needed?
-		// config.putPluginDir(SierraToolConstants.FB_PLUGIN_ID, ???);
+	public static Set<ArtifactType> getArtifactTypes(Config config) {
 		return createTools(config).getArtifactTypes();
 	}
 	
