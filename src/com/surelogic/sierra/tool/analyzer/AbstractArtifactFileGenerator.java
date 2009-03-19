@@ -13,7 +13,6 @@ import java.text.MessageFormat;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.zip.GZIPOutputStream;
 
 import com.surelogic.common.SLUtility;
 import com.surelogic.common.i18n.I18N;
@@ -36,12 +35,12 @@ import com.surelogic.sierra.tool.message.SourceLocation;
  * 
  * This class generates the run document. It generates 3 separate temporary
  * files and stores the artifacts, errors and config in them. It finally
- * combines all of them with proper xml tags and generates a run doucment.
+ * combines all of them with proper xml tags and generates a run document.
  * 
  * @author Tanmay.Sinha
  * @author Edwin.Chan
  */
-public class AbstractArtifactFileGenerator extends DefaultArtifactGenerator {
+public abstract class AbstractArtifactFileGenerator extends DefaultArtifactGenerator {
 
 	private static final String XML_START = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>";
 	private static final String TOOL_OUTPUT_START = "<toolOutput>";
@@ -64,7 +63,6 @@ public class AbstractArtifactFileGenerator extends DefaultArtifactGenerator {
 
 	private FileOutputStream artOut;
 
-	private final File parsedFile;
 	private final Config config;
 	private File artifactsHolder;
 	private File metricsHolder;
@@ -72,8 +70,7 @@ public class AbstractArtifactFileGenerator extends DefaultArtifactGenerator {
 	private FileOutputStream errOut;
 	private FileOutputStream metricsOut;
 
-	public AbstractArtifactFileGenerator(File parsedFile, Config config) {
-		this.parsedFile = parsedFile;
+	public AbstractArtifactFileGenerator( Config config) {
 		this.config = config;
 
 		try {
@@ -110,6 +107,8 @@ public class AbstractArtifactFileGenerator extends DefaultArtifactGenerator {
 		return new MessageErrorBuilder();
 	}
 
+	protected abstract OutputStream getOutputStream() throws IOException;
+	
 	@Override
 	public void finished(SLProgressMonitor monitor) {
 		monitor.begin(20);
@@ -119,10 +118,8 @@ public class AbstractArtifactFileGenerator extends DefaultArtifactGenerator {
 			metricsOut.close();
 
 			monitor.subTask("Writing header");
-			OutputStream stream = new FileOutputStream(parsedFile);
-			stream = new GZIPOutputStream(stream, 4096);
-			final OutputStreamWriter osw = new OutputStreamWriter(stream,
-					ENCODING);
+			final OutputStream stream = getOutputStream();
+			final OutputStreamWriter osw = new OutputStreamWriter(stream, ENCODING);
 			final PrintWriter finalFile = new PrintWriter(osw);
 			finalFile.write(XML_START);
 			finalFile.write('\n');
