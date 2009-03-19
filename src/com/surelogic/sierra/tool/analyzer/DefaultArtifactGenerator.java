@@ -10,6 +10,9 @@ import com.surelogic.sierra.tool.message.MetricBuilder;
 import com.surelogic.sierra.tool.message.Priority;
 import com.surelogic.sierra.tool.message.Severity;
 
+/**
+ * Does nothing
+ */
 public class DefaultArtifactGenerator implements ArtifactGenerator {
 
 	public ArtifactBuilder artifact() {
