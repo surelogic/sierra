@@ -39,9 +39,9 @@ import com.surelogic.sierra.tool.message.SourceLocation;
  * combines all of them with proper xml tags and generates a run doucment.
  * 
  * @author Tanmay.Sinha
- * 
+ * @author Edwin.Chan
  */
-public class MessageArtifactFileGenerator extends DefaultArtifactGenerator {
+public class AbstractArtifactFileGenerator extends DefaultArtifactGenerator {
 
 	private static final String XML_START = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>";
 	private static final String TOOL_OUTPUT_START = "<toolOutput>";
@@ -72,7 +72,7 @@ public class MessageArtifactFileGenerator extends DefaultArtifactGenerator {
 	private FileOutputStream errOut;
 	private FileOutputStream metricsOut;
 
-	public MessageArtifactFileGenerator(File parsedFile, Config config) {
+	public AbstractArtifactFileGenerator(File parsedFile, Config config) {
 		this.parsedFile = parsedFile;
 		this.config = config;
 
