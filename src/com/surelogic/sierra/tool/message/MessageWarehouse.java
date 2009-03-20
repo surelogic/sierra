@@ -353,10 +353,12 @@ public final class MessageWarehouse {
 	}
 
 	static class XMLStream {
+		final String name;
 		final InputStream stream;
 		final XMLStreamReader xmlr;
 		
 		XMLStream(File runDocument) throws XMLStreamException, IOException {
+			name = runDocument.getName();
 			stream = new FileInputStream(runDocument);
 			
 			// set up a parser
@@ -366,6 +368,20 @@ public final class MessageWarehouse {
 			} else {
 				xmlr = xmlif.createXMLStreamReader(stream);
 			}
+		}
+
+		public XMLStream(String name, InputStream stream) throws XMLStreamException {
+			this.name = name;
+			this.stream = stream;
+			
+			// set up a parser
+			final XMLInputFactory xmlif = XMLInputFactory.newInstance();
+			xmlr = xmlif.createXMLStreamReader(stream);			
+		}
+
+		public void close() throws XMLStreamException, IOException {
+			xmlr.close();
+			stream.close();
 		}
 	}
 	
@@ -377,50 +393,17 @@ public final class MessageWarehouse {
 			}
 
 			final XMLStream xs = new XMLStream(runDocument);
-			final XMLStreamReader xmlr = xs.xmlr;
 			try {
-				try {
-					// move to the root element and check its name.
-					xmlr.nextTag();
-					xmlr.require(START_ELEMENT, null, "scan");
-					xmlr.nextTag(); // move to uid element
-					xmlr.require(START_ELEMENT, null, "uid");
-					generator.uid(unmarshaller.unmarshal(xmlr, String.class)
-							.getValue());
-					xmlr.nextTag(); // move to toolOutput element.
-					xmlr.nextTag(); // move to artifacts (or config, if no
-					// artifacts, errors, or classMetrics)
-					// Count artifacts, so that we can estimate time until
-					// completion
+				parseScanMetadata(xs, generator, monitor);
 
-					while ((xmlr.getEventType() != START_ELEMENT)
-							|| !xmlr.getLocalName().equals("config")) {
-						xmlr.next();
-					}
-
-					readConfig(unmarshaller.unmarshal(xmlr, Config.class)
-							.getValue(), generator);
-
-					if (cancelled(monitor)) {
-						return null;
-					} else {
-						work(monitor);
-					}
-				} catch (final JAXBException e) {
-					/*
-					 * Throwable linked = e.getLinkedException(); while (linked
-					 * instanceof JAXBException) { JAXBException e2 =
-					 * (JAXBException) linked; linked = e2.getLinkedException(); }
-					 * linked.printStackTrace();
-					 */
-					throw new IllegalArgumentException("File with name"
-							+ runDocument.getName()
-							+ " is not a valid document", e);
+				if (cancelled(monitor)) {
+					return null;
 				}
 			} finally {
-				xmlr.close();
-				xs.stream.close();
+				xs.close();
 			}
+			
+			parseScanDocument(new XMLStream(runDocument), generator.build(), monitor);
 		} catch (final FileNotFoundException e) {
 			throw new IllegalArgumentException("File with name "
 					+ runDocument.getName() + " does not exist.", e);
@@ -429,16 +412,55 @@ public final class MessageWarehouse {
 		} catch (final IOException e) {
 			log.severe("Error when trying to read compressed file " + e);
 		}
-
-		parseScanDocument(runDocument, generator.build(), monitor);
-
 		return generator.finished();
 	}
 
-	private void parseScanDocument(final File runDocument,
+	private void parseScanMetadata(final XMLStream xs, ScanGenerator generator,
+			                       SLProgressMonitor monitor) throws XMLStreamException {
+		final XMLStreamReader xmlr = xs.xmlr;
+		try {
+			// move to the root element and check its name.
+			xmlr.nextTag();
+			xmlr.require(START_ELEMENT, null, "scan");
+			xmlr.nextTag(); // move to uid element
+			xmlr.require(START_ELEMENT, null, "uid");
+			generator.uid(unmarshaller.unmarshal(xmlr, String.class)
+					.getValue());
+			xmlr.nextTag(); // move to toolOutput element.
+			xmlr.nextTag(); // move to artifacts (or config, if no
+			// artifacts, errors, or classMetrics)
+			// Count artifacts, so that we can estimate time until
+			// completion
+
+			while ((xmlr.getEventType() != START_ELEMENT)
+					|| !xmlr.getLocalName().equals("config")) {
+				xmlr.next();
+			}
+
+			readConfig(unmarshaller.unmarshal(xmlr, Config.class)
+					.getValue(), generator);
+
+			if (cancelled(monitor)) {
+				return;
+			} else {
+				work(monitor);
+			}
+		} catch (final JAXBException e) {
+			/*
+			 * Throwable linked = e.getLinkedException(); while (linked
+			 * instanceof JAXBException) { JAXBException e2 =
+			 * (JAXBException) linked; linked = e2.getLinkedException(); }
+			 * linked.printStackTrace();
+			 */
+			throw new IllegalArgumentException("File with name"
+					+ xs.name
+					+ " is not a valid document", e);
+		}
+	}	
+	
+	private void parseScanDocument(final XMLStream xs,
 			ArtifactGenerator generator, SLProgressMonitor monitor) {
 		try {
-			final XMLStream xs = new XMLStream(runDocument);
 			final XMLStreamReader xmlr = xs.xmlr;
 			try {
 				if (cancelled(monitor)) {
@@ -562,16 +584,15 @@ public final class MessageWarehouse {
 					}
 				} catch (final JAXBException e) {
 					throw new IllegalArgumentException("File with name"
-							+ runDocument.getName()
+							+ xs.name
 							+ " is not a valid document", e);
 				}
 			} finally {
-				xmlr.close();
-				xs.stream.close();
+				xs.close();
 			}
 		} catch (final FileNotFoundException e) {
 			throw new IllegalArgumentException("File with name"
-					+ runDocument.getName() + " does not exist.", e);
+					+ xs.name + " does not exist.", e);
 		} catch (final XMLStreamException e) {
 			throw new IllegalArgumentException(e);
 		} catch (final IOException e) {
