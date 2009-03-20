@@ -1,6 +1,7 @@
 package com.surelogic.sierra.tool;
 
 import java.io.File;
+import java.util.*;
 
 public final class SierraToolConstants {
 
@@ -38,6 +39,19 @@ public final class SierraToolConstants {
 
 	/** The default extension for run document */
 	public static final String PARSED_FILE_SUFFIX = ".sierra.gz";
+	
+	/** The default extension for zipped run document */
+	public static final String PARSED_ZIP_FILE_SUFFIX = ".sierra.zip";
+	
+	public static final List<String> PARSED_FILE_SUFFIXES;
+	static {
+		List<String> temp = new ArrayList<String>(2);
+		temp.add(PARSED_ZIP_FILE_SUFFIX);
+		temp.add(PARSED_FILE_SUFFIX);
+		PARSED_FILE_SUFFIXES = Collections.unmodifiableList(temp);
+	}
+	
+	public static final boolean USE_ZIP = false;
 
 	/** The complete path for the SierraResults folder */
 	public static final String SIERRA_RESULTS_PATH = System
