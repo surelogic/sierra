@@ -43,6 +43,8 @@ import com.surelogic.sierra.tool.targets.IToolTarget;
 import com.surelogic.sierra.tool.targets.JarTarget;
 import com.surelogic.sierra.tool.targets.ToolTarget;
 
+import static com.surelogic.sierra.tool.SierraToolConstants.*;
+
 /**
  * Utility class for getting configuration objects that are required to run
  * scans, it handles both project and compilation unit configs
@@ -352,7 +354,7 @@ public final class ConfigGenerator {
 	private String computeScanDocumentName(IJavaProject project, boolean partial) {
 		return f_sierraPath + File.separator + project.getProject().getName()
 				+ (partial ? ".partial." : ".") + ToolUtil.getTimeStamp()
-				+ SierraToolConstants.PARSED_FILE_SUFFIX;
+				+ (USE_ZIP ? PARSED_ZIP_FILE_SUFFIX : PARSED_FILE_SUFFIX);
 	}
 
 	private void setupTools(Config config, IJavaProject javaProject) {

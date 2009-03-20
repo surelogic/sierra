@@ -1,5 +1,7 @@
 package com.surelogic.sierra.client.eclipse.actions;
 
+import static com.surelogic.sierra.tool.SierraToolConstants.*;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -64,7 +66,7 @@ public class NewScan extends AbstractScan<IJavaProject> {
 
 					/* Rename the scan document */
 					File scanDocument = config.getScanDocument();
-					File newScanDocument = getScanDocumentFile(config
+					File newScanDocument = generateScanDocumentFile(config
 							.getProject());
 					/*
 					 * This approach assures that the scan document generation
@@ -90,8 +92,19 @@ public class NewScan extends AbstractScan<IJavaProject> {
 		return started;
 	}
 
-	public static File getScanDocumentFile(String project) {
+	public static File generateScanDocumentFile(String project) {
 		return new File(FileUtility.getSierraDataDirectory() + File.separator
-				+ project + SierraToolConstants.PARSED_FILE_SUFFIX);
+				+ project + (USE_ZIP ? PARSED_ZIP_FILE_SUFFIX : PARSED_FILE_SUFFIX));
+	}
+	
+	public static File findScanDocumentFile(String projectName) {
+		for(String suffix : SierraToolConstants.PARSED_FILE_SUFFIXES) {
+			String scanFileName = projectName + suffix;
+			File scanFile = new File(FileUtility.getSierraDataDirectory(), scanFileName);
+			if (scanFile.exists()) {
+				return scanFile;
+			}
+		}
+		return null;
 	}
 }

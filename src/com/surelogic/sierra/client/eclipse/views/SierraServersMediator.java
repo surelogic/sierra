@@ -1049,7 +1049,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 
 					// FIX Check for a full scan (later than what's on the
 					// server?)
-					final File scan = NewScan.getScanDocumentFile(name);
+					final File scan = NewScan.findScanDocumentFile(name);
 					final ScanInfo info = sm.getLatestScanInfo(name);
 					final ProjectDO dbInfo = projectMap.get(name);
 					final String filterName = SettingQueries

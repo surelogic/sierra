@@ -142,17 +142,8 @@ public final class DeleteProjectDataJob implements IRunnableWithProgress {
 		 */
 		for (final String projectName : f_projectNames) {
 			if (projectName != null) {
-				final File scanDocument = new File(FileUtility
-						.getSierraDataDirectory()
-						+ File.separator
-						+ projectName
-						+ SierraToolConstants.PARSED_FILE_SUFFIX);
-				if (scanDocument.exists() && scanDocument.isFile()) {
-					final boolean success = scanDocument.delete();
-					if (!success) {
-						SLLogger.getLogger().warning(
-								I18N.err(11, scanDocument.getAbsolutePath()));
-					}
+				for(String suffix : SierraToolConstants.PARSED_FILE_SUFFIXES) {
+					deleteProjectScanDocument(projectName, suffix);
 				}
 			}
 		}
@@ -170,6 +161,21 @@ public final class DeleteProjectDataJob implements IRunnableWithProgress {
 				}
 			};
 			job.schedule();
+		}
+	}
+
+	private void deleteProjectScanDocument(final String projectName, String suffix) {
+		final File scanDocument = new File(FileUtility
+				.getSierraDataDirectory()
+				+ File.separator
+				+ projectName
+				+ suffix);
+		if (scanDocument.exists() && scanDocument.isFile()) {
+			final boolean success = scanDocument.delete();
+			if (!success) {
+				SLLogger.getLogger().warning(
+						I18N.err(11, scanDocument.getAbsolutePath()));
+			}
 		}
 	}
 }
