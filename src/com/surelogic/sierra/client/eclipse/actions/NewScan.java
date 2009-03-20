@@ -67,7 +67,7 @@ public class NewScan extends AbstractScan<IJavaProject> {
 					/* Rename the scan document */
 					File scanDocument = config.getScanDocument();
 					File newScanDocument = generateScanDocumentFile(config
-							.getProject());
+							.getProject(), scanDocument.getName());
 					/*
 					 * This approach assures that the scan document generation
 					 * will not crash. The tool will simply override the
@@ -92,7 +92,13 @@ public class NewScan extends AbstractScan<IJavaProject> {
 		return started;
 	}
 
-	public static File generateScanDocumentFile(String project) {
+	private static File generateScanDocumentFile(String project, String name) {
+		for(String suffix : SierraToolConstants.PARSED_FILE_SUFFIXES) {
+			if (name.endsWith(suffix)) {
+				return new File(FileUtility.getSierraDataDirectory() + File.separator
+						+ project + suffix);
+			}
+		}
 		return new File(FileUtility.getSierraDataDirectory() + File.separator
 				+ project + (USE_ZIP ? PARSED_ZIP_FILE_SUFFIX : PARSED_FILE_SUFFIX));
 	}
