@@ -12,10 +12,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
-import java.util.Collection;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.zip.GZIPInputStream;
+import java.util.zip.*;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -42,6 +42,9 @@ import com.surelogic.sierra.tool.targets.ToolTarget;
  * 
  */
 public final class MessageWarehouse {
+	public static final String TOOL_STREAM_SUFFIX = ".tool.xml";
+	public static final String CONFIG_STREAM_NAME = "config.xml";
+	
 	private static final Logger log = SLLogger.getLogger(MessageWarehouse.class
 			.getName());
 	private static final MessageWarehouse INSTANCE = new MessageWarehouse();
@@ -414,9 +417,56 @@ public final class MessageWarehouse {
 		}
 		return generator.finished();
 	}
+	
+	public String parseZipScanDocument(final File runDocument,
+			ScanGenerator generator, SLProgressMonitor monitor) {
+		try {			
+			final ZipFile zip = new ZipFile(runDocument);
+			if (monitor != null) {
+				monitor.subTask("Generating Artifacts");
+			}
 
-	private void parseScanMetadata(final XMLStream xs, ScanGenerator generator,
-			                       SLProgressMonitor monitor) throws XMLStreamException {
+			final ZipEntry configEntry = zip.getEntry(CONFIG_STREAM_NAME);
+			final String configName    = runDocument.getName()+File.separatorChar+CONFIG_STREAM_NAME;
+			final XMLStream stream     = new XMLStream(configName, zip.getInputStream(configEntry));
+			Config config = null;
+			try {
+				config = parseScanMetadata(stream, generator, monitor);
+
+				if (cancelled(monitor)) {
+					return null;
+				}
+			} finally {
+				stream.close();
+			}
+			if (config != null) {
+				Enumeration<? extends ZipEntry> entries = zip.entries();
+				while (entries.hasMoreElements()) {
+					final ZipEntry ze  = entries.nextElement();
+					final String name  = ze.getName();
+					if (name.endsWith(TOOL_STREAM_SUFFIX)) {
+						final String tool = name.substring(0, name.length()-TOOL_STREAM_SUFFIX.length());
+						if (config.isToolIncluded(tool)) {
+							final String id    = runDocument.getName()+File.separatorChar+name;
+							final XMLStream xs = new XMLStream(id, zip.getInputStream(ze));
+							parseScanDocument(xs, generator.build(), monitor);
+						}
+					}
+				}
+			}
+		} catch (final FileNotFoundException e) {
+			throw new IllegalArgumentException("File with name "
+					+ runDocument.getName() + " does not exist.", e);
+		} catch (final XMLStreamException e) {
+			throw new IllegalArgumentException(e);
+		} catch (final IOException e) {
+			log.severe("Error when trying to read compressed file " + e);
+		}
+		return generator.finished();
+	}
+
+	private Config parseScanMetadata(final XMLStream xs, ScanGenerator generator,
+			                         SLProgressMonitor monitor) throws XMLStreamException {
 		final XMLStreamReader xmlr = xs.xmlr;
 		try {
 			// move to the root element and check its name.
@@ -437,14 +487,15 @@ public final class MessageWarehouse {
 				xmlr.next();
 			}
 
-			readConfig(unmarshaller.unmarshal(xmlr, Config.class)
-					.getValue(), generator);
+			Config c = unmarshaller.unmarshal(xmlr, Config.class).getValue();
+			readConfig(c, generator);
 
 			if (cancelled(monitor)) {
-				return;
+				return null;
 			} else {
 				work(monitor);
 			}
+			return c;
 		} catch (final JAXBException e) {
 			/*
 			 * Throwable linked = e.getLinkedException(); while (linked
