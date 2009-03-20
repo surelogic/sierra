@@ -17,6 +17,8 @@ import com.surelogic.sierra.tool.message.Config;
 import com.surelogic.sierra.tool.targets.*;
 import com.surelogic.sierra.tool.targets.IToolTarget.Type;
 
+import static com.surelogic.sierra.tool.SierraToolConstants.*;
+
 public class SierraJavacAdapter extends DefaultCompilerAdapter {
 	boolean keepRunning = true;
 
@@ -97,7 +99,7 @@ public class SierraJavacAdapter extends DefaultCompilerAdapter {
 		config.setSourceLevel(scan.getSource());
 		
 		File scanDocument = new File(scan.getDocument() + 
-				                     SierraToolConstants.PARSED_FILE_SUFFIX);
+				                     (USE_ZIP ? PARSED_ZIP_FILE_SUFFIX : PARSED_FILE_SUFFIX));
 		config.setScanDocument(scanDocument);
 		return config;
 	}

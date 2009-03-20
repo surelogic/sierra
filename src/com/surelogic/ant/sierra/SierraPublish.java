@@ -36,13 +36,23 @@ public class SierraPublish extends Task {
 		return s != null && !"".equals(s);
 	}
 
+	private static File findScanFile(String document) {
+		for(String suffix : SierraToolConstants.PARSED_FILE_SUFFIXES) {
+			String scanFileName = document + suffix;
+			File scanFile = new File(scanFileName);
+			if (scanFile.exists()) {
+				return scanFile;
+			}
+		}
+		return null;
+	}
+	
 	@Override
 	public void execute() throws BuildException {
 		if (notEmpty(getHost()) && notEmpty(getContextPath())
 				&& notEmpty(getUser()) && getPassword() != null) {
-			File doc = new File(getDocument()
-					+ SierraToolConstants.PARSED_FILE_SUFFIX);
-			if (doc.exists()) {
+			File doc = findScanFile(getDocument());
+			if (doc != null) {
 				long start = System.currentTimeMillis();
 				uploadRunDocument(doc);
 				long end = System.currentTimeMillis();
