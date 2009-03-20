@@ -390,6 +390,9 @@ public final class MessageWarehouse {
 	
 	public String parseScanDocument(final File runDocument,
 			ScanGenerator generator, SLProgressMonitor monitor) {
+		if (runDocument.getName().endsWith(".zip")) {
+			return parseZipScanDocument(runDocument, generator, monitor);
+		}
 		try {
 			if (monitor != null) {
 				monitor.subTask("Generating Artifacts");
