@@ -352,6 +352,23 @@ public final class MessageWarehouse {
 		return null;
 	}
 
+	static class XMLStream {
+		final InputStream stream;
+		final XMLStreamReader xmlr;
+		
+		XMLStream(File runDocument) throws XMLStreamException, IOException {
+			stream = new FileInputStream(runDocument);
+			
+			// set up a parser
+			final XMLInputFactory xmlif = XMLInputFactory.newInstance();
+			if (runDocument.getName().endsWith(".gz")) {
+				xmlr = xmlif.createXMLStreamReader(new GZIPInputStream(stream));
+			} else {
+				xmlr = xmlif.createXMLStreamReader(stream);
+			}
+		}
+	}
+	
 	public String parseScanDocument(final File runDocument,
 			ScanGenerator generator, SLProgressMonitor monitor) {
 		try {
@@ -359,20 +376,9 @@ public final class MessageWarehouse {
 				monitor.subTask("Generating Artifacts");
 			}
 
-			// set up a parser
-			final XMLInputFactory xmlif = XMLInputFactory.newInstance();
-			XMLStreamReader xmlr;
-
-			final FileInputStream stream = new FileInputStream(runDocument);
-
+			final XMLStream xs = new XMLStream(runDocument);
+			final XMLStreamReader xmlr = xs.xmlr;
 			try {
-				if (runDocument.getName().endsWith(".gz")) {
-					xmlr = xmlif.createXMLStreamReader(new GZIPInputStream(
-							stream));
-				} else {
-					xmlr = xmlif.createXMLStreamReader(stream);
-				}
-
 				try {
 					// move to the root element and check its name.
 					xmlr.nextTag();
@@ -411,10 +417,9 @@ public final class MessageWarehouse {
 							+ runDocument.getName()
 							+ " is not a valid document", e);
 				}
-
-				xmlr.close();
 			} finally {
-				stream.close();
+				xmlr.close();
+				xs.stream.close();
 			}
 		} catch (final FileNotFoundException e) {
 			throw new IllegalArgumentException("File with name "
@@ -433,19 +438,9 @@ public final class MessageWarehouse {
 	private void parseScanDocument(final File runDocument,
 			ArtifactGenerator generator, SLProgressMonitor monitor) {
 		try {
-			// set up a parser
-			final XMLInputFactory xmlif = XMLInputFactory.newInstance();
-			XMLStreamReader xmlr;
-			final InputStream stream = new FileInputStream(runDocument);
-
+			final XMLStream xs = new XMLStream(runDocument);
+			final XMLStreamReader xmlr = xs.xmlr;
 			try {
-				if (runDocument.getName().endsWith(".gz")) {
-					xmlr = xmlif.createXMLStreamReader(new GZIPInputStream(
-							stream));
-				} else {
-					xmlr = xmlif.createXMLStreamReader(stream);
-				}
-
 				if (cancelled(monitor)) {
 					generator.rollback();
 
@@ -570,10 +565,9 @@ public final class MessageWarehouse {
 							+ runDocument.getName()
 							+ " is not a valid document", e);
 				}
-
-				xmlr.close();
 			} finally {
-				stream.close();
+				xmlr.close();
+				xs.stream.close();
 			}
 		} catch (final FileNotFoundException e) {
 			throw new IllegalArgumentException("File with name"
