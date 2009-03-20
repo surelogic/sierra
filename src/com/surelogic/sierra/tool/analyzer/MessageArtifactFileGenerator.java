@@ -17,6 +17,7 @@ import com.surelogic.sierra.tool.message.Config;
  */
 public class MessageArtifactFileGenerator extends AbstractArtifactFileGenerator {
 	private final File parsedFile;
+	private OutputStream stream;
 
 	public MessageArtifactFileGenerator(File parsedFile, Config config) {
 		super(config);
@@ -24,8 +25,17 @@ public class MessageArtifactFileGenerator extends AbstractArtifactFileGenerator 
 	}
 
 	@Override
-	protected OutputStream getOutputStream() throws IOException {
-		OutputStream stream = new FileOutputStream(parsedFile);
-		return new GZIPOutputStream(stream, 4096);
+	protected OutputStream openOutputStream() throws IOException {
+		stream = new FileOutputStream(parsedFile);
+		stream = new GZIPOutputStream(stream, 4096);
+		return stream;
+	}
+	
+	@Override
+	protected void closeOutputStream() throws IOException {
+		//finalFile.close();
+		//osw.close();
+		stream.close();
+		stream = null;
 	}
 }

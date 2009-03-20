@@ -107,7 +107,9 @@ public abstract class AbstractArtifactFileGenerator extends DefaultArtifactGener
 		return new MessageErrorBuilder();
 	}
 
-	protected abstract OutputStream getOutputStream() throws IOException;
+	protected abstract OutputStream openOutputStream() throws IOException;
+	
+	protected abstract void closeOutputStream() throws IOException;
 	
 	@Override
 	public void finished(SLProgressMonitor monitor) {
@@ -118,7 +120,7 @@ public abstract class AbstractArtifactFileGenerator extends DefaultArtifactGener
 			metricsOut.close();
 
 			monitor.subTask("Writing header");
-			final OutputStream stream = getOutputStream();
+			final OutputStream stream = openOutputStream();
 			final OutputStreamWriter osw = new OutputStreamWriter(stream, ENCODING);
 			final PrintWriter finalFile = new PrintWriter(osw);
 			finalFile.write(XML_START);
@@ -130,6 +132,7 @@ public abstract class AbstractArtifactFileGenerator extends DefaultArtifactGener
 			finalFile.write(UUID.randomUUID().toString());
 			finalFile.write(UID_END);
 			finalFile.write('\n');
+			
 			finalFile.write(TOOL_OUTPUT_START);
 			monitor.worked(1);
 
@@ -182,9 +185,7 @@ public abstract class AbstractArtifactFileGenerator extends DefaultArtifactGener
 			configOutput.delete();
 			finalFile.write(RUN_END);
 			finalFile.flush();
-			finalFile.close();
-			osw.close();
-			stream.close();
+			closeOutputStream();
 			monitor.worked(1);
 		} catch (final FileNotFoundException e) {
 			log.log(Level.SEVERE, "Unable to locate the file", e);
