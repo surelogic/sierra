@@ -16,13 +16,17 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.PlatformUI;
 
+import com.surelogic.adhoc.views.ExportQueryDialog;
 import com.surelogic.common.CommonImages;
 import com.surelogic.common.FileUtility;
+import com.surelogic.common.XUtil;
 import com.surelogic.common.eclipse.MemoryUtility;
 import com.surelogic.common.eclipse.SLImages;
+import com.surelogic.common.eclipse.SWTUtility;
 import com.surelogic.common.eclipse.dialogs.ChangeDataDirectoryDialog;
 import com.surelogic.common.eclipse.preferences.AbstractCommonPreferencePage;
 import com.surelogic.common.i18n.I18N;
+import com.surelogic.sierra.client.eclipse.views.adhoc.AdHocDataSource;
 import com.surelogic.sierra.tool.message.Importance;
 
 public class SierraPreferencePage extends AbstractCommonPreferencePage {
@@ -44,9 +48,9 @@ public class SierraPreferencePage extends AbstractCommonPreferencePage {
 	}
 
 	@Override
-	protected Control createContents(Composite parent) {
+	protected Control createContents(final Composite parent) {
 		final Composite panel = new Composite(parent, SWT.NONE);
-		GridLayout grid = new GridLayout();
+		final GridLayout grid = new GridLayout();
 		panel.setLayout(grid);
 
 		final Group dataGroup = new Group(panel, SWT.NONE);
@@ -66,7 +70,7 @@ public class SierraPreferencePage extends AbstractCommonPreferencePage {
 		change.setLayoutData(new GridData(SWT.DEFAULT, SWT.DEFAULT, false,
 				false));
 		change.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event event) {
+			public void handleEvent(final Event event) {
 				ChangeDataDirectoryDialog
 						.open(
 								change.getShell(),
@@ -181,7 +185,7 @@ public class SierraPreferencePage extends AbstractCommonPreferencePage {
 		f_toolMemoryMB.load();
 		f_toolMemoryMB.getScaleControl().addListener(SWT.Selection,
 				new Listener() {
-					public void handleEvent(Event event) {
+					public void handleEvent(final Event event) {
 						updateMBInLabel();
 					}
 				});
@@ -209,7 +213,18 @@ public class SierraPreferencePage extends AbstractCommonPreferencePage {
 		 */
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,
 				"com.surelogic.sierra.client.eclipse.preferences-sierra");
-
+		if (XUtil.useExperimental()) {
+			final Button exportButton = new Button(parent, SWT.PUSH);
+			exportButton.setText("Export New Queries File");
+			exportButton.setLayoutData(new GridData(SWT.DEFAULT, SWT.DEFAULT,
+					false, false));
+			exportButton.addListener(SWT.Selection, new Listener() {
+				public void handleEvent(final Event event) {
+					new ExportQueryDialog(SWTUtility.getShell(),
+							AdHocDataSource.getManager()).open();
+				}
+			});
+		}
 		return panel;
 	}
 

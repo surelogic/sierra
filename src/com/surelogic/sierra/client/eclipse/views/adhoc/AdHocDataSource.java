@@ -73,7 +73,8 @@ public final class AdHocDataSource extends AdHocManagerAdapter implements
 	}
 
 	public URL getDefaultQueryUrl() {
-		return null;
+		return Thread.currentThread().getContextClassLoader().getResource(
+				"/com/surelogic/sierra/schema/default-sierra-queries.xml");
 	}
 
 	public static AdHocManager getManager() {
