@@ -5,13 +5,14 @@ import java.net.*;
 import java.util.*;
 
 import com.surelogic.common.jobs.*;
+import com.surelogic.sierra.tool.analyzer.ILazyArtifactGenerator;
 import com.surelogic.sierra.tool.message.ArtifactGenerator;
 import com.surelogic.sierra.tool.message.Config;
 import com.surelogic.sierra.tool.targets.IToolTarget;
 
 public abstract class AbstractToolInstance extends AbstractSLJob implements IToolInstance {
   private final ITool tool;
-  protected final ArtifactGenerator generator;  
+  protected final ILazyArtifactGenerator genHandle;  
   private final List<IToolTarget> srcTargets = new ArrayList<IToolTarget>();
   private final List<IToolTarget> binTargets = new ArrayList<IToolTarget>();
   private final List<IToolTarget> auxTargets = new ArrayList<IToolTarget>();
@@ -21,11 +22,12 @@ public abstract class AbstractToolInstance extends AbstractSLJob implements IToo
   private final Map<String,String> options = new HashMap<String,String>();
   protected final boolean debug;
   protected final SLStatus.Builder status = new SLStatus.Builder();
+  protected ArtifactGenerator generator = null;
   
-  protected AbstractToolInstance(boolean debug, ITool t, ArtifactGenerator gen, boolean close) {
+  protected AbstractToolInstance(boolean debug, ITool t, ILazyArtifactGenerator gen, boolean close) {
 	super(t.getName()); // FIX is this the right name?
     tool = t;
-    generator = gen;
+    genHandle = gen;
     closeWhenDone = close;
     this.debug = debug;
   }
@@ -97,6 +99,8 @@ public abstract class AbstractToolInstance extends AbstractSLJob implements IToo
     		System.out.println("Auxiliary: "+t.getLocation());
     	}
     }
+    generator = genHandle.create(tool);
+    
     try {
       status.addChild(execute(monitor));
     }
@@ -110,7 +114,12 @@ public abstract class AbstractToolInstance extends AbstractSLJob implements IToo
 
     if (closeWhenDone) {
       generator.finished(monitor);
+      genHandle.finished();
     }
+    else if (genHandle.closeWhenDone()) {
+      generator.finished(monitor);
+    }
+    generator = null;
     return status.build();
   }
 
@@ -166,7 +175,7 @@ public abstract class AbstractToolInstance extends AbstractSLJob implements IToo
     throw new UnsupportedOperationException("Instances can't create other instances");
   }
   
-  public final IToolInstance create(String name, ArtifactGenerator generator) {
+  public final IToolInstance create(String name, ILazyArtifactGenerator generator) {
     throw new UnsupportedOperationException("Instances can't create other instances");
   }
   

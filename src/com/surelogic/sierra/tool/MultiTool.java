@@ -5,6 +5,7 @@ import java.net.URI;
 import java.util.*;
 
 import com.surelogic.common.jobs.*;
+import com.surelogic.sierra.tool.analyzer.ILazyArtifactGenerator;
 import com.surelogic.sierra.tool.message.ArtifactGenerator;
 import com.surelogic.sierra.tool.targets.IToolTarget;
 
@@ -37,7 +38,8 @@ public class MultiTool extends AbstractTool implements Iterable<ITool> {
 		return merged;
 	}
 
-	protected IToolInstance create(String name, ArtifactGenerator generator,
+	@Override
+	protected IToolInstance create(String name, ILazyArtifactGenerator generator,
 			boolean close) {
 		return new Instance(debug, this, name, generator, close);
 	}
@@ -52,11 +54,11 @@ public class MultiTool extends AbstractTool implements Iterable<ITool> {
 		private final List<IToolInstance> instances = new ArrayList<IToolInstance>();
 		private IToolInstance first = null;
 
-		private final ArtifactGenerator generator;
+		private final ILazyArtifactGenerator genHandle;
 		private final boolean closeWhenDone;
 
 		Instance(boolean debug, MultiTool mt, String name,
-				 ArtifactGenerator gen, boolean close) {
+				 ILazyArtifactGenerator gen, boolean close) {
 			super(debug);
 			for (ITool tool : mt.tools) {
 				this.tools.add(tool);
@@ -67,7 +69,7 @@ public class MultiTool extends AbstractTool implements Iterable<ITool> {
 					first = i;
 				}
 			}
-			generator = gen;
+			genHandle = gen;
 			closeWhenDone = close;
 		}
 
@@ -95,7 +97,9 @@ public class MultiTool extends AbstractTool implements Iterable<ITool> {
 				} else {
 					SLJob j = new AbstractSLJob("Closing results file") {
 						public SLStatus run(SLProgressMonitor monitor) {
+							ArtifactGenerator generator = genHandle.create(Instance.this);
 							generator.finished(monitor);
+							genHandle.finished();
 							return SLStatus.OK_STATUS;
 						}
 

@@ -11,7 +11,7 @@ import com.surelogic.sierra.tool.message.Config;
  * 
  * @author Edwin.Chan
  */
-public class MessageArtifactZipFileGenerator extends AbstractArtifactFileGenerator {
+class MessageArtifactZipFileGenerator extends AbstractArtifactFileGenerator {
 	private final ZipOutputStream zip;
 	private final String name;
 

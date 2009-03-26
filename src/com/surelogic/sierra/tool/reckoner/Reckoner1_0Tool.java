@@ -16,7 +16,7 @@ import com.surelogic.sierra.tool.AbstractTool;
 import com.surelogic.sierra.tool.AbstractToolInstance;
 import com.surelogic.sierra.tool.ArtifactType;
 import com.surelogic.sierra.tool.IToolInstance;
-import com.surelogic.sierra.tool.message.ArtifactGenerator;
+import com.surelogic.sierra.tool.analyzer.ILazyArtifactGenerator;
 import com.surelogic.sierra.tool.message.MetricBuilder;
 
 public class Reckoner1_0Tool extends AbstractTool {
@@ -28,7 +28,7 @@ public class Reckoner1_0Tool extends AbstractTool {
     return Collections.emptySet();
   }
   
-	protected IToolInstance create(String name, final ArtifactGenerator generator,
+	protected IToolInstance create(String name, final ILazyArtifactGenerator generator,
 			boolean close) {
     return new AbstractToolInstance(debug, this, generator, close) {
       @Override

@@ -7,8 +7,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import com.surelogic.common.logging.SLLogger;
-import com.surelogic.sierra.tool.analyzer.MessageArtifactFileGenerator;
-import com.surelogic.sierra.tool.message.ArtifactGenerator;
+import com.surelogic.sierra.tool.analyzer.*;
 import com.surelogic.sierra.tool.message.Config;
 import com.surelogic.sierra.tool.targets.ToolTarget;
 
@@ -62,18 +61,23 @@ public abstract class AbstractTool implements ITool {
   }
 
   public IToolInstance create(Config config) {
-    ArtifactGenerator generator = 
-      new MessageArtifactFileGenerator(config.getScanDocument(), config);
+	File doc = config.getScanDocument();	
+	ILazyArtifactGenerator generator;
+    if (doc.getName().endsWith(SierraToolConstants.PARSED_ZIP_FILE_SUFFIX)) {
+      generator = new LazyZipArtifactGenerator(config);
+    } else {
+      generator = new MessageArtifactFileGenerator(doc, config);
+    }
     IToolInstance ti =  create(config.getProject(), generator, true);
     setupToolForProject(ti, config);
     return ti;
   }
   
-  public IToolInstance create(String name, ArtifactGenerator generator) {
+  public IToolInstance create(String name, ILazyArtifactGenerator generator) {
     return create(name, generator, false);
   }
   
-  protected abstract IToolInstance create(String name, ArtifactGenerator generator, boolean close);
+  protected abstract IToolInstance create(String name, ILazyArtifactGenerator generator, boolean close);
   
   public List<File> getRequiredJars() {
 	  return Collections.emptyList();

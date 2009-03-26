@@ -3,6 +3,8 @@ package com.surelogic.sierra.tool.analyzer;
 import java.io.*;
 import java.util.zip.GZIPOutputStream;
 
+import com.surelogic.sierra.tool.ITool;
+import com.surelogic.sierra.tool.message.ArtifactGenerator;
 import com.surelogic.sierra.tool.message.Config;
 
 /**
@@ -15,7 +17,8 @@ import com.surelogic.sierra.tool.message.Config;
  * @author Tanmay.Sinha
  * 
  */
-public class MessageArtifactFileGenerator extends AbstractArtifactFileGenerator {
+public class MessageArtifactFileGenerator extends AbstractArtifactFileGenerator
+implements ILazyArtifactGenerator {
 	private final File parsedFile;
 	private OutputStream stream;
 
@@ -37,5 +40,19 @@ public class MessageArtifactFileGenerator extends AbstractArtifactFileGenerator 
 		//osw.close();
 		stream.close();
 		stream = null;
+	}
+
+	public ArtifactGenerator create(ITool tool) {
+		// Ok to return itself
+		// since it doesn't need to be specialized to a particular tool
+		return this;
+	}
+
+	public boolean closeWhenDone() {
+		return false;
+	}
+	
+	public void finished() {
+		// Nothing extra to do
 	}
 }

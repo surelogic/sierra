@@ -3,7 +3,7 @@ package com.surelogic.sierra.tool;
 import java.io.File;
 import java.util.*;
 
-import com.surelogic.sierra.tool.message.ArtifactGenerator;
+import com.surelogic.sierra.tool.analyzer.ILazyArtifactGenerator;
 import com.surelogic.sierra.tool.message.Config;
 
 /**
@@ -52,5 +52,5 @@ public interface ITool {
   /**
    * Creates an instance of the tool to do one scan
    */
-  IToolInstance create(String name, ArtifactGenerator generator);
+  IToolInstance create(String name, ILazyArtifactGenerator generator);
 }

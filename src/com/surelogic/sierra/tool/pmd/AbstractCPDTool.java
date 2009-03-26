@@ -13,6 +13,7 @@ import com.surelogic.sierra.tool.AbstractTool;
 import com.surelogic.sierra.tool.AbstractToolInstance;
 import com.surelogic.sierra.tool.ArtifactType;
 import com.surelogic.sierra.tool.IToolInstance;
+import com.surelogic.sierra.tool.analyzer.ILazyArtifactGenerator;
 import com.surelogic.sierra.tool.message.ArtifactGenerator;
 import com.surelogic.sierra.tool.message.IdentifierType;
 import com.surelogic.sierra.tool.message.Priority;
@@ -31,7 +32,7 @@ public abstract class AbstractCPDTool extends AbstractTool {
 	}
 	
 	@Override
-	protected IToolInstance create(String name, ArtifactGenerator generator, boolean close) {
+	protected IToolInstance create(String name, ILazyArtifactGenerator generator, boolean close) {
 		return new AbstractToolInstance(debug, this, generator, close) {
 			@Override
 			protected SLStatus execute(SLProgressMonitor monitor)

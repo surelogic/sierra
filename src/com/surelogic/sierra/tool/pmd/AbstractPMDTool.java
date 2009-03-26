@@ -26,6 +26,7 @@ import com.surelogic.common.jobs.SLStatus;
 import com.surelogic.common.xml.Entities;
 import com.surelogic.sierra.tool.*;
 import com.surelogic.sierra.tool.ArtifactType;
+import com.surelogic.sierra.tool.analyzer.ILazyArtifactGenerator;
 import com.surelogic.sierra.tool.message.*;
 import com.surelogic.sierra.tool.message.ArtifactGenerator.*;
 import com.surelogic.sierra.tool.targets.IToolTarget;
@@ -332,7 +333,7 @@ public class AbstractPMDTool extends AbstractTool {
 		return jars;
 	}
 	
-	protected final IToolInstance create(String name, final ArtifactGenerator generator,
+	protected final IToolInstance create(String name, final ILazyArtifactGenerator generator,
 			boolean close) {
 		return new AbstractToolInstance(debug, this, generator, close) {
 			@Override
