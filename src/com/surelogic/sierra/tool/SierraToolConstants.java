@@ -52,6 +52,7 @@ public final class SierraToolConstants {
 	}
 	
 	public static final boolean USE_ZIP = false;
+	public static final boolean CREATE_ZIP_DIRECTLY = false;
 
 	/** The complete path for the SierraResults folder */
 	public static final String SIERRA_RESULTS_PATH = System

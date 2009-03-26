@@ -64,7 +64,11 @@ public abstract class AbstractTool implements ITool {
 	File doc = config.getScanDocument();	
 	ILazyArtifactGenerator generator;
     if (doc.getName().endsWith(SierraToolConstants.PARSED_ZIP_FILE_SUFFIX)) {
-      generator = new LazyZipArtifactGenerator(config);
+      if (SierraToolConstants.CREATE_ZIP_DIRECTLY) {
+    	generator = new LazyZipArtifactGenerator(config);
+      } else {
+    	generator = new LazyZipDirArtifactGenerator(config);  
+      }
     } else {
       generator = new MessageArtifactFileGenerator(doc, config);
     }
