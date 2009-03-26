@@ -403,9 +403,13 @@ public class AbstractFindBugsTool extends AbstractTool {
 		}
 
 		public void reportMissingClass(ClassNotFoundException ex) {
-			if (handleWarning(ex.getMessage())) {
+			String msg = ex.getMessage();
+			if (msg == null) {
+				msg = ex.toString();
+			}
+			if (handleWarning(msg)) {
 				// LOG.log(Level.WARNING, "Missing class", ex);
-				tool.reportWarning(ex.getMessage());
+				tool.reportWarning(msg);
 			}
 		}
 

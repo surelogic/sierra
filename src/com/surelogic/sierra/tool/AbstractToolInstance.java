@@ -124,6 +124,9 @@ public abstract class AbstractToolInstance extends AbstractSLJob implements IToo
   }
 
   public final void reportWarning(String msg) {
+	  if (msg == null) {
+		  msg = "Null message";
+	  }
 	  generator.error().message(msg).tool(getName());
 	  status.addChild(SLStatus.createWarningStatus(-1, msg));  
   }
