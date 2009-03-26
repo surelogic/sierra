@@ -20,17 +20,25 @@ import com.surelogic.sierra.tool.message.Config;
 public class MessageArtifactFileGenerator extends AbstractArtifactFileGenerator
 implements ILazyArtifactGenerator {
 	private final File parsedFile;
+	private final boolean compress;
 	private OutputStream stream;
-
-	public MessageArtifactFileGenerator(File parsedFile, Config config) {
+	
+	public MessageArtifactFileGenerator(File parsedFile, Config config, boolean compress) {
 		super(config);
 		this.parsedFile = parsedFile;
+		this.compress = compress;
+	}
+	
+	public MessageArtifactFileGenerator(File parsedFile, Config config) {
+		this(parsedFile, config, true);
 	}
 
 	@Override
 	protected OutputStream openOutputStream() throws IOException {
 		stream = new FileOutputStream(parsedFile);
-		stream = new GZIPOutputStream(stream, 4096);
+		if (compress) {
+			stream = new GZIPOutputStream(stream, 4096);
+		}
 		return stream;
 	}
 	
