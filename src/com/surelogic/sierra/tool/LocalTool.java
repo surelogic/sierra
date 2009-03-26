@@ -84,7 +84,7 @@ public class LocalTool extends AbstractTool {
 		LocalInstance(boolean debug, Config c) {
 			super("Sierra tool", ToolUtil.getNumTools(c), 
 					       TestCode.getTestCode(c.getTestCode()), 
-					       c.getMemorySize(), true || debug && c.isVerbose());
+					       c.getMemorySize(), /*true ||*/ debug && c.isVerbose());
 			config = c;
 		}
 
