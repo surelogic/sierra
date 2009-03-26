@@ -443,7 +443,8 @@ public final class MessageWarehouse {
 				stream.close();
 			}
 			if (config != null) {
-				Enumeration<? extends ZipEntry> entries = zip.entries();
+				final ArtifactGenerator ag = generator.build();
+				final Enumeration<? extends ZipEntry> entries = zip.entries();
 				while (entries.hasMoreElements()) {
 					final ZipEntry ze  = entries.nextElement();
 					final String name  = ze.getName();
@@ -452,7 +453,7 @@ public final class MessageWarehouse {
 						if (config.isToolIncluded(tool)) {
 							final String id    = runDocument.getName()+File.separatorChar+name;
 							final XMLStream xs = new XMLStream(id, zip.getInputStream(ze));
-							parseScanDocument(xs, generator.build(), monitor);
+							parseScanDocument(xs, ag, monitor);
 						}
 					}
 				}
@@ -463,7 +464,7 @@ public final class MessageWarehouse {
 		} catch (final XMLStreamException e) {
 			throw new IllegalArgumentException(e);
 		} catch (final IOException e) {
-			log.severe("Error when trying to read compressed file " + e);
+			log.log(Level.SEVERE, "Error when trying to read compressed file", e);
 		}
 		return generator.finished();
 	}
