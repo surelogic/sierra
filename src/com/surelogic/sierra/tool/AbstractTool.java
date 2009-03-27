@@ -4,6 +4,7 @@ import java.io.File;
 import java.net.URI;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.surelogic.common.logging.SLLogger;
@@ -32,16 +33,18 @@ public abstract class AbstractTool implements ITool {
   private final String title;
   private final String version;
   protected final boolean debug;
-
+  protected final Config config;
+  
   /**
    * Perhaps this should read from a file
    */
-  protected AbstractTool(String name, String version, String title, String desc, boolean debug) {
+  protected AbstractTool(String name, String version, String title, String desc, Config config) {
     this.name = name;
     this.version = version;
     this.title = title;
     this.description = desc;
-    this.debug = debug;
+    this.config = config;
+    debug = LOG.isLoggable(Level.FINE);
   }
 
   public final String getHtmlDescription() {
@@ -60,7 +63,7 @@ public abstract class AbstractTool implements ITool {
     return version;
   }
 
-  public IToolInstance create(Config config) {
+  public IToolInstance create() {
 	File doc = config.getScanDocument();	
 	ILazyArtifactGenerator generator;
     if (doc.getName().endsWith(SierraToolConstants.PARSED_ZIP_FILE_SUFFIX)) {

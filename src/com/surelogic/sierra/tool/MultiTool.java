@@ -7,14 +7,14 @@ import java.util.*;
 import com.surelogic.common.jobs.*;
 import com.surelogic.sierra.tool.analyzer.ILazyArtifactGenerator;
 import com.surelogic.sierra.tool.message.ArtifactGenerator;
+import com.surelogic.sierra.tool.message.Config;
 import com.surelogic.sierra.tool.targets.IToolTarget;
 
 public class MultiTool extends AbstractTool implements Iterable<ITool> {
 	protected List<ITool> tools = new ArrayList<ITool>();
 
-	public MultiTool(boolean debug) {
-		super("MultiTool", "1.0", "MultiTool", "A container for other tools",
-				debug);
+	public MultiTool(Config config) {
+		super("MultiTool", "1.0", "MultiTool", "A container for other tools", config);
 	}
 
 	public Iterator<ITool> iterator() {
@@ -41,7 +41,7 @@ public class MultiTool extends AbstractTool implements Iterable<ITool> {
 	@Override
 	protected IToolInstance create(String name, ILazyArtifactGenerator generator,
 			boolean close) {
-		return new Instance(debug, this, name, generator, close);
+		return new Instance(config, this, name, generator, close);
 	}
 
 	public void addTool(ITool t) {
@@ -57,9 +57,9 @@ public class MultiTool extends AbstractTool implements Iterable<ITool> {
 		private final ILazyArtifactGenerator genHandle;
 		private final boolean closeWhenDone;
 
-		Instance(boolean debug, MultiTool mt, String name,
+		Instance(Config config, MultiTool mt, String name,
 				 ILazyArtifactGenerator gen, boolean close) {
-			super(debug);
+			super(config);
 			for (ITool tool : mt.tools) {
 				this.tools.add(tool);
 

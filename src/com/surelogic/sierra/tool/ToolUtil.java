@@ -20,28 +20,26 @@ public class ToolUtil {
 	protected static final Logger LOG = SLLogger.getLogger("sierra");
 
 	public static ITool create(Config config, boolean runRemotely) {
-		final boolean debug = LOG.isLoggable(Level.FINE);
 		if (runRemotely) {
-			return new LocalTool(debug);
+			return new LocalTool(config);
 		}
 		return createTools(config);
 	}
 		
 	public static MultiTool createTools(Config config) {
-		final boolean debug = LOG.isLoggable(Level.FINE);
-		final MultiTool t = new MultiTool(true);
+		final MultiTool t = new MultiTool(config);
 		if (config.isToolIncluded("findbugs")) {
 			//final String fbDir = config.getPluginDir(SierraToolConstants.FB_PLUGIN_ID);
 			final String fbDir = FileUtility.getSierraDataDirectory().getAbsolutePath();
 			AbstractFindBugsTool.init(fbDir);
-			t.addTool(new AbstractFindBugsTool(fbDir, debug));
+			t.addTool(new AbstractFindBugsTool(fbDir, config));
 		}
 		if (config.isToolIncluded("pmd")) {
-			t.addTool(new AbstractPMDTool(debug));
-			t.addTool(new CPD4_1Tool(debug));
+			t.addTool(new AbstractPMDTool(config));
+			t.addTool(new CPD4_1Tool(config));
 		}
 		if (config.isToolIncluded("reckoner")) {
-			t.addTool(new Reckoner1_0Tool(debug));
+			t.addTool(new Reckoner1_0Tool(config));
 		}
 		return t;
 	}
@@ -74,7 +72,7 @@ public class ToolUtil {
 			LOG.fine("Java version: " + config.getJavaVersion());
 			LOG.fine("Rules file: " + config.getPmdRulesFile());
 		}
-		IToolInstance ti = t.create(config);
+		IToolInstance ti = t.create();
 		if (fineIsLoggable) {
 			LOG.fine("Created " + ti.getClass().getSimpleName());
 		}

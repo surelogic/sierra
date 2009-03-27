@@ -15,6 +15,7 @@ import com.surelogic.sierra.tool.ArtifactType;
 import com.surelogic.sierra.tool.IToolInstance;
 import com.surelogic.sierra.tool.analyzer.ILazyArtifactGenerator;
 import com.surelogic.sierra.tool.message.ArtifactGenerator;
+import com.surelogic.sierra.tool.message.Config;
 import com.surelogic.sierra.tool.message.IdentifierType;
 import com.surelogic.sierra.tool.message.Priority;
 import com.surelogic.sierra.tool.message.Severity;
@@ -23,8 +24,8 @@ import com.surelogic.sierra.tool.message.ArtifactGenerator.SourceLocationBuilder
 import com.surelogic.sierra.tool.targets.*;
 
 public abstract class AbstractCPDTool extends AbstractTool {
-	public AbstractCPDTool(String version, boolean debug) {
-		super("CPD", version, "CPD", "", debug);
+	public AbstractCPDTool(String version, Config config) {
+		super("CPD", version, "CPD", "", config);
 	}
 
 	public Set<ArtifactType> getArtifactTypes() {

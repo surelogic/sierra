@@ -35,8 +35,8 @@ public class AbstractFindBugsTool extends AbstractTool {
 		};
 	}
 	
-	public AbstractFindBugsTool(String fbDir, boolean debug) {		
-		super("FindBugs", "1.3.7"/*Version.RELEASE_BASE*/, "FindBugs (TM)", "", debug);
+	public AbstractFindBugsTool(String fbDir, Config config) {		
+		super("FindBugs", "1.3.7"/*Version.RELEASE_BASE*/, "FindBugs (TM)", "", config);
 	}
 	
 	public final Set<ArtifactType> getArtifactTypes() {

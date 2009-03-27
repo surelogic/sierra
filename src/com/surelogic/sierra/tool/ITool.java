@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.*;
 
 import com.surelogic.sierra.tool.analyzer.ILazyArtifactGenerator;
-import com.surelogic.sierra.tool.message.Config;
 
 /**
  * API for querying the tools about what they are,
@@ -47,7 +46,7 @@ public interface ITool {
   /**
    * Creates an instance of the tool to do one scan
    */
-  IToolInstance create(Config config);
+  IToolInstance create();
   
   /**
    * Creates an instance of the tool to do one scan

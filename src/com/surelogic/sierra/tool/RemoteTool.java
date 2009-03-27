@@ -87,7 +87,7 @@ public class RemoteTool extends AbstractRemoteSLJob {
 			}
 		}
 		*/
-		final IToolInstance ti = t.create(config);
+		final IToolInstance ti = t.create();
 		checkInput(br, mon, "Created tool instance");
 		return ti;
 	}

@@ -17,11 +17,12 @@ import com.surelogic.sierra.tool.AbstractToolInstance;
 import com.surelogic.sierra.tool.ArtifactType;
 import com.surelogic.sierra.tool.IToolInstance;
 import com.surelogic.sierra.tool.analyzer.ILazyArtifactGenerator;
+import com.surelogic.sierra.tool.message.Config;
 import com.surelogic.sierra.tool.message.MetricBuilder;
 
 public class Reckoner1_0Tool extends AbstractTool {
-  public Reckoner1_0Tool(boolean debug) {
-    super("Reckoner", "1.0", "Reckoner", "", debug);
+  public Reckoner1_0Tool(Config config) {
+    super("Reckoner", "1.0", "Reckoner", "", config);
   }
 
   public Set<ArtifactType> getArtifactTypes() {

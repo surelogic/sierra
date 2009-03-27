@@ -52,9 +52,9 @@ public class LocalTool extends AbstractTool {
 		}
 	}
 
-	public LocalTool(boolean debug) {
+	public LocalTool(Config config) {
 		super("Local", "1.0", "Local",
-				"Local tool for running other tools in another JVM", debug);
+				"Local tool for running other tools in another JVM", config);
 	}
 
 	public Set<ArtifactType> getArtifactTypes() {
@@ -62,8 +62,8 @@ public class LocalTool extends AbstractTool {
 	}
 
 	@Override
-	public IToolInstance create(final Config config) {
-		return new LocalInstance(debug, config);
+	public IToolInstance create() {
+		return new LocalInstance(debug);
 	}
 
 	public IToolInstance create(String name, ILazyArtifactGenerator generator) {
@@ -79,13 +79,10 @@ public class LocalTool extends AbstractTool {
 
 	private class LocalInstance extends AbstractLocalSLJob implements
 			IToolInstance {
-		final Config config;
-
-		LocalInstance(boolean debug, Config c) {
-			super("Sierra tool", ToolUtil.getNumTools(c), 
-					       TestCode.getTestCode(c.getTestCode()), 
-					       c.getMemorySize(), /*true ||*/ debug && c.isVerbose());
-			config = c;
+		LocalInstance(boolean debug) {
+			super("Sierra tool", ToolUtil.getNumTools(config), 
+					       TestCode.getTestCode(config.getTestCode()), 
+					       config.getMemorySize(), /*true ||*/ debug && config.isVerbose());
 		}
 
 		protected RemoteSLJobException newException(int number, Object... args) {
@@ -338,7 +335,7 @@ public class LocalTool extends AbstractTool {
 			}
 		}
 
-		public IToolInstance create(Config config) {
+		public IToolInstance create() {
 			throw new UnsupportedOperationException();
 		}
 

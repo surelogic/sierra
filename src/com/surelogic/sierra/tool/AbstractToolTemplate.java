@@ -2,6 +2,7 @@ package com.surelogic.sierra.tool;
 
 import com.surelogic.common.jobs.*;
 import com.surelogic.sierra.tool.analyzer.ILazyArtifactGenerator;
+import com.surelogic.sierra.tool.message.Config;
 
 /**
  * Template for AbstractTool implementations
@@ -9,8 +10,8 @@ import com.surelogic.sierra.tool.analyzer.ILazyArtifactGenerator;
  * @author Edwin.Chan
  */
 public abstract class AbstractToolTemplate extends AbstractTool {
-  public AbstractToolTemplate(String version, boolean debug) {
-    super("", version, "", "", debug);
+  public AbstractToolTemplate(String version, Config config) {
+    super("", version, "", "", config);
   }
 
   @Override

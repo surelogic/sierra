@@ -7,7 +7,6 @@ import java.util.*;
 import com.surelogic.common.jobs.*;
 import com.surelogic.sierra.tool.analyzer.ILazyArtifactGenerator;
 import com.surelogic.sierra.tool.message.ArtifactGenerator;
-import com.surelogic.sierra.tool.message.Config;
 import com.surelogic.sierra.tool.targets.IToolTarget;
 
 public abstract class AbstractToolInstance extends AbstractSLJob implements IToolInstance {
@@ -174,7 +173,7 @@ public abstract class AbstractToolInstance extends AbstractSLJob implements IToo
 	return tool.getRequiredJars();
   }
   
-  public final IToolInstance create(final Config config) {
+  public final IToolInstance create() {
     throw new UnsupportedOperationException("Instances can't create other instances");
   }
   
