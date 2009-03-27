@@ -67,14 +67,12 @@ public class LocalTool extends AbstractTool {
 	}
 
 	public IToolInstance create(String name, ILazyArtifactGenerator generator) {
-		throw new UnsupportedOperationException(
-				"Generators can't be sent remotely");
+		return new LocalInstance(debug);
 	}
 
 	protected IToolInstance create(String name, ILazyArtifactGenerator generator,
 			boolean close) {
-		throw new UnsupportedOperationException(
-				"Generators can't be sent remotely");
+		return new LocalInstance(debug);
 	}
 
 	private class LocalInstance extends AbstractLocalSLJob implements
@@ -90,7 +88,9 @@ public class LocalTool extends AbstractTool {
 		}
 		
 		public void addTarget(IToolTarget target) {
-			config.addTarget((ToolTarget) target);
+			if (verbose) {
+				System.out.println("Currently ignoring, since already in config: "+ target.getLocation());
+			}
 		}
 
 		public void addToClassPath(URI loc) {
@@ -113,8 +113,9 @@ public class LocalTool extends AbstractTool {
 		}
 
 		public void setOption(String key, String option) {
-			System.out.println("Currently ignoring, since already in config: "
-					+ key);
+			if (verbose) {
+				System.out.println("Currently ignoring, since already in config: "+ key);
+			}
 		}
 
 		@SuppressWarnings("unused")

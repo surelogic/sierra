@@ -72,7 +72,8 @@ public abstract class AbstractTool implements ITool {
 				generator = new LazyZipDirArtifactGenerator(config);  
 			}
 		} else {
-			generator = new MessageArtifactFileGenerator(doc, config);
+			final boolean compress = doc.getName().endsWith(SierraToolConstants.PARSED_FILE_SUFFIX);
+			generator = new MessageArtifactFileGenerator(doc, config, compress);
 		}
 		IToolInstance ti =  create(config.getProject(), generator, true);
 		setupToolForProject(ti, config);

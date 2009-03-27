@@ -50,6 +50,10 @@ public class MultiTool extends AbstractTool implements Iterable<ITool> {
 		}
 	}
 
+	public int size() {
+		return tools.size();
+	}
+	
 	private static class Instance extends MultiTool implements IToolInstance {
 		private final List<IToolInstance> instances = new ArrayList<IToolInstance>();
 		private IToolInstance first = null;

@@ -51,8 +51,9 @@ public final class SierraToolConstants {
 		PARSED_FILE_SUFFIXES = Collections.unmodifiableList(temp);
 	}
 	
-	public static final boolean USE_ZIP = false;
-	public static final boolean CREATE_ZIP_DIRECTLY = false;
+	public static final boolean RUN_TOGETHER = true;
+	public static final boolean USE_ZIP = false || !RUN_TOGETHER;
+	public static final boolean CREATE_ZIP_DIRECTLY = false && RUN_TOGETHER;
 
 	/** The complete path for the SierraResults folder */
 	public static final String SIERRA_RESULTS_PATH = System

@@ -13,6 +13,7 @@ import com.surelogic.sierra.tool.AbstractTool;
 import com.surelogic.sierra.tool.AbstractToolInstance;
 import com.surelogic.sierra.tool.ArtifactType;
 import com.surelogic.sierra.tool.IToolInstance;
+import com.surelogic.sierra.tool.SierraToolConstants;
 import com.surelogic.sierra.tool.analyzer.ILazyArtifactGenerator;
 import com.surelogic.sierra.tool.message.ArtifactGenerator;
 import com.surelogic.sierra.tool.message.Config;
@@ -30,6 +31,13 @@ public abstract class AbstractCPDTool extends AbstractTool {
 
 	public Set<ArtifactType> getArtifactTypes() {
 	  return Collections.emptySet();
+	}
+	
+	@Override
+	public List<File> getRequiredJars() {
+		final List<File> jars = new ArrayList<File>();				
+		addAllPluginJarsToPath(debug, jars,	SierraToolConstants.PMD_PLUGIN_ID, "lib");
+		return jars;
 	}
 	
 	@Override

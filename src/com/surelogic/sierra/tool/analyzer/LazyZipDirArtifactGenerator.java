@@ -20,17 +20,24 @@ public class LazyZipDirArtifactGenerator implements ILazyArtifactGenerator {
 	final Config config;
 	final File tempDir;
 	
+	public static File computeTempDir(File scanDoc) {
+		final String dirName = scanDoc.getName().substring(0, scanDoc.getName().lastIndexOf(".sierra"));
+		return new File(scanDoc.getParentFile(), dirName);
+	}
+	
+	public static void createConfigStream(File tempDir, Config config) {
+		// Create config stream
+		final File metadata = new File(tempDir, MessageWarehouse.CONFIG_STREAM_NAME);
+		new MessageArtifactFileGenerator(metadata, config, false).finished(new NullSLProgressMonitor());
+	}
+	
 	public LazyZipDirArtifactGenerator(Config config) {
 		this.config = config;
 
-		final File scanDoc = config.getScanDocument();
-		final String dirName = scanDoc.getName().substring(0, scanDoc.getName().lastIndexOf(".sierra"));
-		tempDir = new File(scanDoc.getParentFile(), dirName);
+		tempDir = computeTempDir(config.getScanDocument());
 		tempDir.mkdir();
 			
-		// Create config stream
-		final File metadata = new File(tempDir, MessageWarehouse.CONFIG_STREAM_NAME);
-		new MessageArtifactFileGenerator(metadata, config, false).finished(new NullSLProgressMonitor());		
+		createConfigStream(tempDir, config);		
 	}
 	
 	public ArtifactGenerator create(ITool tool) {
