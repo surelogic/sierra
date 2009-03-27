@@ -117,78 +117,6 @@ public class LocalTool extends AbstractTool {
 					+ key);
 		}
 
-		private Set<String> usedPlugins = new HashSet<String>();
-
-		private String getPluginDir(final boolean debug, final String pluginId) {
-			return getPluginDir(debug, pluginId, true);
-		}
-
-		private String getPluginDir(final boolean debug, final String pluginId,
-				boolean required) {
-			final String pluginDir = config.getPluginDir(pluginId, required);
-			if (debug) {
-				System.out.println(pluginId + " = " + pluginDir);
-			}
-			usedPlugins.add(pluginId);
-			return pluginDir;
-		}
-
-		private void addPluginToPath(final boolean debug, Project proj,
-				Path path, final String pluginId) {
-			addPluginToPath(debug, proj, path, pluginId, false);
-		}
-
-		private void addPluginToPath(final boolean debug, Project proj,
-				Path path, final String pluginId, boolean unpacked) {
-			final String pluginDir = getPluginDir(debug, pluginId);
-			if (unpacked) {
-				boolean workspaceExists = addToPath(proj, path, pluginDir
-						+ "/bin", false); // in workspace
-				if (!workspaceExists) {
-					addToPath(proj, path, pluginDir); // as plugin
-				}
-			} else if (pluginDir.endsWith(".jar")) {
-				addToPath(proj, path, pluginDir); // as plugin
-			} else {
-				addToPath(proj, path, pluginDir + "/bin"); // in workspace
-			}
-		}
-
-		/**
-		 * @return true if found
-		 */
-		private boolean addPluginJarsToPath(final boolean debug, Project proj,
-				Path path, final String pluginId, String... jars) {
-			return addPluginJarsToPath(debug, proj, path, pluginId, false, jars);
-		}
-
-		/**
-		 * @param exclusive
-		 *            If true, try each of the jars in sequence until one exists
-		 * @return true if found
-		 */
-		private boolean addPluginJarsToPath(final boolean debug, Project proj,
-				Path path, final String pluginId, boolean exclusive,
-				String... jars) {
-			boolean rv = true;
-			final String pluginDir = getPluginDir(debug, pluginId);
-			for (String jar : jars) {
-				boolean exists = addToPath(proj, path, pluginDir + '/' + jar,
-						!exclusive);
-				if (exclusive && exists) {
-					return true;
-				}
-				rv = rv && exists;
-			}
-			return rv;
-		}
-
-		private void addAllPluginJarsToPath(final boolean debug, Project proj,
-				Path path, final String pluginId, String libPath) {
-			final String pluginDir = getPluginDir(debug, pluginId);
-			findJars(proj, path, pluginDir + '/' + libPath);
-		}
-
 		@SuppressWarnings("unused")
 		private void setupCustomClassLoader(final boolean debug,
 				CommandlineJava cmdj) {
@@ -275,51 +203,39 @@ public class LocalTool extends AbstractTool {
 		}
 		
 		@Override 
-		protected void setupClassPath(boolean debug, Project proj, Path path) {					
-			addPluginToPath(debug, proj, path,
-					SierraToolConstants.COMMON_PLUGIN_ID);
+		protected void setupClassPath(boolean debug, Project proj, Path path) {			
+			final Set<File> jars = new HashSet<File>();
+			addPluginToPath(debug, jars, SierraToolConstants.COMMON_PLUGIN_ID);
+			
 			// sierra-tool needs special handling since it is unpacked, due to
 			// Reckoner (and other tools)
-			addPluginToPath(debug, proj, path,
-					SierraToolConstants.TOOL_PLUGIN_ID, true);
-			addPluginToPath(debug, proj, path,
-					SierraToolConstants.MESSAGE_PLUGIN_ID);
+			addPluginToPath(debug, jars, SierraToolConstants.TOOL_PLUGIN_ID, true);
+			addPluginToPath(debug, jars, SierraToolConstants.MESSAGE_PLUGIN_ID);
 
 			// JAXB is included in Java 6 and beyond
 			if (SystemUtils.IS_JAVA_1_5) {
-				addAllPluginJarsToPath(debug, proj, path,
-						SierraToolConstants.JAVA5_PLUGIN_ID, "lib/jaxb");
+				addAllPluginJarsToPath(debug, jars, SierraToolConstants.JAVA5_PLUGIN_ID, "lib/jaxb");
 			} else {
+				// FIX
 				// Called just to mark it as "used";
 				getPluginDir(debug, SierraToolConstants.JAVA5_PLUGIN_ID, false);
 			}
-			addAllPluginJarsToPath(debug, proj, path,
-					SierraToolConstants.PMD_PLUGIN_ID, "lib");
-			addAllPluginJarsToPath(debug, proj, path,
-					SierraToolConstants.FB_PLUGIN_ID, "lib");
-			findJars(proj, path, new File(config.getToolsDirectory(),
-					"reckoner/lib"));
-			path.add(new Path(proj, new File(config.getToolsDirectory(),
-					"reckoner/reckoner.jar").getAbsolutePath()));
-			if (addPluginJarsToPath(debug, proj, path,
+
+			// FIX which tool needs this?
+			if (addPluginJarsToPath(debug, jars,
 					SierraToolConstants.JUNIT4_PLUGIN_ID, true, "junit.jar",
 					"junit-4.1.jar")) {
 				// Called just to mark it as "used";
 				getPluginDir(debug, SierraToolConstants.JUNIT_PLUGIN_ID, false);
 			} else {
-				addPluginJarsToPath(debug, proj, path,
+				addPluginJarsToPath(debug, jars,
 						SierraToolConstants.JUNIT_PLUGIN_ID, "junit.jar");
-			}
-			// Add all the plugins needed by Reckoner (e.g. JDT Core and
-			// company)
-			for (String id : config.getPluginDirs().keySet()) {
-				if (usedPlugins.contains(id)) {
-					continue;
-				}
-				addPluginToPath(debug, proj, path, id);
-			}
+			}			
+			addToolPluginJars(debug, jars);
 			
-			addToolPluginJars(debug, proj, path);
+			for(File jar : jars) {
+				addToPath(proj, path, jar, true);
+			}			
 			
 			if (false) {
 				for(String elt : path.list()) {
@@ -328,10 +244,10 @@ public class LocalTool extends AbstractTool {
 			}
 		}
 
-		private void addToolPluginJars(boolean debug, Project proj, Path path) {
+		private void addToolPluginJars(boolean debug, Set<File> path) {
 			MultiTool tools = ToolUtil.createTools(config);
 			for(File jar : tools.getRequiredJars()) {
-				addToPath(proj, path, jar, true);			
+				path.add(jar);		
 			}
 		}
 

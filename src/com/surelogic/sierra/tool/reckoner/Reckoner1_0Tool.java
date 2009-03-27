@@ -12,21 +12,49 @@ import com.surelogic.common.jobs.SLProgressMonitor;
 import com.surelogic.common.jobs.SLStatus;
 import com.surelogic.sierra.metrics.Reckoner;
 import com.surelogic.sierra.metrics.model.Metrics;
-import com.surelogic.sierra.tool.AbstractTool;
-import com.surelogic.sierra.tool.AbstractToolInstance;
-import com.surelogic.sierra.tool.ArtifactType;
-import com.surelogic.sierra.tool.IToolInstance;
+import com.surelogic.sierra.tool.*;
 import com.surelogic.sierra.tool.analyzer.ILazyArtifactGenerator;
 import com.surelogic.sierra.tool.message.Config;
 import com.surelogic.sierra.tool.message.MetricBuilder;
 
 public class Reckoner1_0Tool extends AbstractTool {
+  /*
+  private static final String[] required = {
+	  SierraToolConstants.JDT_CORE_PLUGIN_ID,
+	  SierraToolConstants.CORE_RUNTIME_PLUGIN_ID
+  };
+  */
+	
   public Reckoner1_0Tool(Config config) {
     super("Reckoner", "1.0", "Reckoner", "", config);
   }
 
   public Set<ArtifactType> getArtifactTypes() {
     return Collections.emptySet();
+  }
+  
+  @Override
+  public List<File> getRequiredJars() {
+	  final List<File> jars = new ArrayList<File>();	
+	  findJars(jars, new File(config.getToolsDirectory(), "reckoner/lib"));
+	  jars.add(new File(config.getToolsDirectory(), "reckoner/reckoner.jar"));
+	  
+	  // Add all the plugins needed by Reckoner (e.g. JDT Core and
+	  // company)
+	  for (String id : config.getPluginDirs().keySet()) {
+		  if (id.startsWith("org.eclipse")) {
+			  addPluginToPath(debug, jars, id);
+		  } else {
+			  //System.out.println("Unused: "+id);
+		  }
+	  }
+	  /*
+	  for (String id : required) {
+		  // FIX what about transitive dependencies?
+		  addPluginToPath(debug, jars, id);
+	  }
+	  */
+	  return jars;
   }
   
 	protected IToolInstance create(String name, final ILazyArtifactGenerator generator,
