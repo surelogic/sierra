@@ -23,7 +23,7 @@ import com.surelogic.sierra.tool.targets.ToolTarget;
 @XmlAccessorOrder(XmlAccessOrder.ALPHABETICAL)
 @XmlType
 @XmlRootElement
-public class Config {
+public class Config implements Cloneable {
 	protected static final Logger LOG = SLLogger.getLogger("sierra");
 	private String project = null;
 	private List<String> timeseries = null;
@@ -184,6 +184,15 @@ public class Config {
 		return loc;
 	}
 
+	@Override
+	public Config clone() {
+		try {
+			return (Config) super.clone();
+		} catch (CloneNotSupportedException e) {
+			throw new UnsupportedOperationException();
+		}
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
