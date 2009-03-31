@@ -111,7 +111,7 @@ public class ToolUtil {
 	
 	private static String MANIFEST = "META-INF"+File.separatorChar+"MANIFEST.MF";
 	private static String CLASSPATH = "Bundle-ClassPath";
-	private static String TOOL_ID = "SureLogic-Tool";
+	private static String TOOL_ID = "Sierra-Tool";
 	
 	// FIX how to identify tools?
 	// By ITool?  How to make it consistent with a plugin.xml?

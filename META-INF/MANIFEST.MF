@@ -20,5 +20,5 @@ Bundle-ClassPath: .,
  Tools/reckoner/reckoner.jar,
  Tools/reckoner/lib/commons-cli-1.1/commons-cli-1.1.jar
 Bundle-Vendor: SureLogic, Inc.
-SureLogic-Tool: com.surelogic.sierra.tool.pmd.PMDToolFactory, 
+Sierra-Tool: com.surelogic.sierra.tool.pmd.PMDToolFactory, 
  com.surelogic.sierra.tool.pmd.CPDToolFactory
