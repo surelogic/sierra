@@ -8,8 +8,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.Writer;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.charset.Charset;
 import java.util.*;
@@ -61,17 +59,7 @@ public class AbstractPMDTool extends AbstractTool {
 	
 	static List<RuleSet> getRuleSets() throws RuleSetNotFoundException {
 		List<File> plugins = findPluginJars(false);
-		URL[] urls         = new URL[plugins.size()];
-		int i = 0;
-		for(File jar : plugins) {
-			try {
-				urls[i] = jar.toURI().toURL();
-			} catch (MalformedURLException e) {
-				LOG.log(Level.WARNING, "Problem converting "+jar.getAbsolutePath()+" to URL", e);
-			}
-			i++;
-		}
-		final URLClassLoader cl = new URLClassLoader(urls, AbstractPMDTool.class.getClassLoader());
+		final URLClassLoader cl = ToolUtil.computeClassLoader(plugins);
 		final RuleSetFactory ruleSetFactory = new RuleSetFactory();
 		final List<RuleSet> sets = getDefaultRuleSets();
 
