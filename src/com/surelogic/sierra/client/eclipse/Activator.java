@@ -86,7 +86,7 @@ public final class Activator extends AbstractUIPlugin {
 			SierraServersAutoSync.start();
 			new DeleteUnfinishedScans().schedule();
 			
- 			Utility.checkForNewArtifactTypes();
+ 			Tools.checkForNewArtifactTypes();
 		} catch (final FutureDatabaseException e) {
 			/*
 			 * The database schema version is too new, we need to delete it to
