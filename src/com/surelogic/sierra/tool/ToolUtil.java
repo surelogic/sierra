@@ -25,17 +25,33 @@ import com.surelogic.sierra.tool.reckoner.*;
 
 public class ToolUtil {
 	public static final String SIERRA_TOOLS_DIR = "sierra.tools.dir";
+	private static final String TOOLS_SUBDIR = "tools";
 	private static final String RECKONER = "reckoner";
 	private static final String PMD = "pmd";
 	private static final String CPD = "cpd";
 	private static final String FINDBUGS = "findbugs";
+
 	private static final String[] TOOLS = {
 		RECKONER, PMD, CPD, FINDBUGS
 	};
 	
 	/** The logger */
 	protected static final Logger LOG = SLLogger.getLogger("sierra");
-
+	
+	private static final List<IToolFinder> finders = new ArrayList<IToolFinder>();
+	static {
+		addToolFinder(new IToolFinder() {
+			public List<File> findToolDirectories() {
+		        /*
+				for(File plugin : findToolPlugins()) {
+					System.out.println("Found plugin @ "+plugin.getAbsolutePath());
+				}
+				*/
+				return findToolPlugins(new File(getSierraToolDirectory(), TOOLS_SUBDIR));
+			}			
+		});
+	}
+	
 	public static File getSierraToolDirectory() {
 		String path = System.getProperty(SIERRA_TOOLS_DIR);
 		if (path != null) {
@@ -48,6 +64,24 @@ public class ToolUtil {
 			}
 		}
 		return FileUtility.getSierraDataDirectory();		
+	}
+	
+	public static void addToolFinder(IToolFinder f) {
+		synchronized (finders) {
+			finders.add(f);
+		}
+	}
+	
+	public static Set<File> findToolDirs() {
+		Set<File> dirs = new HashSet<File>();
+		for(IToolFinder f : finders) {
+			for(File dir : f.findToolDirectories()) {
+				if (!dirs.contains(dir)) {
+					dirs.add(dir);
+				}
+			}
+		}
+		return dirs;
 	}
 	
 	public static ITool create(Config config, boolean runRemotely) {
@@ -97,7 +131,7 @@ public class ToolUtil {
 		return copy;
 	}
 	
-	public static MultiTool createTools(Config config) {
+	public static MultiTool createTools(Config config) {        
 		final MultiTool t = new MultiTool(config);
 		if (config.isToolIncluded(FINDBUGS)) {
 			//final String fbDir = config.getPluginDir(SierraToolConstants.FB_PLUGIN_ID);
@@ -118,11 +152,6 @@ public class ToolUtil {
 	}
 	
 	public static Set<ArtifactType> getArtifactTypes(Config config) {
-		/*
-		for(File plugin : findToolPlugins(new File("/home/edwin/workspace-3.4.1"))) {
-			System.out.println("Found plugin @ "+plugin.getAbsolutePath());
-		}
-		*/
 		return createTools(config).getArtifactTypes();
 	}
 	
@@ -132,7 +161,7 @@ public class ToolUtil {
 	
 	// FIX how to identify tools?
 	// By ITool?  How to make it consistent with a plugin.xml?
-	static Attributes readManifest(File pluginDir) throws IOException {
+	private static Attributes readManifest(File pluginDir) throws IOException {
 		File manifest = new File(pluginDir, MANIFEST);
 		if (!manifest.exists() || !manifest.isFile()) {
 			return null;
@@ -140,7 +169,7 @@ public class ToolUtil {
 		return new Manifest(new FileInputStream(manifest)).getMainAttributes();
 	}
 	
-	static List<File> findToolPlugins(File pluginsDir) {
+	private static List<File> findToolPlugins(File pluginsDir) {
 		List<File> tools = new ArrayList<File>();
 		for(File f : pluginsDir.listFiles()) {
 			if (f.isDirectory()) {
@@ -163,7 +192,7 @@ public class ToolUtil {
 	
 	// FIX Note that this only allows for one tool per plugin
 	// FIX loading properties doesn't allow multi-line
-	static List<IToolFactory> instantiateToolFactories(File pluginDir, Attributes attrs) {
+	private static List<IToolFactory> instantiateToolFactories(File pluginDir, Attributes attrs) {
 		String ids = attrs.getValue(TOOL_ID);
 		if (ids != null) {
 			StringTokenizer st = new StringTokenizer(ids, ",");
