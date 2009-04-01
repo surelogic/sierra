@@ -163,7 +163,7 @@ public class AbstractPMDTool extends AbstractTool {
 	 * @return the directory containing all.xml
 	 */
 	static File createAllXml() {
-		final File lib = new File(FileUtility.getSierraDataDirectory(), PMD_LIB);
+		final File lib = new File(ToolUtil.getSierraToolDirectory(), PMD_LIB);
 		if (!lib.exists()) {
 			lib.mkdirs();
 		}
@@ -261,7 +261,7 @@ public class AbstractPMDTool extends AbstractTool {
 	}
 	
 	static List<File> findPluginJars(boolean includeRequired) {
-		final File lib = new File(FileUtility.getSierraDataDirectory(), PMD_LIB);
+		final File lib = new File(ToolUtil.getSierraToolDirectory(), PMD_LIB);
 		if (!lib.exists() || !lib.isDirectory()) {
 			return Collections.emptyList();
 		}

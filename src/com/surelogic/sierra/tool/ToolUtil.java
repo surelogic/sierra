@@ -24,6 +24,7 @@ import com.surelogic.sierra.tool.pmd.*;
 import com.surelogic.sierra.tool.reckoner.*;
 
 public class ToolUtil {
+	public static final String SIERRA_TOOLS_DIR = "sierra.tools.dir";
 	private static final String RECKONER = "reckoner";
 	private static final String PMD = "pmd";
 	private static final String CPD = "cpd";
@@ -35,6 +36,20 @@ public class ToolUtil {
 	/** The logger */
 	protected static final Logger LOG = SLLogger.getLogger("sierra");
 
+	public static File getSierraToolDirectory() {
+		String path = System.getProperty(SIERRA_TOOLS_DIR);
+		if (path != null) {
+			File dir = new File(path);
+			if (dir.exists() && dir.isDirectory()) {			
+				// TODO should it check for anything else?
+				return dir;
+			} else {
+				LOG.warning("Invalid tools directory: "+path);
+			}
+		}
+		return FileUtility.getSierraDataDirectory();		
+	}
+	
 	public static ITool create(Config config, boolean runRemotely) {
 		if (runRemotely) {
 			if (SierraToolConstants.RUN_TOGETHER) {
@@ -86,7 +101,7 @@ public class ToolUtil {
 		final MultiTool t = new MultiTool(config);
 		if (config.isToolIncluded(FINDBUGS)) {
 			//final String fbDir = config.getPluginDir(SierraToolConstants.FB_PLUGIN_ID);
-			final String fbDir = FileUtility.getSierraDataDirectory().getAbsolutePath();
+			final String fbDir = getSierraToolDirectory().getAbsolutePath();
 			AbstractFindBugsTool.init(fbDir);
 			t.addTool(new AbstractFindBugsTool(fbDir, config));
 		}
