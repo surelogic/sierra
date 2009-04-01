@@ -103,9 +103,11 @@ public class ToolUtil {
 	}
 	
 	public static Set<ArtifactType> getArtifactTypes(Config config) {
+		/*
 		for(File plugin : findToolPlugins(new File("/home/edwin/workspace-3.4.1"))) {
 			System.out.println("Found plugin @ "+plugin.getAbsolutePath());
 		}
+		*/
 		return createTools(config).getArtifactTypes();
 	}
 	
