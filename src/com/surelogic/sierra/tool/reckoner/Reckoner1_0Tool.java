@@ -113,7 +113,7 @@ public class Reckoner1_0Tool extends AbstractTool {
       }
 
       private void buildMetrics(Metrics m) {
-    	  MetricBuilder metric = generator.metric();
+    	  MetricBuilder metric = getGenerator().metric();
     	  metric.compilation(m.getClassName());
     	  if (m.getLoc() > Integer.MAX_VALUE) {
 					reportError("#LOC too big to report: " + m.getClassName()

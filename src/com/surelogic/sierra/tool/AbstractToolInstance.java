@@ -21,7 +21,7 @@ public abstract class AbstractToolInstance extends AbstractSLJob implements IToo
   private final Map<String,String> options = new HashMap<String,String>();
   protected final boolean debug;
   protected final SLStatus.Builder status = new SLStatus.Builder();
-  protected ArtifactGenerator generator = null;
+  private ArtifactGenerator generator = null;
   
   protected AbstractToolInstance(boolean debug, ITool t, ILazyArtifactGenerator gen, boolean close) {
 	super(t.getName()); // FIX is this the right name?
@@ -32,6 +32,9 @@ public abstract class AbstractToolInstance extends AbstractSLJob implements IToo
   }
   
   public final ArtifactGenerator getGenerator() {
+	if (generator == null) {
+		throw new UnsupportedOperationException("No generator right now");
+	}
     return generator;
   }
   
