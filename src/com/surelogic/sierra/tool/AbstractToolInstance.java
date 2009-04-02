@@ -4,9 +4,12 @@ import java.io.File;
 import java.net.*;
 import java.util.*;
 
+import com.surelogic.common.HashGenerator;
 import com.surelogic.common.jobs.*;
 import com.surelogic.sierra.tool.analyzer.ILazyArtifactGenerator;
 import com.surelogic.sierra.tool.message.ArtifactGenerator;
+import com.surelogic.sierra.tool.message.IdentifierType;
+import com.surelogic.sierra.tool.message.ArtifactGenerator.SourceLocationBuilder;
 import com.surelogic.sierra.tool.targets.IToolTarget;
 
 public abstract class AbstractToolInstance extends AbstractSLJob implements IToolInstance {
@@ -207,4 +210,39 @@ public abstract class AbstractToolInstance extends AbstractSLJob implements IToo
 		  }
 	  }  
   }
+  
+  public static class SourceInfo {
+	protected String fileName;
+	protected String packageName;
+	protected String cuName;
+	protected int startLine;
+	protected int endLine;
+	protected IdentifierType type;
+	protected String identifier;
+  }
+  
+  protected static void setSourceLocation(
+			SourceLocationBuilder sourceLocation, SourceInfo info) {
+		sourceLocation.packageName(info.packageName);
+		sourceLocation.compilation(info.cuName);
+		sourceLocation.className(info.cuName);
+		if (info.type != null && info.identifier != null) {
+			sourceLocation.type(info.type);
+			sourceLocation.identifier(info.identifier);
+		} else {
+			sourceLocation.type(IdentifierType.CLASS);
+			sourceLocation.identifier(info.cuName);
+		}
+		HashGenerator hashGenerator = HashGenerator.getInstance();
+		Long hashValue = hashGenerator.getHash(info.fileName,
+				info.startLine);
+
+		sourceLocation = sourceLocation.hash(hashValue).lineOfCode(
+				info.startLine);
+		sourceLocation = sourceLocation.endLine(info.endLine);
+
+		//System.out.println("Building location for "+info.fileName+" : "
+		// +info.startLine);
+		sourceLocation.build();
+	}
 }
