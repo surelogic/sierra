@@ -19,19 +19,10 @@ import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.tool.analyzer.LazyZipDirArtifactGenerator;
 import com.surelogic.sierra.tool.message.Config;
 import com.surelogic.sierra.tool.message.MessageWarehouse;
-import com.surelogic.sierra.tool.reckoner.*;
 
 public class ToolUtil {
 	public static final String SIERRA_TOOLS_DIR = "sierra.tools.dir";
 	private static final String TOOLS_SUBDIR = "tools";
-	private static final String RECKONER = "reckoner";
-	private static final String PMD = "pmd";
-	private static final String CPD = "cpd";
-	private static final String FINDBUGS = "findbugs";
-
-	private static final String[] TOOLS = {
-		RECKONER, PMD, CPD, FINDBUGS
-	};
 	
 	/** The logger */
 	protected static final Logger LOG = SLLogger.getLogger("sierra");
@@ -40,11 +31,6 @@ public class ToolUtil {
 	static {
 		addToolFinder(new IToolFinder() {
 			public List<File> findToolDirectories() {
-		        /*
-				for(File plugin : findToolPlugins()) {
-					System.out.println("Found plugin @ "+plugin.getAbsolutePath());
-				}
-				*/
 				return findToolPlugins(new File(getSierraToolDirectory(), TOOLS_SUBDIR));
 			}			
 		});
@@ -82,6 +68,29 @@ public class ToolUtil {
 		return dirs;
 	}
 	
+	public static List<IToolFactory> findToolFactories() {
+		List<IToolFactory> factories = new ArrayList<IToolFactory>();
+		for(File dir : findToolDirs()) {
+			try {
+				Attributes manifest = readManifest(dir);
+				for(IToolFactory f : instantiateToolFactories(dir, manifest)) {
+					factories.add(f);
+				}
+			} catch (IOException e) {
+				LOG.log(Level.INFO, "Couldn't read manifest for "+dir.getAbsolutePath(), e);
+			}
+		}
+		return factories;
+	}
+	
+	public static List<String> getToolIds() {
+		List<String> ids = new ArrayList<String>();
+		for(IToolFactory f : findToolFactories()) {
+			ids.add(f.getId());
+		}
+		return ids;
+	}
+	
 	public static ITool create(Config config, boolean runRemotely) {
 		if (runRemotely) {
 			if (SierraToolConstants.RUN_TOGETHER) {
@@ -89,7 +98,7 @@ public class ToolUtil {
 			} else {
 				// Alternately, run in each in separate JVMs
 				final MultiTool t = new MultiTool(config);
-				for(String tool : TOOLS) {
+				for(String tool : getToolIds()) {
 					if (config.isToolIncluded(tool)) {
 						final Config c = updateForTool(config, tool);
 						t.addTool(new LocalTool(c));
@@ -116,7 +125,7 @@ public class ToolUtil {
 		
 		// Set it to only run this one tool
 		StringBuilder sb = new StringBuilder();
-		for(String t : TOOLS) {
+		for(String t : getToolIds()) {
 			if (!t.equals(tool)) {
 				// Set as excluded
 				if (sb.length() > 0) {
@@ -131,7 +140,16 @@ public class ToolUtil {
 	
 	public static MultiTool createTools(Config config) {        
 		final MultiTool t = new MultiTool(config);
-		/* FIX
+		final File home   = getSierraToolDirectory();
+		for(IToolFactory f : findToolFactories()) {
+			//System.out.println("Creating "+f.getId());
+			f.init(home);
+			t.addTool(f.create(config));
+		}
+		/*
+		if (config.isToolIncluded(RECKONER)) {
+			t.addTool(new Reckoner1_0Tool(config));
+		}
 		if (config.isToolIncluded(FINDBUGS)) {
 			//final String fbDir = config.getPluginDir(SierraToolConstants.FB_PLUGIN_ID);
 			final String fbDir = getSierraToolDirectory().getAbsolutePath();
@@ -145,9 +163,6 @@ public class ToolUtil {
 			t.addTool(new CPD4_1Tool(config));
 		}
 		*/
-		if (config.isToolIncluded(RECKONER)) {
-			t.addTool(new Reckoner1_0Tool(config));
-		}
 		return t;
 	}
 	
@@ -175,9 +190,6 @@ public class ToolUtil {
 			if (f.isDirectory()) {
 				try {
 					Attributes attrs = readManifest(f);
-					if (attrs == null) {
-						continue;
-					}
 					List<IToolFactory> factories = instantiateToolFactories(f, attrs);
 					if (!factories.isEmpty()) {
 						tools.add(f);
@@ -193,6 +205,9 @@ public class ToolUtil {
 	// FIX Note that this only allows for one tool per plugin
 	// FIX loading properties doesn't allow multi-line
 	private static List<IToolFactory> instantiateToolFactories(File pluginDir, Attributes attrs) {
+		if (attrs == null) {
+			return Collections.emptyList();
+		}
 		String ids = attrs.getValue(TOOL_ID);
 		if (ids != null) {
 			StringTokenizer st = new StringTokenizer(ids, ",");
@@ -201,7 +216,7 @@ public class ToolUtil {
 			}
 			List<File> path = getRequiredJars(pluginDir, attrs);
 			if (!path.isEmpty()) {
-				ClassLoader cl = computeClassLoader(path);			
+				ClassLoader cl = computeClassLoader(ToolUtil.class.getClassLoader(), path);			
 				String id = null;
 				try {
 					List<IToolFactory> factories = new ArrayList<IToolFactory>();
@@ -217,6 +232,7 @@ public class ToolUtil {
 							return Collections.emptyList();
 						}
 					}
+					return factories;
 				} catch (ClassNotFoundException e) {
 					LOG.log(Level.WARNING, "Couldn't load class "+id, e);
 				} catch (InstantiationException e) {
@@ -261,7 +277,7 @@ public class ToolUtil {
 		return jars;
 	}
 	
-	public static URLClassLoader computeClassLoader(List<File> plugins) {
+	public static URLClassLoader computeClassLoader(ClassLoader cl, List<File> plugins) {
 		URL[] urls = new URL[plugins.size()];
 		int i = 0;
 		for(File jar : plugins) {
@@ -272,12 +288,12 @@ public class ToolUtil {
 			}
 			i++;
 		}
-		return new URLClassLoader(urls, ToolUtil.class.getClassLoader());
+		return new URLClassLoader(urls, cl);
 	}
 	
 	public static int getNumTools(Config config) {
 		int count = 0;
-		for(String tool : TOOLS) {
+		for(String tool : getToolIds()) {
 			if (config.isToolIncluded(tool)) {
 				count++;
 			}
