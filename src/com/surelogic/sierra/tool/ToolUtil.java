@@ -17,10 +17,8 @@ import com.surelogic.common.FileUtility;
 import com.surelogic.common.jobs.*;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.tool.analyzer.LazyZipDirArtifactGenerator;
-import com.surelogic.sierra.tool.findbugs.*;
 import com.surelogic.sierra.tool.message.Config;
 import com.surelogic.sierra.tool.message.MessageWarehouse;
-import com.surelogic.sierra.tool.pmd.*;
 import com.surelogic.sierra.tool.reckoner.*;
 
 public class ToolUtil {
@@ -133,6 +131,7 @@ public class ToolUtil {
 	
 	public static MultiTool createTools(Config config) {        
 		final MultiTool t = new MultiTool(config);
+		/* FIX
 		if (config.isToolIncluded(FINDBUGS)) {
 			//final String fbDir = config.getPluginDir(SierraToolConstants.FB_PLUGIN_ID);
 			final String fbDir = getSierraToolDirectory().getAbsolutePath();
@@ -145,6 +144,7 @@ public class ToolUtil {
 		if (config.isToolIncluded(CPD)) {
 			t.addTool(new CPD4_1Tool(config));
 		}
+		*/
 		if (config.isToolIncluded(RECKONER)) {
 			t.addTool(new Reckoner1_0Tool(config));
 		}

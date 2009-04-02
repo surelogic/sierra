@@ -5,20 +5,15 @@ Bundle-SymbolicName: com.surelogic.sierra.tool;singleton:=true
 Bundle-Version: 2.2.1.qualifier
 Require-Bundle: com.surelogic.common,
  com.surelogic.sierra.message,
- com.surelogic.sierra.pmd,
- com.surelogic.sierra.fb,
  com.surelogic.sierra.java5.compatibility;resolution:=optional,
  org.eclipse.jdt.core,
  org.eclipse.core.runtime,
  org.apache.ant
 Export-Package: com.surelogic.sierra.tool,
  com.surelogic.sierra.tool.analyzer,
- com.surelogic.sierra.tool.findbugs,
- com.surelogic.sierra.tool.pmd,
  com.surelogic.sierra.tool.reckoner
 Bundle-ClassPath: .,
  Tools/reckoner/reckoner.jar,
  Tools/reckoner/lib/commons-cli-1.1/commons-cli-1.1.jar
 Bundle-Vendor: SureLogic, Inc.
-Sierra-Tool: com.surelogic.sierra.tool.pmd.PMDToolFactory, 
- com.surelogic.sierra.tool.pmd.CPDToolFactory
+
