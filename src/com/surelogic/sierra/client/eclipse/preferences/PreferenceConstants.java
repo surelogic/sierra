@@ -5,6 +5,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import com.surelogic.common.eclipse.preferences.IPreferenceConstants;
 import com.surelogic.sierra.client.eclipse.Activator;
 import com.surelogic.sierra.client.eclipse.views.ServerStatusSort;
+import com.surelogic.sierra.tool.IToolFactory;
 import com.surelogic.sierra.tool.message.Importance;
 
 /**
@@ -46,26 +47,15 @@ public class PreferenceConstants implements IPreferenceConstants {
 				P_SIERRA_BALLOON_FLAG);
 	}
 
-	public static final String P_RUN_FINDBUGS = PREFIX + "run-FindBugs";
+	public static final String P_RUN_PREFIX = PREFIX + "run-";
 
-	public static boolean runFindBugs() {
-		return Activator.getDefault().getPluginPreferences().getBoolean(
-				P_RUN_FINDBUGS);
+	public static final String getToolPref(IToolFactory f) {
+		return P_RUN_PREFIX + f.getId();
 	}
-
-	public static final String P_RUN_PMD = PREFIX + "run-PMD";
-
-	public static boolean runPMD() {
-		return Activator.getDefault().getPluginPreferences().getBoolean(
-				P_RUN_PMD);
-	}
-
-	public static final String P_RUN_RECKONER = PREFIX + "run-Reckoner";
-
-	public static boolean runReckoner() {
-		return Activator.getDefault().getPluginPreferences().getBoolean(
-				P_RUN_RECKONER);
-	}
+	
+	public static boolean runTool(IToolFactory f) {
+		return Activator.getDefault().getPluginPreferences().getBoolean(getToolPref(f));
+	}	
 
 	public static final String P_SIERRA_SHOW_MARKERS = PREFIX + "show-markers";
 

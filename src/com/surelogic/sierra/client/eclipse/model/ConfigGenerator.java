@@ -34,6 +34,7 @@ import com.surelogic.common.eclipse.Activator;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Tools;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
+import com.surelogic.sierra.tool.IToolFactory;
 import com.surelogic.sierra.tool.SierraToolConstants;
 import com.surelogic.sierra.tool.ToolUtil;
 import com.surelogic.sierra.tool.message.Config;
@@ -384,35 +385,23 @@ public final class ConfigGenerator {
 	 */
 	private String getExcludedTools() {
 
-		StringBuffer excludedTools = new StringBuffer();
-		excludedTools.append("");
+		StringBuilder excludedTools = new StringBuilder();
 		f_numberofExcludedTools = 0;
 
-		if (!PreferenceConstants.runFindBugs()) {
-			excludedTools.append("findbugs, ");
-			f_numberofExcludedTools++;
+		for(IToolFactory f : ToolUtil.findToolFactories()) {
+			if (!PreferenceConstants.runTool(f)) {
+				// Only need to add a comma if this isn't the first one
+				if (f_numberofExcludedTools != 0) {
+					excludedTools.append(", ");
+				}
+				excludedTools.append(f.getId());			
+				f_numberofExcludedTools++;
+			}
 		}
-
-		if (!PreferenceConstants.runPMD()) {
-			excludedTools.append("pmd, ");
-			f_numberofExcludedTools++;
-		}
-
-		if (!PreferenceConstants.runReckoner()) {
-			excludedTools.append("reckoner");
-			f_numberofExcludedTools++;
-		}
-
-		String listOfTools = excludedTools.toString();
-		if (listOfTools != null && listOfTools.endsWith(", ")) {
-			listOfTools = listOfTools.substring(0, listOfTools.length() - 2);
-		}
-
-		if ("".equals(listOfTools)) {
+		if (f_numberofExcludedTools == 0) {
 			return null;
 		}
-
-		return listOfTools;
+		return excludedTools.toString();
 	}
 
 	/**

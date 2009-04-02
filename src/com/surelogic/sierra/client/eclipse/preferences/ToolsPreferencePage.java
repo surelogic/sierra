@@ -1,6 +1,10 @@
 package com.surelogic.sierra.client.eclipse.preferences;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.logging.Level;
 
 import org.eclipse.jface.preference.BooleanFieldEditor;
@@ -23,25 +27,18 @@ import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 
 import com.surelogic.common.CommonImages;
-import com.surelogic.common.XUtil;
 import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Activator;
 import com.surelogic.sierra.client.eclipse.actions.PreferencesAction;
+import com.surelogic.sierra.tool.IToolFactory;
+import com.surelogic.sierra.tool.ToolUtil;
 
 public class ToolsPreferencePage extends PreferencePage implements
 		IWorkbenchPreferencePage {
 
 	private static final String DESELECT_TOOL_WARNING = "A tool that is not checked will be skipped during all scans.  For more fine-grained control of scan results, setup a <A HREF=\"scan filter\">'Scan Filter'</A> instead.";
-	private static final String FINDBUGS_INFO = "<A HREF=\"http://findbugs.sourceforge.net\">FindBugs</A> is a static analysis tool created at University of Maryland for finding bugs in Java code.";
-	private static final String PMD_INFO = "<A HREF=\"http://pmd.sourceforge.net\">PMD</A> is a static analysis tool to look for multiple issues like potential bugs, dead, duplicate and sub-optimal code, and over-complicated expressions.";
-	private static final String RECKONER_INFO = "<A HREF=\"http://www.surelogic.com\">Reckoner</A> is a static analysis tool created by SureLogic, Inc. that collects metrics about Java code.";
 	private static final String TAB_SPACE = "\t";
-
-	private BooleanFieldEditor f_runFindbugsFlag;
-	private BooleanFieldEditor f_runPMDFlag;
-	private BooleanFieldEditor f_runReckonerFlag;
-	private BooleanFieldEditor f_runCheckStyleFlag;
 
 	static final Listener LINK_LISTENER = new Listener() {
 		public void handleEvent(Event event) {
@@ -71,6 +68,8 @@ public class ToolsPreferencePage extends PreferencePage implements
 		}
 	};
 
+	BooleanFieldEditor[] flags;	
+	
 	@Override
 	protected Control createContents(Composite parent) {
 		final Composite panel = new Composite(parent, SWT.NONE);
@@ -93,31 +92,26 @@ public class ToolsPreferencePage extends PreferencePage implements
 		data = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
 		data.widthHint = 100;
 
-		f_runFindbugsFlag = new BooleanFieldEditor(
-				PreferenceConstants.P_RUN_FINDBUGS, "FindBugs\u2122",
-				toolsGroup);
-		f_runFindbugsFlag.setPage(this);
-		f_runFindbugsFlag.setPreferenceStore(getPreferenceStore());
-		f_runFindbugsFlag.load();
-
-		addSpacedText(toolsGroup, FINDBUGS_INFO);
-
-		f_runPMDFlag = new BooleanFieldEditor(PreferenceConstants.P_RUN_PMD,
-				"PMD\u2122", toolsGroup);
-		f_runPMDFlag.setPage(this);
-		f_runPMDFlag.setPreferenceStore(getPreferenceStore());
-		f_runPMDFlag.load();
-
-		addSpacedText(toolsGroup, PMD_INFO);
-
-		f_runReckonerFlag = new BooleanFieldEditor(
-				PreferenceConstants.P_RUN_RECKONER, "Reckoner", toolsGroup);
-		f_runReckonerFlag.setPage(this);
-		f_runReckonerFlag.setPreferenceStore(getPreferenceStore());
-		f_runReckonerFlag.load();
-
-		addSpacedText(toolsGroup, RECKONER_INFO);
-
+		// Sort tools by name
+		final List<IToolFactory> factories = ToolUtil.findToolFactories();
+		Collections.sort(factories, new Comparator<IToolFactory>() {
+			public int compare(IToolFactory o1, IToolFactory o2) {
+				return o1.getName().compareTo(o2.getName());
+			}
+		});
+		
+		final List<BooleanFieldEditor> editors = new ArrayList<BooleanFieldEditor>();
+		for(IToolFactory tf : factories) {
+			BooleanFieldEditor flag = 
+				new BooleanFieldEditor(PreferenceConstants.getToolPref(tf), tf.getName(), toolsGroup);
+			flag.setPage(this);
+			flag.setPreferenceStore(getPreferenceStore());
+			flag.load();
+			addSpacedText(toolsGroup, tf.getHTMLInfo());
+			editors.add(flag);
+		}
+		flags = editors.toArray(new BooleanFieldEditor[editors.size()]);
+		
 		final Composite warning = new Composite(panel, SWT.NONE);
 		warning.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false,
 				2, 1));
@@ -182,34 +176,25 @@ public class ToolsPreferencePage extends PreferencePage implements
 
 	@Override
 	protected void performApply() {
-		f_runFindbugsFlag.store();
-		if (XUtil.useExperimental()) {
-			f_runCheckStyleFlag.store();
+		for(BooleanFieldEditor flag : flags) {
+			flag.store();
 		}
-		f_runPMDFlag.store();
-		f_runReckonerFlag.store();
 		super.performApply();
 	}
 
 	@Override
 	protected void performDefaults() {
-		f_runFindbugsFlag.loadDefault();
-		if (XUtil.useExperimental()) {
-			f_runCheckStyleFlag.loadDefault();
+		for(BooleanFieldEditor flag : flags) {
+			flag.loadDefault();
 		}
-		f_runPMDFlag.loadDefault();
-		f_runReckonerFlag.loadDefault();
 		super.performDefaults();
 	}
 
 	@Override
 	public boolean performOk() {
-		f_runFindbugsFlag.store();
-		if (XUtil.useExperimental()) {
-			f_runCheckStyleFlag.store();
+		for(BooleanFieldEditor flag : flags) {
+			flag.store();
 		}
-		f_runPMDFlag.store();
-		f_runReckonerFlag.store();
 		return super.performOk();
 	}
 }
