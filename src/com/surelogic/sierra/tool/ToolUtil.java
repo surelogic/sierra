@@ -14,6 +14,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.surelogic.common.FileUtility;
+import com.surelogic.common.XUtil;
 import com.surelogic.common.jobs.*;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.tool.analyzer.LazyZipDirArtifactGenerator;
@@ -69,26 +70,24 @@ public class ToolUtil {
 	}
 	
 	public static List<IToolFactory> findToolFactories() {
+		return findToolFactories(XUtil.useExperimental());
+	}
+	
+	public static List<IToolFactory> findToolFactories(boolean all) {
 		List<IToolFactory> factories = new ArrayList<IToolFactory>();
 		for(File dir : findToolDirs()) {
 			try {
 				Attributes manifest = readManifest(dir);
 				for(IToolFactory f : instantiateToolFactories(dir, manifest)) {
-					factories.add(f);
+					if (all || f.isProduction()) {
+						factories.add(f);
+					}
 				}
 			} catch (IOException e) {
 				LOG.log(Level.INFO, "Couldn't read manifest for "+dir.getAbsolutePath(), e);
 			}
 		}
 		return factories;
-	}
-	
-	public static List<String> getToolIds() {
-		List<String> ids = new ArrayList<String>();
-		for(IToolFactory f : findToolFactories()) {
-			ids.add(f.getId());
-		}
-		return ids;
 	}
 	
 	public static ITool create(Config config, boolean runRemotely) {
@@ -98,9 +97,9 @@ public class ToolUtil {
 			} else {
 				// Alternately, run in each in separate JVMs
 				final MultiTool t = new MultiTool(config);
-				for(String tool : getToolIds()) {
-					if (config.isToolIncluded(tool)) {
-						final Config c = updateForTool(config, tool);
+				for(IToolFactory f : findToolFactories()) {
+					if (config.isToolIncluded(f.getId())) {
+						final Config c = updateForTool(config, f);
 						t.addTool(new LocalTool(c));
 					}
 				}
@@ -116,22 +115,22 @@ public class ToolUtil {
 		return createTools(config);
 	}
 	
-	private static Config updateForTool(Config orig, String tool) {
+	private static Config updateForTool(Config orig, IToolFactory factory) {
 		final Config copy  = orig.clone();
 		// Create an uncompressed result
 		final File tempDir = LazyZipDirArtifactGenerator.computeTempDir(orig.getScanDocument());
 		tempDir.mkdir();
-		copy.setScanDocument(new File(tempDir, tool + MessageWarehouse.TOOL_STREAM_SUFFIX));
+		copy.setScanDocument(new File(tempDir, factory.getId() + MessageWarehouse.TOOL_STREAM_SUFFIX));
 		
 		// Set it to only run this one tool
 		StringBuilder sb = new StringBuilder();
-		for(String t : getToolIds()) {
-			if (!t.equals(tool)) {
+		for(IToolFactory tf : findToolFactories()) {
+			if (!tf.equals(factory)) {
 				// Set as excluded
 				if (sb.length() > 0) {
 					sb.append(',');
 				}
-				sb.append(t);
+				sb.append(tf.getId());
 			}
 		}
 		copy.setExcludedToolsList(sb.toString());
@@ -303,8 +302,8 @@ public class ToolUtil {
 	
 	public static int getNumTools(Config config) {
 		int count = 0;
-		for(String tool : getToolIds()) {
-			if (config.isToolIncluded(tool)) {
+		for(IToolFactory tf : findToolFactories()) {
+			if (config.isToolIncluded(tf.getId())) {
 				count++;
 			}
 		}
