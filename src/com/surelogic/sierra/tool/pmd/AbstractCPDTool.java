@@ -108,7 +108,7 @@ public abstract class AbstractCPDTool extends AbstractTool {
 				Iterator<Match> matches = cpd.getMatches();
 				while (matches.hasNext()) {
 					Match m = matches.next();
-					createArtifact(roots, generator, m);
+					createArtifact(roots, getGenerator(), m);
 				}
 				monitor.worked(1);
 				return SLStatus.OK_STATUS;
