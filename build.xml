@@ -25,8 +25,7 @@
 	  
 	  <mkdir dir="./lib/reckoner"/>
 	  <copy todir="./lib/reckoner">
-	    <fileset dir="../sierra-tool/Tools">
-	    </fileset>
+	    <fileset dir="../sierra-tool" excludes="bin/,src/"/>	    
 	  </copy>
 	  <copy todir="./lib/reckoner/reckoner/lib">
 	    <fileset dir="../sierra-metrics/lib">
