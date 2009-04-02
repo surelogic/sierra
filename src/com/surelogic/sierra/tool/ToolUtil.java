@@ -187,19 +187,26 @@ public class ToolUtil {
 	private static List<File> findToolPlugins(File pluginsDir) {
 		List<File> tools = new ArrayList<File>();
 		for(File f : pluginsDir.listFiles()) {
-			if (f.isDirectory()) {
-				try {
-					Attributes attrs = readManifest(f);
-					List<IToolFactory> factories = instantiateToolFactories(f, attrs);
-					if (!factories.isEmpty()) {
-						tools.add(f);
-					}
-				} catch (IOException e) {
-					LOG.log(Level.INFO, "Couldn't read manifest for "+f.getAbsolutePath(), e);
-				}
+			if (isToolPlugin(f)) {
+				tools.add(f);
 			}
 		}
 		return tools;
+	}
+	
+	public static boolean isToolPlugin(File f) {
+		if (f.isDirectory()) {
+			try {
+				Attributes attrs = readManifest(f);
+				List<IToolFactory> factories = instantiateToolFactories(f, attrs);
+				if (!factories.isEmpty()) {
+					return true;
+				}
+			} catch (IOException e) {
+				LOG.log(Level.INFO, "Couldn't read manifest for "+f.getAbsolutePath(), e);
+			}
+		}
+		return false;
 	}
 	
 	// FIX Note that this only allows for one tool per plugin
