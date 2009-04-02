@@ -59,7 +59,7 @@ public class AbstractPMDTool extends AbstractTool {
 	
 	static List<RuleSet> getRuleSets() throws RuleSetNotFoundException {
 		List<File> plugins = findPluginJars(false);
-		final URLClassLoader cl = ToolUtil.computeClassLoader(plugins);
+		final URLClassLoader cl = ToolUtil.computeClassLoader(AbstractPMDTool.class.getClassLoader(), plugins);
 		final RuleSetFactory ruleSetFactory = new RuleSetFactory();
 		final List<RuleSet> sets = getDefaultRuleSets();
 
