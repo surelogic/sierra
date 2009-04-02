@@ -7,6 +7,7 @@ import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
 
 import java.io.*;
 import java.net.*;
+import java.util.*;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
@@ -76,6 +77,8 @@ public class RemoteTool extends AbstractRemoteSLJob {
 				+ config.getExcludedToolsList());
 		System.out.flush();
 
+		addToolFinder(config);
+		
 		final ITool t = ToolUtil.create(config, false);
 		System.out.println("Java version: " + config.getJavaVersion());
 		System.out.println("Rules file: " + config.getPmdRulesFile());
@@ -90,5 +93,21 @@ public class RemoteTool extends AbstractRemoteSLJob {
 		final IToolInstance ti = t.create();
 		checkInput(br, mon, "Created tool instance");
 		return ti;
+	}
+
+	private void addToolFinder(final Config config) {
+		final List<File> dirs = new ArrayList<File>();
+		for(Map.Entry<String, String> e : config.getPluginDirs().entrySet()) {
+			final File f = new File(e.getValue());
+			if (ToolUtil.isToolPlugin(f)) {
+				dirs.add(f);
+			}
+		}
+		
+		ToolUtil.addToolFinder(new IToolFinder() {
+			public List<File> findToolDirectories() {
+				return dirs;
+			}			
+		});
 	}
 }
