@@ -76,6 +76,7 @@ public class SierraJavacAdapter extends DefaultCompilerAdapter {
 		if (!new File(libHome).exists()) {
 			throw new BuildException("No lib subdirectory under "+libHome);
 		}		
+		System.setProperty(ToolUtil.SIERRA_TOOLS_DIR, libHome);
 		config.setExcludedToolsList("checkstyle");
 		config.setToolsDirectory(new File(libHome+"reckoner"));
 		config.putPluginDir(SierraToolConstants.COMMON_PLUGIN_ID,
