@@ -28,27 +28,13 @@ public final class Tools {
 	 */
 	public static final String TOOL_EXTENSION_POINT_ID = "tool";
 	
-	private static final String[] defaultTools = {
-		SierraToolConstants.PMD_PLUGIN_ID,	
-		SierraToolConstants.FB_PLUGIN_ID,
-	};
-	
 	private static void addToolFinder() {
 		ToolUtil.addToolFinder(new IToolFinder() {
 			// FIX what about duplicate finders?
 			public List<File> findToolDirectories() {
-				// Collect plugins
-				Set<String> ids = new HashSet<String>();
-				/*
-				for(String id : defaultTools) {
-					ids.add(id);
-				}
-				*/
-				addProductionToolDirectories(ids);
-
 				// Look up locations of these plugins
 				List<File> tools = new ArrayList<File>();
-				for(String id : ids) {
+				for(String id : getToolPluginIds()) {
 					String path = 
 						com.surelogic.common.eclipse.Activator.getDefault().getDirectoryOf(id);
 					File dir = new File(path);
@@ -61,6 +47,20 @@ public final class Tools {
 				return tools;
 			}			
 		});
+	}
+	
+	/**
+	 * Collect plugins
+	 */
+	public static Set<String> getToolPluginIds() {
+		Set<String> ids = new HashSet<String>();
+		/*
+		for(String id : defaultTools) {
+			ids.add(id);
+		}
+		*/
+		addProductionToolDirectories(ids);
+		return ids;
 	}
 	
 	public static void checkForNewArtifactTypes() {

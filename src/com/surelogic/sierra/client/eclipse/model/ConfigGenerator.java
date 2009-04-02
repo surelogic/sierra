@@ -32,6 +32,7 @@ import com.surelogic.common.FileUtility;
 import com.surelogic.common.SLUtility;
 import com.surelogic.common.eclipse.Activator;
 import com.surelogic.common.logging.SLLogger;
+import com.surelogic.sierra.client.eclipse.Tools;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
 import com.surelogic.sierra.tool.SierraToolConstants;
 import com.surelogic.sierra.tool.ToolUtil;
@@ -54,8 +55,10 @@ public final class ConfigGenerator {
 			SierraToolConstants.MESSAGE_PLUGIN_ID,
 			SierraToolConstants.COMMON_PLUGIN_ID,
 			SierraToolConstants.TOOL_PLUGIN_ID,
+			/*
 			SierraToolConstants.PMD_PLUGIN_ID,
 			SierraToolConstants.FB_PLUGIN_ID,
+			*/
 			SierraToolConstants.JUNIT4_PLUGIN_ID,
 			SierraToolConstants.JUNIT_PLUGIN_ID,
 			SierraToolConstants.JAVA5_PLUGIN_ID, };
@@ -88,6 +91,9 @@ public final class ConfigGenerator {
 		 * System.out.println(jdt);
 		 */
 		for (String id : PLUGINS) {
+			getDirectoryOfPlugin(id);
+		}
+		for (String id : Tools.getToolPluginIds()) {
 			getDirectoryOfPlugin(id);
 		}
 		getDirectoryOfAllPlugins(SierraToolConstants.CORE_RUNTIME_PLUGIN_ID);
