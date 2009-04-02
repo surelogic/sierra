@@ -184,7 +184,10 @@ public class ToolUtil {
 		return new Manifest(new FileInputStream(manifest)).getMainAttributes();
 	}
 	
-	private static List<File> findToolPlugins(File pluginsDir) {
+	static List<File> findToolPlugins(File pluginsDir) {
+		if (pluginsDir == null || !pluginsDir.exists()) {
+			return Collections.emptyList();
+		}
 		List<File> tools = new ArrayList<File>();
 		for(File f : pluginsDir.listFiles()) {
 			if (isToolPlugin(f)) {
