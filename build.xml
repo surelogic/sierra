@@ -15,17 +15,17 @@
 	  
 	  <mkdir dir="./lib/pmd"/>
 	  <copy todir="./lib/pmd">
-	    <fileset dir="../sierra-pmd" excludes="bin/,src/"/>	      
+	    <fileset dir="../sierra-pmd" excludes="src/"/>	      
 	  </copy>
 	  
 	  <mkdir dir="./lib/findbugs"/>
 	  <copy todir="./lib/findbugs">
-	    <fileset dir="../sierra-fb" excludes="bin/"/>	      
+	    <fileset dir="../sierra-fb" excludes="src/"/>	      
 	  </copy>
 	  
 	  <mkdir dir="./lib/reckoner"/>
 	  <copy todir="./lib/reckoner">
-	    <fileset dir="../sierra-tool" excludes="bin/,src/"/>	    
+	    <fileset dir="../sierra-tool" excludes="src/"/>	    
 	  </copy>
 	  <copy todir="./lib/reckoner/reckoner/lib">
 	    <fileset dir="../sierra-metrics/lib">
