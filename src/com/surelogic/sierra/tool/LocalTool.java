@@ -80,7 +80,7 @@ public class LocalTool extends AbstractTool {
 		LocalInstance(boolean debug) {
 			super("Sierra tool", ToolUtil.getNumTools(config), 
 					       TestCode.getTestCode(config.getTestCode()), 
-					       config.getMemorySize(), /*true ||*/ debug && config.isVerbose());
+					       config.getMemorySize(), /*true ||*/ debug || config.isVerbose());
 		}
 
 		protected RemoteSLJobException newException(int number, Object... args) {
