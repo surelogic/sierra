@@ -225,6 +225,11 @@ public class ToolUtil {
 			}
 			List<File> path = getRequiredJars(pluginDir, attrs);
 			if (!path.isEmpty()) {
+				/*
+				for(File f : path) {
+					System.out.println("Required: "+f);
+				}
+				*/
 				ClassLoader cl = computeClassLoader(ToolUtil.class.getClassLoader(), path);			
 				String id = null;
 				try {
