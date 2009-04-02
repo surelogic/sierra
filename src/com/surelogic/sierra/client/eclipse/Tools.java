@@ -67,7 +67,10 @@ public final class Tools {
 		addToolFinder();		
 		for(File plugin : ToolUtil.findToolDirs()) {
 			System.out.println("Found plugin @ "+plugin.getPath());
-		}		
+		}	
+		for(IToolFactory f : ToolUtil.findToolFactories()) {
+			System.out.println("Found tool: "+f.getName());
+		}
 		
 		try {
 			// Get known artifact types
