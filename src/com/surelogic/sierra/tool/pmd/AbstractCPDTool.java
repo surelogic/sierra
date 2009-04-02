@@ -6,7 +6,6 @@ import java.util.*;
 
 import net.sourceforge.pmd.cpd.*;
 
-import com.surelogic.common.*;
 import com.surelogic.common.jobs.SLProgressMonitor;
 import com.surelogic.common.jobs.SLStatus;
 import com.surelogic.sierra.tool.AbstractTool;
@@ -17,11 +16,9 @@ import com.surelogic.sierra.tool.SierraToolConstants;
 import com.surelogic.sierra.tool.analyzer.ILazyArtifactGenerator;
 import com.surelogic.sierra.tool.message.ArtifactGenerator;
 import com.surelogic.sierra.tool.message.Config;
-import com.surelogic.sierra.tool.message.IdentifierType;
 import com.surelogic.sierra.tool.message.Priority;
 import com.surelogic.sierra.tool.message.Severity;
 import com.surelogic.sierra.tool.message.ArtifactGenerator.ArtifactBuilder;
-import com.surelogic.sierra.tool.message.ArtifactGenerator.SourceLocationBuilder;
 import com.surelogic.sierra.tool.targets.*;
 
 public abstract class AbstractCPDTool extends AbstractTool {
@@ -119,11 +116,11 @@ public abstract class AbstractCPDTool extends AbstractTool {
 				ArtifactBuilder artifact = generator.artifact();
 				TokenEntry firstMark = m.getFirstMark();
 				setSourceLocation(artifact.primarySourceLocation(),
-						new SourceInfo(roots, firstMark, m.getLineCount()));
+						new SrcInfo(roots, firstMark, m.getLineCount()));
 				for (TokenEntry mark : m.getMarkSet()) {
 					if (mark.getIndex() != firstMark.getIndex()) {
 						setSourceLocation(artifact.sourceLocation(),
-								new SourceInfo(roots, mark, m.getLineCount()));
+								new SrcInfo(roots, mark, m.getLineCount()));
 					}
 				}
 
@@ -135,14 +132,8 @@ public abstract class AbstractCPDTool extends AbstractTool {
 				artifact.build();
 			}
 
-			class SourceInfo {
-				final String fileName;
-				final String packageName;
-				final String cuName;
-				final int startLine;
-				final int endLine;
-
-				SourceInfo(Map<String, String> roots, TokenEntry mark,
+			class SrcInfo extends SourceInfo {
+				SrcInfo(Map<String, String> roots, TokenEntry mark,
 						int lineCount) {
 					fileName = mark.getTokenSrcID();
 
@@ -175,28 +166,6 @@ public abstract class AbstractCPDTool extends AbstractTool {
 					startLine = mark.getBeginLine();
 					endLine = mark.getBeginLine() + lineCount;
 				}
-			}
-
-			private void setSourceLocation(
-					SourceLocationBuilder sourceLocation, SourceInfo info) {
-				sourceLocation.packageName(info.packageName);
-				sourceLocation.compilation(info.cuName);
-				sourceLocation.className(info.cuName);
-				sourceLocation.type(IdentifierType.CLASS);
-				sourceLocation.identifier(info.cuName);
-
-				HashGenerator hashGenerator = HashGenerator.getInstance();
-				Long hashValue = hashGenerator.getHash(info.fileName,
-						info.startLine);
-				// FIX use v.getBeginColumn();
-				// FIX use v.getEndColumn();
-				sourceLocation = sourceLocation.hash(hashValue).lineOfCode(
-						info.startLine);
-				sourceLocation = sourceLocation.endLine(info.endLine);
-
-				//System.out.println("Building location for "+info.fileName+" : "
-				// +info.startLine);
-				sourceLocation.build();
 			}
 		};
 	}
