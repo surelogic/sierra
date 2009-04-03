@@ -1,6 +1,7 @@
 package com.surelogic.sierra.tool;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 import java.util.*;
 import java.util.logging.Level;
@@ -81,7 +82,12 @@ public abstract class AbstractTool implements ITool {
 	protected abstract IToolInstance create(String name, ILazyArtifactGenerator generator, boolean close);
 
 	public List<File> getRequiredJars() {
-		return Collections.emptyList();
+		try {
+			return ToolUtil.getRequiredJars(factory.getPluginDir());
+		} catch (IOException e) {
+			LOG.log(Level.SEVERE, "Couldn't get required jars for "+getTitle(), e);
+			return Collections.emptyList();
+		}
 	}
 
 	protected String getPluginDir(final boolean debug, final String pluginId) {

@@ -35,10 +35,14 @@ public class Reckoner1_0Tool extends AbstractTool {
   
   @Override
   public List<File> getRequiredJars() {
-	  final List<File> jars = new ArrayList<File>();	
+	  final List<File> jars = super.getRequiredJars();
+	  /*
 	  findJars(jars, new File(config.getToolsDirectory(), "reckoner/lib"));
 	  jars.add(new File(config.getToolsDirectory(), "reckoner/reckoner.jar"));
-	  
+	  */
+
+	  // TODO remove special case to save spaces
+	  // 
 	  // Add all the plugins needed by Reckoner (e.g. JDT Core and
 	  // company)
 	  for (String id : config.getPluginDirs().keySet()) {
