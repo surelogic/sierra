@@ -8,7 +8,7 @@ public class ReckonerFactory extends AbstractToolFactory {
 	private static final String INFO = "<A HREF=\"http://www.surelogic.com\">Reckoner</A> is a static analysis tool created by SureLogic, Inc. that collects metrics about Java code.";
 
 	public String getId() {
-		return "reckoner";
+		return "Reckoner";
 	}
 	
 	public String getName() {
