@@ -11,10 +11,13 @@ import com.surelogic.sierra.tool.message.Config;
 import com.surelogic.sierra.tool.targets.IToolTarget;
 
 public class MultiTool extends AbstractTool implements Iterable<ITool> {
+	private static final IToolFactory factory = 
+		new DummyToolFactory("MultiTool", "1.0", "MultiTool", "A container for other tools");
+	
 	protected List<ITool> tools = new ArrayList<ITool>();
 
 	public MultiTool(Config config) {
-		super("MultiTool", "1.0", "MultiTool", "A container for other tools", config);
+		super(factory, config);
 	}
 
 	public Iterator<ITool> iterator() {

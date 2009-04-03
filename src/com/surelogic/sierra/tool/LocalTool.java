@@ -25,6 +25,10 @@ public class LocalTool extends AbstractTool {
 	private static final JAXBContext ctx = createContext();
 
 	private static final Marshaller marshaller = createMarshaller(ctx);
+	
+	private static final IToolFactory factory = 
+		new DummyToolFactory("Local", "1.0", "Local",
+				"Local tool for running other tools in another JVM");
 
 	private static JAXBContext createContext() {
 		try {
@@ -53,8 +57,7 @@ public class LocalTool extends AbstractTool {
 	}
 
 	public LocalTool(Config config) {
-		super("Local", "1.0", "Local",
-				"Local tool for running other tools in another JVM", config);
+		super(factory, config);
 	}
 
 	public Set<ArtifactType> getArtifactTypes() {

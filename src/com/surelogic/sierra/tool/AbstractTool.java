@@ -27,39 +27,33 @@ public abstract class AbstractTool implements ITool {
 		ti.setOption(IToolInstance.TARGET_LEVEL, config.getTargetLevel());
 	}
 
-	private final String description;
-	private final String name;
-	private final String title;
-	private final String version;
 	protected final boolean debug;
+	protected final IToolFactory factory;
 	protected final Config config;
 
 	/**
 	 * Perhaps this should read from a file
 	 */
-	protected AbstractTool(String name, String version, String title, String desc, Config config) {
-		this.name = name;
-		this.version = version;
-		this.title = title;
-		this.description = desc;
+	protected AbstractTool(IToolFactory factory, Config config) {
+		this.factory = factory;
 		this.config = config;
 		debug = LOG.isLoggable(Level.FINE);
 	}
 
 	public final String getHtmlDescription() {
-		return description;
+		return factory.getHTMLInfo();
 	}
 
 	public final String getName() {
-		return name;
+		return factory.getId();
 	}
 
 	public final String getTitle() {
-		return title;
+		return factory.getName();
 	}
 
 	public final String getVersion() {
-		return version;
+		return factory.getVersion();
 	}
 
 	public IToolInstance create() {

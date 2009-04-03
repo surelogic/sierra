@@ -7,6 +7,7 @@ import com.surelogic.sierra.tool.message.Config;
 public interface IToolFactory {
 	String getId();
 	String getName();
+	String getVersion();
 	String getHTMLInfo();
 	boolean isProduction();
 	
@@ -17,5 +18,6 @@ public interface IToolFactory {
 	 * @param pluginDir The specific directory for this tool
 	 */
 	void init(File toolHome, File pluginDir);
+	File getPluginDir();
 	ITool create(Config config);
 }

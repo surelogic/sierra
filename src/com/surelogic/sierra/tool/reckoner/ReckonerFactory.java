@@ -15,11 +15,16 @@ public class ReckonerFactory extends AbstractToolFactory {
 		return "Reckoner";
 	}
 	
+	@Override
+	public String getVersion() {
+		return "1.0";
+	}
+	
 	public String getHTMLInfo() {
 		return INFO;
 	}
 	
 	public ITool create(Config config) {
-		return new Reckoner1_0Tool(config);
+		return new Reckoner1_0Tool(this, config);
 	}
 }

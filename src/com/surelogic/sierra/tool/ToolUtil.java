@@ -172,7 +172,8 @@ public class ToolUtil {
 	private static String MANIFEST = "META-INF"+File.separatorChar+"MANIFEST.MF";
 	private static String CLASSPATH = "Bundle-ClassPath";
 	private static String TOOL_ID = "Sierra-Tool";
-	
+	private static String PLUGIN_VERSION = "Bundle-Version";
+
 	// FIX how to identify tools?
 	// By ITool?  How to make it consistent with a plugin.xml?
 	private static Attributes readManifest(File pluginDir) throws IOException {
@@ -257,6 +258,20 @@ public class ToolUtil {
 			}
 		}
 		return Collections.emptyList();
+	}
+	
+	public static String getPluginVersion(File pluginDir) throws IOException {
+		final Attributes attrs = readManifest(pluginDir);
+		final String version = attrs.getValue(PLUGIN_VERSION);
+		// Find the first non-underscore/digit
+		int i = 0;
+		for(; i<version.length(); i++) {
+			final char ch = version.charAt(i);
+			if (ch != '.' && !Character.isDigit(ch)) {
+				break;
+			}
+		}		
+		return version.substring(0, i);
 	}
 	
 	public static List<File> getRequiredJars(File pluginDir) throws IOException {

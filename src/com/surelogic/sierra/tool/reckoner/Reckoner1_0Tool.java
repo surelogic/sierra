@@ -25,8 +25,8 @@ public class Reckoner1_0Tool extends AbstractTool {
   };
   */
 	
-  public Reckoner1_0Tool(Config config) {
-    super("Reckoner", "1.0", "Reckoner", "", config);
+  public Reckoner1_0Tool(ReckonerFactory f, Config config) {
+    super(f, config);
   }
 
   public Set<ArtifactType> getArtifactTypes() {

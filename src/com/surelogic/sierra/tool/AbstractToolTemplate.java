@@ -10,8 +10,8 @@ import com.surelogic.sierra.tool.message.Config;
  * @author Edwin.Chan
  */
 public abstract class AbstractToolTemplate extends AbstractTool {
-  public AbstractToolTemplate(String version, Config config) {
-    super("", version, "", "", config);
+  public AbstractToolTemplate(IToolFactory f, Config config) {
+    super(f, config);
   }
 
   @Override
