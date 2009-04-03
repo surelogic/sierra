@@ -169,11 +169,21 @@ public class ToolUtil {
 		return createTools(config).getArtifactTypes();
 	}
 	
-	private static String MANIFEST = "META-INF"+File.separatorChar+"MANIFEST.MF";
-	private static String CLASSPATH = "Bundle-ClassPath";
-	private static String TOOL_ID = "Sierra-Tool";
-	private static String PLUGIN_VERSION = "Bundle-Version";
+	private static final String MANIFEST = "META-INF"+File.separatorChar+"MANIFEST.MF";
+	private static final String CLASSPATH = "Bundle-ClassPath";
+	private static final String TOOL_ID = "Sierra-Tool";
+	private static final String PLUGIN_VERSION = "Bundle-Version";
+	private static final String DEPENDENCIES = "Require-Bundle:";
 
+	private static final Set<String> EXPECTED_DEPS;
+	static {
+		Set<String> temp = new HashSet<String>(4);
+		temp.add(SierraToolConstants.COMMON_PLUGIN_ID);
+		temp.add(SierraToolConstants.TOOL_PLUGIN_ID);
+		temp.add(SierraToolConstants.MESSAGE_PLUGIN_ID);
+		EXPECTED_DEPS = Collections.unmodifiableSet(temp);
+	}
+	
 	// FIX how to identify tools?
 	// By ITool?  How to make it consistent with a plugin.xml?
 	private static Attributes readManifest(File pluginDir) throws IOException {
@@ -182,6 +192,49 @@ public class ToolUtil {
 			return null;
 		}		
 		return new Manifest(new FileInputStream(manifest)).getMainAttributes();
+	}
+	
+	interface ItemProcessor<T> {
+		boolean isCancelled();
+		T process(String item);
+	}
+	
+	abstract static class AbstractItemProcessor<T> implements ItemProcessor<T> {
+		private boolean cancel = false;
+		
+		public boolean isCancelled() {
+			return !cancel;
+		}
+		
+		protected T cancel() {
+			cancel = true;
+			return null;
+		}
+	}
+	
+	/**
+	 * Get items from a comma-separated list
+	 */
+	private static <T> List<T> getItems(String items, ItemProcessor<T> p) {
+		if (items == null) {
+			return Collections.emptyList();
+		}
+		StringTokenizer st = new StringTokenizer(items, ",");
+		if (!st.hasMoreTokens()) {
+			return Collections.emptyList();
+		}
+		List<T> rv = new ArrayList<T>();				
+		while (!p.isCancelled() && st.hasMoreTokens()) {
+			String label = st.nextToken().trim();
+			T item = p.process(label);
+			if (item != null) {
+				rv.add(item);
+			}
+		}
+		if (p.isCancelled()) {
+			return Collections.emptyList();
+		}
+		return rv;
 	}
 	
 	static List<File> findToolPlugins(File pluginsDir) {
@@ -218,36 +271,32 @@ public class ToolUtil {
 		if (attrs == null) {
 			return Collections.emptyList();
 		}
+		final List<File> path = getRequiredJars(pluginDir, attrs);
+		if (path.isEmpty()) {
+			return Collections.emptyList();
+		}
+		if (hasExtraDependencies(pluginDir, attrs)) {
+			return Collections.emptyList();
+		}
+		/*
+		for(File f : path) {
+			System.out.println("Required: "+f);
+		}
+		*/
+		final ClassLoader cl = computeClassLoader(ToolUtil.class.getClassLoader(), path);		
+		
 		String ids = attrs.getValue(TOOL_ID);
-		if (ids != null) {
-			StringTokenizer st = new StringTokenizer(ids, ",");
-			if (!st.hasMoreTokens()) {
-				return Collections.emptyList();
-			}
-			List<File> path = getRequiredJars(pluginDir, attrs);
-			if (!path.isEmpty()) {
-				/*
-				for(File f : path) {
-					System.out.println("Required: "+f);
-				}
-				*/
-				ClassLoader cl = computeClassLoader(ToolUtil.class.getClassLoader(), path);			
-				String id = null;
-				try {
-					List<IToolFactory> factories = new ArrayList<IToolFactory>();
-					while (st.hasMoreTokens()) {
-						id = st.nextToken().trim();					
-						
-						Class<?> toolClass = cl.loadClass(id);
-						Object o = toolClass.newInstance();
-						if (o instanceof IToolFactory) {
-							factories.add((IToolFactory) o);
-						} else {
-							LOG.info("Got a non-IToolFactory: "+id);
-							return Collections.emptyList();
-						}
-					}
-					return factories;
+		return getItems(ids, new AbstractItemProcessor<IToolFactory>() {
+			public IToolFactory process(String id) {
+				try {			
+					Class<?> toolClass = cl.loadClass(id);
+					Object o = toolClass.newInstance();
+					if (o instanceof IToolFactory) {
+						return (IToolFactory) o;
+					} else {
+						LOG.info("Got a non-IToolFactory: "+id);
+						return cancel();
+					}				
 				} catch (ClassNotFoundException e) {
 					LOG.log(Level.WARNING, "Couldn't load class "+id, e);
 				} catch (InstantiationException e) {
@@ -255,9 +304,10 @@ public class ToolUtil {
 				} catch (IllegalAccessException e) {
 					LOG.log(Level.WARNING, "Couldn't access class "+id, e);
 				}
-			}
-		}
-		return Collections.emptyList();
+				// Should only get here due to exception
+				return cancel();
+			}			
+		});
 	}
 	
 	public static String getPluginVersion(File pluginDir) throws IOException {
@@ -274,36 +324,51 @@ public class ToolUtil {
 		return version.substring(0, i);
 	}
 	
+	private static boolean hasExtraDependencies(File pluginDir, Attributes attrs) {
+		boolean extra = false;
+		for(String id : getDependencies(attrs)) {
+			if (!EXPECTED_DEPS.contains(id)) {
+				LOG.warning(pluginDir+" requires non-standard dependency: "+id);
+				extra = true;
+			}
+		}
+		return extra;
+	}
+	
+	private static List<String> getDependencies(Attributes attrs) {
+		final String path = attrs.getValue(DEPENDENCIES);
+		return getItems(path, new AbstractItemProcessor<String>() {
+			public String process(String id) {
+				return id;
+			}
+		});
+	}
+	
 	public static List<File> getRequiredJars(File pluginDir) throws IOException {
 		final Attributes attrs = readManifest(pluginDir);
 		return getRequiredJars(pluginDir, attrs);
 	}
 		
-	public static List<File> getRequiredJars(File pluginDir, Attributes attrs) {
+	public static List<File> getRequiredJars(final File pluginDir, Attributes attrs) {
 		final String path = attrs.getValue(CLASSPATH);
-		if (path == null) {
-			return Collections.emptyList();
-		}
-		StringTokenizer st = new StringTokenizer(path, ",");
-		if (!st.hasMoreTokens()) {
-			return Collections.emptyList();
-		}
-		List<File> jars = new ArrayList<File>();				
-		while (st.hasMoreTokens()) {
-			String fragment = st.nextToken().trim();
-			if (".".equals(fragment)) {
-				File pluginBin = new File(pluginDir, "bin");
-				if (pluginBin.exists() && pluginBin.isDirectory()) {
-					// local binary
-					jars.add(pluginBin);
-					continue;
+		return getItems(path, new AbstractItemProcessor<File>() {
+			public File process(String fragment) {
+				if (".".equals(fragment)) {
+					File pluginBin = new File(pluginDir, "bin");
+					if (pluginBin.exists() && pluginBin.isDirectory()) {
+						// local binary
+						return pluginBin;
+					}
+					// otherwise, add the directory
 				}
-				// otherwise, add the directory
+				// plugin-relative path
+				File jar = new File(pluginDir, fragment);	
+				if (!jar.exists()) {
+					return cancel();
+				}
+				return jar;
 			}
-			// plugin-relative path
-			jars.add(new File(pluginDir, fragment));			
-		}
-		return jars;
+		});
 	}
 	
 	public static URLClassLoader computeClassLoader(ClassLoader cl, List<File> plugins) {
