@@ -310,12 +310,12 @@ public class AbstractPMDTool extends AbstractTool {
 	
 	@Override
 	public List<File> getRequiredJars() {
-		final List<File> jars = new ArrayList<File>();				
+		final List<File> jars = super.getRequiredJars();		
 		final File all = createAllXml();
 		if (all != null) {
 			jars.add(all);
 		}
-		addAllPluginJarsToPath(debug, jars,	SierraToolConstants.PMD_PLUGIN_ID, "lib");
+		//addAllPluginJarsToPath(debug, jars, SierraToolConstants.PMD_PLUGIN_ID, "lib");
 		jars.addAll(findPluginJars(true));	
 		return jars;
 	}

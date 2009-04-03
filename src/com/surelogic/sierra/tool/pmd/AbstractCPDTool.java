@@ -30,12 +30,14 @@ public abstract class AbstractCPDTool extends AbstractTool {
 	  return Collections.emptySet();
 	}
 	
+	/*
 	@Override
 	public List<File> getRequiredJars() {
 		final List<File> jars = new ArrayList<File>();				
 		addAllPluginJarsToPath(debug, jars,	SierraToolConstants.PMD_PLUGIN_ID, "lib");
 		return jars;
 	}
+	*/
 	
 	@Override
 	protected IToolInstance create(String name, ILazyArtifactGenerator generator, boolean close) {
