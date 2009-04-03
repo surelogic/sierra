@@ -17,6 +17,11 @@ public class FindBugsToolFactory extends AbstractToolFactory {
 		return "FindBugs\u2122";
 	}
 	
+//	@Override
+//	public String getVersion() {
+//		return "1.3.7"/*Version.RELEASE_BASE*/;
+//	}
+	
 	public String getHTMLInfo() {
 		return INFO;
 	}
@@ -28,6 +33,6 @@ public class FindBugsToolFactory extends AbstractToolFactory {
 	}
 	
 	public ITool create(Config config) {
-		return new AbstractFindBugsTool(config);
+		return new AbstractFindBugsTool(this, config);
 	}
 }

@@ -35,8 +35,8 @@ public class AbstractFindBugsTool extends AbstractTool {
 		};
 	}
 	
-	public AbstractFindBugsTool(Config config) {		
-		super("FindBugs", "1.3.7"/*Version.RELEASE_BASE*/, "FindBugs (TM)", "", config);
+	public AbstractFindBugsTool(FindBugsToolFactory f, Config config) {		
+		super(f, config);
 	}
 	
 	@Override
