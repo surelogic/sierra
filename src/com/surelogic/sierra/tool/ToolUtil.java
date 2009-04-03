@@ -173,7 +173,7 @@ public class ToolUtil {
 	private static final String CLASSPATH = "Bundle-ClassPath";
 	private static final String TOOL_ID = "Sierra-Tool";
 	private static final String PLUGIN_VERSION = "Bundle-Version";
-	private static final String DEPENDENCIES = "Require-Bundle:";
+	private static final String DEPENDENCIES = "Require-Bundle";
 
 	private static final Set<String> EXPECTED_DEPS;
 	static {
@@ -203,7 +203,7 @@ public class ToolUtil {
 		private boolean cancel = false;
 		
 		public boolean isCancelled() {
-			return !cancel;
+			return cancel;
 		}
 		
 		protected T cancel() {
@@ -339,6 +339,11 @@ public class ToolUtil {
 		final String path = attrs.getValue(DEPENDENCIES);
 		return getItems(path, new AbstractItemProcessor<String>() {
 			public String process(String id) {
+				int semi = id.indexOf(';');
+				// Check for attributes
+				if (semi >= 0) {
+					return id.substring(0, semi);
+				}
 				return id;
 			}
 		});
@@ -362,7 +367,7 @@ public class ToolUtil {
 					// otherwise, add the directory
 				}
 				// plugin-relative path
-				File jar = new File(pluginDir, fragment);	
+				File jar = new File(pluginDir, fragment);					
 				if (!jar.exists()) {
 					return cancel();
 				}
