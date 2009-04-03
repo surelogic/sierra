@@ -15,11 +15,16 @@ public class PMDToolFactory extends AbstractToolFactory {
 		return "PMD\u2122";
 	}
 	
+//	@Override
+//	public String getVersion() {
+//		return "4.2.4"/*PMD.VERSION*/;
+//	}
+	
 	public String getHTMLInfo() {
 		return INFO;
 	}
 	
 	public ITool create(Config config) {
-		return new AbstractPMDTool(config);
+		return new AbstractPMDTool(this, config);
 	}
 }

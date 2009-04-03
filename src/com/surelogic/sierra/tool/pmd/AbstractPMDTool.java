@@ -33,8 +33,8 @@ public class AbstractPMDTool extends AbstractTool {
 	private static final String PMD_LIB = "pmd-lib";	
 	private static final String rulesets = "all.xml"; // location of the XML rule file
 	
-	public AbstractPMDTool(Config config) {
-		super("PMD", "4.2.4"/*PMD.VERSION*/, "PMD", "", config);
+	public AbstractPMDTool(PMDToolFactory f, Config config) {
+		super(f, config);
 	}
 
 	static List<RuleSet> getDefaultRuleSets() throws RuleSetNotFoundException {

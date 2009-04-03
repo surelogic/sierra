@@ -15,11 +15,16 @@ public class CPDToolFactory extends AbstractToolFactory {
 		return "CPD";
 	}
 	
+	@Override 
+	public String getVersion() {
+		return "4.1";
+	}
+	
 	public String getHTMLInfo() {
 		return INFO;
 	}
 	
 	public ITool create(Config config) {
-		return new CPD4_1Tool(config);
+		return new CPD4_1Tool(this, config);
 	}
 }
