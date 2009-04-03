@@ -39,12 +39,14 @@ public class AbstractFindBugsTool extends AbstractTool {
 		super(f, config);
 	}
 	
+	/*
 	@Override
 	public List<File> getRequiredJars() {
 		final List<File> jars = new ArrayList<File>();	
 		addAllPluginJarsToPath(debug, jars, SierraToolConstants.FB_PLUGIN_ID, "lib");
 		return jars;
 	}
+	*/
 	
 	public final Set<ArtifactType> getArtifactTypes() {
 		Set<ArtifactType> types = new HashSet<ArtifactType>();
