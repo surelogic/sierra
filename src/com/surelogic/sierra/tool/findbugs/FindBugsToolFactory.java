@@ -6,7 +6,7 @@ import com.surelogic.sierra.tool.*;
 import com.surelogic.sierra.tool.message.Config;
 
 public class FindBugsToolFactory extends AbstractToolFactory {
-	private static final String FINDBUGS = "findbugs";
+	private static final String FINDBUGS = "FindBugs";
 	private static final String INFO = "<A HREF=\"http://findbugs.sourceforge.net\">FindBugs</A> is a static analysis tool created at University of Maryland for finding bugs in Java code.";
 	
 	public String getId() {
