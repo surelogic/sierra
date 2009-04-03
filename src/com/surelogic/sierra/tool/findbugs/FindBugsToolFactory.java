@@ -22,7 +22,8 @@ public class FindBugsToolFactory extends AbstractToolFactory {
 	}
 	
 	@Override
-	public void init(File toolHome) {
+	public void init(File toolHome, File pluginDir) {
+		super.init(toolHome, pluginDir);
 		AbstractFindBugsTool.init(toolHome.getAbsolutePath());
 	}
 	
