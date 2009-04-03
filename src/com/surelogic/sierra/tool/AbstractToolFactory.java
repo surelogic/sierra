@@ -3,12 +3,14 @@ package com.surelogic.sierra.tool;
 import java.io.File;
 
 public abstract class AbstractToolFactory implements IToolFactory {
+	File pluginDir;
+	
 	public boolean isProduction() {
 		return true;
 	}
 	
-	public void init(File toolHome) {
-		// Nothing to do
+	public void init(File toolHome, File pluginDir) {
+		this.pluginDir = pluginDir;
 	}
 	
 	@Override

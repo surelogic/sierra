@@ -10,6 +10,12 @@ public interface IToolFactory {
 	String getHTMLInfo();
 	boolean isProduction();
 	
-	void init(File toolHome);
+	/**
+	 * If overridden, should call super.init()
+	 * 
+	 * @param toolHome The general directory for Sierra tool-related stuff
+	 * @param pluginDir The specific directory for this tool
+	 */
+	void init(File toolHome, File pluginDir);
 	ITool create(Config config);
 }

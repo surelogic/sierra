@@ -74,12 +74,14 @@ public class ToolUtil {
 	}
 	
 	public static List<IToolFactory> findToolFactories(boolean all) {
+		final File home = getSierraToolDirectory();
 		List<IToolFactory> factories = new ArrayList<IToolFactory>();
 		for(File dir : findToolDirs()) {
 			try {
 				Attributes manifest = readManifest(dir);
 				for(IToolFactory f : instantiateToolFactories(dir, manifest)) {
 					if (all || f.isProduction()) {
+						f.init(home, dir);
 						factories.add(f);
 					}
 				}
@@ -139,10 +141,8 @@ public class ToolUtil {
 	
 	public static MultiTool createTools(Config config) {        
 		final MultiTool t = new MultiTool(config);
-		final File home   = getSierraToolDirectory();
 		for(IToolFactory f : findToolFactories()) {
 			//System.out.println("Creating "+f.getId());
-			f.init(home);
 			t.addTool(f.create(config));
 		}
 		/*
