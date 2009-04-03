@@ -174,6 +174,7 @@ public class ToolUtil {
 	private static final String TOOL_ID = "Sierra-Tool";
 	private static final String PLUGIN_VERSION = "Bundle-Version";
 	private static final String DEPENDENCIES = "Require-Bundle";
+	private static final String PLUGIN_ID = "Bundle-SymbolicName";	
 
 	private static final Set<String> EXPECTED_DEPS;
 	static {
@@ -235,6 +236,21 @@ public class ToolUtil {
 			return Collections.emptyList();
 		}
 		return rv;
+	}
+	
+	/**
+	 * Remove any whitespace and extra attributes
+	 */
+	private static String trimValue(String value) {
+		if (value == null) {
+			return null;
+		}
+		int semi = value.indexOf(';');
+		// Check for attributes
+		if (semi >= 0) {
+			return value.substring(0, semi).trim();
+		}
+		return value;
 	}
 	
 	static List<File> findToolPlugins(File pluginsDir) {
@@ -325,6 +341,11 @@ public class ToolUtil {
 	}
 	
 	private static boolean hasExtraDependencies(File pluginDir, Attributes attrs) {
+		String pluginId = trimValue(attrs.getValue(PLUGIN_ID));
+		if (SierraToolConstants.TOOL_PLUGIN_ID.equals(pluginId)) {
+			// OK for sierra-tool to have more, since we wrote it
+			return false;
+		}		
 		boolean extra = false;
 		for(String id : getDependencies(attrs)) {
 			if (!EXPECTED_DEPS.contains(id)) {
@@ -339,12 +360,7 @@ public class ToolUtil {
 		final String path = attrs.getValue(DEPENDENCIES);
 		return getItems(path, new AbstractItemProcessor<String>() {
 			public String process(String id) {
-				int semi = id.indexOf(';');
-				// Check for attributes
-				if (semi >= 0) {
-					return id.substring(0, semi);
-				}
-				return id;
+				return trimValue(id);
 			}
 		});
 	}
