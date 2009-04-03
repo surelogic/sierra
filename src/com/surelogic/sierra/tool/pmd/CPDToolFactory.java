@@ -4,7 +4,7 @@ import com.surelogic.sierra.tool.*;
 import com.surelogic.sierra.tool.message.Config;
 
 public class CPDToolFactory extends AbstractToolFactory {
-	private static final String CPD = "cpd";
+	private static final String CPD = "CPD";
 	private static final String INFO = "<A HREF=\"http://pmd.sourceforge.net\">CPD</A> is a static analysis tool that looks for duplicated code.";
 		
 	public String getId() {
