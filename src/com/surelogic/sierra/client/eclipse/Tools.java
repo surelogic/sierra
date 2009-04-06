@@ -22,11 +22,13 @@ import com.surelogic.sierra.tool.*;
 import com.surelogic.sierra.tool.message.Config;
 
 public final class Tools {
+	public static final String TOOL_PLUGIN_ID = "com.surelogic.sierra.tool";
+	
 	/**
 	 * The Sierra tool module extension point identifier <i>must</i> 
 	 * match the plugin manifest.
 	 */
-	public static final String TOOL_EXTENSION_POINT_ID = "tool";
+	public static final String TOOL_EXTENSION_POINT_ID = "sierraTool";
 	
 	private static void addToolFinder() {
 		ToolUtil.addToolFinder(new IToolFinder() {
@@ -135,7 +137,7 @@ public final class Tools {
 	private static IExtension[] readToolExtensionPoints() {
 		IExtensionRegistry pluginRegistry = Platform.getExtensionRegistry();
 		IExtensionPoint extensionPoint = pluginRegistry.getExtensionPoint(
-				Activator.PLUGIN_ID,
+				TOOL_PLUGIN_ID,
 				TOOL_EXTENSION_POINT_ID);
 		return extensionPoint.getExtensions();
 	}
