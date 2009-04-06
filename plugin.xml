@@ -556,4 +556,37 @@
           </activeWhen>
 	    </handler>
 	</extension>
+	
+	<!-- Support for developing Sierra tool extensions -->
+	<extension id="sierraToolNature" name="Sierra Tool Nature"
+		point="org.eclipse.core.resources.natures">
+		<runtime>
+			<run class="com.surelogic.sierra.tool.eclipse.Nature">
+				<parameter name="installBuilder" value="true">
+				</parameter>
+			</run>
+		</runtime>
+		<requires-nature id="org.eclipse.jdt.core.javanature">
+        </requires-nature>
+		<requires-nature id="org.eclipse.pde.PluginNature">
+		</requires-nature>		
+		<builder id="com.surelogic.sierra.client.eclipse.sierraToolBuilder"></builder>
+	</extension>
+	<extension id="sierraToolBuilder" name="Sierra Tools"
+		point="org.eclipse.core.resources.builders">
+		<builder hasNature="true">
+			<run class="com.surelogic.sierra.tool.eclipse.Builder"></run>
+		</builder>
+	</extension>
+	<extension point="org.eclipse.ui.newWizards">
+	   <category name="Sierra tool extensions" id="com.surelogic.sierra.tool.newWizards"/>
+	   <wizard name="Sierra Tool Plugin Project"
+	           icon="icons/newproject16.gif"
+	           category="com.surelogic.sierra.tool.newWizards"
+	           class="com.surelogic.sierra.tool.eclipse.NewSierraToolProjectWizard"
+	           project="true"
+	           id="com.surelogic.sierra.tool.eclipse.newproject">
+	      <description>Create a Sierra tool project.</description>
+	   </wizard>
+	</extension>
 </plugin>
