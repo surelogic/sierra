@@ -1,0 +1,4 @@
+Sierra-Id: CPD
+Bundle-Version: 4.1
+Sierra-Website: pmd.sourceforge.net
+Sierra-Description: A static analysis tool that looks for duplicated code.
