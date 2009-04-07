@@ -1,8 +1,10 @@
 package com.surelogic.sierra.tool;
 
+import java.io.File;
+
 import com.surelogic.sierra.tool.message.Config;
 
-public final class DummyToolFactory extends AbstractToolFactory {
+public final class DummyToolFactory implements IToolFactory {
 	private final String description;
 	private final String id;
 	private final String name;
@@ -34,15 +36,16 @@ public final class DummyToolFactory extends AbstractToolFactory {
 	public String getHTMLInfo() {
 		return description;
 	}
-	
-	@Override
-	public int hashCode() {
-		return id.hashCode();
+
+	public File getPluginDir() {
+		return null;
 	}
-	
-	@Override
-	public boolean equals(Object o) {
-		return this == o;
+
+	public void init(File toolHome, File pluginDir) {
+		// Nothing to do
 	}
-	
+
+	public boolean isProduction() {
+		return true;
+	}
 }

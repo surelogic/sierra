@@ -3,6 +3,7 @@ package com.surelogic.sierra.tool;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -169,12 +170,16 @@ public class ToolUtil {
 		return createTools(config).getArtifactTypes();
 	}
 	
-	private static final String MANIFEST = "META-INF"+File.separatorChar+"MANIFEST.MF";
-	private static final String CLASSPATH = "Bundle-ClassPath";
-	private static final String TOOL_ID = "Sierra-Tool";
-	private static final String PLUGIN_VERSION = "Bundle-Version";
-	private static final String DEPENDENCIES = "Require-Bundle";
-	private static final String PLUGIN_ID = "Bundle-SymbolicName";	
+	public static final String MANIFEST = "META-INF"+File.separatorChar+"MANIFEST.MF";
+	public static final String CLASSPATH = "Bundle-ClassPath";
+	public static final String TOOL_ID = "Sierra-Id";
+	public static final String TOOL_FACTORIES = "Sierra-Tool";
+	public static final String TOOL_WEBSITE = "Sierra-Website";
+	public static final String TOOL_DESCRIPTION = "Sierra-Description";
+    public static final String PLUGIN_VERSION = "Bundle-Version";
+    public static final String DEPENDENCIES = "Require-Bundle";
+    public static final String PLUGIN_ID = "Bundle-SymbolicName";	
+    public static final String PLUGIN_NAME = "Bundle-Name";
 
 	private static final Set<String> EXPECTED_DEPS;
 	static {
@@ -188,7 +193,7 @@ public class ToolUtil {
 	// FIX how to identify tools?
 	// By ITool?  How to make it consistent with a plugin.xml?
 	private static Attributes readManifest(File pluginDir) throws IOException {
-		File manifest = new File(pluginDir, MANIFEST);
+		File manifest = new File(pluginDir, MANIFEST);		
 		if (!manifest.exists() || !manifest.isFile()) {
 			return null;
 		}		
@@ -210,6 +215,12 @@ public class ToolUtil {
 		protected T cancel() {
 			cancel = true;
 			return null;
+		}
+	}
+	
+	static class IdentityItemProcessor extends AbstractItemProcessor<String> {
+		public String process(String item) {
+			return item;
 		}
 	}
 	
@@ -236,6 +247,10 @@ public class ToolUtil {
 			return Collections.emptyList();
 		}
 		return rv;
+	}
+	
+	private static int countItems(String items) {
+		return getItems(items, new IdentityItemProcessor()).size();
 	}
 	
 	/**
@@ -281,8 +296,10 @@ public class ToolUtil {
 		return false;
 	}
 	
-	// FIX Note that this only allows for one tool per plugin
-	// FIX loading properties doesn't allow multi-line
+	private static int numToolFactories(Attributes attrs) {
+		return countItems(attrs.getValue(TOOL_FACTORIES));
+	}
+
 	private static List<IToolFactory> instantiateToolFactories(File pluginDir, Attributes attrs) {
 		if (attrs == null) {
 			return Collections.emptyList();
@@ -301,7 +318,7 @@ public class ToolUtil {
 		*/
 		final ClassLoader cl = computeClassLoader(ToolUtil.class.getClassLoader(), path);		
 		
-		String ids = attrs.getValue(TOOL_ID);
+		String ids = attrs.getValue(TOOL_FACTORIES);
 		return getItems(ids, new AbstractItemProcessor<IToolFactory>() {
 			public IToolFactory process(String id) {
 				try {			
@@ -326,8 +343,39 @@ public class ToolUtil {
 		});
 	}
 	
-	public static String getPluginVersion(File pluginDir) throws IOException {
-		final Attributes attrs = readManifest(pluginDir);
+	/**
+	 * Tries to get the metadata for a given tool factory from:
+	 * 1. A factory-specific properties file, e.g. tool/Factory.properties
+	 * 2. The bundle manifest
+	 * 
+	 * @return null if no id, or there's more than one tool factory
+	 */
+	public static ToolInfo getToolInfo(File pluginDir, String factoryName) throws IOException {
+		final Attributes mainAttrs = readManifest(pluginDir);
+		Attributes attrs = mainAttrs;
+		// First, try the specific props file
+		final List<File> path = getRequiredJars(pluginDir, mainAttrs);		
+		if (!path.isEmpty()) {			
+			final ClassLoader cl = computeClassLoader(ToolUtil.class.getClassLoader(), path);	
+			String resPath = factoryName.replace('.', '/') + ".manifest";
+			InputStream stream = cl.getResourceAsStream(resPath);
+			if (stream != null) {
+				attrs = new Manifest(stream).getMainAttributes();
+			}
+		}
+		// Otherwise, use the bundle manifest
+		String id = attrs.getValue(TOOL_ID);
+		if (id == null) {
+			return null;
+		}
+		String version = getPluginVersion(attrs);
+		String name = attrs.getValue(PLUGIN_NAME);
+		String website = attrs.getValue(TOOL_WEBSITE);
+		String description = attrs.getValue(TOOL_DESCRIPTION);
+		return new ToolInfo(id, version, name, website, description);
+	}
+
+	private static String getPluginVersion(Attributes attrs) {
 		final String version = attrs.getValue(PLUGIN_VERSION);
 		// Find the first non-underscore/digit
 		int i = 0;
