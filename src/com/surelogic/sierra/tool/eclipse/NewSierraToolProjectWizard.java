@@ -41,9 +41,11 @@ public class NewSierraToolProjectWizard extends Wizard implements INewWizard {
 		namePage.setDescription("???");
 		//namePage.setImageDescriptor(null);
 		
-		//detailsPage = new NewSierraToolProjectWizardPage();
+		detailsPage = new NewSierraToolProjectWizardPage(namePage);
+		detailsPage.setTitle("Describe the new tool");
+		detailsPage.setDescription("???");
 		addPage(namePage);
-		//addPage(detailsPage);
+		addPage(detailsPage);
 	}
 	
 	@Override
