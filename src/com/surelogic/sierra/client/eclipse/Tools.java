@@ -71,7 +71,12 @@ public final class Tools {
 			System.out.println("Found plugin @ "+plugin.getPath());
 		}	
 		for(IToolFactory f : ToolUtil.findToolFactories()) {
-			System.out.println("Found tool: "+f.getName());
+			try {
+				System.out.println("Found tool: "+f.getName()+" v"+f.getVersion());
+				System.out.println(f.getHTMLInfo());
+			} catch(NullPointerException npe) {
+				System.out.println("Ignored tool: "+f.getClass().getName());
+			}
 		}
 		
 		try {
