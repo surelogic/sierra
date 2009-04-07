@@ -19,8 +19,12 @@ import org.xml.sax.SAXException;
 
 import com.surelogic.common.eclipse.WorkspaceUtility;
 import com.surelogic.sierra.client.eclipse.Activator;
+import com.surelogic.sierra.tool.ToolUtil;
 
 public class NewSierraToolProjectWizard extends Wizard implements INewWizard {
+	public static final String PLUGIN_PROVIDER = "Bundle-Vendor";
+	private static final String EXPORT_PACKAGE = "Export-Package";
+	
 	private WizardNewProjectCreationPage namePage;
 	private NewSierraToolProjectWizardPage detailsPage;
 
@@ -158,6 +162,14 @@ public class NewSierraToolProjectWizard extends Wizard implements INewWizard {
 		new CopyInfo("org.eclipse.jdt.core.prefs", ".settings/org.eclipse.jdt.core.prefs"), 
 	};
 	
+	private static void addAttr(StringBuilder sb, String attr, String... values) {
+		sb.append(attr).append(": ");
+		for(String val : values) {
+			sb.append(val);
+		}
+		sb.append('\n');
+	}
+	
 	protected void createProject(IProgressMonitor monitor) {
 		monitor.beginTask("Creating Sierra tool project", 50 + (10*TO_COPY.length));
 		try {
@@ -210,14 +222,18 @@ public class NewSierraToolProjectWizard extends Wizard implements INewWizard {
 			}			
 			// Need to create META-INF/MANIFEST.MF from partial.manifest
 			
-			String dottedName = "com.surelogic." + name.replace('-', '.');
+			String dottedName = detailsPage.getPluginId();
 			StringBuilder sb = new StringBuilder();
-			sb.append("Bundle-Name: ").append(dottedName).append(" Plug-in\n");
-			sb.append("Bundle-SymbolicName: ").append(dottedName).append(";singleton:=true\n");
-			sb.append("Bundle-Version: 1.0.0\n");
-			sb.append("Bundle-Vendor: SureLogic, Inc.\n");
-			sb.append("Sierra-Tool: ").append(dottedName).append(".Factory\n");
-			sb.append("Export-Package: ").append(dottedName).append("\n\n");
+			addAttr(sb, ToolUtil.PLUGIN_NAME, detailsPage.getToolName());
+			addAttr(sb, ToolUtil.PLUGIN_ID, dottedName, ";singleton:=true");
+			addAttr(sb, ToolUtil.PLUGIN_VERSION, detailsPage.getToolVersion());
+			addAttr(sb, PLUGIN_PROVIDER, detailsPage.getToolProvider());
+			addAttr(sb, ToolUtil.TOOL_FACTORIES, dottedName, ".Factory");
+			addAttr(sb, ToolUtil.TOOL_ID, detailsPage.getToolId());			
+			addAttr(sb, ToolUtil.TOOL_WEBSITE, detailsPage.getToolWebsite());
+			addAttr(sb, ToolUtil.TOOL_DESCRIPTION, detailsPage.getDescription());
+			addAttr(sb, EXPORT_PACKAGE, dottedName);
+			sb.append('\n');
 			
 			IPath manifestPath = projectPath.append("META-INF/MANIFEST.MF");
 			IFile file = root.getFile(manifestPath);

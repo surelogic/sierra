@@ -8,19 +8,22 @@ import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
 
 public class NewSierraToolProjectWizardPage extends WizardPage {	
 	// <A HREF=\"http://findbugs.sourceforge.net\">FindBugs</A> is
-	private static final String INITIAL_DESCRIPTION = "A static analysis tool";
+	private static final String INITIAL_DESCRIPTION = "A static analysis tool to";
 	private static final int ID = 0;
 	private static final int VERSION = 1;
 	private static final int NAME = 2;
 	private static final int PROVIDER = 3;
 	private static final int WEBSITE = 4;
+	private static final int QUALIFIED_ID = 5;
 	private static final String[] FIELD_LABELS = new String[] {
 			"Tool Id:", 
 			"Tool Version:", 
 			"Tool Name:", 
 			"Tool Provider:", 
-			"Tool Website:"
+			"Tool Website:",
+			"Plugin Id:"
 	};
+
 
 	final WizardNewProjectCreationPage namePage;	
 	boolean firstTimeVisible = true;
@@ -65,7 +68,8 @@ public class NewSierraToolProjectWizardPage extends WizardPage {
 		}
 		if (fields != null) {
 			for(Text f : fields) {
-				if (f.getText().length() == 0) {
+				String contents = f.getText();
+				if (contents.length() == 0 || contents.contains("?")) {
 					return false;
 				}
 			}
@@ -86,10 +90,11 @@ public class NewSierraToolProjectWizardPage extends WizardPage {
 		Label projectLabel = new Label(projectGroup, SWT.NONE);
 		projectLabel.setText("Tool Description:");
 
-		description = new Text(projectGroup, SWT.BORDER);
+		description = new Text(projectGroup, SWT.BORDER | SWT.MULTI | SWT.WRAP | SWT.V_SCROLL);
 		GridData data = new GridData(GridData.FILL_BOTH);
 		description.setLayoutData(data);
 		description.setText(INITIAL_DESCRIPTION);
+		
 		description.addListener(SWT.Modify, nameModifyListener);
 	}
 
@@ -125,8 +130,9 @@ public class NewSierraToolProjectWizardPage extends WizardPage {
 		// Set the initial value first before listener
 		// to avoid handling an event during the initialization.
 		final String dottedName = namePage.getProjectName().replace('-', '.');
-		fields[0].setText("com.someone."+dottedName);
-		fields[1].setText("1.0.0");
+		fields[QUALIFIED_ID].setText("com.???."+dottedName);
+		fields[VERSION].setText("1.0.0");
+		fields[WEBSITE].setText("www.???.com");
 
 		for(Text f : fields) {
 			f.addListener(SWT.Modify, nameModifyListener);  
@@ -155,5 +161,9 @@ public class NewSierraToolProjectWizardPage extends WizardPage {
 
 	public String getToolDescription() {
 		return description.getText();
+	}
+
+	public String getPluginId() {
+		return fields[QUALIFIED_ID].getText();
 	}
 }
