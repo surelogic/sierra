@@ -12,26 +12,12 @@ import com.surelogic.sierra.tool.message.ArtifactGenerator.ArtifactBuilder;
 import com.surelogic.sierra.tool.targets.IToolTarget;
 
 public class Factory extends AbstractToolFactory {
-	public String getId() {
-		return "sample"; // TODO
-	}
-
-	public String getName() {
-		return "Sample Sierra tool plugin"; // TODO
-	}
-
-	public String getHTMLInfo() {
-		// TODO
-		return "<A HREF=\"http://some.url\">"+getName()+
-		"</A> is a static analysis tool to look for something.";
-	}
-
 	public ITool create(Config config) {
-		return new Tool("v0.0", config); // TODO what version?
+		return new Tool(config); 
 	}
 
 	private class Tool extends AbstractTool {
-		public Tool(String version, Config config) {
+		public Tool(Config config) {
 			super(Factory.this, config);
 		}
 
