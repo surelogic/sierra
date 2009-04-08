@@ -63,7 +63,7 @@ public class NewSierraToolProjectWizardPage extends WizardPage {
 	}
 
 	private boolean validatePage() {
-		if (description.getText().length() == 0) {
+		if (description.getText().length() == 0 || INITIAL_DESCRIPTION.equals(description.getText())) {
 			return false;
 		}
 		if (fields != null) {

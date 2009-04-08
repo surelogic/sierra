@@ -231,7 +231,7 @@ public class NewSierraToolProjectWizard extends Wizard implements INewWizard {
 			addAttr(sb, ToolUtil.TOOL_FACTORIES, dottedName, ".Factory");
 			addAttr(sb, ToolUtil.TOOL_ID, detailsPage.getToolId());			
 			addAttr(sb, ToolUtil.TOOL_WEBSITE, detailsPage.getToolWebsite());
-			addAttr(sb, ToolUtil.TOOL_DESCRIPTION, detailsPage.getDescription());
+			addAttr(sb, ToolUtil.TOOL_DESCRIPTION, detailsPage.getToolDescription());
 			addAttr(sb, EXPORT_PACKAGE, dottedName);
 			sb.append('\n');
 			
