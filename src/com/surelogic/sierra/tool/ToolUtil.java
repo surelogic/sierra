@@ -40,16 +40,25 @@ public class ToolUtil {
 	
 	public static File getSierraToolDirectory() {
 		String path = System.getProperty(SIERRA_TOOLS_DIR);
+		File toolsDir = null;
 		if (path != null) {
 			File dir = new File(path);
 			if (dir.exists() && dir.isDirectory()) {			
 				// TODO should it check for anything else?
-				return dir;
+				toolsDir = dir;
 			} else {
 				LOG.warning("Invalid tools directory: "+path);
 			}
 		}
-		return FileUtility.getSierraDataDirectory();		
+		if (toolsDir == null) {
+			toolsDir = FileUtility.getSierraDataDirectory();		
+		}		
+		File subDir = new File(toolsDir, TOOLS_SUBDIR);
+		if (!subDir.exists()) {
+			// Try to create tools subdir
+			FileUtility.createDirectory(subDir);
+		}
+		return toolsDir;
 	}
 	
 	public static void addToolFinder(IToolFinder f) {
