@@ -4,9 +4,9 @@ import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.jface.preference.IPreferenceStore;
 
 import com.surelogic.sierra.client.eclipse.Activator;
+import com.surelogic.sierra.client.eclipse.Tools;
 import com.surelogic.sierra.client.eclipse.views.ServerStatusSort;
 import com.surelogic.sierra.tool.IToolFactory;
-import com.surelogic.sierra.tool.ToolUtil;
 import com.surelogic.sierra.tool.message.Importance;
 
 /**
@@ -27,7 +27,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 				.setDefault(
 						PreferenceConstants.P_SIERRA_SHOW_MARKERS_AT_OR_ABOVE_IMPORTANCE,
 						Importance.HIGH.toString());
-		for(IToolFactory f : ToolUtil.findToolFactories()) {
+		for(IToolFactory f : Tools.findToolFactories()) {
 			store.setDefault(PreferenceConstants.getToolPref(f), true);
 		}
 		store.setDefault(PreferenceConstants.P_SIERRA_ALWAYS_SAVE_RESOURCES,

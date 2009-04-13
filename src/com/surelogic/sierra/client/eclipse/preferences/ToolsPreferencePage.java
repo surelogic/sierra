@@ -30,6 +30,7 @@ import com.surelogic.common.CommonImages;
 import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Activator;
+import com.surelogic.sierra.client.eclipse.Tools;
 import com.surelogic.sierra.client.eclipse.actions.PreferencesAction;
 import com.surelogic.sierra.tool.IToolFactory;
 import com.surelogic.sierra.tool.ToolUtil;
@@ -93,7 +94,7 @@ public class ToolsPreferencePage extends PreferencePage implements
 		data.widthHint = 100;
 
 		// Sort tools by name
-		final List<IToolFactory> factories = ToolUtil.findToolFactories();
+		final List<IToolFactory> factories = Tools.findToolFactories();
 		Collections.sort(factories, new Comparator<IToolFactory>() {
 			public int compare(IToolFactory o1, IToolFactory o2) {
 				return o1.getName().compareTo(o2.getName());

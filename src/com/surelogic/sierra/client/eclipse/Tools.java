@@ -29,7 +29,7 @@ public final class Tools {
 	 */
 	public static final String TOOL_EXTENSION_POINT_ID = "sierraTool";
 	
-	private static void addToolFinder() {
+	static {
 		ToolUtil.addToolFinder(new IToolFinder() {
 			// FIX what about duplicate finders?
 			public List<File> findToolDirectories() {
@@ -64,8 +64,9 @@ public final class Tools {
 		return ids;
 	}
 	
+	
+	
 	public static void checkForNewArtifactTypes() {
-		addToolFinder();		
 		for(File plugin : ToolUtil.findToolDirs()) {
 			System.out.println("Found plugin @ "+plugin.getPath());
 		}	
@@ -186,5 +187,9 @@ public final class Tools {
 		for(IExtension tool : findProductionToolExtensionPoints()) {
 			ids.add(tool.getContributor().getName());
 		}
+	}
+
+	public static List<IToolFactory> findToolFactories() {
+		return ToolUtil.findToolFactories();
 	}
 }

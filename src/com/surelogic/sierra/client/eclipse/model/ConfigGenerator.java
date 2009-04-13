@@ -388,7 +388,7 @@ public final class ConfigGenerator {
 		StringBuilder excludedTools = new StringBuilder();
 		f_numberofExcludedTools = 0;
 
-		for(IToolFactory f : ToolUtil.findToolFactories()) {
+		for(IToolFactory f : Tools.findToolFactories()) {
 			if (!PreferenceConstants.runTool(f)) {
 				// Only need to add a comma if this isn't the first one
 				if (f_numberofExcludedTools != 0) {
