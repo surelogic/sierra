@@ -3,7 +3,7 @@ package com.surelogic.sierra.tool.analyzer;
 import java.io.*;
 import java.util.zip.GZIPOutputStream;
 
-import com.surelogic.sierra.tool.ITool;
+import com.surelogic.sierra.tool.IToolFactory;
 import com.surelogic.sierra.tool.message.ArtifactGenerator;
 import com.surelogic.sierra.tool.message.Config;
 
@@ -50,7 +50,7 @@ implements ILazyArtifactGenerator {
 		stream = null;
 	}
 
-	public ArtifactGenerator create(ITool tool) {
+	public ArtifactGenerator create(IToolFactory tool) {
 		// Ok to return itself
 		// since it doesn't need to be specialized to a particular tool
 		return this;

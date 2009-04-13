@@ -79,7 +79,7 @@ public class RemoteTool extends AbstractRemoteSLJob {
 
 		addToolFinder(config);
 		
-		final ITool t = ToolUtil.create(config, false);
+		final IToolInstance ti = ToolUtil.create(config, false);
 		System.out.println("Java version: " + config.getJavaVersion());
 		System.out.println("Rules file: " + config.getPmdRulesFile());
 		/*
@@ -90,7 +90,6 @@ public class RemoteTool extends AbstractRemoteSLJob {
 			}
 		}
 		*/
-		final IToolInstance ti = t.create();
 		checkInput(br, mon, "Created tool instance");
 		return ti;
 	}

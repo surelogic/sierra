@@ -102,7 +102,7 @@ public class ToolUtil {
 		return factories;
 	}
 	
-	public static ITool create(Config config, boolean runRemotely) {
+	public static IToolInstance create(Config config, boolean runRemotely) {
 		if (runRemotely) {
 			if (SierraToolConstants.RUN_TOGETHER) {
 				return new LocalTool(config);
@@ -115,6 +115,7 @@ public class ToolUtil {
 						t.addTool(new LocalTool(c));
 					}
 				}
+				AbstractToolFactory.setupToolForProject(t, config);
 				/*
 				if (t.size() > 0) {
 					final File tempDir = LazyZipDirArtifactGenerator.computeTempDir(config.getScanDocument());
@@ -124,7 +125,15 @@ public class ToolUtil {
 				return t;
 			}
 		}
-		return createTools(config);
+		final MultiTool t = new MultiTool(config);
+		for(IToolFactory f : findToolFactories()) {
+			if (config.isToolIncluded(f.getId())) {
+				//System.out.println("Creating "+f.getId());
+				t.addTool(f);
+			}
+		}
+		AbstractToolFactory.setupToolForProject(t, config);
+		return t;
 	}
 	
 	private static Config updateForTool(Config orig, IToolFactory factory) {
@@ -149,34 +158,12 @@ public class ToolUtil {
 		return copy;
 	}
 	
-	public static MultiTool createTools(Config config) {        
-		final MultiTool t = new MultiTool(config);
+	public static Set<ArtifactType> getArtifactTypes() {
+		Set<ArtifactType> types = new HashSet<ArtifactType>();
 		for(IToolFactory f : findToolFactories()) {
-			//System.out.println("Creating "+f.getId());
-			t.addTool(f.create(config));
+			types.addAll(f.getArtifactTypes());			
 		}
-		/*
-		if (config.isToolIncluded(RECKONER)) {
-			t.addTool(new Reckoner1_0Tool(config));
-		}
-		if (config.isToolIncluded(FINDBUGS)) {
-			//final String fbDir = config.getPluginDir(SierraToolConstants.FB_PLUGIN_ID);
-			final String fbDir = getSierraToolDirectory().getAbsolutePath();
-			AbstractFindBugsTool.init(fbDir);
-			t.addTool(new AbstractFindBugsTool(fbDir, config));
-		}
-		if (config.isToolIncluded(PMD)) {
-			t.addTool(new AbstractPMDTool(config));
-		}
-		if (config.isToolIncluded(CPD)) {
-			t.addTool(new CPD4_1Tool(config));
-		}
-		*/
-		return t;
-	}
-	
-	public static Set<ArtifactType> getArtifactTypes(Config config) {
-		return createTools(config).getArtifactTypes();
+		return types;
 	}
 	
 	public static final String MANIFEST = "META-INF"+File.separatorChar+"MANIFEST.MF";
@@ -476,14 +463,13 @@ public class ToolUtil {
 	public static SLStatus scan(Config config, SLProgressMonitor mon,
 			boolean runRemotely) {
 		final boolean fineIsLoggable = LOG.isLoggable(Level.FINE);
-		final ITool t = ToolUtil.create(config, runRemotely);
+		final IToolInstance ti = ToolUtil.create(config, runRemotely);
 
 		if (fineIsLoggable) {
 			LOG.fine("Excluded: " + config.getExcludedToolsList());
 			LOG.fine("Java version: " + config.getJavaVersion());
 			LOG.fine("Rules file: " + config.getPmdRulesFile());
 		}
-		IToolInstance ti = t.create();
 		if (fineIsLoggable) {
 			LOG.fine("Created " + ti.getClass().getSimpleName());
 		}

@@ -1,21 +1,19 @@
 package com.surelogic.sierra.tool;
 
 import java.io.File;
-import java.io.IOException;
-import java.net.URI;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.surelogic.common.jobs.AbstractSLJob;
 import com.surelogic.common.logging.SLLogger;
-import com.surelogic.sierra.tool.analyzer.*;
 import com.surelogic.sierra.tool.message.Config;
-import com.surelogic.sierra.tool.targets.ToolTarget;
 
-public abstract class AbstractTool implements ITool {
+public abstract class AbstractTool extends AbstractSLJob implements ITool {
 	protected static final Logger LOG = SLLogger.getLogger("sierra");
 	protected static final int JAVA_SUFFIX_LEN = ".java".length();
 
+	/*
 	protected static void setupToolForProject(IToolInstance ti, Config config) {
 		for(ToolTarget t : config.getTargets()) {
 			ti.addTarget(t);
@@ -27,6 +25,7 @@ public abstract class AbstractTool implements ITool {
 		ti.setOption(IToolInstance.SOURCE_LEVEL, config.getSourceLevel());
 		ti.setOption(IToolInstance.TARGET_LEVEL, config.getTargetLevel());
 	}
+	*/
 
 	protected final boolean debug;
 	protected final IToolFactory factory;
@@ -36,58 +35,26 @@ public abstract class AbstractTool implements ITool {
 	 * Perhaps this should read from a file
 	 */
 	protected AbstractTool(IToolFactory factory, Config config) {
+		super(factory.getName()); // FIX is this the right name?
 		this.factory = factory;
 		this.config = config;
 		debug = LOG.isLoggable(Level.FINE);
 	}
 
-	public final String getHtmlDescription() {
+	public final String getHTMLInfo() {
 		return factory.getHTMLInfo();
 	}
 
-	public final String getName() {
+	public final String getId() {
 		return factory.getId();
 	}
 
-	public final String getTitle() {
+	public final String getName() {
 		return factory.getName();
 	}
 
 	public final String getVersion() {
 		return factory.getVersion();
-	}
-
-	public IToolInstance create() {
-		File doc = config.getScanDocument();	
-		ILazyArtifactGenerator generator;
-		if (doc.getName().endsWith(SierraToolConstants.PARSED_ZIP_FILE_SUFFIX)) {
-			if (SierraToolConstants.CREATE_ZIP_DIRECTLY) {
-				generator = new LazyZipArtifactGenerator(config);
-			} else {
-				generator = new LazyZipDirArtifactGenerator(config);  
-			}
-		} else {
-			final boolean compress = doc.getName().endsWith(SierraToolConstants.PARSED_FILE_SUFFIX);
-			generator = new MessageArtifactFileGenerator(doc, config, compress);
-		}
-		IToolInstance ti =  create(config.getProject(), generator, true);
-		setupToolForProject(ti, config);
-		return ti;
-	}
-
-	public IToolInstance create(String name, ILazyArtifactGenerator generator) {
-		return create(name, generator, false);
-	}
-
-	protected abstract IToolInstance create(String name, ILazyArtifactGenerator generator, boolean close);
-
-	public List<File> getRequiredJars() {
-		try {
-			return ToolUtil.getRequiredJars(factory.getPluginDir());
-		} catch (IOException e) {
-			LOG.log(Level.SEVERE, "Couldn't get required jars for "+getTitle(), e);
-			return Collections.emptyList();
-		}
 	}
 
 	protected String getPluginDir(final boolean debug, final String pluginId) {
@@ -104,7 +71,7 @@ public abstract class AbstractTool implements ITool {
 		return pluginDir;
 	}
 
-	protected void addPluginToPath(final boolean debug, Collection<File> path, final String pluginId) {
+	public void addPluginToPath(final boolean debug, Collection<File> path, final String pluginId) {
 		addPluginToPath(debug, path, pluginId, false);
 	}
 

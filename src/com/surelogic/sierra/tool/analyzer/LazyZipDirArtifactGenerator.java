@@ -6,7 +6,7 @@ import java.util.logging.Level;
 import com.surelogic.common.FileUtility;
 import com.surelogic.common.jobs.NullSLProgressMonitor;
 import com.surelogic.common.logging.SLLogger;
-import com.surelogic.sierra.tool.ITool;
+import com.surelogic.sierra.tool.IToolFactory;
 import com.surelogic.sierra.tool.message.ArtifactGenerator;
 import com.surelogic.sierra.tool.message.Config;
 import com.surelogic.sierra.tool.message.MessageWarehouse;
@@ -40,8 +40,8 @@ public class LazyZipDirArtifactGenerator implements ILazyArtifactGenerator {
 		createConfigStream(tempDir, config);		
 	}
 	
-	public ArtifactGenerator create(ITool tool) {
-		final String name = tool.getName().toLowerCase() + MessageWarehouse.TOOL_STREAM_SUFFIX;
+	public ArtifactGenerator create(IToolFactory tool) {
+		final String name = tool.getId().toLowerCase() + MessageWarehouse.TOOL_STREAM_SUFFIX;
 		return new MessageArtifactFileGenerator(new File(tempDir, name), config, false);
 	}
 

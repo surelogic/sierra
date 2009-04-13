@@ -3,38 +3,42 @@ package com.surelogic.sierra.tool;
 import java.io.File;
 import java.net.*;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.surelogic.common.HashGenerator;
 import com.surelogic.common.jobs.*;
+import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.tool.analyzer.ILazyArtifactGenerator;
 import com.surelogic.sierra.tool.message.ArtifactGenerator;
+import com.surelogic.sierra.tool.message.Config;
 import com.surelogic.sierra.tool.message.IdentifierType;
 import com.surelogic.sierra.tool.message.ArtifactGenerator.SourceLocationBuilder;
 import com.surelogic.sierra.tool.targets.IToolTarget;
 
-public abstract class AbstractToolInstance extends AbstractSLJob implements IToolInstance {
-  private final ITool tool;
+public abstract class AbstractToolInstance extends AbstractTool implements IToolInstance {
+  protected static final Logger LOG = SLLogger.getLogger("sierra");
+	
   protected final ILazyArtifactGenerator genHandle;  
   private final List<IToolTarget> srcTargets = new ArrayList<IToolTarget>();
   private final List<IToolTarget> binTargets = new ArrayList<IToolTarget>();
   private final List<IToolTarget> auxTargets = new ArrayList<IToolTarget>();
   private final List<URI> paths = new ArrayList<URI>();
   private boolean done = false;
-  private final boolean closeWhenDone;
+  protected final boolean closeWhenDone;
   private final Map<String,String> options = new HashMap<String,String>();
   protected final boolean debug;
   protected final SLStatus.Builder status = new SLStatus.Builder();
   private ArtifactGenerator generator = null;
   
-  protected AbstractToolInstance(boolean debug, ITool t, ILazyArtifactGenerator gen, boolean close) {
-	super(t.getName()); // FIX is this the right name?
-    tool = t;
+  protected AbstractToolInstance(IToolFactory t, Config config, ILazyArtifactGenerator gen, boolean close) {
+	super(t, config);
     genHandle = gen;
     closeWhenDone = close;
-    this.debug = debug;
+	debug = LOG.isLoggable(Level.FINE);
   }
   
-  public final ArtifactGenerator getGenerator() {
+  public ArtifactGenerator getGenerator() {
 	if (generator == null) {
 		throw new UnsupportedOperationException("No generator right now");
 	}
@@ -50,7 +54,7 @@ public abstract class AbstractToolInstance extends AbstractSLJob implements IToo
     }
   }
   
-  public final void addTarget(IToolTarget target) {
+  public void addTarget(IToolTarget target) {
     checkArgs(target);
     switch (target.getType()) {
       case SOURCE:
@@ -67,7 +71,7 @@ public abstract class AbstractToolInstance extends AbstractSLJob implements IToo
     }
   }
   
-  public final void addToClassPath(URI loc) {
+  public void addToClassPath(URI loc) {
     checkArgs(loc);
     paths.add(loc);
   }
@@ -88,7 +92,7 @@ public abstract class AbstractToolInstance extends AbstractSLJob implements IToo
     return paths;
   }
   
-  public final SLStatus run(SLProgressMonitor monitor) {
+  public SLStatus run(SLProgressMonitor monitor) {
     if (done) {
       throw new IllegalArgumentException("Tool instance cannot be reused");
     }
@@ -104,7 +108,7 @@ public abstract class AbstractToolInstance extends AbstractSLJob implements IToo
     		System.out.println("Auxiliary: "+t.getLocation());
     	}
     }
-    generator = genHandle.create(tool);
+    generator = genHandle.create(factory);
     
     try {
       status.addChild(execute(monitor));
@@ -136,12 +140,12 @@ public abstract class AbstractToolInstance extends AbstractSLJob implements IToo
 	  status.addChild(SLStatus.createWarningStatus(-1, msg));  
   }
   
-  public final void reportError(String msg) {
+  public void reportError(String msg) {
     generator.error().message(msg).tool(getName());
     status.addChild(SLStatus.createErrorStatus(-1, msg));  
   }
   
-  public final void reportError(String msg, Throwable e) {
+  public void reportError(String msg, Throwable e) {
     StringBuilder sb = new StringBuilder();
     sb.append(msg).append('\n');
     sb.append(e.getClass().getName()).append(' ').append(e.getMessage()).append('\n');
@@ -153,30 +157,14 @@ public abstract class AbstractToolInstance extends AbstractSLJob implements IToo
   }
   
   protected abstract SLStatus execute(SLProgressMonitor mon) throws Exception;    
-  
-  /**************** ITool **********************/
-  public final String getHtmlDescription() {
-    return tool.getHtmlDescription();
-  }
 
-  public final String getName() {
-    return tool.getName();
-  }
-
-  public final String getTitle() {
-    return tool.getTitle();
-  }
-
-  public final String getVersion() {
-    return tool.getVersion();
-  } 
-  
-  public final Set<ArtifactType> getArtifactTypes() {
-    return tool.getArtifactTypes();
+  /**************** ITool **********************/  
+  public Set<ArtifactType> getArtifactTypes() {
+    return factory.getArtifactTypes();
   }
   
-  public List<File> getRequiredJars() {
-	return tool.getRequiredJars();
+  public List<File> getRequiredJars(Config config) {
+	return factory.getRequiredJars(config);
   }
   
   public final IToolInstance create() {

@@ -1,7 +1,11 @@
 package com.surelogic.sierra.tool;
 
 import java.io.File;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
+import com.surelogic.sierra.tool.analyzer.ILazyArtifactGenerator;
 import com.surelogic.sierra.tool.message.Config;
 
 public final class DummyToolFactory implements IToolFactory {
@@ -17,7 +21,11 @@ public final class DummyToolFactory implements IToolFactory {
 		this.description = desc;
 	}
 	
-	public ITool create(Config config) {
+	public IToolInstance create(Config config) {
+		throw new UnsupportedOperationException();
+	}
+	
+	public IToolInstance create(Config config, ILazyArtifactGenerator gen, String label) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -47,5 +55,13 @@ public final class DummyToolFactory implements IToolFactory {
 
 	public boolean isProduction() {
 		return true;
+	}
+
+	public Set<ArtifactType> getArtifactTypes() {
+		return Collections.emptySet();
+	}
+
+	public List<File> getRequiredJars(Config config) {
+		return Collections.emptyList();
 	}
 }
