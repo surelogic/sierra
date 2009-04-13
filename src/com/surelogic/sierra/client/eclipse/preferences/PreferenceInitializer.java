@@ -28,7 +28,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 						PreferenceConstants.P_SIERRA_SHOW_MARKERS_AT_OR_ABOVE_IMPORTANCE,
 						Importance.HIGH.toString());
 		for(IToolFactory f : ToolUtil.findToolFactories()) {
-			store.setDefault(PreferenceConstants.P_RUN_PREFIX + f.getId(), true);
+			store.setDefault(PreferenceConstants.getToolPref(f), true);
 		}
 		store.setDefault(PreferenceConstants.P_SIERRA_ALWAYS_SAVE_RESOURCES,
 				false);
