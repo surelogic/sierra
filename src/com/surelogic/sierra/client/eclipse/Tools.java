@@ -19,7 +19,6 @@ import com.surelogic.sierra.jdbc.tool.ArtifactTypeDO;
 import com.surelogic.sierra.jdbc.tool.FindingTypeDO;
 import com.surelogic.sierra.jdbc.tool.FindingTypes;
 import com.surelogic.sierra.tool.*;
-import com.surelogic.sierra.tool.message.Config;
 
 public final class Tools {
 	public static final String TOOL_PLUGIN_ID = "com.surelogic.sierra.tool";
@@ -70,7 +69,8 @@ public final class Tools {
 		for(File plugin : ToolUtil.findToolDirs()) {
 			System.out.println("Found plugin @ "+plugin.getPath());
 		}	
-		for(IToolFactory f : ToolUtil.findToolFactories()) {
+		final List<IToolFactory> factories = ToolUtil.findToolFactories();
+		for(IToolFactory f : factories) {
 			try {
 				System.out.println("Found tool: "+f.getName()+" v"+f.getVersion());
 				System.out.println(f.getHTMLInfo());
@@ -84,24 +84,28 @@ public final class Tools {
 			final Connection c = Data.getInstance().readOnlyConnection();
 			final Query q = new ConnectionQuery(c);
 			final FindingTypes ft = new FindingTypes(q);
+			/*
 			final Config config = new Config();					
 			config.putPluginDir(SierraToolConstants.FB_PLUGIN_ID, 
 					            com.surelogic.common.eclipse.Activator.getDefault().getDirectoryOf(SierraToolConstants.FB_PLUGIN_ID));
+			*/
 			
 			final Set<ArtifactType> knownTypes = new HashSet<ArtifactType>();
-			for(ITool t : ToolUtil.createTools(config)) {
-				List<ArtifactTypeDO> temp = ft.getToolArtifactTypes(t.getName(), t.getVersion());
+			for(IToolFactory t : factories) {
+				List<ArtifactTypeDO> temp = ft.getToolArtifactTypes(t.getId(), t.getVersion());
 				for(ArtifactTypeDO a : temp) {
 					knownTypes.add(new ArtifactType(a.getTool(), a.getVersion(), "", a.getMnemonic(), ""));
 				}				                          
 			}
-			final Set<ArtifactType> types = ToolUtil.getArtifactTypes(config);
 			final List<ArtifactType> unknown = new ArrayList<ArtifactType>();
-			for(ArtifactType a : types) {
-				if (!knownTypes.contains(a)) {
-					unknown.add(a);
+			for(IToolFactory t : factories) {
+				for(ArtifactType a : t.getArtifactTypes()) {
+					if (!knownTypes.contains(a)) {
+						unknown.add(a);
+					}
 				}
 			}
+
 			if (unknown.isEmpty()) {
 				System.out.println("No new artifact types");
 			} else {
