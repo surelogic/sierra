@@ -65,7 +65,7 @@ public class FindBugsToolFactory extends AbstractToolFactory {
 	
 	@Override
 	protected IToolInstance create(Config config,
-			ILazyArtifactGenerator generator, String name, boolean close) {
+			ILazyArtifactGenerator generator, boolean close) {
 		return new AbstractFindBugsTool(this, config, generator, close);
 	}
 }
