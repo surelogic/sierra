@@ -1,9 +1,15 @@
 package com.surelogic.sierra.tool.findbugs;
 
 import java.io.File;
+import java.util.*;
 
 import com.surelogic.sierra.tool.*;
+import com.surelogic.sierra.tool.analyzer.ILazyArtifactGenerator;
 import com.surelogic.sierra.tool.message.Config;
+
+import edu.umd.cs.findbugs.BugPattern;
+import edu.umd.cs.findbugs.DetectorFactoryCollection;
+import edu.umd.cs.findbugs.Plugin;
 
 public class FindBugsToolFactory extends AbstractToolFactory {	
 //	@Override
@@ -16,8 +22,50 @@ public class FindBugsToolFactory extends AbstractToolFactory {
 		super.init(toolHome, pluginDir);
 		AbstractFindBugsTool.init(toolHome.getAbsolutePath());
 	}
+
+	private static <T> Iterable<T> iterable(final Iterator<T> it) {
+		return new Iterable<T>() {
+			public Iterator<T> iterator() {
+				return it;
+			}			
+		};
+	}
 	
-	public ITool create(Config config) {
-		return new AbstractFindBugsTool(this, config);
+	@Override
+	public final Set<ArtifactType> getArtifactTypes() {
+		Set<ArtifactType> types = new HashSet<ArtifactType>();
+		// Code to get meta-data from FindBugs
+		for(Plugin plugin : iterable(DetectorFactoryCollection.instance().pluginIterator())) {
+			final String pluginId = plugin.getPluginId();				
+			/*
+			for(BugCode code : iterable(plugin.bugCodeIterator())) {				
+			}
+			*/
+			for(BugPattern pattern : iterable(plugin.bugPatternIterator())) {				
+				types.add(new ArtifactType(getId(), getVersion(), pluginId, 
+						                   pattern.getType(), pattern.getCategory()));
+			}
+			/*
+			for(DetectorFactory factory : iterable(plugin.detectorFactoryIterator())) {
+				// Actual detector
+			}
+			*/
+		}
+		return types;
+	}
+
+	/*
+	@Override
+	public List<File> getRequiredJars() {
+		final List<File> jars = new ArrayList<File>();	
+		addAllPluginJarsToPath(debug, jars, SierraToolConstants.FB_PLUGIN_ID, "lib");
+		return jars;
+	}
+	*/
+	
+	@Override
+	protected IToolInstance create(Config config,
+			ILazyArtifactGenerator generator, String name, boolean close) {
+		return new AbstractFindBugsTool(this, config, generator, close);
 	}
 }

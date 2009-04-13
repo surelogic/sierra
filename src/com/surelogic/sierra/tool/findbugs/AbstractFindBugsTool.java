@@ -8,7 +8,6 @@ import java.util.logging.Level;
 import com.surelogic.common.*;
 import com.surelogic.common.jobs.*;
 import com.surelogic.sierra.tool.*;
-import com.surelogic.sierra.tool.ArtifactType;
 import com.surelogic.sierra.tool.analyzer.ILazyArtifactGenerator;
 import com.surelogic.sierra.tool.message.*;
 import com.surelogic.sierra.tool.message.ArtifactGenerator.*;
@@ -19,7 +18,7 @@ import edu.umd.cs.findbugs.classfile.ClassDescriptor;
 import edu.umd.cs.findbugs.classfile.MethodDescriptor;
 import edu.umd.cs.findbugs.config.UserPreferences;
 
-public class AbstractFindBugsTool extends AbstractTool {
+public class AbstractFindBugsTool extends AbstractToolInstance {
 	public static void init(String fbDir) {
 		System.setProperty("findbugs.home", fbDir);
 		//System.out.println("FB = "+System.getProperty("findbugs.home"));
@@ -27,167 +26,128 @@ public class AbstractFindBugsTool extends AbstractTool {
 		//System.setProperty("findbugs.debug.PluginLoader", "true");
 	}
 	
-	static <T> Iterable<T> iterable(final Iterator<T> it) {
-		return new Iterable<T>() {
-			public Iterator<T> iterator() {
-				return it;
-			}			
-		};
+	public AbstractFindBugsTool(FindBugsToolFactory f, Config config,
+			ILazyArtifactGenerator generator, boolean close) {		
+		super(f, config, generator, close);
 	}
 	
-	public AbstractFindBugsTool(FindBugsToolFactory f, Config config) {		
-		super(f, config);
-	}
-	
-	/*
+	// Removed to avoid problem with duplicate detector factories
+	// System.setProperty("findbugs.home", fbDir);
+	// monitor.subTask("Set FB home to "+fbDir);
+
+	final IFindBugsEngine engine = createEngine();
+
 	@Override
-	public List<File> getRequiredJars() {
-		final List<File> jars = new ArrayList<File>();	
-		addAllPluginJarsToPath(debug, jars, SierraToolConstants.FB_PLUGIN_ID, "lib");
-		return jars;
-	}
-	*/
-	
-	public final Set<ArtifactType> getArtifactTypes() {
-		Set<ArtifactType> types = new HashSet<ArtifactType>();
-		// Code to get meta-data from FindBugs
-		for(Plugin plugin : iterable(DetectorFactoryCollection.instance().pluginIterator())) {
-			final String pluginId = plugin.getPluginId();				
-			/*
-			for(BugCode code : iterable(plugin.bugCodeIterator())) {				
-			}
-			*/
-			for(BugPattern pattern : iterable(plugin.bugPatternIterator())) {				
-				types.add(new ArtifactType(getName(), getVersion(), pluginId, 
-						                   pattern.getType(), pattern.getCategory()));
-			}
-			/*
-			for(DetectorFactory factory : iterable(plugin.detectorFactoryIterator())) {
-				// Actual detector
-			}
-			*/
+	protected SLStatus execute(SLProgressMonitor monitor)
+	throws Exception {
+		final Project p = createProject();
+		if (p.getFileCount() == 0) {
+			System.out.println("Nothing for FB to scan");
+			return SLStatus.OK_STATUS;
 		}
-		return types;
+		engine.setProject(p);
+		engine.setUserPreferences(UserPreferences.getUserPreferences());
+		// engine.setAnalysisFeatureSettings(arg0);
+		engine.setDetectorFactoryCollection(DetectorFactoryCollection
+				.instance());
+		// engine.setClassScreener(new Screener());
+
+		Monitor mon = new Monitor(this, monitor);
+		// engine.addClassObserver(mon);
+		engine.setBugReporter(mon);
+		engine.setProgressCallback(mon);
+		try {
+			engine.execute();
+			System.out.println("Done with FB execute()");
+		} catch (IOException e) {
+			if (!e.getMessage().startsWith(
+					"No classes found to analyze")) {
+				e.printStackTrace();
+				throw e;
+			} else {
+				// Ignored
+			}
+		}
+		return SLStatus.OK_STATUS;
 	}
-	
-	protected IToolInstance create(String name, final ILazyArtifactGenerator generator,
-			boolean close) {
-		//Removed to avoid problem with duplicate detector factories
-		//System.setProperty("findbugs.home", fbDir);
-		
-		// monitor.subTask("Set FB home to "+fbDir);
 
-		return new AbstractToolInstance(debug, this, generator, close) {
-			final IFindBugsEngine engine = createEngine();
-
-			@Override
-			protected SLStatus execute(SLProgressMonitor monitor)
-					throws Exception {
-				final Project p = createProject();
-				engine.setProject(p);
-				engine.setUserPreferences(UserPreferences.getUserPreferences());
-				// engine.setAnalysisFeatureSettings(arg0);
-				engine.setDetectorFactoryCollection(DetectorFactoryCollection
-						.instance());
-				// engine.setClassScreener(new Screener());
-
-				Monitor mon = new Monitor(this, monitor);
-				// engine.addClassObserver(mon);
-				engine.setBugReporter(mon);
-				engine.setProgressCallback(mon);
-				try {
-					engine.execute();
-					System.out.println("Done with FB execute()");
-				} catch (IOException e) {
-					if (!e.getMessage().startsWith(
-							"No classes found to analyze")) {
-						e.printStackTrace();
-						throw e;
-					} else {
-						// Ignored
+	protected Project createProject() {
+		final Project p = new Project();
+		for (IToolTarget t : getBinTargets()) {
+			// Only scanning binaries
+			final String path = new File(t.getLocation())
+			.getAbsolutePath();
+			switch (t.getKind()) {
+			case FILE:
+			case JAR:				
+				p.addFile(path);
+				break;
+			case DIRECTORY:
+				for (URI loc : t.getFiles()) {
+					File f = new File(loc);
+					if (f.exists()) {
+						System.out.println("FB got "+f);
+						p.addFile(f.getAbsolutePath());
 					}
 				}
-				return SLStatus.OK_STATUS;
+				break;
+			default:
+				System.out.println("Ignoring target " + t.getLocation());
 			}
+		}
+		for (IToolTarget t : getAuxTargets()) {
+			final String path = new File(t.getLocation())
+			.getAbsolutePath();
+			switch (t.getKind()) {
+			case DIRECTORY:
+			case JAR:
+				p.addAuxClasspathEntry(path);
 
-			protected Project createProject() {
-				final Project p = new Project();
-				for (IToolTarget t : getBinTargets()) {
-					// Only scanning binaries
-					final String path = new File(t.getLocation())
-							.getAbsolutePath();
-					switch (t.getKind()) {
-					case FILE:
-					case JAR:
-						p.addFile(path);
-						break;
-					case DIRECTORY:
-						for (URI loc : t.getFiles()) {
-							File f = new File(loc);
-							if (f.exists()) {
-								p.addFile(f.getAbsolutePath());
-							}
-						}
-						break;
-					default:
-						System.out
-								.println("Ignoring target " + t.getLocation());
-					}
+				IToolTarget auxSrc = t.getAuxSources();
+				if (auxSrc != null
+						&& auxSrc.getKind() == IToolTarget.Kind.DIRECTORY) {
+					p.addSourceDir(new File(t.getLocation())
+					.getAbsolutePath());
 				}
-				for (IToolTarget t : getAuxTargets()) {
-					final String path = new File(t.getLocation())
-							.getAbsolutePath();
-					switch (t.getKind()) {
-					case DIRECTORY:
-					case JAR:
-						p.addAuxClasspathEntry(path);
-
-						IToolTarget auxSrc = t.getAuxSources();
-						if (auxSrc != null
-								&& auxSrc.getKind() == IToolTarget.Kind.DIRECTORY) {
-							p.addSourceDir(new File(t.getLocation())
-									.getAbsolutePath());
-						}
-						// FIX how to deal w/ jars?
-						break;
-					case FILE:
-						System.out.println("FB ignored AUX file: " + path);
-						break;
-					default:
-						System.out
-								.println("Ignoring target " + t.getLocation());
-					}
-				}
-				for (IToolTarget t : getSrcTargets()) {
-					final String path = new File(t.getLocation())
-							.getAbsolutePath();
-					switch (t.getKind()) {
-					case DIRECTORY:
-						p.addSourceDir(path);
-						break;
-					case JAR:
-					case FILE:
-						// System.out.println("Ignored: "+path);
-						FileTarget ft = (FileTarget) t;
-						URI root = ft.getRoot();
-						// System.out.println(path+" : "+root);
-						String rootPath = new File(root).getAbsolutePath();
-						p.addSourceDir(rootPath);
-						break;
-					default:
-						System.out
-								.println("Ignoring target " + t.getLocation());
-					}
-				}
-				return p;
+				// FIX how to deal w/ jars?
+				break;
+			case FILE:
+				System.out.println("FB ignored AUX file: " + path);
+				break;
+			default:
+				System.out
+				.println("Ignoring target " + t.getLocation());
 			}
-		};
+		}
+		for (IToolTarget t : getSrcTargets()) {
+			final String path = new File(t.getLocation())
+			.getAbsolutePath();
+			switch (t.getKind()) {
+			case DIRECTORY:
+				p.addSourceDir(path);
+				break;
+			case JAR:
+			case FILE:
+				// System.out.println("Ignored: "+path);
+				FileTarget ft = (FileTarget) t;
+				URI root = ft.getRoot();
+				// System.out.println(path+" : "+root);
+				String rootPath = new File(root).getAbsolutePath();
+				p.addSourceDir(rootPath);
+				break;
+			default:
+				System.out
+				.println("Ignoring target " + t.getLocation());
+			}
+		}
+		return p;
 	}
 
 	protected IFindBugsEngine createEngine() {
 		return new FindBugs2();
 	}
 
+	/*
 	static class Screener implements IClassScreener {
 		public boolean matches(String fileName) {
 			// TODO Auto-generated method stub
@@ -198,6 +158,7 @@ public class AbstractFindBugsTool extends AbstractTool {
 			return true;
 		}
 	}
+	*/
 
 	class Monitor implements FindBugsProgress, BugReporter {
 		final AbstractToolInstance tool;
@@ -334,7 +295,7 @@ public class AbstractFindBugsTool extends AbstractTool {
 				sourceLocation = setupSourceLocation(line, sourceLocation);
 				sourceLocation.build();
 			}
-			artifact.findingType(getName(), getVersion(), bug.getType());
+			artifact.findingType(getId(), getVersion(), bug.getType());
 			artifact.message(bug.getMessageWithoutPrefix());
 
 			int priority = bug.getPriority();
