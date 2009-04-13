@@ -16,7 +16,7 @@ public class CPDToolFactory extends AbstractToolFactory {
 	
 	@Override
 	protected IToolInstance create(Config config,
-			ILazyArtifactGenerator generator, String name, boolean close) {
+			ILazyArtifactGenerator generator, boolean close) {
 		return new CPD4_1Tool(this, config, generator, close);
 	}
 

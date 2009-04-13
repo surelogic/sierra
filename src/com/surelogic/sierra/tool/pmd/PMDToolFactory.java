@@ -40,8 +40,7 @@ public class PMDToolFactory extends AbstractToolFactory {
 //	}
 
 	@Override
-	protected IToolInstance create(Config config, ILazyArtifactGenerator generator,
-			String name, boolean close) {
+	protected IToolInstance create(Config config, ILazyArtifactGenerator generator, boolean close) {
 		return new AbstractPMDTool(this, config, generator, close);
 	}
 	
