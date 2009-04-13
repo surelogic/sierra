@@ -25,7 +25,7 @@ public final class DummyToolFactory implements IToolFactory {
 		throw new UnsupportedOperationException();
 	}
 	
-	public IToolInstance create(Config config, ILazyArtifactGenerator gen, String label) {
+	public IToolInstance create(Config config, ILazyArtifactGenerator gen) {
 		throw new UnsupportedOperationException();
 	}
 

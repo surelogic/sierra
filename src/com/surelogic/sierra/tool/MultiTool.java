@@ -37,7 +37,7 @@ public class MultiTool extends AbstractSLJob implements IToolInstance, Iterable<
 
 	public void addTool(IToolFactory f) {
 		if (f != null) {
-			final IToolInstance t = f.create(config, genHandle, f.getId());
+			final IToolInstance t = f.create(config, genHandle);
 			addTool(t);
 		}
 	}

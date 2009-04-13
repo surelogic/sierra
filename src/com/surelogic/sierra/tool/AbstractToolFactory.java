@@ -87,7 +87,7 @@ public abstract class AbstractToolFactory implements IToolFactory {
 	}
 	
 	public final IToolInstance create(Config config) {
-		IToolInstance ti =  create(config, createGenerator(config), config.getProject(), true);
+		IToolInstance ti =  create(config, createGenerator(config), true);
 		setupToolForProject(ti, config);
 		return ti;
 	}
@@ -106,11 +106,11 @@ public abstract class AbstractToolFactory implements IToolFactory {
 		}
 	}
 	
-	public final IToolInstance create(Config config, ILazyArtifactGenerator generator, String name) {
-		return create(config, generator, name, false);
+	public final IToolInstance create(Config config, ILazyArtifactGenerator generator) {
+		return create(config, generator, false);
 	}
 
-	protected abstract IToolInstance create(Config config, ILazyArtifactGenerator generator, String name, boolean close);
+	protected abstract IToolInstance create(Config config, ILazyArtifactGenerator generator, boolean close);
 	
 	public List<File> getRequiredJars(Config config) {
 		try {

@@ -56,7 +56,7 @@ public class ReckonerFactory extends AbstractToolFactory {
 
 	@Override
 	protected IToolInstance create(Config config,
-			ILazyArtifactGenerator generator, String name, boolean close) {
+			ILazyArtifactGenerator generator, boolean close) {
 		return new Reckoner1_0Tool(this, config, generator, close);
 	}
 }

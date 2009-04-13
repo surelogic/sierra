@@ -53,5 +53,5 @@ public interface IToolFactory {
 	 * Creates an instance of the tool to do one scan
 	 */
 	IToolInstance create(Config config);
-	IToolInstance create(Config config, ILazyArtifactGenerator gen, String label);
+	IToolInstance create(Config config, ILazyArtifactGenerator gen);
 }
