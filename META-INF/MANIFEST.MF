@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Sierra FindBugs Integration
+Bundle-Name: FindBugs\u2122
 Bundle-SymbolicName: com.surelogic.sierra.fb;singleton:=true
 Bundle-Version: 1.3.7
 Bundle-ClassPath: lib/annotations.jar,
@@ -65,3 +65,7 @@ Require-Bundle: com.surelogic.sierra.tool;bundle-version="2.2.1",
  com.surelogic.sierra.message;bundle-version="2.2.1",
  com.surelogic.common;bundle-version="2.2.1"
 Sierra-Tool: com.surelogic.sierra.tool.findbugs.FindBugsToolFactory
+Sierra-Id: FindBugs
+Sierra-Website: findbugs.sourceforge.net
+Sierra-Description: A static analysis tool created at University of Maryland 
+  for finding bugs in Java code.
