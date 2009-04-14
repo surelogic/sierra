@@ -190,16 +190,7 @@ public class LocalTool extends AbstractLocalSLJob implements IToolInstance {
 	@Override 
 	protected void setupClassPath(boolean debug, Project proj, Path path) {			
 		final Set<File> jars = new HashSet<File>();
-		
-		// Created temporarily to reuse code accessing config
-		final AbstractTool util = new AbstractTool(factory, config) {
-			public Set<ArtifactType> getArtifactTypes() {
-				throw new UnsupportedOperationException();
-			}
-			public SLStatus run(SLProgressMonitor monitor) {
-				throw new UnsupportedOperationException();
-			}
-		};
+		final ConfigUtil util = new ConfigUtil(config);
 		util.addPluginToPath(debug, jars, SierraToolConstants.COMMON_PLUGIN_ID);
 
 		// sierra-tool needs special handling since it is unpacked, due to

@@ -23,16 +23,7 @@ public class ReckonerFactory extends AbstractToolFactory {
 		  findJars(jars, new File(config.getToolsDirectory(), "reckoner/lib"));
 		  jars.add(new File(config.getToolsDirectory(), "reckoner/reckoner.jar"));
 		 */
-
-		// Created temporarily to reuse code accessing config
-		final AbstractTool util = new AbstractTool(this, config) {
-			public Set<ArtifactType> getArtifactTypes() {
-				throw new UnsupportedOperationException();
-			}
-			public SLStatus run(SLProgressMonitor monitor) {
-				throw new UnsupportedOperationException();
-			}
-		};
+		final ConfigUtil util = new ConfigUtil(config);
 		
 		// TODO remove special case to save spaces
 		// 

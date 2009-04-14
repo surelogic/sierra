@@ -2,59 +2,13 @@ package com.surelogic.sierra.tool;
 
 import java.io.File;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import com.surelogic.common.jobs.AbstractSLJob;
-import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.tool.message.Config;
 
-public abstract class AbstractTool extends AbstractSLJob implements ITool {
-	protected static final Logger LOG = SLLogger.getLogger("sierra");
-	protected static final int JAVA_SUFFIX_LEN = ".java".length();
-
-	/*
-	protected static void setupToolForProject(IToolInstance ti, Config config) {
-		for(ToolTarget t : config.getTargets()) {
-			ti.addTarget(t);
-		}
-		for(URI path : config.getPaths()) {
-			ti.addToClassPath(path);
-		}
-		ti.setOption(IToolInstance.COMPLIANCE_LEVEL, config.getComplianceLevel());
-		ti.setOption(IToolInstance.SOURCE_LEVEL, config.getSourceLevel());
-		ti.setOption(IToolInstance.TARGET_LEVEL, config.getTargetLevel());
-	}
-	*/
-
-	protected final boolean debug;
-	protected final IToolFactory factory;
+public final class ConfigUtil {
 	protected final Config config;
 
-	/**
-	 * Perhaps this should read from a file
-	 */
-	protected AbstractTool(IToolFactory factory, Config config) {
-		super(factory.getName()); // FIX is this the right name?
-		this.factory = factory;
+	public ConfigUtil(Config config) {
 		this.config = config;
-		debug = LOG.isLoggable(Level.FINE);
-	}
-
-	public final String getHTMLInfo() {
-		return factory.getHTMLInfo();
-	}
-
-	public final String getId() {
-		return factory.getId();
-	}
-
-	public final String getName() {
-		return factory.getName();
-	}
-
-	public final String getVersion() {
-		return factory.getVersion();
 	}
 
 	protected String getPluginDir(final boolean debug, final String pluginId) {
