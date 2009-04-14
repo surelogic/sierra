@@ -59,19 +59,15 @@ public abstract class AbstractToolFactory implements IToolFactory {
 	
 	@Override
 	public int hashCode() {
-		return this.getClass().hashCode();
+		return this.getClass().getName().hashCode();
 	}
 	
 	@Override
 	public boolean equals(Object o) {
 		if (o instanceof AbstractToolFactory) {
-			return this.getClass().equals(o.getClass());
+			return this.getClass().getName().equals(o.getClass().getName());
 		}
 		return false;
-	}
-	
-	public final IToolInstance create() {
-		return null;
 	}
 	
 	public static void setupToolForProject(IToolInstance ti, Config config) {
