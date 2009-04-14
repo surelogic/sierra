@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.*;
 import java.util.logging.Level;
 
-import com.surelogic.common.jobs.*;
 import com.surelogic.sierra.tool.*;
 import com.surelogic.sierra.tool.analyzer.ILazyArtifactGenerator;
 import com.surelogic.sierra.tool.message.Config;

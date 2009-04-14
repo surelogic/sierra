@@ -14,8 +14,6 @@ import org.apache.commons.lang.SystemUtils;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.types.*;
 
-import com.surelogic.common.jobs.SLProgressMonitor;
-import com.surelogic.common.jobs.SLStatus;
 import com.surelogic.common.jobs.remote.RemoteSLJobException;
 import com.surelogic.common.jobs.remote.TestCode;
 import com.surelogic.sierra.tool.analyzer.ILazyArtifactGenerator;
