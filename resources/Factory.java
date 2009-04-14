@@ -12,114 +12,112 @@ import com.surelogic.sierra.tool.message.ArtifactGenerator.ArtifactBuilder;
 import com.surelogic.sierra.tool.targets.IToolTarget;
 
 public class Factory extends AbstractToolFactory {
-	public ITool create(Config config) {
-		return new Tool(config); 
+	public Set<ArtifactType> getArtifactTypes() {
+		// TODO report available artifact types
+		return Collections.emptySet(); 
 	}
 
-	private class Tool extends AbstractTool {
-		public Tool(Config config) {
-			super(Factory.this, config);
-		}
+	@Override
+	public List<File> getRequiredJars(Config config) {
+		// TODO add any libraries not listed in the manifest
+		// This should only be needed for tool extensions
+		return super.getRequiredJars(config);
+	}
+	
+	protected IToolInstance create(Config config, ILazyArtifactGenerator generator, boolean close) {
+		return new AbstractToolInstance(this, config, generator, close) {
+			@Override
+			protected SLStatus execute(SLProgressMonitor monitor) throws Exception {      		
+				final List<File> targets = init();					
+				int num = targets.size();
+				monitor.begin(num > 0 ? num : 10);
 
-		public Set<ArtifactType> getArtifactTypes() {			
-			return Collections.emptySet(); // TODO
-		}
-		
-		@Override
-		protected IToolInstance create(String name, ILazyArtifactGenerator generator, boolean close) {
-			return new AbstractToolInstance(debug, this, generator, close) {
-				@Override
-				protected SLStatus execute(SLProgressMonitor monitor) throws Exception {      		
-					final List<File> targets = init();					
-					monitor.begin(targets.size());
-					
-					final ArtifactGenerator gen = getGenerator();
-					for(File target : targets) {
-						final boolean success = processTarget(gen, target);
-						if (success) {
-							monitor.worked(1);
-						}
+				final ArtifactGenerator gen = getGenerator();
+				for(File target : targets) {
+					final boolean success = processTarget(gen, target);
+					if (success) {
+						monitor.worked(1);
 					}
-					return status.build();
 				}
+				return status.build();
+			}
 
-				private List<File> init() {
-					// If processing individual source files
-					final List<File> targets = new ArrayList<File>();
-					prepJavaFiles(new SourcePrep() {
-						public void prep(File f) {
-							targets.add(f);
-						}					
-					});
-					
-					// If processing binaries
-					final List<String> paths = new ArrayList<String>();
-					for (IToolTarget t : getBinTargets()) {
-						final String path = new File(t.getLocation()).getAbsolutePath();
-						switch (t.getKind()) {
-						case FILE:
-						case JAR:
-							paths.add(path);
-							break;
-						case DIRECTORY:
-							for (URI loc : t.getFiles()) {
-								File f = new File(loc);
-								if (f.exists()) {
-									paths.add(f.getAbsolutePath());
-								}
+			private List<File> init() {
+				// If processing individual source files
+				final List<File> targets = new ArrayList<File>();
+				prepJavaFiles(new SourcePrep() {
+					public void prep(File f) {
+						targets.add(f);
+					}					
+				});
+
+				// If processing binaries
+				final List<String> paths = new ArrayList<String>();
+				for (IToolTarget t : getBinTargets()) {
+					final String path = new File(t.getLocation()).getAbsolutePath();
+					switch (t.getKind()) {
+					case FILE:
+					case JAR:
+						paths.add(path);
+						break;
+					case DIRECTORY:
+						for (URI loc : t.getFiles()) {
+							File f = new File(loc);
+							if (f.exists()) {
+								paths.add(f.getAbsolutePath());
 							}
-							break;
-						default:
-							System.out.println("Ignoring target " + t.getLocation());
 						}
+						break;
+					default:
+						System.out.println("Ignoring target " + t.getLocation());
 					}
-					
-					// If processing jars required for compilation/runtime
-					final List<String> libs = new ArrayList<String>();
-					for (IToolTarget t : getAuxTargets()) {
-						final String path = new File(t.getLocation()).getAbsolutePath();
-						switch (t.getKind()) {
-						case DIRECTORY:
-						case JAR:
-							libs.add(path);
-							break;
-						case FILE:							
-						default:
-							System.out.println("Ignoring target " + t.getLocation());
-						}
-					}
-					// TODO use targets, paths, libs
-					return targets;
 				}
-				
-				private boolean processTarget(final ArtifactGenerator gen, File target) {
-					try {
-						// TODO scan target and create artifacts	
-						System.out.println("Doing something with "+target);
-						
-						if (false) {
-							createArtifact(gen);
-						}
-						return true;
-					} catch (Exception e) {
-						final String msg = "Problem with "+target+": "+e.getMessage(); // TODO
-						gen.error().tool(getId()).message(msg).build();					   
-						status.addChild(SLStatus.createWarningStatus(-1, msg, e));
-					}
-					return false;
-				}
-				
-				private void createArtifact(final ArtifactGenerator gen) {
-					final ArtifactBuilder artifact = gen.artifact();						
-					setSourceLocation(artifact.primarySourceLocation(),
-							          new SourceInfo()); // TODO fill in SourceInfo
 
-					artifact.findingType(getName(), getVersion(), "Something"); // TODO
-					artifact.message("Found something"); // TODO
-					artifact.priority(Priority.MEDIUM).severity(Severity.WARNING); // TODO
-					artifact.build();
+				// If processing jars required for compilation/runtime
+				final List<String> libs = new ArrayList<String>();
+				for (IToolTarget t : getAuxTargets()) {
+					final String path = new File(t.getLocation()).getAbsolutePath();
+					switch (t.getKind()) {
+					case DIRECTORY:
+					case JAR:
+						libs.add(path);
+						break;
+					case FILE:							
+					default:
+						System.out.println("Ignoring target " + t.getLocation());
+					}
 				}
-			};
-		}
+				// TODO use targets, paths, libs
+				return targets;
+			}
+
+			private boolean processTarget(final ArtifactGenerator gen, File target) {
+				try {
+					// TODO scan target and create artifacts	
+					System.out.println("Doing something with "+target);
+
+					if (false) {
+						createArtifact(gen);
+					}
+					return true;
+				} catch (Exception e) {
+					final String msg = "Problem with "+target+": "+e.getMessage(); // TODO
+					gen.error().tool(getId()).message(msg).build();					   
+					status.addChild(SLStatus.createWarningStatus(-1, msg, e));
+				}
+				return false;
+			}
+
+			private void createArtifact(final ArtifactGenerator gen) {
+				final ArtifactBuilder artifact = gen.artifact();						
+				setSourceLocation(artifact.primarySourceLocation(),
+						new SourceInfo()); // TODO fill in SourceInfo
+
+				artifact.findingType(getName(), getVersion(), "Something"); // TODO
+				artifact.message("Found something"); // TODO
+				artifact.priority(Priority.MEDIUM).severity(Severity.WARNING); // TODO
+				artifact.build();
+			}
+		};
 	}
 }
