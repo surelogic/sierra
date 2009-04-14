@@ -14,7 +14,27 @@ import com.surelogic.sierra.tool.targets.IToolTarget;
  * 
  * @author Edwin.Chan
  */
-public interface IToolInstance extends ITool, SLJob {
+public interface IToolInstance extends SLJob {
+  /**
+   * e.g. "FindBugs"
+   */
+  String getId();
+
+  /**
+   * e.g. "1.3.0"
+   */
+  String getVersion(); 
+
+  /**
+   * e.g. "FindBugs (TM)"
+   */
+  String getName();
+
+  /**
+   * e.g. "<a href="http://findbugs.sf.net">FindBugs</a> is a blahblahblah"
+   */
+  String getHTMLInfo();
+	
   ArtifactGenerator getGenerator();
   
   /**

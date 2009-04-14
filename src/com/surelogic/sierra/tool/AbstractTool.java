@@ -9,23 +9,9 @@ import com.surelogic.common.jobs.AbstractSLJob;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.tool.message.Config;
 
-public abstract class AbstractTool extends AbstractSLJob implements ITool {
+public abstract class AbstractTool extends AbstractSLJob {
 	protected static final Logger LOG = SLLogger.getLogger("sierra");
 	protected static final int JAVA_SUFFIX_LEN = ".java".length();
-
-	/*
-	protected static void setupToolForProject(IToolInstance ti, Config config) {
-		for(ToolTarget t : config.getTargets()) {
-			ti.addTarget(t);
-		}
-		for(URI path : config.getPaths()) {
-			ti.addToClassPath(path);
-		}
-		ti.setOption(IToolInstance.COMPLIANCE_LEVEL, config.getComplianceLevel());
-		ti.setOption(IToolInstance.SOURCE_LEVEL, config.getSourceLevel());
-		ti.setOption(IToolInstance.TARGET_LEVEL, config.getTargetLevel());
-	}
-	*/
 
 	protected final boolean debug;
 	protected final IToolFactory factory;
