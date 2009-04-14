@@ -145,7 +145,8 @@ public class ToolUtil {
 		
 		// Set it to only run this one tool
 		StringBuilder sb = new StringBuilder();
-		for(IToolFactory tf : findToolFactories()) {
+		List<IToolFactory> factories = findToolFactories();
+		for(IToolFactory tf : factories) {
 			if (!tf.equals(factory)) {
 				// Set as excluded
 				if (sb.length() > 0) {
