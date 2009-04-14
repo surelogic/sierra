@@ -33,6 +33,9 @@ public abstract class AbstractLocalSLJob extends AbstractSLJob {
 	protected AbstractLocalSLJob(String name, int work, TestCode code, int memSize, boolean verbose) {
 		super(name);
 		this.work  = work;
+		if (work <= 0) {
+			throw new IllegalArgumentException("work <= 0");
+		}
 		testCode   = code;
 		memorySize = memSize;
 		this.verbose = verbose;
