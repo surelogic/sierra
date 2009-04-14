@@ -16,9 +16,12 @@ import com.surelogic.sierra.tool.message.IdentifierType;
 import com.surelogic.sierra.tool.message.ArtifactGenerator.SourceLocationBuilder;
 import com.surelogic.sierra.tool.targets.IToolTarget;
 
-public abstract class AbstractToolInstance extends AbstractTool implements IToolInstance {
+public abstract class AbstractToolInstance extends AbstractSLJob implements IToolInstance {
   protected static final Logger LOG = SLLogger.getLogger("sierra");
-	
+  protected static final int JAVA_SUFFIX_LEN = ".java".length();
+
+  protected final IToolFactory factory;
+  protected final Config config;
   protected final ILazyArtifactGenerator genHandle;  
   private final List<IToolTarget> srcTargets = new ArrayList<IToolTarget>();
   private final List<IToolTarget> binTargets = new ArrayList<IToolTarget>();
@@ -30,12 +33,30 @@ public abstract class AbstractToolInstance extends AbstractTool implements ITool
   protected final boolean debug;
   protected final SLStatus.Builder status = new SLStatus.Builder();
   private ArtifactGenerator generator = null;
-  
-  protected AbstractToolInstance(IToolFactory t, Config config, ILazyArtifactGenerator gen, boolean close) {
-	super(t, config);
-    genHandle = gen;
-    closeWhenDone = close;
-	debug = LOG.isLoggable(Level.FINE);
+
+  protected AbstractToolInstance(IToolFactory factory, Config config, ILazyArtifactGenerator gen, boolean close) {
+	  super(factory.getName()); // FIX is this the right name?
+	  this.factory = factory;
+	  this.config = config;
+	  genHandle = gen;
+	  closeWhenDone = close;
+	  debug = LOG.isLoggable(Level.FINE);
+  }
+
+  public final String getHTMLInfo() {
+	  return factory.getHTMLInfo();
+  }
+
+  public final String getId() {
+	  return factory.getId();
+  }
+
+  public final String getName() {
+	  return factory.getName();
+  }
+
+  public final String getVersion() {
+	  return factory.getVersion();
   }
   
   public ArtifactGenerator getGenerator() {
