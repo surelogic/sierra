@@ -18,13 +18,13 @@ class ToolInfo {
 		} else {		
 			final StringBuilder sb = new StringBuilder();
 			if (website == null) {
-				sb.append(name);
+				sb.append(this.name);
 			} else {
 				sb.append("<A HREF=\"");
 				if (!website.startsWith(HTTP_PREFIX)) {
 					sb.append(HTTP_PREFIX);
 				}
-				sb.append(website).append("\">").append(name).append("</A>");
+				sb.append(website).append("\">").append(this.name).append("</A>");
 			}
 			sb.append(" is ");
 			
