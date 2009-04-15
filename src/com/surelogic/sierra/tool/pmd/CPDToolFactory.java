@@ -8,7 +8,7 @@ import com.surelogic.sierra.tool.analyzer.ILazyArtifactGenerator;
 import com.surelogic.sierra.tool.message.Config;
 
 public class CPDToolFactory extends AbstractToolFactory {	
-	@Override
+//	@Override
 	public Set<ArtifactType> getArtifactTypes() {
 		// TODO Auto-generated method stub
 		return Collections.emptySet();
