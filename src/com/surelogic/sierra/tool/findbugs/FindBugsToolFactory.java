@@ -31,7 +31,7 @@ public class FindBugsToolFactory extends AbstractToolFactory {
 		};
 	}
 	
-	@Override
+//	@Override
 	public final Set<ArtifactType> getArtifactTypes() {
 		Set<ArtifactType> types = new HashSet<ArtifactType>();
 		// Code to get meta-data from FindBugs
