@@ -1,11 +1,7 @@
 To create a Sierra tool plugin for a typical third-party tool:
-1. Creata an Eclipse plugin project without an Activator class
-
-   Alternatively, you can copy this project and customize META-INF/MANIFEST.MF
-
-2. Copy the appropriate library jars to the project, and add them to the Runtime Classpath
-   (via the Plugin Manifest Editor)
+1. Create an Eclipse plugin project using the Sierra Tool Plugin Project wizard
    
-3. Rename the package "sierra_tool_template" appropriately
+2. Copy the appropriate library jars to the project, and add them to the classpath via
+   the Runtime tab in the Plugin Manifest Editor
 
-4. Edit Factory.java, filling in the various TODOs
+3. Edit Factory.java, filling in the various TODOs
