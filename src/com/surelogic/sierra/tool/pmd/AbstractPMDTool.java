@@ -133,15 +133,6 @@ public class AbstractPMDTool extends AbstractToolInstance {
 				LOG.fine(msg);
 		}
 
-		private String getCompUnitName(String file) {
-			int separator = file.lastIndexOf(File.separatorChar);
-			if (separator < 0) {
-				return file.substring(0, file.length() - JAVA_SUFFIX_LEN);
-			}
-			return file.substring(separator + 1, file.length()
-					- JAVA_SUFFIX_LEN);
-		}
-
 		public synchronized void renderFileReport(Report report)
 				throws IOException {
 			Iterator<IRuleViolation> it = report.iterator();
