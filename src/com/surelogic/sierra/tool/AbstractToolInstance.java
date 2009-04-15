@@ -20,6 +20,19 @@ public abstract class AbstractToolInstance extends AbstractSLJob implements IToo
   protected static final Logger LOG = SLLogger.getLogger("sierra");
   protected static final int JAVA_SUFFIX_LEN = ".java".length();
 
+  public static String getCompUnitName(String file) {
+	  int separator = file.lastIndexOf(File.separatorChar);
+	  if (separator < 0) {
+		  return file.substring(0, file.length() - JAVA_SUFFIX_LEN);
+	  }
+	  return file.substring(separator + 1, file.length()
+			  - JAVA_SUFFIX_LEN);
+  }
+  
+  public static String getPackageName(String file) {
+	  return null; // TODO fix to use code from CPD
+  }
+  
   protected final IToolFactory factory;
   protected final Config config;
   protected final ILazyArtifactGenerator genHandle;  
@@ -221,13 +234,22 @@ public abstract class AbstractToolInstance extends AbstractSLJob implements IToo
   }
   
   public static class SourceInfo {
-	protected String fileName;
-	protected String packageName;
-	protected String cuName;
-	protected int startLine;
-	protected int endLine;
-	protected IdentifierType type;
-	protected String identifier;
+	public String fileName;
+	public String packageName;
+	public String cuName;
+	public int startLine;
+	public int endLine;
+	public IdentifierType type;
+	public String identifier;
+	
+	public static SourceInfo get(String file, int line) {
+		SourceInfo info = new SourceInfo();
+		info.fileName = file;
+		info.cuName = getCompUnitName(file);					
+		info.packageName = getPackageName(file);
+		info.startLine = info.endLine = line;	
+		return info;
+	}
   }
   
   protected static void setSourceLocation(
