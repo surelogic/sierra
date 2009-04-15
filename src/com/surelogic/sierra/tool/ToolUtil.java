@@ -293,6 +293,7 @@ public class ToolUtil {
 		return false;
 	}
 	
+	@SuppressWarnings("unused")
 	private static int numToolFactories(Attributes attrs) {
 		return countItems(attrs.getValue(TOOL_FACTORIES));
 	}
@@ -378,7 +379,12 @@ public class ToolUtil {
 		int i = 0;
 		for(; i<version.length(); i++) {
 			final char ch = version.charAt(i);
+			// Not a dot or a digit
 			if (ch != '.' && !Character.isDigit(ch)) {
+				// Eliminate trailing dots
+				while (i > 0 && version.charAt(i-1) == '.') {
+					i--;
+				}
 				break;
 			}
 		}		
