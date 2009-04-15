@@ -14,6 +14,7 @@ import com.surelogic.sierra.tool.targets.IToolTarget;
 public class Factory extends AbstractToolFactory {
 	public Set<ArtifactType> getArtifactTypes() {
 		// TODO report available artifact types
+		// Check the tool's source code to see how to get this info
 		return Collections.emptySet(); 
 	}
 
@@ -113,7 +114,7 @@ public class Factory extends AbstractToolFactory {
 				setSourceLocation(artifact.primarySourceLocation(),
 						new SourceInfo()); // TODO fill in SourceInfo
 
-				artifact.findingType(getName(), getVersion(), "Something"); // TODO
+				artifact.findingType(getId(), getVersion(), "Something"); // TODO
 				artifact.message("Found something"); // TODO
 				artifact.priority(Priority.MEDIUM).severity(Severity.WARNING); // TODO
 				artifact.build();
