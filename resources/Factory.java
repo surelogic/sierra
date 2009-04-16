@@ -27,6 +27,8 @@ public class Factory extends AbstractToolFactory {
 	
 	protected IToolInstance create(Config config, ILazyArtifactGenerator generator, boolean close) {
 		return new AbstractToolInstance(this, config, generator, close) {
+			SourceRoots roots; // Used to compute package names for files
+			
 			@Override
 			protected SLStatus execute(SLProgressMonitor monitor) throws Exception {      		
 				final List<File> targets = init();					
@@ -43,10 +45,10 @@ public class Factory extends AbstractToolFactory {
 				return status.build();
 			}
 
-			private List<File> init() {
+			private List<File> init() throws Exception {
 				// If processing individual source files
 				final List<File> targets = new ArrayList<File>();
-				prepJavaFiles(new SourcePrep() {
+				roots = collectSourceRoots(new SourcePrep() {
 					public void prep(File f) {
 						targets.add(f);
 					}					
