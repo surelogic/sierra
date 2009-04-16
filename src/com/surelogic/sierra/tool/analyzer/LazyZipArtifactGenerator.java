@@ -13,10 +13,11 @@ import com.surelogic.sierra.tool.message.MessageWarehouse;
 
 /**
  * Directly creates a zip file to contain the results
+ * Not to be used by clients
  * 
  * @author edwin
  */
-public class LazyZipArtifactGenerator implements ILazyArtifactGenerator {
+public final class LazyZipArtifactGenerator implements ILazyArtifactGenerator {
 	final Config config;
 	final ZipOutputStream stream;
 	

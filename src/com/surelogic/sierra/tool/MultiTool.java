@@ -9,7 +9,7 @@ import com.surelogic.sierra.tool.message.ArtifactGenerator;
 import com.surelogic.sierra.tool.message.Config;
 import com.surelogic.sierra.tool.targets.IToolTarget;
 
-public class MultiTool extends AbstractSLJob implements IToolInstance, Iterable<IToolInstance> {
+final class MultiTool extends AbstractSLJob implements IToolInstance, Iterable<IToolInstance> {
 	public static final IToolFactory factory = 
 		new DummyToolFactory("MultiTool", "1.0", "MultiTool", "A container for other tools");
 

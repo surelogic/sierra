@@ -14,10 +14,12 @@ import com.surelogic.sierra.tool.message.Config;
  * files and stores the artifacts, errors and config in them. It finally
  * combines all of them with proper xml tags and generates a run document.
  * 
+ * Not to be used by clients
+ * 
  * @author Tanmay.Sinha
  * 
  */
-public class MessageArtifactFileGenerator extends AbstractArtifactFileGenerator
+public final class MessageArtifactFileGenerator extends AbstractArtifactFileGenerator
 implements ILazyArtifactGenerator {
 	private final File parsedFile;
 	private final boolean compress;

@@ -40,7 +40,7 @@ import com.surelogic.sierra.tool.message.SourceLocation;
  * @author Tanmay.Sinha
  * @author Edwin.Chan
  */
-public abstract class AbstractArtifactFileGenerator extends DefaultArtifactGenerator {
+abstract class AbstractArtifactFileGenerator extends DefaultArtifactGenerator {
 
 	private static final String XML_START = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>";
 	private static final String TOOL_OUTPUT_START = "<toolOutput>";

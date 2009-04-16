@@ -21,7 +21,7 @@ import com.surelogic.sierra.tool.jobs.AbstractLocalSLJob;
 import com.surelogic.sierra.tool.message.*;
 import com.surelogic.sierra.tool.targets.*;
 
-public class LocalTool extends AbstractLocalSLJob implements IToolInstance {
+final class LocalTool extends AbstractLocalSLJob implements IToolInstance {
 	private static final JAXBContext ctx = createContext();
 
 	private static final Marshaller marshaller = createMarshaller(ctx);

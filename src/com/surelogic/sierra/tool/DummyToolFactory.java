@@ -8,7 +8,7 @@ import java.util.Set;
 import com.surelogic.sierra.tool.analyzer.ILazyArtifactGenerator;
 import com.surelogic.sierra.tool.message.Config;
 
-public final class DummyToolFactory implements IToolFactory {
+final class DummyToolFactory implements IToolFactory {
 	private final String description;
 	private final String id;
 	private final String name;

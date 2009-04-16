@@ -19,7 +19,7 @@ import com.surelogic.common.jobs.remote.AbstractRemoteSLJob;
 import com.surelogic.sierra.tool.message.*;
 import com.surelogic.sierra.tool.targets.*;
 
-public class RemoteTool extends AbstractRemoteSLJob {
+final class RemoteTool extends AbstractRemoteSLJob {
 	public static void main(String[] args) {
 		RemoteTool job = new RemoteTool();
 		job.run();

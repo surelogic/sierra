@@ -13,7 +13,7 @@ import com.surelogic.sierra.tool.message.Severity;
 /**
  * Does nothing
  */
-public class DefaultArtifactGenerator implements ArtifactGenerator {
+class DefaultArtifactGenerator implements ArtifactGenerator {
 
 	public ArtifactBuilder artifact() {
 

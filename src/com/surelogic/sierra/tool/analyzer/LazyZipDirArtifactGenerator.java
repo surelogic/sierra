@@ -13,10 +13,11 @@ import com.surelogic.sierra.tool.message.MessageWarehouse;
 
 /**
  * Creates results in a temporary directory before creating the final zip file
+ * Not to be used by clients
  *
  * @author edwin
  */
-public class LazyZipDirArtifactGenerator implements ILazyArtifactGenerator {
+public final class LazyZipDirArtifactGenerator implements ILazyArtifactGenerator {
 	final Config config;
 	final File tempDir;
 	

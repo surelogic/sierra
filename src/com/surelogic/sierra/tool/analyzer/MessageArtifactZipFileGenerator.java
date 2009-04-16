@@ -9,9 +9,11 @@ import com.surelogic.sierra.tool.message.Config;
 /**
  * The scan document generator, output to a ZipOutputStream
  * 
+ * Not to be used by clients
+ *
  * @author Edwin.Chan
  */
-class MessageArtifactZipFileGenerator extends AbstractArtifactFileGenerator {
+final class MessageArtifactZipFileGenerator extends AbstractArtifactFileGenerator {
 	private final ZipOutputStream zip;
 	private final String name;
 
