@@ -14,11 +14,13 @@ import com.surelogic.sierra.tool.message.ArtifactGenerator;
 import com.surelogic.sierra.tool.message.Config;
 import com.surelogic.sierra.tool.message.IdentifierType;
 import com.surelogic.sierra.tool.message.ArtifactGenerator.SourceLocationBuilder;
+import com.surelogic.sierra.tool.targets.FileTarget;
 import com.surelogic.sierra.tool.targets.IToolTarget;
 
 public abstract class AbstractToolInstance extends AbstractSLJob implements IToolInstance {
   protected static final Logger LOG = SLLogger.getLogger("sierra");
-  protected static final int JAVA_SUFFIX_LEN = ".java".length();
+  protected static final String JAVA_SUFFIX = ".java";
+  protected static final int JAVA_SUFFIX_LEN = JAVA_SUFFIX.length();
 
   public static String getCompUnitName(String file) {
 	  int separator = file.lastIndexOf(File.separatorChar);
@@ -27,10 +29,6 @@ public abstract class AbstractToolInstance extends AbstractSLJob implements IToo
 	  }
 	  return file.substring(separator + 1, file.length()
 			  - JAVA_SUFFIX_LEN);
-  }
-  
-  public static String getPackageName(String file) {
-	  return null; // TODO fix to use code from CPD
   }
   
   protected final IToolFactory factory;
@@ -220,17 +218,92 @@ public abstract class AbstractToolInstance extends AbstractSLJob implements IToo
   }
   
   public interface SourcePrep {
-	void prep(File f);	  
+	void prep(File f) throws Exception;	  
   }  
-  protected void prepJavaFiles(SourcePrep p) {
+  protected void prepJavaFiles(SourcePrep p) throws Exception {
 	  for (IToolTarget t : getSrcTargets()) {
 		  for (URI loc : t.getFiles()) {
 			  File f = new File(loc);
-			  if (f.exists() && f.getName().endsWith(".java")) {
+			  if (f.exists() && f.getName().endsWith(JAVA_SUFFIX)) {
 				  p.prep(f);
 			  }
 		  }
 	  }  
+  }
+  
+  public static class SourceRoots {
+	  private final Map<String, String> roots = new HashMap<String, String>();
+
+	  void addRoot(String locName, URI uri) {
+		  String root = new File(uri).getAbsolutePath();
+		  roots.put(locName, root);
+	  }
+	  void addRoot(String path, String locName) {
+		  roots.put(path, locName);
+	  }
+	  
+	  public void initSourceInfo(final SourceInfo info, final String fileName) {
+		  info.fileName = fileName;
+
+		  final String root = roots.get(fileName);
+		  if (root == null) {
+			  throw new IllegalArgumentException(fileName
+					  + " doesn't have a source root");
+		  }
+		  final String file;
+		  if (fileName.startsWith(root)) {
+			  file = fileName.substring(root.length() + 1);
+		  } else {
+			  throw new IllegalArgumentException(fileName
+					  + " start with root " + root);
+		  }
+
+		  // Modified from AbstractPMDTool.getCompUnitName()
+		  int separator = file.lastIndexOf(File.separatorChar);
+		  if (separator < 0) {
+			  // Default package
+			  info.packageName = "";
+			  info.cuName = file.substring(0, file.length()
+					  - JAVA_SUFFIX_LEN);
+		  } else {
+			  info.packageName = file.substring(0, separator).replace(
+					  File.separatorChar, '.');
+			  info.cuName = file.substring(separator + 1, file.length()
+					  - JAVA_SUFFIX_LEN);
+		  }
+	  }
+  }
+  
+  /**
+   * Same as prepJavaFiles, but also collects source root info
+   */
+  protected SourceRoots collectSourceRoots(SourcePrep p) throws Exception {
+	  SourceRoots roots = new SourceRoots();
+	  for (IToolTarget t : getSrcTargets()) {
+		  File location = new File(t.getLocation());
+		  String locName = location.getAbsolutePath();
+		  if (t instanceof FileTarget) {
+			  FileTarget ft = (FileTarget) t;
+			  if (!location.exists() || !location.getName().endsWith(JAVA_SUFFIX)) {
+				  continue;
+			  }
+			  if (ft.getRoot() != null) {
+				  roots.addRoot(locName, ft.getRoot());
+			  } else {
+				  System.out.println("No root for " + locName);
+			  }
+			  p.prep(location);
+		  } else {
+			  for (URI loc : t.getFiles()) {
+				  File file = new File(loc);
+				  if (file.exists() && file.getName().endsWith(JAVA_SUFFIX)) {
+					  roots.addRoot(file.getAbsolutePath(), locName);
+					  p.prep(file);
+				  }
+			  }
+		  }
+	  }
+	  return roots;
   }
   
   public static class SourceInfo {
@@ -242,11 +315,9 @@ public abstract class AbstractToolInstance extends AbstractSLJob implements IToo
 	public IdentifierType type;
 	public String identifier;
 	
-	public static SourceInfo get(String file, int line) {
+	public static SourceInfo get(SourceRoots roots, String file, int line) {
 		SourceInfo info = new SourceInfo();
-		info.fileName = file;
-		info.cuName = getCompUnitName(file);					
-		info.packageName = getPackageName(file);
+		roots.initSourceInfo(info, file);
 		info.startLine = info.endLine = line;	
 		return info;
 	}
