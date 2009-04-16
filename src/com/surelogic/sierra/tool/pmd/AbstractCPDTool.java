@@ -8,7 +8,6 @@ import net.sourceforge.pmd.cpd.*;
 import net.sourceforge.pmd.cpd.Match;
 
 import com.surelogic.common.jobs.SLProgressMonitor;
-import com.surelogic.common.jobs.SLStatus;
 import com.surelogic.sierra.tool.*;
 import com.surelogic.sierra.tool.ArtifactType;
 import com.surelogic.sierra.tool.analyzer.ILazyArtifactGenerator;
@@ -27,7 +26,7 @@ public abstract class AbstractCPDTool extends AbstractToolInstance {
 	}
 
 	@Override
-	protected SLStatus execute(SLProgressMonitor monitor)
+	protected void execute(SLProgressMonitor monitor)
 	throws Exception {
 		monitor.begin(10);
 		monitor.subTask("Setting up");
@@ -72,7 +71,6 @@ public abstract class AbstractCPDTool extends AbstractToolInstance {
 			createArtifact(roots, getGenerator(), m);
 		}
 		monitor.worked(1);
-		return SLStatus.OK_STATUS;
 	}
 
 	protected void createArtifact(SourceRoots roots,
