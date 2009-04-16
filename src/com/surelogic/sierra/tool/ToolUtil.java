@@ -63,6 +63,12 @@ public class ToolUtil {
 	
 	public static void addToolFinder(IToolFinder f) {
 		synchronized (finders) {
+			// First check if already added
+			for(IToolFinder finder : finders) {
+				if (finder == f || finder.getClass() == f.getClass()) {
+					return;
+				}
+			}
 			finders.add(f);
 		}
 	}
