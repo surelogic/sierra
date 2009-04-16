@@ -169,8 +169,7 @@ public class Factory extends AbstractToolFactory {
 				public void addException(AuditEvent e, Throwable t) {
 					// Adapted from original processTarget()
 					final String msg = "Problem with "+e.getFileName()+": "+t.getMessage(); // TODO
-					gen.error().tool(getId()).message(msg).build();					   
-					status.addChild(SLStatus.createWarningStatus(-1, msg, t));
+					reportError(msg, t);
 				}
 				
 				public void fileFinished(AuditEvent arg0) {
