@@ -30,7 +30,7 @@ public class Factory extends AbstractToolFactory {
 			SourceRoots roots; // Used to compute package names for files
 			
 			@Override
-			protected SLStatus execute(SLProgressMonitor monitor) throws Exception {      		
+			protected void execute(SLProgressMonitor monitor) throws Exception {      		
 				final List<File> targets = init();					
 				int num = targets.size();
 				monitor.begin(num > 0 ? num : 10);
@@ -42,7 +42,6 @@ public class Factory extends AbstractToolFactory {
 						monitor.worked(1);
 					}
 				}
-				return status.build();
 			}
 
 			private List<File> init() throws Exception {
