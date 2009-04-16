@@ -17,11 +17,20 @@ import com.surelogic.sierra.tool.message.ArtifactGenerator.SourceLocationBuilder
 import com.surelogic.sierra.tool.targets.FileTarget;
 import com.surelogic.sierra.tool.targets.IToolTarget;
 
+/**
+ * An abstract class designed to simplify implementation of IToolInstance
+ * 
+ * @author edwin
+ */
 public abstract class AbstractToolInstance extends AbstractSLJob implements IToolInstance {
   protected static final Logger LOG = SLLogger.getLogger("sierra");
   protected static final String JAVA_SUFFIX = ".java";
   protected static final int JAVA_SUFFIX_LEN = JAVA_SUFFIX.length();
 
+  /**
+   * Gets the compilation unit name from a Java source file name
+   * e.g. Baz from /foo/bar/Baz.java
+   */
   public static String getCompUnitName(String file) {
 	  int separator = file.lastIndexOf(File.separatorChar);
 	  if (separator < 0) {
@@ -42,11 +51,11 @@ public abstract class AbstractToolInstance extends AbstractSLJob implements IToo
   private final boolean closeWhenDone;
   private final Map<String,String> options = new HashMap<String,String>();
   protected final boolean debug;
-  protected final SLStatus.Builder status = new SLStatus.Builder();
+  private final SLStatus.Builder status = new SLStatus.Builder();
   private ArtifactGenerator generator = null;
 
   protected AbstractToolInstance(IToolFactory factory, Config config, ILazyArtifactGenerator gen, boolean close) {
-	  super(factory.getName()); // FIX is this the right name?
+	  super(factory.getName()); 
 	  this.factory = factory;
 	  this.config = config;
 	  genHandle = gen;
@@ -124,6 +133,10 @@ public abstract class AbstractToolInstance extends AbstractSLJob implements IToo
     return paths;
   }
   
+  /**
+   * Encapsulates most of the details of using ILazyArtifactGenerator, ArtifactGenerator,
+   * besides the actual creation of artifacts/errors
+   */
   public SLStatus run(SLProgressMonitor monitor) {
     if (done) {
       throw new IllegalArgumentException("Tool instance cannot be reused");
@@ -143,7 +156,7 @@ public abstract class AbstractToolInstance extends AbstractSLJob implements IToo
     generator = genHandle.create(factory);
     
     try {
-      status.addChild(execute(monitor));
+      execute(monitor);
     }
     catch(Exception e) {
       reportError("Exception during run()", e);
@@ -188,24 +201,7 @@ public abstract class AbstractToolInstance extends AbstractSLJob implements IToo
     status.addChild(SLStatus.createErrorStatus(-1, msg, e));
   }
   
-  protected abstract SLStatus execute(SLProgressMonitor mon) throws Exception;    
-
-  /**************** ITool **********************/  
-  public Set<ArtifactType> getArtifactTypes() {
-    return factory.getArtifactTypes();
-  }
-  
-  public List<File> getRequiredJars(Config config) {
-	return factory.getRequiredJars(config);
-  }
-  
-  public final IToolInstance create() {
-    throw new UnsupportedOperationException("Instances can't create other instances");
-  }
-  
-  public final IToolInstance create(String name, ILazyArtifactGenerator generator) {
-    throw new UnsupportedOperationException("Instances can't create other instances");
-  }
+  protected abstract void execute(SLProgressMonitor mon) throws Exception;    
   
   public void setOption(String key, String value) {
 	if (key == null) {
@@ -218,8 +214,16 @@ public abstract class AbstractToolInstance extends AbstractSLJob implements IToo
   }
   
   public interface SourcePrep {
+	/**
+	 * @param f the Java source file location
+	 */
 	void prep(File f) throws Exception;	  
   }  
+  
+  /**
+   * Iterates through all the Java source files, 
+   * calling SourcePrep.prep() for each one
+   */
   protected void prepJavaFiles(SourcePrep p) throws Exception {
 	  for (IToolTarget t : getSrcTargets()) {
 		  for (URI loc : t.getFiles()) {
@@ -231,6 +235,13 @@ public abstract class AbstractToolInstance extends AbstractSLJob implements IToo
 	  }  
   }
   
+  /**
+   * A helper class that encapsulates the source directories that
+   * any given Java source file was found under.  Mostly used to
+   * compute the package names for each file
+   * 
+   * @author edwin
+   */
   public static class SourceRoots {
 	  private final Map<String, String> roots = new HashMap<String, String>();
 
@@ -275,7 +286,10 @@ public abstract class AbstractToolInstance extends AbstractSLJob implements IToo
   }
   
   /**
-   * Same as prepJavaFiles, but also collects source root info
+   * Iterates through all the Java source files, 
+   * calling SourcePrep.prep() for each one
+   * 
+   * Similar to prepJavaFiles(), but also collects source root info
    */
   protected SourceRoots collectSourceRoots(SourcePrep p) throws Exception {
 	  SourceRoots roots = new SourceRoots();
@@ -306,6 +320,11 @@ public abstract class AbstractToolInstance extends AbstractSLJob implements IToo
 	  return roots;
   }
   
+  /**
+   * Encapsulates the info needed to add a source location for an artifact
+   * 
+   * @author edwin
+   */
   public static class SourceInfo {
 	public String fileName;
 	public String packageName;
@@ -323,6 +342,9 @@ public abstract class AbstractToolInstance extends AbstractSLJob implements IToo
 	}
   }
   
+  /**
+   * Builds a source location from a SourceInfo object
+   */
   protected static void setSourceLocation(
 			SourceLocationBuilder sourceLocation, SourceInfo info) {
 		sourceLocation.packageName(info.packageName);

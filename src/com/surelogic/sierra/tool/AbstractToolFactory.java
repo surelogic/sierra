@@ -15,6 +15,13 @@ import com.surelogic.sierra.tool.analyzer.MessageArtifactFileGenerator;
 import com.surelogic.sierra.tool.message.Config;
 import com.surelogic.sierra.tool.targets.ToolTarget;
 
+/**
+ * An abstract class designed to simplify implementation of IToolFactory
+ * 
+ * Tries to load the tool metadata from the tool manifest file
+ * 
+ * @author edwin
+ */
 public abstract class AbstractToolFactory implements IToolFactory {
     protected static final Logger LOG = SLLogger.getLogger("sierra");
 	
@@ -70,6 +77,9 @@ public abstract class AbstractToolFactory implements IToolFactory {
 		return false;
 	}
 	
+	/**
+	 * Initializes the IToolInstance from the Config
+	 */
 	public static void setupToolForProject(IToolInstance ti, Config config) {
 		for(ToolTarget t : config.getTargets()) {
 			ti.addTarget(t);
@@ -88,6 +98,9 @@ public abstract class AbstractToolFactory implements IToolFactory {
 		return ti;
 	}
 
+	/**
+	 * Create an ILazyArtifactGenerator appropriate to the Config
+	 */
 	public static ILazyArtifactGenerator createGenerator(Config config) {
 		final File doc = config.getScanDocument();	
 		if (doc.getName().endsWith(SierraToolConstants.PARSED_ZIP_FILE_SUFFIX)) {

@@ -35,6 +35,11 @@ public interface IToolInstance extends SLJob {
    */
   String getHTMLInfo();
 	
+  /**
+   * Returns the stream being used to report results from this tool
+   * 
+   * @return the ArtifactGenerator being used with this IToolInstance
+   */
   ArtifactGenerator getGenerator();
   
   /**
@@ -55,7 +60,18 @@ public interface IToolInstance extends SLJob {
   
   void setOption(String key, String value);
   
+  /**
+   * An option to set the Java language compliance level
+   */
   String COMPLIANCE_LEVEL = "compliance.level";
+
+  /**
+   * An option to set the Java source language level
+   */
   String SOURCE_LEVEL = "source.level";
+  
+  /**
+   * An option to set the Java target binary level
+   */
   String TARGET_LEVEL = "target.level";
 }

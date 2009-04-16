@@ -5,7 +5,6 @@ import java.util.*;
 import java.util.logging.Level;
 
 import com.surelogic.common.jobs.SLProgressMonitor;
-import com.surelogic.common.jobs.SLStatus;
 import com.surelogic.sierra.metrics.Reckoner;
 import com.surelogic.sierra.metrics.model.Metrics;
 import com.surelogic.sierra.tool.*;
@@ -26,7 +25,7 @@ public class Reckoner1_0Tool extends AbstractToolInstance {
 	}
 
 	@Override
-	protected SLStatus execute(SLProgressMonitor monitor) throws Exception {
+	protected void execute(SLProgressMonitor monitor) throws Exception {
 		final boolean debug = LOG.isLoggable(Level.FINE);
 		final Reckoner r = new Reckoner();
 
@@ -51,8 +50,7 @@ public class Reckoner1_0Tool extends AbstractToolInstance {
 			try {
 				Metrics m = r.countLOC(f);
 				if (m == null) {
-					status.addChild(SLStatus.createWarningStatus(-1,
-							"Problem reading " + path));
+					reportWarning("Problem reading " + path);
 					continue;
 				}
 				if (debug) {
@@ -62,18 +60,15 @@ public class Reckoner1_0Tool extends AbstractToolInstance {
 				final String key = m.getPackageName() + ','
 				+ m.getClassName();
 				if (processed.contains(key)) {
-					status.addChild(SLStatus.createWarningStatus(-1,
-							"Duplicate metric found for " + key));
+					reportWarning("Duplicate metric found for " + key);
 				}
 
 				buildMetrics(m);
 				monitor.worked(1);
 			} catch (Exception e) {
-				status.addChild(SLStatus.createWarningStatus(-1,
-						"Unexpected problem with " + path, e));
+				reportError("Unexpected problem with " + path, e);
 			}
 		}
-		return status.build();
 	}
 
 	private void buildMetrics(Metrics m) {
