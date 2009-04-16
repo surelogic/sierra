@@ -39,7 +39,7 @@ public abstract class AbstractToolInstance extends AbstractSLJob implements IToo
   private final List<IToolTarget> auxTargets = new ArrayList<IToolTarget>();
   private final List<URI> paths = new ArrayList<URI>();
   private boolean done = false;
-  protected final boolean closeWhenDone;
+  private final boolean closeWhenDone;
   private final Map<String,String> options = new HashMap<String,String>();
   protected final boolean debug;
   protected final SLStatus.Builder status = new SLStatus.Builder();
