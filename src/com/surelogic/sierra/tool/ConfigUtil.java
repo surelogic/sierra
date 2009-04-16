@@ -4,6 +4,11 @@ import java.io.File;
 import java.util.*;
 import com.surelogic.sierra.tool.message.Config;
 
+/**
+ * Collects various methods that use a Config object
+ * 
+ * @author edwin
+ */
 public final class ConfigUtil {
 	protected final Config config;
 
@@ -25,6 +30,9 @@ public final class ConfigUtil {
 		return pluginDir;
 	}
 
+	/**
+	 * Adds libraries required to use the given Eclipse plugin
+	 */
 	public void addPluginToPath(final boolean debug, Collection<File> path, final String pluginId) {
 		addPluginToPath(debug, path, pluginId, false);
 	}
