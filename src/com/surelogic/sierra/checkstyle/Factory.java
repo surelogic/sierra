@@ -51,9 +51,9 @@ public class Factory extends AbstractToolFactory {
 				// Note that the file must be included under the src subdirectory to be found
 				InputStream stream = Factory.class.getResourceAsStream("/sun_checks.xml");				
 		        final Configuration config =
-		        	ConfigurationLoader.loadConfiguration(stream, new PropertiesExpander(props), true);		        
+		        	ConfigurationLoader.loadConfiguration(stream, new PropertiesExpander(props), true);				        
 		        final AuditListener listener = new Listener(monitor);
-		        final Checker c = createChecker(config, listener);		        
+		        final Checker c = createChecker(config, listener);	
 		        c.process(targets);
 		        
 				return status.build();
