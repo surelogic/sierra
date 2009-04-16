@@ -103,6 +103,7 @@ public class ToolUtil {
 	}
 	
 	public static IToolInstance create(Config config, boolean runRemotely) {
+		//runRemotely = false;
 		if (runRemotely) {
 			if (SierraToolConstants.RUN_TOGETHER) {
 				return new LocalTool(config);
