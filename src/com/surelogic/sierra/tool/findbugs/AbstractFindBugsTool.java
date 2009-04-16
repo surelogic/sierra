@@ -38,12 +38,12 @@ public class AbstractFindBugsTool extends AbstractToolInstance {
 	final IFindBugsEngine engine = createEngine();
 
 	@Override
-	protected SLStatus execute(SLProgressMonitor monitor)
+	protected void execute(SLProgressMonitor monitor)
 	throws Exception {
 		final Project p = createProject();
 		if (p.getFileCount() == 0) {
-			System.out.println("Nothing for FB to scan");
-			return SLStatus.OK_STATUS;
+			reportWarning("Nothing for FB to scan");
+			return;
 		}
 		engine.setProject(p);
 		engine.setUserPreferences(UserPreferences.getUserPreferences());
@@ -68,7 +68,6 @@ public class AbstractFindBugsTool extends AbstractToolInstance {
 				// Ignored
 			}
 		}
-		return SLStatus.OK_STATUS;
 	}
 
 	protected Project createProject() {
