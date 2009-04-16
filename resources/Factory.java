@@ -105,8 +105,7 @@ public class Factory extends AbstractToolFactory {
 					return true;
 				} catch (Exception e) {
 					final String msg = "Problem with "+target+": "+e.getMessage(); // TODO
-					gen.error().tool(getId()).message(msg).build();					   
-					status.addChild(SLStatus.createWarningStatus(-1, msg, e));
+					reportError(msg, t);
 				}
 				return false;
 			}
