@@ -215,14 +215,14 @@ public abstract class AbstractToolInstance extends AbstractSLJob implements IToo
   
   public interface TargetPrep {
 	/**
-	 * @param f the Java source file location
+	 * @param f the Java file location
 	 */
 	void prep(File f) throws Exception;	  
   }  
   
   /**
    * Iterates through all the Java source files, 
-   * calling SourcePrep.prep() for each one
+   * calling TargetPrep.prep() for each one
    */
   protected void prepJavaFiles(TargetPrep p) throws Exception {
 	  for (IToolTarget t : getSrcTargets()) {
@@ -233,6 +233,51 @@ public abstract class AbstractToolInstance extends AbstractSLJob implements IToo
 			  }
 		  }
 	  }  
+  }
+  
+  /**
+   * Iterates through all the Java binary files, 
+   * calling TargetPrep.prep() for each one
+   */
+  protected void prepClassFiles(TargetPrep p) throws Exception {
+	  for (IToolTarget t : getBinTargets()) {
+		  final File location = new File(t.getLocation());
+		  switch (t.getKind()) {
+		  case FILE:
+		  case JAR:
+			  p.prep(location);
+			  break;
+		  case DIRECTORY:
+			  for (URI loc : t.getFiles()) {
+				  File f = new File(loc);
+				  if (f.exists()) {
+					  p.prep(f);
+				  }
+			  }
+			  break;
+		  default:
+			  System.out.println("Ignoring target " + location);
+		  }
+	  }
+  }
+  
+  /**
+   * Iterates through all the Java libraries, 
+   * calling TargetPrep.prep() for each one
+   */
+  protected void prepAuxFiles(TargetPrep p) throws Exception {
+	  for (IToolTarget t : getAuxTargets()) {
+		  final File location = new File(t.getLocation());
+		  switch (t.getKind()) {
+		  case DIRECTORY:
+		  case JAR:
+			  p.prep(location);
+			  break;
+		  case FILE:							
+		  default:
+			  System.out.println("Ignoring target " + location);
+		  }
+	  }
   }
   
   /**
