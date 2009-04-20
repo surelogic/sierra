@@ -6,6 +6,7 @@ import java.util.*;
 import com.surelogic.common.jobs.*;
 import com.surelogic.sierra.tool.*;
 import com.surelogic.sierra.tool.ArtifactType;
+import com.surelogic.sierra.tool.AbstractToolInstance.TargetPrep;
 import com.surelogic.sierra.tool.analyzer.ILazyArtifactGenerator;
 import com.surelogic.sierra.tool.message.*;
 import com.surelogic.sierra.tool.message.ArtifactGenerator.ArtifactBuilder;
@@ -55,40 +56,19 @@ public class Factory extends AbstractToolFactory {
 
 				// If processing binaries
 				final List<String> paths = new ArrayList<String>();
-				for (IToolTarget t : getBinTargets()) {
-					final String path = new File(t.getLocation()).getAbsolutePath();
-					switch (t.getKind()) {
-					case FILE:
-					case JAR:
-						paths.add(path);
-						break;
-					case DIRECTORY:
-						for (URI loc : t.getFiles()) {
-							File f = new File(loc);
-							if (f.exists()) {
-								paths.add(f.getAbsolutePath());
-							}
-						}
-						break;
-					default:
-						System.out.println("Ignoring target " + t.getLocation());
+				prepClassFiles(new TargetPrep() {
+					public void prep(File f) {
+						paths.add(f.getAbsolutePath());
 					}
-				}
+				});
 
 				// If processing jars required for compilation/runtime
 				final List<String> libs = new ArrayList<String>();
-				for (IToolTarget t : getAuxTargets()) {
-					final String path = new File(t.getLocation()).getAbsolutePath();
-					switch (t.getKind()) {
-					case DIRECTORY:
-					case JAR:
-						libs.add(path);
-						break;
-					case FILE:							
-					default:
-						System.out.println("Ignoring target " + t.getLocation());
+				prepAuxFiles(new TargetPrep() {
+					public void prep(File f) {
+						libs.add(f.getAbsolutePath());
 					}
-				}
+				});
 				// TODO use targets, paths, libs
 				return targets;
 			}
