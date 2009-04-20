@@ -213,7 +213,7 @@ public abstract class AbstractToolInstance extends AbstractSLJob implements IToo
 	return options.get(key);
   }
   
-  public interface SourcePrep {
+  public interface TargetPrep {
 	/**
 	 * @param f the Java source file location
 	 */
@@ -224,7 +224,7 @@ public abstract class AbstractToolInstance extends AbstractSLJob implements IToo
    * Iterates through all the Java source files, 
    * calling SourcePrep.prep() for each one
    */
-  protected void prepJavaFiles(SourcePrep p) throws Exception {
+  protected void prepJavaFiles(TargetPrep p) throws Exception {
 	  for (IToolTarget t : getSrcTargets()) {
 		  for (URI loc : t.getFiles()) {
 			  File f = new File(loc);
@@ -291,7 +291,7 @@ public abstract class AbstractToolInstance extends AbstractSLJob implements IToo
    * 
    * Similar to prepJavaFiles(), but also collects source root info
    */
-  protected SourceRoots collectSourceRoots(SourcePrep p) throws Exception {
+  protected SourceRoots collectSourceRoots(TargetPrep p) throws Exception {
 	  SourceRoots roots = new SourceRoots();
 	  for (IToolTarget t : getSrcTargets()) {
 		  File location = new File(t.getLocation());

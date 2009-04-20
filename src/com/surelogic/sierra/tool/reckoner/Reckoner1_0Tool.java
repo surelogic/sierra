@@ -31,7 +31,7 @@ public class Reckoner1_0Tool extends AbstractToolInstance {
 
 		final List<File> targets = new ArrayList<File>();
 		//monitor.beginTask("Reckoner setup", IProgressMonitor.UNKNOWN);
-		prepJavaFiles(new SourcePrep() {
+		prepJavaFiles(new TargetPrep() {
 			public void prep(File f) {
 				targets.add(f);
 			}					
