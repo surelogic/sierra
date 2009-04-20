@@ -70,7 +70,7 @@ public class Factory extends AbstractToolFactory {
 			private List<File> init() throws Exception {
 				// If processing individual source files
 				final List<File> targets = new ArrayList<File>();
-				roots = collectSourceRoots(new SourcePrep() {
+				roots = collectSourceRoots(new TargetPrep() {
 					public void prep(File f) {
 						targets.add(f);
 					}					
