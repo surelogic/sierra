@@ -70,30 +70,14 @@ public class AbstractFindBugsTool extends AbstractToolInstance {
 		}
 	}
 
-	protected Project createProject() {
+	protected Project createProject() throws Exception {
 		final Project p = new Project();
-		for (IToolTarget t : getBinTargets()) {
-			// Only scanning binaries
-			final String path = new File(t.getLocation())
-			.getAbsolutePath();
-			switch (t.getKind()) {
-			case FILE:
-			case JAR:				
-				p.addFile(path);
-				break;
-			case DIRECTORY:
-				for (URI loc : t.getFiles()) {
-					File f = new File(loc);
-					if (f.exists()) {
-						System.out.println("FB got "+f);
-						p.addFile(f.getAbsolutePath());
-					}
-				}
-				break;
-			default:
-				System.out.println("Ignoring target " + t.getLocation());
+		prepClassFiles(new TargetPrep() {
+			public void prep(File f) {
+				p.addFile(f.getAbsolutePath());
 			}
-		}
+		});
+
 		for (IToolTarget t : getAuxTargets()) {
 			final String path = new File(t.getLocation())
 			.getAbsolutePath();
