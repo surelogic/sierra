@@ -54,7 +54,6 @@ public abstract class AbstractCPDTool extends AbstractToolInstance {
 			}
 		});
 		final SourceRoots roots = collectSourceRoots(new TargetPrep() {
-			@Override
 			public void prep(File f) throws IOException {				
 				cpd.add(f);
 			}}
