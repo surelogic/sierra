@@ -70,7 +70,7 @@ public class AbstractPMDTool extends AbstractToolInstance {
 				.toString());
 
 		final List<DataSource> files = new ArrayList<DataSource>();
-		prepJavaFiles(new SourcePrep() {
+		prepJavaFiles(new TargetPrep() {
 			public void prep(File f) {
 				files.add(new FileDataSource(f));
 			}					

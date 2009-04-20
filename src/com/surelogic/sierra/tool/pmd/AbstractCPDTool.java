@@ -53,7 +53,7 @@ public abstract class AbstractCPDTool extends AbstractToolInstance {
 				System.out.println("CPD Phase " + phase);
 			}
 		});
-		final SourceRoots roots = collectSourceRoots(new SourcePrep() {
+		final SourceRoots roots = collectSourceRoots(new TargetPrep() {
 			@Override
 			public void prep(File f) throws IOException {				
 				cpd.add(f);
