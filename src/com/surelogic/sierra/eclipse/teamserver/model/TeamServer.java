@@ -18,8 +18,8 @@ import org.apache.tools.ant.types.CommandlineJava;
 import org.apache.tools.ant.types.Environment;
 import org.apache.tools.ant.types.Commandline.Argument;
 
-import com.surelogic.common.FileUtility;
 import com.surelogic.common.eclipse.Activator;
+import com.surelogic.common.eclipse.EclipseFileUtility;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.eclipse.teamserver.preferences.PreferenceConstants;
@@ -265,7 +265,7 @@ public final class TeamServer {
 
 	public void start() {
 		// Ensure the local team server directory exists for logging
-		FileUtility.getSierraLocalTeamServerDirectory();
+		EclipseFileUtility.getSierraLocalTeamServerDirectory();
 
 		CommandlineJava command = getJettyTemplate();
 

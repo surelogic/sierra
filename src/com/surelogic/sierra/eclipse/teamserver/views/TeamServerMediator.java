@@ -37,6 +37,7 @@ import org.eclipse.ui.progress.UIJob;
 
 import com.surelogic.common.CommonImages;
 import com.surelogic.common.FileUtility;
+import com.surelogic.common.eclipse.EclipseFileUtility;
 import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.common.eclipse.dialogs.ErrorDialogUtility;
 import com.surelogic.common.eclipse.jobs.SLUIJob;
@@ -337,7 +338,7 @@ public final class TeamServerMediator implements ITeamServerObserver {
 		if (MessageDialog.openConfirm(f_command.getShell(), I18N
 				.msg("sierra.eclipse.teamserver.confirmDataWipe.title"), I18N
 				.msg("sierra.eclipse.teamserver.confirmDataWipe.msg"))) {
-			FileUtility.recursiveDelete(FileUtility
+			FileUtility.recursiveDelete(EclipseFileUtility
 					.getSierraLocalTeamServerDirectory());
 		}
 	}

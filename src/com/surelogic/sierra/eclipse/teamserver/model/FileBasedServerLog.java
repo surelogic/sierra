@@ -9,7 +9,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
-import com.surelogic.common.FileUtility;
+import com.surelogic.common.eclipse.EclipseFileUtility;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.logging.SLLogger;
 
@@ -52,7 +52,7 @@ public abstract class FileBasedServerLog extends ServerLog {
 	}
 
 	private File getSierraServerDir() {
-		final File sd = FileUtility.getSierraLocalTeamServerDirectory();
+		final File sd = EclipseFileUtility.getSierraLocalTeamServerDirectory();
 		return sd;
 	}
 
