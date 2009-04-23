@@ -10,7 +10,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.PlatformUI;
 
-import com.surelogic.common.FileUtility;
+import com.surelogic.common.eclipse.EclipseFileUtility;
 import com.surelogic.sierra.client.eclipse.jobs.ImportScanDocumentJob;
 
 /**
@@ -34,7 +34,7 @@ public final class ImportScanAction implements IWorkbenchWindowActionDelegate {
 			fd = new FileDialog(PlatformUI.getWorkbench()
 					.getActiveWorkbenchWindow().getShell(), SWT.OPEN);
 			fd.setText("Import Scan");
-			fd.setFilterPath(FileUtility.getSierraDataDirectory()
+			fd.setFilterPath(EclipseFileUtility.getSierraDataDirectory()
 					.getAbsolutePath());
 			fd.setFilterExtensions(new String[] { "*.sierra", "*.sierra.gz",
 					"*.*" });

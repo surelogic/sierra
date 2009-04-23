@@ -5,7 +5,7 @@ import java.io.File;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.swt.widgets.Shell;
 
-import com.surelogic.common.FileUtility;
+import com.surelogic.common.eclipse.EclipseFileUtility;
 import com.surelogic.common.eclipse.dialogs.ErrorDialogUtility;
 import com.surelogic.common.eclipse.logging.SLEclipseStatusUtility;
 import com.surelogic.common.i18n.I18N;
@@ -26,7 +26,7 @@ public class PublishScanAction extends AbstractWebServiceMenuAction {
 		} else {
 			final int errNo = 21;
 			final String msg = I18N.err(errNo, projectName, server.getName(),
-					projectName, FileUtility.getSierraDataDirectory()
+					projectName, EclipseFileUtility.getSierraDataDirectory()
 							.getAbsolutePath(), File.separator, projectName,
 					projectName);
 			final IStatus reason = SLEclipseStatusUtility.createErrorStatus(

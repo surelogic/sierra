@@ -18,8 +18,8 @@ import org.eclipse.ui.PlatformUI;
 
 import com.surelogic.adhoc.views.ExportQueryDialog;
 import com.surelogic.common.CommonImages;
-import com.surelogic.common.FileUtility;
 import com.surelogic.common.XUtil;
+import com.surelogic.common.eclipse.EclipseFileUtility;
 import com.surelogic.common.eclipse.MemoryUtility;
 import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.common.eclipse.SWTUtility;
@@ -74,7 +74,7 @@ public class SierraPreferencePage extends AbstractCommonPreferencePage {
 				ChangeDataDirectoryDialog
 						.open(
 								change.getShell(),
-								FileUtility.getSierraDataDirectoryAnchor(),
+								EclipseFileUtility.getSierraDataDirectoryAnchor(),
 								I18N
 										.msg("sierra.change.data.directory.dialog.title"),
 								SLImages.getImage(CommonImages.IMG_SIERRA_LOGO),
@@ -234,7 +234,7 @@ public class SierraPreferencePage extends AbstractCommonPreferencePage {
 	}
 
 	private void updateDataDirectory() {
-		f_dataDirectory.setText(FileUtility.getSierraDataDirectory()
+		f_dataDirectory.setText(EclipseFileUtility.getSierraDataDirectory()
 				.getAbsolutePath());
 	}
 

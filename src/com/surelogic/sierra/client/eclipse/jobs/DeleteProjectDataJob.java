@@ -16,7 +16,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.UIJob;
 
-import com.surelogic.common.FileUtility;
+import com.surelogic.common.eclipse.EclipseFileUtility;
 import com.surelogic.common.eclipse.SWTUtility;
 import com.surelogic.common.eclipse.dialogs.ErrorDialogUtility;
 import com.surelogic.common.eclipse.jobs.DatabaseAccessRule;
@@ -165,7 +165,7 @@ public final class DeleteProjectDataJob implements IRunnableWithProgress {
 	}
 
 	private void deleteProjectScanDocument(final String projectName, String suffix) {
-		final File scanDocument = new File(FileUtility
+		final File scanDocument = new File(EclipseFileUtility
 				.getSierraDataDirectory()
 				+ File.separator
 				+ projectName

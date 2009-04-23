@@ -11,8 +11,8 @@ import java.util.logging.Level;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.IJavaProject;
 
-import com.surelogic.common.FileUtility;
 import com.surelogic.common.eclipse.BalloonUtility;
+import com.surelogic.common.eclipse.EclipseFileUtility;
 import com.surelogic.common.eclipse.JDTUtility;
 import com.surelogic.common.eclipse.jobs.DatabaseJob;
 import com.surelogic.sierra.client.eclipse.jobs.ImportScanDocumentJob;
@@ -95,18 +95,18 @@ public class NewScan extends AbstractScan<IJavaProject> {
 	private static File generateScanDocumentFile(String project, String name) {
 		for(String suffix : SierraToolConstants.PARSED_FILE_SUFFIXES) {
 			if (name.endsWith(suffix)) {
-				return new File(FileUtility.getSierraDataDirectory() + File.separator
+				return new File(EclipseFileUtility.getSierraDataDirectory() + File.separator
 						+ project + suffix);
 			}
 		}
-		return new File(FileUtility.getSierraDataDirectory() + File.separator
+		return new File(EclipseFileUtility.getSierraDataDirectory() + File.separator
 				+ project + (USE_ZIP ? PARSED_ZIP_FILE_SUFFIX : PARSED_FILE_SUFFIX));
 	}
 	
 	public static File findScanDocumentFile(String projectName) {
 		for(String suffix : SierraToolConstants.PARSED_FILE_SUFFIXES) {
 			String scanFileName = projectName + suffix;
-			File scanFile = new File(FileUtility.getSierraDataDirectory(), scanFileName);
+			File scanFile = new File(EclipseFileUtility.getSierraDataDirectory(), scanFileName);
 			if (scanFile.exists()) {
 				return scanFile;
 			}

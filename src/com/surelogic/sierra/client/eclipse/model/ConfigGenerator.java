@@ -28,9 +28,9 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 
-import com.surelogic.common.FileUtility;
 import com.surelogic.common.SLUtility;
 import com.surelogic.common.eclipse.Activator;
+import com.surelogic.common.eclipse.EclipseFileUtility;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Tools;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
@@ -70,7 +70,7 @@ public final class ConfigGenerator {
 			SierraToolConstants.SIERRA_RESULTS_PATH);
 
 	/** The default folder from the preference page */
-	private final String f_sierraPath = FileUtility.getSierraDataDirectory()
+	private final String f_sierraPath = EclipseFileUtility.getSierraDataDirectory()
 			.getAbsolutePath();
 
 	/** The plug-in directory that has tools folder */
