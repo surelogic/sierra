@@ -1,5 +1,7 @@
 package com.surelogic.sierra.client.eclipse.preferences;
 
+import java.io.File;
+
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.IntegerFieldEditor;
 import org.eclipse.jface.preference.RadioGroupFieldEditor;
@@ -60,7 +62,7 @@ public class SierraPreferencePage extends AbstractCommonPreferencePage {
 		dataGroup.setLayout(new GridLayout(2, false));
 
 		f_dataDirectory = new Label(dataGroup, SWT.NONE);
-		updateDataDirectory();
+		updateDataDirectory(null);
 		f_dataDirectory.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
 				false));
 
@@ -71,7 +73,7 @@ public class SierraPreferencePage extends AbstractCommonPreferencePage {
 				false));
 		change.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(final Event event) {
-				ChangeDataDirectoryDialog
+				File loc = ChangeDataDirectoryDialog
 						.open(
 								change.getShell(),
 								EclipseFileUtility.getSierraDataDirectoryAnchor(),
@@ -81,7 +83,7 @@ public class SierraPreferencePage extends AbstractCommonPreferencePage {
 								I18N
 										.msg("sierra.change.data.directory.dialog.information"),
 								null, null);
-				updateDataDirectory();
+				updateDataDirectory(loc);
 			}
 		});
 
@@ -233,7 +235,11 @@ public class SierraPreferencePage extends AbstractCommonPreferencePage {
 		f_toolMemoryMB.setLabelText(I18N.msg(TOOL_MB_LABEL, mb));
 	}
 
-	private void updateDataDirectory() {
+	private void updateDataDirectory(File loc) {
+		if (loc != null) {
+			com.surelogic.common.eclipse.preferences.PreferenceConstants.
+			  setSierraDataDirectoryAnchor(loc);
+		}
 		f_dataDirectory.setText(EclipseFileUtility.getSierraDataDirectory()
 				.getAbsolutePath());
 	}
