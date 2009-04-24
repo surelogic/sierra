@@ -672,6 +672,10 @@ public enum ConnectionFactory implements DBConnection {
 		throw new UnsupportedOperationException();
 	}
 
+	public void shutdown() {
+		throw new UnsupportedOperationException();
+	}
+	
 	public void destroy() {
 		throw new UnsupportedOperationException();
 	}
