@@ -26,8 +26,14 @@ import com.surelogic.common.eclipse.MemoryUtility;
 import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.common.eclipse.SWTUtility;
 import com.surelogic.common.eclipse.dialogs.ChangeDataDirectoryDialog;
+import com.surelogic.common.eclipse.jobs.ChangedDataDirectoryJob;
 import com.surelogic.common.eclipse.preferences.AbstractCommonPreferencePage;
 import com.surelogic.common.i18n.I18N;
+import com.surelogic.common.jobs.SLJob;
+import com.surelogic.common.jobs.SLProgressMonitor;
+import com.surelogic.common.jobs.SLStatus;
+import com.surelogic.sierra.client.eclipse.jobs.DisconnectDatabase;
+import com.surelogic.sierra.client.eclipse.jobs.RefreshDatabaseJob;
 import com.surelogic.sierra.client.eclipse.views.adhoc.AdHocDataSource;
 import com.surelogic.sierra.tool.message.Importance;
 
@@ -73,7 +79,19 @@ public class SierraPreferencePage extends AbstractCommonPreferencePage {
 				false));
 		change.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(final Event event) {
-				File loc = ChangeDataDirectoryDialog
+				final SLJob before = 
+					EclipseFileUtility.COLOCATE_DATABASE ? new DisconnectDatabase() : null;
+				final ChangedDataDirectoryJob after = new ChangedDataDirectoryJob("") {
+					public SLStatus run(SLProgressMonitor monitor) {
+						monitor.begin();
+						updateDataDirectory(dataDir);
+						if (EclipseFileUtility.COLOCATE_DATABASE) {
+							new RefreshDatabaseJob().run(monitor);
+						}
+						return SLStatus.OK_STATUS;
+					}
+				};
+				ChangeDataDirectoryDialog
 						.open(
 								change.getShell(),
 								EclipseFileUtility.getSierraDataDirectoryAnchor(),
@@ -82,8 +100,7 @@ public class SierraPreferencePage extends AbstractCommonPreferencePage {
 								SLImages.getImage(CommonImages.IMG_SIERRA_LOGO),
 								I18N
 										.msg("sierra.change.data.directory.dialog.information"),
-								null, null);
-				updateDataDirectory(loc);
+								before, after);
 			}
 		});
 
