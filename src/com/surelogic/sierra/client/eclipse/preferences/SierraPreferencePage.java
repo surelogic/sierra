@@ -21,6 +21,7 @@ import org.eclipse.ui.PlatformUI;
 import com.surelogic.adhoc.views.ExportQueryDialog;
 import com.surelogic.common.CommonImages;
 import com.surelogic.common.XUtil;
+import com.surelogic.common.eclipse.Activator;
 import com.surelogic.common.eclipse.EclipseFileUtility;
 import com.surelogic.common.eclipse.MemoryUtility;
 import com.surelogic.common.eclipse.SLImages;
@@ -87,12 +88,11 @@ public class SierraPreferencePage extends AbstractCommonPreferencePage {
 							public void run() {
 								updateDataDirectory(dataDir);
 							}							
-						});
-						/*
+						});						
 						if (EclipseFileUtility.COLOCATE_DATABASE) {
-							new RefreshDatabaseJob().run(monitor);
-						}
-						*/
+							Activator.getDefault().startLogHandler();
+							//new RefreshDatabaseJob().run(monitor);
+						}					
 						return SLStatus.OK_STATUS;
 					}
 				};

@@ -1,6 +1,7 @@
 package com.surelogic.sierra.client.eclipse.jobs;
 
 import com.surelogic.common.jobs.*;
+import com.surelogic.common.eclipse.Activator;
 import com.surelogic.sierra.client.eclipse.Data;
 
 /**
@@ -20,6 +21,7 @@ public class DisconnectDatabase extends AbstractSLJob {
 			 */
 			try {
 				Data.getInstance().shutdown();
+				Activator.getDefault().stopLogHandler();
 			} catch (final Exception e) {
 				return SLStatus.createErrorStatus(e);
 			}
