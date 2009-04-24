@@ -32,8 +32,7 @@ import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.jobs.SLJob;
 import com.surelogic.common.jobs.SLProgressMonitor;
 import com.surelogic.common.jobs.SLStatus;
-import com.surelogic.sierra.client.eclipse.jobs.DisconnectDatabase;
-import com.surelogic.sierra.client.eclipse.jobs.RefreshDatabaseJob;
+import com.surelogic.sierra.client.eclipse.jobs.*;
 import com.surelogic.sierra.client.eclipse.views.adhoc.AdHocDataSource;
 import com.surelogic.sierra.tool.message.Importance;
 
@@ -84,10 +83,16 @@ public class SierraPreferencePage extends AbstractCommonPreferencePage {
 				final ChangedDataDirectoryJob after = new ChangedDataDirectoryJob("") {
 					public SLStatus run(SLProgressMonitor monitor) {
 						monitor.begin();
-						updateDataDirectory(dataDir);
+						change.getDisplay().syncExec(new Runnable() {
+							public void run() {
+								updateDataDirectory(dataDir);
+							}							
+						});
+						/*
 						if (EclipseFileUtility.COLOCATE_DATABASE) {
 							new RefreshDatabaseJob().run(monitor);
 						}
+						*/
 						return SLStatus.OK_STATUS;
 					}
 				};
