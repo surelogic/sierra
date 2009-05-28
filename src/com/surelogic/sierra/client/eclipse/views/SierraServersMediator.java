@@ -51,7 +51,7 @@ import com.surelogic.common.CommonImages;
 import com.surelogic.common.eclipse.ImageImageDescriptor;
 import com.surelogic.common.eclipse.JDTUtility;
 import com.surelogic.common.eclipse.SLImages;
-import com.surelogic.common.eclipse.WorkspaceUtility;
+import com.surelogic.common.eclipse.EclipseUtility;
 import com.surelogic.common.eclipse.jobs.DatabaseJob;
 import com.surelogic.common.eclipse.logging.SLEclipseStatusUtility;
 import com.surelogic.common.i18n.I18N;
@@ -1482,7 +1482,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 					createLabel(root, "Needs a local scan");
 					continue;
 				} else { // closed project?
-					final IProject p = WorkspaceUtility.getProject(projectName);
+					final IProject p = EclipseUtility.getProject(projectName);
 					if ((p != null) && p.exists()) {
 						if (p.isOpen()) {
 							throw new IllegalStateException(

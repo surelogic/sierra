@@ -17,7 +17,7 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
 import org.xml.sax.SAXException;
 
-import com.surelogic.common.eclipse.WorkspaceUtility;
+import com.surelogic.common.eclipse.EclipseUtility;
 import com.surelogic.sierra.client.eclipse.Activator;
 import com.surelogic.sierra.tool.ToolUtil;
 
@@ -207,10 +207,10 @@ public class NewSierraToolProjectWizard extends Wizard implements INewWizard {
 			for(String subdir : SUBDIRS) {
 				IPath dirPath = projectPath.append(subdir);
 				IFolder folder = root.getFolder(dirPath);
-				WorkspaceUtility.createFolderHelper(folder, monitor);
+				EclipseUtility.createFolderHelper(folder, monitor);
 			}
 			IPath pkgPath = projectPath.append("src/com/surelogic/"+name.replace('-', '/'));
-			WorkspaceUtility.createFolderHelper(root.getFolder(pkgPath), monitor);
+			EclipseUtility.createFolderHelper(root.getFolder(pkgPath), monitor);
 			monitor.worked(10);
 			
 			monitor.subTask("Creating files");
