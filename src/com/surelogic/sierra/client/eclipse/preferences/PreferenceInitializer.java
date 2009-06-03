@@ -62,7 +62,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 
 	private String getDefaultDataDirectory() {
 		final File root = EclipseUtility.getWorspacePath();
-		final File path = new File(root, FileUtility.SIERRA_DATA);
+		final File path = new File(root, FileUtility.SIERRA_DATA_PATH_FRAGMENT);
 		return path.getAbsolutePath();
 	}
 }
