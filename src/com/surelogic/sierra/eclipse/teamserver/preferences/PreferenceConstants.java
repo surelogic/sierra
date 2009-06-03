@@ -1,7 +1,9 @@
 package com.surelogic.sierra.eclipse.teamserver.preferences;
 
+import java.io.File;
 import java.util.logging.Level;
 
+import com.surelogic.common.FileUtility;
 import com.surelogic.sierra.eclipse.teamserver.Activator;
 
 /**
@@ -81,5 +83,14 @@ public class PreferenceConstants {
 		final String level = Activator.getDefault().getPluginPreferences()
 				.getString(P_SERVER_LOGGING_LEVEL);
 		return Level.parse(level);
+	}
+
+	public static File getSierraLocalTeamServerDirectory() {
+		final File dataDir = com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants
+				.getSierraDataDirectory();
+		final File teamServerDir = new File(dataDir,
+				FileUtility.DB_PATH_FRAGMENT);
+		FileUtility.createDirectory(teamServerDir);
+		return teamServerDir;
 	}
 }

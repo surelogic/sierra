@@ -9,6 +9,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  com.surelogic.common,
  com.surelogic.common.eclipse,
- org.apache.ant
+ org.apache.ant,
+ com.surelogic.sierra.client.eclipse
 Eclipse-LazyStart: true
 Bundle-ActivationPolicy: lazy
