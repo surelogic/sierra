@@ -6,9 +6,11 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.FileDialog;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.IWorkbenchWindowActionDelegate;
+import org.eclipse.ui.PlatformUI;
 
-import com.surelogic.common.eclipse.EclipseFileUtility;
+import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
 
 public final class ImportJSureAction implements IWorkbenchWindowActionDelegate {
 	private static final boolean debug = true;
@@ -28,7 +30,7 @@ public final class ImportJSureAction implements IWorkbenchWindowActionDelegate {
 			fd = new FileDialog(PlatformUI.getWorkbench()
 					.getActiveWorkbenchWindow().getShell(), SWT.OPEN);
 			fd.setText("Import Scan");
-			fd.setFilterPath(EclipseFileUtility.getSierraDataDirectory()
+			fd.setFilterPath(PreferenceConstants.getSierraDataDirectory()
 					.getAbsolutePath());
 			fd.setFilterExtensions(new String[] { "*.sea.xml", "*.sea.xml.gz",
 					"*.*" });

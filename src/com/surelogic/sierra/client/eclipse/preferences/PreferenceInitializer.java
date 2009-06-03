@@ -1,8 +1,12 @@
 package com.surelogic.sierra.client.eclipse.preferences;
 
+import java.io.File;
+
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.jface.preference.IPreferenceStore;
 
+import com.surelogic.common.FileUtility;
+import com.surelogic.common.eclipse.EclipseUtility;
 import com.surelogic.sierra.client.eclipse.Activator;
 import com.surelogic.sierra.client.eclipse.Tools;
 import com.surelogic.sierra.client.eclipse.views.ServerStatusSort;
@@ -27,7 +31,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 				.setDefault(
 						PreferenceConstants.P_SIERRA_SHOW_MARKERS_AT_OR_ABOVE_IMPORTANCE,
 						Importance.HIGH.toString());
-		for(IToolFactory f : Tools.findToolFactories()) {
+		for (IToolFactory f : Tools.findToolFactories()) {
 			store.setDefault(PreferenceConstants.getToolPref(f), true);
 		}
 		store.setDefault(PreferenceConstants.P_SIERRA_ALWAYS_SAVE_RESOURCES,
@@ -52,5 +56,13 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 				PreferenceConstants.P_SERVER_INTERACTION_RETRY_THRESHOLD, 4);
 		store.setDefault(PreferenceConstants.P_SERVER_FAILURE_REPORTING,
 				ServerFailureReport.SHOW_BALLOON.toString());
+		store.setDefault(PreferenceConstants.P_DATA_DIRECTORY,
+				getDefaultDataDirectory());
+	}
+
+	private String getDefaultDataDirectory() {
+		final File root = EclipseUtility.getWorspacePath();
+		final File path = new File(root, FileUtility.SIERRA_DATA);
+		return path.getAbsolutePath();
 	}
 }

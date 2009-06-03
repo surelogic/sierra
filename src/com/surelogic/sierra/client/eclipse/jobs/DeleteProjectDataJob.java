@@ -16,7 +16,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.UIJob;
 
-import com.surelogic.common.eclipse.EclipseFileUtility;
 import com.surelogic.common.eclipse.SWTUtility;
 import com.surelogic.common.eclipse.dialogs.ErrorDialogUtility;
 import com.surelogic.common.eclipse.jobs.DatabaseAccessRule;
@@ -27,8 +26,9 @@ import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.jobs.SLProgressMonitor;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;
-import com.surelogic.sierra.client.eclipse.model.DatabaseHub;
 import com.surelogic.sierra.client.eclipse.model.ConnectedServerManager;
+import com.surelogic.sierra.client.eclipse.model.DatabaseHub;
+import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
 import com.surelogic.sierra.jdbc.project.ClientProjectManager;
 import com.surelogic.sierra.tool.SierraToolConstants;
 
@@ -123,7 +123,8 @@ public final class DeleteProjectDataJob implements IRunnableWithProgress {
 						conn.rollback();
 						throw e;
 					}
-					ConnectedServerManager.getInstance().disconnect(projectName);
+					ConnectedServerManager.getInstance()
+							.disconnect(projectName);
 					DatabaseHub.getInstance().notifyProjectDeleted();
 				}
 			} catch (Exception e) {
@@ -142,7 +143,7 @@ public final class DeleteProjectDataJob implements IRunnableWithProgress {
 		 */
 		for (final String projectName : f_projectNames) {
 			if (projectName != null) {
-				for(String suffix : SierraToolConstants.PARSED_FILE_SUFFIXES) {
+				for (String suffix : SierraToolConstants.PARSED_FILE_SUFFIXES) {
 					deleteProjectScanDocument(projectName, suffix);
 				}
 			}
@@ -164,12 +165,11 @@ public final class DeleteProjectDataJob implements IRunnableWithProgress {
 		}
 	}
 
-	private void deleteProjectScanDocument(final String projectName, String suffix) {
-		final File scanDocument = new File(EclipseFileUtility
+	private void deleteProjectScanDocument(final String projectName,
+			String suffix) {
+		final File scanDocument = new File(PreferenceConstants
 				.getSierraDataDirectory()
-				+ File.separator
-				+ projectName
-				+ suffix);
+				+ File.separator + projectName + suffix);
 		if (scanDocument.exists() && scanDocument.isFile()) {
 			final boolean success = scanDocument.delete();
 			if (!success) {

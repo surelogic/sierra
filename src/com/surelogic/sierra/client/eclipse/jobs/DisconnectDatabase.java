@@ -1,12 +1,12 @@
 package com.surelogic.sierra.client.eclipse.jobs;
 
-import com.surelogic.common.jobs.*;
-import com.surelogic.common.eclipse.Activator;
+import com.surelogic.common.jobs.AbstractSLJob;
+import com.surelogic.common.jobs.SLProgressMonitor;
+import com.surelogic.common.jobs.SLStatus;
 import com.surelogic.sierra.client.eclipse.Data;
 
 /**
- * This job is used to disconnect the Sierra database under the data
- * directory.
+ * This job is used to disconnect the Sierra database under the data directory.
  */
 public class DisconnectDatabase extends AbstractSLJob {
 	public DisconnectDatabase() {
@@ -21,7 +21,6 @@ public class DisconnectDatabase extends AbstractSLJob {
 			 */
 			try {
 				Data.getInstance().shutdown();
-				Activator.getDefault().stopLogHandler();
 			} catch (final Exception e) {
 				return SLStatus.createErrorStatus(e);
 			}

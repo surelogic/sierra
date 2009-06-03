@@ -2,10 +2,12 @@ package com.surelogic.sierra.client.eclipse.preferences;
 
 import java.io.File;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.IntegerFieldEditor;
 import org.eclipse.jface.preference.RadioGroupFieldEditor;
 import org.eclipse.jface.preference.ScaleFieldEditor;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -20,20 +22,21 @@ import org.eclipse.ui.PlatformUI;
 
 import com.surelogic.adhoc.views.ExportQueryDialog;
 import com.surelogic.common.CommonImages;
+import com.surelogic.common.FileUtility;
 import com.surelogic.common.XUtil;
-import com.surelogic.common.eclipse.Activator;
-import com.surelogic.common.eclipse.EclipseFileUtility;
 import com.surelogic.common.eclipse.MemoryUtility;
 import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.common.eclipse.SWTUtility;
 import com.surelogic.common.eclipse.dialogs.ChangeDataDirectoryDialog;
-import com.surelogic.common.eclipse.jobs.ChangedDataDirectoryJob;
+import com.surelogic.common.eclipse.dialogs.ErrorDialogUtility;
+import com.surelogic.common.eclipse.logging.SLEclipseStatusUtility;
 import com.surelogic.common.eclipse.preferences.AbstractCommonPreferencePage;
 import com.surelogic.common.i18n.I18N;
+import com.surelogic.common.jobs.NullSLProgressMonitor;
 import com.surelogic.common.jobs.SLJob;
-import com.surelogic.common.jobs.SLProgressMonitor;
+import com.surelogic.common.jobs.SLSeverity;
 import com.surelogic.common.jobs.SLStatus;
-import com.surelogic.sierra.client.eclipse.jobs.*;
+import com.surelogic.sierra.client.eclipse.jobs.DisconnectDatabase;
 import com.surelogic.sierra.client.eclipse.views.adhoc.AdHocDataSource;
 import com.surelogic.sierra.tool.message.Importance;
 
@@ -68,7 +71,7 @@ public class SierraPreferencePage extends AbstractCommonPreferencePage {
 		dataGroup.setLayout(new GridLayout(2, false));
 
 		f_dataDirectory = new Label(dataGroup, SWT.NONE);
-		updateDataDirectory(null);
+		updateDataDirectory();
 		f_dataDirectory.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
 				false));
 
@@ -79,33 +82,38 @@ public class SierraPreferencePage extends AbstractCommonPreferencePage {
 				false));
 		change.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(final Event event) {
-				final SLJob before = 
-					EclipseFileUtility.COLOCATE_DATABASE ? new DisconnectDatabase() : null;
-				final ChangedDataDirectoryJob after = new ChangedDataDirectoryJob("") {
-					public SLStatus run(SLProgressMonitor monitor) {
-						monitor.begin();
-						change.getDisplay().syncExec(new Runnable() {
-							public void run() {
-								updateDataDirectory(dataDir);
-							}							
-						});						
-						if (EclipseFileUtility.COLOCATE_DATABASE) {
-							Activator.getDefault().startLogHandler();
-							//new RefreshDatabaseJob().run(monitor);
-						}					
-						return SLStatus.OK_STATUS;
-					}
-				};
-				ChangeDataDirectoryDialog
-						.open(
-								change.getShell(),
-								EclipseFileUtility.getSierraDataDirectoryAnchor(),
-								I18N
-										.msg("sierra.change.data.directory.dialog.title"),
-								SLImages.getImage(CommonImages.IMG_SIERRA_LOGO),
-								I18N
-										.msg("sierra.change.data.directory.dialog.information"),
-								before, after);
+				final File existing = PreferenceConstants
+						.getSierraDataDirectory();
+				final ChangeDataDirectoryDialog dialog = new ChangeDataDirectoryDialog(
+						change.getShell(),
+						existing,
+						I18N.msg("sierra.change.data.directory.dialog.title"),
+						SLImages.getImage(CommonImages.IMG_FL_LOGO),
+						I18N
+								.msg("sierra.change.data.directory.dialog.information"));
+
+				if (dialog.open() != Window.OK)
+					return;
+
+				if (!dialog.isValidChangeToDataDirectory())
+					return;
+
+				final File destination = dialog.getNewDataDirectory();
+				final boolean moveOldToNew = dialog.moveOldToNew();
+
+				SLJob moveJob = FileUtility.moveDataDirectory(existing,
+						destination, moveOldToNew, new DisconnectDatabase(),
+						null);
+				SLStatus result = moveJob.run(new NullSLProgressMonitor());
+				if (result.getSeverity() == SLSeverity.OK) {
+					PreferenceConstants.setSierraDataDirectory(destination);
+					updateDataDirectory();
+				} else {
+					IStatus status = SLEclipseStatusUtility.convert(result);
+					ErrorDialogUtility.open(change.getShell(), I18N
+							.msg("sierra.change.data.directory.dialog.failed"),
+							status);
+				}
 			}
 		});
 
@@ -257,12 +265,8 @@ public class SierraPreferencePage extends AbstractCommonPreferencePage {
 		f_toolMemoryMB.setLabelText(I18N.msg(TOOL_MB_LABEL, mb));
 	}
 
-	private void updateDataDirectory(File loc) {
-		if (loc != null) {
-			com.surelogic.common.eclipse.preferences.PreferenceConstants.
-			  setSierraDataDirectoryAnchor(loc);
-		}
-		f_dataDirectory.setText(EclipseFileUtility.getSierraDataDirectory()
+	private void updateDataDirectory() {
+		f_dataDirectory.setText(PreferenceConstants.getSierraDataDirectory()
 				.getAbsolutePath());
 	}
 

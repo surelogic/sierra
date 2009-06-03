@@ -2,8 +2,8 @@ package com.surelogic.sierra.client.eclipse;
 
 import java.io.File;
 
+import com.surelogic.common.FileUtility;
 import com.surelogic.common.derby.DerbyConnection;
-import com.surelogic.common.eclipse.EclipseFileUtility;
 import com.surelogic.common.jdbc.DBConnection;
 import com.surelogic.common.jdbc.SchemaData;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
@@ -12,8 +12,8 @@ import com.surelogic.sierra.schema.SierraSchemaData;
 public final class Data extends DerbyConnection {
 
 	private static final Data INSTANCE = new Data();
-	private String pluginStatePath;
-	
+	private volatile String f_dataPath;
+
 	public static DBConnection getInstance() {
 		INSTANCE.loggedBootAndCheckSchema();
 		return INSTANCE;
@@ -35,15 +35,12 @@ public final class Data extends DerbyConnection {
 
 	@Override
 	protected synchronized String getDatabaseLocation() {
-		if (pluginStatePath == null) {
-			if (EclipseFileUtility.COLOCATE_DATABASE) {
-				pluginStatePath = EclipseFileUtility.getSierraDataDirectory().getAbsolutePath();
-			} else {
-				pluginStatePath = Activator.getDefault().getStateLocation().toOSString();
-			}
+		if (f_dataPath == null) {
+			final File dataDir = PreferenceConstants.getSierraDataDirectory();
+			final File dbDir = new File(dataDir, FileUtility.DB_PATH_FRAGMENT);
+			f_dataPath = dbDir.getAbsolutePath();
 		}
-		return pluginStatePath + File.separator
-				+ DATABASE_PATH_FRAGMENT;
+		return f_dataPath;
 	}
 
 	@Override

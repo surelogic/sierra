@@ -33,7 +33,6 @@ import com.surelogic.sierra.client.eclipse.Activator;
 import com.surelogic.sierra.client.eclipse.Tools;
 import com.surelogic.sierra.client.eclipse.actions.PreferencesAction;
 import com.surelogic.sierra.tool.IToolFactory;
-import com.surelogic.sierra.tool.ToolUtil;
 
 public class ToolsPreferencePage extends PreferencePage implements
 		IWorkbenchPreferencePage {
@@ -69,8 +68,8 @@ public class ToolsPreferencePage extends PreferencePage implements
 		}
 	};
 
-	BooleanFieldEditor[] flags;	
-	
+	BooleanFieldEditor[] flags;
+
 	@Override
 	protected Control createContents(Composite parent) {
 		final Composite panel = new Composite(parent, SWT.NONE);
@@ -100,11 +99,12 @@ public class ToolsPreferencePage extends PreferencePage implements
 				return o1.getName().compareTo(o2.getName());
 			}
 		});
-		
+
 		final List<BooleanFieldEditor> editors = new ArrayList<BooleanFieldEditor>();
-		for(IToolFactory tf : factories) {
-			BooleanFieldEditor flag = 
-				new BooleanFieldEditor(PreferenceConstants.getToolPref(tf), tf.getName(), toolsGroup);
+		for (IToolFactory tf : factories) {
+			BooleanFieldEditor flag = new BooleanFieldEditor(
+					PreferenceConstants.getToolPref(tf), tf.getName(),
+					toolsGroup);
 			flag.setPage(this);
 			flag.setPreferenceStore(getPreferenceStore());
 			flag.load();
@@ -112,7 +112,7 @@ public class ToolsPreferencePage extends PreferencePage implements
 			editors.add(flag);
 		}
 		flags = editors.toArray(new BooleanFieldEditor[editors.size()]);
-		
+
 		final Composite warning = new Composite(panel, SWT.NONE);
 		warning.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false,
 				2, 1));
@@ -177,7 +177,7 @@ public class ToolsPreferencePage extends PreferencePage implements
 
 	@Override
 	protected void performApply() {
-		for(BooleanFieldEditor flag : flags) {
+		for (BooleanFieldEditor flag : flags) {
 			flag.store();
 		}
 		super.performApply();
@@ -185,7 +185,7 @@ public class ToolsPreferencePage extends PreferencePage implements
 
 	@Override
 	protected void performDefaults() {
-		for(BooleanFieldEditor flag : flags) {
+		for (BooleanFieldEditor flag : flags) {
 			flag.loadDefault();
 		}
 		super.performDefaults();
@@ -193,7 +193,7 @@ public class ToolsPreferencePage extends PreferencePage implements
 
 	@Override
 	public boolean performOk() {
-		for(BooleanFieldEditor flag : flags) {
+		for (BooleanFieldEditor flag : flags) {
 			flag.store();
 		}
 		return super.performOk();

@@ -1,5 +1,7 @@
 package com.surelogic.sierra.client.eclipse.preferences;
 
+import java.io.File;
+
 import org.eclipse.jface.preference.IPreferenceStore;
 
 import com.surelogic.common.eclipse.preferences.IPreferenceConstants;
@@ -52,10 +54,11 @@ public class PreferenceConstants implements IPreferenceConstants {
 	public static final String getToolPref(IToolFactory f) {
 		return P_RUN_PREFIX + f.getId();
 	}
-	
+
 	public static boolean runTool(IToolFactory f) {
-		return Activator.getDefault().getPluginPreferences().getBoolean(getToolPref(f));
-	}	
+		return Activator.getDefault().getPluginPreferences().getBoolean(
+				getToolPref(f));
+	}
 
 	public static final String P_SIERRA_SHOW_MARKERS = PREFIX + "show-markers";
 
@@ -259,10 +262,30 @@ public class PreferenceConstants implements IPreferenceConstants {
 				P_AUTO_PERSPECTIVE_SWITCH, value);
 	}
 
+	public static final String P_DATA_DIRECTORY = PREFIX + "data-directory";
+
+	public static File getSierraDataDirectory() {
+		final String path = Activator.getDefault().getPluginPreferences()
+				.getString(P_DATA_DIRECTORY);
+		if (path.length() == 0 || path == null) {
+			return null;
+		}
+		return new File(path);
+	}
+
+	public static void setSierraDataDirectory(final File dir) {
+		if (dir != null && dir.exists() && dir.isDirectory()) {
+			Activator.getDefault().getPluginPreferences().setValue(
+					P_DATA_DIRECTORY, dir.getAbsolutePath());
+		} else {
+			throw new IllegalArgumentException("Bad directory: " + dir);
+		}
+	}
+
 	private PreferenceConstants() {
 		// Nothing to do
 	}
-	
+
 	public static final PreferenceConstants prototype = new PreferenceConstants();
 
 	public String getPrefConstant(String suffix) {

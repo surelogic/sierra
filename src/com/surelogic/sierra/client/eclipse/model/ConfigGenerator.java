@@ -1,5 +1,9 @@
 package com.surelogic.sierra.client.eclipse.model;
 
+import static com.surelogic.sierra.tool.SierraToolConstants.PARSED_FILE_SUFFIX;
+import static com.surelogic.sierra.tool.SierraToolConstants.PARSED_ZIP_FILE_SUFFIX;
+import static com.surelogic.sierra.tool.SierraToolConstants.USE_ZIP;
+
 import java.io.File;
 import java.net.URI;
 import java.util.ArrayList;
@@ -30,7 +34,6 @@ import org.eclipse.jdt.core.JavaModelException;
 
 import com.surelogic.common.SLUtility;
 import com.surelogic.common.eclipse.Activator;
-import com.surelogic.common.eclipse.EclipseFileUtility;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Tools;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
@@ -45,8 +48,6 @@ import com.surelogic.sierra.tool.targets.IToolTarget;
 import com.surelogic.sierra.tool.targets.JarTarget;
 import com.surelogic.sierra.tool.targets.ToolTarget;
 
-import static com.surelogic.sierra.tool.SierraToolConstants.*;
-
 /**
  * Utility class for getting configuration objects that are required to run
  * scans, it handles both project and compilation unit configs
@@ -57,9 +58,9 @@ public final class ConfigGenerator {
 			SierraToolConstants.COMMON_PLUGIN_ID,
 			SierraToolConstants.TOOL_PLUGIN_ID,
 			/*
-			SierraToolConstants.PMD_PLUGIN_ID,
-			SierraToolConstants.FB_PLUGIN_ID,
-			*/
+			 * SierraToolConstants.PMD_PLUGIN_ID,
+			 * SierraToolConstants.FB_PLUGIN_ID,
+			 */
 			SierraToolConstants.JUNIT4_PLUGIN_ID,
 			SierraToolConstants.JUNIT_PLUGIN_ID,
 			SierraToolConstants.JAVA5_PLUGIN_ID, };
@@ -70,8 +71,8 @@ public final class ConfigGenerator {
 			SierraToolConstants.SIERRA_RESULTS_PATH);
 
 	/** The default folder from the preference page */
-	private final String f_sierraPath = EclipseFileUtility.getSierraDataDirectory()
-			.getAbsolutePath();
+	private final String f_sierraPath = PreferenceConstants
+			.getSierraDataDirectory().getAbsolutePath();
 
 	/** The plug-in directory that has tools folder */
 	private final String tools;
@@ -388,13 +389,13 @@ public final class ConfigGenerator {
 		StringBuilder excludedTools = new StringBuilder();
 		f_numberofExcludedTools = 0;
 
-		for(IToolFactory f : Tools.findToolFactories()) {
+		for (IToolFactory f : Tools.findToolFactories()) {
 			if (!PreferenceConstants.runTool(f)) {
 				// Only need to add a comma if this isn't the first one
 				if (f_numberofExcludedTools != 0) {
 					excludedTools.append(", ");
 				}
-				excludedTools.append(f.getId());			
+				excludedTools.append(f.getId());
 				f_numberofExcludedTools++;
 			}
 		}

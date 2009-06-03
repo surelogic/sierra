@@ -12,6 +12,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.progress.UIJob;
 import org.osgi.framework.BundleContext;
 
+import com.surelogic.common.FileUtility;
 import com.surelogic.common.eclipse.dialogs.ErrorDialogUtility;
 import com.surelogic.common.eclipse.jobs.SLUIJob;
 import com.surelogic.common.eclipse.logging.SLEclipseStatusUtility;
@@ -68,6 +69,14 @@ public final class Activator extends AbstractUIPlugin {
 		SLEclipseStatusUtility.touch();
 
 		try {
+			// Get the data directory and ensure that it actually exists.
+			final String path = getPluginPreferences().getString(
+					PreferenceConstants.P_DATA_DIRECTORY);
+			if (path == null)
+				throw new IllegalStateException(I18N
+						.err(44, "P_DATA_DIRECTORY"));
+			final File dataDir = new File(path);
+			FileUtility.createDirectory(dataDir);
 			// startup the database and ensure its schema is up to date
 			System.setProperty("derby.stream.error.file", getDerbyLogFile());
 			// load up persisted sierra servers
@@ -85,8 +94,8 @@ public final class Activator extends AbstractUIPlugin {
 
 			SierraServersAutoSync.start();
 			new DeleteUnfinishedScans().schedule();
-			
- 			Tools.checkForNewArtifactTypes();
+
+			Tools.checkForNewArtifactTypes();
 		} catch (final FutureDatabaseException e) {
 			/*
 			 * The database schema version is too new, we need to delete it to

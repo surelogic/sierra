@@ -1,6 +1,8 @@
 package com.surelogic.sierra.client.eclipse.actions;
 
-import static com.surelogic.sierra.tool.SierraToolConstants.*;
+import static com.surelogic.sierra.tool.SierraToolConstants.PARSED_FILE_SUFFIX;
+import static com.surelogic.sierra.tool.SierraToolConstants.PARSED_ZIP_FILE_SUFFIX;
+import static com.surelogic.sierra.tool.SierraToolConstants.USE_ZIP;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -12,12 +14,12 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.IJavaProject;
 
 import com.surelogic.common.eclipse.BalloonUtility;
-import com.surelogic.common.eclipse.EclipseFileUtility;
 import com.surelogic.common.eclipse.JDTUtility;
 import com.surelogic.common.eclipse.jobs.DatabaseJob;
 import com.surelogic.sierra.client.eclipse.jobs.ImportScanDocumentJob;
 import com.surelogic.sierra.client.eclipse.model.ConfigGenerator;
 import com.surelogic.sierra.client.eclipse.model.DatabaseHub;
+import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
 import com.surelogic.sierra.tool.SierraToolConstants;
 import com.surelogic.sierra.tool.message.Config;
 
@@ -93,20 +95,22 @@ public class NewScan extends AbstractScan<IJavaProject> {
 	}
 
 	private static File generateScanDocumentFile(String project, String name) {
-		for(String suffix : SierraToolConstants.PARSED_FILE_SUFFIXES) {
+		for (String suffix : SierraToolConstants.PARSED_FILE_SUFFIXES) {
 			if (name.endsWith(suffix)) {
-				return new File(EclipseFileUtility.getSierraDataDirectory() + File.separator
-						+ project + suffix);
+				return new File(PreferenceConstants.getSierraDataDirectory()
+						+ File.separator + project + suffix);
 			}
 		}
-		return new File(EclipseFileUtility.getSierraDataDirectory() + File.separator
-				+ project + (USE_ZIP ? PARSED_ZIP_FILE_SUFFIX : PARSED_FILE_SUFFIX));
+		return new File(PreferenceConstants.getSierraDataDirectory()
+				+ File.separator + project
+				+ (USE_ZIP ? PARSED_ZIP_FILE_SUFFIX : PARSED_FILE_SUFFIX));
 	}
-	
+
 	public static File findScanDocumentFile(String projectName) {
-		for(String suffix : SierraToolConstants.PARSED_FILE_SUFFIXES) {
+		for (String suffix : SierraToolConstants.PARSED_FILE_SUFFIXES) {
 			String scanFileName = projectName + suffix;
-			File scanFile = new File(EclipseFileUtility.getSierraDataDirectory(), scanFileName);
+			File scanFile = new File(PreferenceConstants
+					.getSierraDataDirectory(), scanFileName);
 			if (scanFile.exists()) {
 				return scanFile;
 			}
