@@ -152,7 +152,7 @@ public final class TeamServer {
 				boolean isNotRunning;
 				final Logger log = SLLogger.getLogger();
 				try {
-					Socket s = new Socket(LOCALHOST, f_port.get());
+					final Socket s = new Socket(LOCALHOST, f_port.get());
 					/*
 					 * A local team server is running. (Or at least something is
 					 * listening on the port we expect.)
@@ -160,11 +160,11 @@ public final class TeamServer {
 					isRunning = true;
 					isNotRunning = false;
 					s.close();
-				} catch (UnknownHostException e) {
+				} catch (final UnknownHostException e) {
 					log.log(Level.SEVERE, I18N.err(63, LOCALHOST), e);
 					isRunning = false;
 					isNotRunning = false;
-				} catch (IOException e) {
+				} catch (final IOException e) {
 					/*
 					 * A local team server is not running. (Or at least it is
 					 * not listening on the port we expect.)
@@ -239,7 +239,7 @@ public final class TeamServer {
 	 * Callers should never be holding a lock due to the potential for deadlock.
 	 */
 	private void notifyObservers() {
-		for (ITeamServerObserver o : f_observers) {
+		for (final ITeamServerObserver o : f_observers) {
 			o.notify(this);
 		}
 	}
@@ -248,7 +248,7 @@ public final class TeamServer {
 	 * Callers should never be holding a lock due to the potential for deadlock.
 	 */
 	private void notifyStartupFailureObservers() {
-		for (ITeamServerObserver o : f_observers) {
+		for (final ITeamServerObserver o : f_observers) {
 			o.notifyStartupFailure(this);
 		}
 	}
@@ -263,12 +263,20 @@ public final class TeamServer {
 	private static final String JETTY_STOP_ARG = "--stop";
 
 	public void start() {
-		// Ensure the local team server directory exists for logging
-		PreferenceConstants.getSierraLocalTeamServerDirectory();
-
-		CommandlineJava command = getJettyTemplate();
+		final CommandlineJava command = getJettyTemplate();
 
 		command.setMaxmemory(PreferenceConstants.getServerMemoryMB() + "m");
+
+		// Ensure the local team server directory exists for logging
+		final File serverDir = PreferenceConstants
+				.getSierraLocalTeamServerDirectory();
+		if (!serverDir.exists()) {
+			serverDir.mkdir();
+		}
+		final Environment.Variable serverVar = new Environment.Variable();
+		serverVar.setKey("com.surelogic.server");
+		serverVar.setFile(serverDir);
+		command.addSysproperty(serverVar);
 
 		final Environment.Variable loggingLevel = new Environment.Variable();
 		loggingLevel.setKey(SLLogger.SL_LOGGING_PROPERTY);
@@ -277,7 +285,7 @@ public final class TeamServer {
 		command.addSysproperty(loggingLevel);
 
 		final String jettyConfig = launder(f_pluginDir + JETTY_CONFIG);
-		Argument jettyConfigFile = command.createArgument();
+		final Argument jettyConfigFile = command.createArgument();
 		jettyConfigFile.setValue(jettyConfig);
 
 		runJava(command, true);
@@ -291,9 +299,9 @@ public final class TeamServer {
 	}
 
 	public void stop() {
-		CommandlineJava command = getJettyTemplate();
+		final CommandlineJava command = getJettyTemplate();
 
-		Argument jettyStop = command.createArgument();
+		final Argument jettyStop = command.createArgument();
 		jettyStop.setValue(JETTY_STOP_ARG);
 
 		runJava(command, false);
@@ -379,7 +387,7 @@ public final class TeamServer {
 				f_processExitValue.set(exitValue);
 				readAllFrom(p.getErrorStream(), f_processConsoleOutput);
 				readAllFrom(p.getInputStream(), f_processConsoleOutput);
-			} catch (IllegalThreadStateException e) {
+			} catch (final IllegalThreadStateException e) {
 				/*
 				 * This indicates that the Jetty process is still running.
 				 */
@@ -395,26 +403,27 @@ public final class TeamServer {
 	}
 
 	private void readAllFrom(final InputStream in, final StringBuffer into) {
-		InputStreamReader inr = new InputStreamReader(in);
+		final InputStreamReader inr = new InputStreamReader(in);
 		try {
 			while (inr.ready()) {
-				int byteRead = inr.read();
+				final int byteRead = inr.read();
 				if (byteRead != -1) {
 					into.append((char) byteRead);
 				}
 			}
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			LOG.log(Level.SEVERE, I18N.err(40,
 					"process stream after local team server startup failure"));
 		}
 	}
 
-	private void runJava(final CommandlineJava command, boolean storeProcess) {
+	private void runJava(final CommandlineJava command,
+			final boolean storeProcess) {
 		final Logger log = SLLogger.getLogger();
 		if (log.isLoggable(Level.FINE)) {
 			log.fine(command.toString());
 		}
-		ProcessBuilder b = new ProcessBuilder(command.getCommandline());
+		final ProcessBuilder b = new ProcessBuilder(command.getCommandline());
 		b.redirectErrorStream(true);
 
 		final File workingDirectory = launderToFile(f_pluginDir + JETTY_DIR);
@@ -425,9 +434,10 @@ public final class TeamServer {
 				+ workingDirectory.getAbsolutePath() + "'.");
 		try {
 			final Process p = b.start();
-			if (storeProcess)
+			if (storeProcess) {
 				f_process.set(p);
-		} catch (IOException e) {
+			}
+		} catch (final IOException e) {
 			log.log(Level.SEVERE, I18N.err(65, command.toString()), e);
 		}
 	}
