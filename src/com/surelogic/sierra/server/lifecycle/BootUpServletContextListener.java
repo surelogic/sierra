@@ -17,6 +17,7 @@ import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.jdbc.scan.ScanQueries;
 import com.surelogic.sierra.jdbc.server.ConnectionFactory;
 import com.surelogic.sierra.jdbc.server.Server;
+import com.surelogic.sierra.jdbc.server.ServerFiles;
 import com.surelogic.sierra.jdbc.server.ServerTransaction;
 import com.surelogic.sierra.schema.SierraSchemaData;
 
@@ -71,7 +72,7 @@ public class BootUpServletContextListener implements ServletContextListener {
 			final String tail = "log-" + loggerTag
 					+ dateFormat.format(new Date()) + ".txt";
 			if ("serverdir".equals(loggerOption)) {
-				path = FileUtility.getSierraLocalTeamServerDirectory();
+				path = ServerFiles.getSierraLocalTeamServerDirectory();
 			} else {
 				path = new File(System.getProperty("java.io.tmpdir"));
 			}
@@ -125,7 +126,7 @@ public class BootUpServletContextListener implements ServletContextListener {
 	}
 
 	private void clearCache() {
-		final File cacheDir = FileUtility.getSierraTeamServerCacheDirectory();
+		final File cacheDir = ServerFiles.getSierraTeamServerCacheDirectory();
 		if (FileUtility.recursiveDelete(cacheDir)) {
 			SLLogger.getLogger().log(Level.INFO,
 					"Cache cleared from " + cacheDir.getAbsolutePath());
