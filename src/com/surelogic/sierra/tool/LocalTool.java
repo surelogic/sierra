@@ -113,6 +113,7 @@ final class LocalTool extends AbstractLocalSLJob implements IToolInstance {
 		.createVmArgument()
 		.setValue(
 		"-Djava.system.class.loader=com.surelogic.common.loading.CustomClassLoader");
+		
 		try {
 			if (TestCode.BAD_AUX_PATH.equals(testCode)) {
 				throw new IOException("Testing error with aux path");
@@ -183,6 +184,8 @@ final class LocalTool extends AbstractLocalSLJob implements IToolInstance {
 		//cmdj.createVmArgument().setValue("-Dfindbugs.verbose=true");
 		//cmdj.createVmArgument().setValue("-Dfindbugs.debug=true");
 		//cmdj.createVmArgument().setValue("-Dfindbugs.execplan.debug=true");			
+		cmdj.createVmArgument().setValue("-D"+ToolUtil.TOOLS_PATH_PROP_NAME+"="+
+				                         ToolUtil.getSierraToolDirectory());
 	}
 
 	@Override 
