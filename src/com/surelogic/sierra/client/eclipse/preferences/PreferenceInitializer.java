@@ -7,10 +7,12 @@ import org.eclipse.jface.preference.IPreferenceStore;
 
 import com.surelogic.common.FileUtility;
 import com.surelogic.common.eclipse.EclipseUtility;
+import com.surelogic.common.i18n.I18N;
 import com.surelogic.sierra.client.eclipse.Activator;
 import com.surelogic.sierra.client.eclipse.Tools;
 import com.surelogic.sierra.client.eclipse.views.ServerStatusSort;
 import com.surelogic.sierra.tool.IToolFactory;
+import com.surelogic.sierra.tool.ToolUtil;
 import com.surelogic.sierra.tool.message.Importance;
 
 /**
@@ -31,9 +33,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 				.setDefault(
 						PreferenceConstants.P_SIERRA_SHOW_MARKERS_AT_OR_ABOVE_IMPORTANCE,
 						Importance.HIGH.toString());
-		for (IToolFactory f : Tools.findToolFactories()) {
-			store.setDefault(PreferenceConstants.getToolPref(f), true);
-		}
+
 		store.setDefault(PreferenceConstants.P_SIERRA_ALWAYS_SAVE_RESOURCES,
 				false);
 		store.setDefault(PreferenceConstants.P_SIERRA_SHOW_MARKERS, true);
@@ -58,6 +58,32 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 				ServerFailureReport.SHOW_BALLOON.toString());
 		store.setDefault(PreferenceConstants.P_DATA_DIRECTORY,
 				getDefaultDataDirectory());
+		
+		// Get the data directory and ensure that it actually exists.
+		final String path = store.getString(PreferenceConstants.P_DATA_DIRECTORY);
+		if (path == null)
+			throw new IllegalStateException(I18N
+					.err(44, "P_DATA_DIRECTORY"));
+		final File dataDir = new File(path);
+		if (!FileUtility.createDirectory(dataDir)) {
+			throw new RuntimeException("Unable to create "+path);
+		}
+		
+		// Check if tools dir setup yet
+		final String toolsDirSet = System.getProperty(ToolUtil.CUSTOM_TOOLS_PATH_PROP_NAME);
+		if (toolsDirSet == null) {
+			final String origToolsDir = System.getProperty(ToolUtil.TOOLS_PATH_PROP_NAME);
+			// set Sierra tools dir if unavailable
+			if (origToolsDir == null) {
+				System.setProperty(ToolUtil.CUSTOM_TOOLS_PATH_PROP_NAME, "");
+				System.setProperty(ToolUtil.TOOLS_PATH_PROP_NAME, path);
+			} else {
+				System.setProperty(ToolUtil.CUSTOM_TOOLS_PATH_PROP_NAME, origToolsDir);
+			}
+		}
+		for (IToolFactory f : Tools.findToolFactories()) {
+			store.setDefault(PreferenceConstants.getToolPref(f), true);
+		}
 	}
 
 	private String getDefaultDataDirectory() {
