@@ -184,11 +184,12 @@
 		<Arg>derby.storage.pageSize</Arg>
 		<Arg>8192</Arg>
 	</Call>
+	
 	<New id="SierraDS" class="org.mortbay.jetty.plus.naming.Resource">
 		<Arg>jdbc/Sierra</Arg>
 		<Arg>
 			<New class="org.apache.derby.jdbc.EmbeddedDataSource">
-				<Set name="DatabaseName"><SystemProperty name="user.home" /><SystemProperty name="file.separator" />.sierra-data<SystemProperty name="file.separator" />server<SystemProperty name="file.separator" />server-db</Set>
+				<Set name="DatabaseName"><SystemProperty name="com.surelogic.server" /><SystemProperty name="file.separator" />server-db</Set>
 				<Set name="createDatabase">create</Set>
 			</New>
 		</Arg>
