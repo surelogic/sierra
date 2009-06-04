@@ -32,9 +32,9 @@ import com.surelogic.sierra.tool.message.Config;
 import com.surelogic.sierra.tool.message.MessageWarehouse;
 
 public class ToolUtil {
-
 	public static final String TOOLS_PATH_PROP_NAME = "sierra.tools.dir";
-
+	public static final String CUSTOM_TOOLS_PATH_PROP_NAME = "custom.sierra.tools.dir";
+	
 	private static final String TOOLS_PATH_FRAGMENT = "tools";
 
 	/** The logger */
@@ -58,7 +58,7 @@ public class ToolUtil {
 		final File toolsDir = new File(path);
 		final boolean validToolsDir = toolsDir.exists()
 				&& toolsDir.isDirectory();
-		if (validToolsDir)
+		if (!validToolsDir)
 			throw new IllegalStateException(I18N.err(166, toolsDir
 					.getAbsolutePath()));
 		/*
