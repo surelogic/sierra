@@ -4,6 +4,7 @@ import java.io.File;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.logging.Logger;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -13,6 +14,7 @@ import org.eclipse.core.runtime.Platform;
 
 import com.surelogic.common.jdbc.ConnectionQuery;
 import com.surelogic.common.jdbc.Query;
+import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.jdbc.settings.Categories;
 import com.surelogic.sierra.jdbc.settings.CategoryDO;
 import com.surelogic.sierra.jdbc.tool.ArtifactTypeDO;
@@ -21,6 +23,8 @@ import com.surelogic.sierra.jdbc.tool.FindingTypes;
 import com.surelogic.sierra.tool.*;
 
 public final class Tools {
+	private static final Logger LOG = SLLogger.getLogger();
+	
 	public static final String TOOL_PLUGIN_ID = "com.surelogic.sierra.tool";
 	
 	/**
@@ -68,15 +72,15 @@ public final class Tools {
 	
 	public static void checkForNewArtifactTypes() {
 		for(File plugin : ToolUtil.findToolDirs()) {
-			System.out.println("Found plugin @ "+plugin.getPath());
+			LOG.fine("Found plugin @ "+plugin.getPath());
 		}	
 		final List<IToolFactory> factories = ToolUtil.findToolFactories();
 		for(IToolFactory f : factories) {
 			try {
-				System.out.println("Found tool: "+f.getName()+" v"+f.getVersion());
-				System.out.println(f.getHTMLInfo());
+				LOG.fine("Found tool: "+f.getName()+" v"+f.getVersion());
+				LOG.fine(f.getHTMLInfo());
 			} catch(NullPointerException npe) {
-				System.out.println("Ignored tool: "+f.getClass().getName());
+				LOG.fine("Ignored tool: "+f.getClass().getName());
 			}
 		}
 		
@@ -108,12 +112,12 @@ public final class Tools {
 			}
 
 			if (unknown.isEmpty()) {
-				System.out.println("No new artifact types");
+				LOG.fine("No new artifact types");
 			} else {
 				Collections.sort(unknown);
 				for(ArtifactType a : unknown) {
 					//SLLogger.getLogger().warning("Couldn't find "+a.type+" for "+a.tool+", v"+a.version);					
-					System.out.println("Couldn't find "+a.type+" for "+a.tool+", v"+a.version);	
+					LOG.fine("Couldn't find "+a.type+" for "+a.tool+", v"+a.version);	
 				}				
 				// Find/define finding types
 				List<FindingTypeDO> ftypes = ft.listFindingTypes();

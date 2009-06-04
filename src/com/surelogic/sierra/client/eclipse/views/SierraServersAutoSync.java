@@ -9,6 +9,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.ui.progress.UIJob;
 
 import com.surelogic.common.eclipse.jobs.SLUIJob;
+import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.actions.SynchronizeAllProjectsAction;
 import com.surelogic.sierra.client.eclipse.jobs.*;
 import com.surelogic.sierra.client.eclipse.model.ConnectedServerManager;
@@ -34,7 +35,7 @@ public class SierraServersAutoSync {
 			                        final ServerFailureReport reporting) {
 		final long now = System.currentTimeMillis();
 		lastServerUpdateTime.set(now); // Sync >> update
-		System.out.println("Sync at: " + now);
+		SLLogger.getLogger().fine("Sync at: " + now);
 
 		final UIJob job = new SLUIJob() {
 			@Override
