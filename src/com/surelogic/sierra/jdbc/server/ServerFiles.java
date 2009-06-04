@@ -29,7 +29,11 @@ public final class ServerFiles {
 	}
 
 	public static File getSierraTeamServerCacheDirectory() {
-		return new File(System.getProperty("java.io.tmpdir") + File.separator
-				+ "sierra-cache");
+		final File dir = new File(System.getProperty("java.io.tmpdir")
+				+ File.separator + "sierra-cache");
+		if (!dir.exists()) {
+			dir.mkdir();
+		}
+		return dir;
 	}
 }
