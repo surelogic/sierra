@@ -17,7 +17,6 @@ import java.util.logging.Level;
 
 import javax.servlet.ServletException;
 
-import com.surelogic.common.FileUtility;
 import com.surelogic.common.Sweepable;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.jdbc.ConnectionQuery;
@@ -30,6 +29,7 @@ import com.surelogic.sierra.gwt.client.data.ReportSettings;
 import com.surelogic.sierra.gwt.client.data.ReportTable;
 import com.surelogic.sierra.jdbc.server.ConnectionFactory;
 import com.surelogic.sierra.jdbc.server.Server;
+import com.surelogic.sierra.jdbc.server.ServerFiles;
 import com.surelogic.sierra.jdbc.server.ServerQuery;
 import com.surelogic.sierra.jdbc.server.ServerTransaction;
 import com.surelogic.sierra.table.IDatabaseTable;
@@ -46,13 +46,13 @@ public class TableCache implements Sweepable {
 	private static final String TABLE_CACHE_FILE_PREFIX = "table-";
 
 	private File getTableFileFor(final Ticket ticket) {
-		return new File(FileUtility.getSierraTeamServerCacheDirectory(),
+		return new File(ServerFiles.getSierraTeamServerCacheDirectory(),
 				TABLE_CACHE_FILE_PREFIX + ticket.getUUID().toString()
 						+ ".table");
 	}
 
 	private File getRevFileFor(final Ticket ticket) {
-		return new File(FileUtility.getSierraTeamServerCacheDirectory(),
+		return new File(ServerFiles.getSierraTeamServerCacheDirectory(),
 				TABLE_CACHE_FILE_PREFIX + ticket.getUUID().toString() + ".rev");
 	}
 

@@ -26,7 +26,6 @@ import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.Plot;
 import org.jfree.chart.renderer.category.CategoryItemRenderer;
 
-import com.surelogic.common.FileUtility;
 import com.surelogic.common.Sweepable;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.jdbc.ConnectionQuery;
@@ -40,6 +39,7 @@ import com.surelogic.sierra.chart.PlotSize;
 import com.surelogic.sierra.gwt.client.data.ReportSettings;
 import com.surelogic.sierra.jdbc.server.ConnectionFactory;
 import com.surelogic.sierra.jdbc.server.Server;
+import com.surelogic.sierra.jdbc.server.ServerFiles;
 import com.surelogic.sierra.jdbc.server.ServerQuery;
 import com.surelogic.sierra.jdbc.server.ServerTransaction;
 import com.surelogic.sierra.servlets.ServletUtility;
@@ -75,17 +75,17 @@ public final class ChartCache implements Sweepable {
 	private static final String CHART_CACHE_FILE_PREFIX = "chart-";
 
 	private File getPngFileFor(final Ticket ticket) {
-		return new File(FileUtility.getSierraTeamServerCacheDirectory(),
+		return new File(ServerFiles.getSierraTeamServerCacheDirectory(),
 				CHART_CACHE_FILE_PREFIX + ticket.getUUID().toString() + ".png");
 	}
 
 	private File getMapFileFor(final Ticket ticket) {
-		return new File(FileUtility.getSierraTeamServerCacheDirectory(),
+		return new File(ServerFiles.getSierraTeamServerCacheDirectory(),
 				CHART_CACHE_FILE_PREFIX + ticket.getUUID().toString() + ".map");
 	}
 
 	private File getRevFileFor(final Ticket ticket) {
-		return new File(FileUtility.getSierraTeamServerCacheDirectory(),
+		return new File(ServerFiles.getSierraTeamServerCacheDirectory(),
 				CHART_CACHE_FILE_PREFIX + ticket.getUUID().toString() + ".rev");
 	}
 
