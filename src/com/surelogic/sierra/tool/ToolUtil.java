@@ -34,8 +34,6 @@ import com.surelogic.sierra.tool.message.MessageWarehouse;
 public class ToolUtil {
 	public static final String TOOLS_PATH_PROP_NAME = "sierra.tools.dir";
 	public static final String CUSTOM_TOOLS_PATH_PROP_NAME = "custom.sierra.tools.dir";
-	
-	private static final String TOOLS_PATH_FRAGMENT = "tools";
 
 	/** The logger */
 	protected static final Logger LOG = SLLogger.getLogger("sierra");
@@ -45,7 +43,7 @@ public class ToolUtil {
 		addToolFinder(new IToolFinder() {
 			public List<File> findToolDirectories() {
 				return findToolPlugins(new File(getSierraToolDirectory(),
-						TOOLS_PATH_FRAGMENT));
+						FileUtility.TOOLS_PATH_FRAGMENT));
 			}
 		});
 	}
@@ -64,7 +62,7 @@ public class ToolUtil {
 		/*
 		 * Ensure that the tools subdirectory exists
 		 */
-		File subDir = new File(toolsDir, TOOLS_PATH_FRAGMENT);
+		File subDir = new File(toolsDir, FileUtility.TOOLS_PATH_FRAGMENT);
 		FileUtility.createDirectory(subDir);
 
 		return toolsDir;
