@@ -89,7 +89,7 @@ public class PreferenceConstants {
 		final File dataDir = com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants
 				.getSierraDataDirectory();
 		final File teamServerDir = new File(dataDir,
-				FileUtility.DB_PATH_FRAGMENT);
+				FileUtility.LOCAL_TEAM_SERVER_PATH_FRAGMENT);
 		FileUtility.createDirectory(teamServerDir);
 		return teamServerDir;
 	}
