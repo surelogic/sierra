@@ -84,8 +84,7 @@ public class ValidateServerLocationJob extends DatabaseJob {
 		} catch (final Exception e) {
 			if (e instanceof TransactionException
 					&& e.getCause() instanceof InvalidServerException) {
-				return SLEclipseStatusUtility.createErrorStatus(158, e
-						.getCause().getMessage());
+				return Status.OK_STATUS;
 			} else {
 				return SLEclipseStatusUtility.createErrorStatus(159, e);
 			}
