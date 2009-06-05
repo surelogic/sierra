@@ -83,7 +83,8 @@ public class ValidateServerLocationJob extends DatabaseJob {
 			return Status.OK_STATUS;
 		} catch (final Exception e) {
 			if (e instanceof TransactionException
-					&& e.getCause() instanceof InvalidServerException) {
+					&& e.getCause() instanceof InvalidServerException
+					|| e instanceof SierraServiceClientException) {
 				return Status.OK_STATUS;
 			} else {
 				return SLEclipseStatusUtility.createErrorStatus(159, e);
