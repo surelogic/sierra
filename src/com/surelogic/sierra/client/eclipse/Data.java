@@ -15,7 +15,6 @@ public final class Data extends DerbyConnection {
 	private volatile String f_dataPath;
 
 	public static DBConnection getInstance() {
-		INSTANCE.loggedBootAndCheckSchema();
 		return INSTANCE;
 	}
 

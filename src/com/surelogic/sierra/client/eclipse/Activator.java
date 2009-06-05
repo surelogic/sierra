@@ -1,22 +1,27 @@
 package com.surelogic.sierra.client.eclipse;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.logging.Level;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.progress.UIJob;
 import org.osgi.framework.BundleContext;
 
+import com.surelogic.common.eclipse.SWTUtility;
 import com.surelogic.common.eclipse.dialogs.ErrorDialogUtility;
 import com.surelogic.common.eclipse.jobs.SLUIJob;
 import com.surelogic.common.eclipse.logging.SLEclipseStatusUtility;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.jdbc.FutureDatabaseException;
+import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.actions.MarkersHandler;
 import com.surelogic.sierra.client.eclipse.jobs.DeleteUnfinishedScans;
 import com.surelogic.sierra.client.eclipse.model.BuglinkData;
@@ -30,7 +35,7 @@ import com.surelogic.sierra.client.eclipse.views.adhoc.AdHocDataSource;
 /**
  * The activator class controls the plug-in life cycle
  */
-public final class Activator extends AbstractUIPlugin {
+public final class Activator extends AbstractUIPlugin implements IRunnableWithProgress {
 
 	// The plug-in ID
 	public static final String PLUGIN_ID = "com.surelogic.sierra.client.eclipse";
@@ -61,32 +66,52 @@ public final class Activator extends AbstractUIPlugin {
 	@Override
 	public void start(final BundleContext context) throws Exception {
 		super.start(context);
-
+		SWTUtility.startup(this);
+	}
+	
+	// Used for startup
+	public void run(IProgressMonitor monitor) 
+	throws InvocationTargetException, InterruptedException {
+		monitor.beginTask("Initializing sierra-client-eclipse", 20);
 		/*
 		 * "Touch" common-eclipse so the logging gets Eclipse-ified.
 		 */
 		SLEclipseStatusUtility.touch();
-
+		monitor.worked(1);
+		
 		try {			
 			// startup the database and ensure its schema is up to date
 			System.setProperty("derby.stream.error.file", getDerbyLogFile());
+			Data.getInstance().bootAndCheckSchema();
+			monitor.worked(1);
+			
 			// load up persisted sierra servers
 			ConnectedServerManager.getInstance().init();
+			monitor.worked(1);
+			
 			// load up persisted sierra selections
 			SelectionManager.getInstance().load(getSelectionSaveFile());
+			monitor.worked(1);
+			
 			// start observing data changes
 			Projects.getInstance().init();
 			BuglinkData.getInstance().init();
+			monitor.worked(1);
+			
 			// listen changes to the active editor and preference listener
 			final MarkersHandler handler = MarkersHandler.getInstance();
 			handler.addMarkerListener();
 			getDefault().getPluginPreferences().addPropertyChangeListener(
 					handler);
-
+			monitor.worked(1);
+			
 			SierraServersAutoSync.start();
+			monitor.worked(1);
 			new DeleteUnfinishedScans().schedule();
-
+			monitor.worked(1);
+			
 			Tools.checkForNewArtifactTypes();
+			monitor.worked(1);
 		} catch (final FutureDatabaseException e) {
 			/*
 			 * The database schema version is too new, we need to delete it to
@@ -111,6 +136,9 @@ public final class Activator extends AbstractUIPlugin {
 				}
 			};
 			restartEclipseJob.schedule();
+		} catch (final Exception e) {
+			SLLogger.getLogger().log(Level.SEVERE, 
+					"Failure to boot and check schema.", e);
 		}
 	}
 
