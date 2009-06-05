@@ -1119,13 +1119,14 @@ not equal when compared normally. Don't do it.</p>]]>
     <artifact tool="FindBugs" mnemonic="EQ_SELF_NO_OBJECT"/>
     <artifact tool="FindBugs" mnemonic="EQ_ABSTRACT_SELF"/>
     <artifact tool="FindBugs" mnemonic="EQ_OTHER_USE_OBJECT"/>
+    <artifact tool="FindBugs" mnemonic="NM_BAD_EQUAL"/>
+    <artifact tool="PMD" mnemonic="SuspiciousEqualsMethodName"/>
     <name>Equals() defined that does not override Object.equals</name>
-    <shortMessage>Covariant equals() method defined, Object.equals(Object) inherited.</shortMessage>
+    <shortMessage>An equal() or equals() method is defined, but Object.equals(Object) is inherited.</shortMessage>
     <info>
-<![CDATA[<p>This class defines a covariant version of the
-<code>equals()</code> method, but inherits the normal
-<code>equals(Object)</code> method defined in the base
-<code>java.lang.Object</code> class. The class probably intended to
+<![CDATA[<p>This method does not override the
+<code>equals(Object)</code> method in <code>java.lang.Object</code>,
+which is probably what was intended.  The class probably intended to
 define a non-covariant version of <code>equals()</code> and use the
 <code>@Override</code> tag if using JDK 1.5 or above as shown in the
 code below.  In addition, to correctly override the
@@ -1139,7 +1140,7 @@ parameter must have the type <code>java.lang.Object</code>.</p>
 </pre>
 
 <p>If this was not the intent of the class, then the method should be
-renamed something other than <code>equals</code> to avoid
+renamed something other than <code>equals</code> or <code>equal</code> to avoid
 confusion.</p>]]>
     </info>
   </findingType>
@@ -2141,20 +2142,6 @@ the <code>hashCode</code> method.</p>]]>
 <code>tostring</code>. This method does not override the
 <code>toString</code> method in <code>java.lang.Object</code>, which
 is probably what was intended.</p>]]>
-    </info>
-  </findingType>
-  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-  <findingType>
-    <id>NM_BAD_EQUAL</id>
-    <artifact tool="FindBugs" mnemonic="NM_BAD_EQUAL"/>
-    <artifact tool="PMD" mnemonic="SuspiciousEqualsMethodName"/>
-    <name>Suspicious equal() method name</name>
-    <shortMessage>Class defines equal(); should it be equals()?</shortMessage>
-    <info>
-<![CDATA[<p>This class defines a method
-<code>equal(Object)</code>. This method does not override the
-<code>equals(Object)</code> method in <code>java.lang.Object</code>,
-which is probably what was intended.</p>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
