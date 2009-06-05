@@ -99,11 +99,12 @@ public class SchemaUtil {
 				}
 			}
 			if (!exists.equals(included)) {
+				included.removeAll(exists);
 				throw new IllegalStateException(
 						String
 								.format(
 										"The following finding types do not exist in the database: %s",
-										included.removeAll(exists)));
+										included));
 			}
 			filters.writeScanFilter(filter);
 		}
