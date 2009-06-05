@@ -146,8 +146,7 @@ public final class SelectionPersistence {
 		end(pw, b, TOP);
 	}
 
-	public static void load(final SelectionManager manager, final File saveFile)
-			throws Exception {
+	public static void load(final SelectionManager manager, final File saveFile) {
 		if (saveFile.exists()) {
 			try {
 				InputStream stream = new FileInputStream(saveFile);

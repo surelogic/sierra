@@ -137,7 +137,7 @@ public final class SelectionManager {
 		SelectionPersistence.save(this, file);
 	}
 
-	public void load(File file) throws Exception {
+	public void load(File file) {
 		SelectionPersistence.load(this, file);
 		notifySavedSelectionsChanged();
 	}
