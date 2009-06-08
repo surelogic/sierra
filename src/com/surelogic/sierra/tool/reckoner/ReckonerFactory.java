@@ -35,12 +35,21 @@ public class ReckonerFactory extends AbstractToolFactory {
 				//System.out.println("Unused: "+id);
 			}
 		}
+		final File toolsDir = new File(config.getToolsDirectory(), "reckoner/lib");
+		if (toolsDir.exists()) {
+			for(File f : toolsDir.listFiles()) {
+				if (f.getName().endsWith(".jar")) {
+					util.addToPath(jars, f, true);
+				}
+			}
+		}
 		/*
 		  for (String id : required) {
 			  // FIX what about transitive dependencies?
 			  addPluginToPath(debug, jars, id);
 		  }
 		 */
+
 		return jars;
 	}
 
