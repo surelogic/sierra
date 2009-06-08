@@ -449,6 +449,7 @@ public class ToolUtil {
 	public static List<File> getRequiredJars(final File pluginDir,
 			Attributes attrs) {
 		final String path = attrs.getValue(CLASSPATH);
+		final String pluginId = trimValue(attrs.getValue(PLUGIN_ID));
 		return getItems(path, new AbstractItemProcessor<File>() {
 			public File process(String fragment) {
 				if (".".equals(fragment)) {
@@ -456,6 +457,11 @@ public class ToolUtil {
 					if (pluginBin.exists() && pluginBin.isDirectory()) {
 						// local binary
 						return pluginBin;
+					}
+					// look for a plugin jar
+					File pluginJar = new File(pluginDir, pluginId+".jar");
+					if (pluginJar.exists() && pluginJar.isFile()) {						
+						return pluginJar;
 					}
 					// otherwise, add the directory
 				}
