@@ -86,7 +86,7 @@ public final class ConfigUtil {
 		findJars(path, pluginDir + '/' + libPath);
 	}
 
-	protected boolean addToPath(Collection<File> path, String name) {
+	public boolean addToPath(Collection<File> path, String name) {
 		return addToPath(path, new File(name), true);
 	}
 
@@ -94,7 +94,7 @@ public final class ConfigUtil {
 		return addToPath(path, new File(name), required);
 	}
 
-	protected boolean addToPath(Collection<File> path, File f, boolean required) {
+	public boolean addToPath(Collection<File> path, File f, boolean required) {
 		final boolean exists = f.exists();
 		if (!exists) {
 			if (required) {
