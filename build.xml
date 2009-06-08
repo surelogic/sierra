@@ -62,8 +62,12 @@
 	</target>
 	  
 	<target name="zip">
+	  <zip destfile="./lib/tools/findbugs/com.surelogic.sierra.fb.jar" basedir="./lib/tools/findbugs/bin"/>
+	  <zip destfile="./lib/tools/pmd/com.surelogic.sierra.pmd.jar" basedir="./lib/tools/pmd/bin"/>
+	  <zip destfile="./lib/tools/reckoner/com.surelogic.sierra.tool.jar" basedir="./lib/tools/reckoner/bin"/>
+
 	  <zip destfile="./sierra-ant.zip" basedir=".."
-	       includes="sierra-ant/lib/**/*.jar, sierra-ant/README.txt, sierra-ant/build-tomcat.xml, sierra-ant/test-build.xml"/>
+	       includes="sierra-ant/lib/**/*.jar, sierra-ant/lib/**/*.MF, sierra-ant/README.txt"/>
 	</target>
 </project>
 	  
