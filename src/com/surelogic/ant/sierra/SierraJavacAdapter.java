@@ -75,21 +75,22 @@ public class SierraJavacAdapter extends DefaultCompilerAdapter {
 			throw new BuildException("No value for home");
 		}
 		// C:/work/workspace/sierra-ant
-		String libHome = scan.getHome()+"/lib/";
+		final String libHome = scan.getHome()+"/lib/";
 		if (!new File(libHome).exists()) {
 			throw new BuildException("No lib subdirectory under "+libHome);
 		}		
 		System.setProperty(ToolUtil.TOOLS_PATH_PROP_NAME, libHome);		
+		final String toolsDir = libHome+"tools/";
 		config.setExcludedToolsList("checkstyle");
-		config.setToolsDirectory(new File(libHome+"reckoner"));
+		config.setToolsDirectory(new File(toolsDir+"reckoner"));
 		config.putPluginDir(SierraToolConstants.COMMON_PLUGIN_ID,
 				libHome+"common.jar");
 		config.putPluginDir(SierraToolConstants.MESSAGE_PLUGIN_ID,
 				libHome+"sierra-message.jar");
 		config.putPluginDir(SierraToolConstants.PMD_PLUGIN_ID,
-				libHome+"pmd");
+				toolsDir+"pmd");
 		config.putPluginDir(SierraToolConstants.FB_PLUGIN_ID,
-				libHome+"findbugs");
+				toolsDir+"findbugs");
 		config.putPluginDir(SierraToolConstants.TOOL_PLUGIN_ID,
 				libHome+"sierra-tool.jar");		
 		config.putPluginDir(SierraToolConstants.JUNIT4_PLUGIN_ID,
