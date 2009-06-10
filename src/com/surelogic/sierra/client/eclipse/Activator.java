@@ -168,7 +168,7 @@ public final class Activator extends AbstractUIPlugin implements IRunnableWithPr
 		return f_plugin;
 	}
 
-	private File getSelectionSaveFile() {
+	public File getSelectionSaveFile() {
 		final IPath pluginState = Activator.getDefault().getStateLocation();
 		return new File(pluginState.toOSString() + File.separator
 				+ "selections.xml");

@@ -103,11 +103,12 @@ public class SierraPreferencePage extends AbstractCommonPreferencePage {
 
 				SLJob moveJob = FileUtility.moveDataDirectory(existing,
 						destination, moveOldToNew, new DisconnectDatabase(),
-						new BootDatabase());
+						null);
 				SLStatus result = moveJob.run(new NullSLProgressMonitor());
 				if (result.getSeverity() == SLSeverity.OK) {
 					PreferenceConstants.setSierraDataDirectory(destination);
 					updateDataDirectory();
+					new BootDatabase().run(new NullSLProgressMonitor());
 				} else {
 					IStatus status = SLEclipseStatusUtility.convert(result);
 					ErrorDialogUtility.open(change.getShell(), I18N
