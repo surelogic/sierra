@@ -36,7 +36,7 @@ import com.surelogic.common.jobs.NullSLProgressMonitor;
 import com.surelogic.common.jobs.SLJob;
 import com.surelogic.common.jobs.SLSeverity;
 import com.surelogic.common.jobs.SLStatus;
-import com.surelogic.sierra.client.eclipse.jobs.DisconnectDatabase;
+import com.surelogic.sierra.client.eclipse.jobs.*;
 import com.surelogic.sierra.client.eclipse.views.adhoc.AdHocDataSource;
 import com.surelogic.sierra.tool.message.Importance;
 
@@ -103,7 +103,7 @@ public class SierraPreferencePage extends AbstractCommonPreferencePage {
 
 				SLJob moveJob = FileUtility.moveDataDirectory(existing,
 						destination, moveOldToNew, new DisconnectDatabase(),
-						null);
+						new BootDatabase());
 				SLStatus result = moveJob.run(new NullSLProgressMonitor());
 				if (result.getSeverity() == SLSeverity.OK) {
 					PreferenceConstants.setSierraDataDirectory(destination);

@@ -1,0 +1,32 @@
+package com.surelogic.sierra.client.eclipse.jobs;
+
+import com.surelogic.common.jobs.AbstractSLJob;
+import com.surelogic.common.jobs.SLProgressMonitor;
+import com.surelogic.common.jobs.SLStatus;
+import com.surelogic.sierra.client.eclipse.Data;
+
+/**
+ * This job is used to boot the Sierra database under the data directory.
+ */
+public class BootDatabase extends AbstractSLJob {
+	public BootDatabase() {
+		super("Boot the Sierra database");
+	}
+
+	public SLStatus run(SLProgressMonitor monitor) {
+		monitor.begin();
+		try {
+			/*
+			 * Disconnect from the connected Sierra database.
+			 */
+			try {
+				Data.getInstance().bootAndCheckSchema();
+			} catch (final Exception e) {
+				return SLStatus.createErrorStatus(e);
+			}
+		} finally {
+			monitor.done();
+		}
+		return SLStatus.OK_STATUS;
+	}
+}
