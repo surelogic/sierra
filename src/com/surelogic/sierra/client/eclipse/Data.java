@@ -38,10 +38,17 @@ public final class Data extends DerbyConnection {
 			final File dataDir = PreferenceConstants.getSierraDataDirectory();
 			final File dbDir = new File(dataDir, FileUtility.DB_PATH_FRAGMENT);
 			f_dataPath = dbDir.getAbsolutePath();
+			System.out.println(f_dataPath);
 		}
 		return f_dataPath;
 	}
 
+	@Override
+	public synchronized void shutdown() {
+		super.shutdown();
+		f_dataPath = null;
+	}
+	
 	@Override
 	protected String getSchemaName() {
 		return "SIERRAV1";
