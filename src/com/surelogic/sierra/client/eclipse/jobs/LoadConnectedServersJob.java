@@ -18,7 +18,7 @@ import com.surelogic.sierra.jdbc.settings.ServerLocations;
  * @author nathan
  * 
  */
-public class LoadConnectedServersJob extends DatabaseJob {
+public class LoadConnectedServersJob extends AbstractSierraDatabaseJob {
 
 	private final Map<String, String> f_passwords;
 

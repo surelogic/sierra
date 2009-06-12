@@ -15,7 +15,7 @@ import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.jdbc.settings.ConnectedServer;
 import com.surelogic.sierra.jdbc.settings.ServerLocations;
 
-public class UpdateConnectedServersJob extends DatabaseJob {
+public class UpdateConnectedServersJob extends AbstractSierraDatabaseJob {
 
 	private final Map<ConnectedServer, Collection<String>> f_servers;
 

@@ -26,6 +26,7 @@ import com.surelogic.common.eclipse.logging.SLEclipseStatusUtility;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.jdbc.NullDBTransaction;
 import com.surelogic.sierra.client.eclipse.Data;
+import com.surelogic.sierra.client.eclipse.jobs.AbstractSierraDatabaseJob;
 import com.surelogic.sierra.jdbc.finding.AuditDetail;
 import com.surelogic.sierra.jdbc.finding.SynchDetail;
 import com.surelogic.sierra.jdbc.finding.SynchOverview;
@@ -172,7 +173,7 @@ public class SynchronizeDetailsMediator extends AbstractSierraViewMediator {
 			};
 			job.schedule();
 		} else {
-			final Job job = new DatabaseJob(
+			final Job job = new AbstractSierraDatabaseJob(
 					"Updating reading events from server synchronize", Job.INTERACTIVE) {
 				@Override
 				protected IStatus run(IProgressMonitor monitor) {

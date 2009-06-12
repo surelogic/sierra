@@ -56,7 +56,7 @@ public class SynchronizeProjectsJob extends AbstractServerProjectJob {
 				+ server.getName() + "'", server, null, strategy);
 		f_force = force;
 		f_projects = projects;
-		setRule(DatabaseAccessRule.getInstance());
+		setRule(DatabaseAccessRule.getInstance(JobConstants.ACCESS_KEY));
 	}
 
 	@Override

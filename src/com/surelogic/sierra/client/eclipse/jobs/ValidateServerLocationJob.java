@@ -25,7 +25,7 @@ import com.surelogic.sierra.tool.message.SierraServiceClientException;
  * validates that the client can talk to a particular team server and
  * synchronizes data.
  */
-public class ValidateServerLocationJob extends DatabaseJob {
+public class ValidateServerLocationJob extends AbstractSierraDatabaseJob {
 
 	private final ServerLocation f_loc;
 	private final boolean f_savePass;

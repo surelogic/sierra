@@ -67,6 +67,7 @@ import com.surelogic.sierra.client.eclipse.dialogs.ConnectProjectsDialog;
 import com.surelogic.sierra.client.eclipse.dialogs.PromptForFilterNameDialog;
 import com.surelogic.sierra.client.eclipse.dialogs.ServerLocationDialog;
 import com.surelogic.sierra.client.eclipse.dialogs.ServerSelectionDialog;
+import com.surelogic.sierra.client.eclipse.jobs.AbstractSierraDatabaseJob;
 import com.surelogic.sierra.client.eclipse.jobs.DeleteProjectDataJob;
 import com.surelogic.sierra.client.eclipse.jobs.OverwriteLocalScanFilterJob;
 import com.surelogic.sierra.client.eclipse.jobs.SendScanFiltersJob;
@@ -984,7 +985,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 		});
 		final long now = startingUpdate();
 
-		final Job job = new DatabaseJob("Updating project status",
+		final Job job = new AbstractSierraDatabaseJob("Updating project status",
 				Job.INTERACTIVE) {
 			@Override
 			protected IStatus run(final IProgressMonitor monitor) {

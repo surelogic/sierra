@@ -34,6 +34,7 @@ import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.jdbc.ConnectionQuery;
 import com.surelogic.common.jdbc.Query;
 import com.surelogic.sierra.client.eclipse.Data;
+import com.surelogic.sierra.client.eclipse.jobs.AbstractSierraDatabaseJob;
 import com.surelogic.sierra.client.eclipse.views.AbstractSierraViewMediator;
 import com.surelogic.sierra.client.eclipse.views.FindingDetailsView;
 import com.surelogic.sierra.client.eclipse.views.IViewUpdater;
@@ -191,7 +192,7 @@ public class JSureFindingDetailsMediator extends AbstractSierraViewMediator
 		final Long findingIdObj = detail.getFindingId();
 		f_finding = detail;
 
-		final Job job = new DatabaseJob("Querying JSure details of finding "
+		final Job job = new AbstractSierraDatabaseJob("Querying JSure details of finding "
 				+ findingIdObj, Job.INTERACTIVE) {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {

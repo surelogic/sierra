@@ -26,7 +26,7 @@ import com.surelogic.sierra.tool.message.InvalidLoginException;
 import com.surelogic.sierra.tool.message.ServerLocation;
 import com.surelogic.sierra.tool.message.SierraServiceClientException;
 
-public final class GetCategoriesJob extends DatabaseJob {
+public final class GetCategoriesJob extends AbstractSierraDatabaseJob {
 	private final ServerFailureReport f_strategy;
 	private ConnectedServer f_server;
 

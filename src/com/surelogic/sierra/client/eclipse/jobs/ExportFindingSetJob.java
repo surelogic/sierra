@@ -17,7 +17,7 @@ import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.tool.message.Importance;
 
-public abstract class ExportFindingSetJob extends DatabaseJob {
+public abstract class ExportFindingSetJob extends AbstractSierraDatabaseJob {
 
 	protected final String f_listOfFindingsQuery;
 	protected final File f_file;

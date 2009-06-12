@@ -16,7 +16,7 @@ import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.jdbc.settings.SettingQueries;
 import com.surelogic.sierra.tool.message.ScanFilter;
 
-public final class OverwriteLocalScanFilterJob extends DatabaseJob {
+public final class OverwriteLocalScanFilterJob extends AbstractSierraDatabaseJob {
 	private static final int ERROR_NUM = 48; // FIX
 	private final ScanFilter f_filter;
 	

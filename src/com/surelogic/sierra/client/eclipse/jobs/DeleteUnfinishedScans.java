@@ -10,7 +10,7 @@ import com.surelogic.common.jobs.SLProgressMonitor;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.jdbc.scan.ScanQueries;
 
-public class DeleteUnfinishedScans extends DatabaseJob {
+public class DeleteUnfinishedScans extends AbstractSierraDatabaseJob {
 
 	public DeleteUnfinishedScans() {
 		super("Deleting unfinished scans.");

@@ -59,6 +59,7 @@ import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.Utility;
 import com.surelogic.sierra.client.eclipse.dialogs.ExportFindingSetDialog;
+import com.surelogic.sierra.client.eclipse.jobs.AbstractSierraDatabaseJob;
 import com.surelogic.sierra.client.eclipse.jsure.JSureUtil;
 import com.surelogic.sierra.client.eclipse.model.FindingMutationUtility;
 import com.surelogic.sierra.client.eclipse.model.selection.Column;
@@ -153,7 +154,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 					getSelection().removeObserver(MListOfFindingsColumn.this);
 				} else {
 					final long now = startingUpdate();
-					final Job job = new DatabaseJob("Refresh list of findings",
+					final Job job = new AbstractSierraDatabaseJob("Refresh list of findings",
 							Job.INTERACTIVE) {
 						@Override
 						protected IStatus run(final IProgressMonitor monitor) {

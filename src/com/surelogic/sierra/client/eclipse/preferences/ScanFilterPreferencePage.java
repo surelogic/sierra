@@ -42,7 +42,6 @@ import org.eclipse.ui.progress.UIJob;
 
 import com.surelogic.common.eclipse.HTMLPrinter;
 import com.surelogic.common.eclipse.dialogs.ErrorDialogUtility;
-import com.surelogic.common.eclipse.jobs.DatabaseJob;
 import com.surelogic.common.eclipse.jobs.SLUIJob;
 import com.surelogic.common.eclipse.logging.SLEclipseStatusUtility;
 import com.surelogic.common.i18n.I18N;
@@ -56,6 +55,7 @@ import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Activator;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.StyleSheetHelper;
+import com.surelogic.sierra.client.eclipse.jobs.AbstractSierraDatabaseJob;
 import com.surelogic.sierra.jdbc.settings.SettingQueries;
 
 public class ScanFilterPreferencePage extends PreferencePage implements
@@ -148,7 +148,7 @@ public class ScanFilterPreferencePage extends PreferencePage implements
 						"IO failure writing " + output + " filter set file", e);
 			}
 		}
-		final Job job = new DatabaseJob("Updating Global Sierra Settings",
+		final Job job = new AbstractSierraDatabaseJob("Updating Global Sierra Settings",
 				Job.INTERACTIVE) {
 			@Override
 			protected IStatus run(final IProgressMonitor monitor) {
@@ -197,7 +197,7 @@ public class ScanFilterPreferencePage extends PreferencePage implements
 						 */
 						if (!findingTypeId.equals(f_selectedFindingTypeId)) {
 							f_selectedFindingTypeId = findingTypeId;
-							final Job job = new DatabaseJob(
+							final Job job = new AbstractSierraDatabaseJob(
 									"Querying Sierra Artifact Type Description",
 									Job.INTERACTIVE) {
 								@Override
@@ -274,7 +274,7 @@ public class ScanFilterPreferencePage extends PreferencePage implements
 		}
 		clearHTMLDescription();
 
-		final Job job = new DatabaseJob("Querying Sierra Artifacts") {
+		final Job job = new AbstractSierraDatabaseJob("Querying Sierra Artifacts") {
 			@Override
 			protected IStatus run(final IProgressMonitor monitor) {
 				monitor.beginTask("Querying Sierra Artifacts",

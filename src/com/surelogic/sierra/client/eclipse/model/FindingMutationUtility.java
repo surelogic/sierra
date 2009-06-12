@@ -11,12 +11,12 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.progress.UIJob;
 
 import com.surelogic.common.eclipse.SWTUtility;
-import com.surelogic.common.eclipse.jobs.DatabaseJob;
 import com.surelogic.common.eclipse.jobs.SLProgressMonitorWrapper;
 import com.surelogic.common.eclipse.logging.SLEclipseStatusUtility;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.jobs.SLProgressMonitor;
 import com.surelogic.sierra.client.eclipse.Data;
+import com.surelogic.sierra.client.eclipse.jobs.AbstractSierraDatabaseJob;
 import com.surelogic.sierra.jdbc.finding.ClientFindingManager;
 import com.surelogic.sierra.tool.message.Importance;
 
@@ -26,7 +26,7 @@ public final class FindingMutationUtility {
 		// no instances
 	}
 
-	static abstract class MutationJob extends DatabaseJob {
+	static abstract class MutationJob extends AbstractSierraDatabaseJob {
 		public MutationJob(final String name) {
 			super(name, Job.INTERACTIVE);
 			setSystem(false);

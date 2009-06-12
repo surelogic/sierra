@@ -15,9 +15,9 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 
-import com.surelogic.common.eclipse.jobs.DatabaseJob;
 import com.surelogic.common.eclipse.logging.SLEclipseStatusUtility;
 import com.surelogic.common.i18n.I18N;
+import com.surelogic.sierra.client.eclipse.jobs.AbstractSierraDatabaseJob;
 import com.surelogic.sierra.client.eclipse.model.AbstractDatabaseObserver;
 import com.surelogic.sierra.client.eclipse.model.DatabaseHub;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
@@ -419,7 +419,7 @@ public final class Selection extends AbstractDatabaseObserver {
 		 * The database has changed. Refresh this selection if it has any
 		 * filters.
 		 */
-		final Job job = new DatabaseJob("Refresh selection", Job.INTERACTIVE) {
+		final Job job = new AbstractSierraDatabaseJob("Refresh selection", Job.INTERACTIVE) {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
@@ -445,7 +445,7 @@ public final class Selection extends AbstractDatabaseObserver {
 	 */
 	public void refreshFilters() {
 		final long now = startingUpdate();
-		final Job job = new DatabaseJob("Refresh selection", Job.INTERACTIVE) {
+		final Job job = new AbstractSierraDatabaseJob("Refresh selection", Job.INTERACTIVE) {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
@@ -493,7 +493,7 @@ public final class Selection extends AbstractDatabaseObserver {
 	 *            a filter that is part of this selection.
 	 */
 	void filterChanged(final Filter changedFilter) {
-		final Job job = new DatabaseJob("Refresh filter", Job.INTERACTIVE) {
+		final Job job = new AbstractSierraDatabaseJob("Refresh filter", Job.INTERACTIVE) {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {

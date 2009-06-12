@@ -61,7 +61,7 @@ public class SynchronizeJob extends AbstractServerProjectJob {
 		super(family, "Synchronizing BugLink data for server '"
 				+ server.getName() + "'", server, null, strategy);
 		f_force = force;
-		setRule(DatabaseAccessRule.getInstance());
+		setRule(DatabaseAccessRule.getInstance(JobConstants.ACCESS_KEY));
 	}
 
 	@Override

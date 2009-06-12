@@ -55,7 +55,7 @@ public class SynchronizeProjectJob extends AbstractServerProjectJob {
 		super(family, "Synchronizing Sierra data for project '" + projectName
 				+ "'", server, projectName, strategy);
 		f_force = force;
-		setRule(DatabaseAccessRule.getInstance());
+		setRule(DatabaseAccessRule.getInstance(JobConstants.ACCESS_KEY));
 	}
 
 	@Override

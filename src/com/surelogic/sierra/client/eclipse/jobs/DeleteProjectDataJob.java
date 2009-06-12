@@ -48,7 +48,7 @@ public final class DeleteProjectDataJob implements IRunnableWithProgress {
 		try {
 			PlatformUI.getWorkbench().getProgressService().runInUI(
 					PlatformUI.getWorkbench().getActiveWorkbenchWindow(), this,
-					DatabaseAccessRule.getInstance());
+					DatabaseAccessRule.getInstance(JobConstants.ACCESS_KEY));
 		} catch (Exception e) {
 			SLLogger.getLogger().log(Level.SEVERE, f_jobFailureMsg, e);
 		}

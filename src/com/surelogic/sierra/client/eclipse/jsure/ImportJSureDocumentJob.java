@@ -13,6 +13,7 @@ import com.surelogic.common.eclipse.jobs.SLProgressMonitorWrapper;
 import com.surelogic.common.jobs.SLProgressMonitor;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.jsure.xml.JSureXMLReader;
+import com.surelogic.sierra.client.eclipse.jobs.AbstractSierraDatabaseJob;
 import com.surelogic.sierra.client.eclipse.jobs.ScanDocumentUtility;
 import com.surelogic.sierra.client.eclipse.model.*;
 import com.surelogic.sierra.jdbc.finding.ClientFindingManager;
@@ -20,7 +21,7 @@ import com.surelogic.sierra.jdbc.scan.ScanManager;
 import com.surelogic.sierra.jdbc.tool.FindingFilter;
 import com.surelogic.sierra.tool.message.*;
 
-public class ImportJSureDocumentJob extends DatabaseJob {
+public class ImportJSureDocumentJob extends AbstractSierraDatabaseJob {
 	private static final Logger log = SLLogger
 			.getLoggerFor(ImportJSureDocumentJob.class);
 

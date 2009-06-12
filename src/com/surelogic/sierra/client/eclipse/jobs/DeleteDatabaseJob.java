@@ -12,7 +12,7 @@ import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.model.ConnectedServerManager;
 import com.surelogic.sierra.client.eclipse.model.DatabaseHub;
 
-public final class DeleteDatabaseJob extends DatabaseJob {
+public final class DeleteDatabaseJob extends AbstractSierraDatabaseJob {
 
 	public DeleteDatabaseJob() {
 		super("Deleting Sierra database.");

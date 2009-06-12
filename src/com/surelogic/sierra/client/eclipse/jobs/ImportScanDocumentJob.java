@@ -12,7 +12,7 @@ import com.surelogic.common.eclipse.jobs.DatabaseJob;
 import com.surelogic.common.eclipse.jobs.SLProgressMonitorWrapper;
 import com.surelogic.common.jobs.SLProgressMonitor;
 
-public final class ImportScanDocumentJob extends DatabaseJob {
+public final class ImportScanDocumentJob extends AbstractSierraDatabaseJob {
 
 	private final File f_scanDocument;
 	private final String projectName;

@@ -17,7 +17,6 @@ import org.eclipse.jdt.core.IJavaProject;
 import com.surelogic.common.eclipse.BalloonUtility;
 import com.surelogic.common.eclipse.JDTUtility;
 import com.surelogic.common.eclipse.dialogs.ErrorDialogUtility;
-import com.surelogic.common.eclipse.jobs.DatabaseJob;
 import com.surelogic.common.eclipse.logging.SLEclipseStatusUtility;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.jdbc.DBQuery;
@@ -28,6 +27,7 @@ import com.surelogic.common.jobs.SLStatus;
 import com.surelogic.common.license.SLLicenseUtility;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;
+import com.surelogic.sierra.client.eclipse.jobs.AbstractSierraDatabaseJob;
 import com.surelogic.sierra.jdbc.scan.ScanInfo;
 import com.surelogic.sierra.jdbc.scan.Scans;
 
@@ -64,7 +64,7 @@ public class ScanChangedProjectsAction extends
 			return;
 		}
 
-		new DatabaseJob("Checking last scan times") {
+		new AbstractSierraDatabaseJob("Checking last scan times") {
 			@Override
 			protected IStatus run(final IProgressMonitor monitor) {
 				monitor.beginTask(getName(), projects.size() + 1);

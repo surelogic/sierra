@@ -23,6 +23,7 @@ import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.jdbc.NullDBTransaction;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.actions.SynchronizeProjectDialogAction;
+import com.surelogic.sierra.client.eclipse.jobs.AbstractSierraDatabaseJob;
 import com.surelogic.sierra.client.eclipse.model.Projects;
 import com.surelogic.sierra.client.eclipse.model.ConnectedServerManager;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
@@ -99,7 +100,7 @@ public final class SynchronizeMediator extends AbstractSierraViewMediator {
 	}
 
 	private void asyncUpdateContents() {
-		final Job job = new DatabaseJob(
+		final Job job = new AbstractSierraDatabaseJob(
 				"Updating set of server synchronization events", Job.INTERACTIVE) {
 			@Override
 			protected IStatus run(final IProgressMonitor monitor) {

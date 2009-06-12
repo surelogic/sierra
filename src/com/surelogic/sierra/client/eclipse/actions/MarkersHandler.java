@@ -41,6 +41,7 @@ import com.surelogic.common.eclipse.jobs.SLUIJob;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;
+import com.surelogic.sierra.client.eclipse.jobs.AbstractSierraDatabaseJob;
 import com.surelogic.sierra.client.eclipse.model.AbstractDatabaseObserver;
 import com.surelogic.sierra.client.eclipse.model.DatabaseHub;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
@@ -441,7 +442,7 @@ public final class MarkersHandler extends AbstractDatabaseObserver implements
 		}
 	}
 
-	private class QueryMarkersJob extends DatabaseJob {
+	private class QueryMarkersJob extends AbstractSierraDatabaseJob {
 
 		private List<FindingOverview> f_overview;
 		private final String f_projectName;

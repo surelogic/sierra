@@ -52,7 +52,6 @@ import com.surelogic.common.eclipse.JDTUtility;
 import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.common.eclipse.TextEditedListener;
 import com.surelogic.common.eclipse.ViewUtility;
-import com.surelogic.common.eclipse.jobs.DatabaseJob;
 import com.surelogic.common.eclipse.jobs.SLUIJob;
 import com.surelogic.common.eclipse.logging.SLEclipseStatusUtility;
 import com.surelogic.common.i18n.I18N;
@@ -60,6 +59,7 @@ import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.StyleSheetHelper;
 import com.surelogic.sierra.client.eclipse.Utility;
+import com.surelogic.sierra.client.eclipse.jobs.AbstractSierraDatabaseJob;
 import com.surelogic.sierra.client.eclipse.jsure.JSureFindingDetailsView;
 import com.surelogic.sierra.client.eclipse.model.FindingMutationUtility;
 import com.surelogic.sierra.client.eclipse.views.selection.FindingsSelectionView;
@@ -246,7 +246,7 @@ public class FindingDetailsMediator extends AbstractSierraViewMediator
 		 * long lastId = findingQueryInProgress.getAndSet(findingId); if (lastId
 		 * == findingId) { return; }
 		 */
-		final Job job = new DatabaseJob("Querying details of finding "
+		final Job job = new AbstractSierraDatabaseJob("Querying details of finding "
 				+ findingId, Job.INTERACTIVE) {
 			@Override
 			protected IStatus run(final IProgressMonitor monitor) {
