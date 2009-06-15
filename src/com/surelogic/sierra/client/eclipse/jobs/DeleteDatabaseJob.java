@@ -1,10 +1,11 @@
 package com.surelogic.sierra.client.eclipse.jobs;
 
+import java.util.logging.Level;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
-import com.surelogic.common.eclipse.jobs.DatabaseJob;
 import com.surelogic.common.eclipse.jobs.SLProgressMonitorWrapper;
 import com.surelogic.common.jobs.SLProgressMonitor;
 import com.surelogic.common.logging.SLLogger;
@@ -27,6 +28,12 @@ public final class DeleteDatabaseJob extends AbstractSierraDatabaseJob {
 		ConnectedServerManager.getInstance().clear();
 		// Projects.getInstance().clear();
 		Data.getInstance().destroy();
+		try {
+			Data.getInstance().bootAndCheckSchema();
+		} catch (Exception e) {
+			SLLogger.getLogger().log(Level.SEVERE, "Unable to re-boot database", e);
+			return Status.CANCEL_STATUS; // FIX
+		}
 		DatabaseHub.getInstance().notifyDatabaseDeleted();
 		SLLogger.getLogger().info("The client database has been deleted");
 		return Status.OK_STATUS;
