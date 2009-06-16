@@ -1,8 +1,6 @@
 package com.surelogic.sierra.jdbc.scan;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -140,10 +138,40 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
 			conn.commit();
 			monitor.worked(1);
 		} catch (final SQLException e) {
+			//dumpTables();
+			
 			monitor.subTask("Rolling back ...");
 			quietlyRollback();
 			monitor.worked(1);
 			throw new ScanPersistenceException(e);
+		}
+	}
+
+	private void dumpTables() {
+		try {
+			final Statement st = conn.createStatement();
+			dumpTable(st, "select * from metric_cu");
+			dumpTable(st, "select * from compilation_unit");
+			System.out.println();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void dumpTable(Statement st, String q) throws SQLException {
+		System.out.println(q);
+		final ResultSet rs = st.executeQuery(q);
+		while (rs.next()) {
+			StringBuilder sb = new StringBuilder("\t");
+			final int num = rs.getMetaData().getColumnCount();
+			for(int i=1; i<=num; i++) {
+				try {
+					sb.append(rs.getString(i)).append(", ");
+				} catch (SQLException e) {
+					sb.append(rs.getLong(i)).append(", ");
+				}
+			}
+			System.out.println(sb);
 		}
 	}
 
