@@ -176,37 +176,45 @@ public final class ConfigGenerator {
 		for (ICompilationUnit c : compilationUnits) {
 			try {
 				IType[] types = c.getAllTypes();
-				if (types.length > 0) {
+				String packageName = SLUtility.JAVA_DEFAULT_PACKAGE;
+				if (types.length > 0 || "package-info.java".equals(c.getElementName())) {
+					for(org.eclipse.jdt.core.IPackageDeclaration decl : c.getPackageDeclarations()) {
+						packageName = decl.getElementName();
+						break;
+					}
+					/*
 					String qualifiedName = types[0].getFullyQualifiedName();
 
 					int lastPeriod = qualifiedName.lastIndexOf('.');
-
-					String packageName = SLUtility.JAVA_DEFAULT_PACKAGE;
 					if (lastPeriod != -1) {
 						packageName = qualifiedName.substring(0, lastPeriod);
 					}
-
-					Set<String> packageInMap = packageCompilationUnitMap
-							.keySet();
-					List<String> compilationUnitsHolder;
-					if (packageInMap.contains(packageName)) {
-						compilationUnitsHolder = packageCompilationUnitMap
-								.get(packageName);
-					} else {
-						compilationUnitsHolder = new ArrayList<String>();
-
-					}
-
-					String holder = c.getElementName();
-
-					if (holder.endsWith(".java")) {
-						holder = holder.substring(0, holder.length() - 5);
-					}
-
-					compilationUnitsHolder.add(holder);
-					packageCompilationUnitMap.put(packageName,
-							compilationUnitsHolder);
+					*/
+				} else {
+					SLLogger.getLogger().warning("No package for "+c.getElementName());
+					continue;
 				}
+					
+				Set<String> packageInMap = packageCompilationUnitMap
+				.keySet();
+				List<String> compilationUnitsHolder;
+				if (packageInMap.contains(packageName)) {
+					compilationUnitsHolder = packageCompilationUnitMap
+					.get(packageName);
+				} else {
+					compilationUnitsHolder = new ArrayList<String>();
+
+				}
+
+				String holder = c.getElementName();
+
+				if (holder.endsWith(".java")) {
+					holder = holder.substring(0, holder.length() - 5);
+				}
+
+				compilationUnitsHolder.add(holder);
+				packageCompilationUnitMap.put(packageName,
+						compilationUnitsHolder);
 			} catch (JavaModelException e) {
 				SLLogger.getLogger().log(Level.SEVERE,
 						"Error when getting compilation unit types", e);
