@@ -77,7 +77,10 @@ public class FindBugsFindingTypeCreator extends AbstractFindingTypeCreator {
 			for(Map.Entry<String,List<String>> e : category2types.entrySet()) {
 				System.out.println("Category: "+e.getKey());
 				for(String mnem : e.getValue()) {
-					System.out.println("    <findingType>"+mnem+"</findingType>");
+					System.out.println("        <filter>");
+					System.out.println("            <type>"+mnem+"</type>");
+					System.out.println("            <filtered>false</filtered>");
+					System.out.println("        </filter>");
 				}
 			}	
 		}
