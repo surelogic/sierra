@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.eclipse.core.resources.WorkspaceJob;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -102,6 +102,10 @@ public abstract class AbstractScan<T extends IJavaElement> {
 				final boolean saved = trySavingEditors();
 				new WorkspaceJob(
 						"Checking if source code is built and compiles") {
+					{ 
+						IWorkspace workspace = ResourcesPlugin.getWorkspace();
+						setRule(workspace.getRoot());
+					}
 					@Override
 					public IStatus runInWorkspace(IProgressMonitor monitor)
 							throws CoreException {
