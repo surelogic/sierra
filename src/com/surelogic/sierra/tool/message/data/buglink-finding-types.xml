@@ -712,7 +712,7 @@ creating instances of <code>Double</code>, <code>Float</code>,
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-  <findingType>
+  <!--findingType>
     <id>DM_STRING_EMPTY_EQUALS</id>
     <artifact tool="FindBugs" mnemonic="DM_STRING_EMPTY_EQUALS"/>
     <name>Use length() or isEmpty() to check if a String is empty</name>
@@ -728,7 +728,7 @@ Change <code>s.equals("")</code> or <code>"".equals(s)</code> to
 was added to the String class which will directly answer the query.
 Thus in the example above use <code>s.isEmpty()</code>.</p>]]>
     </info>
-  </findingType>
+  </findingType-->
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
     <id>DM_CONVERT_CASE</id>
@@ -10036,6 +10036,7 @@ public void log(String msg) {
   <findingType>
     <id>AvoidRethrowingException</id>
     <artifact tool="PMD" mnemonic="AvoidRethrowingException"/>
+    <artifact tool="PMD" mnemonic="AvoidThrowingNewInstanceOfSameException"/>    
     <name>Avoid rethrowing</name>
     <shortMessage>This code contains a catch block that seems to merely rethrow a caught exception. Consider removing this catch block.</shortMessage>
     <info>
@@ -10049,8 +10050,9 @@ block.</p>
 void bar() {
   try {
     // do something
-  }  catch (NullPointerException e) {
+  }  catch (NullPointerException e) {    
     throw e;
+    // or throw new NullPointerException(e);
   }
 }
 </pre>
@@ -11033,4 +11035,208 @@ has a superior analysis or if it is a tool diagnostic report.]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+  <findingType>
+    <id>NOISE_NULL_DEREFERENCE</id>
+    <artifact tool="FindBugs"	mnemonic="NOISE_NULL_DEREFERENCE"/>
+    <shortMessage>Bogus warning about a null pointer dereference</shortMessage>
+    <info>
+      <![CDATA[
+      
+	<p>Bogus warning.</p>
+
+    ]]>
+    </info>
+    <name>Bogus warning about a null pointer dereference</name>
+  </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+  <findingType>
+    <id>NOISE_METHOD_CALL</id>
+    <artifact tool="FindBugs"	mnemonic="NOISE_METHOD_CALL"/>
+    <shortMessage>Bogus warning about a method call</shortMessage>
+    <info>
+      <![CDATA[
+      
+	<p>Bogus warning.</p>
+
+    ]]>
+    </info>
+    <name>Bogus warning about a method call</name>
+  </findingType>
+  <findingType>
+    <id>NOISE_FIELD_REFERENCE</id>
+    <artifact tool="FindBugs"	mnemonic="NOISE_FIELD_REFERENCE"/>
+    <shortMessage>Bogus warning about a field reference</shortMessage>
+    <info>
+      <![CDATA[
+      
+	<p>Bogus warning.</p>
+
+    ]]>
+    </info>
+    <name>Bogus warning about a field reference</name>
+  </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+  <findingType>
+    <id>NOISE_OPERATION</id>
+    <artifact tool="FindBugs"	mnemonic="NOISE_OPERATION"/>
+    <shortMessage>Bogus warning about an operation</shortMessage>
+    <info>
+      <![CDATA[
+      
+	<p>Bogus warning.</p>
+
+    ]]>
+    </info>
+    <name>Bogus warning about an operation</name>
+  </findingType>
+  <findingType>
+    <id>SF_SWITCH_NO_DEFAULT</id>
+    <artifact tool="FindBugs"	mnemonic="SF_SWITCH_NO_DEFAULT"/>
+    <shortMessage>Switch statement found where default case is missing</shortMessage>
+    <info>
+      <![CDATA[
+
+  <p> This method contains a switch statement where default case is missing.
+  Usually you need to provide a default case.</p>
+
+    ]]>
+    </info>
+    <name>Switch statement found where default case is missing</name>
+  </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+  <findingType>
+    <id>SF_DEAD_STORE_DUE_TO_SWITCH_FALLTHROUGH_TO_THROW</id>
+    <artifact tool="FindBugs"	mnemonic="SF_DEAD_STORE_DUE_TO_SWITCH_FALLTHROUGH_TO_THROW"/>
+    <shortMessage>Dead store due to switch statement fall through to throw</shortMessage>
+    <info>
+      <![CDATA[
+
+  <p> A value stored in the previous switch case is ignored here due to a switch fall through to a place where
+	an exception is thrown. It is likely that
+	you forgot to put a break or return at the end of the previous case.
+</p>
+
+    ]]>
+    </info>
+    <name>Dead store due to switch statement fall through to throw</name>
+  </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+  <findingType>
+    <id>INT_VACUOUS_BIT_OPERATION</id>
+    <artifact tool="FindBugs"	mnemonic="INT_VACUOUS_BIT_OPERATION"/>
+    <shortMessage>Vacuous bit mask operation on integer value</shortMessage>
+    <info>
+      <![CDATA[
+
+<p> This is an integer bit operation (and, or, or exclusive or) that doesn't do any useful work
+(e.g., <code>v & 0xffffffff</code>).
+
+</p>
+
+    ]]>
+    </info>
+    <name>Vacuous bit mask operation on integer value</name>
+  </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+  <findingType>
+    <id>FB_UNEXPECTED_WARNING</id>
+    <artifact tool="FindBugs"	mnemonic="FB_UNEXPECTED_WARNING"/>
+    <shortMessage>Unexpected/undesired warning from FindBugs</shortMessage>
+    <info>
+      <![CDATA[
+		  
+		  <p>FindBugs generated a warning that, according to a @NoWarning annotated,
+			is unexpected or undesired</p>
+		  
+	  ]]>
+    </info>
+    <name>Unexpected/undesired warning from FindBugs</name>
+  </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+  <findingType>
+    <id>FB_MISSING_EXPECTED_WARNING</id>
+    <artifact tool="FindBugs"	mnemonic="FB_MISSING_EXPECTED_WARNING"/>
+    <shortMessage>Missing expected or desired warning from FindBugs</shortMessage>
+    <info>
+      <![CDATA[
+		  
+		  <p>FindBugs didn't generate generated a warning that, according to a @ExpectedWarning annotated,
+			is expected or desired</p>
+		  
+	  ]]>
+    </info>
+    <name>Missing expected or desired warning from FindBugs</name>
+  </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+
+  <findingType>
+    <id>CallSuperFirst</id>
+    <artifact tool="PMD"	mnemonic="CallSuperFirst"/>
+    <shortMessage>super should be called at the start of the method</shortMessage>
+    <info>
+      <![CDATA[
+		  
+		  <p>super() should be called at the start of the method</p>
+		  
+	  ]]>
+    </info>
+    <name>super should be called at the start of the method</name>
+  </findingType>
+    <findingType>
+    <id>CallSuperLast</id>
+    <artifact tool="PMD"	mnemonic="CallSuperLast"/>
+    <shortMessage>super should be called at the end of the method</shortMessage>
+    <info>
+      <![CDATA[
+		  
+		  <p>super() should be called at the end of the method</p>
+		  
+	  ]]>
+    </info>
+    <name>super should be called at the end of the method</name>
+  </findingType>
+  <findingType>
+    <id>ProtectLogD</id>
+    <artifact tool="PMD"	mnemonic="ProtectLogD"/>
+    <shortMessage>Log.d calls should be protected by checking Config.LOGD first</shortMessage>
+    <info>
+      <![CDATA[
+		  
+		  <pre>
+   public class DummyActivity extends Activity {
+    public void foo() {
+     Log.d("TAG", "msg1"); // Bad
+
+     bar();
+
+     if (Config.LOGD) Log.d("TAG", "msg1"); // Good
+    }
+   }</pre>
+		  
+	  ]]>
+    </info>
+    <name>Log.d calls should be protected by checking Config.LOGD first</name>
+  </findingType>
+  <findingType>
+    <id>ProtectLogV</id>
+    <artifact tool="PMD"	mnemonic="ProtectLogV"/>
+    <shortMessage>Log.v calls should be protected by checking Config.LOGV first</shortMessage>
+    <info>
+      <![CDATA[
+		  
+		  <pre>
+   public class DummyActivity extends Activity {
+    public void foo() {
+     Log.v("TAG", "msg1"); // Bad
+
+     bar();
+
+     if (Config.LOGV) Log.v("TAG", "msg1"); // Good
+    }
+   }</pre>
+		  
+	  ]]>
+    </info>
+    <name>Log.v calls should be protected by checking Config.LOGV first</name>
+  </findingType>
 </findingTypes>

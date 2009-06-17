@@ -1115,6 +1115,10 @@
 			for a low false positive rate.
 		</info>
         <filter>
+            <type>SF_DEAD_STORE_DUE_TO_SWITCH_FALLTHROUGH_TO_THROW</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
             <type>IM_MULTIPLYING_RESULT_OF_IREM</type>
             <filtered>false</filtered>
         </filter>
@@ -1936,6 +1940,14 @@
             <filtered>false</filtered>
         </filter>
         <filter>
+            <type>SF_SWITCH_NO_DEFAULT</type>
+            <filtered>false</filtered>
+        </filter>    
+        <filter>
+            <type>INT_VACUOUS_BIT_OPERATION</type>
+            <filtered>false</filtered>
+        </filter>       
+        <filter>
             <type>SE_TRANSIENT_FIELD_OF_NONSERIALIZABLE_CLASS</type>
             <filtered>false</filtered>
         </filter>
@@ -2421,11 +2433,11 @@
             <type>DM_STRING_TOSTRING</type>
             <filtered>false</filtered>
         </filter>
-        <filter>
+        <!--filter>
             <type>DM_STRING_EMPTY_EQUALS</type>
             <filtered>false</filtered>
         </filter>
-        <filter>
+        <filter-->
             <type>UseStringBufferForStringAppends</type>
             <filtered>false</filtered>
         </filter>
