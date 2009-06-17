@@ -1,5 +1,5 @@
 Sierra-Id: PMD
-Bundle-Version: 4.2.4
+Bundle-Version: 4.2.5
 Sierra-Website: pmd.sourceforge.net
 Sierra-Description: A static analysis tool to look for multiple issues like potential bugs, 
   dead and sub-optimal code, and over-complicated expressions.
