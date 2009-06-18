@@ -36,6 +36,7 @@ import com.surelogic.common.jobs.NullSLProgressMonitor;
 import com.surelogic.common.jobs.SLJob;
 import com.surelogic.common.jobs.SLSeverity;
 import com.surelogic.common.jobs.SLStatus;
+import com.surelogic.sierra.client.eclipse.Activator;
 import com.surelogic.sierra.client.eclipse.jobs.*;
 import com.surelogic.sierra.client.eclipse.views.adhoc.AdHocDataSource;
 import com.surelogic.sierra.tool.message.Importance;
@@ -110,7 +111,7 @@ public class SierraPreferencePage extends AbstractCommonPreferencePage {
 					updateDataDirectory();
 					new BootDatabase().run(new NullSLProgressMonitor());
 				} else {
-					IStatus status = SLEclipseStatusUtility.convert(result);
+					IStatus status = SLEclipseStatusUtility.convert(result, Activator.getDefault());
 					ErrorDialogUtility.open(change.getShell(), I18N
 							.msg("sierra.change.data.directory.dialog.failed"),
 							status);

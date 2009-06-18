@@ -26,6 +26,7 @@ import com.surelogic.common.jobs.NullSLProgressMonitor;
 import com.surelogic.common.jobs.SLStatus;
 import com.surelogic.common.license.SLLicenseUtility;
 import com.surelogic.common.logging.SLLogger;
+import com.surelogic.sierra.client.eclipse.Activator;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.jobs.AbstractSierraDatabaseJob;
 import com.surelogic.sierra.jdbc.scan.ScanInfo;
@@ -59,7 +60,7 @@ public class ScanChangedProjectsAction extends
 				SLLicenseUtility.SIERRA_SUBJECT,
 				new NullSLProgressMonitor());
 		if (failed != null) {
-			IStatus status = SLEclipseStatusUtility.convert(failed);
+			IStatus status = SLEclipseStatusUtility.convert(failed, Activator.getDefault());
 			ErrorDialogUtility.open(null, null, status, true);
 			return;
 		}

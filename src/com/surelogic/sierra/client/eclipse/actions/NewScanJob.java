@@ -13,6 +13,7 @@ import com.surelogic.common.eclipse.logging.SLEclipseStatusUtility;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.jobs.*;
 import com.surelogic.common.logging.SLLogger;
+import com.surelogic.sierra.client.eclipse.Activator;
 import com.surelogic.sierra.tool.ToolException;
 import com.surelogic.sierra.tool.ToolUtil;
 import com.surelogic.sierra.tool.message.Config;
@@ -55,7 +56,7 @@ public class NewScanJob extends WorkspaceJob {
 				return dealWithException(status.getException());
 			}
 			if (status != SLStatus.OK_STATUS) {
-				return SLEclipseStatusUtility.convert(status);
+				return SLEclipseStatusUtility.convert(status, Activator.getDefault());
 			}
 		}
 		return Status.OK_STATUS;
