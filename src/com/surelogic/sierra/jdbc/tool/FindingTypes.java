@@ -3,13 +3,19 @@ package com.surelogic.sierra.jdbc.tool;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
+import java.util.Map.Entry;
 
+import com.surelogic.common.jdbc.LongIdHandler;
 import com.surelogic.common.jdbc.Query;
 import com.surelogic.common.jdbc.Queryable;
 import com.surelogic.common.jdbc.Row;
 import com.surelogic.common.jdbc.RowHandler;
 import com.surelogic.common.jdbc.SingleRowHandler;
 import com.surelogic.common.jdbc.StringRowHandler;
+import com.surelogic.sierra.jdbc.settings.Categories;
+import com.surelogic.sierra.jdbc.settings.CategoryDO;
+import com.surelogic.sierra.jdbc.settings.CategoryEntryDO;
 
 public class FindingTypes {
 
@@ -99,7 +105,57 @@ public class FindingTypes {
 	 * @param e
 	 */
 	public void registerExtension(final ExtensionDO e) {
+		if (e.getName() == null || e.getVersion() == null
+				|| e.getName().isEmpty() || e.getVersion().isEmpty()) {
+			throw new IllegalArgumentException();
+		}
+		final long id = q.prepared("FindingTypes.registerExtension",
+				new LongIdHandler()).call(e.getName(), e.getVersion());
+		final Queryable<Long> insertFT = q.prepared(
+				"FindingTypes.insertFindingType", new LongIdHandler());
+		final Queryable<?> registerFT = q
+				.prepared("FindingTypes.registerExtenstionFindingType");
+		final List<String> allFindingTypes = new ArrayList<String>();
+		for (final FindingTypeDO ft : e.getNewFindingTypes()) {
+			final long ftId = insertFT.call(ft.getUid(), ft.getName(), ft
+					.getShortMessage(), ft.getInfo());
+			registerFT.call(id, ftId);
+			allFindingTypes.add(ft.getUid());
+		}
 
+		allFindingTypes.addAll(e.getArtifactMap().keySet());
+		final CategoryDO cDO = new CategoryDO();
+		cDO.setName(e.getName());
+		cDO.setUid(UUID.randomUUID().toString());
+		for (final String ft : allFindingTypes) {
+			cDO.getFilters().add(new CategoryEntryDO(ft, false));
+		}
+		// FIXME this is not how we make categories
+		new Categories(q).writeCategory(cDO);
+
+		final Queryable<Long> insertAT = q.prepared(
+				"FindingTypes.insertArtifactType", new LongIdHandler());
+		final Queryable<?> registerAT = q
+				.prepared("FindingTypes.registerExtensionArtifact");
+		for (final Entry<String, List<ArtifactTypeDO>> entry : e
+				.getArtifactMap().entrySet()) {
+			for (final ArtifactTypeDO art : entry.getValue()) {
+				final long artId = insertAT.call(art.getTool(), art
+						.getVersion(), art.getMnemonic(), art.getDisplay(),
+						null, null, entry.getValue());
+				registerAT.call(id, artId);
+			}
+		}
+	}
+
+	/**
+	 * Return a list of all of the available extensions registered in the
+	 * database.
+	 * 
+	 * @return
+	 */
+	public List<ExtensionDO> getExtensions() {
+		throw new UnsupportedOperationException();
 	}
 
 	private static class FindingTypeDOHandler extends

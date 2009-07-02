@@ -7,6 +7,14 @@ public class ArtifactTypeDO {
 	private String tool;
 	private String version;
 
+	public ArtifactTypeDO(final String tool, final String mnemonic,
+			final String display, final String version) {
+		this.mnemonic = mnemonic;
+		this.tool = tool;
+		this.version = version;
+		this.display = display;
+	}
+
 	ArtifactTypeDO(final long id, final String tool, final String mnemonic,
 			final String display, final String version) {
 		this.id = id;
@@ -60,7 +68,7 @@ public class ArtifactTypeDO {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + (int) (id ^ (id >>> 32));
+		result = prime * result + (int) (id ^ id >>> 32);
 		return result;
 	}
 
