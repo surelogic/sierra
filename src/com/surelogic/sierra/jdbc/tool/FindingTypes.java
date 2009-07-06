@@ -106,7 +106,7 @@ public class FindingTypes {
 	 */
 	public void registerExtension(final ExtensionDO e) {
 		if (e.getName() == null || e.getVersion() == null
-				|| e.getName().isEmpty() || e.getVersion().isEmpty()) {
+				|| e.getName().length() == 0 || e.getVersion().length() == 0) {
 			throw new IllegalArgumentException();
 		}
 		final long id = q.prepared("FindingTypes.registerExtension",
