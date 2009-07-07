@@ -1,9 +1,7 @@
 package com.surelogic.sierra.tool;
 
 import java.io.File;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import com.surelogic.sierra.tool.analyzer.ILazyArtifactGenerator;
 import com.surelogic.sierra.tool.message.Config;
@@ -57,11 +55,11 @@ final class DummyToolFactory implements IToolFactory {
 		return true;
 	}
 
-	public Set<ArtifactType> getArtifactTypes() {
+	public Collection<IToolExtension> getExtensions() {
 		return Collections.emptySet();
 	}
 
-	public List<File> getRequiredJars(Config config) {
+	public Collection<File> getRequiredJars(Config config) {
 		return Collections.emptyList();
 	}
 }

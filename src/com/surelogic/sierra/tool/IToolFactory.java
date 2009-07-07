@@ -1,8 +1,7 @@
 package com.surelogic.sierra.tool;
 
 import java.io.File;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import com.surelogic.sierra.tool.analyzer.ILazyArtifactGenerator;
 import com.surelogic.sierra.tool.message.Config;
@@ -48,17 +47,16 @@ public interface IToolFactory {
 	File getPluginDir();
 
 	/**
-	 * Returns all possible artifact types that can be gen'd by this tool 
-	 * for db bootstrapping
+     * Returns all available extensions to this tool
 	 */
-	Set<ArtifactType> getArtifactTypes();
+	Collection<IToolExtension> getExtensions();
 
 	/**
  	 * If overridden, should merge its results with super.getRequiredJars()
 	 * 
 	 * @return a list of jars/libraries required by the tool(s)
 	 */
-	List<File> getRequiredJars(Config config);
+	Collection<File> getRequiredJars(Config config);
 
 	/**
 	 * Creates an instance of the tool to do one scan

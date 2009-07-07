@@ -9,14 +9,14 @@ import com.surelogic.sierra.tool.analyzer.ILazyArtifactGenerator;
 import com.surelogic.sierra.tool.message.Config;
 
 public class ReckonerFactory extends AbstractToolFactory {	
-	public Set<ArtifactType> getArtifactTypes() {
+	public Collection<IToolExtension> getExtensions() {
 		// TODO Auto-generated method stub
 		return Collections.emptySet();
 	}
 
 	@Override
-	public List<File> getRequiredJars(Config config) {
-		final List<File> jars = super.getRequiredJars(config);
+	public Collection<File> getRequiredJars(Config config) {
+		final Collection<File> jars = super.getRequiredJars(config);
 		final boolean debug = LOG.isLoggable(Level.FINE);
 		/*
 		  findJars(jars, new File(config.getToolsDirectory(), "reckoner/lib"));

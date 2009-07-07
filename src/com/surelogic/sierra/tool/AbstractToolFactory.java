@@ -121,7 +121,7 @@ public abstract class AbstractToolFactory implements IToolFactory {
 
 	protected abstract IToolInstance create(Config config, ILazyArtifactGenerator generator, boolean close);
 	
-	public List<File> getRequiredJars(Config config) {
+	public Collection<File> getRequiredJars(Config config) {
 		try {
 			return ToolUtil.getRequiredJars(getPluginDir());
 		} catch (IOException e) {

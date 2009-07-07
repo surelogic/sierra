@@ -8,14 +8,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.StringTokenizer;
+import java.util.*;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 import java.util.logging.Level;
@@ -180,7 +173,9 @@ public class ToolUtil {
 	public static Set<ArtifactType> getArtifactTypes() {
 		Set<ArtifactType> types = new HashSet<ArtifactType>();
 		for (IToolFactory f : findToolFactories()) {
-			types.addAll(f.getArtifactTypes());
+			for (IToolExtension e : f.getExtensions()) {
+				types.addAll(e.getArtifactTypes());
+			}
 		}
 		return types;
 	}
@@ -325,7 +320,7 @@ public class ToolUtil {
 		if (attrs == null) {
 			return Collections.emptyList();
 		}
-		final List<File> path = getRequiredJars(pluginDir, attrs);
+		final Collection<File> path = getRequiredJars(pluginDir, attrs);
 		if (path.isEmpty()) {
 			return Collections.emptyList();
 		}
@@ -375,7 +370,7 @@ public class ToolUtil {
 		final Attributes mainAttrs = readManifest(pluginDir);
 		Attributes attrs = mainAttrs;
 		// First, try the specific props file
-		final List<File> path = getRequiredJars(pluginDir, mainAttrs);
+		final Collection<File> path = getRequiredJars(pluginDir, mainAttrs);
 		if (!path.isEmpty()) {
 			final ClassLoader cl = computeClassLoader(ToolUtil.class
 					.getClassLoader(), path);
@@ -441,12 +436,12 @@ public class ToolUtil {
 		});
 	}
 
-	public static List<File> getRequiredJars(File pluginDir) throws IOException {
+	public static Collection<File> getRequiredJars(File pluginDir) throws IOException {
 		final Attributes attrs = readManifest(pluginDir);
 		return getRequiredJars(pluginDir, attrs);
 	}
 
-	public static List<File> getRequiredJars(final File pluginDir,
+	public static Collection<File> getRequiredJars(final File pluginDir,
 			Attributes attrs) {
 		final String path = attrs.getValue(CLASSPATH);
 		final String pluginId = trimValue(attrs.getValue(PLUGIN_ID));
@@ -476,7 +471,7 @@ public class ToolUtil {
 	}
 
 	public static URLClassLoader computeClassLoader(ClassLoader cl,
-			List<File> plugins) {
+			Collection<File> plugins) {
 		URL[] urls = new URL[plugins.size()];
 		int i = 0;
 		for (File jar : plugins) {
