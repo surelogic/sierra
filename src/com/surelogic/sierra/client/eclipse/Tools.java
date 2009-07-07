@@ -1,13 +1,7 @@
 package com.surelogic.sierra.client.eclipse;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Logger;
 
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -114,55 +108,28 @@ public final class Tools {
 									.getVersion(), "", a.getMnemonic(), ""));
 						}
 					}
-					final List<ArtifactType> unknown = new ArrayList<ArtifactType>();
+					
+					Map<IToolExtension,List<ArtifactType>> newExtensions = 
+						new HashMap<IToolExtension,List<ArtifactType>>();
 					for (final IToolFactory t : factories) {
 						for (IToolExtension e : t.getExtensions()) {
+							final List<ArtifactType> unknown = new ArrayList<ArtifactType>();
 							for (final ArtifactType a : e.getArtifactTypes()) {
 								if (!knownTypes.contains(a)) {
 									unknown.add(a);
 								}
 							}
+							if (!unknown.isEmpty()) {
+								newExtensions.put(e, unknown);
+							}
 						}
 					}
 
-					if (unknown.isEmpty()) {
+					if (newExtensions.isEmpty()) {
 						System.out.println("No new artifact types");
 					} else {
-						Collections.sort(unknown);
-						final ExtensionDO ext = new ExtensionDO();
-						final String now = "" + new Date();
-						ext.setName("Local extension " + new Date());
-						ext.setVersion(now);
-						for (final ArtifactType a : unknown) {
-							// SLLogger.getLogger().warning("Couldn't find "+a.type+" for "+a.tool+", v"+a.version);
-							System.out.println("Couldn't find " + a.type + " for "
-									+ a.tool + ", v" + a.version);
-							final FindingTypeDO ftDO = new FindingTypeDO();
-							ftDO.setName(a.type);
-							ftDO.setUid(a.type);
-							ftDO.setShortMessage(a.type);
-							ftDO.setInfo(a.type);
-							ext.addFindingType(ftDO);
-							final ArtifactTypeDO aDO = new ArtifactTypeDO(
-									a.tool, a.type, a.type, a.version);
-							ext.addType(a.type, aDO);
-						}
-						ft.registerExtension(ext);
-						System.out.println("Registered extension: " + ext.getName());
-						// Find/define finding types
-						final List<FindingTypeDO> ftypes = ft
-								.listFindingTypes();
-						for (final FindingTypeDO f : ftypes) {
-							// Search?
-							f.getName();
-						}
-
-						// Find/create categories -- can be modified later
-						final Categories categories = new Categories(q);
-						final List<CategoryDO> cats = categories
-								.listCategories();
-						for (final CategoryDO cdo : cats) {
-							cdo.getName();
+						for(Map.Entry<IToolExtension,List<ArtifactType>> e : newExtensions.entrySet()) {
+							setupDatabase(q, ft, e.getKey(), e.getValue());
 						}
 					}
 				}
@@ -173,6 +140,46 @@ public final class Tools {
 		}
 	}
 
+	private static void setupDatabase(final Query q, final FindingTypes ft, 
+			                          IToolExtension te, final List<ArtifactType> unknown) {
+		Collections.sort(unknown);
+		final ExtensionDO ext = new ExtensionDO();
+		final String now = "" + new Date();
+		ext.setName(te.getId());
+		ext.setVersion(now);
+		for (final ArtifactType a : unknown) {
+			// SLLogger.getLogger().warning("Couldn't find "+a.type+" for "+a.tool+", v"+a.version);
+			System.out.println("Couldn't find " + a.type + " for "
+					+ a.tool + ", v" + a.version);
+			final FindingTypeDO ftDO = new FindingTypeDO();
+			ftDO.setName(a.type);
+			ftDO.setUid(a.type);
+			ftDO.setShortMessage(a.type);
+			ftDO.setInfo(a.type);
+			ext.addFindingType(ftDO);
+			final ArtifactTypeDO aDO = new ArtifactTypeDO(
+					a.tool, a.type, a.type, a.version);
+			ext.addType(a.type, aDO);
+		}
+		ft.registerExtension(ext);
+		System.out.println("Registered extension: " + ext.getName());
+		// Find/define finding types
+		final List<FindingTypeDO> ftypes = ft
+				.listFindingTypes();
+		for (final FindingTypeDO f : ftypes) {
+			// Search?
+			f.getName();
+		}
+
+		// Find/create categories -- can be modified later
+		final Categories categories = new Categories(q);
+		final List<CategoryDO> cats = categories
+				.listCategories();
+		for (final CategoryDO cdo : cats) {
+			cdo.getName();
+		}
+	}
+	
 	// //////////////////////////////////////////////////////////////////////
 	//
 	// TOOL EXTENSION POINT METHODS
