@@ -3,6 +3,7 @@ package com.surelogic.sierra.jdbc.tool;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.Map.Entry;
 
@@ -18,6 +19,15 @@ import com.surelogic.common.jdbc.StringRowHandler;
 import com.surelogic.sierra.jdbc.settings.Categories;
 import com.surelogic.sierra.jdbc.settings.CategoryDO;
 import com.surelogic.sierra.jdbc.settings.CategoryEntryDO;
+import com.surelogic.sierra.jdbc.settings.CategoryFilterDO;
+import com.surelogic.sierra.jdbc.settings.ScanFilterDO;
+import com.surelogic.sierra.jdbc.settings.TypeFilterDO;
+import com.surelogic.sierra.tool.message.CategoryFilter;
+import com.surelogic.sierra.tool.message.Extension;
+import com.surelogic.sierra.tool.message.ExtensionArtifactType;
+import com.surelogic.sierra.tool.message.ExtensionFindingType;
+import com.surelogic.sierra.tool.message.ScanFilter;
+import com.surelogic.sierra.tool.message.TypeFilter;
 
 public class FindingTypes {
 
@@ -104,6 +114,12 @@ public class FindingTypes {
 	 * types and finding types in the database, making them available for scan
 	 * generation.
 	 * 
+	 * <p>
+	 * <b>NOTE:</b> {@link ExtensionDO} makes use of {@link FindingTypeDO}, but
+	 * when registering an extension the list of {@link ArtifactTypeDO} objects
+	 * referred to by {@link FindingTypeDO#getArtifactTypes()} is ignored.
+	 * </p>
+	 * 
 	 * @param e
 	 */
 	public void registerExtension(final ExtensionDO e) {
@@ -167,10 +183,11 @@ public class FindingTypes {
 						e.setVersion(r.nextString());
 						q.prepared("FindingTypes.selectExtensionArtifactTypes",
 								new NullRowHandler() {
+									ArtifactTypeDOHandler h = new ArtifactTypeDOHandler();
+
 									@Override
 									protected void doHandle(final Row r) {
-										// TODO Auto-generated method stub
-
+										e.addType(r.nextString(), h.handle(r));
 									}
 								}).call(id);
 						for (final FindingTypeDO ft : getFindingTypes(q
@@ -206,6 +223,100 @@ public class FindingTypes {
 					.nextString(), r.nextString(), r.nextString());
 		}
 
+	}
+
+	public static ExtensionDO convertDO(final Extension message) {
+		final ExtensionDO e = new ExtensionDO(message.getName(), message
+				.getVersion());
+		for (final ExtensionArtifactType a : message.getArtifacts()) {
+			e.addType(a.getFindingType(), new ArtifactTypeDO(a.getTool(), a
+					.getMnemonic(), a.getDisplay(), a.getVersion()));
+		}
+		for (final ExtensionFindingType ft : message.getFindingTypes()) {
+			e.addFindingType(convertDO(ft));
+		}
+		for (final ExtensionArtifactType at : message.getArtifacts()) {
+			e.addType(at.getFindingType(), new ArtifactTypeDO(at.getTool(), at
+					.getMnemonic(), at.getDisplay(), at.getVersion()));
+		}
+		return e;
+	}
+
+	public static FindingTypeDO convertDO(final ExtensionFindingType eft) {
+		final FindingTypeDO ft = new FindingTypeDO();
+		ft.setUid(eft.getId());
+		ft.setInfo(eft.getInfo());
+		ft.setName(eft.getName());
+		ft.setShortMessage(eft.getShortMessage());
+		return ft;
+	}
+
+	public static Extension convert(final ExtensionDO data) {
+		final Extension e = new Extension();
+		e.setName(data.getName());
+		e.setVersion(data.getVersion());
+		for (final FindingTypeDO ftDO : data.getNewFindingTypes()) {
+			final ExtensionFindingType ft = new ExtensionFindingType();
+			ft.setId(ftDO.getUid());
+			ft.setInfo(ftDO.getInfo());
+			ft.setName(ftDO.getName());
+			ft.setShortMessage(ftDO.getShortMessage());
+			e.getFindingTypes().add(ft);
+		}
+		for (final Entry<String, List<ArtifactTypeDO>> entry : data
+				.getArtifactMap().entrySet()) {
+			for (final ArtifactTypeDO atDO : entry.getValue()) {
+				final ExtensionArtifactType at = new ExtensionArtifactType();
+				at.setDisplay(atDO.getDisplay());
+				at.setFindingType(entry.getKey());
+				at.setMnemonic(atDO.getMnemonic());
+				at.setTool(atDO.getTool());
+				at.setVersion(atDO.getVersion());
+				e.getArtifacts().add(at);
+			}
+		}
+		return e;
+	}
+
+	public static ScanFilterDO convertDO(final ScanFilter message) {
+		final ScanFilterDO filter = new ScanFilterDO();
+		filter.setName(message.getName());
+		filter.setUid(message.getUid());
+		filter.setRevision(message.getRevision());
+		final Set<CategoryFilterDO> cSet = filter.getCategories();
+		for (final CategoryFilter c : message.getCategoryFilter()) {
+			cSet.add(new CategoryFilterDO(c.getUid(), c.getImportance()));
+		}
+		final Set<TypeFilterDO> tSet = filter.getFilterTypes();
+		for (final TypeFilter t : message.getTypeFilter()) {
+			tSet.add(new TypeFilterDO(t.getUid(), t.getImportance(), t
+					.isFiltered()));
+		}
+		return filter;
+	}
+
+	public static ScanFilter convert(final ScanFilterDO data, final String owner) {
+		final ScanFilter filter = new ScanFilter();
+		filter.setName(data.getName());
+		filter.setUid(data.getUid());
+		filter.setRevision(data.getRevision());
+		filter.setOwner(owner);
+		final List<CategoryFilter> cSet = filter.getCategoryFilter();
+		for (final CategoryFilterDO c : data.getCategories()) {
+			final CategoryFilter cf = new CategoryFilter();
+			cf.setUid(c.getUid());
+			cf.setImportance(c.getImportance());
+			cSet.add(cf);
+		}
+		final List<TypeFilter> tSet = filter.getTypeFilter();
+		for (final TypeFilterDO t : data.getFilterTypes()) {
+			final TypeFilter tf = new TypeFilter();
+			tf.setUid(t.getFindingType());
+			tf.setImportance(t.getImportance());
+			tf.setFiltered(t.isFiltered());
+			tSet.add(tf);
+		}
+		return filter;
 	}
 
 }

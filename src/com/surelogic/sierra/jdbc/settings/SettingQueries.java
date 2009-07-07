@@ -473,7 +473,7 @@ public class SettingQueries {
 
 	/**
 	 * Gets the default set of finding type UUIDs that have been selected by
-	 * SureLogic to be filtered out of scans.
+	 * SureLogic to be included in scans.
 	 * 
 	 * @return the SureLogic default filter set.
 	 */
