@@ -142,7 +142,7 @@ public class FindingTypes {
 			for (final ArtifactTypeDO art : entry.getValue()) {
 				final long artId = insertAT.call(art.getTool(), art
 						.getVersion(), art.getMnemonic(), art.getDisplay(),
-						null, null, entry.getValue());
+						null, null, null, entry.getValue());
 				registerAT.call(id, artId);
 			}
 		}
@@ -155,7 +155,14 @@ public class FindingTypes {
 	 * @return
 	 */
 	public List<ExtensionDO> getExtensions() {
-		throw new UnsupportedOperationException();
+		return q.prepared("FindingTypes.selectExtensions",
+				new RowHandler<ExtensionDO>() {
+					public ExtensionDO handle(final Row r) {
+
+						return null;
+					}
+				}).call();
+
 	}
 
 	private static class FindingTypeDOHandler extends
