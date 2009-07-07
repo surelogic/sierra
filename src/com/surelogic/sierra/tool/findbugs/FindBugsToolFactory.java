@@ -51,7 +51,7 @@ public class FindBugsToolFactory extends AbstractToolFactory {
 			for(DetectorFactory factory : iterable(plugin.detectorFactoryIterator())) {
 				// Actual detector
 			}
-			*/			
+			*/						
 			extensions.add(new AbstractToolExtension(plugin.getPluginId(), types) {});
 		}
 		return extensions;
