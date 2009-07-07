@@ -3,7 +3,6 @@ package com.surelogic.sierra.jdbc.tool;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 import java.util.Map.Entry;
 
@@ -19,15 +18,9 @@ import com.surelogic.common.jdbc.StringRowHandler;
 import com.surelogic.sierra.jdbc.settings.Categories;
 import com.surelogic.sierra.jdbc.settings.CategoryDO;
 import com.surelogic.sierra.jdbc.settings.CategoryEntryDO;
-import com.surelogic.sierra.jdbc.settings.CategoryFilterDO;
-import com.surelogic.sierra.jdbc.settings.ScanFilterDO;
-import com.surelogic.sierra.jdbc.settings.TypeFilterDO;
-import com.surelogic.sierra.tool.message.CategoryFilter;
 import com.surelogic.sierra.tool.message.Extension;
 import com.surelogic.sierra.tool.message.ExtensionArtifactType;
 import com.surelogic.sierra.tool.message.ExtensionFindingType;
-import com.surelogic.sierra.tool.message.ScanFilter;
-import com.surelogic.sierra.tool.message.TypeFilter;
 
 public class FindingTypes {
 
@@ -276,47 +269,6 @@ public class FindingTypes {
 			}
 		}
 		return e;
-	}
-
-	public static ScanFilterDO convertDO(final ScanFilter message) {
-		final ScanFilterDO filter = new ScanFilterDO();
-		filter.setName(message.getName());
-		filter.setUid(message.getUid());
-		filter.setRevision(message.getRevision());
-		final Set<CategoryFilterDO> cSet = filter.getCategories();
-		for (final CategoryFilter c : message.getCategoryFilter()) {
-			cSet.add(new CategoryFilterDO(c.getUid(), c.getImportance()));
-		}
-		final Set<TypeFilterDO> tSet = filter.getFilterTypes();
-		for (final TypeFilter t : message.getTypeFilter()) {
-			tSet.add(new TypeFilterDO(t.getUid(), t.getImportance(), t
-					.isFiltered()));
-		}
-		return filter;
-	}
-
-	public static ScanFilter convert(final ScanFilterDO data, final String owner) {
-		final ScanFilter filter = new ScanFilter();
-		filter.setName(data.getName());
-		filter.setUid(data.getUid());
-		filter.setRevision(data.getRevision());
-		filter.setOwner(owner);
-		final List<CategoryFilter> cSet = filter.getCategoryFilter();
-		for (final CategoryFilterDO c : data.getCategories()) {
-			final CategoryFilter cf = new CategoryFilter();
-			cf.setUid(c.getUid());
-			cf.setImportance(c.getImportance());
-			cSet.add(cf);
-		}
-		final List<TypeFilter> tSet = filter.getTypeFilter();
-		for (final TypeFilterDO t : data.getFilterTypes()) {
-			final TypeFilter tf = new TypeFilter();
-			tf.setUid(t.getFindingType());
-			tf.setImportance(t.getImportance());
-			tf.setFiltered(t.isFiltered());
-			tSet.add(tf);
-		}
-		return filter;
 	}
 
 }
