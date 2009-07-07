@@ -7,6 +7,7 @@ import java.util.UUID;
 import java.util.Map.Entry;
 
 import com.surelogic.common.jdbc.LongIdHandler;
+import com.surelogic.common.jdbc.Nulls;
 import com.surelogic.common.jdbc.Query;
 import com.surelogic.common.jdbc.Queryable;
 import com.surelogic.common.jdbc.Row;
@@ -114,7 +115,7 @@ public class FindingTypes {
 		final Queryable<Long> insertFT = q.prepared(
 				"FindingTypes.insertFindingType", new LongIdHandler());
 		final Queryable<?> registerFT = q
-				.prepared("FindingTypes.registerExtenstionFindingType");
+				.prepared("FindingTypes.registerExtensionFindingType");
 		final List<String> allFindingTypes = new ArrayList<String>();
 		for (final FindingTypeDO ft : e.getNewFindingTypes()) {
 			final long ftId = insertFT.call(ft.getUid(), ft.getName(), ft
@@ -142,7 +143,8 @@ public class FindingTypes {
 			for (final ArtifactTypeDO art : entry.getValue()) {
 				final long artId = insertAT.call(art.getTool(), art
 						.getVersion(), art.getMnemonic(), art.getDisplay(),
-						null, null, null, entry.getValue());
+						Nulls.STRING, Nulls.STRING, Nulls.STRING, entry
+								.getValue());
 				registerAT.call(id, artId);
 			}
 		}
@@ -158,7 +160,18 @@ public class FindingTypes {
 		return q.prepared("FindingTypes.selectExtensions",
 				new RowHandler<ExtensionDO>() {
 					public ExtensionDO handle(final Row r) {
+						final ExtensionDO e = new ExtensionDO();
+						final long id = r.nextLong();
+						e.setName(r.nextString());
+						e.setVersion(r.nextString());
+						q.prepared("FindingTypes.selectExtensionArtifactTypes",
+								new RowHandler<ArtifactTypeDO>() {
 
+									public ArtifactTypeDO handle(final Row r) {
+										// TODO Auto-generated method stub
+										return null;
+									}
+								});
 						return null;
 					}
 				}).call();
