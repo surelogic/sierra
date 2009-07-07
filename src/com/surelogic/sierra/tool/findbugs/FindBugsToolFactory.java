@@ -32,11 +32,13 @@ public class FindBugsToolFactory extends AbstractToolFactory {
 	}
 	
 //	@Override
-	public final Set<ArtifactType> getArtifactTypes() {
-		Set<ArtifactType> types = new HashSet<ArtifactType>();
+	public final Collection<IToolExtension> getExtensions() {
+		List<IToolExtension> extensions = new ArrayList<IToolExtension>();
+
 		// Code to get meta-data from FindBugs
 		for(Plugin plugin : iterable(DetectorFactoryCollection.instance().pluginIterator())) {
 			final String pluginId = plugin.getPluginId();				
+			Set<ArtifactType> types = new HashSet<ArtifactType>();
 			/*
 			for(BugCode code : iterable(plugin.bugCodeIterator())) {				
 			}
@@ -49,9 +51,10 @@ public class FindBugsToolFactory extends AbstractToolFactory {
 			for(DetectorFactory factory : iterable(plugin.detectorFactoryIterator())) {
 				// Actual detector
 			}
-			*/
+			*/			
+			extensions.add(new AbstractToolExtension(plugin.getPluginId(), types) {});
 		}
-		return types;
+		return extensions;
 	}
 
 	/*
