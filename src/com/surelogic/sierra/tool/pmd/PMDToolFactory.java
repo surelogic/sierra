@@ -81,7 +81,7 @@ public class PMDToolFactory extends AbstractToolFactory {
 			for(Rule r : ruleset.getRules()) {
 				types.add(new ArtifactType(getName(), getVersion(), 
 						ruleset.getFileName(), r.getName(), r.getRuleSetName()));					
-			}
+			}		
 			extensions.add(new AbstractToolExtension(ruleset.getName(), types) {});
 		}												
 		return extensions;
