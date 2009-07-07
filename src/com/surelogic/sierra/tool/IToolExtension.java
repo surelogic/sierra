@@ -11,6 +11,7 @@ import java.util.*;
  */
 public interface IToolExtension {
 	String getId();
+	String getVersion();
 	
 	/**
 	 * Returns all possible artifact types that can be gen'd by this tool 
