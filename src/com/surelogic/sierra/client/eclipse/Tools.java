@@ -27,6 +27,7 @@ import com.surelogic.sierra.jdbc.tool.ExtensionDO;
 import com.surelogic.sierra.jdbc.tool.FindingTypeDO;
 import com.surelogic.sierra.jdbc.tool.FindingTypes;
 import com.surelogic.sierra.tool.ArtifactType;
+import com.surelogic.sierra.tool.IToolExtension;
 import com.surelogic.sierra.tool.IToolFactory;
 import com.surelogic.sierra.tool.IToolFinder;
 import com.surelogic.sierra.tool.ToolUtil;
@@ -115,15 +116,17 @@ public final class Tools {
 					}
 					final List<ArtifactType> unknown = new ArrayList<ArtifactType>();
 					for (final IToolFactory t : factories) {
-						for (final ArtifactType a : t.getArtifactTypes()) {
-							if (!knownTypes.contains(a)) {
-								unknown.add(a);
+						for (IToolExtension e : t.getExtensions()) {
+							for (final ArtifactType a : e.getArtifactTypes()) {
+								if (!knownTypes.contains(a)) {
+									unknown.add(a);
+								}
 							}
 						}
 					}
 
 					if (unknown.isEmpty()) {
-						LOG.fine("No new artifact types");
+						System.out.println("No new artifact types");
 					} else {
 						Collections.sort(unknown);
 						final ExtensionDO ext = new ExtensionDO();
@@ -132,7 +135,7 @@ public final class Tools {
 						ext.setVersion(now);
 						for (final ArtifactType a : unknown) {
 							// SLLogger.getLogger().warning("Couldn't find "+a.type+" for "+a.tool+", v"+a.version);
-							LOG.fine("Couldn't find " + a.type + " for "
+							System.out.println("Couldn't find " + a.type + " for "
 									+ a.tool + ", v" + a.version);
 							final FindingTypeDO ftDO = new FindingTypeDO();
 							ftDO.setName(a.type);
@@ -145,7 +148,7 @@ public final class Tools {
 							ext.addType(a.type, aDO);
 						}
 						ft.registerExtension(ext);
-						LOG.fine("Registered extenstion: " + ext.getName());
+						System.out.println("Registered extension: " + ext.getName());
 						// Find/define finding types
 						final List<FindingTypeDO> ftypes = ft
 								.listFindingTypes();
