@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
+import com.surelogic.common.jdbc.DBQuery;
 import com.surelogic.common.jdbc.Query;
 import com.surelogic.common.jdbc.Queryable;
 import com.surelogic.common.jdbc.Row;
@@ -19,6 +20,8 @@ import com.surelogic.sierra.jdbc.settings.CategoryFilterDO;
 import com.surelogic.sierra.jdbc.settings.ScanFilterDO;
 import com.surelogic.sierra.jdbc.settings.ScanFilters;
 import com.surelogic.sierra.jdbc.settings.TypeFilterDO;
+import com.surelogic.sierra.jdbc.tool.ExtensionDO;
+import com.surelogic.sierra.jdbc.tool.FindingTypes;
 
 public class BugLinkServiceImpl extends SecureServiceServlet implements
 		BugLinkService {
@@ -225,6 +228,34 @@ public class BugLinkServiceImpl extends SecureServiceServlet implements
 										.nextRevision()), s.getUid());
 						response.setFilter(updated);
 						return response;
+					}
+				});
+	}
+
+	public ListExtensionResponse listExtensions(
+			final ListExtensionRequest request) {
+		return ConnectionFactory.getInstance().withTransaction(
+				new DBQuery<ListExtensionResponse>() {
+
+					public ListExtensionResponse perform(final Query q) {
+						final ListExtensionResponse r = new ListExtensionResponse();
+						for (final ExtensionDO d : new FindingTypes(q)
+								.getExtensions()) {
+							r.getExtensions().add(FindingTypes.convert(d));
+						}
+						return r;
+					}
+				});
+	}
+
+	public RegisterExtensionResponse registerExtension(
+			final RegisterExtensionRequest request) {
+		final ExtensionDO eDO = FindingTypes.convertDO(request.getExtension());
+		return ConnectionFactory.getInstance().withTransaction(
+				new DBQuery<RegisterExtensionResponse>() {
+					public RegisterExtensionResponse perform(final Query q) {
+						new FindingTypes(q).registerExtension(eDO);
+						return new RegisterExtensionResponse();
 					}
 				});
 	}
