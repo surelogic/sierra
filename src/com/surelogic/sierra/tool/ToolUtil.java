@@ -170,6 +170,7 @@ public class ToolUtil {
 		return copy;
 	}
 
+	/*
 	public static Set<ArtifactType> getArtifactTypes() {
 		Set<ArtifactType> types = new HashSet<ArtifactType>();
 		for (IToolFactory f : findToolFactories()) {
@@ -179,6 +180,7 @@ public class ToolUtil {
 		}
 		return types;
 	}
+	*/
 
 	public static final String MANIFEST = "META-INF" + File.separatorChar
 			+ "MANIFEST.MF";

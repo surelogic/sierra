@@ -1,10 +1,9 @@
 package com.surelogic.sierra.tool;
 
-import java.io.File;
-import java.util.List;
-import java.util.Set;
+//import java.io.File;
+import java.util.*;
 
-import com.surelogic.sierra.tool.message.Config;
+//import com.surelogic.sierra.tool.message.Config;
 
 /**
  * An extension to a tool
