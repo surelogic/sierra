@@ -61,4 +61,20 @@ public interface BugLinkService extends Service {
 	UpdateScanFilterResponse updateScanFilter(UpdateScanFilterRequest request)
 			throws RevisionException;
 
+	/**
+	 * Ask for a list of registered extensions on this server.
+	 * 
+	 * @param request
+	 * @return
+	 */
+	ListExtensionResponse listExtensions(ListExtensionRequest request);
+
+	/**
+	 * Register an extension on this server.
+	 * 
+	 * @param request
+	 * @return
+	 */
+	RegisterExtensionResponse registerExtension(RegisterExtensionRequest request);
+
 }
