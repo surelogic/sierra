@@ -144,9 +144,8 @@ public final class Tools {
 			                          IToolExtension te, final List<ArtifactType> unknown) {
 		Collections.sort(unknown);
 		final ExtensionDO ext = new ExtensionDO();
-		final String now = "" + new Date();
 		ext.setName(te.getId());
-		ext.setVersion(now);
+		ext.setVersion(te.getVersion());
 		for (final ArtifactType a : unknown) {
 			// SLLogger.getLogger().warning("Couldn't find "+a.type+" for "+a.tool+", v"+a.version);
 			System.out.println("Couldn't find " + a.type + " for "
@@ -162,7 +161,7 @@ public final class Tools {
 			ext.addType(a.type, aDO);
 		}
 		ft.registerExtension(ext);
-		System.out.println("Registered extension: " + ext.getName());
+		System.out.println("Registered extension: " + ext.getName()+" "+ext.getVersion());
 		// Find/define finding types
 		final List<FindingTypeDO> ftypes = ft
 				.listFindingTypes();
