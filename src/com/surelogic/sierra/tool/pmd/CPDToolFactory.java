@@ -1,15 +1,13 @@
 package com.surelogic.sierra.tool.pmd;
 
-import java.util.Collections;
-import java.util.Set;
+import java.util.*;
 
 import com.surelogic.sierra.tool.*;
 import com.surelogic.sierra.tool.analyzer.ILazyArtifactGenerator;
 import com.surelogic.sierra.tool.message.Config;
 
 public class CPDToolFactory extends AbstractToolFactory {	
-//	@Override
-	public Set<ArtifactType> getArtifactTypes() {
+	public Collection<IToolExtension> getExtensions() {
 		// TODO Auto-generated method stub
 		return Collections.emptySet();
 	}

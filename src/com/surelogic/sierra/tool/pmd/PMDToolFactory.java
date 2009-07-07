@@ -45,8 +45,8 @@ public class PMDToolFactory extends AbstractToolFactory {
 	}
 	
 	@Override
-	public List<File> getRequiredJars(Config config) {
-		final List<File> jars = super.getRequiredJars(config);		
+	public Collection<File> getRequiredJars(Config config) {
+		final Collection<File> jars = super.getRequiredJars(config);		
 		final File all = createAllXml();
 		if (all != null) {
 			jars.add(all);
@@ -56,16 +56,7 @@ public class PMDToolFactory extends AbstractToolFactory {
 		return jars;
 	}
 	
-	public final Set<ArtifactType> getArtifactTypes() {
-		/*
-		Properties props = System.getProperties();
-		for(Map.Entry<Object,Object> e : props.entrySet()) {
-			System.out.println(e.getKey()+" = "+e.getValue());
-		}
-		for(File jar : findPluginJars()) {
-			System.out.println("Found PMD jar: "+jar.getName());
-		}
-		*/
+	public Collection<IToolExtension> getExtensions() {
 		try {		
 			return extractArtifactTypes(getRuleSets());							
 		} catch (RuleSetNotFoundException e) {
@@ -83,15 +74,17 @@ public class PMDToolFactory extends AbstractToolFactory {
 		return false;
 	}
 
-	Set<ArtifactType> extractArtifactTypes(List<RuleSet> rulesets) {
-		Set<ArtifactType> types = new HashSet<ArtifactType>();	
+	Collection<IToolExtension> extractArtifactTypes(List<RuleSet> rulesets) {
+		List<IToolExtension> extensions = new ArrayList<IToolExtension>();
 		for(RuleSet ruleset : rulesets) {
+			Set<ArtifactType> types = new HashSet<ArtifactType>();	
 			for(Rule r : ruleset.getRules()) {
 				types.add(new ArtifactType(getName(), getVersion(), 
 						ruleset.getFileName(), r.getName(), r.getRuleSetName()));					
 			}
+			extensions.add(new AbstractToolExtension(ruleset.getName(), types) {});
 		}												
-		return types;
+		return extensions;
 	}
 	
 	static List<RuleSet> getDefaultRuleSets() throws RuleSetNotFoundException {
