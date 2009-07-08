@@ -23,7 +23,7 @@ public abstract class AbstractToolExtension implements IToolExtension {
 			version = id.substring(index+1);
 			id = id.substring(0, index);
 		} else {
-			version = "";
+			version = "v0.0";
 		}
 		this.id = id;
 		this.version = version;
