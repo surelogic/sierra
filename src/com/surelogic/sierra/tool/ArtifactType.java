@@ -11,6 +11,7 @@ public class ArtifactType implements Comparable<ArtifactType> {
 	public final String plugin;
 	public final String type;
 	public final String category;
+	private String findingType = null;
 	
 	public ArtifactType(String tool, String version, String plugin, String type, String category) {
 		this.tool = tool;
@@ -18,6 +19,14 @@ public class ArtifactType implements Comparable<ArtifactType> {
 		this.plugin = plugin;
 		this.type = type;
 		this.category = category;
+	}
+	
+	public void setFindingType(String type) {
+		findingType = type;		
+	}
+	
+	public String getFindingType() {
+		return findingType;
 	}
 	
 	@Override
