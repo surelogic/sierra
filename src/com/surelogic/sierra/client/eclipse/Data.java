@@ -47,7 +47,7 @@ public final class Data extends DerbyConnection {
 		super.shutdown();
 		f_dataPath = null;
 	}
-	
+
 	@Override
 	protected String getSchemaName() {
 		return "SIERRAV1";
@@ -56,4 +56,14 @@ public final class Data extends DerbyConnection {
 	public SchemaData getSchemaLoader() {
 		return new SierraSchemaData();
 	}
+
+	@Override
+	public synchronized void bootAndCheckSchema() throws Exception {
+		final boolean booted = isBooted();
+		super.bootAndCheckSchema();
+		if (!booted) {
+			Tools.checkForNewArtifactTypes();
+		}
+	}
+
 }

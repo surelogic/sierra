@@ -35,7 +35,8 @@ import com.surelogic.sierra.client.eclipse.views.adhoc.AdHocDataSource;
 /**
  * The activator class controls the plug-in life cycle
  */
-public final class Activator extends AbstractUIPlugin implements IRunnableWithProgress {
+public final class Activator extends AbstractUIPlugin implements
+		IRunnableWithProgress {
 
 	// The plug-in ID
 	public static final String PLUGIN_ID = "com.surelogic.sierra.client.eclipse";
@@ -68,50 +69,48 @@ public final class Activator extends AbstractUIPlugin implements IRunnableWithPr
 		super.start(context);
 		SWTUtility.startup(this);
 	}
-	
+
 	// Used for startup
-	public void run(IProgressMonitor monitor) 
-	throws InvocationTargetException, InterruptedException {
+	public void run(final IProgressMonitor monitor)
+			throws InvocationTargetException, InterruptedException {
 		monitor.beginTask("Initializing sierra-client-eclipse", 20);
 		/*
 		 * "Touch" common-eclipse so the logging gets Eclipse-ified.
 		 */
 		SLEclipseStatusUtility.touch();
 		monitor.worked(1);
-		
-		try {			
+
+		try {
 			// startup the database and ensure its schema is up to date
 			System.setProperty("derby.stream.error.file", getDerbyLogFile());
 			Data.getInstance().bootAndCheckSchema();
 			monitor.worked(1);
-			
+
 			// load up persisted sierra servers
 			ConnectedServerManager.getInstance().init();
 			monitor.worked(1);
-			
+
 			// load up persisted sierra selections
 			SelectionManager.getInstance().load(getSelectionSaveFile());
 			monitor.worked(1);
-			
+
 			// start observing data changes
 			Projects.getInstance().init();
 			BuglinkData.getInstance().init();
 			monitor.worked(1);
-			
+
 			// listen changes to the active editor and preference listener
 			final MarkersHandler handler = MarkersHandler.getInstance();
 			handler.addMarkerListener();
 			getDefault().getPluginPreferences().addPropertyChangeListener(
 					handler);
 			monitor.worked(1);
-			
+
 			SierraServersAutoSync.start();
 			monitor.worked(1);
 			new DeleteUnfinishedScans().schedule();
 			monitor.worked(1);
-			
-			Tools.checkForNewArtifactTypes();
-			monitor.worked(1);
+
 		} catch (final FutureDatabaseException e) {
 			/*
 			 * The database schema version is too new, we need to delete it to
@@ -137,7 +136,7 @@ public final class Activator extends AbstractUIPlugin implements IRunnableWithPr
 			};
 			restartEclipseJob.schedule();
 		} catch (final Exception e) {
-			SLLogger.getLogger().log(Level.SEVERE, 
+			SLLogger.getLogger().log(Level.SEVERE,
 					"Failure to boot and check schema.", e);
 		}
 	}

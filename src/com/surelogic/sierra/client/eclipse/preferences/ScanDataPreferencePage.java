@@ -81,7 +81,7 @@ public class ScanDataPreferencePage extends PreferencePage implements
 		deleteDatabase.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true,
 				false));
 
-		(new Mediator(t, deleteSelectedProjectData, deleteDatabase)).init();
+		new Mediator(t, deleteSelectedProjectData, deleteDatabase).init();
 
 		/*
 		 * Allow access to help via the F1 key.
