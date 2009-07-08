@@ -32,6 +32,8 @@ public interface ScanGenerator {
 
 	ScanGenerator user(String userName);
 
+	ScanGenerator extension(String name, String version);
+
 	ArtifactGenerator build();
 
 	/**
