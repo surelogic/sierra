@@ -122,6 +122,11 @@ class JDBCPartialScanGenerator implements ScanGenerator {
 		return this;
 	}
 
+	public ScanGenerator extension(final String name, final String version) {
+		extensions.put(name, version);
+		return this;
+	}
+
 	public String finished() {
 		generator.finished(new NullSLProgressMonitor());
 		scan.setStatus(ScanStatus.FINISHED);

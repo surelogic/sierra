@@ -12,7 +12,6 @@ import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.surelogic.common.jdbc.ConnectionQuery;
 import com.surelogic.common.jdbc.JDBCUtils;
 import com.surelogic.common.jdbc.QB;
 import com.surelogic.common.jobs.NullSLProgressMonitor;
@@ -23,9 +22,7 @@ import com.surelogic.sierra.jdbc.record.RecordRelationRecord;
 import com.surelogic.sierra.jdbc.record.ScanRecord;
 import com.surelogic.sierra.jdbc.record.TimeseriesRecord;
 import com.surelogic.sierra.jdbc.record.TimeseriesScanRecord;
-import com.surelogic.sierra.jdbc.tool.ExtensionDO;
 import com.surelogic.sierra.jdbc.tool.FindingFilter;
-import com.surelogic.sierra.jdbc.tool.FindingTypes;
 import com.surelogic.sierra.jdbc.user.ClientUser;
 import com.surelogic.sierra.tool.message.ArtifactGenerator;
 import com.surelogic.sierra.tool.message.ScanGenerator;
@@ -117,12 +114,6 @@ class JDBCScanGenerator implements ScanGenerator {
 							"Invalid timeseries name: " + name);
 				}
 			}
-			// TODO When the extension code is fully in place, we will have the
-			// set of extensions set externally
-			for (final ExtensionDO ext : new FindingTypes(new ConnectionQuery(
-					conn)).getExtensions()) {
-				extensions.put(ext.getName(), ext.getVersion());
-			}
 			final PreparedStatement st = conn.prepareStatement(QB
 					.get("Scans.insertExtension"));
 			try {
@@ -180,6 +171,11 @@ class JDBCScanGenerator implements ScanGenerator {
 
 	public ScanGenerator user(final String user) {
 		this.user = user;
+		return this;
+	}
+
+	public ScanGenerator extension(final String name, final String version) {
+		extensions.put(name, version);
 		return this;
 	}
 
