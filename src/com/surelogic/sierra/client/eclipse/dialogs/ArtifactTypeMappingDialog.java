@@ -3,7 +3,6 @@ package com.surelogic.sierra.client.eclipse.dialogs;
 import java.util.*;
 import java.util.List;
 
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
@@ -12,11 +11,6 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
-import com.surelogic.common.CommonImages;
-import com.surelogic.common.eclipse.SLImages;
-import com.surelogic.common.eclipse.dialogs.ErrorDialogUtility;
-import com.surelogic.common.eclipse.logging.SLEclipseStatusUtility;
-import com.surelogic.common.i18n.I18N;
 import com.surelogic.sierra.jdbc.tool.*;
 import com.surelogic.sierra.tool.ArtifactType;
 
@@ -105,7 +99,11 @@ public class ArtifactTypeMappingDialog extends Dialog {
 			    for(FindingTypeDO f : findingTypes) {
 			    	newEditor.add(f.getName());
 			    }			
-				newEditor.setText(type.getFindingType());
+			    if (type.getFindingType() != null) {
+					newEditor.setText(lookupFindingTypeName(type.getFindingType()));
+			    } else {
+			    	newEditor.setText(findingTypes.get(0).getName());
+			    }
 				newEditor.addModifyListener(new ModifyListener() {
 					public void modifyText(ModifyEvent e) {
 						Combo text = (Combo)editor.getEditor();
