@@ -18,6 +18,10 @@ import com.surelogic.common.jdbc.StringRowHandler;
 import com.surelogic.sierra.jdbc.settings.Categories;
 import com.surelogic.sierra.jdbc.settings.CategoryDO;
 import com.surelogic.sierra.jdbc.settings.CategoryEntryDO;
+import com.surelogic.sierra.jdbc.settings.ScanFilterDO;
+import com.surelogic.sierra.jdbc.settings.ScanFilters;
+import com.surelogic.sierra.jdbc.settings.SettingQueries;
+import com.surelogic.sierra.jdbc.settings.TypeFilterDO;
 import com.surelogic.sierra.tool.message.Extension;
 import com.surelogic.sierra.tool.message.ExtensionArtifactType;
 import com.surelogic.sierra.tool.message.ExtensionFindingType;
@@ -127,11 +131,22 @@ public class FindingTypes {
 		final Queryable<?> registerFT = q
 				.prepared("FindingTypes.registerExtensionFindingType");
 		final List<String> allFindingTypes = new ArrayList<String>();
+
 		for (final FindingTypeDO ft : e.getNewFindingTypes()) {
 			final long ftId = insertFT.call(ft.getUid(), ft.getName(), ft
 					.getShortMessage(), ft.getInfo());
 			registerFT.call(id, ftId);
 			allFindingTypes.add(ft.getUid());
+		}
+
+		final ScanFilters sf = new ScanFilters(q);
+		final ScanFilterDO sfDO = sf.getScanFilter(SettingQueries.LOCAL_UUID);
+		if (sfDO != null) {
+			for (final FindingTypeDO ft : e.getNewFindingTypes()) {
+				sfDO.getFilterTypes().add(
+						new TypeFilterDO(ft.getUid(), null, false));
+			}
+			sf.writeScanFilter(sfDO);
 		}
 
 		allFindingTypes.addAll(e.getArtifactMap().keySet());
