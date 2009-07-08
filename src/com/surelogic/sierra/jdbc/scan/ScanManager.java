@@ -49,6 +49,8 @@ public final class ScanManager {
 	private final PreparedStatement deleteArtifact;
 	private final PreparedStatement deleteArtifactRelation;
 	private final PreparedStatement updateArtifactRelationScan;
+	private final PreparedStatement deleteScanExtensions;
+	private final PreparedStatement updateScanExtensions;
 
 	private ScanManager(final Connection conn) throws SQLException {
 		this.conn = conn;
@@ -155,6 +157,10 @@ public final class ScanManager {
 				.prepareStatement("DELETE FROM SCAN_FINDING_RELATION_OVERVIEW WHERE SCAN_ID = ? AND (PARENT_FINDING_ID = ? OR CHILD_FINDING_ID = ?)");
 		updateScanOverviewFindingRelation = conn
 				.prepareStatement("UPDATE SCAN_FINDING_RELATION_OVERVIEW SET SCAN_ID = ? WHERE SCAN_ID = ? AND (PARENT_FINDING_ID = ? OR CHILD_FINDING_ID = ?)");
+		deleteScanExtensions = conn
+				.prepareStatement("DELETE FROM SCAN_EXTENSION WHERE SCAN_ID = ?");
+		updateScanExtensions = conn
+				.prepareStatement("UPDATE SCAN_EXTENSION SET SCAN_ID = ? WHERE SCAN_ID = ?");
 	}
 
 	public ScanGenerator getScanGenerator(final FindingFilter filter) {
@@ -388,7 +394,11 @@ public final class ScanManager {
 					updateScanOverviewByFinding.setLong(idx++, findingId);
 					updateScanOverviewByFinding.execute();
 				}
-
+				deleteScanExtensions.setLong(1, oldest.getId());
+				deleteScanExtensions.execute();
+				updateScanExtensions.setLong(1, oldest.getId());
+				updateScanExtensions.setLong(2, latest.getId());
+				updateScanExtensions.execute();
 				conn.commit();
 				// Copy the appropriate artifacts to the previous scan, then run
 				// against the latest scan

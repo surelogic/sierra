@@ -1,16 +1,24 @@
 package com.surelogic.sierra.jdbc.scan;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.surelogic.common.jdbc.ConnectionQuery;
 import com.surelogic.common.jdbc.JDBCUtils;
+import com.surelogic.common.jdbc.QB;
 import com.surelogic.common.jobs.NullSLProgressMonitor;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.jdbc.record.ScanRecord;
+import com.surelogic.sierra.jdbc.tool.ExtensionDO;
 import com.surelogic.sierra.jdbc.tool.FindingFilter;
+import com.surelogic.sierra.jdbc.tool.FindingTypes;
 import com.surelogic.sierra.tool.message.ArtifactGenerator;
 import com.surelogic.sierra.tool.message.ScanGenerator;
 
@@ -35,15 +43,18 @@ class JDBCPartialScanGenerator implements ScanGenerator {
 	private final ScanRecord scan;
 	private final FindingFilter filter;
 	private String projectName;
+	private final Map<String, String> extensions;
 	private JDBCArtifactGenerator generator;
 
-	JDBCPartialScanGenerator(Connection conn, ScanRecordFactory factory,
-			ScanManager manager, ScanRecord scan, FindingFilter filter) {
+	JDBCPartialScanGenerator(final Connection conn,
+			final ScanRecordFactory factory, final ScanManager manager,
+			final ScanRecord scan, final FindingFilter filter) {
 		this.conn = conn;
 		this.factory = factory;
 		this.manager = manager;
 		this.scan = scan;
 		this.filter = filter;
+		extensions = new HashMap<String, String>();
 	}
 
 	public ArtifactGenerator build() {
@@ -52,44 +63,62 @@ class JDBCPartialScanGenerator implements ScanGenerator {
 			scan.setPartial(true);
 			scan.setStatus(ScanStatus.LOADING);
 			scan.update();
+			// TODO When the extension code is fully in place, we will have the
+			// set of extensions set externally
+			for (final ExtensionDO ext : new FindingTypes(new ConnectionQuery(
+					conn)).getExtensions()) {
+				extensions.put(ext.getName(), ext.getVersion());
+			}
+			final PreparedStatement st = conn.prepareStatement(QB
+					.get("Scans.insertExtension"));
+			try {
+				for (final Entry<String, String> ext : extensions.entrySet()) {
+					st.setLong(1, scan.getId());
+					st.setString(2, ext.getKey());
+					st.setString(3, ext.getValue());
+					st.execute();
+				}
+			} finally {
+				st.close();
+			}
 			conn.commit();
 			generator = new JDBCArtifactGenerator(conn, factory, manager,
 					projectName, scan, filter);
 			return generator;
-		} catch (SQLException e) {
+		} catch (final SQLException e) {
 			try {
 				conn.rollback();
 				manager.deleteScan(scan.getUid(), null);
 				conn.commit();
-			} catch (SQLException e1) {
+			} catch (final SQLException e1) {
 				// Quietly do nothing, we already have an exception
 			}
 			throw new ScanPersistenceException(e);
 		}
 	}
 
-	public ScanGenerator uid(String uid) {
+	public ScanGenerator uid(final String uid) {
 		return this;
 	}
 
-	public ScanGenerator javaVendor(String vendor) {
+	public ScanGenerator javaVendor(final String vendor) {
 		return this;
 	}
 
-	public ScanGenerator javaVersion(String version) {
+	public ScanGenerator javaVersion(final String version) {
 		return this;
 	}
 
-	public ScanGenerator project(String projectName) {
+	public ScanGenerator project(final String projectName) {
 		this.projectName = projectName;
 		return this;
 	}
 
-	public ScanGenerator timeseries(Collection<String> timeseries) {
+	public ScanGenerator timeseries(final Collection<String> timeseries) {
 		return this;
 	}
 
-	public ScanGenerator user(String user) {
+	public ScanGenerator user(final String user) {
 		return this;
 	}
 
@@ -108,7 +137,7 @@ class JDBCPartialScanGenerator implements ScanGenerator {
 			}
 			conn.commit();
 			return scan.getUid();
-		} catch (SQLException e) {
+		} catch (final SQLException e) {
 			throw new ScanPersistenceException(e);
 		}
 	}

@@ -1,14 +1,20 @@
 package com.surelogic.sierra.jdbc.scan;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.surelogic.common.jdbc.ConnectionQuery;
 import com.surelogic.common.jdbc.JDBCUtils;
+import com.surelogic.common.jdbc.QB;
 import com.surelogic.common.jobs.NullSLProgressMonitor;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.jdbc.project.ProjectRecordFactory;
@@ -17,7 +23,9 @@ import com.surelogic.sierra.jdbc.record.RecordRelationRecord;
 import com.surelogic.sierra.jdbc.record.ScanRecord;
 import com.surelogic.sierra.jdbc.record.TimeseriesRecord;
 import com.surelogic.sierra.jdbc.record.TimeseriesScanRecord;
+import com.surelogic.sierra.jdbc.tool.ExtensionDO;
 import com.surelogic.sierra.jdbc.tool.FindingFilter;
+import com.surelogic.sierra.jdbc.tool.FindingTypes;
 import com.surelogic.sierra.jdbc.user.ClientUser;
 import com.surelogic.sierra.tool.message.ArtifactGenerator;
 import com.surelogic.sierra.tool.message.ScanGenerator;
@@ -39,6 +47,7 @@ class JDBCScanGenerator implements ScanGenerator {
 	private String uid;
 	private String user;
 	private final Set<String> timeseries;
+	private final Map<String, String> extensions;
 	private ScanRecord scan;
 
 	JDBCScanGenerator(final Connection conn, final ScanRecordFactory factory,
@@ -47,6 +56,7 @@ class JDBCScanGenerator implements ScanGenerator {
 		this.factory = factory;
 		this.manager = manager;
 		timeseries = new TreeSet<String>();
+		extensions = new HashMap<String, String>();
 		partial = false;
 		this.filter = filter;
 	}
@@ -58,6 +68,7 @@ class JDBCScanGenerator implements ScanGenerator {
 		this.factory = factory;
 		this.manager = manager;
 		timeseries = new TreeSet<String>();
+		extensions = new HashMap<String, String>();
 		this.partial = partial;
 		this.filter = filter;
 	}
@@ -106,6 +117,24 @@ class JDBCScanGenerator implements ScanGenerator {
 							"Invalid timeseries name: " + name);
 				}
 			}
+			// TODO When the extension code is fully in place, we will have the
+			// set of extensions set externally
+			for (final ExtensionDO ext : new FindingTypes(new ConnectionQuery(
+					conn)).getExtensions()) {
+				extensions.put(ext.getName(), ext.getVersion());
+			}
+			final PreparedStatement st = conn.prepareStatement(QB
+					.get("Scans.insertExtension"));
+			try {
+				for (final Entry<String, String> ext : extensions.entrySet()) {
+					st.setLong(1, scan.getId());
+					st.setString(2, ext.getKey());
+					st.setString(3, ext.getValue());
+					st.execute();
+				}
+			} finally {
+				st.close();
+			}
 			conn.commit();
 			generator = new JDBCArtifactGenerator(conn, factory, manager,
 					projectName, scan, filter);
@@ -143,7 +172,7 @@ class JDBCScanGenerator implements ScanGenerator {
 	}
 
 	public ScanGenerator timeseries(final Collection<String> timeseries) {
-		if ((timeseries != null) && !timeseries.isEmpty()) {
+		if (timeseries != null && !timeseries.isEmpty()) {
 			this.timeseries.addAll(timeseries);
 		}
 		return this;
