@@ -20,7 +20,9 @@ import com.surelogic.sierra.jdbc.scan.ScanManager;
 import com.surelogic.sierra.jdbc.scan.ScanPersistenceException;
 import com.surelogic.sierra.jdbc.settings.ScanFilterView;
 import com.surelogic.sierra.jdbc.settings.SettingQueries;
+import com.surelogic.sierra.jdbc.tool.ExtensionDO;
 import com.surelogic.sierra.jdbc.tool.FindingFilter;
+import com.surelogic.sierra.jdbc.tool.FindingTypes;
 import com.surelogic.sierra.tool.message.MessageWarehouse;
 import com.surelogic.sierra.tool.message.ScanGenerator;
 
@@ -30,9 +32,9 @@ public final class ScanDocumentUtility {
 			.getLoggerFor(ScanDocumentUtility.class);
 
 	public interface Parser {
-		String parse(File scanDocument, ScanManager sMan, FindingFilter filter,
-				Set<Long> findingIds, SLProgressMonitor monitor)
-				throws ScanPersistenceException;
+		String parse(File scanDocument, Connection conn, ScanManager sMan,
+				FindingFilter filter, Set<Long> findingIds,
+				SLProgressMonitor monitor) throws ScanPersistenceException;
 
 		void updateOverview(ClientFindingManager fm, String uid,
 				FindingFilter filter, Set<Long> findingIds,
@@ -69,12 +71,20 @@ public final class ScanDocumentUtility {
 			final Map<String, List<String>> compilations)
 			throws ScanPersistenceException {
 		final Parser p = new Parser() {
-			public String parse(final File scanDocument,
+			public String parse(final File scanDocument, final Connection conn,
 					final ScanManager sMan, final FindingFilter filter,
 					final Set<Long> findingIds, final SLProgressMonitor monitor)
 					throws ScanPersistenceException {
+
 				final ScanGenerator gen = sMan.getPartialScanGenerator(
 						projectName, filter, compilations, findingIds);
+				// TODO When the extension code is fully in place, we will have
+				// the
+				// set of extensions set externally
+				for (final ExtensionDO ext : new FindingTypes(
+						new ConnectionQuery(conn)).getExtensions()) {
+					gen.extension(ext.getName(), ext.getVersion());
+				}
 				return MessageWarehouse.getInstance().parseScanDocument(
 						scanDocument, gen, monitor);
 			}
@@ -106,8 +116,9 @@ public final class ScanDocumentUtility {
 				final FindingFilter filter = SettingQueries
 						.scanFilterForProject(projectName).perform(
 								new ConnectionQuery(conn));
-				final String uid = parser.parse(scanDocument, sMan, filter,
-						findingIds, monitor);
+
+				final String uid = parser.parse(scanDocument, conn, sMan,
+						filter, findingIds, monitor);
 				conn.commit();
 				try {
 
@@ -184,6 +195,13 @@ public final class ScanDocumentUtility {
 						.scanFilterForProject(projectName).perform(
 								new ConnectionQuery(conn));
 				final ScanGenerator gen = sMan.getScanGenerator(filter);
+				// TODO When the extension code is fully in place, we will have
+				// the
+				// set of extensions set externally
+				for (final ExtensionDO ext : new FindingTypes(
+						new ConnectionQuery(conn)).getExtensions()) {
+					gen.extension(ext.getName(), ext.getVersion());
+				}
 				final String uid = MessageWarehouse.getInstance()
 						.parseScanDocument(scanDocument, gen, monitor);
 				SettingQueries.recordScanFilter(filter, uid).perform(q);
