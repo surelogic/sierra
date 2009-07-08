@@ -15,12 +15,19 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.window.Window;
+import org.eclipse.swt.widgets.Shell;
 
+import com.surelogic.common.eclipse.jobs.SLUIJob;
 import com.surelogic.common.jdbc.NullDBQuery;
 import com.surelogic.common.jdbc.Query;
 import com.surelogic.common.jdbc.TransactionException;
 import com.surelogic.common.logging.SLLogger;
+import com.surelogic.sierra.client.eclipse.dialogs.ArtifactTypeMappingDialog;
 import com.surelogic.sierra.jdbc.settings.Categories;
 import com.surelogic.sierra.jdbc.settings.CategoryDO;
 import com.surelogic.sierra.jdbc.tool.ArtifactTypeDO;
@@ -130,15 +137,48 @@ public final class Tools {
 							}
 						}
 					}
-
+					
 					if (newExtensions.isEmpty()) {
 						System.out.println("No new artifact types");
 					} else {
-						for (final Map.Entry<IToolExtension, List<ArtifactType>> e : newExtensions
-								.entrySet()) {
-							setupDatabase(q, ft, e.getKey(), e.getValue());
+						final List<ArtifactType> types = new ArrayList<ArtifactType>();
+						for(Map.Entry<IToolExtension,List<ArtifactType>> e : newExtensions.entrySet()) {
+							types.addAll(e.getValue());
 						}
+						Collections.sort(types);
+	 					
+						// Map to finding types
+						final List<FindingTypeDO> findingTypes = ft.listFindingTypes(); 						
+						SLUIJob job = new SLUIJob() {
+							@Override
+							public IStatus runInUIThread(IProgressMonitor monitor) {
+								Shell s = null;
+								ArtifactTypeMappingDialog d = 
+									new ArtifactTypeMappingDialog(s, types, findingTypes);
+								if (d.open() != Window.OK) {
+									// Cancelled, so clear finding type info
+									for(ArtifactType t : types) {
+										t.setFindingType(null);
+									}
+								}
+								
+								Data.getInstance().withTransaction(new NullDBQuery() {
+									@Override
+									public void doPerform(final Query q) {
+										final FindingTypes ft = new FindingTypes(q);
+										for(Map.Entry<IToolExtension,List<ArtifactType>> e : newExtensions.entrySet()) {
+											setupDatabase(q, ft, e.getKey(), e.getValue());
+										}
+									}
+								});
+								return Status.OK_STATUS;
+							}
+						};
+						job.schedule();
+						
+
 					}
+
 				}
 			});
 			// FIX Show dialog
