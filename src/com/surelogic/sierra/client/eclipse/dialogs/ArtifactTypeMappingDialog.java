@@ -139,7 +139,7 @@ public class ArtifactTypeMappingDialog extends Dialog {
 				return f.getUid();
 			}
 		}
-		return null;
+		return name;
 	}
 	
 	protected void addToEntryPanel(Composite entryPanel) {
