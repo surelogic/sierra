@@ -82,9 +82,9 @@ public class SierraJavacAdapter extends DefaultCompilerAdapter {
 		}		
 		System.setProperty(ToolUtil.TOOLS_PATH_PROP_NAME, libHome);		
 		final String toolsDir = libHome+"tools/";
-		config.setExcludedToolsList("checkstyle");
+		config.setExcludedToolsList("Checkstyle");
 		for (IToolFactory f : ToolUtil.findToolFactories()) {	
-			if (!"checkstyle".equals(f.getId())) {
+			if (!"Checkstyle".equals(f.getId())) {
 				for(final IToolExtension t : f.getExtensions()) {
 					final ToolExtension ext = new ToolExtension();
 					ext.setTool(f.getId());
