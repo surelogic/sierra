@@ -15,6 +15,7 @@ import com.surelogic.sierra.jdbc.server.ConnectionFactory;
 import com.surelogic.sierra.jdbc.settings.ConnectedServer;
 import com.surelogic.sierra.jdbc.settings.ServerLocations;
 import com.surelogic.sierra.jdbc.settings.SettingQueries;
+import com.surelogic.sierra.jdbc.tool.ToolQueries;
 import com.surelogic.sierra.tool.message.ServerInfoReply;
 import com.surelogic.sierra.tool.message.ServerInfoRequest;
 import com.surelogic.sierra.tool.message.ServerInfoServiceClient;
@@ -69,6 +70,13 @@ public class BugLinkServletContextListener implements ServletContextListener {
 								for (final ConnectedServer s : servers) {
 									final ServerLocation location = s
 											.getLocation();
+									ConnectionFactory
+											.getInstance()
+											.withTransaction(
+													ToolQueries
+															.synchronizeExtensions(
+																	location,
+																	false));
 									ConnectionFactory
 											.getInstance()
 											.withTransaction(
