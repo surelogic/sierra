@@ -2,6 +2,7 @@ package com.surelogic.sierra.jdbc.scan;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.HashMap;
@@ -114,17 +115,30 @@ class JDBCScanGenerator implements ScanGenerator {
 							"Invalid timeseries name: " + name);
 				}
 			}
-			final PreparedStatement st = conn.prepareStatement(QB
+			// FIXME We should be writing in all extensions from the config
+			final PreparedStatement insertSt = conn.prepareStatement(QB
 					.get("Scans.insertExtension"));
 			try {
-				for (final Entry<String, String> ext : extensions.entrySet()) {
-					st.setLong(1, scan.getId());
-					st.setString(2, ext.getKey());
-					st.setString(3, ext.getValue());
-					st.execute();
+				final PreparedStatement selectSt = conn.prepareStatement(QB
+						.get("Scans.selectExtension"));
+				try {
+					for (final Entry<String, String> ext : extensions
+							.entrySet()) {
+						selectSt.setString(1, ext.getKey());
+						selectSt.setString(2, ext.getValue());
+						final ResultSet set = selectSt.executeQuery();
+						if (set.next()) {
+							final long extId = set.getLong(1);
+							insertSt.setLong(1, scan.getId());
+							insertSt.setLong(2, extId);
+							insertSt.execute();
+						}
+					}
+				} finally {
+					selectSt.close();
 				}
 			} finally {
-				st.close();
+				insertSt.close();
 			}
 			conn.commit();
 			generator = new JDBCArtifactGenerator(conn, factory, manager,
