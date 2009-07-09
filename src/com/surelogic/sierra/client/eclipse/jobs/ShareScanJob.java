@@ -18,11 +18,13 @@ import com.surelogic.common.eclipse.logging.SLEclipseStatusUtility;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.jobs.SLProgressMonitor;
 import com.surelogic.common.logging.SLLogger;
+import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.actions.TimeseriesPromptFromJob;
 import com.surelogic.sierra.client.eclipse.actions.TroubleshootConnection;
 import com.surelogic.sierra.client.eclipse.model.ConnectedServerManager;
 import com.surelogic.sierra.client.eclipse.preferences.ServerFailureReport;
 import com.surelogic.sierra.jdbc.settings.ConnectedServer;
+import com.surelogic.sierra.jdbc.tool.ToolQueries;
 import com.surelogic.sierra.tool.message.MessageWarehouse;
 import com.surelogic.sierra.tool.message.Scan;
 import com.surelogic.sierra.tool.message.ScanVersionException;
@@ -129,6 +131,9 @@ public class ShareScanJob extends AbstractServerProjectJob {
 			final SLProgressMonitor slMonitor) {
 		TroubleshootConnection troubleshoot;
 		try {
+			Data.getInstance().withTransaction(
+					ToolQueries.synchronizeExtensions(
+							getServer().getLocation(), true));
 			SierraServiceClient.create(getServer().getLocation()).publishRun(
 					scan);
 			ConnectedServerManager.getInstance().getStats(getServer())

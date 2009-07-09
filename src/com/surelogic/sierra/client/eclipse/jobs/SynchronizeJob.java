@@ -28,6 +28,7 @@ import com.surelogic.sierra.client.eclipse.preferences.ServerFailureReport;
 import com.surelogic.sierra.jdbc.settings.ConnectedServer;
 import com.surelogic.sierra.jdbc.settings.ServerScanFilterInfo;
 import com.surelogic.sierra.jdbc.settings.SettingQueries;
+import com.surelogic.sierra.jdbc.tool.ToolQueries;
 import com.surelogic.sierra.tool.message.ListCategoryResponse;
 import com.surelogic.sierra.tool.message.ServerLocation;
 import com.surelogic.sierra.tool.message.ServerMismatchException;
@@ -71,7 +72,7 @@ public class SynchronizeJob extends AbstractServerProjectJob {
 		final int numProblems = ConnectedServerManager.getInstance().getStats(
 				getServer()).getProblemCount()
 				+ Projects.getInstance().getProblemCount(f_projectName);
-		if (!f_force && (numProblems > threshold)) {
+		if (!f_force && numProblems > threshold) {
 			return Status.CANCEL_STATUS;
 		}
 		final SLProgressMonitor slMonitor = new SLProgressMonitorWrapper(
@@ -140,6 +141,7 @@ public class SynchronizeJob extends AbstractServerProjectJob {
 			boolean updated = false;
 			if (joinJob == null || joinJob.process(getServer())) {
 				final ServerLocation loc = getServer().getLocation();
+				ToolQueries.synchronizeExtensions(loc, true).perform(q);
 				final ListCategoryResponse categories = SettingQueries
 						.retrieveCategories(loc,
 								SettingQueries.categoryRequest().perform(q))

@@ -7,7 +7,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
-import com.surelogic.common.eclipse.jobs.DatabaseJob;
 import com.surelogic.common.eclipse.jobs.SLProgressMonitorWrapper;
 import com.surelogic.common.eclipse.logging.SLEclipseStatusUtility;
 import com.surelogic.common.i18n.I18N;
@@ -22,6 +21,7 @@ import com.surelogic.sierra.client.eclipse.model.ConnectedServerManager;
 import com.surelogic.sierra.client.eclipse.preferences.ServerFailureReport;
 import com.surelogic.sierra.jdbc.settings.ConnectedServer;
 import com.surelogic.sierra.jdbc.settings.SettingQueries;
+import com.surelogic.sierra.jdbc.tool.ToolQueries;
 import com.surelogic.sierra.tool.message.InvalidLoginException;
 import com.surelogic.sierra.tool.message.ServerLocation;
 import com.surelogic.sierra.tool.message.SierraServiceClientException;
@@ -30,14 +30,15 @@ public final class GetCategoriesJob extends AbstractSierraDatabaseJob {
 	private final ServerFailureReport f_strategy;
 	private ConnectedServer f_server;
 
-	public GetCategoriesJob(ServerFailureReport strategy, ConnectedServer server) {
+	public GetCategoriesJob(final ServerFailureReport strategy,
+			final ConnectedServer server) {
 		super("Getting categories from " + server.getName());
 		f_server = server;
 		f_strategy = strategy;
 	}
 
 	@Override
-	protected IStatus run(IProgressMonitor monitor) {
+	protected IStatus run(final IProgressMonitor monitor) {
 		final String msg = "Getting scan filter settings from the Sierra team server '"
 				+ f_server + "'";
 		final SLProgressMonitor slMonitor = new SLProgressMonitorWrapper(
@@ -55,9 +56,12 @@ public final class GetCategoriesJob extends AbstractSierraDatabaseJob {
 		return status;
 	}
 
-	private IStatus getResultFilters(SLProgressMonitor slMonitor)
+	private IStatus getResultFilters(final SLProgressMonitor slMonitor)
 			throws SQLException {
 		try {
+			Data.getInstance().withTransaction(
+					ToolQueries.synchronizeExtensions(f_server.getLocation(),
+							true));
 			final DBQuery<?> query = SettingQueries.retrieveCategories(f_server
 					.getLocation(), Data.getInstance().withReadOnly(
 					SettingQueries.categoryRequest()));
@@ -70,8 +74,8 @@ public final class GetCategoriesJob extends AbstractSierraDatabaseJob {
 				troubleshoot = new TroubleshootWrongAuthentication(f_strategy,
 						f_server.getLocation());
 			} else {
-				troubleshoot = new TroubleshootNoSuchServer(f_strategy, f_server
-						.getLocation());
+				troubleshoot = new TroubleshootNoSuchServer(f_strategy,
+						f_server.getLocation());
 			}
 			// We had a recoverable error. Rollback, run the appropriate
 			// troubleshoot, and try again.
