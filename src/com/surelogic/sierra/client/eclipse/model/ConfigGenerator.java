@@ -37,10 +37,9 @@ import com.surelogic.common.eclipse.Activator;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Tools;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
-import com.surelogic.sierra.tool.IToolFactory;
-import com.surelogic.sierra.tool.SierraToolConstants;
-import com.surelogic.sierra.tool.ToolUtil;
+import com.surelogic.sierra.tool.*;
 import com.surelogic.sierra.tool.message.Config;
+import com.surelogic.sierra.tool.message.ToolExtension;
 import com.surelogic.sierra.tool.targets.FileTarget;
 import com.surelogic.sierra.tool.targets.FilteredDirectoryTarget;
 import com.surelogic.sierra.tool.targets.FullDirectoryTarget;
@@ -243,7 +242,6 @@ public final class ConfigGenerator {
 			config.setDestDirectory(f_resultRoot);
 			config.setScanDocument(scanDocument);
 			setupTools(config, javaProject);
-			config.setExcludedToolsList(getExcludedTools());
 
 			try {
 				String defaultOutputLocation = javaProject.getOutputLocation()
@@ -359,7 +357,6 @@ public final class ConfigGenerator {
 		config.setDestDirectory(f_resultRoot);
 		config.setScanDocument(scanDocument);
 		setupTools(config, project);
-		config.setExcludedToolsList(getExcludedTools());
 
 		// Get clean option
 		// Get included dirs -project specific
@@ -385,19 +382,12 @@ public final class ConfigGenerator {
 				true));
 		config.setTargetLevel(javaProject.getOption(
 				JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, true));
-	}
-
-	/**
-	 * Generates a comma separated string of the excluded tools
-	 * 
-	 * @return
-	 */
-	private String getExcludedTools() {
-
+	
+		// Compute set of excluded tools
 		StringBuilder excludedTools = new StringBuilder();
 		f_numberofExcludedTools = 0;
 
-		for (IToolFactory f : Tools.findToolFactories()) {
+		for (IToolFactory f : Tools.findToolFactories()) {			
 			if (!PreferenceConstants.runTool(f)) {
 				// Only need to add a comma if this isn't the first one
 				if (f_numberofExcludedTools != 0) {
@@ -405,12 +395,22 @@ public final class ConfigGenerator {
 				}
 				excludedTools.append(f.getId());
 				f_numberofExcludedTools++;
+			} else {
+				for(final IToolExtension t : f.getExtensions()) {
+					final ToolExtension ext = new ToolExtension();
+					ext.setTool(f.getId());
+					ext.setId(t.getId());
+					ext.setVersion(t.getVersion());
+					config.addExtension(ext);
+				}
 			}
 		}
 		if (f_numberofExcludedTools == 0) {
-			return null;
+			config.setExcludedToolsList(null);
+		} else {
+			config.setExcludedToolsList(excludedTools.toString());
 		}
-		return excludedTools.toString();
+		
 	}
 
 	/**
