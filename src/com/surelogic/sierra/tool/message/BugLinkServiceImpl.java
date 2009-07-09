@@ -236,7 +236,6 @@ public class BugLinkServiceImpl extends SecureServiceServlet implements
 			final ListExtensionRequest request) {
 		return ConnectionFactory.getInstance().withTransaction(
 				new DBQuery<ListExtensionResponse>() {
-
 					public ListExtensionResponse perform(final Query q) {
 						final ListExtensionResponse r = new ListExtensionResponse();
 						for (final ExtensionDO d : new FindingTypes(q)
