@@ -152,16 +152,16 @@ public final class Tools {
 						SLUIJob job = new SLUIJob() {
 							@Override
 							public IStatus runInUIThread(IProgressMonitor monitor) {
-								Shell s = null;
-								ArtifactTypeMappingDialog d = 
-									new ArtifactTypeMappingDialog(s, types, findingTypes);
-								if (d.open() != Window.OK) {
-									// Cancelled, so clear finding type info
-									for(ArtifactType t : types) {
-										t.setFindingType(null);
+								if (false) {
+									ArtifactTypeMappingDialog d = 
+										new ArtifactTypeMappingDialog(null, types, findingTypes);
+									if (d.open() != Window.OK) {
+										// Cancelled, so clear finding type info
+										for(ArtifactType t : types) {
+											t.setFindingType(null);
+										}
 									}
-								}
-								
+								}								
 								Data.getInstance().withTransaction(new NullDBQuery() {
 									@Override
 									public void doPerform(final Query q) {
