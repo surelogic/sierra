@@ -37,6 +37,21 @@ public class PMDToolFactory extends AbstractToolFactory {
 		}
 	}
 	
+	static class RuleSetInfo {
+		final RuleSet ruleset;
+		final boolean isCore;
+		final Properties props;
+		
+		RuleSetInfo(RuleSet rs, boolean core, Properties props) {
+			ruleset = rs;
+			isCore = core;
+			this.props = props;
+		}
+		RuleSetInfo(RuleSet rs) {
+			this(rs, true, null);
+		}
+	}
+	
 //	@Override
 //	public String getVersion() {
 //		return "4.2.4"/*PMD.VERSION*/;
@@ -61,39 +76,43 @@ public class PMDToolFactory extends AbstractToolFactory {
 	
 	public Collection<IToolExtension> getExtensions() {
 		try {		
-			return extractArtifactTypes(getAugmentedRuleSets());							
+			return extractArtifactTypes(getRuleSets());							
 		} catch (RuleSetNotFoundException e) {
 			LOG.log(Level.SEVERE, "Couldn't find rulesets", e);
 		}
 		return Collections.emptySet();
 	}
 	
-	private static boolean containsRuleSet(Map<RuleSet,?> sets, RuleSet set) {
-		for(Map.Entry<RuleSet,?> e : sets.entrySet()) {
-			if (e.getKey().getFileName().equals(set.getFileName())) {
+	private static boolean containsRuleSet(List<RuleSetInfo> sets, RuleSet set) {
+		for(RuleSetInfo info : sets) {
+			if (info.ruleset.getFileName().equals(set.getFileName())) {
 				return true;
 			}
 		}
 		return false;
 	}
 
-	Collection<IToolExtension> extractArtifactTypes(Map<RuleSet,Properties> rulesets) {
+	Collection<IToolExtension> extractArtifactTypes(List<RuleSetInfo> rulesets) {
 		List<IToolExtension> extensions = new ArrayList<IToolExtension>();
-		for(Map.Entry<RuleSet,Properties> e : rulesets.entrySet()) {
-			RuleSet ruleset = e.getKey();
+		for(RuleSetInfo info : rulesets) {
 			Set<ArtifactType> types = new HashSet<ArtifactType>();	
-			for(Rule r : ruleset.getRules()) {
+			for(Rule r : info.ruleset.getRules()) {
 				ArtifactType t = new ArtifactType(getName(), getVersion(), 
-						         ruleset.getFileName(), r.getName(), r.getRuleSetName());
-				if (e.getValue() != null) {
-					String findingType = e.getValue().getProperty(t.type);
+						         info.ruleset.getFileName(), r.getName(), r.getRuleSetName());
+				if (info.props != null) {
+					String findingType = info.props.getProperty(t.type);
 					if (findingType != null) {
 						t.setFindingType(findingType);
 					}
 				}
 				types.add(t);					
 			}		
-			extensions.add(new AbstractToolExtension(ruleset.getName(), types) {});
+			final boolean isCore = info.isCore;
+			extensions.add(new AbstractToolExtension(info.ruleset.getName(), types) {
+				public boolean isCore() {
+					return isCore;
+				}
+			});
 		}												
 		return extensions;
 	}
@@ -118,21 +137,13 @@ public class PMDToolFactory extends AbstractToolFactory {
 		return sets;
 	}
 	
-	static List<RuleSet> getRuleSets() throws RuleSetNotFoundException {
-		List<RuleSet> sets = new ArrayList<RuleSet>();
-		for(Map.Entry<RuleSet,?> e : getAugmentedRuleSets().entrySet()) {
-			sets.add(e.getKey());
-		}
-		return sets;
-	}
-	
-	static Map<RuleSet,Properties> getAugmentedRuleSets() throws RuleSetNotFoundException {
+	static List<RuleSetInfo> getRuleSets() throws RuleSetNotFoundException {
 		List<File> plugins = findPluginJars(false);
 		final URLClassLoader cl = ToolUtil.computeClassLoader(AbstractPMDTool.class.getClassLoader(), plugins);
 		final RuleSetFactory ruleSetFactory = new RuleSetFactory();
-		final Map<RuleSet,Properties> rulesets = new HashMap<RuleSet,Properties>();
+		final List<RuleSetInfo> rulesets = new ArrayList<RuleSetInfo>();
 		for(RuleSet s : getDefaultRuleSets()) {
-			rulesets.put(s, null);
+			rulesets.add(new RuleSetInfo(s));
 		}
 		
 		// Add in plugin rulesets
@@ -145,7 +156,7 @@ public class PMDToolFactory extends AbstractToolFactory {
 							if (set.getFileName() == null) {
 								set.setFileName(pair.name);
 							}
-							rulesets.put(set, pair.props);
+							rulesets.add(new RuleSetInfo(set, false, pair.props));
 						}
 					}
 				}
@@ -199,7 +210,8 @@ public class PMDToolFactory extends AbstractToolFactory {
 		
 		Entities.createTag("description", "Custom Sierra RuleSet", b);
 		try {
-			for(RuleSet rs : getRuleSets()) {
+			for(RuleSetInfo info : getRuleSets()) {
+				RuleSet rs = info.ruleset;
 				Entities.start("rule", b);
 				if (rs.getFileName() == null) {
 					System.out.println(rs.getName());
