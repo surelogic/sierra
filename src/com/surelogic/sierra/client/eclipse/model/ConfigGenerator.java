@@ -397,6 +397,10 @@ public final class ConfigGenerator {
 				f_numberofExcludedTools++;
 			} else {
 				for(final IToolExtension t : f.getExtensions()) {
+					if (t.isCore()) {
+						// Implied by the above
+						continue;
+					}
 					final ToolExtension ext = new ToolExtension();
 					ext.setTool(f.getId());
 					ext.setId(t.getId());
