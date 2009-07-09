@@ -27,6 +27,7 @@ import com.surelogic.sierra.tool.message.MessageWarehouse;
 public class ToolUtil {
 	public static final String TOOLS_PATH_PROP_NAME = "sierra.tools.dir";
 	public static final String CUSTOM_TOOLS_PATH_PROP_NAME = "custom.sierra.tools.dir";
+	public static final String FINDING_TYPE_PROPERTIES = "sl.findingType.properties";
 
 	/** The logger */
 	protected static final Logger LOG = SLLogger.getLogger("sierra");
