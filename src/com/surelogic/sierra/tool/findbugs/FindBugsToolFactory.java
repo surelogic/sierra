@@ -14,6 +14,8 @@ import edu.umd.cs.findbugs.DetectorFactoryCollection;
 import edu.umd.cs.findbugs.Plugin;
 
 public class FindBugsToolFactory extends AbstractToolFactory {	
+	private static final String CORE = "edu.umd.cs.findbugs.plugins.core";
+	
 //	@Override
 //	public String getVersion() {
 //		return "1.3.7"/*Version.RELEASE_BASE*/;
@@ -59,8 +61,13 @@ public class FindBugsToolFactory extends AbstractToolFactory {
 			for(DetectorFactory factory : iterable(plugin.detectorFactoryIterator())) {
 				// Actual detector
 			}
-			*/						
-			extensions.add(new AbstractToolExtension(plugin.getPluginId(), types) {});
+			*/	
+			final boolean isCore = CORE.equals(plugin.getPluginId());
+			extensions.add(new AbstractToolExtension(plugin.getPluginId(), types) {
+				public boolean isCore() {
+					return isCore;
+				};
+			});
 			
 		}
 		return extensions;
