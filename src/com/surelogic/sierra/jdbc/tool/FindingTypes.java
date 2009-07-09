@@ -243,10 +243,6 @@ public class FindingTypes {
 		for (final ExtensionFindingType ft : message.getFindingTypes()) {
 			e.addFindingType(convertDO(ft));
 		}
-		for (final ExtensionArtifactType at : message.getArtifacts()) {
-			e.addType(at.getFindingType(), new ArtifactTypeDO(at.getTool(), at
-					.getMnemonic(), at.getDisplay(), at.getVersion()));
-		}
 		return e;
 	}
 
