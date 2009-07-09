@@ -20,7 +20,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.window.Window;
-import org.eclipse.swt.widgets.Shell;
 
 import com.surelogic.common.eclipse.jobs.SLUIJob;
 import com.surelogic.common.jdbc.NullDBQuery;
