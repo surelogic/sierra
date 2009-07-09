@@ -388,7 +388,7 @@ public final class ConfigGenerator {
 		f_numberofExcludedTools = 0;
 
 		for (IToolFactory f : Tools.findToolFactories()) {			
-			if (!PreferenceConstants.runTool(f)) {
+			if (!PreferenceConstants.runTool(f) || "Checkstyle".equals(f.getId())) {
 				// Only need to add a comma if this isn't the first one
 				if (f_numberofExcludedTools != 0) {
 					excludedTools.append(", ");
