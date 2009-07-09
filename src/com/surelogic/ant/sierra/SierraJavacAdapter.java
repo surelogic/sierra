@@ -86,6 +86,10 @@ public class SierraJavacAdapter extends DefaultCompilerAdapter {
 		for (IToolFactory f : ToolUtil.findToolFactories()) {	
 			if (!"Checkstyle".equals(f.getId())) {
 				for(final IToolExtension t : f.getExtensions()) {
+					if (t.isCore()) {
+						// Implied by the above
+						continue;
+					}
 					final ToolExtension ext = new ToolExtension();
 					ext.setTool(f.getId());
 					ext.setId(t.getId());
