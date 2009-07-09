@@ -41,4 +41,8 @@ public abstract class AbstractToolExtension implements IToolExtension {
 	public final Set<ArtifactType> getArtifactTypes() {
 		return types;
 	}
+	
+	public boolean isCore() {
+		return false;
+	}
 }
