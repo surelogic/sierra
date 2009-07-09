@@ -12,10 +12,13 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
-import java.util.*;
+import java.util.Collection;
+import java.util.Enumeration;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.zip.*;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -44,7 +47,7 @@ import com.surelogic.sierra.tool.targets.ToolTarget;
 public final class MessageWarehouse {
 	public static final String TOOL_STREAM_SUFFIX = ".tool.xml";
 	public static final String CONFIG_STREAM_NAME = "config.xml";
-	
+
 	private static final Logger log = SLLogger.getLogger(MessageWarehouse.class
 			.getName());
 	private static final MessageWarehouse INSTANCE = new MessageWarehouse();
@@ -80,7 +83,7 @@ public final class MessageWarehouse {
 	 * @param dest
 	 *            a path name
 	 */
-	public void writeToolOutput(ToolOutput to, String dest) {
+	public void writeToolOutput(final ToolOutput to, final String dest) {
 		FileWriter out;
 
 		try {
@@ -102,7 +105,8 @@ public final class MessageWarehouse {
 	 * @param metric
 	 * @param out
 	 */
-	public void writeClassMetric(ClassMetric metric, OutputStream out) {
+	public void writeClassMetric(final ClassMetric metric,
+			final OutputStream out) {
 		try {
 			marshaller.marshal(metric, out);
 		} catch (final JAXBException e) {
@@ -117,7 +121,7 @@ public final class MessageWarehouse {
 	 * @param metric
 	 * @param out
 	 */
-	public void writeClassMetric(ClassMetric metric, Writer out) {
+	public void writeClassMetric(final ClassMetric metric, final Writer out) {
 		try {
 			marshaller.marshal(metric, out);
 		} catch (final JAXBException e) {
@@ -132,7 +136,7 @@ public final class MessageWarehouse {
 	 * @param error
 	 * @param out
 	 */
-	public void writeError(Error error, OutputStream out) {
+	public void writeError(final Error error, final OutputStream out) {
 		try {
 			marshaller.marshal(error, out);
 		} catch (final JAXBException e) {
@@ -147,7 +151,7 @@ public final class MessageWarehouse {
 	 * @param a
 	 * @param out
 	 */
-	public void writeArtifact(Artifact a, OutputStream out) {
+	public void writeArtifact(final Artifact a, final OutputStream out) {
 		try {
 			marshaller.marshal(a, out);
 		} catch (final JAXBException e) {
@@ -162,7 +166,7 @@ public final class MessageWarehouse {
 	 * @param a
 	 * @param out
 	 */
-	public void writeArtifact(Artifact a, Writer out) {
+	public void writeArtifact(final Artifact a, final Writer out) {
 		try {
 			marshaller.marshal(a, out);
 		} catch (final JAXBException e) {
@@ -171,7 +175,7 @@ public final class MessageWarehouse {
 		}
 	}
 
-	public void writeConfig(Config config, OutputStream artOut) {
+	public void writeConfig(final Config config, final OutputStream artOut) {
 		try {
 			marshaller.marshal(config, artOut);
 		} catch (final JAXBException e) {
@@ -180,7 +184,7 @@ public final class MessageWarehouse {
 		}
 	}
 
-	public void writeConfig(Config config, Writer artOut) {
+	public void writeConfig(final Config config, final Writer artOut) {
 		try {
 			marshaller.marshal(config, artOut);
 		} catch (final JAXBException e) {
@@ -189,7 +193,8 @@ public final class MessageWarehouse {
 		}
 	}
 
-	public void writeFindingTypes(FindingTypes types, OutputStream out) {
+	public void writeFindingTypes(final FindingTypes types,
+			final OutputStream out) {
 		try {
 			marshaller.marshal(types, out);
 		} catch (final JAXBException e) {
@@ -198,7 +203,7 @@ public final class MessageWarehouse {
 		}
 	}
 
-	public void writeFindingTypes(FindingTypes types, Writer out) {
+	public void writeFindingTypes(final FindingTypes types, final Writer out) {
 		try {
 			marshaller.marshal(types, out);
 		} catch (final JAXBException e) {
@@ -214,7 +219,8 @@ public final class MessageWarehouse {
 	 * @param out
 	 * @throws JAXBException
 	 */
-	public void writeXmlObject(Object o, OutputStream out) throws JAXBException {
+	public void writeXmlObject(final Object o, final OutputStream out)
+			throws JAXBException {
 		marshaller.marshal(o, out);
 	}
 
@@ -225,7 +231,8 @@ public final class MessageWarehouse {
 	 * @param out
 	 * @throws JAXBException
 	 */
-	public void writeXmlObject(Object o, Writer out) throws JAXBException {
+	public void writeXmlObject(final Object o, final Writer out)
+			throws JAXBException {
 		marshaller.marshal(o, out);
 	}
 
@@ -236,7 +243,7 @@ public final class MessageWarehouse {
 	 * @return
 	 * @throws JAXBException
 	 */
-	public Object fetchXmlObject(InputStream in) throws JAXBException {
+	public Object fetchXmlObject(final InputStream in) throws JAXBException {
 		return unmarshaller.unmarshal(in);
 	}
 
@@ -247,7 +254,7 @@ public final class MessageWarehouse {
 	 * @return
 	 * @throws JAXBException
 	 */
-	public Object fetchXmlObject(Reader in) throws JAXBException {
+	public Object fetchXmlObject(final Reader in) throws JAXBException {
 		return unmarshaller.unmarshal(in);
 	}
 
@@ -259,7 +266,7 @@ public final class MessageWarehouse {
 	 * @return a {@link ToolOutput} object, or null if none can be parsed at
 	 *         src.
 	 */
-	public ToolOutput fetchToolOutput(String src) {
+	public ToolOutput fetchToolOutput(final String src) {
 		try {
 			return fetchToolOutput(new FileInputStream(src));
 		} catch (final FileNotFoundException e) {
@@ -267,7 +274,7 @@ public final class MessageWarehouse {
 		}
 	}
 
-	public ToolOutput fetchToolOutput(InputStream in) {
+	public ToolOutput fetchToolOutput(final InputStream in) {
 		try {
 			return (ToolOutput) unmarshaller.unmarshal(in);
 		} catch (final JAXBException e) {
@@ -277,7 +284,7 @@ public final class MessageWarehouse {
 		return null;
 	}
 
-	public ToolOutput fetchToolOutput(Reader in) {
+	public ToolOutput fetchToolOutput(final Reader in) {
 		try {
 			return (ToolOutput) unmarshaller.unmarshal(in);
 		} catch (final JAXBException e) {
@@ -294,7 +301,7 @@ public final class MessageWarehouse {
 	 *            a path name
 	 * @return a {@link Scan} object, or null if none can be parsed at src.
 	 */
-	public Scan fetchScan(String src) {
+	public Scan fetchScan(final String src) {
 		try {
 			return fetchScan(new FileInputStream(src));
 		} catch (final FileNotFoundException e) {
@@ -302,7 +309,7 @@ public final class MessageWarehouse {
 		}
 	}
 
-	public Scan fetchScan(File src, boolean compressed) {
+	public Scan fetchScan(final File src, final boolean compressed) {
 		try {
 			final InputStream is = new FileInputStream(src);
 			final Scan s = fetchScan(compressed ? new GZIPInputStream(is) : is);
@@ -315,7 +322,7 @@ public final class MessageWarehouse {
 		}
 	}
 
-	public Scan fetchScan(InputStream in) {
+	public Scan fetchScan(final InputStream in) {
 		try {
 			return (Scan) unmarshaller.unmarshal(in);
 		} catch (final JAXBException e) {
@@ -325,7 +332,7 @@ public final class MessageWarehouse {
 		return null;
 	}
 
-	public Scan fetchScan(Reader in) {
+	public Scan fetchScan(final Reader in) {
 		try {
 			return (Scan) unmarshaller.unmarshal(in);
 		} catch (final JAXBException e) {
@@ -335,7 +342,7 @@ public final class MessageWarehouse {
 		return null;
 	}
 
-	public FindingTypes fetchFindingTypes(InputStream in) {
+	public FindingTypes fetchFindingTypes(final InputStream in) {
 		try {
 			return (FindingTypes) unmarshaller.unmarshal(in);
 		} catch (final JAXBException e) {
@@ -345,7 +352,7 @@ public final class MessageWarehouse {
 		return null;
 	}
 
-	public FindingTypes fetchFindingTypes(Reader reader) {
+	public FindingTypes fetchFindingTypes(final Reader reader) {
 		try {
 			return (FindingTypes) unmarshaller.unmarshal(reader);
 		} catch (final JAXBException e) {
@@ -359,11 +366,12 @@ public final class MessageWarehouse {
 		final String name;
 		final InputStream stream;
 		final XMLStreamReader xmlr;
-		
-		XMLStream(File runDocument) throws XMLStreamException, IOException {
+
+		XMLStream(final File runDocument) throws XMLStreamException,
+				IOException {
 			name = runDocument.getName();
 			stream = new FileInputStream(runDocument);
-			
+
 			// set up a parser
 			final XMLInputFactory xmlif = XMLInputFactory.newInstance();
 			if (runDocument.getName().endsWith(".gz")) {
@@ -373,13 +381,14 @@ public final class MessageWarehouse {
 			}
 		}
 
-		public XMLStream(String name, InputStream stream) throws XMLStreamException {
+		public XMLStream(final String name, final InputStream stream)
+				throws XMLStreamException {
 			this.name = name;
 			this.stream = stream;
-			
+
 			// set up a parser
 			final XMLInputFactory xmlif = XMLInputFactory.newInstance();
-			xmlr = xmlif.createXMLStreamReader(stream);			
+			xmlr = xmlif.createXMLStreamReader(stream);
 		}
 
 		public void close() throws XMLStreamException, IOException {
@@ -387,9 +396,9 @@ public final class MessageWarehouse {
 			stream.close();
 		}
 	}
-	
+
 	public String parseScanDocument(final File runDocument,
-			ScanGenerator generator, SLProgressMonitor monitor) {
+			final ScanGenerator generator, final SLProgressMonitor monitor) {
 		if (runDocument.getName().endsWith(".zip")) {
 			return parseZipScanDocument(runDocument, generator, monitor);
 		}
@@ -408,8 +417,9 @@ public final class MessageWarehouse {
 			} finally {
 				xs.close();
 			}
-			
-			parseScanDocument(new XMLStream(runDocument), generator.build(), monitor);
+
+			parseScanDocument(new XMLStream(runDocument), generator.build(),
+					monitor);
 		} catch (final FileNotFoundException e) {
 			throw new IllegalArgumentException("File with name "
 					+ runDocument.getName() + " does not exist.", e);
@@ -420,18 +430,20 @@ public final class MessageWarehouse {
 		}
 		return generator.finished();
 	}
-	
+
 	public String parseZipScanDocument(final File runDocument,
-			ScanGenerator generator, SLProgressMonitor monitor) {
-		try {			
+			final ScanGenerator generator, final SLProgressMonitor monitor) {
+		try {
 			final ZipFile zip = new ZipFile(runDocument);
 			if (monitor != null) {
 				monitor.subTask("Generating Artifacts");
 			}
 
 			final ZipEntry configEntry = zip.getEntry(CONFIG_STREAM_NAME);
-			final String configName    = runDocument.getName()+File.separatorChar+CONFIG_STREAM_NAME;
-			final XMLStream stream     = new XMLStream(configName, zip.getInputStream(configEntry));
+			final String configName = runDocument.getName()
+					+ File.separatorChar + CONFIG_STREAM_NAME;
+			final XMLStream stream = new XMLStream(configName, zip
+					.getInputStream(configEntry));
 			Config config = null;
 			try {
 				config = parseScanMetadata(stream, generator, monitor);
@@ -446,13 +458,16 @@ public final class MessageWarehouse {
 				final ArtifactGenerator ag = generator.build();
 				final Enumeration<? extends ZipEntry> entries = zip.entries();
 				while (entries.hasMoreElements()) {
-					final ZipEntry ze  = entries.nextElement();
-					final String name  = ze.getName();
+					final ZipEntry ze = entries.nextElement();
+					final String name = ze.getName();
 					if (name.endsWith(TOOL_STREAM_SUFFIX)) {
-						final String tool = name.substring(0, name.length()-TOOL_STREAM_SUFFIX.length());
+						final String tool = name.substring(0, name.length()
+								- TOOL_STREAM_SUFFIX.length());
 						if (config.isToolIncluded(tool)) {
-							final String id    = runDocument.getName()+File.separatorChar+name;
-							final XMLStream xs = new XMLStream(id, zip.getInputStream(ze));
+							final String id = runDocument.getName()
+									+ File.separatorChar + name;
+							final XMLStream xs = new XMLStream(id, zip
+									.getInputStream(ze));
 							parseScanDocument(xs, ag, monitor);
 						}
 					}
@@ -464,13 +479,15 @@ public final class MessageWarehouse {
 		} catch (final XMLStreamException e) {
 			throw new IllegalArgumentException(e);
 		} catch (final IOException e) {
-			log.log(Level.SEVERE, "Error when trying to read compressed file", e);
+			log.log(Level.SEVERE, "Error when trying to read compressed file",
+					e);
 		}
 		return generator.finished();
 	}
 
-	private Config parseScanMetadata(final XMLStream xs, ScanGenerator generator,
-			                         SLProgressMonitor monitor) throws XMLStreamException {
+	private Config parseScanMetadata(final XMLStream xs,
+			final ScanGenerator generator, final SLProgressMonitor monitor)
+			throws XMLStreamException {
 		final XMLStreamReader xmlr = xs.xmlr;
 		try {
 			// move to the root element and check its name.
@@ -478,20 +495,21 @@ public final class MessageWarehouse {
 			xmlr.require(START_ELEMENT, null, "scan");
 			xmlr.nextTag(); // move to uid element
 			xmlr.require(START_ELEMENT, null, "uid");
-			generator.uid(unmarshaller.unmarshal(xmlr, String.class)
-					.getValue());
+			generator
+					.uid(unmarshaller.unmarshal(xmlr, String.class).getValue());
 			xmlr.nextTag(); // move to toolOutput element.
 			xmlr.nextTag(); // move to artifacts (or config, if no
 			// artifacts, errors, or classMetrics)
 			// Count artifacts, so that we can estimate time until
 			// completion
 
-			while ((xmlr.getEventType() != START_ELEMENT)
+			while (xmlr.getEventType() != START_ELEMENT
 					|| !xmlr.getLocalName().equals("config")) {
 				xmlr.next();
 			}
 
-			Config c = unmarshaller.unmarshal(xmlr, Config.class).getValue();
+			final Config c = unmarshaller.unmarshal(xmlr, Config.class)
+					.getValue();
 			readConfig(c, generator);
 
 			if (cancelled(monitor)) {
@@ -503,18 +521,17 @@ public final class MessageWarehouse {
 		} catch (final JAXBException e) {
 			/*
 			 * Throwable linked = e.getLinkedException(); while (linked
-			 * instanceof JAXBException) { JAXBException e2 =
-			 * (JAXBException) linked; linked = e2.getLinkedException(); }
+			 * instanceof JAXBException) { JAXBException e2 = (JAXBException)
+			 * linked; linked = e2.getLinkedException(); }
 			 * linked.printStackTrace();
 			 */
-			throw new IllegalArgumentException("File with name"
-					+ xs.name
+			throw new IllegalArgumentException("File with name" + xs.name
 					+ " is not a valid document", e);
 		}
-	}	
-	
+	}
+
 	private void parseScanDocument(final XMLStream xs,
-			ArtifactGenerator generator, SLProgressMonitor monitor) {
+			final ArtifactGenerator generator, final SLProgressMonitor monitor) {
 		try {
 			final XMLStreamReader xmlr = xs.xmlr;
 			try {
@@ -536,7 +553,7 @@ public final class MessageWarehouse {
 
 					int counter = 0;
 
-					if ((xmlr.getEventType() == START_ELEMENT)
+					if (xmlr.getEventType() == START_ELEMENT
 							&& xmlr.getLocalName().equals("metrics")) {
 						xmlr.require(START_ELEMENT, null, "metrics");
 						xmlr.nextTag(); // move to classMetric
@@ -544,7 +561,7 @@ public final class MessageWarehouse {
 
 						final MetricBuilder mBuilder = generator.metric();
 
-						while ((xmlr.getEventType() == START_ELEMENT)
+						while (xmlr.getEventType() == START_ELEMENT
 								&& xmlr.getLocalName().equals("classMetric")) {
 							readClassMetric(unmarshaller.unmarshal(xmlr,
 									ClassMetric.class).getValue(), mBuilder);
@@ -576,7 +593,7 @@ public final class MessageWarehouse {
 					// Unmarshal artifacts
 					final ArtifactBuilder aBuilder = generator.artifact();
 
-					while ((xmlr.getEventType() == START_ELEMENT)
+					while (xmlr.getEventType() == START_ELEMENT
 							&& xmlr.getLocalName().equals("artifact")) {
 						readArtifact(unmarshaller.unmarshal(xmlr,
 								Artifact.class).getValue(), aBuilder);
@@ -607,7 +624,7 @@ public final class MessageWarehouse {
 					// Unmarshal errors
 					final ErrorBuilder eBuilder = generator.error();
 
-					while ((xmlr.getEventType() == START_ELEMENT)
+					while (xmlr.getEventType() == START_ELEMENT
 							&& xmlr.getLocalName().equals("errors")) {
 						readError(unmarshaller.unmarshal(xmlr, Error.class)
 								.getValue(), eBuilder);
@@ -639,15 +656,14 @@ public final class MessageWarehouse {
 					}
 				} catch (final JAXBException e) {
 					throw new IllegalArgumentException("File with name"
-							+ xs.name
-							+ " is not a valid document", e);
+							+ xs.name + " is not a valid document", e);
 				}
 			} finally {
 				xs.close();
 			}
 		} catch (final FileNotFoundException e) {
-			throw new IllegalArgumentException("File with name"
-					+ xs.name + " does not exist.", e);
+			throw new IllegalArgumentException("File with name" + xs.name
+					+ " does not exist.", e);
 		} catch (final XMLStreamException e) {
 			throw new IllegalArgumentException(e);
 		} catch (final IOException e) {
@@ -655,7 +671,7 @@ public final class MessageWarehouse {
 		}
 	}
 
-	public static String readScan(Scan scan, ScanGenerator generator) {
+	public static String readScan(final Scan scan, final ScanGenerator generator) {
 		generator.uid(scan.getUid());
 		readConfig(scan.getConfig(), generator);
 
@@ -667,8 +683,8 @@ public final class MessageWarehouse {
 		return generator.finished();
 	}
 
-	private static void readArtifacts(Collection<Artifact> artifacts,
-			ArtifactGenerator generator) {
+	private static void readArtifacts(final Collection<Artifact> artifacts,
+			final ArtifactGenerator generator) {
 		if (artifacts != null) {
 			final ArtifactBuilder aBuilder = generator.artifact();
 
@@ -678,8 +694,8 @@ public final class MessageWarehouse {
 		}
 	}
 
-	private static void readErrors(Collection<Error> errors,
-			ArtifactGenerator generator) {
+	private static void readErrors(final Collection<Error> errors,
+			final ArtifactGenerator generator) {
 		if (errors != null) {
 			final ErrorBuilder eBuilder = generator.error();
 
@@ -689,8 +705,8 @@ public final class MessageWarehouse {
 		}
 	}
 
-	private static void readMetrics(Collection<ClassMetric> metrics,
-			ArtifactGenerator generator) {
+	private static void readMetrics(final Collection<ClassMetric> metrics,
+			final ArtifactGenerator generator) {
 		if (metrics != null) {
 			final MetricBuilder mBuilder = generator.metric();
 
@@ -700,16 +716,20 @@ public final class MessageWarehouse {
 		}
 	}
 
-	private static void readConfig(Config config, ScanGenerator builder) {
+	private static void readConfig(final Config config,
+			final ScanGenerator builder) {
 		builder.javaVendor(config.getJavaVendor());
 		builder.javaVersion(config.getJavaVersion());
 		builder.project(config.getProject());
 		builder.timeseries(config.getTimeseries());
-
+		for (final ToolExtension te : config.getExtensions()) {
+			builder.extension(te.getId(), te.getVersion());
+		}
 		// TODO read all config attributes
 	}
 
-	private static void readArtifact(Artifact artifact, ArtifactBuilder builder) {
+	private static void readArtifact(final Artifact artifact,
+			final ArtifactBuilder builder) {
 		builder.severity(artifact.getSeverity()).priority(
 				artifact.getPriority()).message(artifact.getMessage());
 		builder.findingType(artifact.getArtifactType().getTool(), artifact
@@ -731,18 +751,18 @@ public final class MessageWarehouse {
 		builder.build();
 	}
 
-	private static void readClassMetric(ClassMetric metric,
-			MetricBuilder builder) {
+	private static void readClassMetric(final ClassMetric metric,
+			final MetricBuilder builder) {
 		builder.compilation(metric.getName()).packageName(metric.getPackage())
 				.linesOfCode(metric.getLoc()).build();
 	}
 
-	private static void readError(Error e, ErrorBuilder builder) {
+	private static void readError(final Error e, final ErrorBuilder builder) {
 		builder.message(e.getMessage()).tool(e.getTool()).build();
 	}
 
-	private static void readPrimarySource(ArtifactBuilder aBuilder,
-			SourceLocation s) {
+	private static void readPrimarySource(final ArtifactBuilder aBuilder,
+			final SourceLocation s) {
 		aBuilder.primarySourceLocation().compilation(s.getCompilation())
 				.className(s.getClassName()).packageName(s.getPackageName())
 				.endLine(s.getEndLineOfCode()).lineOfCode(s.getLineOfCode())
@@ -750,7 +770,8 @@ public final class MessageWarehouse {
 				.hash(s.getHash()).build();
 	}
 
-	private static void readSource(ArtifactBuilder aBuilder, SourceLocation s) {
+	private static void readSource(final ArtifactBuilder aBuilder,
+			final SourceLocation s) {
 		aBuilder.sourceLocation().compilation(s.getCompilation()).className(
 				s.getClassName()).packageName(s.getPackageName()).endLine(
 				s.getEndLineOfCode()).lineOfCode(s.getLineOfCode()).type(
@@ -758,7 +779,7 @@ public final class MessageWarehouse {
 				s.getHash()).build();
 	}
 
-	private static boolean cancelled(SLProgressMonitor monitor) {
+	private static boolean cancelled(final SLProgressMonitor monitor) {
 		if (monitor != null) {
 			return monitor.isCanceled();
 		} else {
@@ -766,7 +787,7 @@ public final class MessageWarehouse {
 		}
 	}
 
-	private static void work(SLProgressMonitor monitor) {
+	private static void work(final SLProgressMonitor monitor) {
 		if (monitor != null) {
 			monitor.worked(1);
 		}
