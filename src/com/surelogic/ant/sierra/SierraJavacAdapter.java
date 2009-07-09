@@ -14,6 +14,7 @@ import org.apache.tools.ant.util.StringUtils;
 import com.surelogic.common.jobs.*;
 import com.surelogic.sierra.tool.*;
 import com.surelogic.sierra.tool.message.Config;
+import com.surelogic.sierra.tool.message.ToolExtension;
 import com.surelogic.sierra.tool.targets.*;
 import com.surelogic.sierra.tool.targets.IToolTarget.Type;
 
@@ -82,6 +83,17 @@ public class SierraJavacAdapter extends DefaultCompilerAdapter {
 		System.setProperty(ToolUtil.TOOLS_PATH_PROP_NAME, libHome);		
 		final String toolsDir = libHome+"tools/";
 		config.setExcludedToolsList("checkstyle");
+		for (IToolFactory f : ToolUtil.findToolFactories()) {	
+			if (!"checkstyle".equals(f.getId())) {
+				for(final IToolExtension t : f.getExtensions()) {
+					final ToolExtension ext = new ToolExtension();
+					ext.setTool(f.getId());
+					ext.setId(t.getId());
+					ext.setVersion(t.getVersion());
+					config.addExtension(ext);
+				}
+			}
+		}
 		config.setToolsDirectory(new File(toolsDir+"reckoner"));
 		config.putPluginDir(SierraToolConstants.COMMON_PLUGIN_ID,
 				libHome+"common.jar");
