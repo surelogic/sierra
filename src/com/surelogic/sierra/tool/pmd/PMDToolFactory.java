@@ -9,6 +9,7 @@ import java.util.zip.ZipFile;
 
 import net.sourceforge.pmd.*;
 
+import com.surelogic.common.logging.SLLogger;
 import com.surelogic.common.xml.Entities;
 import com.surelogic.sierra.tool.*;
 import com.surelogic.sierra.tool.analyzer.ILazyArtifactGenerator;
@@ -27,10 +28,12 @@ public class PMDToolFactory extends AbstractToolFactory {
 	static class RulePair {
 		final String name;
 		final InputStream stream;
+		final Properties props;
 		
-		RulePair(String id, InputStream is) {
+		RulePair(String id, InputStream is, Properties props) {
 			name = id;
 			stream = is;
+			this.props = props;
 		}
 	}
 	
@@ -58,29 +61,37 @@ public class PMDToolFactory extends AbstractToolFactory {
 	
 	public Collection<IToolExtension> getExtensions() {
 		try {		
-			return extractArtifactTypes(getRuleSets());							
+			return extractArtifactTypes(getAugmentedRuleSets());							
 		} catch (RuleSetNotFoundException e) {
 			LOG.log(Level.SEVERE, "Couldn't find rulesets", e);
 		}
 		return Collections.emptySet();
 	}
 	
-	private static boolean containsRuleSet(List<RuleSet> sets, RuleSet set) {
-		for(RuleSet inSet : sets) {
-			if (inSet.getFileName().equals(set.getFileName())) {
+	private static boolean containsRuleSet(Map<RuleSet,?> sets, RuleSet set) {
+		for(Map.Entry<RuleSet,?> e : sets.entrySet()) {
+			if (e.getKey().getFileName().equals(set.getFileName())) {
 				return true;
 			}
 		}
 		return false;
 	}
 
-	Collection<IToolExtension> extractArtifactTypes(List<RuleSet> rulesets) {
+	Collection<IToolExtension> extractArtifactTypes(Map<RuleSet,Properties> rulesets) {
 		List<IToolExtension> extensions = new ArrayList<IToolExtension>();
-		for(RuleSet ruleset : rulesets) {
+		for(Map.Entry<RuleSet,Properties> e : rulesets.entrySet()) {
+			RuleSet ruleset = e.getKey();
 			Set<ArtifactType> types = new HashSet<ArtifactType>();	
 			for(Rule r : ruleset.getRules()) {
-				types.add(new ArtifactType(getName(), getVersion(), 
-						ruleset.getFileName(), r.getName(), r.getRuleSetName()));					
+				ArtifactType t = new ArtifactType(getName(), getVersion(), 
+						         ruleset.getFileName(), r.getName(), r.getRuleSetName());
+				if (e.getValue() != null) {
+					String findingType = e.getValue().getProperty(t.type);
+					if (findingType != null) {
+						t.setFindingType(findingType);
+					}
+				}
+				types.add(t);					
 			}		
 			extensions.add(new AbstractToolExtension(ruleset.getName(), types) {});
 		}												
@@ -108,22 +119,33 @@ public class PMDToolFactory extends AbstractToolFactory {
 	}
 	
 	static List<RuleSet> getRuleSets() throws RuleSetNotFoundException {
+		List<RuleSet> sets = new ArrayList<RuleSet>();
+		for(Map.Entry<RuleSet,?> e : getAugmentedRuleSets().entrySet()) {
+			sets.add(e.getKey());
+		}
+		return sets;
+	}
+	
+	static Map<RuleSet,Properties> getAugmentedRuleSets() throws RuleSetNotFoundException {
 		List<File> plugins = findPluginJars(false);
 		final URLClassLoader cl = ToolUtil.computeClassLoader(AbstractPMDTool.class.getClassLoader(), plugins);
 		final RuleSetFactory ruleSetFactory = new RuleSetFactory();
-		final List<RuleSet> sets = getDefaultRuleSets();
-
+		final Map<RuleSet,Properties> rulesets = new HashMap<RuleSet,Properties>();
+		for(RuleSet s : getDefaultRuleSets()) {
+			rulesets.put(s, null);
+		}
+		
 		// Add in plugin rulesets
 		for(File jar : findPluginJars(false)) {
 			try {
 				for(RulePair pair : findRuleSetsInJar(jar)) {
 					if (pair != null) {
 						RuleSet set = ruleSetFactory.createRuleSet(pair.stream, cl);
-						if (!containsRuleSet(sets, set)) {
+						if (!containsRuleSet(rulesets, set)) {
 							if (set.getFileName() == null) {
 								set.setFileName(pair.name);
 							}
-							sets.add(set);
+							rulesets.put(set, pair.props);
 						}
 					}
 				}
@@ -132,7 +154,7 @@ public class PMDToolFactory extends AbstractToolFactory {
 			}
 		}
 		//RuleSet ruleset = ruleSetFactory.createSingleRuleSet(rulesets);	
-		return sets;
+		return rulesets;
 	}
 	
 	/**
@@ -222,6 +244,23 @@ public class PMDToolFactory extends AbstractToolFactory {
 			return ERROR;
 		}				
 		final StringTokenizer st = new StringTokenizer(names, ",");
+		
+		// Check for finding type properties
+		Properties ft_props = null;
+		final ZipEntry ze2  = zf.getEntry(ToolUtil.FINDING_TYPE_PROPERTIES);
+		if (ze2 != null) {
+			final InputStream is2 = zf.getInputStream(ze);
+			if (is2 != null) {
+				ft_props = new Properties();
+				try {
+					ft_props.load(is2);
+				} catch(IOException e) {
+					SLLogger.getLogger().log(Level.WARNING, "Couldn't load finding type mapping for "+jar, e);
+					ft_props = null;
+				}
+			}
+		}
+		final Properties findingTypeProps = ft_props;
 		return new Iterable<RulePair>() {
 			public Iterator<RulePair> iterator() {
 				return new Iterator<RulePair>() {				
@@ -244,7 +283,7 @@ public class PMDToolFactory extends AbstractToolFactory {
 						if (stream == null) {
 							return null;
 						}						
-						return new RulePair(ruleset, stream);
+						return new RulePair(ruleset, stream, findingTypeProps);
 					}
 					
 					public void remove() {
