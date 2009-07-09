@@ -43,7 +43,7 @@ public class SierraServiceImpl extends SecureServiceServlet implements
 		SierraService {
 
 	private static final long serialVersionUID = -8265889420077755990L;
-	private boolean on;
+	private volatile boolean on;
 
 	public void publishRun(final Scan scan) throws ScanVersionException {
 		if (!Server.getSoftwareVersion().equals(scan.getVersion())) {
@@ -258,23 +258,19 @@ public class SierraServiceImpl extends SecureServiceServlet implements
 	protected void service(final HttpServletRequest req,
 			final HttpServletResponse resp) throws ServletException,
 			IOException {
-		synchronized (this) {
-			if (on) {
-				super.service(req, resp);
-			} else {
-				resp.setStatus(404);
-			}
+		if (on) {
+			super.service(req, resp);
+		} else {
+			resp.setStatus(404);
+			return;
 		}
-
 	}
 
 	@Override
 	public void init(final ServletConfig config) throws ServletException {
 		super.init(config);
-		synchronized (this) {
-			on = "on".equals(config.getServletContext().getInitParameter(
-					"teamserver"));
-		}
+		on = "on".equals(config.getServletContext().getInitParameter(
+				"teamserver"));
 	}
 
 }
