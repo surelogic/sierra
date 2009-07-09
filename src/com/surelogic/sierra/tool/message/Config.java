@@ -73,6 +73,8 @@ public class Config implements Cloneable {
 
 	private List<ToolTarget> targets = new ArrayList<ToolTarget>();
 	private Set<ToolTarget> targetsAdded = null;
+	
+	private List<ToolExtension> extensions = new ArrayList<ToolExtension>();
 
 	public Config() {
 		// Nothing to do
@@ -487,5 +489,17 @@ public class Config implements Cloneable {
 
 	public String getTargetLevel() {
 		return targetLevel;
+	}
+	
+	public void setExtensions(List<ToolExtension> t) {
+		extensions = t;
+	}
+
+	public List<ToolExtension> getExtensions() {
+		return extensions;
+	}
+	
+	public void addExtension(ToolExtension t) {
+		extensions.add(t);
 	}
 }
