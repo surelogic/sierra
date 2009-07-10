@@ -3,7 +3,6 @@ package com.surelogic.sierra.jdbc.tool;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.UUID;
 import java.util.Map.Entry;
 
 import com.surelogic.common.jdbc.LongIdHandler;
@@ -152,11 +151,11 @@ public class FindingTypes {
 		allFindingTypes.addAll(e.getArtifactMap().keySet());
 		final CategoryDO cDO = new CategoryDO();
 		cDO.setName(e.getName());
-		cDO.setUid(UUID.randomUUID().toString());
+		cDO.setUid(e.getName());
 		for (final String ft : allFindingTypes) {
 			cDO.getFilters().add(new CategoryEntryDO(ft, false));
 		}
-		// FIXME this is not how we make categories
+		// FIXME Categories should be defined by the extension
 		new Categories(q).writeCategory(cDO);
 
 		final Queryable<Long> insertAT = q.prepared(
