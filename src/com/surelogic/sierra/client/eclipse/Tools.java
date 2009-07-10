@@ -117,8 +117,8 @@ public final class Tools {
 						final List<ArtifactTypeDO> temp = ft
 								.getToolArtifactTypes(t.getId(), t.getVersion());
 						for (final ArtifactTypeDO a : temp) {
-							knownTypes.add(new ArtifactType(a.getTool(), a
-									.getVersion(), "", a.getMnemonic(), ""));
+							knownTypes.add(ArtifactType.create(a.getTool(), a
+									.getVersion(), null, "", a.getMnemonic(), ""));
 						}
 					}
 
