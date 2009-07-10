@@ -117,8 +117,7 @@ public final class Tools {
 						final List<ArtifactTypeDO> temp = ft
 								.getToolArtifactTypes(t.getId(), t.getVersion());
 						for (final ArtifactTypeDO a : temp) {
-							knownTypes.add(ArtifactType.create(a.getTool(), a
-									.getVersion(), null, "", a.getMnemonic(), ""));
+							knownTypes.add(ArtifactType.create(t, null, "", a.getMnemonic(), ""));
 						}
 					}
 
@@ -195,7 +194,7 @@ public final class Tools {
 		for (final ArtifactType a : unknown) {
 			// SLLogger.getLogger().warning("Couldn't find "+a.type+" for "+a.tool+", v"+a.version);
 			System.out.println("Couldn't find " + a.type + " for " + a.tool
-					+ ", v" + a.version);
+					+ ", v" + a.toolVersion);
 			final FindingTypeDO ftDO = new FindingTypeDO();
 			ftDO.setName(a.type);
 			ftDO.setUid(a.type);
@@ -203,7 +202,7 @@ public final class Tools {
 			ftDO.setInfo(a.type);
 			ext.addFindingType(ftDO);
 			final ArtifactTypeDO aDO = new ArtifactTypeDO(a.tool, a.type,
-					a.type, a.version);
+					a.type, a.toolVersion);
 			ext.addType(a.type, aDO);
 		}
 		ft.registerExtension(ext);
