@@ -2,7 +2,7 @@ package com.surelogic.sierra.tool.findbugs;
 
 import java.io.*;
 import java.util.*;
-import java.util.jar.Manifest;
+import java.util.jar.*;
 import java.util.logging.Level;
 
 import com.surelogic.common.logging.SLLogger;
@@ -43,19 +43,15 @@ public class FindBugsToolFactory extends AbstractToolFactory {
 		// Code to get meta-data from FindBugs
 		for(Plugin plugin : iterable(DetectorFactoryCollection.instance().pluginIterator())) {
 			final String pluginId = plugin.getPluginId();			
-			Map<String,String> findingTypeMap = findFindingTypeMap(plugin);
+			final Manifest manifest = findSierraManifest(plugin);
 			Set<ArtifactType> types = new HashSet<ArtifactType>();
 			/*
 			for(BugCode code : iterable(plugin.bugCodeIterator())) {				
 			}
 			*/
-			for(BugPattern pattern : iterable(plugin.bugPatternIterator())) {			
-				ArtifactType t = new ArtifactType(getId(), getVersion(), pluginId, 
+			for(BugPattern pattern : iterable(plugin.bugPatternIterator())) {
+				ArtifactType t = ArtifactType.create(this, manifest, pluginId, 
 		                                          pattern.getType(), pattern.getCategory());
-				String findingType = findingTypeMap.get(t.type);
-				if (findingType != null) {
-					t.setFindingType(findingType);
-				}
 				types.add(t);
 			}
 			/*
@@ -74,24 +70,20 @@ public class FindBugsToolFactory extends AbstractToolFactory {
 		return extensions;
 	}
 
-	private Map<String, String> findFindingTypeMap(Plugin plugin) {
+	private Manifest findSierraManifest(Plugin plugin) {
 		InputStream is = 
 			plugin.getPluginLoader().getClassLoader().getResourceAsStream("/"+ToolUtil.SIERRA_MANIFEST);
 		if (is != null) {
 			Manifest props = new Manifest();
 			try {
 				props.read(is);
+				return props;
 			} catch(IOException e) {
 				SLLogger.getLogger().log(Level.WARNING, "Couldn't load finding type mapping for "+plugin.getPluginId(), e);
-				return Collections.emptyMap();
+				return null;
 			}
-			Map<String, String> map = new HashMap<String,String>();
-			for(Map.Entry<Object, Object> e : props.getAttributes(ToolUtil.FINDING_TYPE_MAPPING_KEY).entrySet()) {
-				map.put(e.getKey().toString(), e.getValue().toString());
-			}
-			return map;
 		}
-		return Collections.emptyMap();
+		return null;
 	}
 
 	/*
