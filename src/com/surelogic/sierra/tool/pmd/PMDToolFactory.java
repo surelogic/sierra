@@ -3,6 +3,7 @@ package com.surelogic.sierra.tool.pmd;
 import java.io.*;
 import java.net.URLClassLoader;
 import java.util.*;
+import java.util.jar.Manifest;
 import java.util.logging.Level;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -28,9 +29,9 @@ public class PMDToolFactory extends AbstractToolFactory {
 	static class RulePair {
 		final String name;
 		final InputStream stream;
-		final Properties props;
+		final Manifest props;
 		
-		RulePair(String id, InputStream is, Properties props) {
+		RulePair(String id, InputStream is, Manifest props) {
 			name = id;
 			stream = is;
 			this.props = props;
@@ -40,9 +41,9 @@ public class PMDToolFactory extends AbstractToolFactory {
 	static class RuleSetInfo {
 		final RuleSet ruleset;
 		final boolean isCore;
-		final Properties props;
+		final Manifest props;
 		
-		RuleSetInfo(RuleSet rs, boolean core, Properties props) {
+		RuleSetInfo(RuleSet rs, boolean core, Manifest props) {
 			ruleset = rs;
 			isCore = core;
 			this.props = props;
@@ -100,7 +101,7 @@ public class PMDToolFactory extends AbstractToolFactory {
 				ArtifactType t = new ArtifactType(getName(), getVersion(), 
 						         info.ruleset.getFileName(), r.getName(), r.getRuleSetName());
 				if (info.props != null) {
-					String findingType = info.props.getProperty(t.type);
+					String findingType = info.props.getAttributes(ToolUtil.FINDING_TYPE_MAPPING_KEY).getValue(t.type);
 					if (findingType != null) {
 						t.setFindingType(findingType);
 					}
@@ -258,21 +259,21 @@ public class PMDToolFactory extends AbstractToolFactory {
 		final StringTokenizer st = new StringTokenizer(names, ",");
 		
 		// Check for finding type properties
-		Properties ft_props = null;
-		final ZipEntry ze2  = zf.getEntry(ToolUtil.FINDING_TYPE_PROPERTIES);
+		Manifest ft_props = null;
+		final ZipEntry ze2  = zf.getEntry(ToolUtil.SIERRA_MANIFEST);
 		if (ze2 != null) {
 			final InputStream is2 = zf.getInputStream(ze);
 			if (is2 != null) {
-				ft_props = new Properties();
+				ft_props = new Manifest();
 				try {
-					ft_props.load(is2);
+					ft_props.read(is2);
 				} catch(IOException e) {
 					SLLogger.getLogger().log(Level.WARNING, "Couldn't load finding type mapping for "+jar, e);
 					ft_props = null;
 				}
 			}
 		}
-		final Properties findingTypeProps = ft_props;
+		final Manifest findingTypeProps = ft_props;
 		return new Iterable<RulePair>() {
 			public Iterator<RulePair> iterator() {
 				return new Iterator<RulePair>() {				
