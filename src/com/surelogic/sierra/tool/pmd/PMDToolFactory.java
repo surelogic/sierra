@@ -98,14 +98,8 @@ public class PMDToolFactory extends AbstractToolFactory {
 		for(RuleSetInfo info : rulesets) {
 			Set<ArtifactType> types = new HashSet<ArtifactType>();	
 			for(Rule r : info.ruleset.getRules()) {
-				ArtifactType t = new ArtifactType(getName(), getVersion(), 
+				ArtifactType t = ArtifactType.create(this, info.props, 
 						         info.ruleset.getFileName(), r.getName(), r.getRuleSetName());
-				if (info.props != null) {
-					String findingType = info.props.getAttributes(ToolUtil.FINDING_TYPE_MAPPING_KEY).getValue(t.type);
-					if (findingType != null) {
-						t.setFindingType(findingType);
-					}
-				}
 				types.add(t);					
 			}		
 			final boolean isCore = info.isCore;
