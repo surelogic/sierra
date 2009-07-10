@@ -2,6 +2,7 @@ package com.surelogic.sierra.tool.findbugs;
 
 import java.io.*;
 import java.util.*;
+import java.util.jar.Manifest;
 import java.util.logging.Level;
 
 import com.surelogic.common.logging.SLLogger;
@@ -75,17 +76,17 @@ public class FindBugsToolFactory extends AbstractToolFactory {
 
 	private Map<String, String> findFindingTypeMap(Plugin plugin) {
 		InputStream is = 
-			plugin.getPluginLoader().getClassLoader().getResourceAsStream("/"+ToolUtil.FINDING_TYPE_PROPERTIES);
+			plugin.getPluginLoader().getClassLoader().getResourceAsStream("/"+ToolUtil.SIERRA_MANIFEST);
 		if (is != null) {
-			Properties props = new Properties();
+			Manifest props = new Manifest();
 			try {
-				props.load(is);
+				props.read(is);
 			} catch(IOException e) {
 				SLLogger.getLogger().log(Level.WARNING, "Couldn't load finding type mapping for "+plugin.getPluginId(), e);
 				return Collections.emptyMap();
 			}
 			Map<String, String> map = new HashMap<String,String>();
-			for(Map.Entry<Object, Object> e : props.entrySet()) {
+			for(Map.Entry<Object, Object> e : props.getAttributes(ToolUtil.FINDING_TYPE_MAPPING_KEY).entrySet()) {
 				map.put(e.getKey().toString(), e.getValue().toString());
 			}
 			return map;
