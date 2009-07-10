@@ -13,14 +13,17 @@ public class ArtifactType implements Comparable<ArtifactType> {
 	public final String plugin;
 	public final String type;
 	public final String category;
+	public final boolean includeInScan;
 	private String findingType = null;
 	
-	private ArtifactType(String tool, String version, String plugin, String type, String category) {
+	private ArtifactType(String tool, String version, String plugin, 
+			             String type, String category, boolean include) {
 		this.tool = tool;
 		this.version = version;
 		this.plugin = plugin;
 		this.type = type;
 		this.category = category;
+		includeInScan = include;
 	}
 	
 	public static ArtifactType create(IToolFactory factory, Manifest manifest,
@@ -30,20 +33,27 @@ public class ArtifactType implements Comparable<ArtifactType> {
 	
 	public static ArtifactType create(String tool, String version, Manifest manifest,
 			                          final String plugin, final String type, String category) {
-		final Attributes findingTypeMap, categoryMap;
+		final Attributes findingTypeMap, categoryMap, scanFilterBlacklist;
 		if (manifest != null) {
 			findingTypeMap = manifest.getAttributes(ToolUtil.FINDING_TYPE_MAPPING_KEY);
 			categoryMap = manifest.getAttributes(ToolUtil.CATEGORY_MAPPING_KEY);
+			scanFilterBlacklist = manifest.getAttributes(ToolUtil.SCAN_FILTER_BLACKLIST_KEY);
 		} else {
-			findingTypeMap = categoryMap = null;
+			findingTypeMap = categoryMap = scanFilterBlacklist = null;
 		}
+		// Code below assumes that the artifact type is not mapped to an existing finding type,
+		// and uses the type name to lookup defaults
 		if (categoryMap != null) {
 			String tmpCategory = categoryMap.getValue(type);
 			if (tmpCategory != null) {
 				category = tmpCategory;				
 			}
 		}		
-		ArtifactType t = new ArtifactType(tool, version, plugin, type, category);
+		boolean includeInScan = true;
+		if (scanFilterBlacklist != null) {
+			includeInScan = scanFilterBlacklist.getValue(type) != null;
+		}
+		ArtifactType t = new ArtifactType(tool, version, plugin, type, category, includeInScan);
 		if (findingTypeMap != null) {
 			String findingType = findingTypeMap.getValue(type);
 			if (findingType != null) {
