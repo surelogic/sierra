@@ -27,8 +27,19 @@ import com.surelogic.sierra.tool.message.MessageWarehouse;
 public class ToolUtil {
 	public static final String TOOLS_PATH_PROP_NAME = "sierra.tools.dir";
 	public static final String CUSTOM_TOOLS_PATH_PROP_NAME = "custom.sierra.tools.dir";
-	public static final String FINDING_TYPE_PROPERTIES = "sl.findingType.properties";
-
+	
+	/**
+	 * A Manifest that:
+	 * 1. primarily maps artifact types to existing finding types,
+	 *    (otherwise, omit to generate a new finding type)
+	 * 2. optionally sets the default for the scan filter 
+	 *    (otherwise, set to )
+	 */
+	public static final String SIERRA_MANIFEST = "sierra.mf";
+	public static final String FINDING_TYPE_MAPPING_KEY = "FindingTypeMappings";
+	public static final String CATEGORY_MAPPING_KEY = "CategoryMappings";
+	public static final String SCAN_FILTER_BLACKLIST_KEY = "ScanFilterBlacklist";
+	
 	/** The logger */
 	protected static final Logger LOG = SLLogger.getLogger("sierra");
 
