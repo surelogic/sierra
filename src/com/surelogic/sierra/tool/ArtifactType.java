@@ -9,7 +9,7 @@ import java.util.jar.*;
  */
 public class ArtifactType implements Comparable<ArtifactType> {
 	public final String tool;
-	public final String version;
+	public final String toolVersion;
 	public final String plugin;
 	public final String type;
 	public final String category;
@@ -19,7 +19,7 @@ public class ArtifactType implements Comparable<ArtifactType> {
 	private ArtifactType(String tool, String version, String plugin, 
 			             String type, String category, boolean include) {
 		this.tool = tool;
-		this.version = version;
+		this.toolVersion = version;
 		this.plugin = plugin;
 		this.type = type;
 		this.category = category;
@@ -28,11 +28,6 @@ public class ArtifactType implements Comparable<ArtifactType> {
 	
 	public static ArtifactType create(IToolFactory factory, Manifest manifest,
 			                          String plugin, String type, String category) {
-		return create(factory.getId(), factory.getVersion(), manifest, plugin, type, category);
-	}
-	
-	public static ArtifactType create(String tool, String version, Manifest manifest,
-			                          final String plugin, final String type, String category) {
 		final Attributes findingTypeMap, categoryMap, scanFilterBlacklist;
 		if (manifest != null) {
 			findingTypeMap = manifest.getAttributes(ToolUtil.FINDING_TYPE_MAPPING_KEY);
@@ -53,7 +48,8 @@ public class ArtifactType implements Comparable<ArtifactType> {
 		if (scanFilterBlacklist != null) {
 			includeInScan = scanFilterBlacklist.getValue(type) != null;
 		}
-		ArtifactType t = new ArtifactType(tool, version, plugin, type, category, includeInScan);
+		ArtifactType t = new ArtifactType(factory.getId(), factory.getVersion(), 
+				                          plugin, type, category, includeInScan);
 		if (findingTypeMap != null) {
 			String findingType = findingTypeMap.getValue(type);
 			if (findingType != null) {
@@ -73,14 +69,14 @@ public class ArtifactType implements Comparable<ArtifactType> {
 	
 	@Override
 	public int hashCode() {
-		return tool.hashCode() + version.hashCode() + type.hashCode();
+		return tool.hashCode() + toolVersion.hashCode() + type.hashCode();
 	}
 	
 	@Override
 	public boolean equals(Object o) {
 		if (o instanceof ArtifactType) {
 			ArtifactType a = (ArtifactType) o;
-			return tool.equals(a.tool) && version.equals(a.version) && type.equals(a.type);
+			return tool.equals(a.tool) && toolVersion.equals(a.toolVersion) && type.equals(a.type);
 		}
 		return false;
 	}
@@ -88,7 +84,7 @@ public class ArtifactType implements Comparable<ArtifactType> {
 	public int compareTo(ArtifactType a) {
 		int rv = tool.compareTo(a.tool);
 		if (rv == 0) {
-			rv = version.compareTo(a.version);
+			rv = toolVersion.compareTo(a.toolVersion);
 			if (rv == 0) {
 				rv = type.compareTo(a.type);
 			}
