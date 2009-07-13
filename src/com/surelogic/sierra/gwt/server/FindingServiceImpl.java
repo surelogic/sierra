@@ -46,7 +46,7 @@ public class FindingServiceImpl extends SierraServiceServlet implements
 	private static final long serialVersionUID = -5522046767503450943L;
 
 	public FindingOverview getFinding(final String key) {
-		if ((key == null) || "".equals(key)) {
+		if (key == null || "".equals(key)) {
 			return null;
 		}
 		return ConnectionFactory.getInstance().withUserReadOnly(
@@ -227,7 +227,7 @@ public class FindingServiceImpl extends SierraServiceServlet implements
 
 		public ScanDetail perform(final Query query, final Server server,
 				final User user) {
-			if ((uuid != null) && !(uuid.length() == 0)) {
+			if (uuid != null && !(uuid.length() == 0)) {
 				final ScanDetail d = new ScanDetail();
 				final Map<String, List<String>> compilations = d
 						.getCompilations();
@@ -281,6 +281,13 @@ public class FindingServiceImpl extends SierraServiceServlet implements
 							compilations.put(pakkage, clazzes);
 						}
 						clazzes.add(clazz);
+					}
+				}).call(uuid);
+				query.prepared("Scans.scanExtensions", new NullRowHandler() {
+					@Override
+					protected void doHandle(final Row r) {
+						d.getExtensions().add(
+								r.nextString() + " &mdash; " + r.nextString());
 					}
 				}).call(uuid);
 				final ScanFilters s = new ScanFilters(query);
