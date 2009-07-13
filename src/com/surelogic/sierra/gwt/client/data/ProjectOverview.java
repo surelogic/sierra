@@ -29,7 +29,7 @@ public class ProjectOverview implements Serializable {
 		return name;
 	}
 
-	public void setName(String name) {
+	public void setName(final String name) {
 		this.name = name;
 	}
 
@@ -37,7 +37,7 @@ public class ProjectOverview implements Serializable {
 		return critical;
 	}
 
-	public void setCritical(int critical) {
+	public void setCritical(final int critical) {
 		this.critical = critical;
 	}
 
@@ -45,7 +45,7 @@ public class ProjectOverview implements Serializable {
 		return high;
 	}
 
-	public void setHigh(int high) {
+	public void setHigh(final int high) {
 		this.high = high;
 	}
 
@@ -53,7 +53,7 @@ public class ProjectOverview implements Serializable {
 		return medium;
 	}
 
-	public void setMedium(int medium) {
+	public void setMedium(final int medium) {
 		this.medium = medium;
 	}
 
@@ -61,7 +61,7 @@ public class ProjectOverview implements Serializable {
 		return low;
 	}
 
-	public void setLow(int low) {
+	public void setLow(final int low) {
 		this.low = low;
 	}
 
@@ -69,7 +69,7 @@ public class ProjectOverview implements Serializable {
 		return irrelevant;
 	}
 
-	public void setIrrelevant(int irrelevant) {
+	public void setIrrelevant(final int irrelevant) {
 		this.irrelevant = irrelevant;
 	}
 
@@ -77,7 +77,7 @@ public class ProjectOverview implements Serializable {
 		return findings;
 	}
 
-	public void setTotalFindings(int findings) {
+	public void setTotalFindings(final int findings) {
 		this.findings = findings;
 	}
 
@@ -85,7 +85,7 @@ public class ProjectOverview implements Serializable {
 		return commentedFindings;
 	}
 
-	public void setCommentedFindings(int findings) {
+	public void setCommentedFindings(final int findings) {
 		this.commentedFindings = findings;
 	}
 
@@ -93,7 +93,7 @@ public class ProjectOverview implements Serializable {
 		return comments;
 	}
 
-	public void setComments(int comments) {
+	public void setComments(final int comments) {
 		this.comments = comments;
 	}
 
@@ -101,7 +101,7 @@ public class ProjectOverview implements Serializable {
 		return lastSynchDate;
 	}
 
-	public void setLastSynchDate(String lastSynchDate) {
+	public void setLastSynchDate(final String lastSynchDate) {
 		this.lastSynchDate = lastSynchDate;
 	}
 
@@ -109,7 +109,7 @@ public class ProjectOverview implements Serializable {
 		return lastSynchUser;
 	}
 
-	public void setLastSynchUser(String lastSynchUser) {
+	public void setLastSynchUser(final String lastSynchUser) {
 		this.lastSynchUser = lastSynchUser;
 	}
 
@@ -117,7 +117,7 @@ public class ProjectOverview implements Serializable {
 		return lastScanDate;
 	}
 
-	public void setLastScanDate(String lastScanDate) {
+	public void setLastScanDate(final String lastScanDate) {
 		this.lastScanDate = lastScanDate;
 	}
 

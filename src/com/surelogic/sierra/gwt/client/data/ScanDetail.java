@@ -1,6 +1,7 @@
 package com.surelogic.sierra.gwt.client.data;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +31,8 @@ public class ScanDetail implements Serializable {
 	private ScanFilter filter;
 
 	private Map<String, List<String>> compilations;
+
+	private List<String> extensions;
 
 	public String getLinesOfCode() {
 		return linesOfCode;
@@ -108,6 +111,13 @@ public class ScanDetail implements Serializable {
 
 	public void setFilter(final ScanFilter filter) {
 		this.filter = filter;
+	}
+
+	public List<String> getExtensions() {
+		if (extensions == null) {
+			extensions = new ArrayList<String>();
+		}
+		return extensions;
 	}
 
 }
