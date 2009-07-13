@@ -72,8 +72,12 @@ public final class ScanDetailView extends Composite {
 			numFindings.setText(scan.getFindings());
 			kloc.setText(scan.getLinesOfCode());
 			extensions.clear();
-			for (final String str : scan.getExtensions()) {
-				extensions.add(new HTML(str, false));
+			if (scan.getExtensions().isEmpty()) {
+				extensions.add(new HTML("None", false));
+			} else {
+				for (final String str : scan.getExtensions()) {
+					extensions.add(new HTML(str, false));
+				}
 			}
 		} else {
 			lastScan.setText("None published.");
