@@ -128,5 +128,8 @@ public class FindingTypeSetupPage extends AbstractArtifactTypePage {
 		}
 		setDescription(nothingToDo ? NOTHING : DESCRIPTION);
 		setPageComplete(allHaveCategories);
+		if (allHaveCategories) {
+			((ManifestLocationPage) getNextPage()).update();
+		}
 	}
 }

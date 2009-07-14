@@ -115,6 +115,9 @@ abstract class AbstractArtifactTypePage extends WizardPage {
 	}
 	
 	protected void update() {
+		if (f_mappingTable == null) {
+			return;
+		}
 		f_mappingTable.removeAll();
 		
 		// Setup table
