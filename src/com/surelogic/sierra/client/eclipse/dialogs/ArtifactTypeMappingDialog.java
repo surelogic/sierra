@@ -11,6 +11,7 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
+import com.surelogic.sierra.jdbc.settings.CategoryDO;
 import com.surelogic.sierra.jdbc.tool.*;
 import com.surelogic.sierra.tool.ArtifactType;
 
@@ -20,14 +21,17 @@ public class ArtifactTypeMappingDialog extends Dialog {
 	
 	private final Collection<ArtifactType> types;
 	private final List<FindingTypeDO> findingTypes;
+	private final List<CategoryDO> categories;
 	private Table f_mappingTable;	
 	
-	public ArtifactTypeMappingDialog(Shell parentShell, Collection<ArtifactType> types, List<FindingTypeDO> ft) {
+	public ArtifactTypeMappingDialog(Shell parentShell, Collection<ArtifactType> types, 
+			                         List<FindingTypeDO> ft, List<CategoryDO> cats) {
 		super(parentShell);
 		setShellStyle(getShellStyle() | SWT.RESIZE | SWT.MAX);
 		
 		this.types = types;
 		findingTypes = ft;
+		categories = cats;
 	}
 
 	@Override
@@ -59,6 +63,10 @@ public class ArtifactTypeMappingDialog extends Dialog {
 	    column0.setText("Artifact Type");
 	    final TableColumn column1 = new TableColumn(f_mappingTable, SWT.NONE);
 	    column1.setText("Finding Type");
+	    final TableColumn column2 = new TableColumn(f_mappingTable, SWT.NONE);
+	    column2.setText("Category");
+	    final TableColumn column3 = new TableColumn(f_mappingTable, SWT.NONE);
+	    column3.setText("Scan Filter");
 		
 	    // Setup table editor
 	    final TableEditor editor = new TableEditor(f_mappingTable);
@@ -79,6 +87,8 @@ public class ArtifactTypeMappingDialog extends Dialog {
 		addToEntryPanel(entryPanel);
 		column0.pack();
 		column1.pack();
+		column2.pack();
+		column3.pack();
 		
 		f_mappingTable.addSelectionListener(new SelectionAdapter() {
 			@Override

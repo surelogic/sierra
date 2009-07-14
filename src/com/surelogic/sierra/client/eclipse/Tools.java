@@ -20,13 +20,17 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.window.Window;
+import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.ui.PlatformUI;
 
+import com.surelogic.common.XUtil;
 import com.surelogic.common.eclipse.jobs.SLUIJob;
 import com.surelogic.common.jdbc.NullDBQuery;
 import com.surelogic.common.jdbc.Query;
 import com.surelogic.common.jdbc.TransactionException;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.dialogs.ArtifactTypeMappingDialog;
+import com.surelogic.sierra.client.eclipse.wizards.ArtifactTypeSetupWizard;
 import com.surelogic.sierra.jdbc.settings.Categories;
 import com.surelogic.sierra.jdbc.settings.CategoryDO;
 import com.surelogic.sierra.jdbc.tool.ArtifactTypeDO;
@@ -146,13 +150,22 @@ public final class Tools {
 						Collections.sort(types);
 	 					
 						// Map to finding types
-						final List<FindingTypeDO> findingTypes = ft.listFindingTypes(); 						
+						final List<FindingTypeDO> findingTypes = ft.listFindingTypes(); 			
+						final Categories categories = new Categories(q);
+						final List<CategoryDO> cats = categories.listCategories();
 						SLUIJob job = new SLUIJob() {
 							@Override
 							public IStatus runInUIThread(IProgressMonitor monitor) {
-								if (false) {
+								if (XUtil.useDeveloperMode()) {
+									/*
 									ArtifactTypeMappingDialog d = 
-										new ArtifactTypeMappingDialog(null, types, findingTypes);
+										new ArtifactTypeMappingDialog(null, types, findingTypes, cats);
+									*/
+									final ArtifactTypeSetupWizard wizard = new ArtifactTypeSetupWizard(types, findingTypes, cats);
+									wizard.init(PlatformUI.getWorkbench(), null);
+									WizardDialog d = 
+										new WizardDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
+											             wizard);
 									if (d.open() != Window.OK) {
 										// Cancelled, so clear finding type info
 										for(ArtifactType t : types) {
