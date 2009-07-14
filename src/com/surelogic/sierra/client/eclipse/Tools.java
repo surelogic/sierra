@@ -29,7 +29,6 @@ import com.surelogic.common.jdbc.NullDBQuery;
 import com.surelogic.common.jdbc.Query;
 import com.surelogic.common.jdbc.TransactionException;
 import com.surelogic.common.logging.SLLogger;
-import com.surelogic.sierra.client.eclipse.dialogs.ArtifactTypeMappingDialog;
 import com.surelogic.sierra.client.eclipse.wizards.ArtifactTypeSetupWizard;
 import com.surelogic.sierra.jdbc.settings.Categories;
 import com.surelogic.sierra.jdbc.settings.CategoryDO;
