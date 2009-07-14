@@ -12,8 +12,8 @@ public class ArtifactType implements Comparable<ArtifactType> {
 	public final String toolVersion;
 	public final String plugin;
 	public final String type;
-	public final String category;
-	public final boolean includeInScan;
+	private String category;
+	private boolean includeInScan;
 	private String findingType = null;
 	
 	private ArtifactType(String tool, String version, String plugin, 
@@ -59,12 +59,28 @@ public class ArtifactType implements Comparable<ArtifactType> {
 		return t;
 	}
 	
-	public void setFindingType(String type) {
-		findingType = type;		
+	public String setFindingType(String type) {
+		return (findingType = type);		
 	}
 	
 	public String getFindingType() {
 		return findingType;
+	}
+	
+	public String setCategory(String cat) {
+		return (category = cat);
+	}
+	
+	public String getCategory() {
+		return category;
+	}
+	
+	public void includeInScan(boolean val) {
+		includeInScan = val;
+	}
+	
+	public boolean includeInScan() {
+		return includeInScan;
 	}
 	
 	@Override
