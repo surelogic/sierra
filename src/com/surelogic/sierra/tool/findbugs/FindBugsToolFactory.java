@@ -1,9 +1,11 @@
 package com.surelogic.sierra.tool.findbugs;
 
 import java.io.*;
+import java.net.URL;
 import java.util.*;
 import java.util.jar.*;
 import java.util.logging.Level;
+import java.util.zip.*;
 
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.tool.*;
@@ -71,19 +73,36 @@ public class FindBugsToolFactory extends AbstractToolFactory {
 	}
 
 	private Manifest findSierraManifest(Plugin plugin) {
-		InputStream is = 
-			plugin.getPluginLoader().getClassLoader().getResourceAsStream("/"+ToolUtil.SIERRA_MANIFEST);
-		if (is != null) {
-			Manifest props = new Manifest();
-			try {
-				props.read(is);
-				return props;
-			} catch(IOException e) {
-				SLLogger.getLogger().log(Level.WARNING, "Couldn't load finding type mapping for "+plugin.getPluginId(), e);
-				return null;
+		URL url = plugin.getPluginLoader().getURL();
+		if (url == null) {
+			return null; // Core plugin
+		}		
+		try {
+			ZipInputStream zis = new ZipInputStream(url.openStream());
+			ZipEntry ze;
+			while ((ze = zis.getNextEntry()) != null) {
+				if (ToolUtil.SIERRA_MANIFEST.equals(ze.getName())) {
+					break;
+				}
 			}
+			if (ze == null) {
+				return null;
+			}			
+			/*
+			InputStreamReader r = new InputStreamReader(zis);
+			int c;
+			while ((c = r.read()) != -1) {
+				System.out.print((char) c);
+			}			
+			*/
+			Manifest props = new Manifest();
+			props.read(zis);
+			zis.close();
+			return props;
+		} catch(IOException e) {
+			SLLogger.getLogger().log(Level.WARNING, "Couldn't load finding type mapping for "+plugin.getPluginId(), e);
+			return null;		
 		}
-		return null;
 	}
 
 	/*
