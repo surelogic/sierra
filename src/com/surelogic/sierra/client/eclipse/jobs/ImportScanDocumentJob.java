@@ -8,9 +8,9 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 
-import com.surelogic.common.eclipse.jobs.DatabaseJob;
 import com.surelogic.common.eclipse.jobs.SLProgressMonitorWrapper;
 import com.surelogic.common.jobs.SLProgressMonitor;
+import com.surelogic.sierra.client.eclipse.model.BuglinkData;
 
 public final class ImportScanDocumentJob extends AbstractSierraDatabaseJob {
 
@@ -18,16 +18,17 @@ public final class ImportScanDocumentJob extends AbstractSierraDatabaseJob {
 	private final String projectName;
 	private final Runnable runAfter;
 
-	public ImportScanDocumentJob(File scanDocument) {
+	public ImportScanDocumentJob(final File scanDocument) {
 		this(scanDocument, null, null);
 	}
 
-	public ImportScanDocumentJob(File scanDocument, String proj, Runnable r) {
+	public ImportScanDocumentJob(final File scanDocument, final String proj,
+			final Runnable r) {
 		super("Loading "
 				+ (proj != null ? "scan document for " + proj : scanDocument
 						.getName()));
 		setPriority(Job.DECORATE);
-		
+
 		f_scanDocument = scanDocument;
 		if (proj == null) {
 			final String fileName = f_scanDocument.getName();
@@ -39,19 +40,19 @@ public final class ImportScanDocumentJob extends AbstractSierraDatabaseJob {
 	}
 
 	@Override
-	protected IStatus run(IProgressMonitor monitor) {
-		SLProgressMonitorWrapper slProgressMonitorWrapper = new SLProgressMonitorWrapper(
+	protected IStatus run(final IProgressMonitor monitor) {
+		final SLProgressMonitorWrapper slProgressMonitorWrapper = new SLProgressMonitorWrapper(
 				monitor, this.getName());
 		try {
 			loadScanDocument(slProgressMonitorWrapper);
-		} catch (IllegalStateException e) {
+		} catch (final IllegalStateException e) {
 			if (e.getCause() instanceof SQLException
 					&& e.getMessage().contains("No current connection")) {
 				// Try again and see if we can get through
 				loadScanDocument(slProgressMonitorWrapper);
 			}
 		}
-
+		BuglinkData.getInstance().refresh();
 		if (slProgressMonitorWrapper.isCanceled()) {
 			return Status.CANCEL_STATUS;
 		} else {
