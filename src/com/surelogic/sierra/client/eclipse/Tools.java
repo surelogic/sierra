@@ -120,7 +120,8 @@ public final class Tools {
 						final List<ArtifactTypeDO> temp = ft
 								.getToolArtifactTypes(t.getId(), t.getVersion());
 						for (final ArtifactTypeDO a : temp) {
-							knownTypes.add(ArtifactType.create(t, null, "", a.getMnemonic(), ""));
+							knownTypes.add(ArtifactType.create(t, null, "", a
+									.getMnemonic(), ""));
 						}
 					}
 
@@ -138,54 +139,67 @@ public final class Tools {
 							}
 						}
 					}
-					
+
 					if (newExtensions.isEmpty()) {
 						System.out.println("No new artifact types");
 					} else {
 						final List<ArtifactType> types = new ArrayList<ArtifactType>();
-						for(Map.Entry<IToolExtension,List<ArtifactType>> e : newExtensions.entrySet()) {
+						for (final Map.Entry<IToolExtension, List<ArtifactType>> e : newExtensions
+								.entrySet()) {
 							types.addAll(e.getValue());
 						}
 						Collections.sort(types);
-	 					
+
 						// Map to finding types
-						final List<FindingTypeDO> findingTypes = ft.listFindingTypes(); 			
+						final List<FindingTypeDO> findingTypes = ft
+								.listFindingTypes();
 						final Categories categories = new Categories(q);
-						final List<CategoryDO> cats = categories.listCategories();
-						SLUIJob job = new SLUIJob() {
+						final List<CategoryDO> cats = categories
+								.listCategories();
+						final SLUIJob job = new SLUIJob() {
 							@Override
-							public IStatus runInUIThread(IProgressMonitor monitor) {
+							public IStatus runInUIThread(
+									final IProgressMonitor monitor) {
 								if (XUtil.useDeveloperMode()) {
 									/*
-									ArtifactTypeMappingDialog d = 
-										new ArtifactTypeMappingDialog(null, types, findingTypes, cats);
-									*/
-									final ArtifactTypeSetupWizard wizard = new ArtifactTypeSetupWizard(types, findingTypes, cats);
-									wizard.init(PlatformUI.getWorkbench(), null);
-									WizardDialog d = 
-										new WizardDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
-											             wizard);
+									 * ArtifactTypeMappingDialog d = new
+									 * ArtifactTypeMappingDialog(null, types,
+									 * findingTypes, cats);
+									 */
+									final ArtifactTypeSetupWizard wizard = new ArtifactTypeSetupWizard(
+											types, findingTypes, cats);
+									wizard
+											.init(PlatformUI.getWorkbench(),
+													null);
+									final WizardDialog d = new WizardDialog(
+											PlatformUI.getWorkbench()
+													.getActiveWorkbenchWindow()
+													.getShell(), wizard);
 									if (d.open() != Window.OK) {
 										// Cancelled, so clear finding type info
-										for(ArtifactType t : types) {
+										for (final ArtifactType t : types) {
 											t.setFindingType(null);
 										}
 									}
-								}								
-								Data.getInstance().withTransaction(new NullDBQuery() {
-									@Override
-									public void doPerform(final Query q) {
-										final FindingTypes ft = new FindingTypes(q);
-										for(Map.Entry<IToolExtension,List<ArtifactType>> e : newExtensions.entrySet()) {
-											setupDatabase(q, ft, e.getKey(), e.getValue());
-										}
-									}
-								});
+								}
+								Data.getInstance().withTransaction(
+										new NullDBQuery() {
+											@Override
+											public void doPerform(final Query q) {
+												final FindingTypes ft = new FindingTypes(
+														q);
+												for (final Map.Entry<IToolExtension, List<ArtifactType>> e : newExtensions
+														.entrySet()) {
+													setupDatabase(q, ft, e
+															.getKey(), e
+															.getValue());
+												}
+											}
+										});
 								return Status.OK_STATUS;
 							}
 						};
 						job.schedule();
-						
 
 					}
 
@@ -207,15 +221,19 @@ public final class Tools {
 			// SLLogger.getLogger().warning("Couldn't find "+a.type+" for "+a.tool+", v"+a.version);
 			System.out.println("Couldn't find " + a.type + " for " + a.tool
 					+ ", v" + a.toolVersion);
-			final FindingTypeDO ftDO = new FindingTypeDO();
-			ftDO.setName(a.type);
-			ftDO.setUid(a.type);
-			ftDO.setShortMessage(a.type);
-			ftDO.setInfo(a.type);
-			ext.addFindingType(ftDO);
+			if (a.getFindingType() == null) {
+				final FindingTypeDO ftDO = new FindingTypeDO();
+				ftDO.setName(a.type);
+				ftDO.setUid(a.type);
+				ftDO.setShortMessage(a.type);
+				ftDO.setInfo(a.type);
+				a.setFindingType(a.type);
+				ext.addFindingType(ftDO);
+			}
+
 			final ArtifactTypeDO aDO = new ArtifactTypeDO(a.tool, a.type,
 					a.type, a.toolVersion);
-			ext.addType(a.type, aDO);
+			ext.addType(a.getFindingType(), aDO);
 		}
 		ft.registerExtension(ext);
 		System.out.println("Registered extension: " + ext.getName() + " "
