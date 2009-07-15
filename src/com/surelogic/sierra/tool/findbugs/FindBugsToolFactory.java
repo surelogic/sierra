@@ -28,7 +28,7 @@ public class FindBugsToolFactory extends AbstractToolFactory {
 		AbstractFindBugsTool.init(toolHome.getAbsolutePath());
 	}
 
-	private static <T> Iterable<T> iterable(final Iterator<T> it) {
+	static <T> Iterable<T> iterable(final Iterator<T> it) {
 		return new Iterable<T>() {
 			public Iterator<T> iterator() {
 				return it;

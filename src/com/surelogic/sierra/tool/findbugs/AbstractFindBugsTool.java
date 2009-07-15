@@ -2,6 +2,7 @@ package com.surelogic.sierra.tool.findbugs;
 
 import java.io.*;
 import java.net.URI;
+import java.net.URL;
 import java.util.*;
 import java.util.logging.Level;
 
@@ -48,8 +49,26 @@ public class AbstractFindBugsTool extends AbstractToolInstance {
 		engine.setProject(p);
 		engine.setUserPreferences(UserPreferences.getUserPreferences());
 		// engine.setAnalysisFeatureSettings(arg0);
-		engine.setDetectorFactoryCollection(DetectorFactoryCollection
-				.instance());
+		
+		// Collect the set of active tool extensions
+		final Set<String> active = new HashSet<String>();
+		for(ToolExtension ext : config.getExtensions()) {
+			if (getId().equals(ext.getTool())) {
+				active.add(ext.getId());
+			}
+		}
+		// Customize the set of plugins based on the Config above
+		final List<URL> urls = new ArrayList<URL>();
+		for(Plugin plugin : FindBugsToolFactory.iterable(DetectorFactoryCollection.instance().pluginIterator())) {
+			URL url = plugin.getPluginLoader().getURL();
+			if (url != null && active.contains(plugin.getPluginId())) {
+				urls.add(url);
+			}
+		}	
+		
+		engine.setDetectorFactoryCollection(new DetectorFactoryCollection() {
+			{ setPluginList(urls.toArray(new URL[urls.size()])); }
+		});
 		// engine.setClassScreener(new Screener());
 
 		Monitor mon = new Monitor(this, monitor);
