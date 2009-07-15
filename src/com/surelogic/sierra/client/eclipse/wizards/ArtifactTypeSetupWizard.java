@@ -66,25 +66,40 @@ public class ArtifactTypeSetupWizard extends Wizard {
 				FileWriter w = new FileWriter(locations.get(plugin.getKey()));
 				PrintWriter out = new PrintWriter(w);
 				out.println("Manifest-Version: 1.0\n");
-				out.println("Name: "+ToolUtil.FINDING_TYPE_MAPPING_KEY);
+				boolean first = true;
+				
 				List<ArtifactType> unmapped = new ArrayList<ArtifactType>();
 				for(final ArtifactType t : plugin.getValue()) {
 					final String fType = t.getFindingType();
 					if (mappedToFindingType(fType)) {
+						if (first) {
+							out.println("Name: "+ToolUtil.FINDING_TYPE_MAPPING_KEY);
+							first = false;
+						}
 						out.println(t.type+": "+fType);
 					} else {
 						unmapped.add(t);
 					}
 				}
-				out.println();
-				out.println("Name: "+ToolUtil.CATEGORY_MAPPING_KEY);
-				for(final ArtifactType t : unmapped) {
-					out.println(t.type+": "+t.getCategory());			
+				if (!first) {
+					out.println();
+				}	
+				
+				if (unmapped.size() > 0) {
+					out.println("Name: "+ToolUtil.CATEGORY_MAPPING_KEY);
+					for(final ArtifactType t : unmapped) {
+						out.println(t.type+": "+t.getCategory());			
+					}				
+					out.println();
 				}
-				out.println();
-				out.println("Name: "+ToolUtil.SCAN_FILTER_BLACKLIST_KEY);
+				
+				first = true;
 				for(final ArtifactType t : unmapped) {
 					if (!t.includeInScan()) {
+						if (first) {
+							out.println("Name: "+ToolUtil.SCAN_FILTER_BLACKLIST_KEY);
+							first = false;
+						}
 						out.println(t.type+": ignore");			
 					}
 				}
