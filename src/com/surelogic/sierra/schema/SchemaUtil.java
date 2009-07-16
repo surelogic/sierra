@@ -39,6 +39,7 @@ public class SchemaUtil {
 		final FindingTypeManager ftMan = FindingTypeManager.getInstance(conn);
 		final List<FindingTypes> types = new ArrayList<FindingTypes>(3);
 		types.add(getFindingTypes("buglink-finding-types.xml"));
+//		types.add(getFindingTypes("jsure-finding-types.xml"));
 		ftMan.updateFindingTypes(types, 0);
 	}
 
