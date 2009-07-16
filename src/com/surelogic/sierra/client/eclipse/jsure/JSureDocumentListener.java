@@ -77,6 +77,9 @@ public class JSureDocumentListener extends AbstractXMLResultListener {
 		} else {
 			return false;
 		}
+		if (aType.startsWith("Color")) {
+			return false;
+		}
 		if (createSourceLocation(builder.primarySourceLocation(), e.getSource())) {
 			final String msg = e.getAttribute(MESSAGE_ATTR);
 			builder.message(msg);
@@ -84,7 +87,7 @@ public class JSureDocumentListener extends AbstractXMLResultListener {
 				builder.severity(Severity.ERROR).priority(Priority.HIGH);
 			} else {
 				builder.severity(Severity.INFO).priority(Priority.LOW);
-			}
+			}			
 			builder.findingType("JSure", "1.1", aType);
 			builder.scanNumber(id);
 			builder.assurance(assuranceType);
