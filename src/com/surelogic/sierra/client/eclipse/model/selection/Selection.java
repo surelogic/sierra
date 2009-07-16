@@ -55,7 +55,7 @@ public final class Selection extends AbstractDatabaseObserver {
 		if (PreferenceConstants.showJSureFindings()) {
 			allFilters.add(FilterVerificationStatus.FACTORY);
 			allFilters.add(FilterResultType.FACTORY);
-			allFilters.add(FilterModels.FACTORY);
+			//allFilters.add(FilterModels.FACTORY);
 		}
 		f_allFilters = Collections.unmodifiableSet(allFilters);
 	}

@@ -796,6 +796,9 @@ public abstract class Filter extends AbstractUpdatable {
 	}
 	
 	protected final String createInClause(boolean quote, String column, Iterable<String> values) {
+		if (values == null) {
+			return "";
+		}
 		final StringBuilder b = new StringBuilder();
 		b.append('(');
 		b.append(getTablePrefix(usesJoin()));
