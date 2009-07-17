@@ -1,6 +1,9 @@
 package com.surelogic.sierra.client.eclipse.jobs;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 
 import com.surelogic.common.xml.Entities;
@@ -17,16 +20,18 @@ public class ExportFindingSetInHTMLFormatJob extends ExportFindingSetJob {
 
 	@Override
 	protected void closeOutput() throws Exception {
-		writer.println("</table></html>");
+		writer.println("</tbody></table></body></html>");
 		writer.close();
 	}
 
 	@Override
 	protected void openOutput() throws Exception {
 		writer = new PrintWriter(f_file);
-		writer.println("<html><table>");
+		writer.println("<html><head>");
+		addStyle(writer);
+		writer.println("</head><body><table>");
 		writer
-				.println("<th>Project</th><th>Package</th><th>Class</th><th>Line</th><th>FindingType</th><th>FindingCategory</th><th>Importance</th><th>Tool</th><th>Summary</th>");
+				.println("<thead><th>Project</th><th>Package</th><th>Class</th><th>Line</th><th>Finding Type</th><th>Category</th><th>Importance</th><th>Tool</th><th>Summary</th></thead><tbody>");
 	}
 
 	@Override
@@ -38,16 +43,15 @@ public class ExportFindingSetInHTMLFormatJob extends ExportFindingSetJob {
 			final String toolName) throws Exception {
 		final StringBuilder b = new StringBuilder();
 		b.append("<tr>");
-		cell(summary, b);
-		cell(importance.toStringSentenceCase(), b);
-		cell(Long.toString(findingId), b);
 		cell(projectName, b);
 		cell(packageName, b);
 		cell(typeName, b);
 		cell(Integer.toString(lineNumber), b);
 		cell(findingTypeName, b);
 		cell(categoryName, b);
+		cell(importance.toStringSentenceCase(), b);
 		cell(toolName, b);
+		cell(summary, b);
 		b.append("</tr>");
 		writer.println(b);
 	}
@@ -56,5 +60,29 @@ public class ExportFindingSetInHTMLFormatJob extends ExportFindingSetJob {
 		b.append("<td>");
 		Entities.addEscaped(val, b);
 		b.append("</td>");
+	}
+
+	/**
+	 * ppp Optional method. May be called to add a style section to the header.
+	 * 
+	 * @param writer
+	 * @return
+	 */
+	protected void addStyle(final PrintWriter writer) {
+		writer.println("<style>");
+		final BufferedReader in = new BufferedReader(new InputStreamReader(
+				Thread.currentThread().getContextClassLoader()
+						.getResourceAsStream(
+								"/com/surelogic/common/adhoc/jobs/style.css")));
+		try {
+			String str = in.readLine();
+			while (str != null) {
+				writer.println(str);
+				str = in.readLine();
+			}
+		} catch (final IOException e) {
+			throw new IllegalStateException(e);
+		}
+		writer.println("</style>");
 	}
 }
