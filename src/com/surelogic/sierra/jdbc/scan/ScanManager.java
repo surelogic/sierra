@@ -596,8 +596,12 @@ public final class ScanManager {
 						updateScanOverviewByFinding.setLong(idx++, findingId);
 						updateScanOverviewByFinding.execute();
 					}
-
 				}
+				deleteScanExtensions.setLong(1, oldest.getId());
+				deleteScanExtensions.execute();
+				updateScanExtensions.setLong(1, oldest.getId());
+				updateScanExtensions.setLong(2, latest.getId());
+				updateScanExtensions.execute();
 				conn.commit();
 				// Copy the appropriate artifacts to the previous scan, then run
 				// against the latest scan
