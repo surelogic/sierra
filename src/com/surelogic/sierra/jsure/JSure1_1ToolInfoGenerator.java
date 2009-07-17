@@ -26,7 +26,7 @@ public class JSure1_1ToolInfoGenerator {
 		}
 	}
 	
-	private static final String[] artifactTypes = {
+	public static final String[] artifactTypes = {
 		"JSure",
 		// Various kinds of PromiseDrops
 		"BorrowedPromiseDrop",
