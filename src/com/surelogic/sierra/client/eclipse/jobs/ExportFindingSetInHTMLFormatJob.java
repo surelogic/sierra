@@ -31,7 +31,7 @@ public class ExportFindingSetInHTMLFormatJob extends ExportFindingSetJob {
 		addStyle(writer);
 		writer.println("</head><body><table>");
 		writer
-				.println("<thead><th>Project</th><th>Package</th><th>Class</th><th>Line</th><th>Finding Type</th><th>Category</th><th>Importance</th><th>Tool</th><th>Summary</th></thead><tbody>");
+				.println("<thead><th>Project</th><th>Package</th><th>Class</th><th>Line</th><th>Finding Type</th><th>Importance</th><th>Tool</th><th>Summary</th></thead><tbody>");
 	}
 
 	@Override
@@ -39,8 +39,8 @@ public class ExportFindingSetInHTMLFormatJob extends ExportFindingSetJob {
 			final Importance importance, final long findingId,
 			final String projectName, final String packageName,
 			final String typeName, final int lineNumber,
-			final String findingTypeName, final String categoryName,
-			final String toolName) throws Exception {
+			final String findingTypeName, final String toolName)
+			throws Exception {
 		final StringBuilder b = new StringBuilder();
 		b.append("<tr>");
 		cell(projectName, b);
@@ -48,7 +48,6 @@ public class ExportFindingSetInHTMLFormatJob extends ExportFindingSetJob {
 		cell(typeName, b);
 		cell(Integer.toString(lineNumber), b);
 		cell(findingTypeName, b);
-		cell(categoryName, b);
 		cell(importance.toStringSentenceCase(), b);
 		cell(toolName, b);
 		cell(summary, b);

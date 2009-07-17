@@ -8,7 +8,7 @@ import com.surelogic.sierra.tool.message.Importance;
 public final class ExportFindingSetInCSVFormatJob extends ExportFindingSetJob {
 
 	public ExportFindingSetInCSVFormatJob(final String listOfFindingsQuery,
-			File file) {
+			final File file) {
 		super(listOfFindingsQuery, file);
 	}
 
@@ -18,14 +18,16 @@ public final class ExportFindingSetInCSVFormatJob extends ExportFindingSetJob {
 	protected void openOutput() throws Exception {
 		f_out = new PrintWriter(f_file);
 		f_out.println("Project,Package,Class,Line,"
-				+ "FindingType,FindingCategory,Importance,Tool,Summary");
+				+ "FindingType,Importance,Tool,Summary");
 	}
 
 	@Override
-	protected void outputFinding(String summary, Importance importance,
-			long findingId, String projectName, String packageName,
-			String typeName, int lineNumber, String findingTypeName,
-			String categoryName, String toolName) throws Exception {
+	protected void outputFinding(final String summary,
+			final Importance importance, final long findingId,
+			final String projectName, final String packageName,
+			final String typeName, final int lineNumber,
+			final String findingTypeName, final String toolName)
+			throws Exception {
 		final StringBuilder b = new StringBuilder();
 		b.append('"').append(projectName).append('"');
 		b.append(',');
@@ -36,8 +38,6 @@ public final class ExportFindingSetInCSVFormatJob extends ExportFindingSetJob {
 		b.append(lineNumber);
 		b.append(',');
 		b.append('"').append(findingTypeName).append('"');
-		b.append(',');
-		b.append('"').append(categoryName).append('"');
 		b.append(',');
 		b.append('"').append(importance.toStringSentenceCase()).append('"');
 		b.append(',');
