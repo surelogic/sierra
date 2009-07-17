@@ -16,7 +16,8 @@ public class JSureUtil {
 	}
 	
 	public static boolean isPromiseType(String id) {
-        return BuglinkData.getInstance().getFindingTypes(PROMISE_CATEGORY_ID).contains(id);				
+		return false;
+        //return BuglinkData.getInstance().getFindingTypes(PROMISE_CATEGORY_ID).contains(id);				
 	}
 	
 	public static Image getImageFor(AssuranceType type) {
