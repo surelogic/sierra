@@ -36,7 +36,7 @@ import com.surelogic.sierra.tool.IToolExtension;
 import com.surelogic.sierra.tool.IToolInstance;
 import com.surelogic.sierra.tool.ToolUtil;
 import com.surelogic.sierra.tool.analyzer.ILazyArtifactGenerator;
-import com.surelogic.sierra.tool.message.Config;
+import com.surelogic.sierra.tool.message.*;
 
 public class PMDToolFactory extends AbstractToolFactory {
 	private static final String PMD_LIB = "pmd-lib";
@@ -197,10 +197,36 @@ public class PMDToolFactory extends AbstractToolFactory {
 		return rulesets;
 	}
 
+	static List<RuleSetInfo> getSelectedRuleSets(String tool, Config c) throws RuleSetNotFoundException {
+		Set<String> selected = new HashSet<String>();
+		for(ToolExtension e : c.getExtensions()) {
+			if (tool.equals(e.getTool())) {
+				selected.add(e.getId());
+			}
+		}
+		// Remove unselected RuleSetInfos
+		List<RuleSetInfo> rules = getRuleSets();
+		Iterator<RuleSetInfo> it = rules.iterator();
+		while (it.hasNext()) {
+			RuleSetInfo r = it.next();
+			if (!r.isCore && !selected.contains(r.ruleset.getName())) {
+				it.remove();
+			}
+		}
+		return rules;
+	}
+	
 	/**
-	 * @return the directory containing all.xml
+	 * @return the directory containing all.xml file
 	 */
 	static File createAllXml() {
+		return createRulesXml(rulesets);
+	}
+	
+	/**
+	 * @return the directory containing the xml file
+	 */
+	static File createRulesXml(final String filename) {
 		final File lib = new File(ToolUtil.getSierraToolDirectory(), PMD_LIB);
 		if (!lib.exists()) {
 			lib.mkdirs();
@@ -210,21 +236,23 @@ public class PMDToolFactory extends AbstractToolFactory {
 			return null;
 		}
 		try {
-			final File allXml = new File(lib, rulesets);
+			final File allXml = new File(lib, filename);
 			if (allXml.exists()) {
 				allXml.delete();
 			}
 			final PrintWriter pw = new PrintWriter(allXml);
-			generateRulesXML(pw);
+			generateRulesXML(pw, getRuleSets());
 			pw.close();
 			return lib;
+		} catch (final RuleSetNotFoundException e) {
+			LOG.log(Level.SEVERE, "Problem getting rulesets", e);
 		} catch (final FileNotFoundException e) {
 			LOG.log(Level.SEVERE, "Couldn't create " + rulesets, e);
 		}
 		return null;
 	}
 
-	static void generateRulesXML(final PrintWriter pw) {
+	static void generateRulesXML(final PrintWriter pw, List<RuleSetInfo> rulesets) {
 		pw.println("<?xml version=\"1.0\"?>");
 		final StringBuilder b = new StringBuilder();
 		Entities.start("ruleset", b);
@@ -244,20 +272,16 @@ public class PMDToolFactory extends AbstractToolFactory {
 		b.setLength(0);
 
 		Entities.createTag("description", "Custom Sierra RuleSet", b);
-		try {
-			for (final RuleSetInfo info : getRuleSets()) {
-				final RuleSet rs = info.ruleset;
-				Entities.start("rule", b);
-				if (rs.getFileName() == null) {
-					System.out.println(rs.getName());
-				}
-				Entities.addAttribute("ref", rs.getFileName(), b);
-				b.append("/>\n");
-				pw.append(b);
-				b.setLength(0);
+		for (final RuleSetInfo info : rulesets) {
+			final RuleSet rs = info.ruleset;
+			Entities.start("rule", b);
+			if (rs.getFileName() == null) {
+				System.out.println(rs.getName());
 			}
-		} catch (final RuleSetNotFoundException e) {
-			e.printStackTrace();
+			Entities.addAttribute("ref", rs.getFileName(), b);
+			b.append("/>\n");
+			pw.append(b);
+			b.setLength(0);
 		}
 		b.append("\n</ruleset>");
 		pw.append(b);
