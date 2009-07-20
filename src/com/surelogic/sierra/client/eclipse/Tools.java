@@ -160,24 +160,28 @@ public final class Tools {
 							@Override
 							public IStatus runInUIThread(
 									final IProgressMonitor monitor) {
-								if (XUtil.useDeveloperMode()) {
+								final List<ArtifactType> incompleteTypes = new ArrayList<ArtifactType>();
+								for(ArtifactType t : types) {
+									if (!t.isComplete()) {
+										incompleteTypes.add(t);
+									}
+								}
+								if (XUtil.useDeveloperMode() && !incompleteTypes.isEmpty()) {
 									/*
 									 * ArtifactTypeMappingDialog d = new
 									 * ArtifactTypeMappingDialog(null, types,
 									 * findingTypes, cats);
 									 */
 									final ArtifactTypeSetupWizard wizard = new ArtifactTypeSetupWizard(
-											types, findingTypes, cats);
-									wizard
-											.init(PlatformUI.getWorkbench(),
-													null);
+											incompleteTypes, findingTypes, cats);
+									wizard.init(PlatformUI.getWorkbench(), null);
 									final WizardDialog d = new WizardDialog(
 											PlatformUI.getWorkbench()
 													.getActiveWorkbenchWindow()
 													.getShell(), wizard);
 									if (d.open() != Window.OK) {
 										// Cancelled, so clear finding type info
-										for (final ArtifactType t : types) {
+										for (final ArtifactType t : incompleteTypes) {
 											t.setFindingType(null);
 										}
 									}
