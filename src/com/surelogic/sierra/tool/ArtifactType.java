@@ -14,6 +14,7 @@ public class ArtifactType implements Comparable<ArtifactType> {
 	public final String type;
 	private String category;
 	private boolean includeInScan;
+	private boolean isComplete = false;
 	private String findingType = null;
 	
 	private ArtifactType(String tool, String version, String plugin, 
@@ -38,11 +39,13 @@ public class ArtifactType implements Comparable<ArtifactType> {
 		}
 		// Code below assumes that the artifact type is not mapped to an existing finding type,
 		// and uses the type name to lookup defaults
+		boolean isComplete = false;
 		if (categoryMap != null) {
 			String tmpCategory = categoryMap.getValue(type);
 			if (tmpCategory != null) {
 				category = tmpCategory;				
 			}
+			isComplete = true;
 		}		
 		boolean includeInScan = true;
 		if (scanFilterBlacklist != null) {
@@ -55,7 +58,9 @@ public class ArtifactType implements Comparable<ArtifactType> {
 			if (findingType != null) {
 				t.setFindingType(findingType);
 			}
+			isComplete = true;
 		}
+		t.isComplete = isComplete;
 		return t;
 	}
 	
@@ -81,6 +86,10 @@ public class ArtifactType implements Comparable<ArtifactType> {
 	
 	public boolean includeInScan() {
 		return includeInScan;
+	}
+	
+	public boolean isComplete() {
+		return isComplete;
 	}
 	
 	@Override
