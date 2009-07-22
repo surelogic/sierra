@@ -1,6 +1,8 @@
 package com.surelogic.sierra.tool.message;
 
+import java.io.File;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -19,6 +21,7 @@ import com.surelogic.sierra.jdbc.settings.CategoryEntryDO;
 import com.surelogic.sierra.jdbc.settings.CategoryFilterDO;
 import com.surelogic.sierra.jdbc.settings.ScanFilterDO;
 import com.surelogic.sierra.jdbc.settings.ScanFilters;
+import com.surelogic.sierra.jdbc.settings.SettingQueries;
 import com.surelogic.sierra.jdbc.settings.TypeFilterDO;
 import com.surelogic.sierra.jdbc.tool.ExtensionDO;
 import com.surelogic.sierra.jdbc.tool.FindingTypes;
@@ -107,6 +110,12 @@ public class BugLinkServiceImpl extends SecureServiceServlet implements
 								sets.add(Categories.convert(set, server));
 							}
 						}
+						final Set<ExtensionName> dependencySet = new HashSet<ExtensionName>();
+						for (final FilterSet f : response.getFilterSets()) {
+							dependencySet.addAll(cats.calculateDependencies(f
+									.getUid()));
+						}
+						response.getDependencies().addAll(dependencySet);
 						return response;
 					}
 				});
@@ -209,6 +218,12 @@ public class BugLinkServiceImpl extends SecureServiceServlet implements
 								list.add(ScanFilters.convert(set, server));
 							}
 						}
+						final Set<ExtensionName> dependencySet = new HashSet<ExtensionName>();
+						for (final ScanFilter f : response.getScanFilter()) {
+							dependencySet.addAll(filters
+									.calculateDependencies(f.getUid()));
+						}
+						response.getDependencies().addAll(dependencySet);
 						return response;
 					}
 				});
@@ -234,7 +249,7 @@ public class BugLinkServiceImpl extends SecureServiceServlet implements
 
 	public ListExtensionResponse listExtensions(
 			final ListExtensionRequest request) {
-		return ConnectionFactory.getInstance().withTransaction(
+		return ConnectionFactory.getInstance().withReadOnly(
 				new DBQuery<ListExtensionResponse>() {
 					public ListExtensionResponse perform(final Query q) {
 						final ListExtensionResponse r = new ListExtensionResponse();
@@ -257,5 +272,39 @@ public class BugLinkServiceImpl extends SecureServiceServlet implements
 						return new RegisterExtensionResponse();
 					}
 				});
+	}
+
+	public File downloadExtension(final ExtensionName request) {
+		// TODO
+		return null;
+	}
+
+	public GetExtensionsResponse getExtensions(
+			final GetExtensionsRequest request) {
+		return ConnectionFactory.getInstance().withReadOnly(
+				new DBQuery<GetExtensionsResponse>() {
+					public GetExtensionsResponse perform(final Query q) {
+						final GetExtensionsResponse response = new GetExtensionsResponse();
+						for (final ExtensionName e : request.getExtensions()) {
+							final ExtensionDO eDO = new FindingTypes(q)
+									.getExtension(e.getName(), e.getVersion());
+							if (eDO != null) {
+								response.getExtension().add(
+										FindingTypes.convert(eDO));
+							}
+						}
+						return response;
+					}
+				});
+	}
+
+	public EnsureExtensionResponse ensureExtensions(
+			final EnsureExtensionRequest request) {
+		final EnsureExtensionResponse response = new EnsureExtensionResponse();
+		response.getUnknownExtensions().addAll(request.getExtensions());
+		response.getUnknownExtensions().removeAll(
+				ConnectionFactory.getInstance().withReadOnly(
+						SettingQueries.localExtensions()));
+		return response;
 	}
 }
