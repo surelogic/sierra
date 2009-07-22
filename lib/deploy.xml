@@ -39,7 +39,7 @@
 			<arg value="${gwt.module}" />
 		</java>
 		<war destfile="../jetty/webapps/sl.war" webxml="../sierra-portal/web.xml">
-			<fileset dir="../sierra-portal/www/${gwt.module}" />
+			<fileset dir="../sierra-portal/www/com.surelogic.sierra.gwt.SierraPortal" />
 			<classes dir="../sierra-portal/bin" />
 			<classes dir="../sierra-services/bin" />
 			<lib dir="../sierra-portal/lib/web-dependencies" />
