@@ -22,20 +22,43 @@ public abstract class FileBasedServerLog extends ServerLog {
 	@Override
 	public final void init() {
 		final Runnable checkIfServerIsRunning = new Runnable() {
+			File lastLog;
+			long lastLen;
+			
+			private void setLastLog(File log) {
+				lastLog = log;
+				lastLen = log.length();
+			}
+			
 			public void run() {
 				boolean notifyObservers = false;
 				final File logFile = getLatestLogFile();
-				if (logFile == null) {
-					if (!"".equals(f_logText.toString())) {
-						f_logText.setLength(0);
-						notifyObservers = true;
-					}
-				} else {
-					final String contents = getTextFileContents(logFile);
-					if (!contents.equals(f_logText.toString())) {
-						final int lengthChar = f_logText.length();
-						f_logText.replace(0, lengthChar, contents);
-						notifyObservers = true;
+				synchronized (f_logText) {
+					if (logFile == null) {
+						if (!"".equals(f_logText.toString())) {
+							f_logText.setLength(0);
+							notifyObservers = true;
+						}
+					} else if (!logFile.equals(lastLog) || logFile.length() != lastLen) {
+						//System.out.println(this+" file: "+logFile+" != "+lastLog);
+						//System.out.println(this+" len: "+logFile.length()+" != "+lastLen);
+						f_logText.setLength(0);	
+						getTextFileContents(f_logText, logFile);
+						setLastLog(logFile);
+						//System.out.println(this+": "+logFile.length()+" ?= "+f_logText.length());
+						notifyObservers = true;					
+					/*
+					} else {
+						final String contents = getTextFileContents(logFile);	
+						System.out.println(this+": "+contents.length()+" != "+f_logText.length());
+						if (contents.length() != f_logText.length() || 
+							!contents.equals(f_logText.toString())) {
+							final int lengthChar = f_logText.length();
+							f_logText.replace(0, lengthChar, contents);
+							setLastLog(logFile);
+							notifyObservers = true;
+						}
+					*/
 					}
 				}
 				if (notifyObservers)
@@ -85,6 +108,10 @@ public abstract class FileBasedServerLog extends ServerLog {
 
 	private String getTextFileContents(final File file) {
 		final StringBuilder result = new StringBuilder();
+		return getTextFileContents(result, file).toString();
+	}
+	
+	private StringBuilder getTextFileContents(final StringBuilder result, final File file) {
 		try {
 			final BufferedReader in = new BufferedReader(new FileReader(file));
 			String line;
@@ -97,7 +124,7 @@ public abstract class FileBasedServerLog extends ServerLog {
 			SLLogger.getLogger().log(Level.SEVERE,
 					I18N.err(40, file.getAbsolutePath()), e);
 		}
-		return result.toString();
+		return result;
 	}
 
 }

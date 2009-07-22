@@ -7,10 +7,13 @@ public abstract class ServerLog {
 
 	protected final ScheduledExecutorService f_executor;
 
-	protected final StringBuffer f_logText = new StringBuffer();
+	// Needs to be synchronized on access
+	protected final StringBuilder f_logText = new StringBuilder();
 
 	public final String getText() {
-		return f_logText.toString();
+		synchronized (f_logText) {
+			return f_logText.toString();
+		}
 	}
 
 	public ServerLog(ScheduledExecutorService executor) {
