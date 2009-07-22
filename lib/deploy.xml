@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="server-deployment">
-
+<project name="server-deployment">	
 	<!-- NOTE: This script is included from .. so its paths are WRONG if it is run directly -->
 
 	<description>Sierra server and portal Jetty with embedded Derby deployment</description>
@@ -37,10 +36,10 @@
 			<arg value="2" />
 			<arg value="-war" />
 			<arg value="../sierra-portal/www" />
-			<arg value="com.surelogic.sierra.gwt.SierraPortal" />
+			<arg value="${gwt.module}" />
 		</java>
 		<war destfile="../jetty/webapps/sl.war" webxml="../sierra-portal/web.xml">
-			<fileset dir="../sierra-portal/www/com.surelogic.sierra.gwt.SierraPortal" />
+			<fileset dir="../sierra-portal/www/${gwt.module}" />
 			<classes dir="../sierra-portal/bin" />
 			<classes dir="../sierra-services/bin" />
 			<lib dir="../sierra-portal/lib/web-dependencies" />
@@ -108,7 +107,7 @@
 		<delete quiet="true" file="../sierra-portal/lib/web-dependencies/commons-httpclient-3.1.jar" />
 		<delete quiet="true" file="../sierra-portal/lib/web-dependencies/commons-logging-1.1.1.jar" />
 		<delete quiet="true" includeemptydirs="true">
-			<fileset dir="../sierra-portal/www/com.surelogic.sierra.gwt.SierraPortal" includes="**/*" />
+			<fileset dir="../sierra-portal/www/${gwt.module}" includes="**/*" />
 		</delete>
 		<!-- sierra-portal.war is obsolete after Jan 31 -->
 		<delete quiet="true" file="../jetty/webapps/sierra-portal.war" />
