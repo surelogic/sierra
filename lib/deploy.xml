@@ -32,7 +32,9 @@
 			<pathelement path="../sierra-portal/lib/gwt/gwt-dev-linux.jar" />
 		</path>
 		<delete dir="../sierra-portal/www" />
-		<java classpathref="gwt.class.path" classname="com.google.gwt.dev.Compiler" fork="true" maxmemory="512m">
+		<java classpathref="gwt.class.path" classname="com.google.gwt.dev.Compiler" fork="true" maxmemory="512m">	
+			<arg value="-localWorkers" />
+			<arg value="2" />
 			<arg value="-war" />
 			<arg value="../sierra-portal/www" />
 			<arg value="com.surelogic.sierra.gwt.SierraPortal" />
