@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project default="deploy">
+<project default="clean-deploy">
 	<import file="./definitions.xml" />
 	<import file="./team-server-undeploy.xml" />
 
-	<target name="deploy" depends="undeploy">
+	<target name="clean-deploy" depends="undeploy,deploy" />
+	
+	<target name="redeploy" depends="deploy" />
+	
+	<target name="deploy">		
 		<mkdir dir="${jetty.dir}" />
 		<copy todir="${jetty.dir}">
 			<fileset dir="${jetty.plugin}">
