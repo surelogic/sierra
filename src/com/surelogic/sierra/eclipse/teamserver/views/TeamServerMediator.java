@@ -97,7 +97,11 @@ public final class TeamServerMediator implements ITeamServerObserver {
 			f_item = item;
 		}
 
-		public void notify(final ServerLog log) {
+		public void notify(final ServerLog log) {		
+			if (!f_teamServer.isRunning() && !f_teamServer.isNotRunning()) {
+				return;
+			}
+
 			final UIJob job = new SLUIJob() {
 				@Override
 				public IStatus runInUIThread(IProgressMonitor monitor) {
@@ -125,6 +129,11 @@ public final class TeamServerMediator implements ITeamServerObserver {
 		}
 
 		public void handleEvent(Event event) {
+		    /*
+			if (!f_teamServer.isRunning() && !f_teamServer.isNotRunning()) {
+				return;
+			}
+*/
 			updateLogText(f_log.getText());
 			PreferenceConstants.setLogShowing(f_logShowingPersistenceNumber);
 		}
