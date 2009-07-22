@@ -10,6 +10,7 @@ public class ExtensionDO {
 	private String version;
 	private final Map<String, List<ArtifactTypeDO>> artifactMap = new HashMap<String, List<ArtifactTypeDO>>();
 	private final List<FindingTypeDO> newFindingTypes = new ArrayList<FindingTypeDO>();
+	private final Map<String, List<String>> categoryMap = new HashMap<String, List<String>>();
 
 	public ExtensionDO() {
 
@@ -50,6 +51,16 @@ public class ExtensionDO {
 		return artifactMap.put(findingType, value);
 	}
 
+	public boolean addFindingType(final FindingTypeDO e, final String category) {
+		List<String> catTypes = categoryMap.get(category);
+		if (catTypes == null) {
+			catTypes = new ArrayList<String>();
+			categoryMap.put(category, catTypes);
+		}
+		catTypes.add(e.getUid());
+		return newFindingTypes.add(e);
+	}
+
 	public boolean addFindingType(final FindingTypeDO e) {
 		return newFindingTypes.add(e);
 	}
@@ -64,6 +75,10 @@ public class ExtensionDO {
 
 	public List<FindingTypeDO> getNewFindingTypes() {
 		return newFindingTypes;
+	}
+
+	public Map<String, List<String>> getCategoryMap() {
+		return categoryMap;
 	}
 
 	@Override

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import com.surelogic.common.jdbc.LongIdHandler;
+import com.surelogic.common.jdbc.LongResultHandler;
 import com.surelogic.common.jdbc.NullRowHandler;
 import com.surelogic.common.jdbc.Nulls;
 import com.surelogic.common.jdbc.Query;
@@ -24,6 +25,7 @@ import com.surelogic.sierra.jdbc.settings.TypeFilterDO;
 import com.surelogic.sierra.tool.message.Extension;
 import com.surelogic.sierra.tool.message.ExtensionArtifactType;
 import com.surelogic.sierra.tool.message.ExtensionFindingType;
+import com.surelogic.sierra.tool.message.ExtensionName;
 
 public class FindingTypes {
 
@@ -172,6 +174,56 @@ public class FindingTypes {
 				registerAT.call(id, artId);
 			}
 		}
+	}
+
+	/**
+	 * Returns the extension with the given name and version.
+	 * 
+	 * @param name
+	 * @param version
+	 * @return the given extension, or <code>null</code> if none exists
+	 */
+	public ExtensionDO getExtension(final String name, final String version) {
+		if (name == null || version == null) {
+			throw new IllegalArgumentException(
+					"Name and version may not be null");
+		}
+		final Long id = q.prepared("FindingTypes.selectExtension",
+				new LongResultHandler()).call(name, version);
+		if (id != null) {
+			final ExtensionDO e = new ExtensionDO();
+			e.setName(name);
+			e.setVersion(version);
+			q.prepared("FindingTypes.selectExtensionArtifactTypes",
+					new NullRowHandler() {
+						ArtifactTypeDOHandler h = new ArtifactTypeDOHandler();
+
+						@Override
+						protected void doHandle(final Row r) {
+							e.addType(r.nextString(), h.handle(r));
+						}
+					}).call(id);
+			for (final FindingTypeDO ft : getFindingTypes(q.prepared(
+					"FindingTypes.selectExtensionFindingTypes",
+					new StringRowHandler()).call(id))) {
+				e.addFindingType(ft);
+			}
+			return e;
+		} else {
+			return null;
+		}
+	}
+
+	public List<ExtensionName> getExtensionNames() {
+		final List<ExtensionName> exts = new ArrayList<ExtensionName>();
+		q.prepared("FindingTypes.selectExtensions", new NullRowHandler() {
+			@Override
+			protected void doHandle(final Row r) {
+				r.nextLong(); // id
+				exts.add(new ExtensionName(r.nextString(), r.nextString()));
+			}
+		}).call();
+		return exts;
 	}
 
 	/**

@@ -28,6 +28,7 @@ import com.surelogic.sierra.jdbc.tool.FindingTypeManager;
 import com.surelogic.sierra.tool.message.FilterEntry;
 import com.surelogic.sierra.tool.message.FilterSet;
 import com.surelogic.sierra.tool.message.FindingTypes;
+import com.surelogic.sierra.tool.message.GetExtensionsResponse;
 import com.surelogic.sierra.tool.message.ListCategoryResponse;
 import com.surelogic.sierra.tool.message.MessageWarehouse;
 
@@ -39,7 +40,7 @@ public class SchemaUtil {
 		final FindingTypeManager ftMan = FindingTypeManager.getInstance(conn);
 		final List<FindingTypes> types = new ArrayList<FindingTypes>(3);
 		types.add(getFindingTypes("buglink-finding-types.xml"));
-//		types.add(getFindingTypes("jsure-finding-types.xml"));
+		// types.add(getFindingTypes("jsure-finding-types.xml"));
 		ftMan.updateFindingTypes(types, 0);
 	}
 
@@ -63,7 +64,8 @@ public class SchemaUtil {
 							"com/surelogic/sierra/tool/message/data/buglink-categories.xml");
 			final ListCategoryResponse response = (ListCategoryResponse) unmarshaller
 					.unmarshal(in);
-			SettingQueries.updateCategories(response, true).perform(q);
+			SettingQueries.updateCategories(response,
+					new GetExtensionsResponse(), true).perform(q);
 			final List<String> orphanedTypes = q.prepared(
 					"SchemaUtil.checkFindingTypeCategories",
 					new StringRowHandler()).call();
@@ -164,7 +166,8 @@ public class SchemaUtil {
 			fe.setType(entry.ft);
 			cat.getFilter().add(fe);
 		}
-		SettingQueries.updateCategories(r, true).perform(q);
+		SettingQueries.updateCategories(r, new GetExtensionsResponse(), true)
+				.perform(q);
 		final List<String> orphanedTypes = q
 				.prepared("SchemaUtil.checkFindingTypeCategories",
 						new StringRowHandler()).call();

@@ -24,9 +24,14 @@ import com.surelogic.common.jdbc.Row;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.jdbc.tool.FindingTypeDO;
 import com.surelogic.sierra.jdbc.tool.FindingTypes;
+import com.surelogic.sierra.tool.message.BugLinkService;
 import com.surelogic.sierra.tool.message.BugLinkServiceClient;
 import com.surelogic.sierra.tool.message.CreateScanFilterRequest;
+import com.surelogic.sierra.tool.message.Extension;
+import com.surelogic.sierra.tool.message.ExtensionName;
 import com.surelogic.sierra.tool.message.FilterSet;
+import com.surelogic.sierra.tool.message.GetExtensionsRequest;
+import com.surelogic.sierra.tool.message.GetExtensionsResponse;
 import com.surelogic.sierra.tool.message.Importance;
 import com.surelogic.sierra.tool.message.ListCategoryRequest;
 import com.surelogic.sierra.tool.message.ListCategoryResponse;
@@ -79,6 +84,14 @@ public class SettingQueries {
 		};
 	}
 
+	public static final DBQuery<List<ExtensionName>> localExtensions() {
+		return new DBQuery<List<ExtensionName>>() {
+			public List<ExtensionName> perform(final Query q) {
+				return new FindingTypes(q).getExtensionNames();
+			}
+		};
+	}
+
 	/**
 	 * Queries the specified server for a list of categories, and returns a
 	 * {@link DBQuery} that, when run, will write the given categories into the
@@ -89,10 +102,21 @@ public class SettingQueries {
 	 * @return
 	 */
 	public static final DBQuery<ListCategoryResponse> retrieveCategories(
-			final ServerLocation loc, final ListCategoryRequest request) {
-		final ListCategoryResponse response = BugLinkServiceClient.create(loc)
-				.listCategories(request);
-		return updateCategories(response, true);
+			final ServerLocation loc, final ListCategoryRequest request,
+			final List<ExtensionName> localExtensions) {
+		final BugLinkService service = BugLinkServiceClient.create(loc);
+		final ListCategoryResponse response = service.listCategories(request);
+		final List<ExtensionName> list = new ArrayList<ExtensionName>();
+		list.addAll(response.getDependencies());
+		list.removeAll(localExtensions);
+		GetExtensionsResponse resp = new GetExtensionsResponse();
+		final GetExtensionsRequest req = new GetExtensionsRequest();
+		req.getExtensions().addAll(response.getDependencies());
+		req.getExtensions().removeAll(localExtensions);
+		if (!req.getExtensions().isEmpty()) {
+			resp = service.getExtensions(req);
+		}
+		return updateCategories(response, resp, true);
 	}
 
 	/**
@@ -102,10 +126,21 @@ public class SettingQueries {
 	 * local copy will not be returned.
 	 */
 	public static final DBQuery<ListCategoryResponse> getNewCategories(
-			final ServerLocation loc, final ListCategoryRequest request) {
-		final ListCategoryResponse response = BugLinkServiceClient.create(loc)
-				.listCategories(request);
-		return updateCategories(response, false);
+			final ServerLocation loc, final ListCategoryRequest request,
+			final List<ExtensionName> localExtensions) {
+		final BugLinkService service = BugLinkServiceClient.create(loc);
+		final ListCategoryResponse response = service.listCategories(request);
+		final List<ExtensionName> list = new ArrayList<ExtensionName>();
+		list.addAll(response.getDependencies());
+		list.removeAll(localExtensions);
+		GetExtensionsResponse resp = new GetExtensionsResponse();
+		final GetExtensionsRequest req = new GetExtensionsRequest();
+		req.getExtensions().addAll(response.getDependencies());
+		req.getExtensions().removeAll(localExtensions);
+		if (!req.getExtensions().isEmpty()) {
+			resp = service.getExtensions(req);
+		}
+		return updateCategories(response, resp, false);
 	}
 
 	/**
@@ -113,21 +148,28 @@ public class SettingQueries {
 	 * set of categories that are changed when applying the given response to
 	 * the local database.
 	 * 
-	 * @param response
+	 * @param categories
+	 * @param newExtensions
 	 * @param update
 	 * @return
 	 */
 	public static final DBQuery<ListCategoryResponse> updateCategories(
-			final ListCategoryResponse response, final boolean update) {
+			final ListCategoryResponse categories,
+			final GetExtensionsResponse newExtensions, final boolean update) {
 		return new DBQuery<ListCategoryResponse>() {
 			public ListCategoryResponse perform(final Query q) {
 				final Categories sets = new Categories(q);
+				final FindingTypes types = new FindingTypes(q);
 				final Queryable<Void> delete = update ? q
 						.prepared("Definitions.deleteDefinition") : null;
 				final Queryable<Void> insert = update ? q
 						.prepared("Definitions.insertDefinition") : null;
-				// for (final FilterSet set : response.getFilterSets()) {
-				final Iterator<FilterSet> it = response.getFilterSets()
+				if (update) {
+					for (final Extension e : newExtensions.getExtension()) {
+						types.registerExtension(FindingTypes.convertDO(e));
+					}
+				}
+				final Iterator<FilterSet> it = categories.getFilterSets()
 						.iterator();
 				while (it.hasNext()) {
 					final FilterSet set = it.next();
@@ -149,9 +191,9 @@ public class SettingQueries {
 					}
 				}
 				if (update) {
-					sets.deleteCategories(response.getDeletions());
+					sets.deleteCategories(categories.getDeletions());
 				}
-				return response;
+				return categories;
 			}
 		};
 	}
@@ -178,24 +220,38 @@ public class SettingQueries {
 	}
 
 	public static final DBQuery<ServerScanFilterInfo> retrieveScanFilters(
-			final ServerLocation loc, final ListScanFilterRequest request) {
-		return getScanFilters(loc, request, true);
+			final ServerLocation loc, final ListScanFilterRequest request,
+			final List<ExtensionName> localExtensions) {
+		return getScanFilters(loc, request, localExtensions, true);
 	}
 
 	public static final DBQuery<ServerScanFilterInfo> getNewScanFilters(
-			final ServerLocation loc, final ListScanFilterRequest request) {
-		return getScanFilters(loc, request, false);
+			final ServerLocation loc, final ListScanFilterRequest request,
+			final List<ExtensionName> localExtensions) {
+		return getScanFilters(loc, request, localExtensions, false);
 	}
 
 	private static final DBQuery<ServerScanFilterInfo> getScanFilters(
 			final ServerLocation loc, final ListScanFilterRequest request,
-			final boolean update) {
-		final ListScanFilterResponse response = BugLinkServiceClient
-				.create(loc).listScanFilters(request);
+			final List<ExtensionName> localExtensions, final boolean update) {
+		final BugLinkService service = BugLinkServiceClient.create(loc);
+		final ListScanFilterResponse response = service
+				.listScanFilters(request);
+		final GetExtensionsRequest req = new GetExtensionsRequest();
+		req.getExtensions().addAll(response.getDependencies());
+		req.getExtensions().removeAll(localExtensions);
+		final GetExtensionsResponse resp = req.getExtensions().isEmpty() ? new GetExtensionsResponse()
+				: service.getExtensions(req);
 		final Set<ScanFilter> changed = new HashSet<ScanFilter>();
 		return new DBQuery<ServerScanFilterInfo>() {
 			public ServerScanFilterInfo perform(final Query q) {
+				final FindingTypes types = new FindingTypes(q);
 				final ScanFilters filters = new ScanFilters(q);
+				if (update) {
+					for (final Extension e : resp.getExtension()) {
+						types.registerExtension(FindingTypes.convertDO(e));
+					}
+				}
 				final Queryable<Void> delete = update ? q
 						.prepared("Definitions.deleteDefinition") : null;
 				final Queryable<Void> insert = update ? q

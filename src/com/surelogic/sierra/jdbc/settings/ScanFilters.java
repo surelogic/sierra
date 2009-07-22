@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import com.surelogic.common.jdbc.ConnectionQuery;
+import com.surelogic.common.jdbc.NullRowHandler;
 import com.surelogic.common.jdbc.Nulls;
 import com.surelogic.common.jdbc.Query;
 import com.surelogic.common.jdbc.Queryable;
@@ -19,6 +20,7 @@ import com.surelogic.common.jdbc.StringRowHandler;
 import com.surelogic.sierra.jdbc.RevisionException;
 import com.surelogic.sierra.jdbc.project.Projects;
 import com.surelogic.sierra.tool.message.CategoryFilter;
+import com.surelogic.sierra.tool.message.ExtensionName;
 import com.surelogic.sierra.tool.message.Importance;
 import com.surelogic.sierra.tool.message.ScanFilter;
 import com.surelogic.sierra.tool.message.TypeFilter;
@@ -85,7 +87,7 @@ public class ScanFilters {
 	 * @return the newly created scan filter
 	 */
 	public ScanFilterDO createScanFilter(final String name, final long revision) {
-		if ((name == null) || (name.length() == 0) || (name.length() > 255)) {
+		if (name == null || name.length() == 0 || name.length() > 255) {
 			throw new IllegalArgumentException(name
 					+ " is not a valid scan filter name.");
 		}
@@ -375,6 +377,26 @@ public class ScanFilters {
 			throw new IllegalArgumentException("May not be null.");
 		}
 		q.prepared("ScanFilters.updateDefault").call(scanFilterUuid);
+	}
+
+	/**
+	 * Returns a list of the extensions this scan filter is directly dependent
+	 * on. The list does not include the dependencies of any categories the scan
+	 * filter may refer to.
+	 * 
+	 * @param uuid
+	 * @return
+	 */
+	public List<ExtensionName> calculateDependencies(final String uuid) {
+		final List<ExtensionName> dependencies = new ArrayList<ExtensionName>();
+		q.prepared("ScanFilters.extensionDependencies", new NullRowHandler() {
+			@Override
+			protected void doHandle(final Row r) {
+				dependencies.add(new ExtensionName(r.nextString(), r
+						.nextString()));
+			}
+		}).call(uuid);
+		return dependencies;
 	}
 
 }
