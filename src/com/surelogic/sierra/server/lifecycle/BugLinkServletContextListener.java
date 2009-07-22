@@ -15,7 +15,7 @@ import com.surelogic.sierra.jdbc.server.ConnectionFactory;
 import com.surelogic.sierra.jdbc.settings.ConnectedServer;
 import com.surelogic.sierra.jdbc.settings.ServerLocations;
 import com.surelogic.sierra.jdbc.settings.SettingQueries;
-import com.surelogic.sierra.jdbc.tool.ToolQueries;
+import com.surelogic.sierra.tool.message.ExtensionName;
 import com.surelogic.sierra.tool.message.ServerInfoReply;
 import com.surelogic.sierra.tool.message.ServerInfoRequest;
 import com.surelogic.sierra.tool.message.ServerInfoServiceClient;
@@ -70,13 +70,10 @@ public class BugLinkServletContextListener implements ServletContextListener {
 								for (final ConnectedServer s : servers) {
 									final ServerLocation location = s
 											.getLocation();
-									ConnectionFactory
-											.getInstance()
-											.withTransaction(
-													ToolQueries
-															.synchronizeExtensions(
-																	location,
-																	false));
+									final List<ExtensionName> localExtensions = ConnectionFactory
+											.getInstance().withTransaction(
+													SettingQueries
+															.localExtensions());
 									ConnectionFactory
 											.getInstance()
 											.withTransaction(
@@ -87,7 +84,8 @@ public class BugLinkServletContextListener implements ServletContextListener {
 																			.getInstance()
 																			.withReadOnly(
 																					SettingQueries
-																							.categoryRequest())));
+																							.categoryRequest()),
+																	localExtensions));
 									ConnectionFactory
 											.getInstance()
 											.withTransaction(
@@ -98,7 +96,8 @@ public class BugLinkServletContextListener implements ServletContextListener {
 																			.getInstance()
 																			.withReadOnly(
 																					SettingQueries
-																							.scanFilterRequest())));
+																							.scanFilterRequest()),
+																	localExtensions));
 								}
 							} catch (final Error e) {
 								SLLogger.getLogger().log(Level.SEVERE,
