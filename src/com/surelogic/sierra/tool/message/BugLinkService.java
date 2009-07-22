@@ -1,5 +1,7 @@
 package com.surelogic.sierra.tool.message;
 
+import java.io.File;
+
 import com.surelogic.sierra.message.srpc.Service;
 
 public interface BugLinkService extends Service {
@@ -70,11 +72,39 @@ public interface BugLinkService extends Service {
 	ListExtensionResponse listExtensions(ListExtensionRequest request);
 
 	/**
+	 * Return the metadata for the requested extension.
+	 * 
+	 * @param name
+	 * @param version
+	 * @return
+	 */
+	GetExtensionsResponse getExtensions(GetExtensionsRequest request);
+
+	/**
+	 * Download the requested extension.
+	 * 
+	 * @param name
+	 * @param version
+	 * @return
+	 */
+	File downloadExtension(ExtensionName request);
+
+	/**
 	 * Register an extension on this server.
 	 * 
 	 * @param request
 	 * @return
 	 */
 	RegisterExtensionResponse registerExtension(RegisterExtensionRequest request);
+
+	/**
+	 * Ensure that the provided list of extensions reside on the server. This
+	 * check should be made before trying to commit data to the server that is
+	 * dependent on these extensions.
+	 * 
+	 * @param request
+	 * @return
+	 */
+	EnsureExtensionResponse ensureExtensions(EnsureExtensionRequest request);
 
 }

@@ -15,6 +15,8 @@ public class ListScanFilterResponse {
 
 	protected List<String> deletions;
 
+	protected List<ExtensionName> dependencies;
+
 	public List<ScanFilter> getScanFilter() {
 		if (scanFilter == null) {
 			scanFilter = new ArrayList<ScanFilter>();
@@ -29,4 +31,10 @@ public class ListScanFilterResponse {
 		return deletions;
 	}
 
+	public List<ExtensionName> getDependencies() {
+		if (dependencies == null) {
+			dependencies = new ArrayList<ExtensionName>();
+		}
+		return dependencies;
+	}
 }

@@ -17,6 +17,8 @@ public class ListCategoryResponse {
 
 	protected List<String> deletions;
 
+	protected List<ExtensionName> dependencies;
+
 	public List<ServerRevision> getServerRevisions() {
 		if (servers == null) {
 			servers = new ArrayList<ServerRevision>();
@@ -36,6 +38,13 @@ public class ListCategoryResponse {
 			deletions = new ArrayList<String>();
 		}
 		return deletions;
+	}
+
+	public List<ExtensionName> getDependencies() {
+		if (dependencies == null) {
+			dependencies = new ArrayList<ExtensionName>();
+		}
+		return dependencies;
 	}
 
 }

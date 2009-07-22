@@ -16,9 +16,10 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 /**
- * <p>
+ * 
  * Java class for FilterSet complex type. Conceptually, a filter set consists of
- * a list of finding types.
+ * a list of finding types. It is referred to a a category in the user interface
+ * and data access layers.
  * 
  * A filter set is uniquely identified by a uid, which in this case is the
  * string representation of a {@link UUID}. A filter set also possesses an
@@ -66,7 +67,7 @@ public class FilterSet {
 	 *            allowed object is {@link String }
 	 * 
 	 */
-	public void setUid(String value) {
+	public void setUid(final String value) {
 		uid = value;
 	}
 
@@ -74,7 +75,7 @@ public class FilterSet {
 		return owner;
 	}
 
-	public void setOwner(String owner) {
+	public void setOwner(final String owner) {
 		this.owner = owner;
 	}
 
@@ -82,7 +83,7 @@ public class FilterSet {
 		return revision;
 	}
 
-	public void setRevision(long revision) {
+	public void setRevision(final long revision) {
 		this.revision = revision;
 	}
 
@@ -90,7 +91,7 @@ public class FilterSet {
 		return info;
 	}
 
-	public void setInfo(String info) {
+	public void setInfo(final String info) {
 		this.info = info;
 	}
 
@@ -111,7 +112,7 @@ public class FilterSet {
 	 *            allowed object is {@link String }
 	 * 
 	 */
-	public void setName(String value) {
+	public void setName(final String value) {
 		name = value;
 	}
 
