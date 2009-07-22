@@ -1,0 +1,4 @@
+<module>
+        <inherits name="com.surelogic.sierra.gwt.SierraPoral"/>
+        <set-property name="user.agent" value="gecko"/>
+</module>
