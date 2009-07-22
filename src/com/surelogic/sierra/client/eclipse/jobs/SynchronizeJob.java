@@ -1,6 +1,7 @@
 package com.surelogic.sierra.client.eclipse.jobs;
 
 import java.sql.Connection;
+import java.util.List;
 import java.util.logging.Level;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -28,7 +29,7 @@ import com.surelogic.sierra.client.eclipse.preferences.ServerFailureReport;
 import com.surelogic.sierra.jdbc.settings.ConnectedServer;
 import com.surelogic.sierra.jdbc.settings.ServerScanFilterInfo;
 import com.surelogic.sierra.jdbc.settings.SettingQueries;
-import com.surelogic.sierra.jdbc.tool.ToolQueries;
+import com.surelogic.sierra.tool.message.ExtensionName;
 import com.surelogic.sierra.tool.message.ListCategoryResponse;
 import com.surelogic.sierra.tool.message.ServerLocation;
 import com.surelogic.sierra.tool.message.ServerMismatchException;
@@ -141,15 +142,16 @@ public class SynchronizeJob extends AbstractServerProjectJob {
 			boolean updated = false;
 			if (joinJob == null || joinJob.process(getServer())) {
 				final ServerLocation loc = getServer().getLocation();
-				ToolQueries.synchronizeExtensions(loc, true).perform(q);
+				final List<ExtensionName> localExtensions = SettingQueries
+						.localExtensions().perform(q);
 				final ListCategoryResponse categories = SettingQueries
 						.retrieveCategories(loc,
-								SettingQueries.categoryRequest().perform(q))
-						.perform(q);
+								SettingQueries.categoryRequest().perform(q),
+								localExtensions).perform(q);
 				final ServerScanFilterInfo filters = SettingQueries
 						.retrieveScanFilters(loc,
-								SettingQueries.scanFilterRequest().perform(q))
-						.perform(q);
+								SettingQueries.scanFilterRequest().perform(q),
+								localExtensions).perform(q);
 				updated = !filters.getDeletions().isEmpty()
 						|| !filters.getScanFilters().isEmpty()
 						|| !categories.getDeletions().isEmpty()

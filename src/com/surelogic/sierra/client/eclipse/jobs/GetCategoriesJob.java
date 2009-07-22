@@ -1,6 +1,7 @@
 package com.surelogic.sierra.client.eclipse.jobs;
 
 import java.sql.SQLException;
+import java.util.List;
 import java.util.logging.Level;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -21,7 +22,7 @@ import com.surelogic.sierra.client.eclipse.model.ConnectedServerManager;
 import com.surelogic.sierra.client.eclipse.preferences.ServerFailureReport;
 import com.surelogic.sierra.jdbc.settings.ConnectedServer;
 import com.surelogic.sierra.jdbc.settings.SettingQueries;
-import com.surelogic.sierra.jdbc.tool.ToolQueries;
+import com.surelogic.sierra.tool.message.ExtensionName;
 import com.surelogic.sierra.tool.message.InvalidLoginException;
 import com.surelogic.sierra.tool.message.ServerLocation;
 import com.surelogic.sierra.tool.message.SierraServiceClientException;
@@ -59,12 +60,11 @@ public final class GetCategoriesJob extends AbstractSierraDatabaseJob {
 	private IStatus getResultFilters(final SLProgressMonitor slMonitor)
 			throws SQLException {
 		try {
-			Data.getInstance().withTransaction(
-					ToolQueries.synchronizeExtensions(f_server.getLocation(),
-							true));
+			final List<ExtensionName> localExtensions = Data.getInstance()
+					.withReadOnly(SettingQueries.localExtensions());
 			final DBQuery<?> query = SettingQueries.retrieveCategories(f_server
 					.getLocation(), Data.getInstance().withReadOnly(
-					SettingQueries.categoryRequest()));
+					SettingQueries.categoryRequest()), localExtensions);
 			Data.getInstance().withTransaction(query);
 			ConnectedServerManager.getInstance().getStats(f_server)
 					.markAsConnected();

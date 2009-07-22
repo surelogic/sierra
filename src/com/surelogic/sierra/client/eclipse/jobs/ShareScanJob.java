@@ -25,6 +25,7 @@ import com.surelogic.sierra.client.eclipse.model.ConnectedServerManager;
 import com.surelogic.sierra.client.eclipse.preferences.ServerFailureReport;
 import com.surelogic.sierra.jdbc.settings.ConnectedServer;
 import com.surelogic.sierra.jdbc.tool.ToolQueries;
+import com.surelogic.sierra.tool.message.ExtensionName;
 import com.surelogic.sierra.tool.message.MessageWarehouse;
 import com.surelogic.sierra.tool.message.Scan;
 import com.surelogic.sierra.tool.message.ScanVersionException;
@@ -32,6 +33,7 @@ import com.surelogic.sierra.tool.message.ServerLocation;
 import com.surelogic.sierra.tool.message.SierraServiceClient;
 import com.surelogic.sierra.tool.message.SierraServiceClientException;
 import com.surelogic.sierra.tool.message.TimeseriesRequest;
+import com.surelogic.sierra.tool.message.ToolExtension;
 
 public class ShareScanJob extends AbstractServerProjectJob {
 
@@ -134,6 +136,13 @@ public class ShareScanJob extends AbstractServerProjectJob {
 			Data.getInstance().withTransaction(
 					ToolQueries.synchronizeExtensions(
 							getServer().getLocation(), true));
+			final List<ExtensionName> extensions = new ArrayList<ExtensionName>();
+			for (final ToolExtension e : scan.getConfig().getExtensions()) {
+				extensions.add(new ExtensionName(e.getId(), e.getVersion()));
+			}
+			Data.getInstance().withReadOnly(
+					ToolQueries.ensureExtensions(getServer().getLocation(),
+							extensions));
 			SierraServiceClient.create(getServer().getLocation()).publishRun(
 					scan);
 			ConnectedServerManager.getInstance().getStats(getServer())
