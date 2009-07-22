@@ -4,15 +4,22 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
+import com.surelogic.common.jdbc.ConnectionQuery;
 import com.surelogic.common.jdbc.JDBCUtils;
+import com.surelogic.common.jdbc.Query;
 import com.surelogic.common.jobs.SLProgressMonitor;
 import com.surelogic.sierra.jdbc.finding.ClientFindingManager;
 import com.surelogic.sierra.jdbc.record.ProjectRecord;
 import com.surelogic.sierra.jdbc.settings.ConnectedServer;
+import com.surelogic.sierra.jdbc.tool.FindingTypes;
+import com.surelogic.sierra.jdbc.tool.ToolQueries;
 import com.surelogic.sierra.tool.message.ServerMismatchException;
 import com.surelogic.sierra.tool.message.SierraService;
 import com.surelogic.sierra.tool.message.SierraServiceClient;
@@ -138,6 +145,22 @@ public final class ClientProjectManager extends ProjectManager {
 					getSyncProjectRequest(server, projectName, monitor,
 							serverGet));
 		}
+
+		// Check extensions
+		monitor.subTask("Comparing extension data.");
+		final Set<String> ftUuids = new HashSet<String>();
+		for (final SyncProjectRequest project : request.getProjects()) {
+			for (final SyncTrailRequest r : project.getTrails()) {
+				ftUuids.add(r.getMerge().getMatch().getFindingType());
+			}
+		}
+		final Query q = new ConnectionQuery(conn);
+		ToolQueries.ensureExtensions(
+				server.getLocation(),
+				new FindingTypes(q)
+						.calculateDependencies(new ArrayList<String>(ftUuids)))
+				.perform(q);
+
 		final SyncResponse reply = service.synchronize(request);
 		final Iterator<String> namesIter = projectNames.iterator();
 		final Iterator<SyncProjectRequest> requestIter = request.getProjects()
@@ -166,8 +189,21 @@ public final class ClientProjectManager extends ProjectManager {
 				projectName, monitor, serverGet);
 		monitor.worked(1);
 
+		// Check extensions
+		monitor.subTask("Comparing extension data.");
+		final Set<String> ftUuids = new HashSet<String>();
+		for (final SyncTrailRequest r : request.getTrails()) {
+			ftUuids.add(r.getMerge().getMatch().getFindingType());
+		}
+		final Query q = new ConnectionQuery(conn);
+		ToolQueries.ensureExtensions(
+				server.getLocation(),
+				new FindingTypes(q)
+						.calculateDependencies(new ArrayList<String>(ftUuids)))
+				.perform(q);
 		// Commit audits
 		monitor.subTask("Sending local updates to the server.");
+
 		final SyncProjectResponse reply = service.synchronizeProject(request);
 		if (monitor.isCanceled()) {
 			return null;

@@ -2,7 +2,9 @@ package com.surelogic.sierra.jdbc.tool;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.Map.Entry;
 
 import com.surelogic.common.jdbc.LongIdHandler;
@@ -259,6 +261,29 @@ public class FindingTypes {
 					}
 				}).call();
 
+	}
+
+	/**
+	 * Returns a list of the extensions the given finding types are dependent
+	 * on.
+	 * 
+	 * @param uuid
+	 * @return
+	 */
+	public List<ExtensionName> calculateDependencies(final List<String> uuids) {
+		final Set<ExtensionName> dependencies = new HashSet<ExtensionName>();
+		final Queryable<?> addDependency = q.prepared(
+				"FindingTypes.extensionDependency", new NullRowHandler() {
+					@Override
+					protected void doHandle(final Row r) {
+						dependencies.add(new ExtensionName(r.nextString(), r
+								.nextString()));
+					}
+				});
+		for (final String uuid : uuids) {
+			addDependency.call(uuid);
+		}
+		return new ArrayList<ExtensionName>(dependencies);
 	}
 
 	private static class FindingTypeDOHandler extends
