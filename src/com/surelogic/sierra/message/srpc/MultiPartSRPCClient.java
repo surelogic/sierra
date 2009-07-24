@@ -1,15 +1,9 @@
 package com.surelogic.sierra.message.srpc;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.net.ConnectException;
 import java.net.URL;
-import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -18,30 +12,29 @@ import java.util.logging.Logger;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.auth.AuthScope;
-import org.apache.commons.httpclient.methods.FileRequestEntity;
-import org.apache.commons.httpclient.methods.PostMethod;
 
 import com.surelogic.common.logging.SLLogger;
-import com.surelogic.sierra.tool.message.InvalidLoginException;
 import com.surelogic.sierra.tool.message.ServerLocation;
-import com.surelogic.sierra.tool.message.SierraServiceClientException;
 
 /**
- * Handles method dispatch for remotely invokable SRPC services.
+ * Handles method dispatch for remotely invokable SRPC services using multi-part
+ * post.
  * 
  * @author nathan
  * 
  */
-public final class SRPCClient implements InvocationHandler {
+public class MultiPartSRPCClient implements InvocationHandler {
 
-	private static final Logger log = SLLogger.getLoggerFor(SRPCClient.class);
+	private static final Logger log = SLLogger
+			.getLoggerFor(MultiPartSRPCClient.class);
 	private final HttpClient client;
-	private final Encoding codec;
+	private final MultiPartEncoding codec;
 	private final URL url;
 	private final Set<Method> methods;
 
-	private SRPCClient(final Method[] methods, final Encoding codec,
-			final ServerLocation location, final String service) {
+	private MultiPartSRPCClient(final Method[] methods,
+			final MultiPartEncoding codec, final ServerLocation location,
+			final String service) {
 		client = new HttpClient();
 		final String user = location.getUser();
 		if (user != null) {
@@ -63,40 +56,8 @@ public final class SRPCClient implements InvocationHandler {
 			return method.invoke(proxy, args);
 		} else {
 			log.info("Calling " + method.getName() + " at " + url);
-			final PostMethod post = new PostMethod(url.toString());
-			final File temp = File.createTempFile("sierra", ".message.gz");
-			try {
-				final OutputStream out = new BufferedOutputStream(
-						new FileOutputStream(temp));
-				codec.encodeMethodInvocation(out, new MethodInvocation(method,
-						args));
-				out.close();
-				post.setRequestEntity(new FileRequestEntity(temp, codec
-						.getContentType()));
-				try {
-					client.executeMethod(post);
-				} catch (final ConnectException e) {
-					throw new SierraServiceClientException(
-							"Could not connect to " + url, e);
-				} catch (final UnknownHostException e) {
-					throw new SierraServiceClientException(
-							"Could not resolve host for " + url, e);
-				}
-				// TODO these exceptions should be in the right package.
-				if (post.getStatusCode() == 401) {
-					throw new InvalidLoginException(post.getStatusCode() + ":"
-							+ post.getStatusText());
-				}
-				if (post.getStatusCode() != 200) {
-					throw new SierraServiceClientException(
-							"Problem locating service at " + url + ": Status: "
-									+ post.getStatusCode() + ": "
-									+ post.getStatusText());
-				}
-				return codec.decodeResponse(post.getResponseBodyAsStream());
-			} finally {
-				temp.delete();
-			}
+			return codec.postMethodInvocation(client, url,
+					new MethodInvocation(method, args));
 		}
 	}
 
@@ -125,8 +86,8 @@ public final class SRPCClient implements InvocationHandler {
 							+ " must be an implementation of com.surelogic.sierra.message.srpc.Service");
 		}
 		return clazz.cast(Proxy.newProxyInstance(clazz.getClassLoader(),
-				new Class[] { clazz }, new SRPCClient(clazz
-						.getDeclaredMethods(), Encoding.getEncoding(clazz,
-						compressed), location, clazz.getSimpleName())));
+				new Class[] { clazz }, new MultiPartSRPCClient(clazz
+						.getDeclaredMethods(), MultiPartEncoding.getEncoding(
+						clazz, compressed), location, clazz.getSimpleName())));
 	}
 }

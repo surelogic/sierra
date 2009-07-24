@@ -9,7 +9,7 @@ class MethodInvocation {
 
 	private final Object[] args;
 
-	public MethodInvocation(Method m, Object[] args) {
+	public MethodInvocation(final Method m, final Object[] args) {
 		this.m = m;
 		this.args = args;
 	}
@@ -22,27 +22,18 @@ class MethodInvocation {
 		return args;
 	}
 
-	public Object invoke(Object target) throws InvocationTargetException {
+	public Object invoke(final Object target) throws InvocationTargetException {
 		try {
 			return m.invoke(target, args);
-		} catch (InvocationTargetException e) {
+		} catch (final InvocationTargetException e) {
 			throw e;
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			throw new SRPCException(e);
 		}
 	}
 
-	public boolean hasCheckedException(Exception e) {
-		for (Class<?> c : m.getExceptionTypes()) {
-			if (c.isAssignableFrom(e.getClass())) {
-				return true;
-			}
-		}
-		return false;
-	}
-
 	@Override
 	public String toString() {
-		return m.getDeclaringClass().getSimpleName() + "." + m.getName(); 
+		return m.getDeclaringClass().getSimpleName() + "." + m.getName();
 	}
 }
