@@ -13,7 +13,7 @@ import com.surelogic.sierra.gwt.client.util.ExceptionUtil;
 import com.surelogic.sierra.gwt.client.util.LangUtil;
 
 public abstract class Cache<E extends Cacheable> implements Iterable<E> {
-	public static final long REFRESH_DELAY = 30 * 1000;
+	public static final long REFRESH_DELAY = 300 * 1000;
 
 	private final List<E> items = new ArrayList<E>();
 	private final Set<CacheListener<E>> listeners = new HashSet<CacheListener<E>>();
@@ -30,9 +30,13 @@ public abstract class Cache<E extends Cacheable> implements Iterable<E> {
 	public final void refresh(boolean force, CacheListener<E> oneTimeListener) {
 		final long currentTime = new Date().getTime();
 		final boolean timeToRefresh = force
-				|| (lastRefresh + REFRESH_DELAY < currentTime);
+				|| (lastRefresh + REFRESH_DELAY < currentTime);		
+		/*
+		final long last = lastRefresh;
+		System.out.println("Time since last: "+(currentTime-last));
+		*/
 		lastRefresh = currentTime;
-
+		
 		for (final CacheListener<E> listener : listeners) {
 			listener.onStartRefresh(this);
 		}
@@ -47,6 +51,8 @@ public abstract class Cache<E extends Cacheable> implements Iterable<E> {
 				protected void processResult(List<E> result) {
 					items.clear();
 					items.addAll(result);
+					lastRefresh = new Date().getTime();
+					//System.out.println("Time to refresh: "+(lastRefresh-currentTime));
 				}
 
 				@Override
