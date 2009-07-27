@@ -8,9 +8,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.surelogic.sierra.jdbc.server.UserContext;
 import com.surelogic.sierra.jdbc.user.User;
-import com.surelogic.sierra.message.srpc.SRPCServlet;
+import com.surelogic.sierra.message.srpc.MultiPartSRPCServlet;
 
-public abstract class SecureServiceServlet extends SRPCServlet {
+public abstract class SecureServiceServlet extends MultiPartSRPCServlet {
 
 	/**
 	 * 
@@ -18,8 +18,9 @@ public abstract class SecureServiceServlet extends SRPCServlet {
 	private static final long serialVersionUID = -664892243722651966L;
 
 	@Override
-	protected void service(HttpServletRequest req, HttpServletResponse resp)
-			throws ServletException, IOException {
+	protected void service(final HttpServletRequest req,
+			final HttpServletResponse resp) throws ServletException,
+			IOException {
 		try {
 			UserContext.set((User) req.getAttribute("SierraUser"));
 			super.service(req, resp);
