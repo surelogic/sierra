@@ -1,5 +1,6 @@
 package com.surelogic.sierra.tool;
 
+import java.io.File;
 import java.util.Set;
 
 public abstract class AbstractToolExtension implements IToolExtension {
@@ -7,15 +8,18 @@ public abstract class AbstractToolExtension implements IToolExtension {
 	private final String id; 
 	private final String version;
 	private final Set<ArtifactType> types;
+	private final File location;
 	
-	protected AbstractToolExtension(String tool, String id, String version, Set<ArtifactType> types) {
+	protected AbstractToolExtension(String tool, String id, String version, File location,
+			                        Set<ArtifactType> types) {
 		this.tool = tool;
 		this.id = id;
 		this.version = version;
+		this.location = location;
 		this.types = types;
 	}
 	
-	protected AbstractToolExtension(String tool, String id, Set<ArtifactType> types) {
+	protected AbstractToolExtension(String tool, String id, File location, Set<ArtifactType> types) {
 		String version;
 		final int index = id.indexOf(".v");
 		final int afterV = index+2;
@@ -30,6 +34,7 @@ public abstract class AbstractToolExtension implements IToolExtension {
 		this.tool = tool;
 		this.id = id;
 		this.version = version;
+		this.location = location;
 		this.types = types;
 	}
 	
@@ -44,6 +49,10 @@ public abstract class AbstractToolExtension implements IToolExtension {
 	public final String getVersion() {
 		return version;
 	}	
+	
+	public final File getJar() {
+		return location;
+	}
 	
 	public final Set<ArtifactType> getArtifactTypes() {
 		return types;
