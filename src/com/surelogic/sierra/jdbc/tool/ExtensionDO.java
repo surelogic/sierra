@@ -8,6 +8,7 @@ import java.util.Map;
 public class ExtensionDO {
 	private String name;
 	private String version;
+	private String path;
 	private final Map<String, List<ArtifactTypeDO>> artifactMap = new HashMap<String, List<ArtifactTypeDO>>();
 	private final List<FindingTypeDO> newFindingTypes = new ArrayList<FindingTypeDO>();
 	private final Map<String, List<String>> categoryMap = new HashMap<String, List<String>>();
@@ -19,6 +20,13 @@ public class ExtensionDO {
 	public ExtensionDO(final String name, final String version) {
 		this.name = name;
 		this.version = version;
+	}
+
+	public ExtensionDO(final String name, final String version,
+			final String path) {
+		this.name = name;
+		this.version = version;
+		this.path = path;
 	}
 
 	public String getName() {
@@ -35,6 +43,14 @@ public class ExtensionDO {
 
 	public void setVersion(final String version) {
 		this.version = version;
+	}
+
+	public String getPath() {
+		return path;
+	}
+
+	public void setPath(final String path) {
+		this.path = path;
 	}
 
 	public void addType(final String findingType, final ArtifactTypeDO type) {

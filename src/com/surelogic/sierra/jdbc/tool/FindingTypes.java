@@ -8,7 +8,6 @@ import java.util.Set;
 import java.util.Map.Entry;
 
 import com.surelogic.common.jdbc.LongIdHandler;
-import com.surelogic.common.jdbc.LongResultHandler;
 import com.surelogic.common.jdbc.NullRowHandler;
 import com.surelogic.common.jdbc.Nulls;
 import com.surelogic.common.jdbc.Query;
@@ -128,7 +127,8 @@ public class FindingTypes {
 			throw new IllegalArgumentException();
 		}
 		final long id = q.prepared("FindingTypes.registerExtension",
-				new LongIdHandler()).call(e.getName(), e.getVersion());
+				new LongIdHandler()).call(e.getName(), e.getVersion(),
+				e.getPath());
 		final Queryable<Long> insertFT = q.prepared(
 				"FindingTypes.insertFindingType", new LongIdHandler());
 		final Queryable<?> registerFT = q
@@ -190,30 +190,9 @@ public class FindingTypes {
 			throw new IllegalArgumentException(
 					"Name and version may not be null");
 		}
-		final Long id = q.prepared("FindingTypes.selectExtension",
-				new LongResultHandler()).call(name, version);
-		if (id != null) {
-			final ExtensionDO e = new ExtensionDO();
-			e.setName(name);
-			e.setVersion(version);
-			q.prepared("FindingTypes.selectExtensionArtifactTypes",
-					new NullRowHandler() {
-						ArtifactTypeDOHandler h = new ArtifactTypeDOHandler();
-
-						@Override
-						protected void doHandle(final Row r) {
-							e.addType(r.nextString(), h.handle(r));
-						}
-					}).call(id);
-			for (final FindingTypeDO ft : getFindingTypes(q.prepared(
-					"FindingTypes.selectExtensionFindingTypes",
-					new StringRowHandler()).call(id))) {
-				e.addFindingType(ft);
-			}
-			return e;
-		} else {
-			return null;
-		}
+		return q.prepared("FindingTypes.selectExtension",
+				SingleRowHandler.from(new ExtensionDOHandler())).call(name,
+				version);
 	}
 
 	public List<ExtensionName> getExtensionNames() {
@@ -236,31 +215,7 @@ public class FindingTypes {
 	 */
 	public List<ExtensionDO> getExtensions() {
 		return q.prepared("FindingTypes.selectExtensions",
-				new RowHandler<ExtensionDO>() {
-					public ExtensionDO handle(final Row r) {
-						final ExtensionDO e = new ExtensionDO();
-						final long id = r.nextLong();
-						e.setName(r.nextString());
-						e.setVersion(r.nextString());
-						q.prepared("FindingTypes.selectExtensionArtifactTypes",
-								new NullRowHandler() {
-									ArtifactTypeDOHandler h = new ArtifactTypeDOHandler();
-
-									@Override
-									protected void doHandle(final Row r) {
-										e.addType(r.nextString(), h.handle(r));
-									}
-								}).call(id);
-						for (final FindingTypeDO ft : getFindingTypes(q
-								.prepared(
-										"FindingTypes.selectExtensionFindingTypes",
-										new StringRowHandler()).call(id))) {
-							e.addFindingType(ft);
-						}
-						return e;
-					}
-				}).call();
-
+				new ExtensionDOHandler()).call();
 	}
 
 	/**
@@ -284,6 +239,31 @@ public class FindingTypes {
 			addDependency.call(uuid);
 		}
 		return new ArrayList<ExtensionName>(dependencies);
+	}
+
+	private class ExtensionDOHandler implements RowHandler<ExtensionDO> {
+
+		public ExtensionDO handle(final Row r) {
+			final long id = r.nextLong();
+			final ExtensionDO e = new ExtensionDO(r.nextString(), r
+					.nextString(), r.nextString());
+			q.prepared("FindingTypes.selectExtensionArtifactTypes",
+					new NullRowHandler() {
+						ArtifactTypeDOHandler h = new ArtifactTypeDOHandler();
+
+						@Override
+						protected void doHandle(final Row r) {
+							e.addType(r.nextString(), h.handle(r));
+						}
+					}).call(id);
+			for (final FindingTypeDO ft : getFindingTypes(q.prepared(
+					"FindingTypes.selectExtensionFindingTypes",
+					new StringRowHandler()).call(id))) {
+				e.addFindingType(ft);
+			}
+			return e;
+		}
+
 	}
 
 	private static class FindingTypeDOHandler extends
@@ -311,7 +291,7 @@ public class FindingTypes {
 
 	public static ExtensionDO convertDO(final Extension message) {
 		final ExtensionDO e = new ExtensionDO(message.getName(), message
-				.getVersion());
+				.getVersion(), message.getPath());
 		for (final ExtensionArtifactType a : message.getArtifacts()) {
 			e.addType(a.getFindingType(), new ArtifactTypeDO(a.getTool(), a
 					.getMnemonic(), a.getDisplay(), a.getVersion()));
@@ -335,6 +315,7 @@ public class FindingTypes {
 		final Extension e = new Extension();
 		e.setName(data.getName());
 		e.setVersion(data.getVersion());
+		e.setPath(data.getPath());
 		for (final FindingTypeDO ftDO : data.getNewFindingTypes()) {
 			final ExtensionFindingType ft = new ExtensionFindingType();
 			ft.setId(ftDO.getUid());
