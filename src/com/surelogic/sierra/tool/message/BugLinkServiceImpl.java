@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.surelogic.common.FileUtility;
 import com.surelogic.common.jdbc.DBQuery;
 import com.surelogic.common.jdbc.Query;
 import com.surelogic.common.jdbc.Queryable;
@@ -14,6 +15,7 @@ import com.surelogic.common.jdbc.RowHandler;
 import com.surelogic.common.jdbc.StringRowHandler;
 import com.surelogic.sierra.jdbc.server.ConnectionFactory;
 import com.surelogic.sierra.jdbc.server.Server;
+import com.surelogic.sierra.jdbc.server.ServerFiles;
 import com.surelogic.sierra.jdbc.server.ServerQuery;
 import com.surelogic.sierra.jdbc.settings.Categories;
 import com.surelogic.sierra.jdbc.settings.CategoryDO;
@@ -274,9 +276,38 @@ public class BugLinkServiceImpl extends SecureServiceServlet implements
 				});
 	}
 
-	public File downloadExtension(final ExtensionName request) {
-		// TODO
-		return null;
+	public UploadExtensionResponse uploadExtension(
+			final UploadExtensionRequest request, final File file) {
+		return ConnectionFactory.getInstance().withTransaction(
+				new DBQuery<UploadExtensionResponse>() {
+					public UploadExtensionResponse perform(final Query q) {
+						final FindingTypes ft = new FindingTypes(q);
+						final ExtensionDO e = FindingTypes.convertDO(request
+								.getE());
+						if (ft.getExtension(e.getName(), e.getVersion()) == null) {
+							ft.registerExtension(e);
+						}
+						FileUtility.copy(file, new File(ServerFiles
+								.getSierraLocalTeamServerDirectory(), e
+								.getPath()));
+						file.delete();
+						return new UploadExtensionResponse();
+					}
+				});
+	}
+
+	public File downloadExtension(final DownloadExtensionRequest request) {
+		return ConnectionFactory.getInstance().withReadOnly(
+				new DBQuery<File>() {
+					public File perform(final Query q) {
+						final ExtensionDO ex = new FindingTypes(q)
+								.getExtension(request.getExtension().getName(),
+										request.getExtension().getVersion());
+						return new File(ServerFiles
+								.getSierraLocalTeamServerDirectory(), ex
+								.getPath());
+					}
+				});
 	}
 
 	public GetExtensionsResponse getExtensions(
