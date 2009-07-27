@@ -89,7 +89,7 @@ public abstract class ListContentComposite<E extends Cacheable, C extends Cache<
 	protected void onUpdate(final Context context) {
 		if (!isActive()) {
 			cache.addListener(cacheListener);
-			cache.refresh();
+			cache.refresh(false); // Use what's in the cache, not server
 		} else {
 			refreshContext(context);
 		}
