@@ -10,6 +10,7 @@ import java.util.*;
  * @author edwin
  */
 public interface IToolExtension {
+	String getTool();
 	String getId();
 	String getVersion();
 	boolean isCore();
