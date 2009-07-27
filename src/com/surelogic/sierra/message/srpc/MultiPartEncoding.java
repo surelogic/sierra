@@ -196,16 +196,21 @@ class MultiPartEncoding {
 									try {
 										final int i = Integer.parseInt(item
 												.getFieldName());
-										if (params[i]
-												.isAssignableFrom(File.class)) {
+										if (File.class
+												.isAssignableFrom(params[i])) {
 											final File file = File
 													.createTempFile("sierra",
 															"tmp");
 											item.write(file);
 											args[i] = file;
 										} else {
-											args[i] = um.unmarshal(item
+											final InputStream in = wrap(item
 													.getInputStream());
+											try {
+												args[i] = um.unmarshal(in);
+											} finally {
+												in.close();
+											}
 										}
 									} catch (final NumberFormatException e) {
 										// Not a recognized form element, we'll
@@ -230,22 +235,27 @@ class MultiPartEncoding {
 		}
 	}
 
-	void encodeResponse(final OutputStream out, final ResponseStatus status,
+	void encodeResponse(OutputStream out, final ResponseStatus status,
 			final Object o, final Class<?> type) throws SRPCException {
 		try {
-			out.write(status.getByte());
+			out = wrap(out);
 			try {
-				if (File.class.isAssignableFrom(type)) {
-					out.write(Type.FILE.getByte());
-					writeFileContents((File) o, out);
-				} else if (o == null) {
-					out.write(Type.NULL.getByte());
-				} else {
-					out.write(Type.XML.getByte());
-					context.createMarshaller().marshal(o, out);
+				out.write(status.getByte());
+				try {
+					if (File.class.isAssignableFrom(type)) {
+						out.write(Type.FILE.getByte());
+						writeFileContents((File) o, out);
+					} else if (o == null) {
+						out.write(Type.NULL.getByte());
+					} else {
+						out.write(Type.XML.getByte());
+						context.createMarshaller().marshal(o, out);
+					}
+				} catch (final JAXBException e) {
+					throw new SRPCException(e);
 				}
-			} catch (final JAXBException e) {
-				throw new SRPCException(e);
+			} finally {
+				out.close();
 			}
 		} catch (final IOException e) {
 			throw new SRPCException(e);
@@ -253,9 +263,10 @@ class MultiPartEncoding {
 
 	}
 
-	Object decodeResponse(final InputStream in, final Class<?> returnType)
+	Object decodeResponse(InputStream in, final Class<?> returnType)
 			throws Exception {
 		try {
+			in = wrap(in);
 			final ResponseStatus status = ResponseStatus.fromByte((byte) in
 					.read());
 			final Type t = Type.fromByte((byte) in.read());
@@ -291,6 +302,8 @@ class MultiPartEncoding {
 			throw new SRPCException(e);
 		} catch (final JAXBException e) {
 			throw new SRPCException(e);
+		} finally {
+			in.close();
 		}
 	}
 
@@ -332,7 +345,7 @@ class MultiPartEncoding {
 
 	static MultiPartEncoding getEncoding(final Class<?> service)
 			throws SRPCException {
-		return getEncoding(service, false);
+		return getEncoding(service, true);
 	}
 
 	enum Type {

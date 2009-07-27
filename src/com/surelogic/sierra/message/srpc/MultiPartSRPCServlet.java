@@ -67,13 +67,15 @@ public abstract class MultiPartSRPCServlet extends HttpServlet {
 
 	@Override
 	public void init() throws ServletException {
+		super.init();
 		for (final Class<?> c : this.getClass().getInterfaces()) {
 			if (Service.class.isAssignableFrom(c)) {
 				codec = MultiPartEncoding.getEncoding(c);
+				return;
 			}
 		}
-		throw new SRPCException(
-				"The servlet does not implement an SRPC service.");
+		throw new SRPCException("The servlet " + getClass().getName()
+				+ " does not implement an SRPC service.");
 	}
 
 }
