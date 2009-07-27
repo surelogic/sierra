@@ -29,6 +29,8 @@ public class Extension {
 	protected String name;
 	@XmlElement(required = true)
 	protected String version;
+	@XmlElement(required = true)
+	protected String path;
 
 	protected List<ExtensionArtifactType> artifact;
 
@@ -48,6 +50,14 @@ public class Extension {
 
 	public void setVersion(final String version) {
 		this.version = version;
+	}
+
+	public String getPath() {
+		return path;
+	}
+
+	public void setPath(final String path) {
+		this.path = path;
 	}
 
 	public List<ExtensionArtifactType> getArtifacts() {

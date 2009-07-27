@@ -87,7 +87,10 @@ public interface BugLinkService extends Service {
 	 * @param version
 	 * @return
 	 */
-	File downloadExtension(ExtensionName request);
+	File downloadExtension(DownloadExtensionRequest request);
+
+	UploadExtensionResponse uploadExtension(UploadExtensionRequest request,
+			File file);
 
 	/**
 	 * Register an extension on this server.
