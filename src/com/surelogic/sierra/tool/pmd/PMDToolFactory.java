@@ -61,18 +61,20 @@ public class PMDToolFactory extends AbstractToolFactory {
 	}
 
 	static class RuleSetInfo {
+		final File location;
 		final RuleSet ruleset;
 		final boolean isCore;
 		final Manifest props;
 
-		RuleSetInfo(final RuleSet rs, final boolean core, final Manifest props) {
+		RuleSetInfo(File jar, final RuleSet rs, final boolean core, final Manifest props) {
+			location = jar;
 			ruleset = rs;
 			isCore = core;
 			this.props = props;
 		}
 
 		RuleSetInfo(final RuleSet rs) {
-			this(rs, true, null);
+			this(null, rs, true, null);
 		}
 	}
 
@@ -129,10 +131,10 @@ public class PMDToolFactory extends AbstractToolFactory {
 						info.ruleset.getFileName(), r.getName(), r
 								.getRuleSetName());
 				types.add(t);
-			}
+			}			
 			final boolean isCore = info.isCore;
-			extensions.add(new AbstractToolExtension(getId(), info.ruleset.getName(),
-					types) {
+			extensions.add(new AbstractToolExtension(getId(), info.ruleset.getName(),					
+        					                         info.location, types) {
 				@Override
 				public boolean isCore() {
 					return isCore;
@@ -184,7 +186,7 @@ public class PMDToolFactory extends AbstractToolFactory {
 								set.setFileName(pair.name);
 							}
 							rulesets
-									.add(new RuleSetInfo(set, false, pair.props));
+									.add(new RuleSetInfo(jar, set, false, pair.props));
 						}
 					}
 				}
