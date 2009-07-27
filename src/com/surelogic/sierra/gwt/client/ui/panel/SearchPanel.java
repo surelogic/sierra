@@ -53,7 +53,6 @@ public abstract class SearchPanel<E extends Cacheable, T extends Cache<E>>
 
 	public void refresh() {
 		results.search(searchPanel.getSearchText());
-		results.setSelection(selection);
 	}
 
 	public void setSelection(final E item) {
@@ -68,8 +67,11 @@ public abstract class SearchPanel<E extends Cacheable, T extends Cache<E>>
 	protected abstract String getItemText(E item);
 
 	protected abstract Widget getItemDecorator(E item);
-
-	private class SearchResultsPanel extends BasicPanel {
+		
+	static final boolean lazyCreatePanelItem = false;
+	
+	private class SearchResultsPanel extends BasicPanel {		
+		private final List<E> searchResults = new ArrayList<E>();
 		private final List<PanelItem> searchResultsData = new ArrayList<PanelItem>();
 		private PagingPanel pagingPanel;
 		private String searchText;
@@ -88,7 +90,12 @@ public abstract class SearchPanel<E extends Cacheable, T extends Cache<E>>
 							* ITEMS_PER_PAGE;
 					for (int itemIndex = firstItemIndex; (itemIndex < (firstItemIndex + ITEMS_PER_PAGE))
 							&& (itemIndex < searchResultsData.size()); itemIndex++) {
-						getContentPanel().add(searchResultsData.get(itemIndex));
+						PanelItem item = searchResultsData.get(itemIndex);
+						if (lazyCreatePanelItem && item == null) {
+							item = createPanelItem(searchResults.get(itemIndex));
+							searchResultsData.set(itemIndex, item);
+						}
+						getContentPanel().add(item);
 					}
 				}
 
@@ -111,36 +118,48 @@ public abstract class SearchPanel<E extends Cacheable, T extends Cache<E>>
 				if (Character.isLetterOrDigit(ch)) {
 					queryBuf.append(Character.toLowerCase(ch));
 				}
-			}
-			final String query = queryBuf.toString();
+			}			
+			final String query = queryBuf.toString();			 
+			boolean first = true;
 			for (final E item : cache) {
 				if (isItemVisible(item, query)) {
-					final HorizontalPanel itemPanel = new HorizontalPanel();
-					itemPanel.setWidth("100%");
-					final String itemText = getItemText(item);
-					final ContentLink itemUI = new ContentLink(itemText,
-							getItemContent(), item.getUuid());
-					itemUI.setWidth(getOffsetWidth() + "px");
-					itemPanel.add(itemUI);
-					final Widget decorator = getItemDecorator(item);
-					if (decorator != null) {
-						itemPanel.add(decorator);
-						itemPanel.setCellHorizontalAlignment(decorator,
-								HorizontalPanel.ALIGN_RIGHT);
+					searchResults.add(item);
+					if (lazyCreatePanelItem && !first) { 
+						searchResultsData.add(null);
+					} else {	
+						first = false;
+						searchResultsData.add(createPanelItem(item));
 					}
-					searchResultsData.add(new PanelItem(itemPanel, item));
 				}
 			}
-			if (searchResultsData.isEmpty()) {
+			if (searchResults.isEmpty()) {
 				getContentPanel().add(new HTML("No matches found."));
 			}
 
 			clearStatus();
 			setSelection(selection);
 		}
+		
+		private PanelItem createPanelItem(E item) {
+			final HorizontalPanel itemPanel = new HorizontalPanel();
+			itemPanel.setWidth("100%");
+			final String itemText = getItemText(item);
+			final ContentLink itemUI = new ContentLink(itemText,
+					getItemContent(), item.getUuid());
+			itemUI.setWidth(getOffsetWidth() + "px");
+			itemPanel.add(itemUI);
+			final Widget decorator = getItemDecorator(item);
+			if (decorator != null) {
+				itemPanel.add(decorator);
+				itemPanel.setCellHorizontalAlignment(decorator,
+						HorizontalPanel.ALIGN_RIGHT);
+			}
+			return new PanelItem(itemPanel, item);
+		}
 
 		public void clearResults() {
 			getContentPanel().clear();
+			searchResults.clear();
 			searchResultsData.clear();
 		}
 
@@ -149,20 +168,29 @@ public abstract class SearchPanel<E extends Cacheable, T extends Cache<E>>
 		}
 
 		public void setSelection(final E item) {
-			final HorizontalPanel itemUI = ItemWidget.findItemUI(
-					searchResultsData, item);
-
+			final int size = searchResults.size();
+			final int pages = 1 + (size / ITEMS_PER_PAGE);
+			final int index;
+			
 			// update the page index and count
 			if (item != null) {
-				final int itemIndex = ItemWidget.indexOf(searchResultsData,
-						itemUI);
-				pagingPanel.setPaging(itemIndex / ITEMS_PER_PAGE,
-						1 + (searchResultsData.size() / ITEMS_PER_PAGE));
-			} else {
-				pagingPanel.setPaging(0,
-						1 + (searchResultsData.size() / ITEMS_PER_PAGE));
-			}
 
+				int itemIndex = 0;			
+				for(; itemIndex < size; itemIndex++) {
+					if (item == searchResults.get(itemIndex)) {
+						break;
+					}
+				}
+				if (itemIndex >= size) {
+					itemIndex = 0;
+				}
+				index = itemIndex / ITEMS_PER_PAGE;
+			} else {
+				index = 0;
+			}
+			//if (pagingPanel.getPageIndex() != index || pagingPanel.getPageCount() != pages) {
+			pagingPanel.setPaging(index, pages);
+			//}
 		}
 
 		private class PanelItem extends ItemWidget<HorizontalPanel, E> {
