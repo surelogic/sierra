@@ -131,7 +131,7 @@ public class PMDToolFactory extends AbstractToolFactory {
 				types.add(t);
 			}
 			final boolean isCore = info.isCore;
-			extensions.add(new AbstractToolExtension(info.ruleset.getName(),
+			extensions.add(new AbstractToolExtension(getId(), info.ruleset.getName(),
 					types) {
 				@Override
 				public boolean isCore() {
