@@ -1,6 +1,7 @@
 package com.surelogic.sierra.tool.findbugs;
 
 import java.io.*;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
 import java.util.jar.*;
@@ -61,8 +62,15 @@ public class FindBugsToolFactory extends AbstractToolFactory {
 				// Actual detector
 			}
 			*/	
+			File loc = null;
+			try {
+				loc = new File(plugin.getPluginLoader().getURL().toURI());
+			} catch (URISyntaxException e) {
+				e.printStackTrace(); // FIX ignored
+				continue;
+			}
 			final boolean isCore = CORE.equals(plugin.getPluginId());
-			extensions.add(new AbstractToolExtension(getId(), plugin.getPluginId(), types) {
+			extensions.add(new AbstractToolExtension(getId(), plugin.getPluginId(), loc, types) {
 				public boolean isCore() {
 					return isCore;
 				};
