@@ -40,6 +40,8 @@ public abstract class MultiPartSRPCServlet extends HttpServlet {
 					response = new RaisedException(e.getCause());
 					status = ResponseStatus.RAISED;
 				}
+				codec.encodeResponse(resp.getOutputStream(), status, response,
+						method.getMethod().getReturnType());
 				log.info("Request: " + method + "Response Status: " + status);
 			} catch (final SRPCException e) {
 				// If we had some type of general messaging/processing
@@ -56,7 +58,6 @@ public abstract class MultiPartSRPCServlet extends HttpServlet {
 				log.log(Level.INFO, "General request processing exception: "
 						+ e, e);
 			}
-			codec.encodeResponse(resp.getOutputStream(), status, response);
 		} catch (final Exception e) {
 			// We couldn't even send a message back to the client, log out a
 			// failure.

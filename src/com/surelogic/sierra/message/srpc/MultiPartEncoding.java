@@ -1,15 +1,13 @@
 package com.surelogic.sierra.message.srpc;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
 import java.lang.reflect.Method;
 import java.net.ConnectException;
 import java.net.URL;
@@ -59,9 +57,6 @@ class MultiPartEncoding {
 	private static final Logger log = SLLogger
 			.getLoggerFor(MultiPartEncoding.class);
 	private static final Class<?>[] NO_CLASSES = new Class[0];
-	private static final String NULL = "null";
-	private static final String GZIP = "application/x-gzip";
-	private static final String PLAINTEXT = "text/plain; charset=UTF-8";
 	private static final String CHARSET = "UTF-8";
 	private final JAXBContext context;
 	private final Class<?> service;
@@ -236,22 +231,22 @@ class MultiPartEncoding {
 	}
 
 	void encodeResponse(final OutputStream out, final ResponseStatus status,
-			final Object o) throws SRPCException {
+			final Object o, final Class<?> type) throws SRPCException {
 		try {
-			final PrintWriter writer = new PrintWriter(new OutputStreamWriter(
-					wrap(out)));
-			writer.println(status);
+			out.write(status.getByte());
 			try {
-				if (o == null) {
-					writer.println(NULL);
+				if (File.class.isAssignableFrom(type)) {
+					out.write(Type.FILE.getByte());
+					writeFileContents((File) o, out);
+				} else if (o == null) {
+					out.write(Type.NULL.getByte());
 				} else {
-					writer.println(o.getClass().getName());
-					context.createMarshaller().marshal(o, writer);
+					out.write(Type.XML.getByte());
+					context.createMarshaller().marshal(o, out);
 				}
 			} catch (final JAXBException e) {
 				throw new SRPCException(e);
 			}
-			writer.close();
 		} catch (final IOException e) {
 			throw new SRPCException(e);
 		}
@@ -260,60 +255,57 @@ class MultiPartEncoding {
 
 	Object decodeResponse(final InputStream in, final Class<?> returnType)
 			throws Exception {
-		if (File.class.isAssignableFrom(returnType)) {
-			final File f = File.createTempFile("sierra", "tmp");
-			writeStreamContents(in, f);
-			return f;
-		}
-		// FIXME
-		final BufferedReader reader = new BufferedReader(new InputStreamReader(
-				wrap(in)));
 		try {
-			final String statusStr = reader.readLine();
-			if (statusStr != null) {
-				ResponseStatus status = null;
-				try {
-					status = ResponseStatus.valueOf(statusStr);
-				} catch (final IllegalArgumentException e) {
-				}
-				if (status != null) {
-					final String returnClass = reader.readLine();
-					Object value;
-					if (NULL.equals(returnClass)) {
-						value = null;
-					} else {
-						value = context.createUnmarshaller().unmarshal(reader);
-					}
-					switch (status) {
-					case OK:
-						return value;
-					case RAISED:
-						final RaisedException e = (RaisedException) value;
-						throw e.regenerateException();
-					case FAIL:
-						final Failure failure = (Failure) value;
-						throw new ServiceInvocationException(failure
-								.getMessage()
-								+ "\n" + failure.getTrace());
-					default:
-						break;
-					}
-
-				}
+			final ResponseStatus status = ResponseStatus.fromByte((byte) in
+					.read());
+			final Type t = Type.fromByte((byte) in.read());
+			Object value;
+			switch (t) {
+			case NULL:
+				value = null;
+				break;
+			case FILE:
+				value = File.createTempFile("sierra", "tmp");
+				writeStreamContents(in, (File) value);
+				break;
+			case XML:
+				value = context.createUnmarshaller().unmarshal(in);
+				break;
+			default:
+				throw new IllegalStateException("Unknown response status.");
 			}
-			throw new SRPCException(
-					"Response did not begin with an acceptable status code.  The first line was: "
-							+ statusStr);
-
+			switch (status) {
+			case OK:
+				return value;
+			case RAISED:
+				final RaisedException e = (RaisedException) value;
+				throw e.regenerateException();
+			case FAIL:
+				final Failure failure = (Failure) value;
+				throw new ServiceInvocationException(failure.getMessage()
+						+ "\n" + failure.getTrace());
+			default:
+				throw new IllegalStateException("Unknown response type.");
+			}
 		} catch (final IOException e) {
 			throw new SRPCException(e);
 		} catch (final JAXBException e) {
 			throw new SRPCException(e);
 		}
-
 	}
 
-	static void writeStreamContents(final InputStream in, final File f)
+	private static void writeFileContents(final File f, final OutputStream out)
+			throws IOException {
+		final InputStream in = new BufferedInputStream(new FileInputStream(f));
+		final byte[] buf = new byte[4096];
+		int read = 0;
+		while ((read = in.read(buf, 0, 4096)) > 0) {
+			out.write(buf, 0, read);
+		}
+		out.close();
+	}
+
+	private static void writeStreamContents(final InputStream in, final File f)
 			throws IOException {
 		final OutputStream out = new BufferedOutputStream(new FileOutputStream(
 				f));
@@ -341,6 +333,29 @@ class MultiPartEncoding {
 	static MultiPartEncoding getEncoding(final Class<?> service)
 			throws SRPCException {
 		return getEncoding(service, false);
+	}
+
+	enum Type {
+		FILE((byte) 'f'), NULL((byte) 'n'), XML((byte) 'x');
+
+		private final byte f_byte;
+
+		Type(final byte b) {
+			f_byte = b;
+		}
+
+		byte getByte() {
+			return f_byte;
+		}
+
+		public static Type fromByte(final byte b) {
+			for (final Type s : values()) {
+				if (b == s.getByte()) {
+					return s;
+				}
+			}
+			throw new IllegalArgumentException("Invalid byte.");
+		}
 	}
 
 }
