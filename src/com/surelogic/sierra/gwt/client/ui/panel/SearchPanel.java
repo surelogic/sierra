@@ -68,7 +68,7 @@ public abstract class SearchPanel<E extends Cacheable, T extends Cache<E>>
 
 	protected abstract Widget getItemDecorator(E item);
 		
-	static final boolean lazyCreatePanelItem = false;
+	static final boolean lazyCreatePanelItem = true;
 	
 	private class SearchResultsPanel extends BasicPanel {		
 		private final List<E> searchResults = new ArrayList<E>();
@@ -120,16 +120,16 @@ public abstract class SearchPanel<E extends Cacheable, T extends Cache<E>>
 				}
 			}			
 			final String query = queryBuf.toString();			 
-			boolean first = true;
+			int i = 0;
 			for (final E item : cache) {
 				if (isItemVisible(item, query)) {
 					searchResults.add(item);
-					if (lazyCreatePanelItem && !first) { 
+					if (lazyCreatePanelItem && i >= ITEMS_PER_PAGE) { 
 						searchResultsData.add(null);
-					} else {	
-						first = false;
+					} else {							
 						searchResultsData.add(createPanelItem(item));
 					}
+					i++;
 				}
 			}
 			if (searchResults.isEmpty()) {
@@ -141,20 +141,26 @@ public abstract class SearchPanel<E extends Cacheable, T extends Cache<E>>
 		}
 		
 		private PanelItem createPanelItem(E item) {
-			final HorizontalPanel itemPanel = new HorizontalPanel();
-			itemPanel.setWidth("100%");
 			final String itemText = getItemText(item);
 			final ContentLink itemUI = new ContentLink(itemText,
 					getItemContent(), item.getUuid());
 			itemUI.setWidth(getOffsetWidth() + "px");
-			itemPanel.add(itemUI);
+			
 			final Widget decorator = getItemDecorator(item);
+			final Widget widget;
 			if (decorator != null) {
+				final HorizontalPanel itemPanel = new HorizontalPanel();
+				itemPanel.setWidth("100%");				
+				itemPanel.add(itemUI);
 				itemPanel.add(decorator);
 				itemPanel.setCellHorizontalAlignment(decorator,
 						HorizontalPanel.ALIGN_RIGHT);
+				widget = itemPanel;
+			} else {
+				itemUI.setWidth("100%");
+				widget = itemUI;
 			}
-			return new PanelItem(itemPanel, item);
+			return new PanelItem(widget, item);
 		}
 
 		public void clearResults() {
@@ -193,9 +199,9 @@ public abstract class SearchPanel<E extends Cacheable, T extends Cache<E>>
 			//}
 		}
 
-		private class PanelItem extends ItemWidget<HorizontalPanel, E> {
+		private class PanelItem extends ItemWidget<Widget, E> {
 
-			public PanelItem(final HorizontalPanel ui, final E item) {
+			public PanelItem(final Widget ui, final E item) {
 				super(ui, item);
 			}
 
