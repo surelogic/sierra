@@ -64,7 +64,10 @@ public class FindBugsToolFactory extends AbstractToolFactory {
 			*/	
 			File loc = null;
 			try {
-				loc = new File(plugin.getPluginLoader().getURL().toURI());
+				URL url = plugin.getPluginLoader().getURL();
+				if (url != null) {
+					loc = new File(url.toURI());
+				}
 			} catch (URISyntaxException e) {
 				e.printStackTrace(); // FIX ignored
 				continue;
