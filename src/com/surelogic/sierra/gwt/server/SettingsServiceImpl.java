@@ -23,6 +23,7 @@ import com.surelogic.common.jdbc.StringResultHandler;
 import com.surelogic.common.jdbc.TransactionException;
 import com.surelogic.sierra.gwt.SierraServiceServlet;
 import com.surelogic.sierra.gwt.client.data.Category;
+import com.surelogic.sierra.gwt.client.data.Extension;
 import com.surelogic.sierra.gwt.client.data.FindingType;
 import com.surelogic.sierra.gwt.client.data.FindingTypeFilter;
 import com.surelogic.sierra.gwt.client.data.PortalServerLocation;
@@ -60,6 +61,7 @@ import com.surelogic.sierra.jdbc.settings.ServerLocations;
 import com.surelogic.sierra.jdbc.settings.SettingQueries;
 import com.surelogic.sierra.jdbc.settings.TypeFilterDO;
 import com.surelogic.sierra.jdbc.tool.ArtifactTypeDO;
+import com.surelogic.sierra.jdbc.tool.ExtensionDO;
 import com.surelogic.sierra.jdbc.tool.FindingTypeDO;
 import com.surelogic.sierra.jdbc.tool.FindingTypes;
 import com.surelogic.sierra.jdbc.user.User;
@@ -81,8 +83,7 @@ public final class SettingsServiceImpl extends SierraServiceServlet implements
 										final List<String> result = new ArrayList<String>();
 										final int count = 0;
 										for (final Row row : r) {
-											if ((limit == -1)
-													|| (count < limit)) {
+											if (limit == -1 || count < limit) {
 												result.add(row.nextString());
 											} else {
 												return result;
@@ -160,7 +161,7 @@ public final class SettingsServiceImpl extends SierraServiceServlet implements
 							set.setName(detail.getName());
 							final String[] owningServer = categoryServer
 									.call(detail.getUid());
-							set.setLocal((owningServer != null)
+							set.setLocal(owningServer != null
 									&& serverUID.equals(owningServer[0]));
 							if (owningServer != null) {
 								set.setOwnerLabel(owningServer[1]);
@@ -724,5 +725,37 @@ public final class SettingsServiceImpl extends SierraServiceServlet implements
 		ConnectionFactory.getInstance().withUserTransaction(
 				DashboardQueries.updateDashboard(settings));
 		return Status.success();
+	}
+
+	public List<Extension> listExtensions() {
+		return ConnectionFactory.getInstance().withReadOnly(
+				new DBQuery<List<Extension>>() {
+					public List<Extension> perform(final Query q) {
+						final List<Extension> exts = new ArrayList<Extension>();
+						for (final ExtensionDO e : new FindingTypes(q)
+								.getExtensions()) {
+							final Extension ext = new Extension();
+							ext.setName(e.getName());
+							ext.setVersion(e.getVersion());
+							for (final List<ArtifactTypeDO> artList : e
+									.getArtifactMap().values()) {
+								for (final ArtifactTypeDO art : artList) {
+									ext.getArtifactTypes().add(
+											new Extension.ArtifactType(art
+													.getTool(), art
+													.getDisplay()));
+								}
+							}
+							for (final FindingTypeDO ftDO : e
+									.getNewFindingTypes()) {
+								ext.getFindingTypes().add(
+										new Extension.FindingType(
+												ftDO.getUid(), ftDO.getName()));
+							}
+							exts.add(ext);
+						}
+						return exts;
+					}
+				});
 	}
 }
