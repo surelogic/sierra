@@ -13,15 +13,6 @@ public class ExtensionDO {
 	private final List<FindingTypeDO> newFindingTypes = new ArrayList<FindingTypeDO>();
 	private final Map<String, List<String>> categoryMap = new HashMap<String, List<String>>();
 
-	public ExtensionDO() {
-
-	}
-
-	public ExtensionDO(final String name, final String version) {
-		this.name = name;
-		this.version = version;
-	}
-
 	public ExtensionDO(final String name, final String version,
 			final String path) {
 		this.name = name;
