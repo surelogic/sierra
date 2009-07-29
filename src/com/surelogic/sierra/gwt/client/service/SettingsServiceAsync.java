@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.surelogic.sierra.gwt.client.data.Category;
+import com.surelogic.sierra.gwt.client.data.Extension;
 import com.surelogic.sierra.gwt.client.data.FindingType;
 import com.surelogic.sierra.gwt.client.data.PortalServerLocation;
 import com.surelogic.sierra.gwt.client.data.Project;
@@ -67,5 +68,7 @@ public interface SettingsServiceAsync {
 
 	void saveDashboardSettings(DashboardSettings settings,
 			AsyncCallback<Status> callback);
+
+	void listExtensions(AsyncCallback<List<Extension>> callback);
 
 }

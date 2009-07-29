@@ -3,6 +3,7 @@ package com.surelogic.sierra.gwt.client.ui.panel;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockPanel;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -21,7 +22,7 @@ public abstract class BasicPanel extends Composite {
 	private final DockPanel rootPanel = new DockPanel();
 	private final DockPanel titlePanel = new DockPanel();
 	private final Label sectionTitle = new Label();
-	private final Label sectionSummary = new Label();
+	private final HTML sectionSummary = new HTML();
 	private final HorizontalPanel actionPanel = new HorizontalPanel();
 	private final VerticalPanel contentPanel = new VerticalPanel();
 	private boolean initialized;
@@ -89,7 +90,7 @@ public abstract class BasicPanel extends Composite {
 	}
 
 	public final void setSummary(final String text) {
-		sectionSummary.setText(text);
+		sectionSummary.setHTML(text);
 		updateHeader();
 	}
 

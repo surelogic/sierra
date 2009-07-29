@@ -20,7 +20,7 @@ public class ContentLink extends Hyperlink {
 
 	public final void setTarget(final String title,
 			final ContentComposite content, final String uuid) {
-		setText(title);
+		setHTML(title);
 		final String contextLink = new Context(content, uuid).toString();
 		setTargetHistoryToken(contextLink);
 	}

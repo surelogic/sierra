@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.surelogic.sierra.gwt.client.data.Category;
+import com.surelogic.sierra.gwt.client.data.Extension;
 import com.surelogic.sierra.gwt.client.data.FindingType;
 import com.surelogic.sierra.gwt.client.data.PortalServerLocation;
 import com.surelogic.sierra.gwt.client.data.Project;
@@ -199,4 +200,10 @@ public interface SettingsService extends RemoteService {
 	 */
 	Status deleteReportSettings(String settings);
 
+	/**
+	 * List the extensions currently registered on the server.
+	 * 
+	 * @return
+	 */
+	List<Extension> listExtensions();
 }

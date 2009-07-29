@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.google.gwt.core.client.GWT;
 import com.surelogic.sierra.gwt.client.content.categories.CategoriesContent;
+import com.surelogic.sierra.gwt.client.content.extensions.ExtensionsContent;
 import com.surelogic.sierra.gwt.client.content.finding.FindingContent;
 import com.surelogic.sierra.gwt.client.content.findingtypes.FindingTypesContent;
 import com.surelogic.sierra.gwt.client.content.login.LoginContent;
@@ -43,6 +44,8 @@ public class ContentRegistry {
 		register("scans", "Scans", ScanContent.getInstance(), userHeader);
 		register("scanfilters", "Scan Filters", ScanFiltersContent
 				.getInstance(), userHeader);
+		register("extensions", "Extensions", ExtensionsContent.getInstance(),
+				userHeader);
 		register("findingtype", "Finding Types", FindingTypesContent
 				.getInstance(), userHeader);
 		register("tsreports", "Reports",
