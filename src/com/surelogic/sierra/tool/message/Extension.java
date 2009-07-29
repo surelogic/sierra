@@ -22,7 +22,7 @@ import javax.xml.bind.annotation.XmlType;
  * @author nathan
  * 
  */
-@XmlType(propOrder = { "name", "version", "artifact", "findingType" })
+@XmlType(propOrder = { "name", "version", "path", "artifact", "findingType" })
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Extension {
 	@XmlElement(required = true)
