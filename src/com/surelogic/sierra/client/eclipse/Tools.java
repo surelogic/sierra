@@ -161,12 +161,13 @@ public final class Tools {
 							public IStatus runInUIThread(
 									final IProgressMonitor monitor) {
 								final List<ArtifactType> incompleteTypes = new ArrayList<ArtifactType>();
-								for(ArtifactType t : types) {
+								for (final ArtifactType t : types) {
 									if (!t.isComplete()) {
 										incompleteTypes.add(t);
 									}
 								}
-								if (XUtil.useDeveloperMode() && !incompleteTypes.isEmpty()) {
+								if (XUtil.useDeveloperMode()
+										&& !incompleteTypes.isEmpty()) {
 									/*
 									 * ArtifactTypeMappingDialog d = new
 									 * ArtifactTypeMappingDialog(null, types,
@@ -174,7 +175,9 @@ public final class Tools {
 									 */
 									final ArtifactTypeSetupWizard wizard = new ArtifactTypeSetupWizard(
 											incompleteTypes, findingTypes, cats);
-									wizard.init(PlatformUI.getWorkbench(), null);
+									wizard
+											.init(PlatformUI.getWorkbench(),
+													null);
 									final WizardDialog d = new WizardDialog(
 											PlatformUI.getWorkbench()
 													.getActiveWorkbenchWindow()
@@ -218,9 +221,18 @@ public final class Tools {
 	private static void setupDatabase(final Query q, final FindingTypes ft,
 			final IToolExtension te, final List<ArtifactType> unknown) {
 		Collections.sort(unknown);
-		final ExtensionDO ext = new ExtensionDO();
-		ext.setName(te.getId());
-		ext.setVersion(te.getVersion());
+		File tef = te.getJar();
+		do {
+			tef = tef.getParentFile();
+		} while (tef.getParent() != null
+				&& !tef.getParentFile().equals(
+						ToolUtil.getSierraToolDirectory()));
+		if (tef == null) {
+			throw new IllegalStateException("The extension" + te.getId()
+					+ " does not appear to be under the sierra data directory.");
+		}
+		final ExtensionDO ext = new ExtensionDO(te.getId(), te.getVersion(),
+				tef.getPath());
 		for (final ArtifactType a : unknown) {
 			// SLLogger.getLogger().warning("Couldn't find "+a.type+" for "+a.tool+", v"+a.version);
 			System.out.println("Couldn't find " + a.type + " for " + a.tool
