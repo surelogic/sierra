@@ -15,6 +15,8 @@ public class Extension implements Serializable, Cacheable {
 	private String name;
 	private String version;
 
+	private boolean installed;
+
 	private List<FindingType> findingTypes;
 	private List<ArtifactType> artifactTypes;
 
@@ -32,6 +34,14 @@ public class Extension implements Serializable, Cacheable {
 
 	public void setVersion(final String version) {
 		this.version = version;
+	}
+
+	public boolean isInstalled() {
+		return installed;
+	}
+
+	public void setInstalled(final boolean installed) {
+		this.installed = installed;
 	}
 
 	public String getUuid() {
