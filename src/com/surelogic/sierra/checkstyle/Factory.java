@@ -15,21 +15,20 @@ import com.puppycrawl.tools.checkstyle.api.Configuration;
 import com.puppycrawl.tools.checkstyle.api.SeverityLevel;
 import com.surelogic.common.jobs.*;
 import com.surelogic.sierra.tool.*;
-import com.surelogic.sierra.tool.ArtifactType;
 import com.surelogic.sierra.tool.analyzer.ILazyArtifactGenerator;
 import com.surelogic.sierra.tool.message.*;
 import com.surelogic.sierra.tool.message.ArtifactGenerator.ArtifactBuilder;
 import com.surelogic.sierra.tool.targets.IToolTarget;
 
 public class Factory extends AbstractToolFactory {
-	public Set<ArtifactType> getArtifactTypes() {
-		// TODO report available artifact types
+	public Set<IToolExtension> getExtensions() {
+		// TODO report available extensions (and artifact types)
 		// Check the tool's source code to see how to get this info
 		return Collections.emptySet(); 
 	}
 
 	@Override
-	public List<File> getRequiredJars(Config config) {
+	public Collection<File> getRequiredJars(Config config) {
 		// TODO add any libraries not listed in the manifest
 		// This should only be needed for tool extensions
 		return super.getRequiredJars(config);
