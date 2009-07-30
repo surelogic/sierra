@@ -1,5 +1,6 @@
 package com.surelogic.sierra.gwt.server;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -48,6 +49,7 @@ import com.surelogic.sierra.jdbc.project.Projects;
 import com.surelogic.sierra.jdbc.reports.ReportSettingQueries;
 import com.surelogic.sierra.jdbc.server.ConnectionFactory;
 import com.surelogic.sierra.jdbc.server.Server;
+import com.surelogic.sierra.jdbc.server.ServerFiles;
 import com.surelogic.sierra.jdbc.server.ServerQuery;
 import com.surelogic.sierra.jdbc.server.UserQuery;
 import com.surelogic.sierra.jdbc.settings.Categories;
@@ -752,6 +754,9 @@ public final class SettingsServiceImpl extends SierraServiceServlet implements
 										new Extension.FindingType(
 												ftDO.getUid(), ftDO.getName()));
 							}
+							ext.setInstalled(new File(ServerFiles
+									.getSierraLocalTeamServerDirectory(), e
+									.getPath()).exists());
 							exts.add(ext);
 						}
 						return exts;
