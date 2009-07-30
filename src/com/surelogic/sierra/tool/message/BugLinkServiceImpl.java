@@ -264,6 +264,25 @@ public class BugLinkServiceImpl extends SecureServiceServlet implements
 				});
 	}
 
+	public ListExtensionResponse listInstalledExtensions(
+			final ListExtensionRequest request) {
+		return ConnectionFactory.getInstance().withReadOnly(
+				new DBQuery<ListExtensionResponse>() {
+					public ListExtensionResponse perform(final Query q) {
+						final ListExtensionResponse r = new ListExtensionResponse();
+						for (final ExtensionDO d : new FindingTypes(q)
+								.getExtensions()) {
+							if (new File(ServerFiles
+									.getSierraLocalTeamServerDirectory(), d
+									.getPath()).exists()) {
+								r.getExtensions().add(FindingTypes.convert(d));
+							}
+						}
+						return r;
+					}
+				});
+	}
+
 	public RegisterExtensionResponse registerExtension(
 			final RegisterExtensionRequest request) {
 		final ExtensionDO eDO = FindingTypes.convertDO(request.getExtension());
