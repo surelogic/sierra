@@ -72,6 +72,12 @@ public interface BugLinkService extends Service {
 	ListExtensionResponse listExtensions(ListExtensionRequest request);
 
 	/**
+	 * Ask for the list of extensions that are actually installed on the server
+	 * and available for download.
+	 */
+	ListExtensionResponse listInstalledExtensions(ListExtensionRequest request);
+
+	/**
 	 * Return the metadata for the requested extension.
 	 * 
 	 * @param name
