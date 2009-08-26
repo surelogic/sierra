@@ -28,6 +28,7 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
+import com.surelogic.common.FileUtility;
 import com.surelogic.common.jobs.SLProgressMonitor;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.tool.message.ArtifactGenerator.ArtifactBuilder;
@@ -374,7 +375,7 @@ public final class MessageWarehouse {
 
 			// set up a parser
 			final XMLInputFactory xmlif = XMLInputFactory.newInstance();
-			if (runDocument.getName().endsWith(".gz")) {
+			if (runDocument.getName().endsWith(FileUtility.GZIP_SUFFIX)) {
 				xmlr = xmlif.createXMLStreamReader(new GZIPInputStream(stream));
 			} else {
 				xmlr = xmlif.createXMLStreamReader(stream);

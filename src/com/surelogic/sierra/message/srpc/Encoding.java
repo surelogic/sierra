@@ -32,6 +32,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
+import com.surelogic.common.FileUtility;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.tool.targets.FileTarget;
 import com.surelogic.sierra.tool.targets.FilteredDirectoryTarget;
@@ -116,7 +117,7 @@ class Encoding {
 				final OutputStream file = new FileOutputStream(recordMessageDir
 						+ File.separator + invocation.getMethod().getName()
 						+ "." + timestamp() + "." + count
-						+ (compressed ? ".gz" : ".txt"));
+						+ (compressed ? FileUtility.GZIP_SUFFIX : ".txt"));
 				try {
 					encodeMethodInvocationHelper(file, invocation);
 				} finally {
@@ -222,7 +223,7 @@ class Encoding {
 						final PrintWriter out = wrap(new FileOutputStream(
 								recordMessageDir + File.separator + "response."
 										+ timestamp() + "." + methodCount
-										+ (compressed ? ".gz" : ".txt")));
+										+ (compressed ? FileUtility.GZIP_SUFFIX : ".txt")));
 						try {
 							if (value == null) {
 								out.write("null\n");
