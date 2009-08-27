@@ -299,6 +299,7 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 		updateSavedSelections();
 		f_first = new MRadioMenuColumn(f_cascadingList, f_workingSelection,
 				null);
+		f_first.setObserver(this);
 		f_first.init();
 		updateColumnSelectionMenu(f_workingSelection);
 	}
@@ -335,7 +336,7 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 			prevMenu.setSelection("Show");
 			MListOfFindingsColumn list = new MListOfFindingsColumn(
 					f_cascadingList, f_workingSelection, prevMenu);
-			list.addObserver(this);
+			list.setObserver(this);
 			list.init();
 		}
 		updateColumnSelectionMenu(newSelection);
@@ -386,7 +387,7 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 				column += 2; // selector and menu
 			} else if (clColumn instanceof MListOfFindingsColumn) {
 				b.append(" | <a href=\"").append(column).append("\">Show</a>");
-				((MListOfFindingsColumn) clColumn).addObserver(this);
+				((MListOfFindingsColumn) clColumn).setObserver(this);
 			}
 			clColumn = clColumn.getNextColumn();
 		} while (clColumn != null);

@@ -37,7 +37,7 @@ public final class MRadioMenuColumn extends MColumn implements
 			MColumn previousColumn) {
 		super(cascadingList, selection, previousColumn);
 	}
-
+	
 	@Override
 	void init() {
 		final CascadingList.IScrolledColumn m = new CascadingList.IScrolledColumn() {
@@ -133,8 +133,10 @@ public final class MRadioMenuColumn extends MColumn implements
 			getSelection().changed();
 		} else if ("Show".equals(choice)) {
 			final MListOfFindingsColumn fsr = new MListOfFindingsColumn(
-					getCascadingList(), getSelection(), this);
+					getCascadingList(), getSelection(), this);		
+			fsr.setObserver(observer);
 			fsr.init();
+			
 		}
 	}
 

@@ -50,7 +50,6 @@ import com.surelogic.common.eclipse.JDTUtility;
 import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.common.eclipse.SWTUtility;
 import com.surelogic.common.eclipse.CascadingList.IColumn;
-import com.surelogic.common.eclipse.jobs.DatabaseJob;
 import com.surelogic.common.eclipse.jobs.SLUIJob;
 import com.surelogic.common.eclipse.logging.SLEclipseStatusUtility;
 import com.surelogic.common.i18n.I18N;
@@ -1299,12 +1298,6 @@ public final class MListOfFindingsColumn extends MColumn implements
 		} else {
 			super.selectAll();
 		}
-	}
-
-	private volatile IFindingsObserver observer;
-
-	public void addObserver(final IFindingsObserver o) {
-		observer = o;
 	}
 
 	private void notifyObserversOfLimitedFindings(final boolean isLimited) {

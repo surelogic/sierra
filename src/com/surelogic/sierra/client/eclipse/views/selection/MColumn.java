@@ -23,6 +23,8 @@ public abstract class MColumn extends AbstractUpdatable {
 
 	protected final int index;
 	
+	protected volatile IFindingsObserver observer;
+	
 	MColumn(CascadingList cascadingList, Selection selection,
 			MColumn previousColumn) {
 		assert cascadingList != null;
@@ -36,6 +38,10 @@ public abstract class MColumn extends AbstractUpdatable {
 		index = cascadingList.getNumColumns();
 	}
 
+	final void setObserver(final IFindingsObserver o) {
+		observer = o;
+	}
+	
 	CascadingList getCascadingList() {
 		return f_cascadingList;
 	}
