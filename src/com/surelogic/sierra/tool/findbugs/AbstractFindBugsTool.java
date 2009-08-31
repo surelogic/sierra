@@ -454,6 +454,10 @@ public class AbstractFindBugsTool extends AbstractToolInstance {
 			 */
 			return null;
 		}
+
+		public void startArchive(String arg0) {
+			// FIX what to do?
+		}
 	}
 
 	/**
