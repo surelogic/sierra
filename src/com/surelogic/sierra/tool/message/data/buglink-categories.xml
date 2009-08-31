@@ -457,6 +457,14 @@
 			although some groups may not care about some of the bad
 			practices.
 		</info>
+		<filter>
+            <type>RC_REF_COMPARISON_BAD_PRACTICE</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>RC_REF_COMPARISON_BAD_PRACTICE_BOOLEAN</type>
+            <filtered>false</filtered>
+        </filter>
         <filter>
             <type>DP_CREATE_CLASSLOADER_INSIDE_DO_PRIVILEGED</type>
             <filtered>false</filtered>
@@ -1114,6 +1122,34 @@
 			that was probably not what the developer intended. We strive
 			for a low false positive rate.
 		</info>
+        <filter>
+            <type>UR_UNINIT_READ_CALLED_FROM_SUPER_CONSTRUCTOR</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>SIC_THREADLOCAL_DEADLY_EMBRACE</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>NP_CLOSING_NULL</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>VA_FORMAT_STRING_EXPECTED_MESSAGE_FORMAT_SUPPLIED</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>EC_INCOMPATIBLE_ARRAY_COMPARE</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>BC_IMPOSSIBLE_DOWNCAST</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>BC_IMPOSSIBLE_DOWNCAST_OF_TOARRAY</type>
+            <filtered>false</filtered>
+        </filter>
         <filter>
             <type>SF_DEAD_STORE_DUE_TO_SWITCH_FALLTHROUGH_TO_THROW</type>
             <filtered>false</filtered>
@@ -2142,6 +2178,14 @@
         <info>
 			code flaws having to do with threads, locks, and volatiles
 		</info>
+        <filter>
+            <type>JLM_JSR166_UTILCONCURRENT_MONITORENTER</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>RV_RETURN_VALUE_OF_PUTIFABSENT_IGNORED</type>
+            <filtered>false</filtered>
+        </filter>		
         <filter>
             <type>UnreleasedLock</type>
             <filtered>false</filtered>

@@ -11239,4 +11239,308 @@ has a superior analysis or if it is a tool diagnostic report.]]>
     </info>
     <name>Log.v calls should be protected by checking Config.LOGV first</name>
   </findingType>
+  
+  <!-- FB 1.3.9 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+  <findingType>
+    <id>TESTING</id>
+    <artifact tool="FindBugs"	mnemonic="TESTING"/>
+    <shortMessage>Prototype bug report</shortMessage>
+    <info>
+      <![CDATA[
+
+<p>This bug pattern is used by prototype/incomplete/experimental bug detectors.
+</p>
+
+    ]]>
+    </info>
+    <name>Prototype bug report</name>
+  </findingType>
+  <findingType>
+    <id>TESTING2</id>
+    <artifact tool="FindBugs"	mnemonic="TESTING2"/>
+    <shortMessage>2nd kind of prototype bug report</shortMessage>
+    <info>
+      <![CDATA[
+
+<p>This bug pattern is  the second pattern reported by used by prototype/incomplete/experimental bug detectors.
+</p>
+
+    ]]>
+    </info>
+    <name>2nd kind of prototype bug report</name>
+  </findingType>
+  <findingType>
+    <id>UR_UNINIT_READ_CALLED_FROM_SUPER_CONSTRUCTOR</id>
+    <artifact tool="FindBugs"	mnemonic="UR_UNINIT_READ_CALLED_FROM_SUPER_CONSTRUCTOR"/>
+    <shortMessage>Uninitialized read of field method called from constructor of superclass</shortMessage>
+    <info>
+      <![CDATA[
+
+  <p> This method is invoked in the constructor of of the superclass. At this point,
+	the fields of the class have not yet initialized.</p>
+<p>To make this more concrete, consider the following classes:</p>
+<pre>abstract class A {
+  int hashCode;
+  abstract Object getValue();
+  A() {
+    hashCode = getValue().hashCode();
+    }
+  }
+class B extends A {
+  Object value;
+  B(Object v) {
+    this.value = v;
+    }
+  Object getValue() {
+    return value;
+  }
+  }</pre>
+<p>When a <code>B</code> is constructed,
+the constructor for the <code>A</code> class is invoked
+<em>before</em> the constructor for <code>B</code> sets <code>value</code>.
+Thus, when the constructor for <code>A</code> invokes <code>getValue</code>,
+an uninitialized value is read for <code>value</code>
+</p>
+
+    ]]>
+    </info>
+    <name>Uninitialized read of field method called from constructor of superclass</name>
+  </findingType>
+  <findingType>
+    <id>SIC_THREADLOCAL_DEADLY_EMBRACE</id>
+    <artifact tool="FindBugs"	mnemonic="SIC_THREADLOCAL_DEADLY_EMBRACE"/>
+    <shortMessage>Deadly embrace of non-static inner class and thread local</shortMessage>
+    <info>
+      <![CDATA[
+
+  <p> This class is an inner class, but should probably be a static inner class.
+  As it is, there is a serious danger of a deadly embrace between the inner class
+  and the thread local in the outer class. Because the inner class isn't static,
+  it retains a reference to the outer class. 
+  If the thread local contains a reference to an instance of the inner
+  class, the inner and outer instance will both be reachable
+  and not eligible for garbage collection.
+</p>
+
+    ]]>
+    </info>
+    <name>Deadly embrace of non-static inner class and thread local</name>
+  </findingType>
+  <findingType>
+    <id>NP_CLOSING_NULL</id>
+    <artifact tool="FindBugs"	mnemonic="NP_CLOSING_NULL"/>
+    <shortMessage>close() invoked on a value that is always null</shortMessage>
+    <info>
+      <![CDATA[
+
+<p> close() is being invoked on a value that is always null. If this statement is executed,
+a null pointer exception will occur. But the big risk here you never close
+something that should be closed. 
+
+    ]]>
+    </info>
+    <name>close() invoked on a value that is always null</name>
+  </findingType>
+  <findingType>
+    <id>RC_REF_COMPARISON_BAD_PRACTICE</id>
+    <artifact tool="FindBugs"	mnemonic="RC_REF_COMPARISON_BAD_PRACTICE"/>
+    <shortMessage>Suspicious reference comparison to constant</shortMessage>
+    <info>
+      <![CDATA[
+
+<p> This method compares a reference value to a constant using the == or != operator,
+where the correct way to compare instances of this type is generally
+with the equals() method.  
+It is possible to create distinct instances that are equal but do not compare as == since
+they are different objects.
+Examples of classes which should generally
+not be compared by reference are java.lang.Integer, java.lang.Float, etc.</p>
+
+    ]]>
+    </info>
+    <name>Suspicious reference comparison to constant</name>
+  </findingType>
+  <findingType>
+    <id>RC_REF_COMPARISON_BAD_PRACTICE_BOOLEAN</id>
+    <artifact tool="FindBugs"	mnemonic="RC_REF_COMPARISON_BAD_PRACTICE_BOOLEAN"/>
+    <shortMessage>Suspicious reference comparison of Boolean values</shortMessage>
+    <info>
+      <![CDATA[
+
+<p> This method compares two Boolean values using the == or != operator. 
+Normally, there are only two Boolean values (Boolean.TRUE and Boolean.FALSE),
+but it is possible to create other Boolean objects using the <code>new Boolean(b)</code>
+constructor. It is best to avoid such objects, but if they do exist,
+then checking Boolean objects for equality using == or != will give results
+than are different than you would get using <code>.equals(...)</code>
+</p>
+
+    ]]>
+    </info>
+    <name>Suspicious reference comparison of Boolean values</name>
+  </findingType>
+  <findingType>
+    <id>VA_FORMAT_STRING_EXPECTED_MESSAGE_FORMAT_SUPPLIED</id>
+    <artifact tool="FindBugs"	mnemonic="VA_FORMAT_STRING_EXPECTED_MESSAGE_FORMAT_SUPPLIED"/>
+    <shortMessage>MessageFormat supplied where printf style format expected</shortMessage>
+    <info>
+      <![CDATA[
+
+<p>
+A method is called that expects a Java printf format string and a list of arguments.
+However, the format string doesn't contain any format specifiers (e.g., %s) but
+does contain message format elements (e.g., {0}).  It is likely
+that the code is supplying a MessageFormat string when a printf-style format string
+is required. At runtime, all of the arguments will be ignored
+and the format string will be returned exactly as provided without any formatting.
+</p>
+</p>
+
+ 	]]>
+    </info>
+    <name>MessageFormat supplied where printf style format expected</name>
+  </findingType>
+  <findingType>
+    <id>JLM_JSR166_UTILCONCURRENT_MONITORENTER</id>
+    <artifact tool="FindBugs"	mnemonic="JLM_JSR166_UTILCONCURRENT_MONITORENTER"/>
+    <shortMessage>Synchronization performed on util.concurrent instance</shortMessage>
+    <info>
+      <![CDATA[
+
+<p> This method performs synchronization an object that is an instance of
+a class from the java.util.concurrent package (or its subclasses). Instances
+of these classes have there own concurrency control mechanisms that are distinct from
+and incompatible with the use of the keyword <code>synchronized</code>.
+</p>
+
+]]>
+    </info>
+    <name>Synchronization performed on util.concurrent instance</name>
+  </findingType>
+  <findingType>
+    <id>EC_INCOMPATIBLE_ARRAY_COMPARE</id>
+    <artifact tool="FindBugs"	mnemonic="EC_INCOMPATIBLE_ARRAY_COMPARE"/>
+    <shortMessage>equals(...) used to compare incompatible arrays</shortMessage>
+    <info>
+      <![CDATA[
+
+<p>
+This method invokes the .equals(Object o) to compare two arrays, but the arrays of
+of incompatible types (e.g., String[] and StringBuffer[], or String[] and int[]).
+They will never be equal. In addition, when equals(...) is used to compare arrays it
+only checks to see if they are the same array, and ignores the contents of the arrays.
+</p>
+
+    ]]>
+    </info>
+    <name>equals(...) used to compare incompatible arrays</name>
+  </findingType>
+  <findingType>
+    <id>BC_IMPOSSIBLE_DOWNCAST</id>
+    <artifact tool="FindBugs"	mnemonic="BC_IMPOSSIBLE_DOWNCAST"/>
+    <shortMessage>Impossible downcast</shortMessage>
+    <info>
+      <![CDATA[
+
+<p>
+This cast will always throw a ClassCastException. 
+The analysis believes it knows
+the precise type of the value being cast, and the attempt to
+downcast it to a subtype will always fail by throwing a ClassCastException.  
+</p>
+
+    ]]>
+    </info>
+    <name>Impossible downcast</name>
+  </findingType>
+  <findingType>
+    <id>BC_IMPOSSIBLE_DOWNCAST_OF_TOARRAY</id>
+    <artifact tool="FindBugs"	mnemonic="BC_IMPOSSIBLE_DOWNCAST_OF_TOARRAY"/>
+    <shortMessage>Impossible downcast of toArray() result</shortMessage>
+    <info>
+      <![CDATA[
+
+<p>
+This code is casting the result of calling <code>toArray()</code> on a collection
+to a type more specific than <code>Object[]</code>, as in:
+<pre>
+String[] getAsArray(Collection&lt;String&gt; c) {
+  return (String[]) c.toArray();
+  }
+</pre>
+<p>This will usually fail by throwing a ClassCastException. The <code>toArray()</code>
+of almost all collections return an <code>Object[]</code>. They can't really do anything else,
+since the Collection object has no reference to the declared generic type of the collection.
+<p>The correct way to do get an array of a specific type from a collection is to use
+  <code>c.toArray(new String[]);</code>
+  or <code>c.toArray(new String[c.size()]);</code> (the latter is slightly more efficient).
+<p>There is one common/known exception exception to this. The <code>toArray()</code>
+method of lists returned by <code>Arrays.asList(...)</code> will return a covariantly
+typed array. For example, <code>Arrays.asArray(new String[] { "a" }).toArray()</code>
+will return a <code>String []</code>. FindBugs attempts to detect and suppress
+such cases, but may miss some.
+</p>
+
+    ]]>
+    </info>
+    <name>Impossible downcast of toArray() result</name>
+  </findingType>
+  <findingType>
+    <id>RV_RETURN_VALUE_OF_PUTIFABSENT_IGNORED</id>
+    <artifact tool="FindBugs"	mnemonic="RV_RETURN_VALUE_OF_PUTIFABSENT_IGNORED"/>
+    <shortMessage>Return value of putIfAbsent ignored, value passed to putIfAbsent reused</shortMessage>
+    <info>
+      <![CDATA[
+		  
+		The <code>putIfAbsent</code> method is typically used to ensure that a 
+		single value is associated with a given key (the first value for which put 
+		if absent succeeds).  
+		If you ignore the return value and retain a reference to the value passed in, 
+		you run the risk of retaining a value that is not the one that is associated with the key in the map.  
+		If it matters which one you use and you use the one that isn't stored in the map,
+		your program will behave incorrectly.
+		  
+	  ]]>
+    </info>
+    <name>Return value of putIfAbsent ignored, value passed to putIfAbsent reused</name>
+  </findingType>
+  <findingType>
+    <id>LG_LOST_LOGGER_DUE_TO_WEAK_REFERENCE</id>
+    <artifact tool="FindBugs"	mnemonic="LG_LOST_LOGGER_DUE_TO_WEAK_REFERENCE"/>
+    <shortMessage>Potential lost logger changes due to weak reference in OpenJDK</shortMessage>
+    <info>
+      <![CDATA[
+		  
+<p>OpenJDK introduces a potential incompatibility.
+ In particular, the java.util.logging.Logger behavior has
+  changed. Instead of using strong references, it now uses weak references
+  internally. That's a reasonable change, but unfortunately some code relies on
+  the old behavior - when changing logger configuration, it simply drops the
+  logger reference. That means that the garbage collector is free to reclaim
+  that memory, which means that the logger configuration is lost. For example,
+consider:
+</p>
+
+<p><pre>public static void initLogging() throws Exception {
+ Logger logger = Logger.getLogger("edu.umd.cs");
+ logger.addHandler(new FileHandler()); // call to change logger configuration
+ logger.setUseParentHandlers(false); // another call to change logger configuration
+}</pre></p>
+
+<p>The logger reference is lost at the end of the method (it doesn't
+escape the method), so if you have a garbage collection cycle just
+after the call to initLogging, the logger configuration is lost
+(because Logger only keeps weak references).</p>
+
+<p><pre>public static void main(String[] args) throws Exception {
+ initLogging(); // adds a file handler to the logger
+ System.gc(); // logger configuration lost
+ Logger.getLogger("edu.umd.cs").info("Some message"); // this isn't logged to the file as expected
+}</pre></p>
+<p><em>Ulf Ochsenfahrt and Eric Fellheimer</em></p>
+		  
+	  ]]>
+    </info>
+    <name>Potential lost logger changes due to weak reference in OpenJDK</name>
+  </findingType>
 </findingTypes>
