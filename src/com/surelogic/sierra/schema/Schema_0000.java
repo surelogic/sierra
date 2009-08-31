@@ -16,9 +16,11 @@ public class Schema_0000 implements SchemaAction {
 		FindBugs1_3_8ToolInfoGenerator.generateTool(conn);
 		PMD4_2_5ToolInfoGenerator.generateTool(conn);
 //		JSure1_1ToolInfoGenerator.generateTool(conn);
+		/*
 		SchemaUtil.updateFindingTypes(conn);
 		SchemaUtil.setupLocalScanFilter(conn);
 		SchemaUtil.generateBuglinkCategories(conn);
+		*/
 	}
 
 }
