@@ -128,6 +128,7 @@ public final class Tools {
 					final Map<IToolExtension, List<ArtifactType>> newExtensions = new HashMap<IToolExtension, List<ArtifactType>>();
 					for (final IToolFactory t : factories) {
 						for (final IToolExtension e : t.getExtensions()) {
+							//System.out.println("Ext: "+e.getId());
 							final List<ArtifactType> unknown = new ArrayList<ArtifactType>();
 							for (final ArtifactType a : e.getArtifactTypes()) {
 								if (!knownTypes.contains(a)) {
@@ -220,33 +221,46 @@ public final class Tools {
 
 	private static void setupDatabase(final Query q, final FindingTypes ft,
 			final IToolExtension te, final List<ArtifactType> unknown) {
+		//System.out.println(te.getId());
 		Collections.sort(unknown);
-		File tef = te.getJar();
-		do {
-			tef = tef.getParentFile();
-		} while (tef.getParent() != null
-				&& !tef.getParentFile().equals(
-						ToolUtil.getSierraToolDirectory()));
-		if (tef == null) {
-			throw new IllegalStateException("The extension" + te.getId()
-					+ " does not appear to be under the sierra data directory.");
-		}
-		final ExtensionDO ext = new ExtensionDO(te.getId(), te.getVersion(),
-				tef.getPath());
-		for (final ArtifactType a : unknown) {
-			// SLLogger.getLogger().warning("Couldn't find "+a.type+" for "+a.tool+", v"+a.version);
-			System.out.println("Couldn't find " + a.type + " for " + a.tool
-					+ ", v" + a.toolVersion);
-			if (a.getFindingType() == null) {
-				final FindingTypeDO ftDO = new FindingTypeDO();
-				ftDO.setName(a.type);
-				ftDO.setUid(a.type);
-				ftDO.setShortMessage(a.type);
-				ftDO.setInfo(a.type);
-				a.setFindingType(a.type);
-				ext.addFindingType(ftDO);
+		String extPath = "";
+		if (!te.isCore()) {
+			File tef = te.getJar();
+			do {
+				tef = tef.getParentFile();
+			} while (tef.getParent() != null
+					&& !tef.getParentFile().equals(
+							ToolUtil.getSierraToolDirectory()));
+			if (tef == null) {
+				throw new IllegalStateException("The extension" + te.getId()
+						+ " does not appear to be under the sierra data directory.");
 			}
+			extPath = tef.getPath();
+		}
+		
+		final ExtensionDO ext = new ExtensionDO(te.getId(), te.getVersion(), extPath);
+		for (final ArtifactType a : unknown) {
+			//SLLogger.getLogger().warning("Couldn't find "+a.type+" for "+a.tool+", v"+a.toolVersion);
+			/*System.out.println("Couldn't find " + a.type + " for " + a.tool
+					+ ", v" + a.toolVersion);
+            */
+			if (a.getFindingType() == null) {
+				// Check if there's already a finding type with the same name
+				if (ft.getFindingType(a.type) == null) {
+				    //System.out.println(a.type);
+					
+					final FindingTypeDO ftDO = new FindingTypeDO();
+					ftDO.setName(a.type);
+					ftDO.setUid(a.type);
+					ftDO.setShortMessage(a.type);
+					ftDO.setInfo(a.type);					
+					ext.addFindingType(ftDO);
 
+				} else {
+					//System.out.println("Exists: "+a.type);
+				}
+				a.setFindingType(a.type);
+			}
 			final ArtifactTypeDO aDO = new ArtifactTypeDO(a.tool, a.type,
 					a.type, a.toolVersion);
 			ext.addType(a.getFindingType(), aDO);
