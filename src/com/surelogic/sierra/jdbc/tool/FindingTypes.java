@@ -82,6 +82,9 @@ public class FindingTypes {
 		}
 		final FindingTypeDO t = q.prepared("FindingTypes.findByUid",
 				new FindingTypeDOHandler()).call(uid);
+		if (t == null) {
+			return t;
+		}
 		t.getArtifactTypes().addAll(
 				q.prepared("FindingTypes.findArtifactTypeById",
 						new ArtifactTypeDOHandler()).call(t.getId()));
