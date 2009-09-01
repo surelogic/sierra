@@ -35,7 +35,7 @@ public final class FilterProject extends Filter {
 	protected void deriveAllValues() {
 		final List<String> projectNames = Projects.getInstance()
 				.getProjectNames();
-		Collections.sort(projectNames);
+		Collections.sort(projectNames, String.CASE_INSENSITIVE_ORDER);
 		synchronized (this) {
 			f_allValues.clear();
 			f_allValues.addAll(projectNames);
