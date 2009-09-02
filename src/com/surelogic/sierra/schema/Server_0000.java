@@ -70,6 +70,6 @@ public class Server_0000 implements SchemaAction {
 		} finally {
 			st.close();
 		}
-		SchemaUtil.setupServerScanFilter(c, serverUuid);
+
 	}
 }

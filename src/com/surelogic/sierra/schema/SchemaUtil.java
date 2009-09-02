@@ -125,8 +125,13 @@ public class SchemaUtil {
 	static void setupServerScanFilter(final Connection c,
 			final String serverUuid) {
 		final Query q = new ConnectionQuery(c);
-		if (q.prepared("ScanFilters.selectDefault", new StringResultHandler())
-				.call().equals(SettingQueries.LOCAL_UUID)) {
+		final String defaul = q.prepared("ScanFilters.selectDefault",
+				new StringResultHandler()).call();
+		if (defaul == null) {
+			throw new IllegalStateException(
+					"There must be a default scan filter.");
+		}
+		if (SettingQueries.LOCAL_UUID.equals(defaul)) {
 			final String newUuid = UUID.randomUUID().toString();
 			q.prepared("ScanFilters.updateUuid").call(newUuid,
 					SettingQueries.LOCAL_UUID);
