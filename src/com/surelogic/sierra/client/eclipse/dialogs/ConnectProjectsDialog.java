@@ -56,16 +56,18 @@ public final class ConnectProjectsDialog extends Dialog {
 
 	private Mediator f_mediator = null;
 
-	public ConnectProjectsDialog(Shell parentShell) {
+	public ConnectProjectsDialog(final Shell parentShell) {
 		super(parentShell);
 		setShellStyle(getShellStyle() | SWT.RESIZE | SWT.MAX);
-		if (f_server == null)
+		if (f_server == null) {
 			throw new IllegalStateException(
 					"server of focus must be non-null (bug)");
-		List<IJavaProject> projects = JDTUtility.getJavaProjects();
-		List<String> scannedProjects = disallowUnscannedProjects ? Projects
-				.getInstance().getProjectNames() : null;
-		Iterator<IJavaProject> it = projects.iterator();
+		}
+		final List<IJavaProject> projects = JDTUtility.getJavaProjects();
+		final List<String> scannedProjects = disallowUnscannedProjects ? Projects
+				.getInstance().getProjectNames()
+				: null;
+		final Iterator<IJavaProject> it = projects.iterator();
 		while (it.hasNext()) {
 			final String projectName = it.next().getElementName();
 			if (f_manager.isConnected(projectName)) {
@@ -77,7 +79,7 @@ public final class ConnectProjectsDialog extends Dialog {
 			}
 		}
 		Collections.sort(projects, new Comparator<IJavaProject>() {
-			public int compare(IJavaProject o1, IJavaProject o2) {
+			public int compare(final IJavaProject o1, final IJavaProject o2) {
 				return o1.getElementName().compareTo(o2.getElementName());
 			}
 
@@ -86,8 +88,8 @@ public final class ConnectProjectsDialog extends Dialog {
 	}
 
 	@Override
-	protected Control createDialogArea(Composite parent) {
-		Composite panel = (Composite) super.createDialogArea(parent);
+	protected Control createDialogArea(final Composite parent) {
+		final Composite panel = (Composite) super.createDialogArea(parent);
 		final GridLayout gridLayout = new GridLayout();
 		panel.setLayout(gridLayout);
 
@@ -106,8 +108,8 @@ public final class ConnectProjectsDialog extends Dialog {
 
 		final Table projectTable = new Table(projectGroup, SWT.CHECK);
 
-		for (IJavaProject p : f_unconnectedProjects) {
-			TableItem item = new TableItem(projectTable, SWT.NONE);
+		for (final IJavaProject p : f_unconnectedProjects) {
+			final TableItem item = new TableItem(projectTable, SWT.NONE);
 			item.setText(p.getElementName());
 			item.setData(p);
 			item.setImage(SLImages.getImage(CommonImages.IMG_PROJECT));
@@ -137,13 +139,14 @@ public final class ConnectProjectsDialog extends Dialog {
 	@Override
 	protected final Control createContents(final Composite parent) {
 		final Control contents = super.createContents(parent);
-		if (f_mediator != null)
+		if (f_mediator != null) {
 			f_mediator.setOKState();
+		}
 		return contents;
 	}
 
 	@Override
-	protected void configureShell(Shell newShell) {
+	protected void configureShell(final Shell newShell) {
 		super.configureShell(newShell);
 		newShell.setText("Connect Projects");
 		newShell.setImage(SLImages.getImage(CommonImages.IMG_SIERRA_SERVER));
@@ -151,8 +154,9 @@ public final class ConnectProjectsDialog extends Dialog {
 
 	@Override
 	protected void okPressed() {
-		if (f_mediator != null)
+		if (f_mediator != null) {
 			f_mediator.okPressed();
+		}
 		super.okPressed();
 	}
 
@@ -164,7 +168,8 @@ public final class ConnectProjectsDialog extends Dialog {
 
 		private final Table f_projectTable;
 
-		Mediator(Button allButton, Button noneButton, Table projectTable) {
+		Mediator(final Button allButton, final Button noneButton,
+				final Table projectTable) {
 			f_allButton = allButton;
 			f_noneButton = noneButton;
 			f_projectTable = projectTable;
@@ -172,12 +177,12 @@ public final class ConnectProjectsDialog extends Dialog {
 
 		private void init() {
 			f_allButton.addListener(SWT.Selection, new Listener() {
-				public void handleEvent(Event event) {
+				public void handleEvent(final Event event) {
 					setCheckedAll(true);
 				}
 			});
 			f_noneButton.addListener(SWT.Selection, new Listener() {
-				public void handleEvent(Event event) {
+				public void handleEvent(final Event event) {
 					setCheckedAll(false);
 				}
 			});
@@ -208,14 +213,14 @@ public final class ConnectProjectsDialog extends Dialog {
 		}
 
 		private void setCheckedAll(final boolean value) {
-			for (TableItem item : f_projectTable.getItems()) {
+			for (final TableItem item : f_projectTable.getItems()) {
 				item.setChecked(value);
 			}
 			setOKState();
 		}
 
 		private void okPressed() {
-			for (TableItem item : f_projectTable.getItems()) {
+			for (final TableItem item : f_projectTable.getItems()) {
 				if (!item.getChecked()) {
 					f_unconnectedProjects.remove(item.getData());
 				}
@@ -225,10 +230,10 @@ public final class ConnectProjectsDialog extends Dialog {
 			final Job job = new Job("Connecting projects to "
 					+ f_server.getName()) {
 				@Override
-				protected IStatus run(IProgressMonitor monitor) {
-					ServerInfoService s = ServerInfoServiceClient
+				protected IStatus run(final IProgressMonitor monitor) {
+					final ServerInfoService s = ServerInfoServiceClient
 							.create(f_server.getLocation());
-					ServerInfoReply reply = s
+					final ServerInfoReply reply = s
 							.getServerInfo(new ServerInfoRequest());
 					if (reply == null || reply.getUid() == null) {
 						showMessageDialog("Bad response",
@@ -240,7 +245,7 @@ public final class ConnectProjectsDialog extends Dialog {
 								"The project(s) could not be connected, because the server has changed.");
 						return Status.CANCEL_STATUS;
 					}
-					for (IJavaProject p : projects) {
+					for (final IJavaProject p : projects) {
 						f_manager.connect(p.getElementName(), f_server);
 					}
 
