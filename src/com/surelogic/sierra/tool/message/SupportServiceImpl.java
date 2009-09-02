@@ -26,9 +26,10 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
 import com.surelogic.common.logging.SLLogger;
-import com.surelogic.sierra.message.srpc.SRPCServlet;
+import com.surelogic.sierra.message.srpc.MultiPartSRPCServlet;
 
-public class SupportServiceImpl extends SRPCServlet implements SupportService {
+public class SupportServiceImpl extends MultiPartSRPCServlet implements
+		SupportService {
 	private static final long serialVersionUID = 4144761373500031238L;
 	static {
 		SLLogger.getLogger().warning("Starting SupportService");
@@ -103,7 +104,7 @@ public class SupportServiceImpl extends SRPCServlet implements SupportService {
 			props.put("mail.smtp.port", port);
 		}
 		Authenticator auth;
-		if ((user != null) && (user.length() > 0)) {
+		if (user != null && user.length() > 0) {
 			auth = new Authenticator() {
 				@Override
 				protected PasswordAuthentication getPasswordAuthentication() {
@@ -116,8 +117,8 @@ public class SupportServiceImpl extends SRPCServlet implements SupportService {
 		final Session session = Session.getInstance(props, auth);
 		try {
 			final MimeMessage msg = new MimeMessage(session);
-			msg.setSender(new InternetAddress(
-					((from == null) || (from.length() == 0)) ? to : from));
+			msg.setSender(new InternetAddress(from == null
+					|| from.length() == 0 ? to : from));
 			msg.setRecipient(Message.RecipientType.TO, new InternetAddress(to));
 			msg.setSubject(subject);
 			msg.setSentDate(new Date());

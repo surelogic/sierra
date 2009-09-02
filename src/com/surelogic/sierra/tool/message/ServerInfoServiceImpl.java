@@ -13,9 +13,9 @@ import com.surelogic.common.jdbc.RowHandler;
 import com.surelogic.sierra.jdbc.server.ConnectionFactory;
 import com.surelogic.sierra.jdbc.server.Server;
 import com.surelogic.sierra.jdbc.server.ServerTransaction;
-import com.surelogic.sierra.message.srpc.SRPCServlet;
+import com.surelogic.sierra.message.srpc.MultiPartSRPCServlet;
 
-public class ServerInfoServiceImpl extends SRPCServlet implements
+public class ServerInfoServiceImpl extends MultiPartSRPCServlet implements
 		ServerInfoService {
 	private static final long serialVersionUID = 557394723869102797L;
 
@@ -49,6 +49,7 @@ public class ServerInfoServiceImpl extends SRPCServlet implements
 
 	@Override
 	public void init(final ServletConfig config) throws ServletException {
+		super.init(config);
 		synchronized (reply) {
 			final List<Services> services = reply.getServices();
 			if ("on".equals(config.getServletContext().getInitParameter(
@@ -67,6 +68,10 @@ public class ServerInfoServiceImpl extends SRPCServlet implements
 					}));
 
 		}
+	}
+
+	public String getVersion() {
+		return "2.2.1";
 	}
 
 }
