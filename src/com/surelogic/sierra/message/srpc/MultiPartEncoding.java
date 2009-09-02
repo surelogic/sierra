@@ -70,6 +70,7 @@ class MultiPartEncoding {
 		final Set<Class<?>> classes = new HashSet<Class<?>>();
 		classes.add(Failure.class);
 		classes.add(RaisedException.class);
+		classes.add(InvalidVersion.class);
 		// TODO rework this to use MessageWarehouse, or figure out how to
 		// properly annotate extension.
 		classes.add(FileTarget.class);
@@ -171,6 +172,11 @@ class MultiPartEncoding {
 					.getMethod().getReturnType());
 
 		} catch (final Exception e) {
+			if (e instanceof InvalidVersionException) {
+				throw (InvalidVersionException) e;
+			} else if (e instanceof ServiceInvocationException) {
+				throw (ServiceInvocationException) e;
+			}
 			throw new SRPCException(e);
 		}
 	}

@@ -33,22 +33,27 @@ public abstract class MultiPartSRPCServlet extends HttpServlet {
 			Object response;
 			try {
 				MethodInvocation method = null;
+				Class<?> returnType = null;
 				try {
 					method = codec.decodeMethodInvocation(req);
 					try {
 						response = method.invoke(this);
 						status = ResponseStatus.OK;
+						returnType = method.getMethod().getReturnType();
 					} catch (final InvocationTargetException e) {
 						response = new RaisedException(e.getCause());
 						status = ResponseStatus.RAISED;
+						returnType = RaisedException.class;
 					}
-					codec.encodeResponse(resp.getOutputStream(), status,
-							response, method.getMethod().getReturnType());
 				} catch (final InvalidVersionException e) {
-					response = new InvalidVersion();
+					response = new InvalidVersion(e.getServiceVersion(), e
+							.getClientVersion());
 					status = ResponseStatus.VERSION;
+					returnType = InvalidVersion.class;
 				}
-				log.info("Request: " + method + "Response Status: " + status);
+				codec.encodeResponse(resp.getOutputStream(), status, response,
+						returnType);
+				log.info("Request: " + method + " Response Status: " + status);
 			} catch (final SRPCException e) {
 				// If we had some type of general messaging/processing
 				// exception, send a failure.
