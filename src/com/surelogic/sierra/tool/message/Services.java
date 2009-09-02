@@ -4,5 +4,5 @@ import javax.xml.bind.annotation.XmlType;
 
 @XmlType
 public enum Services {
-	BUGLINK, TEAMSERVER
+	BUGLINK, TEAMSERVER,
 }

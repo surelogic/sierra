@@ -12,9 +12,14 @@ enum ResponseStatus {
 	FAIL((byte) 'f'),
 	/**
 	 * A checked exception was raised on the server. It will be propagated
-	 * through the client,
+	 * through to the client.
 	 */
-	RAISED((byte) 'r');
+	RAISED((byte) 'r'),
+	/**
+	 * The client made a request to the server, but it used a different version
+	 * of the protocol.
+	 */
+	VERSION((byte) 'v');
 
 	private final byte f_byte;
 

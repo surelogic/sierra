@@ -39,6 +39,7 @@ import org.apache.commons.httpclient.methods.multipart.StringPart;
 
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.tool.message.InvalidLoginException;
+import com.surelogic.sierra.tool.message.InvalidVersionException;
 import com.surelogic.sierra.tool.message.SierraServiceClientException;
 import com.surelogic.sierra.tool.targets.FileTarget;
 import com.surelogic.sierra.tool.targets.FilteredDirectoryTarget;
@@ -61,6 +62,7 @@ class MultiPartEncoding {
 	private final JAXBContext context;
 	private final Class<?> service;
 	private final boolean compressed;
+	private final String serviceVersion;
 
 	private MultiPartEncoding(final Class<?> service, final boolean compressed) {
 		this.service = service;
@@ -74,6 +76,13 @@ class MultiPartEncoding {
 		classes.add(JarTarget.class);
 		classes.add(FullDirectoryTarget.class);
 		classes.add(FilteredDirectoryTarget.class);
+		final Service ann = service.getAnnotation(Service.class);
+		if (ann == null) {
+			throw new IllegalArgumentException(
+					service
+							+ " must be annotated with com.surelogic.sierra.message.srpc.Service");
+		}
+		serviceVersion = ann.version();
 		for (final Method m : service.getDeclaredMethods()) {
 			classes.add(m.getReturnType());
 			for (final Class<?> clazz : m.getParameterTypes()) {
@@ -92,6 +101,7 @@ class MultiPartEncoding {
 	 * the decoded response from the server.
 	 * 
 	 * @param client
+	 * @param version
 	 * @param invocation
 	 * @return
 	 */
@@ -102,7 +112,7 @@ class MultiPartEncoding {
 			final Class<?>[] classes = invocation.getMethod()
 					.getParameterTypes();
 			final Object[] args = invocation.getArgs();
-			final Part[] parts = new Part[classes.length + 1];
+			final Part[] parts = new Part[classes.length + 2];
 			final List<File> temps = new ArrayList<File>();
 			final Marshaller m;
 			try {
@@ -110,7 +120,8 @@ class MultiPartEncoding {
 			} catch (final JAXBException e) {
 				throw new SRPCException(e);
 			}
-			parts[0] = new StringPart("method", invocation.getMethod()
+			parts[0] = new StringPart("version", serviceVersion, CHARSET);
+			parts[1] = new StringPart("method", invocation.getMethod()
 					.getName(), CHARSET);
 			for (int i = 0; i < classes.length; i++) {
 				if (File.class.isAssignableFrom(classes[i])) {
@@ -125,7 +136,7 @@ class MultiPartEncoding {
 						} finally {
 							o.close();
 						}
-						parts[i + 1] = new FilePart(Integer.toString(i), tmp);
+						parts[i + 2] = new FilePart(Integer.toString(i), tmp);
 					} catch (final IOException e) {
 						throw new SRPCException(e);
 					}
@@ -164,6 +175,19 @@ class MultiPartEncoding {
 		}
 	}
 
+	/**
+	 * Decode a method invocation from the given request. Performs version
+	 * checking to make sure the client protocol is compatible with this
+	 * protocol.
+	 * 
+	 * @param req
+	 * @return
+	 * @throws SRPCException
+	 *             if something goes wrong
+	 * @throws InvalidVersionException
+	 *             if the request uses a different protocol version than this
+	 *             service
+	 */
 	@SuppressWarnings("unchecked")
 	MethodInvocation decodeMethodInvocation(final HttpServletRequest req) {
 		if (!ServletFileUpload.isMultipartContent(req)) {
@@ -174,62 +198,69 @@ class MultiPartEncoding {
 		final ServletFileUpload upload = new ServletFileUpload(factory);
 		try {
 			final List<FileItem> items = upload.parseRequest(req);
-			String methodName = null;
+			String version = null;
 			for (final FileItem item : items) {
-				if (item.isFormField()) {
-					if ("method".equals(item.getFieldName())) {
-						methodName = item.getString();
-						break;
-					}
+				if (item.isFormField() && "version".equals(item.getFieldName())) {
+					version = item.getString();
+					break;
 				}
 			}
-			if (methodName != null) {
-				for (final Method m : service.getMethods()) {
-					if (methodName.equals(m.getName())) {
-						final Class<?>[] params = m.getParameterTypes();
-						final Object[] args = new Object[params.length];
-						try {
-							final Unmarshaller um = context
-									.createUnmarshaller();
-							for (final FileItem item : items) {
-								if (!item.isFormField()) {
-									try {
-										final int i = Integer.parseInt(item
-												.getFieldName());
-										if (File.class
-												.isAssignableFrom(params[i])) {
-											final File file = File
-													.createTempFile("sierra",
-															"tmp");
-											item.write(file);
-											args[i] = file;
-										} else {
-											final InputStream in = wrap(item
-													.getInputStream());
-											try {
-												args[i] = um.unmarshal(in);
-											} finally {
-												in.close();
-											}
-										}
-									} catch (final NumberFormatException e) {
-										// Not a recognized form element, we'll
-										// just ignore it
-									}
-								}
-							}
-							return new MethodInvocation(m, args);
-						} catch (final Exception e) {
-							throw new SRPCException(e);
-						}
-					}
+			if (version == null) {
+				throw new SRPCException(
+						"No version was associated with the request");
+			} else if (!serviceVersion.equals(version)) {
+				throw new InvalidVersionException(serviceVersion, version);
+			}
+			String methodName = null;
+			for (final FileItem item : items) {
+				if (item.isFormField() && "method".equals(item.getFieldName())) {
+					methodName = item.getString();
+					break;
 				}
-				throw new SRPCException(methodName
-						+ " is not a valid method on this service");
-			} else {
+			}
+			if (methodName == null) {
 				throw new SRPCException(
 						"No method name was specified on a request.");
 			}
+			for (final Method m : service.getMethods()) {
+				if (methodName.equals(m.getName())) {
+					final Class<?>[] params = m.getParameterTypes();
+					final Object[] args = new Object[params.length];
+					try {
+						final Unmarshaller um = context.createUnmarshaller();
+						for (final FileItem item : items) {
+							if (!item.isFormField()) {
+								try {
+									final int i = Integer.parseInt(item
+											.getFieldName());
+									if (File.class.isAssignableFrom(params[i])) {
+										final File file = File.createTempFile(
+												"sierra", "tmp");
+										item.write(file);
+										args[i] = file;
+									} else {
+										final InputStream in = wrap(item
+												.getInputStream());
+										try {
+											args[i] = um.unmarshal(in);
+										} finally {
+											in.close();
+										}
+									}
+								} catch (final NumberFormatException e) {
+									// Not a recognized form element, we'll
+									// just ignore it
+								}
+							}
+						}
+						return new MethodInvocation(m, args);
+					} catch (final Exception e) {
+						throw new SRPCException(e);
+					}
+				}
+			}
+			throw new SRPCException(methodName
+					+ " is not a valid method on this service");
 		} catch (final FileUploadException e) {
 			throw new SRPCException(e);
 		}
@@ -295,6 +326,11 @@ class MultiPartEncoding {
 				final Failure failure = (Failure) value;
 				throw new ServiceInvocationException(failure.getMessage()
 						+ "\n" + failure.getTrace());
+			case VERSION:
+				final InvalidVersion iv = (InvalidVersion) value;
+				final InvalidVersionException exc = new InvalidVersionException(
+						iv.getServerVersion(), iv.getClientVersion());
+				throw exc;
 			default:
 				throw new IllegalStateException("Unknown response type.");
 			}

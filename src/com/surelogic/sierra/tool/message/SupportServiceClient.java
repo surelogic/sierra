@@ -1,6 +1,6 @@
 package com.surelogic.sierra.tool.message;
 
-import com.surelogic.sierra.message.srpc.SRPCClient;
+import com.surelogic.sierra.message.srpc.MultiPartSRPCClient;
 
 /**
  * Utility class for generating proxies that call the Sierra client web service.
@@ -12,6 +12,7 @@ import com.surelogic.sierra.message.srpc.SRPCClient;
 public class SupportServiceClient {
 
 	public static SupportService create(final ServerLocation location) {
-		return SRPCClient.createClient(location, SupportService.class, true);
+		return MultiPartSRPCClient.createClient(location, SupportService.class,
+				true);
 	}
 }

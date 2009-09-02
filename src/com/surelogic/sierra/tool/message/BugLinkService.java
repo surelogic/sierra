@@ -4,8 +4,8 @@ import java.io.File;
 
 import com.surelogic.sierra.message.srpc.Service;
 
-public interface BugLinkService extends Service {
-	public static final String VERSION = "2.2";
+@Service(version = "2.2.1")
+public interface BugLinkService {
 
 	/**
 	 * Ask for the list of categories available on this server..

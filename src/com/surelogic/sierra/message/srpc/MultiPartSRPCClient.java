@@ -80,11 +80,7 @@ public class MultiPartSRPCClient implements InvocationHandler {
 	public static <T> T createClient(final ServerLocation location,
 			final Class<T> clazz, final boolean compressed)
 			throws SRPCException {
-		if (!Service.class.isAssignableFrom(clazz)) {
-			throw new IllegalArgumentException(
-					clazz
-							+ " must be an implementation of com.surelogic.sierra.message.srpc.Service");
-		}
+
 		return clazz.cast(Proxy.newProxyInstance(clazz.getClassLoader(),
 				new Class[] { clazz }, new MultiPartSRPCClient(clazz
 						.getDeclaredMethods(), MultiPartEncoding.getEncoding(

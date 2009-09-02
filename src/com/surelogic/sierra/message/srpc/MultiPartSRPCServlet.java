@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.surelogic.common.logging.SLLogger;
+import com.surelogic.sierra.tool.message.InvalidVersionException;
 
 public abstract class MultiPartSRPCServlet extends HttpServlet {
 
@@ -31,17 +32,22 @@ public abstract class MultiPartSRPCServlet extends HttpServlet {
 			ResponseStatus status;
 			Object response;
 			try {
-				final MethodInvocation method = codec
-						.decodeMethodInvocation(req);
+				MethodInvocation method = null;
 				try {
-					response = method.invoke(this);
-					status = ResponseStatus.OK;
-				} catch (final InvocationTargetException e) {
-					response = new RaisedException(e.getCause());
-					status = ResponseStatus.RAISED;
+					method = codec.decodeMethodInvocation(req);
+					try {
+						response = method.invoke(this);
+						status = ResponseStatus.OK;
+					} catch (final InvocationTargetException e) {
+						response = new RaisedException(e.getCause());
+						status = ResponseStatus.RAISED;
+					}
+					codec.encodeResponse(resp.getOutputStream(), status,
+							response, method.getMethod().getReturnType());
+				} catch (final InvalidVersionException e) {
+					response = new InvalidVersion();
+					status = ResponseStatus.VERSION;
 				}
-				codec.encodeResponse(resp.getOutputStream(), status, response,
-						method.getMethod().getReturnType());
 				log.info("Request: " + method + "Response Status: " + status);
 			} catch (final SRPCException e) {
 				// If we had some type of general messaging/processing
@@ -69,7 +75,8 @@ public abstract class MultiPartSRPCServlet extends HttpServlet {
 	public void init() throws ServletException {
 		super.init();
 		for (final Class<?> c : this.getClass().getInterfaces()) {
-			if (Service.class.isAssignableFrom(c)) {
+			System.out.println(c.getSimpleName());
+			if (c.getAnnotation(Service.class) != null) {
 				codec = MultiPartEncoding.getEncoding(c);
 				return;
 			}

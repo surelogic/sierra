@@ -1,7 +1,8 @@
 package com.surelogic.sierra.tool.registration;
 
-import com.surelogic.sierra.message.srpc.SRPCClient;
+import com.surelogic.sierra.message.srpc.MultiPartSRPCClient;
 import com.surelogic.sierra.tool.message.ServerLocation;
+import com.surelogic.sierra.tool.message.SierraServiceClientException;
 
 /**
  * Utility class for generating proxies that call the SureLogic registration web
@@ -16,7 +17,8 @@ import com.surelogic.sierra.tool.message.ServerLocation;
  */
 public class RegistrationClient {
 
-	public static Registration create(ServerLocation location) {
-		return SRPCClient.createClient(location, Registration.class, true);
+	public static Registration create(final ServerLocation location) {
+		return MultiPartSRPCClient.createClient(location, Registration.class,
+				true);
 	}
 }
