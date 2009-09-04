@@ -9,6 +9,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 
+import com.surelogic.common.eclipse.BalloonUtility;
 import com.surelogic.common.eclipse.SWTUtility;
 import com.surelogic.sierra.client.eclipse.jobs.ServerProjectGroupJob;
 import com.surelogic.sierra.client.eclipse.jobs.SynchronizeJob;
@@ -62,10 +63,21 @@ public class SynchronizeAllProjectsAction implements
 	public void run(final IAction action) {
 		final ConnectedServerManager manager = ConnectedServerManager
 				.getInstance();
+		setTime();
+		
+		if (manager.isEmpty()) {
+			switch (f_strategy) {
+			case SHOW_BALLOON:
+			case SHOW_DIALOG:
+				BalloonUtility.showMessage("No servers to sync", "There are no servers to synchronize");
+				return;
+			case IGNORE:
+				return;
+			}
+		} 		
+				
 		final ServerProjectGroupJob joinJob = new ServerProjectGroupJob(manager
 				.getServers());
-
-		setTime();
 
 		int totalDelay = 0;
 		for (final ConnectedServer server : manager.getServers()) {
