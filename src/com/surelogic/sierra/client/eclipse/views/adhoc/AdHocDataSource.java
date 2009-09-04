@@ -102,4 +102,8 @@ public final class AdHocDataSource extends AdHocManagerAdapter implements
 	public String getEditorViewId() {
 		return QueryEditorView.class.getName();
 	}
+
+	public String getCurrentAccessKey() {
+		return "sierra";
+	}
 }
