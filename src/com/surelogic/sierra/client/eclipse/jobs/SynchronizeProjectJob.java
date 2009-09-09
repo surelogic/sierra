@@ -7,7 +7,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
-import com.surelogic.common.eclipse.jobs.DatabaseAccessRule;
+import com.surelogic.common.eclipse.jobs.KeywordAccessRule;
 import com.surelogic.common.eclipse.jobs.SLProgressMonitorWrapper;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.jdbc.DBTransaction;
@@ -55,7 +55,7 @@ public class SynchronizeProjectJob extends AbstractServerProjectJob {
 		super(family, "Synchronizing Sierra data for project '" + projectName
 				+ "'", server, projectName, strategy);
 		f_force = force;
-		setRule(DatabaseAccessRule.getInstance(JobConstants.ACCESS_KEY));
+		setRule(KeywordAccessRule.getInstance(JobConstants.ACCESS_KEY));
 	}
 
 	@Override

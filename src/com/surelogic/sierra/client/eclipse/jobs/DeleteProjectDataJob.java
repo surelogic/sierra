@@ -18,7 +18,7 @@ import org.eclipse.ui.progress.UIJob;
 
 import com.surelogic.common.eclipse.SWTUtility;
 import com.surelogic.common.eclipse.dialogs.ErrorDialogUtility;
-import com.surelogic.common.eclipse.jobs.DatabaseAccessRule;
+import com.surelogic.common.eclipse.jobs.KeywordAccessRule;
 import com.surelogic.common.eclipse.jobs.SLProgressMonitorWrapper;
 import com.surelogic.common.eclipse.jobs.SLUIJob;
 import com.surelogic.common.eclipse.logging.SLEclipseStatusUtility;
@@ -48,7 +48,7 @@ public final class DeleteProjectDataJob implements IRunnableWithProgress {
 		try {
 			PlatformUI.getWorkbench().getProgressService().runInUI(
 					PlatformUI.getWorkbench().getActiveWorkbenchWindow(), this,
-					DatabaseAccessRule.getInstance(JobConstants.ACCESS_KEY));
+					KeywordAccessRule.getInstance(JobConstants.ACCESS_KEY));
 		} catch (Exception e) {
 			SLLogger.getLogger().log(Level.SEVERE, f_jobFailureMsg, e);
 		}
