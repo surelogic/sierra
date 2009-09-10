@@ -21,6 +21,7 @@ import org.eclipse.ui.actions.ActionFactory;
 import com.surelogic.common.CommonImages;
 import com.surelogic.common.XUtil;
 import com.surelogic.common.eclipse.CascadingList;
+import com.surelogic.common.eclipse.DemoProjectAction;
 import com.surelogic.common.eclipse.EclipseUtility;
 import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.sierra.client.eclipse.jsure.ImportJSureAction;
@@ -153,36 +154,10 @@ public final class FindingsSelectionView extends AbstractSierraView<FindingsSele
 
 		if (PreferenceConstants.showDemoProjectActions()) {
 			addToViewMenu(new Separator());
-
-			final Action smallWorldAction = new Action("Create SmallWorld") {
-				@Override
-				public void run() {
-					URL source = getClass().getResource("/resources/SmallWorld.zip");
-					try {
-						EclipseUtility.unzipToWorkspace(source);
-					} catch (CoreException e) {
-						e.printStackTrace(); // TODO
-					} catch (IOException e) {
-						e.printStackTrace(); // TODO
-					}
-				}
-			};
-			addToViewMenu(smallWorldAction);
-
-			final Action showOffAction = new Action("Create ShowOff") {
-				@Override
-				public void run() {
-					URL source = getClass().getResource("/resources/ShowOff.zip");
-					try {
-						EclipseUtility.unzipToWorkspace(source);
-					} catch (CoreException e) {
-						e.printStackTrace(); // TODO
-					} catch (IOException e) {
-						e.printStackTrace(); // TODO
-					}
-				}
-			};
-			addToViewMenu(showOffAction);
+			addToViewMenu(new DemoProjectAction("Create SmallWorld", 
+					      getClass().getResource("/resources/SmallWorld.zip")));
+			addToViewMenu(new DemoProjectAction("Create ShowOff",
+				          getClass().getResource("/resources/ShowOff.zip")));
 		}
 		if (XUtil.useExperimental()) {			
 			final Action jsureAction = new Action("Import JSure Document") {
