@@ -1,6 +1,11 @@
 package com.surelogic.sierra.client.eclipse.views.selection;
 
+import java.io.IOException;
+import java.net.URL;
+
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -16,8 +21,10 @@ import org.eclipse.ui.actions.ActionFactory;
 import com.surelogic.common.CommonImages;
 import com.surelogic.common.XUtil;
 import com.surelogic.common.eclipse.CascadingList;
+import com.surelogic.common.eclipse.EclipseUtility;
 import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.sierra.client.eclipse.jsure.ImportJSureAction;
+import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
 import com.surelogic.sierra.client.eclipse.views.AbstractSierraView;
 import com.surelogic.sierra.client.eclipse.wizards.FindingSearchExportWizard;
 import com.surelogic.sierra.client.eclipse.wizards.FindingSearchImportWizard;
@@ -143,7 +150,40 @@ public final class FindingsSelectionView extends AbstractSierraView<FindingsSele
 			}
 		};
 		addToViewMenu(exportAction);
-		
+
+		if (PreferenceConstants.showDemoProjectActions()) {
+			addToViewMenu(new Separator());
+
+			final Action smallWorldAction = new Action("Create SmallWorld") {
+				@Override
+				public void run() {
+					URL source = getClass().getResource("/resources/SmallWorld.zip");
+					try {
+						EclipseUtility.unzipToWorkspace(source);
+					} catch (CoreException e) {
+						e.printStackTrace(); // TODO
+					} catch (IOException e) {
+						e.printStackTrace(); // TODO
+					}
+				}
+			};
+			addToViewMenu(smallWorldAction);
+
+			final Action showOffAction = new Action("Create ShowOff") {
+				@Override
+				public void run() {
+					URL source = getClass().getResource("/resources/ShowOff.zip");
+					try {
+						EclipseUtility.unzipToWorkspace(source);
+					} catch (CoreException e) {
+						e.printStackTrace(); // TODO
+					} catch (IOException e) {
+						e.printStackTrace(); // TODO
+					}
+				}
+			};
+			addToViewMenu(showOffAction);
+		}
 		if (XUtil.useExperimental()) {			
 			final Action jsureAction = new Action("Import JSure Document") {
 				@Override

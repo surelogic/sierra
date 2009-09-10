@@ -281,6 +281,17 @@ public class PreferenceConstants implements IPreferenceConstants {
 			throw new IllegalArgumentException("Bad directory: " + dir);
 		}
 	}
+	
+	public static final String P_SHOW_DEMO_ACTIONS = PREFIX+"show-demo-actions";
+	
+	public static boolean showDemoProjectActions() {
+		return Activator.getDefault().getPluginPreferences().getBoolean(P_SHOW_DEMO_ACTIONS);
+	}
+	
+	public static void showDemoProjectActions(boolean val) {
+		Activator.getDefault().getPluginPreferences().setValue(
+				P_SHOW_DEMO_ACTIONS, val);
+	}
 
 	private PreferenceConstants() {
 		// Nothing to do

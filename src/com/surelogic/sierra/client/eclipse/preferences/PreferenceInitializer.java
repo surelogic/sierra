@@ -58,6 +58,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 				ServerFailureReport.SHOW_BALLOON.toString());
 		store.setDefault(PreferenceConstants.P_DATA_DIRECTORY,
 				getDefaultDataDirectory());
+		store.setDefault(PreferenceConstants.P_SHOW_DEMO_ACTIONS, true);
 		
 		// Get the data directory and ensure that it actually exists.
 		final String path = store.getString(PreferenceConstants.P_DATA_DIRECTORY);
