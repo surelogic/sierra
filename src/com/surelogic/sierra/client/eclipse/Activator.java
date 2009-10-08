@@ -23,6 +23,7 @@ import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.jdbc.FutureDatabaseException;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.actions.MarkersHandler;
+import com.surelogic.sierra.client.eclipse.jobs.AbstractSierraDatabaseJob;
 import com.surelogic.sierra.client.eclipse.jobs.DeleteUnfinishedScans;
 import com.surelogic.sierra.client.eclipse.model.BuglinkData;
 import com.surelogic.sierra.client.eclipse.model.ConnectedServerManager;
@@ -73,7 +74,7 @@ public final class Activator extends AbstractUIPlugin implements
 	// Used for startup
 	public void run(final IProgressMonitor monitor)
 			throws InvocationTargetException, InterruptedException {
-		monitor.beginTask("Initializing sierra-client-eclipse", 20);
+		monitor.beginTask("Initializing sierra-client-eclipse", 7);
 		/*
 		 * "Touch" common-eclipse so the logging gets Eclipse-ified.
 		 */
@@ -95,9 +96,6 @@ public final class Activator extends AbstractUIPlugin implements
 			monitor.worked(1);
 
 			// start observing data changes
-			Projects.getInstance().init();
-			BuglinkData.getInstance().init();
-			monitor.worked(1);
 
 			// listen changes to the active editor and preference listener
 			final MarkersHandler handler = MarkersHandler.getInstance();
@@ -106,9 +104,29 @@ public final class Activator extends AbstractUIPlugin implements
 					handler);
 			monitor.worked(1);
 
-			SierraServersAutoSync.start();
-			monitor.worked(1);
+			new AbstractSierraDatabaseJob("Initializing model") {
+
+				@Override
+				protected IStatus run(final IProgressMonitor monitor) {
+					Projects.getInstance().init();
+					BuglinkData.getInstance().init();
+					return Status.OK_STATUS;
+				}
+			}.schedule();
+			new AbstractSierraDatabaseJob("Checking for new artifact types.") {
+
+				@Override
+				protected IStatus run(final IProgressMonitor monitor) {
+
+					Tools.checkForNewArtifactTypes();
+					return Status.OK_STATUS;
+				}
+			}.schedule();
+
 			new DeleteUnfinishedScans().schedule();
+			monitor.worked(1);
+
+			SierraServersAutoSync.start();
 			monitor.worked(1);
 
 		} catch (final FutureDatabaseException e) {

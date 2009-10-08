@@ -57,13 +57,4 @@ public final class Data extends DerbyConnection {
 		return new SierraSchemaData();
 	}
 
-	@Override
-	public synchronized void bootAndCheckSchema() throws Exception {
-		final boolean booted = isBooted();
-		super.bootAndCheckSchema();
-		if (!booted) {
-			Tools.checkForNewArtifactTypes();
-		}
-	}
-
 }
