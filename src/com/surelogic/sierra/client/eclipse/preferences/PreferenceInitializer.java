@@ -58,31 +58,34 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 				ServerFailureReport.SHOW_BALLOON.toString());
 		store.setDefault(PreferenceConstants.P_DATA_DIRECTORY,
 				getDefaultDataDirectory());
-		store.setDefault(PreferenceConstants.P_SHOW_DEMO_ACTIONS, true);
-		
+
 		// Get the data directory and ensure that it actually exists.
-		final String path = store.getString(PreferenceConstants.P_DATA_DIRECTORY);
-		if (path == null)
-			throw new IllegalStateException(I18N
-					.err(44, "P_DATA_DIRECTORY"));
+		final String path = store
+				.getString(PreferenceConstants.P_DATA_DIRECTORY);
+		if (path == null) {
+			throw new IllegalStateException(I18N.err(44, "P_DATA_DIRECTORY"));
+		}
 		final File dataDir = new File(path);
 		if (!FileUtility.createDirectory(dataDir)) {
-			throw new RuntimeException("Unable to create "+path);
+			throw new RuntimeException("Unable to create " + path);
 		}
-		
+
 		// Check if tools dir setup yet
-		final String toolsDirSet = System.getProperty(ToolUtil.CUSTOM_TOOLS_PATH_PROP_NAME);
+		final String toolsDirSet = System
+				.getProperty(ToolUtil.CUSTOM_TOOLS_PATH_PROP_NAME);
 		if (toolsDirSet == null) {
-			final String origToolsDir = System.getProperty(ToolUtil.TOOLS_PATH_PROP_NAME);
+			final String origToolsDir = System
+					.getProperty(ToolUtil.TOOLS_PATH_PROP_NAME);
 			// set Sierra tools dir if unavailable
 			if (origToolsDir == null) {
 				System.setProperty(ToolUtil.CUSTOM_TOOLS_PATH_PROP_NAME, "");
 				System.setProperty(ToolUtil.TOOLS_PATH_PROP_NAME, path);
 			} else {
-				System.setProperty(ToolUtil.CUSTOM_TOOLS_PATH_PROP_NAME, origToolsDir);
+				System.setProperty(ToolUtil.CUSTOM_TOOLS_PATH_PROP_NAME,
+						origToolsDir);
 			}
 		}
-		for (IToolFactory f : Tools.findToolFactories()) {
+		for (final IToolFactory f : Tools.findToolFactories()) {
 			store.setDefault(PreferenceConstants.getToolPref(f), true);
 		}
 	}

@@ -91,7 +91,7 @@
 			<action
 				class="com.surelogic.sierra.client.eclipse.actions.ImportTutorialProjectsAction"
 				id="com.surelogic.sierra.client.eclipse.actions.ImportTutorialProjectsAction"
-				label="Run the Sierra Tutorials" menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/service"
+				label="Run Sierra Tutorials" menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/service"
 				helpContextId="menu-run-sierra-tutorials">
 			</action>
 			<action

@@ -34,7 +34,7 @@ public class PreferenceConstants implements IPreferenceConstants {
 	}
 
 	public static void setDeleteDatabaseOnStartup(
-			boolean deleteDatabaseOnStartup) {
+			final boolean deleteDatabaseOnStartup) {
 		Activator.getDefault().getPluginPreferences().setValue(
 				P_SIERRA_DELETE_DB_ON_STARTUP, deleteDatabaseOnStartup);
 	}
@@ -51,11 +51,11 @@ public class PreferenceConstants implements IPreferenceConstants {
 
 	public static final String P_RUN_PREFIX = PREFIX + "run-";
 
-	public static final String getToolPref(IToolFactory f) {
+	public static final String getToolPref(final IToolFactory f) {
 		return P_RUN_PREFIX + f.getId();
 	}
 
-	public static boolean runTool(IToolFactory f) {
+	public static boolean runTool(final IToolFactory f) {
 		return Activator.getDefault().getPluginPreferences().getBoolean(
 				getToolPref(f));
 	}
@@ -67,7 +67,7 @@ public class PreferenceConstants implements IPreferenceConstants {
 				P_SIERRA_SHOW_MARKERS);
 	}
 
-	public static void setMarkersVisibility(boolean visible) {
+	public static void setMarkersVisibility(final boolean visible) {
 		Activator.getDefault().getPluginPreferences().setValue(
 				P_SIERRA_SHOW_MARKERS, visible);
 	}
@@ -80,7 +80,7 @@ public class PreferenceConstants implements IPreferenceConstants {
 				P_SIERRA_SHOW_JSURE_FINDINGS);
 	}
 
-	public static void setJSureFindingsVisibility(boolean visible) {
+	public static void setJSureFindingsVisibility(final boolean visible) {
 		Activator.getDefault().getPluginPreferences().setValue(
 				P_SIERRA_SHOW_JSURE_FINDINGS, visible);
 	}
@@ -111,7 +111,7 @@ public class PreferenceConstants implements IPreferenceConstants {
 				P_TOOL_MEMORY_MB);
 	}
 
-	public static void setToolMemoryMB(int mb) {
+	public static void setToolMemoryMB(final int mb) {
 		Activator.getDefault().getPluginPreferences().setValue(
 				P_TOOL_MEMORY_MB, mb);
 	}
@@ -124,7 +124,7 @@ public class PreferenceConstants implements IPreferenceConstants {
 				P_WARN_MAXIMUM_FINDINGS_SHOWN);
 	}
 
-	public static void setWarnAboutMaximumFindingsShown(boolean value) {
+	public static void setWarnAboutMaximumFindingsShown(final boolean value) {
 		Activator.getDefault().getPluginPreferences().setValue(
 				P_WARN_MAXIMUM_FINDINGS_SHOWN, value);
 	}
@@ -137,7 +137,8 @@ public class PreferenceConstants implements IPreferenceConstants {
 				P_SELECT_PROJECTS_TO_SCAN);
 	}
 
-	public static void setAlwaysAllowUserToSelectProjectsToScan(boolean value) {
+	public static void setAlwaysAllowUserToSelectProjectsToScan(
+			final boolean value) {
 		Activator.getDefault().getPluginPreferences().setValue(
 				P_SELECT_PROJECTS_TO_SCAN, value);
 	}
@@ -150,7 +151,7 @@ public class PreferenceConstants implements IPreferenceConstants {
 				P_OMIT_EMPTY_SYNCHRONIZE_ENTRIES);
 	}
 
-	public static void setHideEmptySynchronizeEntries(boolean value) {
+	public static void setHideEmptySynchronizeEntries(final boolean value) {
 		Activator.getDefault().getPluginPreferences().setValue(
 				P_OMIT_EMPTY_SYNCHRONIZE_ENTRIES, value);
 	}
@@ -159,12 +160,12 @@ public class PreferenceConstants implements IPreferenceConstants {
 			+ "server-status-sort";
 
 	public static ServerStatusSort getServerStatusSort() {
-		String sort = Activator.getDefault().getPluginPreferences().getString(
-				P_SERVER_STATUS_SORT);
+		final String sort = Activator.getDefault().getPluginPreferences()
+				.getString(P_SERVER_STATUS_SORT);
 		return ServerStatusSort.valueOf(sort);
 	}
 
-	public static void setServerStatusSort(ServerStatusSort value) {
+	public static void setServerStatusSort(final ServerStatusSort value) {
 		Activator.getDefault().getPluginPreferences().setValue(
 				P_SERVER_STATUS_SORT, value.toString());
 	}
@@ -183,7 +184,7 @@ public class PreferenceConstants implements IPreferenceConstants {
 				P_SERVER_INTERACTION_PERIOD_IN_MINUTES);
 	}
 
-	public static void setServerInteractionPeriodInMinutes(int value) {
+	public static void setServerInteractionPeriodInMinutes(final int value) {
 		Activator.getDefault().getPluginPreferences().setValue(
 				P_SERVER_INTERACTION_PERIOD_IN_MINUTES, value);
 	}
@@ -199,7 +200,7 @@ public class PreferenceConstants implements IPreferenceConstants {
 				P_SERVER_INTERACTION_AUDIT_THRESHOLD);
 	}
 
-	public static void setServerInteractionAuditThreshold(int value) {
+	public static void setServerInteractionAuditThreshold(final int value) {
 		Activator.getDefault().getPluginPreferences().setValue(
 				P_SERVER_INTERACTION_AUDIT_THRESHOLD, value);
 	}
@@ -212,7 +213,7 @@ public class PreferenceConstants implements IPreferenceConstants {
 				P_SERVER_INTERACTION_RETRY_THRESHOLD);
 	}
 
-	public static void setServerInteractionRetryThreshold(int value) {
+	public static void setServerInteractionRetryThreshold(final int value) {
 		Activator.getDefault().getPluginPreferences().setValue(
 				P_SERVER_INTERACTION_RETRY_THRESHOLD, value);
 	}
@@ -231,7 +232,7 @@ public class PreferenceConstants implements IPreferenceConstants {
 		return result;
 	}
 
-	public static void getServerFailureReporting(ServerFailureReport s) {
+	public static void getServerFailureReporting(final ServerFailureReport s) {
 		Activator.getDefault().getPluginPreferences().setValue(
 				P_SERVER_FAILURE_REPORTING, s.toString());
 	}
@@ -244,7 +245,7 @@ public class PreferenceConstants implements IPreferenceConstants {
 				P_PROMPT_PERSPECTIVE_SWITCH);
 	}
 
-	public void setPromptForPerspectiveSwitch(boolean value) {
+	public void setPromptForPerspectiveSwitch(final boolean value) {
 		Activator.getDefault().getPluginPreferences().setValue(
 				P_PROMPT_PERSPECTIVE_SWITCH, value);
 	}
@@ -257,7 +258,7 @@ public class PreferenceConstants implements IPreferenceConstants {
 				P_AUTO_PERSPECTIVE_SWITCH);
 	}
 
-	public void setAutoPerspectiveSwitch(boolean value) {
+	public void setAutoPerspectiveSwitch(final boolean value) {
 		Activator.getDefault().getPluginPreferences().setValue(
 				P_AUTO_PERSPECTIVE_SWITCH, value);
 	}
@@ -281,17 +282,6 @@ public class PreferenceConstants implements IPreferenceConstants {
 			throw new IllegalArgumentException("Bad directory: " + dir);
 		}
 	}
-	
-	public static final String P_SHOW_DEMO_ACTIONS = PREFIX+"show-demo-actions";
-	
-	public static boolean showDemoProjectActions() {
-		return Activator.getDefault().getPluginPreferences().getBoolean(P_SHOW_DEMO_ACTIONS);
-	}
-	
-	public static void showDemoProjectActions(boolean val) {
-		Activator.getDefault().getPluginPreferences().setValue(
-				P_SHOW_DEMO_ACTIONS, val);
-	}
 
 	private PreferenceConstants() {
 		// Nothing to do
@@ -299,7 +289,7 @@ public class PreferenceConstants implements IPreferenceConstants {
 
 	public static final PreferenceConstants prototype = new PreferenceConstants();
 
-	public String getPrefConstant(String suffix) {
+	public String getPrefConstant(final String suffix) {
 		return PREFIX + suffix;
 	}
 

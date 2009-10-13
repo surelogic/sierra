@@ -1,11 +1,6 @@
 package com.surelogic.sierra.client.eclipse.views.selection;
 
-import java.io.IOException;
-import java.net.URL;
-
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -21,21 +16,20 @@ import org.eclipse.ui.actions.ActionFactory;
 import com.surelogic.common.CommonImages;
 import com.surelogic.common.XUtil;
 import com.surelogic.common.eclipse.CascadingList;
-import com.surelogic.common.eclipse.DemoProjectAction;
-import com.surelogic.common.eclipse.EclipseUtility;
 import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.sierra.client.eclipse.jsure.ImportJSureAction;
-import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
 import com.surelogic.sierra.client.eclipse.views.AbstractSierraView;
 import com.surelogic.sierra.client.eclipse.wizards.FindingSearchExportWizard;
 import com.surelogic.sierra.client.eclipse.wizards.FindingSearchImportWizard;
 
-public final class FindingsSelectionView extends AbstractSierraView<FindingsSelectionMediator> {
+public final class FindingsSelectionView extends
+		AbstractSierraView<FindingsSelectionMediator> {
 
 	public static final String ID = "com.surelogic.sierra.client.eclipse.views.selection.FindingsSelectionView";
 
 	@Override
-	protected FindingsSelectionMediator createMorePartControls(final Composite findingsPage) {
+	protected FindingsSelectionMediator createMorePartControls(
+			final Composite findingsPage) {
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
@@ -74,7 +68,8 @@ public final class FindingsSelectionView extends AbstractSierraView<FindingsSele
 				false, false));
 		final ToolItem columnSelectionItem = new ToolItem(clearSelectionBar,
 				SWT.DROP_DOWN);
-		columnSelectionItem.setImage(SLImages.getImage(CommonImages.IMG_COLUMNS));
+		columnSelectionItem.setImage(SLImages
+				.getImage(CommonImages.IMG_COLUMNS));
 		columnSelectionItem.setToolTipText("Set Columns to Show");
 
 		final ToolItem clearSelectionItem = new ToolItem(clearSelectionBar,
@@ -114,10 +109,12 @@ public final class FindingsSelectionView extends AbstractSierraView<FindingsSele
 				.getImage(CommonImages.IMG_SIERRA_INVESTIGATE_DOT));
 		openSearchItem.setToolTipText("Open Search");
 		final ToolItem saveSearchAsItem = new ToolItem(searchBar, SWT.PUSH);
-		saveSearchAsItem.setImage(SLImages.getImage(CommonImages.IMG_SAVEAS_EDIT));
+		saveSearchAsItem.setImage(SLImages
+				.getImage(CommonImages.IMG_SAVEAS_EDIT));
 		saveSearchAsItem.setToolTipText("Save Search As");
 		final ToolItem deleteSearchItem = new ToolItem(searchBar, SWT.PUSH);
-		deleteSearchItem.setImage(SLImages.getImage(CommonImages.IMG_GRAY_X_DOT));
+		deleteSearchItem.setImage(SLImages
+				.getImage(CommonImages.IMG_GRAY_X_DOT));
 		deleteSearchItem.setToolTipText("Delete Saved Search");
 		final Link savedSelections = new Link(selectionPersistencePanel,
 				SWT.WRAP);
@@ -132,7 +129,7 @@ public final class FindingsSelectionView extends AbstractSierraView<FindingsSele
 			public void run() {
 				final FindingSearchImportWizard wizard = new FindingSearchImportWizard();
 				wizard.init(PlatformUI.getWorkbench(), null);
-				WizardDialog dialog = new WizardDialog(PlatformUI
+				final WizardDialog dialog = new WizardDialog(PlatformUI
 						.getWorkbench().getActiveWorkbenchWindow().getShell(),
 						wizard);
 				dialog.open();
@@ -144,7 +141,7 @@ public final class FindingsSelectionView extends AbstractSierraView<FindingsSele
 			public void run() {
 				final FindingSearchExportWizard wizard = new FindingSearchExportWizard();
 				wizard.init(PlatformUI.getWorkbench(), null);
-				WizardDialog dialog = new WizardDialog(PlatformUI
+				final WizardDialog dialog = new WizardDialog(PlatformUI
 						.getWorkbench().getActiveWorkbenchWindow().getShell(),
 						wizard);
 				dialog.open();
@@ -152,14 +149,7 @@ public final class FindingsSelectionView extends AbstractSierraView<FindingsSele
 		};
 		addToViewMenu(exportAction);
 
-		if (PreferenceConstants.showDemoProjectActions()) {
-			addToViewMenu(new Separator());
-			addToViewMenu(new DemoProjectAction("Create SmallWorld", 
-					      getClass().getResource("/resources/SmallWorld.zip")));
-			addToViewMenu(new DemoProjectAction("Create ShowOff",
-				          getClass().getResource("/resources/ShowOff.zip")));
-		}
-		if (XUtil.useExperimental()) {			
+		if (XUtil.useExperimental()) {
 			final Action jsureAction = new Action("Import JSure Document") {
 				@Override
 				public void run() {
@@ -169,10 +159,9 @@ public final class FindingsSelectionView extends AbstractSierraView<FindingsSele
 			addToViewMenu(jsureAction);
 		}
 
-		return new FindingsSelectionMediator(this, 
-				findingsPage, cascadingList, clearSelectionItem, breadcrumbs,
-				findingsIcon, findingsStatus, columnSelectionItem,
-				openSearchItem, saveSearchAsItem, deleteSearchItem,
-				savedSelections);
+		return new FindingsSelectionMediator(this, findingsPage, cascadingList,
+				clearSelectionItem, breadcrumbs, findingsIcon, findingsStatus,
+				columnSelectionItem, openSearchItem, saveSearchAsItem,
+				deleteSearchItem, savedSelections);
 	}
 }
