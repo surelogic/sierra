@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -215,7 +216,7 @@ public final class Tools {
 			});
 			// FIX Show dialog
 		} catch (final TransactionException e) {
-			e.printStackTrace();
+			SLLogger.getLogger().log(Level.SEVERE, "Problem handling new artifact types", e);
 		}
 	}
 

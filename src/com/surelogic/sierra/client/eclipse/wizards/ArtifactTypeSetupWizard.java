@@ -2,12 +2,14 @@ package com.surelogic.sierra.client.eclipse.wizards;
 
 import java.io.*;
 import java.util.*;
+import java.util.logging.Level;
 import java.util.zip.*;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IWorkbench;
 
+import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.jdbc.settings.CategoryDO;
 import com.surelogic.sierra.jdbc.tool.FindingTypeDO;
 import com.surelogic.sierra.tool.ArtifactType;
@@ -111,7 +113,7 @@ public class ArtifactTypeSetupWizard extends Wizard {
 					os.close();
 				}
 			} catch(IOException e) {
-				e.printStackTrace();
+				SLLogger.getLogger().log(Level.SEVERE, "Problem updating jars", e);
 				return false;
 			}	
 		}
