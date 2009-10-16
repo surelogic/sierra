@@ -148,7 +148,7 @@ public final class ConnectedServerManager extends
 		}
 		saveAndNotifyObservers();
 	}
-	
+
 	/**
 	 * Deletes the passed server from the set of servers managed by this model.
 	 * 
@@ -247,7 +247,7 @@ public final class ConnectedServerManager extends
 		f_servers.remove(server);
 		f_servers.add(newServer);
 	}
-	
+
 	/**
 	 * This method changes the authorization information for a specified server.
 	 * 
@@ -329,18 +329,20 @@ public final class ConnectedServerManager extends
 	public void connect(final String projectName, final ConnectedServer server) {
 		connect(projectName, server, true);
 	}
-	
-	private void connect_private(final String projectName, final ConnectedServer server) {
+
+	private void connect_private(final String projectName,
+			final ConnectedServer server) {
 		connect(projectName, server, false);
 	}
-	
-	private void connect(final String projectName, final ConnectedServer server, boolean notify) {
+
+	private void connect(final String projectName,
+			final ConnectedServer server, boolean notify) {
 		if (projectName == null) {
 			throw new IllegalArgumentException(I18N.err(44, "projectName"));
 		}
 		if (server == null) {
 			throw new IllegalArgumentException(I18N.err(44, "server"));
-		}		
+		}
 		synchronized (this) {
 			notify &= server != f_projectNameToServer.put(projectName, server);
 		}
@@ -370,7 +372,7 @@ public final class ConnectedServerManager extends
 		synchronized (this) {
 			for (final Map.Entry<String, ConnectedServer> entry : f_projectNameToServer
 					.entrySet()) {
-				if (entry.getValue() == server) {
+				if (entry.getValue().equals(server)) {
 					projects.add(entry.getKey());
 				}
 			}
@@ -480,7 +482,8 @@ public final class ConnectedServerManager extends
 		synchronized (this) {
 			final Set<ConnectedServer> servers = new HashSet<ConnectedServer>(
 					f_servers);
-			final Map<String, ConnectedServer> projects = new HashMap<String, ConnectedServer>(f_projectNameToServer);
+			final Map<String, ConnectedServer> projects = new HashMap<String, ConnectedServer>(
+					f_projectNameToServer);
 			f_projectNameToServer.clear();
 			f_servers.clear();
 
@@ -523,7 +526,7 @@ public final class ConnectedServerManager extends
 		}
 		if (updated) {
 			notifyObservers();
-		}	
+		}
 	}
 
 	/**
