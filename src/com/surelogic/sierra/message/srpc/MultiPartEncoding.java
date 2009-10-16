@@ -174,6 +174,8 @@ class MultiPartEncoding {
 		} catch (final Exception e) {
 			if (e instanceof InvalidVersionException) {
 				throw (InvalidVersionException) e;
+			} else if (e instanceof InvalidLoginException) {
+				throw (InvalidLoginException) e;
 			} else if (e instanceof ServiceInvocationException) {
 				throw (ServiceInvocationException) e;
 			}
