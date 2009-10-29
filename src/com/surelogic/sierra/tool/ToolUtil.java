@@ -408,12 +408,20 @@ public class ToolUtil {
 
 	private static String getPluginVersion(Attributes attrs) {
 		final String version = attrs.getValue(PLUGIN_VERSION);
+		int numDots = 0; // Only keep first 3 segments
+		
 		// Find the first non-underscore/digit
 		int i = 0;
 		for (; i < version.length(); i++) {
 			final char ch = version.charAt(i);
+			if (ch == '.') {
+				numDots++;
+				if (numDots >= 3) {
+					break; // last dot omitted below by substring()
+				}
+			}
 			// Not a dot or a digit
-			if (ch != '.' && !Character.isDigit(ch)) {
+			else if (ch != '.' && !Character.isDigit(ch)) {
 				// Eliminate trailing dots
 				while (i > 0 && version.charAt(i - 1) == '.') {
 					i--;
