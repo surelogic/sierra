@@ -83,7 +83,7 @@ public class ImportJSureDocumentJob extends AbstractSierraDatabaseJob {
 				final JSureDocumentListener l = new JSureDocumentListener(
 						generator, mon);
 				try {
-					JSureXMLReader.readSnapshot(scanDocument, l);
+					new JSureXMLReader(l).read(scanDocument);
 				} catch (final Exception e) {
 					final ArtifactGenerator aGenerator = l
 							.getArtifactGenerator();
