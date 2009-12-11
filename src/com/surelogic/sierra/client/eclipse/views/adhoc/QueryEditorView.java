@@ -18,4 +18,5 @@ public final class QueryEditorView extends AbstractQueryEditorView {
 	public AdHocManager getManager() {
 		return AdHocDataSource.getManager();
 	}
+
 }

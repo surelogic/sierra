@@ -18,4 +18,5 @@ public final class QueryMenuView extends AbstractQueryMenuView {
 	public AdHocManager getManager() {
 		return AdHocDataSource.getManager();
 	}
+
 }
