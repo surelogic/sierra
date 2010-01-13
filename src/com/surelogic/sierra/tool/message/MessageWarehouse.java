@@ -86,7 +86,6 @@ public final class MessageWarehouse {
 	 */
 	public void writeToolOutput(final ToolOutput to, final String dest) {
 		FileWriter out;
-
 		try {
 			out = new FileWriter(dest);
 			marshaller.marshal(to, out);
