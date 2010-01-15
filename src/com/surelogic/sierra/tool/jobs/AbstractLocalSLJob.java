@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.types.*;
 
+import com.surelogic.common.SLUtility;
 import com.surelogic.common.jobs.AbstractSLJob;
 import com.surelogic.common.jobs.SLProgressMonitor;
 import com.surelogic.common.jobs.SLStatus;
@@ -286,9 +287,17 @@ public abstract class AbstractLocalSLJob extends AbstractSLJob {
 		} else if (memorySize > 0) {
 			cmdj.setMaxmemory(memorySize + "m");
 		} else {
-			cmdj.setMaxmemory("1024m");
+			if (SLUtility.is64bit) {
+				cmdj.setMaxmemory("1500m");
+			} else {
+				cmdj.setMaxmemory("1024m");
+			}
 		}
-		cmdj.createVmArgument().setValue("-XX:MaxPermSize=128m");
+		if (SLUtility.is64bit) {
+			cmdj.createVmArgument().setValue("-XX:MaxPermSize=256m");
+		} else {
+			cmdj.createVmArgument().setValue("-XX:MaxPermSize=128m");
+		}
 		if (false) {
 			cmdj.createVmArgument().setValue("-verbose");
 		}
