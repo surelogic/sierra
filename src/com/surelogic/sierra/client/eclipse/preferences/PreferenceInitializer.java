@@ -1,13 +1,9 @@
 package com.surelogic.sierra.client.eclipse.preferences;
 
-import java.io.File;
-
-import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.jface.preference.IPreferenceStore;
 
 import com.surelogic.common.FileUtility;
-import com.surelogic.common.eclipse.EclipseUtility;
-import com.surelogic.common.i18n.I18N;
+import com.surelogic.common.eclipse.preferences.AbstractPrefInitializer;
 import com.surelogic.sierra.client.eclipse.Activator;
 import com.surelogic.sierra.client.eclipse.Tools;
 import com.surelogic.sierra.client.eclipse.views.ServerStatusSort;
@@ -18,7 +14,7 @@ import com.surelogic.sierra.tool.message.Importance;
 /**
  * Class used to initialize default preference values.
  */
-public class PreferenceInitializer extends AbstractPreferenceInitializer {
+public class PreferenceInitializer extends AbstractPrefInitializer {
 
 	@Override
 	public void initializeDefaultPreferences() {
@@ -57,18 +53,12 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		store.setDefault(PreferenceConstants.P_SERVER_FAILURE_REPORTING,
 				ServerFailureReport.SHOW_BALLOON.toString());
 		store.setDefault(PreferenceConstants.P_DATA_DIRECTORY,
-				getDefaultDataDirectory());
+				getDefaultDataDirectory(FileUtility.SIERRA_DATA_PATH_FRAGMENT));
 
 		// Get the data directory and ensure that it actually exists.
 		final String path = store
 				.getString(PreferenceConstants.P_DATA_DIRECTORY);
-		if (path == null) {
-			throw new IllegalStateException(I18N.err(44, "P_DATA_DIRECTORY"));
-		}
-		final File dataDir = new File(path);
-		if (!FileUtility.createDirectory(dataDir)) {
-			throw new RuntimeException("Unable to create " + path);
-		}
+		ensureDataDirectoryExists(path);
 
 		// Check if tools dir setup yet
 		final String toolsDirSet = System
@@ -88,11 +78,5 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		for (final IToolFactory f : Tools.findToolFactories()) {
 			store.setDefault(PreferenceConstants.getToolPref(f), true);
 		}
-	}
-
-	private String getDefaultDataDirectory() {
-		final File root = EclipseUtility.getWorspacePath();
-		final File path = new File(root, FileUtility.SIERRA_DATA_PATH_FRAGMENT);
-		return path.getAbsolutePath();
 	}
 }

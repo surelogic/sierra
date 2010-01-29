@@ -263,7 +263,7 @@ public class PreferenceConstants implements IPreferenceConstants {
 				P_AUTO_PERSPECTIVE_SWITCH, value);
 	}
 
-	public static final String P_DATA_DIRECTORY = PREFIX + "data-directory";
+	public static final String P_DATA_DIRECTORY = PREFIX + DATA_DIRECTORY;
 
 	public static File getSierraDataDirectory() {
 		final String path = Activator.getDefault().getPluginPreferences()
