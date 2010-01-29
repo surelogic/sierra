@@ -2,6 +2,7 @@ package com.surelogic.sierra.gwt.client.content;
 
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockPanel;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.surelogic.sierra.gwt.client.Context;
@@ -61,8 +62,8 @@ public abstract class ContentComposite extends Composite {
 		final Label title = new Label(text);
 		title.addStyleName(CAPTION_STYLE);
 		titlePanel.add(title);
-		titlePanel
-				.setCellHorizontalAlignment(title, HorizontalPanel.ALIGN_LEFT);
+		titlePanel.setCellHorizontalAlignment(title,
+				HasHorizontalAlignment.ALIGN_LEFT);
 	}
 
 	protected abstract void onInitialize(DockPanel rootPanel);

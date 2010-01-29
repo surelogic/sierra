@@ -215,7 +215,8 @@ public class ScanFilterEditor extends BasicPanel {
 					filterGrid.removeRow(rowIndex);
 				}
 			});
-			removeLabel.setHorizontalAlignment(Label.ALIGN_CENTER);
+			removeLabel
+					.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 
 			final int rowIndex = filterGrid.getRowCount();
 			filterGrid.setWidget(rowIndex, 0, h);

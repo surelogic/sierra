@@ -5,6 +5,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -45,14 +46,14 @@ public abstract class BasicPanel extends Composite {
 		sectionSummary.setWordWrap(false);
 		titlePanel.add(sectionSummary, DockPanel.CENTER);
 		titlePanel.setCellHorizontalAlignment(sectionSummary,
-				HorizontalPanel.ALIGN_CENTER);
+				HasHorizontalAlignment.ALIGN_CENTER);
 
 		actionPanel.addStyleName(PRIMARY_STYLE + "-actionpanel");
 		titlePanel.add(actionPanel, DockPanel.EAST);
 		titlePanel.setCellHorizontalAlignment(actionPanel,
-				HorizontalPanel.ALIGN_RIGHT);
+				HasHorizontalAlignment.ALIGN_RIGHT);
 		titlePanel.setCellVerticalAlignment(actionPanel,
-				HorizontalPanel.ALIGN_MIDDLE);
+				HasVerticalAlignment.ALIGN_MIDDLE);
 
 		titlePanel.setCellWidth(sectionTitle, "25%");
 		titlePanel.setCellWidth(sectionSummary, "50%");

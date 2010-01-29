@@ -6,6 +6,7 @@ import java.util.Map;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Hyperlink;
@@ -46,7 +47,7 @@ public abstract class HeaderComposite extends Composite {
 		sierraLogo.addStyleName("logo");
 		headerRow.add(sierraLogo);
 		headerRow.setCellVerticalAlignment(sierraLogo,
-				HorizontalPanel.ALIGN_MIDDLE);
+				HasVerticalAlignment.ALIGN_MIDDLE);
 		rootPanel.add(headerRow);
 
 		tabStylingPanel.addStyleName("header-tab-panel");
@@ -69,7 +70,7 @@ public abstract class HeaderComposite extends Composite {
 		tabStylingPanel.add(tabRight);
 		tabStylingPanel.setCellHeight(tabRight, "100%");
 		tabStylingPanel.setCellHorizontalAlignment(tabRight,
-				HorizontalPanel.ALIGN_LEFT);
+				HasHorizontalAlignment.ALIGN_LEFT);
 		tabStylingPanel.setCellVerticalAlignment(tabRight,
 				HasVerticalAlignment.ALIGN_BOTTOM);
 
@@ -145,9 +146,9 @@ public abstract class HeaderComposite extends Composite {
 		if (headerRow.getWidgetIndex(utilityRow) == -1) {
 			headerRow.add(utilityRow);
 			headerRow.setCellHorizontalAlignment(utilityRow,
-					HorizontalPanel.ALIGN_RIGHT);
+					HasHorizontalAlignment.ALIGN_RIGHT);
 			headerRow.setCellVerticalAlignment(utilityRow,
-					HorizontalPanel.ALIGN_TOP);
+					HasVerticalAlignment.ALIGN_TOP);
 		}
 	}
 

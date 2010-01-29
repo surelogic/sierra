@@ -4,6 +4,7 @@ import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -42,7 +43,7 @@ public class FormTable extends Composite {
 
 		rootPanel.add(actionPanel);
 		rootPanel.setCellHorizontalAlignment(actionPanel,
-				VerticalPanel.ALIGN_RIGHT);
+				HasHorizontalAlignment.ALIGN_RIGHT);
 	}
 
 	public final void addField(String title, Widget inputUI) {

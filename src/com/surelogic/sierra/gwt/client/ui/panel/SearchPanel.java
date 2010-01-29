@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -67,10 +68,10 @@ public abstract class SearchPanel<E extends Cacheable, T extends Cache<E>>
 	protected abstract String getItemText(E item);
 
 	protected abstract Widget getItemDecorator(E item);
-		
+
 	static final boolean lazyCreatePanelItem = true;
-	
-	private class SearchResultsPanel extends BasicPanel {		
+
+	private class SearchResultsPanel extends BasicPanel {
 		private final List<E> searchResults = new ArrayList<E>();
 		private final List<PanelItem> searchResultsData = new ArrayList<PanelItem>();
 		private PagingPanel pagingPanel;
@@ -88,8 +89,9 @@ public abstract class SearchPanel<E extends Cacheable, T extends Cache<E>>
 
 					final int firstItemIndex = pagingPanel.getPageIndex()
 							* ITEMS_PER_PAGE;
-					for (int itemIndex = firstItemIndex; (itemIndex < (firstItemIndex + ITEMS_PER_PAGE))
-							&& (itemIndex < searchResultsData.size()); itemIndex++) {
+					for (int itemIndex = firstItemIndex; itemIndex < firstItemIndex
+							+ ITEMS_PER_PAGE
+							&& itemIndex < searchResultsData.size(); itemIndex++) {
 						PanelItem item = searchResultsData.get(itemIndex);
 						if (lazyCreatePanelItem && item == null) {
 							item = createPanelItem(searchResults.get(itemIndex));
@@ -118,15 +120,15 @@ public abstract class SearchPanel<E extends Cacheable, T extends Cache<E>>
 				if (Character.isLetterOrDigit(ch)) {
 					queryBuf.append(Character.toLowerCase(ch));
 				}
-			}			
-			final String query = queryBuf.toString();			 
+			}
+			final String query = queryBuf.toString();
 			int i = 0;
 			for (final E item : cache) {
 				if (isItemVisible(item, query)) {
 					searchResults.add(item);
-					if (lazyCreatePanelItem && i >= ITEMS_PER_PAGE) { 
+					if (lazyCreatePanelItem && i >= ITEMS_PER_PAGE) {
 						searchResultsData.add(null);
-					} else {							
+					} else {
 						searchResultsData.add(createPanelItem(item));
 					}
 					i++;
@@ -139,22 +141,22 @@ public abstract class SearchPanel<E extends Cacheable, T extends Cache<E>>
 			clearStatus();
 			setSelection(selection);
 		}
-		
-		private PanelItem createPanelItem(E item) {
+
+		private PanelItem createPanelItem(final E item) {
 			final String itemText = getItemText(item);
 			final ContentLink itemUI = new ContentLink(itemText,
 					getItemContent(), item.getUuid());
 			itemUI.setWidth(getOffsetWidth() + "px");
-			
+
 			final Widget decorator = getItemDecorator(item);
 			final Widget widget;
 			if (decorator != null) {
 				final HorizontalPanel itemPanel = new HorizontalPanel();
-				itemPanel.setWidth("100%");				
+				itemPanel.setWidth("100%");
 				itemPanel.add(itemUI);
 				itemPanel.add(decorator);
 				itemPanel.setCellHorizontalAlignment(decorator,
-						HorizontalPanel.ALIGN_RIGHT);
+						HasHorizontalAlignment.ALIGN_RIGHT);
 				widget = itemPanel;
 			} else {
 				itemUI.setWidth("100%");
@@ -175,14 +177,14 @@ public abstract class SearchPanel<E extends Cacheable, T extends Cache<E>>
 
 		public void setSelection(final E item) {
 			final int size = searchResults.size();
-			final int pages = 1 + (size / ITEMS_PER_PAGE);
+			final int pages = 1 + size / ITEMS_PER_PAGE;
 			final int index;
-			
+
 			// update the page index and count
 			if (item != null) {
 
-				int itemIndex = 0;			
-				for(; itemIndex < size; itemIndex++) {
+				int itemIndex = 0;
+				for (; itemIndex < size; itemIndex++) {
 					if (item == searchResults.get(itemIndex)) {
 						break;
 					}
@@ -194,9 +196,10 @@ public abstract class SearchPanel<E extends Cacheable, T extends Cache<E>>
 			} else {
 				index = 0;
 			}
-			//if (pagingPanel.getPageIndex() != index || pagingPanel.getPageCount() != pages) {
+			// if (pagingPanel.getPageIndex() != index ||
+			// pagingPanel.getPageCount() != pages) {
 			pagingPanel.setPaging(index, pages);
-			//}
+			// }
 		}
 
 		private class PanelItem extends ItemWidget<Widget, E> {

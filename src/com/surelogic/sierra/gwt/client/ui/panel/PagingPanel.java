@@ -5,6 +5,8 @@ import java.util.EventListener;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockPanel;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
@@ -24,12 +26,12 @@ public class PagingPanel extends Composite {
 		this.pageListener = pageListener;
 		initWidget(rootPanel);
 		rootPanel.setWidth("100%");
-		rootPanel.setVerticalAlignment(DockPanel.ALIGN_MIDDLE);
+		rootPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 
 		pageText.addStyleName("sl-PagingPanel-text");
 		rootPanel.add(pageText, DockPanel.CENTER);
 		rootPanel.setCellHorizontalAlignment(pageText,
-				HorizontalPanel.ALIGN_CENTER);
+				HasHorizontalAlignment.ALIGN_CENTER);
 
 		previousPage = new StyledButton("<<", new ClickListener() {
 

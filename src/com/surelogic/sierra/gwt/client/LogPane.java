@@ -2,6 +2,7 @@ package com.surelogic.sierra.gwt.client;
 
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
@@ -32,19 +33,19 @@ public class LogPane extends Composite {
 
 		logIcon.addClickListener(new ClickListener() {
 
-			public void onClick(Widget sender) {
+			public void onClick(final Widget sender) {
 				toggleLogVisible();
 			}
 
 		});
 	}
 
-	public void log(Throwable cause) {
+	public void log(final Throwable cause) {
 		showLogIcon();
 		appendThrowable(cause, null);
 	}
 
-	private void appendThrowable(Throwable cause, TreeItem parent) {
+	private void appendThrowable(final Throwable cause, final TreeItem parent) {
 		final Label logItemLabel = new Label(buildLogText(cause));
 		logItemLabel.addStyleName(ITEM_TEXT_STYLE);
 
@@ -67,8 +68,8 @@ public class LogPane extends Composite {
 		}
 	}
 
-	private String buildLogText(Throwable cause) {
-		StringBuffer log = new StringBuffer();
+	private String buildLogText(final Throwable cause) {
+		final StringBuffer log = new StringBuffer();
 		log.append(cause.toString());
 
 		final StackTraceElement[] trace = cause.getStackTrace();
@@ -83,7 +84,7 @@ public class LogPane extends Composite {
 		if (rootPanel.getWidgetIndex(logIcon) == -1) {
 			rootPanel.insert(logIcon, 0);
 			rootPanel.setCellHorizontalAlignment(logIcon,
-					VerticalPanel.ALIGN_RIGHT);
+					HasHorizontalAlignment.ALIGN_RIGHT);
 		}
 	}
 
