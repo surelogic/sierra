@@ -14,6 +14,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
@@ -365,7 +366,7 @@ public final class TeamServerMediator implements ITeamServerObserver {
 			if (PreferenceConstants.warnAboutServerStaysRunning()) {
 				final ServerStaysRunningWarning dialog = new ServerStaysRunningWarning();
 				final int result = dialog.open();
-				if (result == Dialog.CANCEL) {
+				if (result == Window.CANCEL) {
 					return;
 				}
 			}

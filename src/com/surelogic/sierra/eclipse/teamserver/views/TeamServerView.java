@@ -1,6 +1,7 @@
 package com.surelogic.sierra.eclipse.teamserver.views;
 
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.swt.SWT;
@@ -106,7 +107,7 @@ public class TeamServerView extends ViewPart {
 		 */
 		final IMenuManager menu = getViewSite().getActionBars()
 				.getMenuManager();
-		final Action showLogAction = new Action(menuText, Action.AS_CHECK_BOX) {
+		final Action showLogAction = new Action(menuText, IAction.AS_CHECK_BOX) {
 			@Override
 			public void run() {
 				if (f_mediator != null) {
@@ -116,7 +117,7 @@ public class TeamServerView extends ViewPart {
 		};
 		menu.add(showLogAction);
 		final Action deleteServerDbAction = new Action(
-				"Wipe Local Team Server Database", Action.AS_PUSH_BUTTON) {
+				"Wipe Local Team Server Database", IAction.AS_PUSH_BUTTON) {
 			@Override
 			public void run() {
 				if (f_mediator != null) {
