@@ -46,7 +46,7 @@ import org.eclipse.ui.progress.UIJob;
 import com.surelogic.common.CommonImages;
 import com.surelogic.common.StringComparators;
 import com.surelogic.common.eclipse.CascadingList;
-import com.surelogic.common.eclipse.JDTUtility;
+import com.surelogic.common.eclipse.JDTUIUtility;
 import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.common.eclipse.SWTUtility;
 import com.surelogic.common.eclipse.CascadingList.IColumn;
@@ -512,7 +512,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 		public void handleEvent(final Event event) {
 			final FindingData data = lastSelected.get();
 			if (data != null) {
-				JDTUtility.tryToOpenInEditor(data.f_projectName,
+				JDTUIUtility.tryToOpenInEditor(data.f_projectName,
 						data.f_packageName, data.f_typeName, data.f_lineNumber);
 			}
 		}

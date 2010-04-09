@@ -26,9 +26,8 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 
-import com.surelogic.common.eclipse.JDTUtility;
+import com.surelogic.common.eclipse.JDTUIUtility;
 import com.surelogic.common.eclipse.ViewUtility;
-import com.surelogic.common.eclipse.jobs.DatabaseJob;
 import com.surelogic.common.eclipse.logging.SLEclipseStatusUtility;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.jdbc.ConnectionQuery;
@@ -101,7 +100,7 @@ public class JSureFindingDetailsMediator extends AbstractSierraViewMediator
 						data = getDetail(fr, lookAtChildren);
 					}
 					if (data != null) {
-						JDTUtility.tryToOpenInEditor(data.getProjectName(),
+						JDTUIUtility.tryToOpenInEditor(data.getProjectName(),
 								data.getPackageName(), data.getClassName(),
 								data.getLineOfCode());
 

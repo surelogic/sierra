@@ -48,7 +48,7 @@ import com.surelogic.common.CommonImages;
 import com.surelogic.common.eclipse.AuditTrail;
 import com.surelogic.common.eclipse.FocusAction;
 import com.surelogic.common.eclipse.HTMLPrinter;
-import com.surelogic.common.eclipse.JDTUtility;
+import com.surelogic.common.eclipse.JDTUIUtility;
 import com.surelogic.common.eclipse.SLImages;
 import com.surelogic.common.eclipse.TextEditedListener;
 import com.surelogic.common.eclipse.ViewUtility;
@@ -342,7 +342,7 @@ public class FindingDetailsMediator extends AbstractSierraViewMediator
 				return;
 			}
 
-			JDTUtility.tryToOpenInEditor(f_finding.getProjectName(), src
+			JDTUIUtility.tryToOpenInEditor(f_finding.getProjectName(), src
 					.getPackageName(), src.getClassName(), src.getLineOfCode());
 		}
 	};
@@ -508,7 +508,7 @@ public class FindingDetailsMediator extends AbstractSierraViewMediator
 					final String packageName = item.getText(2);
 					final String className = item.getText(3);
 					final int lineNumber = Integer.valueOf(item.getText(4));
-					JDTUtility.tryToOpenInEditor(projectName, packageName,
+					JDTUIUtility.tryToOpenInEditor(projectName, packageName,
 							className, lineNumber);
 				}
 			}
