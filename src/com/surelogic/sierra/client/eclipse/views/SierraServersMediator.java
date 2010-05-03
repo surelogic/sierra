@@ -985,8 +985,8 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 		});
 		final long now = startingUpdate();
 
-		final Job job = new AbstractSierraDatabaseJob("Updating project status",
-				Job.INTERACTIVE) {
+		final Job job = new AbstractSierraDatabaseJob(
+				"Updating project status", Job.INTERACTIVE) {
 			@Override
 			protected IStatus run(final IProgressMonitor monitor) {
 				monitor.beginTask("Updating list", IProgressMonitor.UNKNOWN);
@@ -1496,9 +1496,15 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 							createLabel(root, "Closed ... no info available");
 							continue;
 						}
+					} else {
+						final ServersViewContent root = createProjectItem(
+								parent, server, projectName);
+						content.add(root);
+						createLabel(root,
+								"Project no longer in workspace ... no info available");
+						continue;
+						// The project probably once existed. Ignore it now.
 					}
-					throw new IllegalStateException("No such Java project: "
-							+ projectName);
 				}
 			}
 			final ServersViewContent root = new ServersViewContent(parent,
