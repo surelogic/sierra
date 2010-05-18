@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -20,6 +19,7 @@ import org.eclipse.ui.progress.UIJob;
 import com.surelogic.common.XUtil;
 import com.surelogic.common.eclipse.BalloonUtility;
 import com.surelogic.common.eclipse.JDTUtility;
+import com.surelogic.common.eclipse.jobs.WorkspaceLockingJob;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.dialogs.ScanTestCodeSelectionDialog;
@@ -100,12 +100,7 @@ public abstract class AbstractScan<T extends IJavaElement> {
 			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				final boolean saved = trySavingEditors();
-				new WorkspaceJob(
-						"Checking if source code is built and compiles") {
-					{ 
-						IWorkspace workspace = ResourcesPlugin.getWorkspace();
-						setRule(workspace.getRoot());
-					}
+				new WorkspaceLockingJob("Checking if source code is built and compiles") {
 					@Override
 					public IStatus runInWorkspace(IProgressMonitor monitor)
 							throws CoreException {

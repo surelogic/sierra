@@ -1,7 +1,5 @@
 package com.surelogic.sierra.client.eclipse.actions;
 
-import org.eclipse.core.resources.WorkspaceJob;
-import org.eclipse.core.resources.team.ResourceRuleFactory;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -9,6 +7,7 @@ import org.eclipse.core.runtime.jobs.Job;
 
 import com.surelogic.common.eclipse.jobs.DatabaseJob;
 import com.surelogic.common.eclipse.jobs.SLProgressMonitorWrapper;
+import com.surelogic.common.eclipse.jobs.WorkspaceLockingJob;
 import com.surelogic.common.eclipse.logging.SLEclipseStatusUtility;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.jobs.*;
@@ -18,7 +17,7 @@ import com.surelogic.sierra.tool.ToolException;
 import com.surelogic.sierra.tool.ToolUtil;
 import com.surelogic.sierra.tool.message.Config;
 
-public class NewScanJob extends WorkspaceJob {
+public class NewScanJob extends WorkspaceLockingJob {
 
 	final Config config;
 
@@ -28,9 +27,9 @@ public class NewScanJob extends WorkspaceJob {
 		super(name);
 		config = cfg;
 		afterJob = after;
-		setPriority(Job.DECORATE);
-		setRule(new ResourceRuleFactory() {/* Nothing to do here */
-		}.buildRule());
+		setPriority(Job.DECORATE);		
+		//setRule(new ResourceRuleFactory() {/* Nothing to do here */
+		//}.buildRule());
 		afterJob.setPriority(Job.DECORATE);
 	}
 
