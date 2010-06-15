@@ -24,6 +24,7 @@ import com.surelogic.common.jdbc.Query;
 import com.surelogic.common.jdbc.TransactionException;
 import com.surelogic.common.jobs.NullSLProgressMonitor;
 import com.surelogic.common.jobs.SLStatus;
+import com.surelogic.common.license.SLLicenseProduct;
 import com.surelogic.common.license.SLLicenseUtility;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Activator;
@@ -57,7 +58,7 @@ public class ScanChangedProjectsAction extends
 		 * License check: A hack because Sierra is not using SLJobs yet.
 		 */
 		final SLStatus failed = SLLicenseUtility.validateSLJob(
-				SLLicenseUtility.SIERRA_SUBJECT,
+				SLLicenseProduct.SIERRA,
 				new NullSLProgressMonitor());
 		if (failed != null) {
 			IStatus status = SLEclipseStatusUtility.convert(failed, Activator.getDefault());
