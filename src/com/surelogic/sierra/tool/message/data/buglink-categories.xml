@@ -2480,8 +2480,8 @@
         <!--filter>
             <type>DM_STRING_EMPTY_EQUALS</type>
             <filtered>false</filtered>
-        </filter>
-        <filter-->
+        </filter> -->
+        <filter>
             <type>UseStringBufferForStringAppends</type>
             <filtered>false</filtered>
         </filter>
