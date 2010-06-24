@@ -525,7 +525,7 @@ public class SettingQueries {
 	/**
 	 * The full location, on the Java classpath, of the default world file.
 	 */
-	public static final String DEFAULT_FILTER_SET_FILE = "/com/surelogic/sierra/tool/message/data/buglink-default-scan-filter.txt";
+	public static final String DEFAULT_FILTER_SET_FILE = "com/surelogic/sierra/tool/message/data/buglink-default-scan-filter.txt";
 
 	/**
 	 * Gets the default set of finding type UUIDs that have been selected by
