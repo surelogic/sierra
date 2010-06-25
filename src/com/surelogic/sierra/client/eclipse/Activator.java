@@ -15,12 +15,14 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.progress.UIJob;
 import org.osgi.framework.BundleContext;
 
+import com.surelogic.common.eclipse.EclipseUtility;
 import com.surelogic.common.eclipse.SWTUtility;
 import com.surelogic.common.eclipse.dialogs.ErrorDialogUtility;
 import com.surelogic.common.eclipse.jobs.SLUIJob;
 import com.surelogic.common.eclipse.logging.SLEclipseStatusUtility;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.jdbc.FutureDatabaseException;
+import com.surelogic.common.license.SLLicenseProduct;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.actions.MarkersHandler;
 import com.surelogic.sierra.client.eclipse.jobs.AbstractSierraDatabaseJob;
@@ -74,7 +76,7 @@ public final class Activator extends AbstractUIPlugin implements
 	// Used for startup
 	public void run(final IProgressMonitor monitor)
 			throws InvocationTargetException, InterruptedException {
-		monitor.beginTask("Initializing sierra-client-eclipse", 7);
+		monitor.beginTask("Initializing the Sierra tool", 8);
 		/*
 		 * "Touch" common-eclipse so the logging gets Eclipse-ified.
 		 */
@@ -122,6 +124,10 @@ public final class Activator extends AbstractUIPlugin implements
 					return Status.OK_STATUS;
 				}
 			}.schedule();
+
+			EclipseUtility.getProductReleaseDateJob(SLLicenseProduct.SIERRA,
+					this).schedule();
+			monitor.worked(1);
 
 			new DeleteUnfinishedScans().schedule();
 			monitor.worked(1);
