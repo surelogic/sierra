@@ -186,7 +186,7 @@
 	</Call>
 	
 	<New id="SierraDS" class="org.mortbay.jetty.plus.naming.Resource">
-		<Arg>jdbc/Sierra</Arg>
+		<Arg>java:comp/env/jdbc/Sierra</Arg>
 		<Arg>
 			<New class="org.apache.derby.jdbc.EmbeddedDataSource">
 				<Set name="DatabaseName"><SystemProperty name="com.surelogic.server" /><SystemProperty name="file.separator" />server-db</Set>
@@ -197,14 +197,14 @@
 
 	<!-- Transaction handler -->
 	<New id="SierraTH" class="org.mortbay.jetty.plus.naming.Resource">
-		<Arg>SierraTransactionHandler</Arg>
+		<Arg>java:comp/env/SierraTransactionHandler</Arg>
 		<Arg>
 			<Call name="newSingleThreadExecutor" class="java.util.concurrent.Executors"/>
 		</Arg>
 	</New>
 
 	<New id="SierraTS" class="org.mortbay.jetty.plus.naming.Resource">
-		<Arg>SierraTimerService</Arg>
+		<Arg>java:comp/env/SierraTimerService</Arg>
 		<Arg>
 			<Call name="newScheduledThreadPool" class="java.util.concurrent.Executors">
 				<Arg type="int">2</Arg>
