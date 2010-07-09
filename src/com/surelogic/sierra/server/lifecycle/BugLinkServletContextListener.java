@@ -103,9 +103,10 @@ public class BugLinkServletContextListener implements ServletContextListener {
 								SLLogger.getLogger().log(Level.SEVERE,
 										e.getMessage(), e);
 								throw e;
-							} catch (final Exception e) {
-								SLLogger.getLogger().log(Level.WARNING,
+							} catch (final RuntimeException e) {
+								SLLogger.getLogger().log(Level.SEVERE,
 										e.getMessage(), e);
+								throw e;
 							}
 						}
 					}, DELAY, DELAY, UNIT);

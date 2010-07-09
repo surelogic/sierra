@@ -10,6 +10,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
@@ -608,8 +609,8 @@ public enum ConnectionFactory implements DBConnection {
 		try {
 			final InitialContext context = new InitialContext();
 			try {
-				return ((DataSource) new InitialContext().lookup("jdbc/Sierra"))
-						.getConnection();
+				return ((DataSource) ((Context) context.lookup("java:comp/env"))
+						.lookup("jdbc/Sierra")).getConnection();
 			} finally {
 				context.close();
 			}
@@ -625,7 +626,8 @@ public enum ConnectionFactory implements DBConnection {
 		try {
 			final InitialContext context = new InitialContext();
 			try {
-				return (ExecutorService) new InitialContext()
+				return (ExecutorService) ((Context) context
+						.lookup("java:comp/env"))
 						.lookup("SierraTransactionHandler");
 			} finally {
 				context.close();
@@ -644,8 +646,8 @@ public enum ConnectionFactory implements DBConnection {
 		try {
 			final InitialContext context = new InitialContext();
 			try {
-				return (ScheduledExecutorService) new InitialContext()
-						.lookup("SierraTimerService");
+				return (ScheduledExecutorService) ((Context) context
+						.lookup("java:comp/env")).lookup("SierraTimerService");
 			} finally {
 				context.close();
 			}
@@ -675,7 +677,7 @@ public enum ConnectionFactory implements DBConnection {
 	public void shutdown() {
 		throw new UnsupportedOperationException();
 	}
-	
+
 	public void destroy() {
 		throw new UnsupportedOperationException();
 	}

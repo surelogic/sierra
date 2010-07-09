@@ -2,6 +2,8 @@ package com.surelogic.sierra.server.lifecycle;
 
 import java.io.File;
 import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.FileHandler;
@@ -12,6 +14,7 @@ import javax.servlet.ServletContextListener;
 
 import com.surelogic.common.FileUtility;
 import com.surelogic.common.i18n.I18N;
+import com.surelogic.common.jdbc.FutureDatabaseException;
 import com.surelogic.common.jdbc.SchemaUtility;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.jdbc.scan.ScanQueries;
@@ -45,15 +48,21 @@ public class BootUpServletContextListener implements ServletContextListener {
 		/*
 		 * Configure SLLogger based upon the web.xml context parameters.
 		 */
-		final String loggerOption = sce.getServletContext().getInitParameter(
-				"SLLogger");
-		final String loggerTag = sce.getServletContext().getInitParameter(
-				"SLLoggerTag");
-		final String contextName = sce.getServletContext()
-				.getServletContextName();
-		bootLogging(loggerOption, loggerTag, contextName);
-		bootDatabase();
-		clearCache();
+		try {
+			final String loggerOption = sce.getServletContext()
+					.getInitParameter("SLLogger");
+			final String loggerTag = sce.getServletContext().getInitParameter(
+					"SLLoggerTag");
+			final String contextName = sce.getServletContext()
+					.getServletContextName();
+			bootLogging(loggerOption, loggerTag, contextName);
+			bootDatabase();
+			clearCache();
+		} catch (final Error e) {
+			SLLogger.getLogger().log(Level.SEVERE, e.getMessage(), e);
+		} catch (final Exception e) {
+			SLLogger.getLogger().log(Level.SEVERE, e.getMessage(), e);
+		}
 	}
 
 	private void bootLogging(final String loggerOption, String loggerTag,
@@ -91,8 +100,7 @@ public class BootUpServletContextListener implements ServletContextListener {
 		final long maxMemoryMB = rt.maxMemory() / 1024L / 1024L;
 		final long totalMemoryMB = rt.totalMemory() / 1024L / 1024L;
 		final long freeMemoryMB = rt.freeMemory() / 1024L / 1024L;
-		SLLogger.getLogger().log(
-				Level.INFO,
+		SLLogger.getLogger().info(
 				contextName + " logging " + toString
 						+ "initialized : Java runtime: maxMemory="
 						+ maxMemoryMB + " MB; totalMemory=" + totalMemoryMB
@@ -116,8 +124,7 @@ public class BootUpServletContextListener implements ServletContextListener {
 				});
 		ConnectionFactory.getInstance().withTransaction(
 				ScanQueries.deleteUnfinishedScans(null));
-		SLLogger.getLogger().log(
-				Level.INFO,
+		SLLogger.getLogger().info(
 				"Derby booted with derby.storage.pageSize="
 						+ System.getProperty("derby.storage.pageSize")
 						+ " and derby.storage.pageCacheSize="
@@ -137,4 +144,5 @@ public class BootUpServletContextListener implements ServletContextListener {
 							+ cacheDir.getAbsolutePath());
 		}
 	}
+
 }
