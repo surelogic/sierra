@@ -266,7 +266,11 @@ public final class TeamServer {
 		final CommandlineJava command = getJettyTemplate();
 
 		command.setMaxmemory(PreferenceConstants.getServerMemoryMB() + "m");
-
+		if (System.getProperty("com.surelogic.debugServer") != null) {
+			command.createVmArgument()
+					.setValue(
+							"-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000");
+		}	
 		// Ensure the local team server directory exists for logging
 		final File serverDir = PreferenceConstants
 				.getSierraLocalTeamServerDirectory();
@@ -429,9 +433,10 @@ public final class TeamServer {
 		final File workingDirectory = launderToFile(f_pluginDir + JETTY_DIR);
 		b.directory(workingDirectory);
 		final String commandLine = command.toString();
-		log.log(Level.INFO, "Local team server command '" + commandLine
-				+ "' with a working directory of '"
-				+ workingDirectory.getAbsolutePath() + "'.");
+		log.log(Level.INFO,
+				"Local team server command '" + commandLine
+						+ "' with a working directory of '"
+						+ workingDirectory.getAbsolutePath() + "'.");
 		try {
 			final Process p = b.start();
 			if (storeProcess) {
