@@ -180,7 +180,6 @@ public final class ScanDocumentUtility {
 		if (debug) {
 			log.info("Loading scan document " + scanDocument);
 		}
-		monitor.begin(100);
 		Throwable exc = null;
 		try {
 			final Connection conn = Data.getInstance().transactionConnection();

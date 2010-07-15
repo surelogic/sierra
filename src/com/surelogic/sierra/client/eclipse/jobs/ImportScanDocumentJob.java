@@ -43,6 +43,7 @@ public final class ImportScanDocumentJob extends AbstractSierraDatabaseJob {
 	protected IStatus run(final IProgressMonitor monitor) {
 		final SLProgressMonitorWrapper slProgressMonitorWrapper = new SLProgressMonitorWrapper(
 				monitor, this.getName());
+		slProgressMonitorWrapper.begin(100);
 		try {
 			loadScanDocument(slProgressMonitorWrapper);
 		} catch (final IllegalStateException e) {
