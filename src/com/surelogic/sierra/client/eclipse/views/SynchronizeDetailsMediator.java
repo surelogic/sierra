@@ -20,7 +20,6 @@ import org.eclipse.swt.widgets.Listener;
 
 import com.surelogic.common.eclipse.LinkTrail;
 import com.surelogic.common.eclipse.ViewUtility;
-import com.surelogic.common.eclipse.jobs.DatabaseJob;
 import com.surelogic.common.eclipse.jobs.SLUIJob;
 import com.surelogic.common.eclipse.logging.SLEclipseStatusUtility;
 import com.surelogic.common.i18n.I18N;
@@ -71,7 +70,7 @@ public class SynchronizeDetailsMediator extends AbstractSierraViewMediator {
 		super.init();
 		f_view.setStatus(IViewCallback.Status.NO_DATA);
 	}
-	
+
 	private void updateEventTableContents(final SynchOverview so)
 			throws Exception {
 		Data.getInstance().withReadOnly(new NullDBTransaction() {
@@ -174,7 +173,8 @@ public class SynchronizeDetailsMediator extends AbstractSierraViewMediator {
 			job.schedule();
 		} else {
 			final Job job = new AbstractSierraDatabaseJob(
-					"Updating reading events from server synchronize", Job.INTERACTIVE) {
+					"Updating reading events from server synchronize",
+					Job.INTERACTIVE) {
 				@Override
 				protected IStatus run(IProgressMonitor monitor) {
 					monitor
@@ -185,7 +185,8 @@ public class SynchronizeDetailsMediator extends AbstractSierraViewMediator {
 					} catch (Exception e) {
 						final int errNo = 59;
 						final String msg = I18N.err(errNo);
-						return SLEclipseStatusUtility.createErrorStatus(errNo, msg, e);
+						return SLEclipseStatusUtility.createErrorStatus(errNo,
+								msg, e);
 					}
 					monitor.done();
 					return Status.OK_STATUS;
