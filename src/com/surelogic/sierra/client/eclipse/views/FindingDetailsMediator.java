@@ -246,8 +246,8 @@ public class FindingDetailsMediator extends AbstractSierraViewMediator
 		 * long lastId = findingQueryInProgress.getAndSet(findingId); if (lastId
 		 * == findingId) { return; }
 		 */
-		final Job job = new AbstractSierraDatabaseJob("Querying details of finding "
-				+ findingId, Job.INTERACTIVE) {
+		final Job job = new AbstractSierraDatabaseJob(
+				"Querying details of finding " + findingId, Job.INTERACTIVE) {
 			@Override
 			protected IStatus run(final IProgressMonitor monitor) {
 				monitor.beginTask("Querying finding data",
@@ -615,6 +615,7 @@ public class FindingDetailsMediator extends AbstractSierraViewMediator
 				.append("</b>");
 		final String details = f_finding.getFindingTypeDetail();
 		b.append(details);
+		HTMLPrinter.addPageEpilog(b);
 		f_detailsText.setText(b.toString());
 
 		f_criticalButton.setSelection(false);
