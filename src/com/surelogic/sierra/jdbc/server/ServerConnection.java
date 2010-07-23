@@ -26,6 +26,27 @@ public class ServerConnection {
 	protected final boolean readOnly;
 	protected final Server server;
 
+	/**
+	 * Construct a server connection, but do not explicitly set a transaction
+	 * mode.
+	 * 
+	 * @param conn
+	 * @throws SQLException
+	 */
+	ServerConnection(final Connection conn) throws SQLException {
+		this.conn = LazyPreparedStatementConnection.wrap(conn);
+		this.readOnly = false;
+		server = new Server(conn, readOnly);
+	}
+
+	/**
+	 * Construct a server connection with the given transactional mode
+	 * 
+	 * @param conn
+	 * @param readOnly
+	 *            whether the server is read only, or transacted
+	 * @throws SQLException
+	 */
 	public ServerConnection(final Connection conn, final boolean readOnly)
 			throws SQLException {
 		this.conn = LazyPreparedStatementConnection.wrap(conn);

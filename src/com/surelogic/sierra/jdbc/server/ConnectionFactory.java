@@ -64,6 +64,17 @@ public enum ConnectionFactory implements DBConnection {
 	}
 
 	/**
+	 * Return a connection to the server, but do not explicitly set its
+	 * transactional mode.
+	 * 
+	 * @return
+	 * @throws SQLException
+	 */
+	public ServerConnection defaultServerConnection() throws SQLException {
+		return new ServerConnection(lookupConnection());
+	}
+
+	/**
 	 * Return a connection to the server capable of executing transactions.
 	 * 
 	 * @return
@@ -407,6 +418,29 @@ public enum ConnectionFactory implements DBConnection {
 	public <T> T withReadOnly(final ServerTransaction<T> t) {
 		try {
 			return with(readOnly(), t);
+		} catch (final SQLException e) {
+			throw new TransactionException(e);
+		}
+	}
+
+	public <T> T withDefault(final DBQuery<T> dbQuery) {
+		try {
+			return with(defaultServerConnection(), dbQuery);
+		} catch (final SQLException e) {
+			throw new TransactionException(e);
+		}
+	}
+
+	/**
+	 * Retrieve a connection, and execute the given transaction.
+	 * 
+	 * @param <T>
+	 * @param t
+	 * @return
+	 */
+	public <T> T withDefault(final DBTransaction<T> action) {
+		try {
+			return with(defaultServerConnection(), action);
 		} catch (final SQLException e) {
 			throw new TransactionException(e);
 		}
