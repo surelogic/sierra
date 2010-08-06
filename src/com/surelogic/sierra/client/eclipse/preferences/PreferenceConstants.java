@@ -4,7 +4,7 @@ import java.io.File;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 
-import com.surelogic.common.eclipse.preferences.IPreferenceConstants;
+import com.surelogic.common.eclipse.preferences.IAutoPerspectiveSwitchPreferences;
 import com.surelogic.sierra.client.eclipse.Activator;
 import com.surelogic.sierra.client.eclipse.views.ServerStatusSort;
 import com.surelogic.sierra.tool.IToolFactory;
@@ -13,7 +13,7 @@ import com.surelogic.sierra.tool.message.Importance;
 /**
  * Constant definitions for plug-in preferences
  */
-public class PreferenceConstants implements IPreferenceConstants {
+public class PreferenceConstants implements IAutoPerspectiveSwitchPreferences {
 
 	private static final String PREFIX = "com.surelogic.sierra.";
 
