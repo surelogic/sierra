@@ -20,7 +20,7 @@
 
 	<target name="instrument">
 		<!-- Set the src and dest for the war that Maven creates -->
-		<instrument-archive srcfile="./jetty/webapps/sl.orig.war" 
+		<instrument-archive srcfile="./jetty/sl.orig.war" 
 			                destfile="./jetty/webapps/sl.war" 
 			                runtime="${flashlight-runtime.jar}" 
 			                datadir="${data-directory}">
