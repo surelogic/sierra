@@ -23,7 +23,8 @@
 		<instrument-archive srcfile="./jetty/sl.orig.war" 
 			                destfile="./jetty/webapps/sl.war" 
 			                runtime="${flashlight-runtime.jar}" 
-			                datadir="${data-directory}">
+			                datadir="${data-directory}"
+			                collectiontype="ONLY_LOCKS">
 			<libs>
 				<!-- Set these based on whatever web container you're using -->
 				<pathelement location="./jetty/lib/servlet-api-2.5-6.1.7.jar" />
