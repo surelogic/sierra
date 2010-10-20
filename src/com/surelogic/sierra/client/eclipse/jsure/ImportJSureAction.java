@@ -10,6 +10,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.PlatformUI;
 
+import com.surelogic.common.regression.RegressionUtility;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
 
 public final class ImportJSureAction implements IWorkbenchWindowActionDelegate {
@@ -44,7 +45,7 @@ public final class ImportJSureAction implements IWorkbenchWindowActionDelegate {
 			File desktop = new File(userDir, "Desktop");
 			String first = null;
 			for (String file : desktop.list()) {
-				if (file.endsWith(".sea.xml")) {
+				if (file.endsWith(RegressionUtility.JSURE_SNAPSHOT_SUFFIX)) {
 					first = new File(desktop, file).getAbsolutePath();
 					break;
 				}
@@ -62,7 +63,7 @@ public final class ImportJSureAction implements IWorkbenchWindowActionDelegate {
 	public static void asyncImportJSureDocument(File runDocument) {
 		if (runDocument.canRead()) {
 			final String name = runDocument.getName();
-			final int last = name.length() - ".sea.xml".length();
+			final int last = name.length() - RegressionUtility.JSURE_SNAPSHOT_SUFFIX.length();
 			final String proj = name.substring(0, last);
 			final ImportJSureDocumentJob job = new ImportJSureDocumentJob(proj,
 					runDocument);
