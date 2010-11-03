@@ -31,6 +31,7 @@ import com.surelogic.sierra.tool.message.FindingTypes;
 import com.surelogic.sierra.tool.message.GetExtensionsResponse;
 import com.surelogic.sierra.tool.message.ListCategoryResponse;
 import com.surelogic.sierra.tool.message.MessageWarehouse;
+import com.surelogic.sierra.tool.message.data.JSureInfo;
 
 public class SchemaUtil {
 
@@ -40,7 +41,9 @@ public class SchemaUtil {
 		final FindingTypeManager ftMan = FindingTypeManager.getInstance(conn);
 		final List<FindingTypes> types = new ArrayList<FindingTypes>(3);
 		types.add(getFindingTypes("buglink-finding-types.xml"));
-		// types.add(getFindingTypes("jsure-finding-types.xml"));
+		if (JSureInfo.useJSure) {
+			types.add(getFindingTypes("jsure-finding-types.xml"));
+		}
 		ftMan.updateFindingTypes(types, 0);
 	}
 
