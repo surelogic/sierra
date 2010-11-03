@@ -112,7 +112,12 @@ public class JSureDocumentListener extends AbstractXMLResultListener {
 			final int line = Integer.parseInt(s.getLine());
 			loc.lineOfCode(line);
 			loc.endLine(line);
-			loc.hash(Long.decode(s.getAttribute(HASH_ATTR)));
+			String hash = s.getAttribute(HASH_ATTR);
+			if (hash != null) {
+				loc.hash(Long.decode(hash));
+			} else {
+				System.out.println("No hash: "+s);
+			}
 			loc.identifier("unknown");
 			loc.type(IdentifierType.CLASS);
 			loc.build();
