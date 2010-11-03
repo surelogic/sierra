@@ -27,6 +27,7 @@ public final class ImportJSureAction implements IWorkbenchWindowActionDelegate {
 	private FileDialog fd = null;
 
 	public void run(IAction action) {
+		// TODO check if there's a scan for the project(s)
 		if (fd == null && !debug) {
 			fd = new FileDialog(PlatformUI.getWorkbench()
 					.getActiveWorkbenchWindow().getShell(), SWT.OPEN);
