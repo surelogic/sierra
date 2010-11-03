@@ -13,6 +13,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
+import com.surelogic.common.eclipse.ViewUtility;
 import com.surelogic.common.eclipse.jobs.SLProgressMonitorWrapper;
 import com.surelogic.common.jobs.SLProgressMonitor;
 import com.surelogic.common.logging.SLLogger;
@@ -20,6 +21,7 @@ import com.surelogic.jsure.xml.JSureXMLReader;
 import com.surelogic.sierra.client.eclipse.jobs.AbstractSierraDatabaseJob;
 import com.surelogic.sierra.client.eclipse.jobs.ScanDocumentUtility;
 import com.surelogic.sierra.client.eclipse.model.DatabaseHub;
+import com.surelogic.sierra.client.eclipse.perspectives.CodeReviewPerspective;
 import com.surelogic.sierra.jdbc.finding.ClientFindingManager;
 import com.surelogic.sierra.jdbc.scan.ScanManager;
 import com.surelogic.sierra.jdbc.tool.FindingFilter;
@@ -60,6 +62,7 @@ public class ImportJSureDocumentJob extends AbstractSierraDatabaseJob {
 		if (wrapper.isCanceled()) {
 			return Status.CANCEL_STATUS;
 		} else {
+			ViewUtility.showPerspective(CodeReviewPerspective.class.getName());
 			return Status.OK_STATUS;
 		}
 	}
