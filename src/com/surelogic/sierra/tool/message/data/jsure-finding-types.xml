@@ -187,6 +187,16 @@ single thread while it executes.</p>]]>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
+    <id>LockAnalysis_ds_FieldAccessOkayThreadConfined</id> 
+    <artifact tool="JSure" mnemonic="LockAnalysis_ds_FieldAccessOkayThreadConfined"/>
+    <name>Field Access in a Thread-confined Constructor</name>
+    <shortMessage>A field access in a thread-confined constructor</shortMessage>
+    <info>
+<![CDATA[<p>The field access in a thread-confined constructor is being treated as if it is protected by a lock</p>]]>
+    </info>
+  </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+  <findingType>
     <id>LockAnalysis_ds_PreconditionsAssured</id> 
     <artifact tool="JSure" mnemonic="LockAnalysis_ds_PreconditionsAssured"/>
     <name>Lock precondition assured</name>
@@ -467,6 +477,26 @@ single thread while it executes.</p>]]>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
+    <id>UniquenessAssurance_aggregatedUniqueFields</id> 
+    <artifact tool="JSure" mnemonic="UniquenessAssurance_aggregatedUniqueFields"/>
+    <name>Aggregated Unique Fields</name>
+    <shortMessage>Aggregated unique fields</shortMessage>
+    <info>
+<![CDATA[<p>These are unique fields that are considered as together as one by the analysis</p>]]>
+    </info>
+  </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->      
+  <findingType>
+    <id>UniquenessAssurance_aggregatedUniqueParams</id> 
+    <artifact tool="JSure" mnemonic="UniquenessAssurance_aggregatedUniqueParams"/>
+    <name>Aggregated Unique Parameters</name>
+    <shortMessage>Aggregated unique parameters</shortMessage>
+    <info>
+<![CDATA[<p>These are unique parameters that are considered as together as one by the analysis</p>]]>
+    </info>
+  </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->  
+  <findingType>
     <id>UniquenessAssurance</id> 
     <artifact tool="JSure" mnemonic="UniquenessAssurance"/>
     <name>Uniqueness assurance</name>
@@ -524,6 +554,21 @@ contains the field.</p>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+  <findingType>
+    <id>AggregateInRegionPromiseDrop</id> 
+    <artifact tool="JSure" mnemonic="AggregateInRegionPromiseDrop"/>
+    <name>@AggregateInRegion</name>
+    <shortMessage>The Instance region of the object referenced by this field is to be "aggregated" into the specified regions of the containing object</shortMessage>
+    <info>
+<![CDATA[<p>Declares that the Instance region of the object referenced by this
+field is to be mapped into a named region of the object that contains the
+field to which this annotation is applied.</p>
+
+<p>It is an error if the field is not also annotated with
+<tt>@Unique</tt>.</p>]]>
+    </info>
+  </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->  
   <findingType>
     <id>StartsPromiseDrop</id> 
     <artifact tool="JSure" mnemonic="StartsPromiseDrop"/>
@@ -819,6 +864,66 @@ true</tt>.</p>]]>
     <shortMessage>Region effects checked by constructor.</shortMessage>
     <info>
 <![CDATA[<p>Region effects checked by constructor</p>]]>
+    </info>
+  </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <findingType>
+    <id>EffectAssurance</id> 
+    <artifact tool="JSure" mnemonic="EffectAssurance"/>
+    <name>Info from Effects Assurance</name>
+    <shortMessage>Info from effects assurance.</shortMessage>
+    <info>
+<![CDATA[<p>Miscellaneous info from effects assurance.</p>]]>
+    </info>
+  </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+  <findingType>
+    <id>PRIMITIVE_TYPE</id> 
+    <artifact tool="JSure" mnemonic="PRIMITIVE_TYPE"/>
+    <name>Primitive typed field</name>
+    <shortMessage>A primitive typed field</shortMessage>
+    <info>
+<![CDATA[<p>A primitive typed field</p>]]>
+    </info>
+  </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+  <findingType>
+    <id>FINAL_AND_THREADSAFE</id> 
+    <artifact tool="JSure" mnemonic="FINAL_AND_THREADSAFE"/>
+    <name>Final and ThreadSafe field</name>
+    <shortMessage>A final field referring to a @ThreadSafe object</shortMessage>
+    <info>
+<![CDATA[<p>A final field referring to a @ThreadSafe object</p>]]>
+    </info>
+  </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+  <findingType>
+    <id>VOLATILE_AND_THREADSAFE</id> 
+    <artifact tool="JSure" mnemonic="VOLATILE_AND_THREADSAFE"/>
+    <name>Volatile and ThreadSafe</name>
+    <shortMessage>A volatile field referring to a @ThreadSafe object</shortMessage>
+    <info>
+<![CDATA[<p>A volatile field referring to a @ThreadSafe object</p>]]>
+    </info>
+  </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+  <findingType>
+    <id>PROTECTED_AND_THREADSAFE</id> 
+    <artifact tool="JSure" mnemonic="PROTECTED_AND_THREADSAFE"/>
+    <name>Protected and ThreadSafe</name>
+    <shortMessage>A protected field referring to a @ThreadSafe object</shortMessage>
+    <info>
+<![CDATA[<p>A protected field referring to a @ThreadSafe object</p>]]>
+    </info>
+  </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+  <findingType>
+    <id>UNSAFE_FIELD</id> 
+    <artifact tool="JSure" mnemonic="UNSAFE_FIELD"/>
+    <name>Unsafe Field</name>
+    <shortMessage>An unsafe field</shortMessage>
+    <info>
+<![CDATA[<p>A field that cannot be considered safe</p>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
