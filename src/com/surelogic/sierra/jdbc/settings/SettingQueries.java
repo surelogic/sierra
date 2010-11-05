@@ -44,6 +44,7 @@ import com.surelogic.sierra.tool.message.ServerInfoServiceClient;
 import com.surelogic.sierra.tool.message.ServerLocation;
 import com.surelogic.sierra.tool.message.Services;
 import com.surelogic.sierra.tool.message.SierraServiceClientException;
+import com.surelogic.sierra.tool.message.data.JSureInfo;
 
 /**
  * This class represents implementations of the client-side behavior of the bug
@@ -525,7 +526,10 @@ public class SettingQueries {
 	/**
 	 * The full location, on the Java classpath, of the default world file.
 	 */
-	public static final String DEFAULT_FILTER_SET_FILE = "com/surelogic/sierra/tool/message/data/buglink-default-scan-filter.txt";
+	public static final String DEFAULT_FILTER_SET_FILE = 
+		JSureInfo.useJSure ? 
+			"com/surelogic/sierra/tool/message/data/buglink-default-jsure-scan-filter.txt" :
+			"com/surelogic/sierra/tool/message/data/buglink-default-scan-filter.txt";
 
 	/**
 	 * Gets the default set of finding type UUIDs that have been selected by
