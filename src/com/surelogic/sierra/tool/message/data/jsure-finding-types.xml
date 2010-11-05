@@ -923,7 +923,27 @@ true</tt>.</p>]]>
     <name>Unsafe Field</name>
     <shortMessage>An unsafe field</shortMessage>
     <info>
-<![CDATA[<p>A field that cannot be considered safe</p>]]>
+<![CDATA[<p>This field cannot be accessed in a thread-safe manner: field must be final, volatile, or protected by a lock</p>]]>
+    </info>
+  </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+  <findingType>
+    <id>UNSAFE_REFERENCE</id> 
+    <artifact tool="JSure" mnemonic="UNSAFE_REFERENCE"/>
+    <name>Unsafe Reference</name>
+    <shortMessage>An unsafe reference by this field</shortMessage>
+    <info>
+<![CDATA[<p>The object referenced by this field cannot be accessed in a thread-safe manner</p>]]>
+    </info>
+  </findingType>
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->  
+  <findingType>
+    <id>UNIQUE_AND_CONTAINABLE</id> 
+    <artifact tool="JSure" mnemonic="UNIQUE_AND_CONTAINABLE"/>
+    <name>Unique and Containable</name>
+    <shortMessage>Unique and containable</shortMessage>
+    <info>
+<![CDATA[<p>This field is a uniquely referenced, containable object that is aggregated into lock-protected regions</p>]]>
     </info>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
