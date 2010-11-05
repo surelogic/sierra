@@ -11,6 +11,7 @@ import static com.surelogic.jsure.xml.JSureXMLReader.RESULT_ATTR;
 import static com.surelogic.jsure.xml.JSureXMLReader.RESULT_DROP;
 import static com.surelogic.jsure.xml.JSureXMLReader.TYPE_ATTR;
 
+import com.surelogic.common.jobs.NullSLProgressMonitor;
 import com.surelogic.common.jobs.SLProgressMonitor;
 import com.surelogic.jsure.xml.AbstractXMLResultListener;
 import com.surelogic.jsure.xml.Entity;
@@ -136,7 +137,9 @@ public class JSureDocumentListener extends AbstractXMLResultListener {
 		//System.out.println("Handled " + to + " ref from " + from + " to "	+ to.getId());
 		aGenerator.relation(fromId, Integer.valueOf(to.getId()), to.getName());
 	}
-	/*
-	 * @Override public void done() { }
-	 */
+	
+	@Override 
+	public void done() { 
+		aGenerator.finished(new NullSLProgressMonitor());
+	}
 }
