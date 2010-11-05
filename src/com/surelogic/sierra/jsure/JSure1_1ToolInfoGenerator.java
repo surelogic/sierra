@@ -113,5 +113,20 @@ public class JSure1_1ToolInfoGenerator {
 		"PROTECTED_AND_THREADSAFE",
 		"UNSAFE_FIELD",
 		"PRIMITIVE_TYPE",
+		"UNIQUE_AND_CONTAINABLE",
+		"UNSAFE_REFERENCE",
+		/*
+		  public static final int CONSTRUCTOR_UNIQUE_RETURN = 450;
+		  public static final int CONSTRUCTOR_BORROWED_RECEVIER = 451;
+		  public static final int CONSTRUCTOR_BAD = 452;
+		  public static final int METHOD_BORROWED_RECEIVER = 453;
+		  public static final int METHOD_BAD = 454;
+		  public static final int FIELD_CONTAINED_PRIMITIVE = 455;
+		  public static final int FIELD_CONTAINED_OBJECT = 456;
+		  public static final int FIELD_BAD = 457;
+		  public static final int FIELD_NOT_CONTAINABLE = 458;
+		  public static final int FIELD_NOT_UNIQUE = 459;
+		  public static final int FIELD_NOT_AGGREGATED = 460;
+		  */
 	};
 }
