@@ -1,15 +1,6 @@
 package com.surelogic.sierra.client.eclipse.jsure;
 
-import static com.surelogic.jsure.xml.JSureXMLReader.CUNIT_ATTR;
-import static com.surelogic.jsure.xml.JSureXMLReader.HASH_ATTR;
-import static com.surelogic.jsure.xml.JSureXMLReader.IR_DROP;
-import static com.surelogic.jsure.xml.JSureXMLReader.MESSAGE_ATTR;
-import static com.surelogic.jsure.xml.JSureXMLReader.PKG_ATTR;
-import static com.surelogic.jsure.xml.JSureXMLReader.PROMISE_DROP;
-import static com.surelogic.jsure.xml.JSureXMLReader.PROVED_ATTR;
-import static com.surelogic.jsure.xml.JSureXMLReader.RESULT_ATTR;
-import static com.surelogic.jsure.xml.JSureXMLReader.RESULT_DROP;
-import static com.surelogic.jsure.xml.JSureXMLReader.TYPE_ATTR;
+import static com.surelogic.jsure.xml.JSureXMLReader.*;
 
 import com.surelogic.common.jobs.NullSLProgressMonitor;
 import com.surelogic.common.jobs.SLProgressMonitor;
@@ -101,13 +92,26 @@ public class JSureDocumentListener extends AbstractXMLResultListener {
 
 	private boolean createSourceLocation(SourceLocationBuilder loc, SourceRef s) {
 		if (s != null) {
+			final String path = s.getAttribute(PATH_ATTR);
 			final String cu = s.getAttribute(CUNIT_ATTR);
-			loc.compilation(cu);
-			if (cu.endsWith(".java")) {
-	       loc.className(cu.substring(0, cu.length() - 5));
+			if (path != null) {
+				loc.compilation(path);
+
+				final int lastSeparator = path.lastIndexOf('/');
+				final String className;
+				if (path.endsWith(".java")) {
+					className = path.substring(lastSeparator+1, path.length() - 5);
+				} else if (path.endsWith(".class")) {
+					className = path.substring(lastSeparator+1, path.length() - 6);
+				} else {
+					className = path.substring(lastSeparator+1);
+				}
+				loc.className(className);
 			} else {
-			  loc.className(cu);
+				loc.compilation(cu);
+				loc.className(cu);
 			}
+
 			loc.packageName(s.getAttribute(PKG_ATTR));
 
 			final int line = Integer.parseInt(s.getLine());
