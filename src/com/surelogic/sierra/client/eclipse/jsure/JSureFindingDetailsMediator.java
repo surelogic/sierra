@@ -446,6 +446,9 @@ public class JSureFindingDetailsMediator extends AbstractSierraViewMediator
 		FindingDetail fd = getDetail(fr, lookAtChildren);
 		// String pre = lookAtChildren ? "child " : "parent ";
 		// return pre + fr.getRelationType() + ' ' + fd.getSummary();
+		if (fd == null) {
+			return fr.getRelationType();
+		}
 		return fr.getRelationType() + ' ' + fd.getSummary();
 	}
 
