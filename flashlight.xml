@@ -21,7 +21,7 @@
 
 	<target name="instrument">
 		<!-- Set the src and dest for the war that Maven creates -->
-		<!-- 			                collectiontype="ONLY_LOCKS" -->
+		<!-- 		      properties="./fl.properties"  collectiontype="ONLY_LOCKS" -->
 		<instrument-archive srcfile="./jetty/sl.orig.war" 
 			                destfile="./jetty/webapps/sl.war" 
 			                runtime="${flashlight-runtime.jar}" 
