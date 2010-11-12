@@ -2,11 +2,12 @@ package com.surelogic.sierra.client.eclipse.jsure;
 
 import static com.surelogic.jsure.xml.JSureXMLReader.*;
 
+import org.xml.sax.Attributes;
+
 import com.surelogic.common.jobs.NullSLProgressMonitor;
 import com.surelogic.common.jobs.SLProgressMonitor;
 import com.surelogic.jsure.xml.AbstractXMLResultListener;
-import com.surelogic.jsure.xml.Entity;
-import com.surelogic.jsure.xml.SourceRef;
+import com.surelogic.common.xml.*;
 import com.surelogic.sierra.tool.message.ArtifactGenerator;
 import com.surelogic.sierra.tool.message.AssuranceType;
 import com.surelogic.sierra.tool.message.IdentifierType;
@@ -145,5 +146,9 @@ public class JSureDocumentListener extends AbstractXMLResultListener {
 	@Override 
 	public void done() { 
 		aGenerator.finished(new NullSLProgressMonitor());
+	}
+	
+	public Entity makeEntity(String name, Attributes a) {
+		return new Entity(name, a);
 	}
 }
