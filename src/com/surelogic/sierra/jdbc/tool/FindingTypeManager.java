@@ -209,17 +209,17 @@ public final class FindingTypeManager {
 						fRec.insert();
 					}
 					final List<ArtifactType> artifactTypes = ft.getArtifact();
-					if ((artifactTypes != null) && !artifactTypes.isEmpty()) {
+					if (artifactTypes != null && !artifactTypes.isEmpty()) {
 						for (final ArtifactType at : artifactTypes) {
 							Collection<Long> typeIds;
 							if (at.getVersion() == null) {
-								typeIds = getArtifactTypesIds(at.getTool(), at
-										.getMnemonic());
+								typeIds = getArtifactTypesIds(at.getTool(),
+										at.getMnemonic());
 							} else {
 								typeIds = Collections
-										.singleton(getArtifactTypeId(at
-												.getTool(), at.getVersion(), at
-												.getMnemonic()));
+										.singleton(getArtifactTypeId(
+												at.getTool(), at.getVersion(),
+												at.getMnemonic()));
 							}
 							if (typeIds.isEmpty()) {
 								invalidArtifacts.add(at.getMnemonic() + " in "
@@ -275,15 +275,13 @@ public final class FindingTypeManager {
 		if (!unassignedArtifacts.isEmpty() || !uncategorizedFindings.isEmpty()) {
 			final StringBuilder builder = new StringBuilder();
 			if (!unassignedArtifacts.isEmpty()) {
-				builder
-						.append("The following artifact types do not have an assigned finding type:\n");
+				builder.append("The following artifact types do not have an assigned finding type:\n");
 				for (final String s : unassignedArtifacts) {
 					builder.append(s);
 				}
 			}
 			if (!uncategorizedFindings.isEmpty()) {
-				builder
-						.append("The following finding types do not have an assigned category:\n");
+				builder.append("The following finding types do not have an assigned category:\n");
 				for (final String s : uncategorizedFindings) {
 					builder.append(s);
 				}
