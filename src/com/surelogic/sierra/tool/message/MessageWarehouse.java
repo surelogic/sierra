@@ -442,8 +442,8 @@ public final class MessageWarehouse {
 			final ZipEntry configEntry = zip.getEntry(CONFIG_STREAM_NAME);
 			final String configName = runDocument.getName()
 					+ File.separatorChar + CONFIG_STREAM_NAME;
-			final XMLStream stream = new XMLStream(configName, zip
-					.getInputStream(configEntry));
+			final XMLStream stream = new XMLStream(configName,
+					zip.getInputStream(configEntry));
 			Config config = null;
 			try {
 				config = parseScanMetadata(stream, generator, monitor);
@@ -466,8 +466,8 @@ public final class MessageWarehouse {
 						if (config.isToolIncluded(tool)) {
 							final String id = runDocument.getName()
 									+ File.separatorChar + name;
-							final XMLStream xs = new XMLStream(id, zip
-									.getInputStream(ze));
+							final XMLStream xs = new XMLStream(id,
+									zip.getInputStream(ze));
 							parseScanDocument(xs, ag, monitor);
 						}
 					}
@@ -563,8 +563,10 @@ public final class MessageWarehouse {
 
 						while (xmlr.getEventType() == START_ELEMENT
 								&& xmlr.getLocalName().equals("classMetric")) {
-							readClassMetric(unmarshaller.unmarshal(xmlr,
-									ClassMetric.class).getValue(), mBuilder);
+							readClassMetric(
+									unmarshaller.unmarshal(xmlr,
+											ClassMetric.class).getValue(),
+									mBuilder);
 
 							if (++counter == COUNT) {
 								if (cancelled(monitor)) {
@@ -595,8 +597,9 @@ public final class MessageWarehouse {
 
 					while (xmlr.getEventType() == START_ELEMENT
 							&& xmlr.getLocalName().equals("artifact")) {
-						readArtifact(unmarshaller.unmarshal(xmlr,
-								Artifact.class).getValue(), aBuilder);
+						readArtifact(
+								unmarshaller.unmarshal(xmlr, Artifact.class)
+										.getValue(), aBuilder);
 
 						if (xmlr.getEventType() == CHARACTERS) {
 							xmlr.next(); // skip the whitespace between
@@ -730,8 +733,9 @@ public final class MessageWarehouse {
 
 	private static void readArtifact(final Artifact artifact,
 			final ArtifactBuilder builder) {
-		builder.severity(artifact.getSeverity()).priority(
-				artifact.getPriority()).message(artifact.getMessage());
+		builder.severity(artifact.getSeverity())
+				.priority(artifact.getPriority())
+				.message(artifact.getMessage());
 		builder.findingType(artifact.getArtifactType().getTool(), artifact
 				.getArtifactType().getVersion(), artifact.getArtifactType()
 				.getMnemonic());
@@ -772,11 +776,11 @@ public final class MessageWarehouse {
 
 	private static void readSource(final ArtifactBuilder aBuilder,
 			final SourceLocation s) {
-		aBuilder.sourceLocation().compilation(s.getCompilation()).className(
-				s.getClassName()).packageName(s.getPackageName()).endLine(
-				s.getEndLineOfCode()).lineOfCode(s.getLineOfCode()).type(
-				s.getIdentifierType()).identifier(s.getIdentifier()).hash(
-				s.getHash()).build();
+		aBuilder.sourceLocation().compilation(s.getCompilation())
+				.className(s.getClassName()).packageName(s.getPackageName())
+				.endLine(s.getEndLineOfCode()).lineOfCode(s.getLineOfCode())
+				.type(s.getIdentifierType()).identifier(s.getIdentifier())
+				.hash(s.getHash()).build();
 	}
 
 	private static boolean cancelled(final SLProgressMonitor monitor) {
