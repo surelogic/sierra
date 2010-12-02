@@ -6,7 +6,6 @@ import org.xml.sax.Attributes;
 
 import com.surelogic.common.jobs.NullSLProgressMonitor;
 import com.surelogic.common.jobs.SLProgressMonitor;
-import com.surelogic.jsure.xml.AbstractXMLResultListener;
 import com.surelogic.common.xml.*;
 import com.surelogic.sierra.tool.message.ArtifactGenerator;
 import com.surelogic.sierra.tool.message.AssuranceType;
