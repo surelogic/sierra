@@ -57,9 +57,10 @@ final class LocalTool extends AbstractLocalSLJob implements IToolInstance {
 	private final Config config;
 	
 	public LocalTool(Config config) {
-		super("Sierra tool", ToolUtil.getNumTools(config), 
-				TestCode.getTestCode(config.getTestCode()), 
-				config.getMemorySize(), /*true ||*/ config.isVerbose());
+		//super("Sierra tool",, 
+		//		TestCode.getTestCode(config.getTestCode()), 
+		//		config.getMemorySize(), /*true ||*/ config.isVerbose());
+		super("Sierra tool", ToolUtil.getNumTools(config), config);
 		this.config = config;
 	}
 
@@ -189,7 +190,7 @@ final class LocalTool extends AbstractLocalSLJob implements IToolInstance {
 	@Override 
 	protected void setupClassPath(boolean debug, Project proj, Path path) {			
 		final Set<File> jars = new HashSet<File>();
-		final ConfigUtil util = new ConfigUtil(config);
+		final ConfigHelper util = new ConfigHelper(config);
 		util.addPluginToPath(debug, jars, SierraToolConstants.COMMON_PLUGIN_ID);
 
 		// sierra-tool needs special handling since it is unpacked, due to
@@ -221,12 +222,13 @@ final class LocalTool extends AbstractLocalSLJob implements IToolInstance {
 		for(File jar : jars) {
 			addToPath(proj, path, jar, true);
 		}			
-
+		/*
 		if (false) {
 			for(String elt : path.list()) {
 				System.out.println("Path: "+elt);
 			}
 		}
+		*/
 	}
 
 	private void addToolPluginJars(boolean debug, Set<File> path) {

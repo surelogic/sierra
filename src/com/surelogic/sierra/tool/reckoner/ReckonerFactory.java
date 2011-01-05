@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.*;
 import java.util.logging.Level;
 
+import com.surelogic.common.jobs.remote.ConfigHelper;
 import com.surelogic.sierra.tool.*;
 import com.surelogic.sierra.tool.analyzer.ILazyArtifactGenerator;
 import com.surelogic.sierra.tool.message.Config;
@@ -22,7 +23,7 @@ public class ReckonerFactory extends AbstractToolFactory {
 		  findJars(jars, new File(config.getToolsDirectory(), "reckoner/lib"));
 		  jars.add(new File(config.getToolsDirectory(), "reckoner/reckoner.jar"));
 		 */
-		final ConfigUtil util = new ConfigUtil(config);
+		final ConfigHelper util = new ConfigHelper(config);
 		
 		// TODO remove special case to save spaces
 		// 
