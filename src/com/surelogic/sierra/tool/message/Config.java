@@ -10,6 +10,7 @@ import javax.xml.bind.annotation.XmlAccessorOrder;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import com.surelogic.common.jobs.remote.ILocalConfig;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.tool.targets.IToolTarget;
 import com.surelogic.sierra.tool.targets.ToolTarget;
@@ -23,7 +24,7 @@ import com.surelogic.sierra.tool.targets.ToolTarget;
 @XmlAccessorOrder(XmlAccessOrder.ALPHABETICAL)
 @XmlType
 @XmlRootElement
-public class Config implements Cloneable {
+public class Config implements Cloneable, ILocalConfig {
 	protected static final Logger LOG = SLLogger.getLogger("sierra");
 	private String project = null;
 	private List<String> timeseries = null;
