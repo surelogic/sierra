@@ -7,8 +7,7 @@ Require-Bundle: com.surelogic.common,
  com.surelogic.sierra.message,
  com.surelogic.sierra.java5.compatibility;resolution:=optional,
  org.eclipse.jdt.core,
- org.eclipse.core.runtime,
- org.apache.ant
+ org.eclipse.core.runtime
 Export-Package: com.surelogic.sierra.tool,
  com.surelogic.sierra.tool.analyzer,
  com.surelogic.sierra.tool.reckoner

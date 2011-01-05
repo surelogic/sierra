@@ -14,10 +14,8 @@ import org.apache.commons.lang.SystemUtils;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.types.*;
 
-import com.surelogic.common.jobs.remote.RemoteSLJobException;
-import com.surelogic.common.jobs.remote.TestCode;
+import com.surelogic.common.jobs.remote.*;
 import com.surelogic.sierra.tool.analyzer.ILazyArtifactGenerator;
-import com.surelogic.sierra.tool.jobs.AbstractLocalSLJob;
 import com.surelogic.sierra.tool.message.*;
 import com.surelogic.sierra.tool.targets.*;
 
