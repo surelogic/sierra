@@ -28,7 +28,7 @@ final class RemoteTool extends AbstractRemoteSLJob {
 	@Override
 	protected SLJob init(BufferedReader br, Monitor mon) throws Exception {
 		Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
-		System.out.println("Lowered thread priority");
+		out.println("Lowered thread priority");
 
 		String configName = System
 		.getProperty(SierraToolConstants.CONFIG_PROPERTY);
@@ -36,25 +36,25 @@ final class RemoteTool extends AbstractRemoteSLJob {
 			throw new IllegalArgumentException("No config provided");
 		}
 		FileInputStream file = new FileInputStream(configName);
-		System.out.println("Got file: " + configName);
+		out.println("Got file: " + configName);
 
 		JAXBContext ctx = JAXBContext.newInstance(Config.class,
 				FileTarget.class, JarTarget.class,
 				FullDirectoryTarget.class, FilteredDirectoryTarget.class);
 		XMLInputFactory xmlif = XMLInputFactory.newInstance();
 		XMLStreamReader xmlr = xmlif.createXMLStreamReader(file);
-		System.out.println("Created reader");
+		out.println("Created reader");
 		Unmarshaller unmarshaller = ctx.createUnmarshaller();
 
 		xmlr.nextTag();
-		System.out.println("Finding next tag");
+		out.println("Finding next tag");
 		xmlr.require(START_ELEMENT, null, "config");
-		System.out.println("Checking for config");
+		out.println("Checking for config");
 
 		final Config config = unmarshaller.unmarshal(xmlr, Config.class)
 		.getValue();
 		// Config config = (Config) unmarshaller.unmarshal(file);
-		System.out.println("Read config");
+		out.println("Read config");
 		file.close();
 		new File(configName).delete();
 
@@ -63,30 +63,29 @@ final class RemoteTool extends AbstractRemoteSLJob {
 		// if (line.equals("\n")) {
 		// break;
 		// }
-		// System.out.println(line);
+		// out.println(line);
 		// line = br.readLine();
 		// }
 
 		for (URI location : config.getPaths()) {
-			System.out.println("URI = " + location);
+			out.println("URI = " + location);
 		}
 		for (ToolTarget t : config.getTargets()) {
-			System.out.println(t.getType() + " = " + t.getLocation());
+			out.println(t.getType() + " = " + t.getLocation());
 		}
-		System.out.println("Excluded tools = "
-				+ config.getExcludedToolsList());
-		System.out.flush();
+		out.println("Excluded tools = "+config.getExcludedToolsList());
+		out.flush();
 
 		addToolFinder(config);
 		
 		final IToolInstance ti = ToolUtil.create(config, false);
-		System.out.println("Java version: " + config.getJavaVersion());
-		System.out.println("Rules file: " + config.getPmdRulesFile());
+		out.println("Java version: " + config.getJavaVersion());
+		out.println("Rules file: " + config.getPmdRulesFile());
 		/*
-		System.out.println("Classpath: "+System.getProperty("java.class.path"));
+		out.println("Classpath: "+System.getProperty("java.class.path"));
 		for(ArtifactType at : t.getArtifactTypes()) {
 			if ("PMD".equals(at.tool) && at.plugin.contains("de.bsd")) {
-				System.out.println("Found "+at.type);
+				out.println("Found "+at.type);
 			}
 		}
 		*/
