@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.eclipse.jdt.core.IJavaProject;
 
+import com.surelogic.common.eclipse.actions.AbstractProjectSelectedMenuAction;
 import com.surelogic.common.jobs.NullSLProgressMonitor;
 import com.surelogic.common.jobs.SLStatus;
 import com.surelogic.common.license.SLLicenseProduct;

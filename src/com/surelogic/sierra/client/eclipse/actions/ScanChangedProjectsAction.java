@@ -16,6 +16,7 @@ import org.eclipse.jdt.core.IJavaProject;
 
 import com.surelogic.common.eclipse.BalloonUtility;
 import com.surelogic.common.eclipse.JDTUtility;
+import com.surelogic.common.eclipse.actions.AbstractProjectSelectedMenuAction;
 import com.surelogic.common.eclipse.dialogs.ErrorDialogUtility;
 import com.surelogic.common.eclipse.logging.SLEclipseStatusUtility;
 import com.surelogic.common.i18n.I18N;

@@ -6,20 +6,14 @@ import org.eclipse.jdt.core.IJavaProject;
 
 import com.surelogic.common.CommonImages;
 import com.surelogic.common.eclipse.SLImages;
-import com.surelogic.sierra.client.eclipse.dialogs.JavaProjectSelectionDialog;
+import com.surelogic.common.eclipse.dialogs.JavaProjectSelectionDialog;
+import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
 
 public class PublishScanDialogAction extends PublishScanAction {
-  @Override
-  protected void run(List<IJavaProject> selectedProjects,
-      List<String> projectNames) {
-    final List<IJavaProject> projects = JavaProjectSelectionDialog
-    .getProjects("Select project(s) to publish:", "Publish Scan for Project",
-        SLImages.getImage(CommonImages.IMG_SIERRA_PUBLISH),
-        selectedProjects);
-    if (selectedProjects == projects) {
-      super.run(selectedProjects, projectNames);
-    } else {
-      super.run(projects, getNames(projects));
-    }
-  }
+	@Override
+	protected JavaProjectSelectionDialog.Config getDialogInfo(List<IJavaProject> selectedProjects) {
+		return new JavaProjectSelectionDialog.Config("Select project(s) to publish:", "Publish Scan for Project",
+		        SLImages.getImage(CommonImages.IMG_SIERRA_PUBLISH),
+		        selectedProjects, PreferenceConstants.alwaysAllowUserToSelectProjectsToScan);
+	}		
 }

@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.eclipse.jdt.core.IJavaProject;
 
+import com.surelogic.common.eclipse.actions.AbstractProjectSelectedMenuAction;
 import com.surelogic.sierra.client.eclipse.jobs.DeleteProjectDataJob;
 
 public class DisconnectAction extends AbstractProjectSelectedMenuAction {

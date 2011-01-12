@@ -5,6 +5,7 @@ import java.io.File;
 import org.eclipse.jface.preference.IPreferenceStore;
 
 import com.surelogic.common.eclipse.preferences.IAutoPerspectiveSwitchPreferences;
+import com.surelogic.common.eclipse.preferences.IPreferenceAccessor;
 import com.surelogic.sierra.client.eclipse.Activator;
 import com.surelogic.sierra.client.eclipse.views.ServerStatusSort;
 import com.surelogic.sierra.tool.IToolFactory;
@@ -142,6 +143,17 @@ public class PreferenceConstants implements IAutoPerspectiveSwitchPreferences {
 				P_SELECT_PROJECTS_TO_SCAN, value);
 	}
 
+	public static final IPreferenceAccessor<Boolean> alwaysAllowUserToSelectProjectsToScan = 
+		new IPreferenceAccessor<Boolean>() {
+			public Boolean get() {
+				return alwaysAllowUserToSelectProjectsToScan();
+			}
+
+			public void set(Boolean value) {
+				setAlwaysAllowUserToSelectProjectsToScan(value);
+			}
+		};
+	
 	public static final String P_OMIT_EMPTY_SYNCHRONIZE_ENTRIES = PREFIX
 			+ "omit-empty-synchronize-entries";
 
