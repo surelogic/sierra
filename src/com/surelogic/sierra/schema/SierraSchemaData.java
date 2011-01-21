@@ -3,8 +3,8 @@ package com.surelogic.sierra.schema;
 import java.io.InputStream;
 import java.net.URL;
 
+import com.surelogic.common.jdbc.AbstractSchemaData;
 import com.surelogic.common.license.SLLicenseProduct;
-import com.surelogic.flashlight.schema.AbstractSchemaData;
 
 public class SierraSchemaData extends AbstractSchemaData {
 	public SierraSchemaData() {

@@ -7,8 +7,7 @@ Bundle-Vendor: SureLogic, Inc.
 Bundle-ClassPath: .
 Require-Bundle: com.surelogic.common,
  com.surelogic.sierra.message,
- com.surelogic.sierra.java5.compatibility;resolution:=optional,
- com.surelogic.common.derby
+ com.surelogic.sierra.java5.compatibility;resolution:=optional
 Export-Package: com.surelogic.sierra.findbugs,
  com.surelogic.sierra.findbugs1_2_1,
  com.surelogic.sierra.findbugs1_3_0,
