@@ -21,7 +21,6 @@
 		<copy file="../sierra-message/srpc/commons-fileupload-1.2.1.jar" todir="../sierra-portal/lib/web-dependencies/"/>
 		<copy file="../sierra-message/srpc/commons-io-1.4.jar" todir="../sierra-portal/lib/web-dependencies/"/>
 		<jar destfile="../sierra-portal/lib/web-dependencies/common.jar" basedir="../common/bin" />
-		<jar destfile="../sierra-portal/lib/web-dependencies/derby-common.jar" basedir="../derby-common/bin" />
 		<jar destfile="../sierra-portal/lib/web-dependencies/sierra-jdbc.jar" basedir="../sierra-jdbc/bin" />
 		<jar destfile="../sierra-portal/lib/web-dependencies/sierra-jdbc-server.jar" basedir="../sierra-jdbc-server/bin" />
 		<jar destfile="../sierra-portal/lib/web-dependencies/sierra-message.jar" basedir="../sierra-message/bin" />
@@ -99,7 +98,6 @@
 		<!-- services.war is obsolete after Mar 17 -->
 		<delete quiet="true" file="../jetty/webapps/services.war" />
 		<delete quiet="true" file="../sierra-portal/lib/web-dependencies/common.jar" />
-		<delete quiet="true" file="../sierra-portal/lib/web-dependencies/derby-common.jar" />
 		<delete quiet="true" file="../sierra-portal/lib/web-dependencies/sierra-jdbc.jar" />
 		<delete quiet="true" file="../sierra-portal/lib/web-dependencies/sierra-message.jar" />
 		<!-- sierra-portal-rpc.jar is obsolete after Jan 08 -->
