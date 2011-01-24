@@ -50,9 +50,10 @@ Export-Package: net.sourceforge.pmd,
  net.sourceforge.pmd.util.viewer.gui.menu,
  net.sourceforge.pmd.util.viewer.model,
  net.sourceforge.pmd.util.viewer.util
-Require-Bundle: com.surelogic.common;bundle-version="2.3.0",
- com.surelogic.sierra.message;bundle-version="2.3.0",
- com.surelogic.sierra.tool;bundle-version="2.3.0"
+Require-Bundle: com.surelogic.common,
+ com.surelogic.sierra.message,
+ com.surelogic.sierra.tool
 Sierra-Tool: com.surelogic.sierra.tool.pmd.PMDToolFactory,
  com.surelogic.sierra.tool.pmd.CPDToolFactory
 Bundle-Vendor: SureLogic, Inc.
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
