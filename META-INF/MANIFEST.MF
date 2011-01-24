@@ -33,3 +33,4 @@ Export-Package: com.surelogic.sierra.findbugs,
  com.surelogic.sierra.pmd4_2_1,
  com.surelogic.sierra.schema,
  com.surelogic.sierra.setup
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
