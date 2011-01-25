@@ -56,4 +56,4 @@ Require-Bundle: com.surelogic.common,
 Sierra-Tool: com.surelogic.sierra.tool.pmd.PMDToolFactory,
  com.surelogic.sierra.tool.pmd.CPDToolFactory
 Bundle-Vendor: SureLogic, Inc.
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
