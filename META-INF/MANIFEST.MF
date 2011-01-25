@@ -69,4 +69,4 @@ Sierra-Id: FindBugs
 Sierra-Website: findbugs.sourceforge.net
 Sierra-Description: A static analysis tool created at University of Maryland 
   for finding bugs in Java code.
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
