@@ -32,4 +32,4 @@ Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .
 Export-Package: com.surelogic.sierra.client.eclipse.jsure,
  com.surelogic.sierra.client.eclipse.preferences
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
