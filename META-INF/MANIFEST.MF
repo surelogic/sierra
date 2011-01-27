@@ -5,12 +5,12 @@ Bundle-SymbolicName: com.surelogic.sierra.eclipse.teamserver; singleton:=true
 Bundle-Version: 4.0.0.qualifier
 Bundle-Activator: com.surelogic.sierra.eclipse.teamserver.Activator
 Bundle-Vendor: SureLogic, Inc.
-Require-Bundle: org.eclipse.ui,
- org.eclipse.core.runtime,
- com.surelogic.common,
+Require-Bundle: com.surelogic.common,
  com.surelogic.common.eclipse,
- org.apache.ant,
- com.surelogic.sierra.client.eclipse
+ com.surelogic.sierra.client.eclipse,
+ org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.apache.ant
 Eclipse-LazyStart: true
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
