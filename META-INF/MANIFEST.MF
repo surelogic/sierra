@@ -61,9 +61,9 @@ Export-Package: edu.umd.cs.findbugs,
  edu.umd.cs.findbugs.workflow,
  edu.umd.cs.findbugs.xml
 Bundle-Vendor: SureLogic, Inc.
-Require-Bundle: com.surelogic.sierra.tool,
+Require-Bundle: com.surelogic.common,
  com.surelogic.sierra.message,
- com.surelogic.common
+ com.surelogic.sierra.tool
 Sierra-Tool: com.surelogic.sierra.tool.findbugs.FindBugsToolFactory
 Sierra-Id: FindBugs
 Sierra-Website: findbugs.sourceforge.net
