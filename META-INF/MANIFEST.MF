@@ -5,7 +5,15 @@ Bundle-SymbolicName: com.surelogic.sierra.client.eclipse;singleton:=true
 Bundle-Vendor: SureLogic, Inc.
 Bundle-Version: 4.0.0.qualifier
 Bundle-Activator: com.surelogic.sierra.client.eclipse.Activator
-Require-Bundle: org.eclipse.ui,
+Require-Bundle: com.surelogic.common,
+ com.surelogic.common.eclipse,
+ com.surelogic.common.adhoc,
+ com.surelogic.adhoc.eclipse,
+ com.surelogic.sierra.message,
+ com.surelogic.sierra.tool,
+ com.surelogic.sierra.jdbc,
+ com.surelogic.jsure.message,
+ org.eclipse.ui,
  org.eclipse.ui.console,
  org.eclipse.ui.ide,
  org.eclipse.core.runtime,
@@ -13,20 +21,12 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.jdt,
  org.eclipse.jdt.core,
  org.eclipse.jdt.ui,
- com.surelogic.sierra.tool,
- com.surelogic.sierra.jdbc,
- com.surelogic.common.eclipse,
- com.surelogic.common,
  org.eclipse.jdt.launching,
  org.apache.ant,
  org.eclipse.ui.browser,
  org.eclipse.ui.editors,
  org.eclipse.jface.text,
- com.surelogic.sierra.message,
- org.eclipse.ui.workbench.texteditor,
- com.surelogic.adhoc.eclipse,
- com.surelogic.jsure.message,
- com.surelogic.common.adhoc
+ org.eclipse.ui.workbench.texteditor
 Eclipse-LazyStart: true
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .
