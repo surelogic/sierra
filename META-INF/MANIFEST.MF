@@ -7,8 +7,6 @@ Bundle-Version: 4.0.0.qualifier
 Bundle-Activator: com.surelogic.sierra.client.eclipse.Activator
 Require-Bundle: com.surelogic.common,
  com.surelogic.common.eclipse,
- com.surelogic.common.adhoc,
- com.surelogic.adhoc.eclipse,
  com.surelogic.sierra.message,
  com.surelogic.sierra.tool,
  com.surelogic.sierra.jdbc,
