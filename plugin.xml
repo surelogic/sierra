@@ -583,7 +583,7 @@
 	</extension>
 	<extension point="org.eclipse.ui.newWizards">
 		<category name="Sierra tool extensions" id="com.surelogic.sierra.tool.newWizards" />
-		<wizard name="Sierra Tool Plugin Project" icon="icons/newproject16.gif"
+		<wizard name="Sierra Tool Plugin Project"
 			category="com.surelogic.sierra.tool.newWizards"
 			class="com.surelogic.sierra.tool.eclipse.NewSierraToolProjectWizard"
 			project="true" id="com.surelogic.sierra.tool.eclipse.newproject">
