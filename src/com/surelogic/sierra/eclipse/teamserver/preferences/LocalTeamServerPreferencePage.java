@@ -18,7 +18,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
 
-import com.surelogic.common.eclipse.MemoryUtility;
+import com.surelogic.common.core.MemoryUtility;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.sierra.eclipse.teamserver.Activator;
 

@@ -2,17 +2,16 @@ package com.surelogic.sierra.eclipse.teamserver;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
-import com.surelogic.common.eclipse.logging.SLEclipseStatusUtility;
+import com.surelogic.common.core.logging.SLEclipseStatusUtility;
+import com.surelogic.common.ui.DialogTouchNotificationUI;
 
 /**
  * The activator class controls the plug-in life cycle
  */
 public class Activator extends AbstractUIPlugin {
-
-	// The plug-in ID
-	public static final String PLUGIN_ID = "com.surelogic.sierra.eclipse.teamserver";
 
 	// The shared instance
 	private static Activator f_plugin;
@@ -21,6 +20,10 @@ public class Activator extends AbstractUIPlugin {
 	 * The constructor
 	 */
 	public Activator() {
+		if (f_plugin != null)
+			throw new IllegalStateException(Activator.class.getName()
+					+ " instance already exits, it should be a singleton.");
+		f_plugin = this;
 	}
 
 	public void start(BundleContext context) throws Exception {
@@ -28,9 +31,9 @@ public class Activator extends AbstractUIPlugin {
 		f_plugin = this;
 
 		/*
-		 * "Touch" common-eclipse so the logging gets Eclipse-ified.
+		 * "Touch" common-core-eclipse so the logging gets Eclipse-ified.
 		 */
-		SLEclipseStatusUtility.touch();
+		SLEclipseStatusUtility.touch(new DialogTouchNotificationUI());
 	}
 
 	public void stop(BundleContext context) throws Exception {
@@ -48,6 +51,17 @@ public class Activator extends AbstractUIPlugin {
 	}
 
 	/**
+	 * Gets the identifier for this plug in.
+	 * 
+	 * @return an identifier, such as <tt>com.surelogic.common</tt>. In rare
+	 *         cases, for example bad plug in XML, it may be {@code null}.
+	 * @see Bundle#getSymbolicName()
+	 */
+	public String getPlugInId() {
+		return f_plugin.getBundle().getSymbolicName();
+	}
+
+	/**
 	 * Returns an image descriptor for the image file at the given plug-in
 	 * relative path
 	 * 
@@ -56,6 +70,6 @@ public class Activator extends AbstractUIPlugin {
 	 * @return the image descriptor
 	 */
 	public static ImageDescriptor getImageDescriptor(String path) {
-		return imageDescriptorFromPlugin(PLUGIN_ID, path);
+		return imageDescriptorFromPlugin(getDefault().getPlugInId(), path);
 	}
 }

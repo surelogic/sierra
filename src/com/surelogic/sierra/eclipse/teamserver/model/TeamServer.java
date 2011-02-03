@@ -14,13 +14,14 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.apache.tools.ant.types.Commandline.Argument;
 import org.apache.tools.ant.types.CommandlineJava;
 import org.apache.tools.ant.types.Environment;
-import org.apache.tools.ant.types.Commandline.Argument;
 
-import com.surelogic.common.eclipse.Activator;
+import com.surelogic.common.core.EclipseUtility;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.logging.SLLogger;
+import com.surelogic.sierra.eclipse.teamserver.Activator;
 import com.surelogic.sierra.eclipse.teamserver.preferences.PreferenceConstants;
 
 public final class TeamServer {
@@ -73,8 +74,8 @@ public final class TeamServer {
 	public TeamServer(final int port, final ScheduledExecutorService executor) {
 		f_port = new AtomicInteger(port);
 		f_executor = executor;
-		f_pluginDir = Activator.getDefault().getDirectoryOf(
-				com.surelogic.sierra.eclipse.teamserver.Activator.PLUGIN_ID);
+		f_pluginDir = EclipseUtility.getDirectoryOf(Activator.getDefault()
+				.getPlugInId());
 	}
 
 	/**
@@ -270,7 +271,7 @@ public final class TeamServer {
 			command.createVmArgument()
 					.setValue(
 							"-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000");
-		}	
+		}
 		// Ensure the local team server directory exists for logging
 		final File serverDir = PreferenceConstants
 				.getSierraLocalTeamServerDirectory();

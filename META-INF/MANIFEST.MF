@@ -6,7 +6,8 @@ Bundle-Version: 4.0.0.qualifier
 Bundle-Activator: com.surelogic.sierra.eclipse.teamserver.Activator
 Bundle-Vendor: SureLogic, Inc.
 Require-Bundle: com.surelogic.common,
- com.surelogic.common.eclipse,
+ com.surelogic.common.core,
+ com.surelogic.common.ui,
  com.surelogic.sierra.client.eclipse,
  org.eclipse.ui,
  org.eclipse.core.runtime,

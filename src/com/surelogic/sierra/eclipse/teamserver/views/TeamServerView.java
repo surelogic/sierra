@@ -22,7 +22,7 @@ import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.part.ViewPart;
 
 import com.surelogic.common.CommonImages;
-import com.surelogic.common.eclipse.SLImages;
+import com.surelogic.common.ui.SLImages;
 import com.surelogic.sierra.eclipse.teamserver.actions.PreferenceAction;
 
 public class TeamServerView extends ViewPart {
