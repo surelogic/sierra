@@ -4,7 +4,7 @@ import java.io.File;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 
-import com.surelogic.common.ui.preferences.IAutoPerspectiveSwitchPreferences;
+import com.surelogic.common.core.preferences.IAutoPerspectiveSwitchPreferences;
 import com.surelogic.common.core.preferences.IPreferenceAccessor;
 import com.surelogic.sierra.client.eclipse.Activator;
 import com.surelogic.sierra.client.eclipse.views.ServerStatusSort;
@@ -274,7 +274,7 @@ public class PreferenceConstants implements IAutoPerspectiveSwitchPreferences {
 				P_AUTO_PERSPECTIVE_SWITCH, value);
 	}
 
-	public static final String P_DATA_DIRECTORY = PREFIX + DATA_DIRECTORY;
+	public static final String P_DATA_DIRECTORY = PREFIX + "data.directory";
 
 	public static File getSierraDataDirectory() {
 		final String path = Activator.getDefault().getPreferenceStore()
