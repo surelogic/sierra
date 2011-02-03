@@ -12,7 +12,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 
 import com.surelogic.common.CommonImages;
-import com.surelogic.common.eclipse.SLImages;
+import com.surelogic.common.ui.SLImages;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.model.selection.SelectionManager;
 

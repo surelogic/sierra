@@ -9,8 +9,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 
-import com.surelogic.common.eclipse.BalloonUtility;
-import com.surelogic.common.eclipse.SWTUtility;
+import com.surelogic.common.ui.BalloonUtility;
+import com.surelogic.common.ui.SWTUtility;
 import com.surelogic.sierra.client.eclipse.jobs.ServerProjectGroupJob;
 import com.surelogic.sierra.client.eclipse.jobs.SynchronizeJob;
 import com.surelogic.sierra.client.eclipse.jobs.SynchronizeProjectsJob;

@@ -19,8 +19,8 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.part.ViewPart;
 
-import com.surelogic.common.eclipse.PageBook;
-import com.surelogic.common.eclipse.SLImages;
+import com.surelogic.common.ui.PageBook;
+import com.surelogic.common.ui.SLImages;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.sierra.client.eclipse.actions.PreferencesAction;
 

@@ -3,7 +3,7 @@ package com.surelogic.sierra.client.eclipse.dialogs;
 import org.eclipse.swt.widgets.Shell;
 
 import com.surelogic.common.CommonImages;
-import com.surelogic.common.eclipse.dialogs.AbstractConfirmPerspectiveSwitch;
+import com.surelogic.common.ui.dialogs.AbstractConfirmPerspectiveSwitch;
 import com.surelogic.sierra.client.eclipse.perspectives.CodeReviewPerspective;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
 

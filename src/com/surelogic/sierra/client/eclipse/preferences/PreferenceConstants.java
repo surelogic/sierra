@@ -4,8 +4,8 @@ import java.io.File;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 
-import com.surelogic.common.eclipse.preferences.IAutoPerspectiveSwitchPreferences;
-import com.surelogic.common.eclipse.preferences.IPreferenceAccessor;
+import com.surelogic.common.ui.preferences.IAutoPerspectiveSwitchPreferences;
+import com.surelogic.common.core.preferences.IPreferenceAccessor;
 import com.surelogic.sierra.client.eclipse.Activator;
 import com.surelogic.sierra.client.eclipse.views.ServerStatusSort;
 import com.surelogic.sierra.tool.IToolFactory;

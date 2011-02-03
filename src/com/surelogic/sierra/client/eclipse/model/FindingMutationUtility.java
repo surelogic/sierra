@@ -10,9 +10,9 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.progress.UIJob;
 
-import com.surelogic.common.eclipse.SWTUtility;
-import com.surelogic.common.eclipse.jobs.SLProgressMonitorWrapper;
-import com.surelogic.common.eclipse.logging.SLEclipseStatusUtility;
+import com.surelogic.common.ui.SWTUtility;
+import com.surelogic.common.core.jobs.SLProgressMonitorWrapper;
+import com.surelogic.common.core.logging.SLEclipseStatusUtility;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.jobs.SLProgressMonitor;
 import com.surelogic.sierra.client.eclipse.Data;

@@ -26,9 +26,9 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 
-import com.surelogic.common.eclipse.JDTUIUtility;
-import com.surelogic.common.eclipse.ViewUtility;
-import com.surelogic.common.eclipse.logging.SLEclipseStatusUtility;
+import com.surelogic.common.ui.JDTUIUtility;
+import com.surelogic.common.ui.ViewUtility;
+import com.surelogic.common.core.logging.SLEclipseStatusUtility;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.jdbc.ConnectionQuery;
 import com.surelogic.common.jdbc.Query;

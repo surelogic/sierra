@@ -40,10 +40,10 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.UIJob;
 
-import com.surelogic.common.eclipse.HTMLPrinter;
-import com.surelogic.common.eclipse.dialogs.ErrorDialogUtility;
-import com.surelogic.common.eclipse.jobs.SLUIJob;
-import com.surelogic.common.eclipse.logging.SLEclipseStatusUtility;
+import com.surelogic.common.ui.HTMLPrinter;
+import com.surelogic.common.ui.dialogs.ErrorDialogUtility;
+import com.surelogic.common.ui.jobs.SLUIJob;
+import com.surelogic.common.core.logging.SLEclipseStatusUtility;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.jdbc.NullDBQuery;
 import com.surelogic.common.jdbc.QB;

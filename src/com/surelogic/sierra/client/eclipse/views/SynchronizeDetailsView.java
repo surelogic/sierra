@@ -7,8 +7,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbenchPage;
 
-import com.surelogic.common.eclipse.LinkTrail;
-import com.surelogic.common.eclipse.ViewUtility;
+import com.surelogic.common.ui.LinkTrail;
+import com.surelogic.common.ui.ViewUtility;
 import com.surelogic.sierra.jdbc.finding.SynchOverview;
 
 public final class SynchronizeDetailsView extends

@@ -13,7 +13,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 import com.surelogic.common.CommonImages;
-import com.surelogic.common.eclipse.SLImages;
+import com.surelogic.common.ui.SLImages;
 
 public final class SaveSearchAsDialog extends Dialog {
 

@@ -4,7 +4,7 @@ import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
 
-import com.surelogic.common.eclipse.ViewUtility;
+import com.surelogic.common.ui.ViewUtility;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.views.FindingDetailsView;
 import com.surelogic.sierra.client.eclipse.views.SierraServersView;

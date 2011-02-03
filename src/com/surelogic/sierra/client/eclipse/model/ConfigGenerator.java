@@ -33,11 +33,14 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 
 import com.surelogic.common.SLUtility;
-import com.surelogic.common.eclipse.Activator;
+import com.surelogic.common.core.EclipseUtility;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Tools;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
-import com.surelogic.sierra.tool.*;
+import com.surelogic.sierra.tool.IToolExtension;
+import com.surelogic.sierra.tool.IToolFactory;
+import com.surelogic.sierra.tool.SierraToolConstants;
+import com.surelogic.sierra.tool.ToolUtil;
 import com.surelogic.sierra.tool.message.Config;
 import com.surelogic.sierra.tool.message.ToolExtension;
 import com.surelogic.sierra.tool.targets.FileTarget;
@@ -83,8 +86,8 @@ public final class ConfigGenerator {
 
 	private ConfigGenerator() {
 		// singleton
-		tools = Activator.getDefault().getDirectoryOf(
-				SierraToolConstants.TOOL_PLUGIN_ID)
+		tools = EclipseUtility
+				.getDirectoryOf(SierraToolConstants.TOOL_PLUGIN_ID)
 				+ SierraToolConstants.TOOLS_FOLDER;
 		/*
 		 * String jdt =
@@ -103,14 +106,14 @@ public final class ConfigGenerator {
 
 	private void getDirectoryOfPlugin(String id) {
 		try {
-			pluginDirs.put(id, Activator.getDefault().getDirectoryOf(id));
+			pluginDirs.put(id, EclipseUtility.getDirectoryOf(id));
 		} catch (IllegalStateException e) {
 			System.out.println("Couldn't find plugin: " + id);
 		}
 	}
 
 	private void getDirectoryOfAllPlugins(String rootId) {
-		for (String id : Activator.getDefault().getDependencies(rootId)) {
+		for (String id : EclipseUtility.getDependencies(rootId)) {
 			getDirectoryOfPlugin(id);
 		}
 	}
@@ -176,30 +179,31 @@ public final class ConfigGenerator {
 			try {
 				IType[] types = c.getAllTypes();
 				String packageName = SLUtility.JAVA_DEFAULT_PACKAGE;
-				if (types.length > 0 || "package-info.java".equals(c.getElementName())) {
-					for(org.eclipse.jdt.core.IPackageDeclaration decl : c.getPackageDeclarations()) {
+				if (types.length > 0
+						|| "package-info.java".equals(c.getElementName())) {
+					for (org.eclipse.jdt.core.IPackageDeclaration decl : c
+							.getPackageDeclarations()) {
 						packageName = decl.getElementName();
 						break;
 					}
 					/*
-					String qualifiedName = types[0].getFullyQualifiedName();
-
-					int lastPeriod = qualifiedName.lastIndexOf('.');
-					if (lastPeriod != -1) {
-						packageName = qualifiedName.substring(0, lastPeriod);
-					}
-					*/
+					 * String qualifiedName = types[0].getFullyQualifiedName();
+					 * 
+					 * int lastPeriod = qualifiedName.lastIndexOf('.'); if
+					 * (lastPeriod != -1) { packageName =
+					 * qualifiedName.substring(0, lastPeriod); }
+					 */
 				} else {
-					SLLogger.getLogger().warning("No package for "+c.getElementName());
+					SLLogger.getLogger().warning(
+							"No package for " + c.getElementName());
 					continue;
 				}
-					
-				Set<String> packageInMap = packageCompilationUnitMap
-				.keySet();
+
+				Set<String> packageInMap = packageCompilationUnitMap.keySet();
 				List<String> compilationUnitsHolder;
 				if (packageInMap.contains(packageName)) {
 					compilationUnitsHolder = packageCompilationUnitMap
-					.get(packageName);
+							.get(packageName);
 				} else {
 					compilationUnitsHolder = new ArrayList<String>();
 
@@ -382,13 +386,14 @@ public final class ConfigGenerator {
 				true));
 		config.setTargetLevel(javaProject.getOption(
 				JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, true));
-	
+
 		// Compute set of excluded tools
 		StringBuilder excludedTools = new StringBuilder();
 		f_numberofExcludedTools = 0;
 
-		for (IToolFactory f : Tools.findToolFactories()) {			
-			if (!PreferenceConstants.runTool(f) || "Checkstyle".equals(f.getId())) {
+		for (IToolFactory f : Tools.findToolFactories()) {
+			if (!PreferenceConstants.runTool(f)
+					|| "Checkstyle".equals(f.getId())) {
 				// Only need to add a comma if this isn't the first one
 				if (f_numberofExcludedTools != 0) {
 					excludedTools.append(", ");
@@ -396,7 +401,7 @@ public final class ConfigGenerator {
 				excludedTools.append(f.getId());
 				f_numberofExcludedTools++;
 			} else {
-				for(final IToolExtension t : f.getExtensions()) {
+				for (final IToolExtension t : f.getExtensions()) {
 					if (t.isCore()) {
 						// Implied by the above
 						continue;
@@ -414,7 +419,7 @@ public final class ConfigGenerator {
 		} else {
 			config.setExcludedToolsList(excludedTools.toString());
 		}
-		
+
 	}
 
 	/**
@@ -570,8 +575,8 @@ public final class ConfigGenerator {
 			IPath srcPath = cpe.getSourceAttachmentPath();
 			// FIX cpe.getSourceAttachmentRootPath();
 			if (srcPath != null) {
-				IToolTarget srcTarget = createTarget(root, cpe
-						.getSourceAttachmentPath(), null);
+				IToolTarget srcTarget = createTarget(root,
+						cpe.getSourceAttachmentPath(), null);
 				cfg.addTarget(createTarget(root, cpe.getPath(), srcTarget));
 			} else {
 				cfg.addTarget(createTarget(root, cpe.getPath(), null));

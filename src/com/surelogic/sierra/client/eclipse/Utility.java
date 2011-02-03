@@ -3,7 +3,7 @@ package com.surelogic.sierra.client.eclipse;
 import org.eclipse.swt.graphics.Image;
 
 import com.surelogic.common.CommonImages;
-import com.surelogic.common.eclipse.SLImages;
+import com.surelogic.common.ui.SLImages;
 import com.surelogic.sierra.tool.message.Importance;
 
 public final class Utility {

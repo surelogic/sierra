@@ -7,7 +7,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 
-import com.surelogic.common.eclipse.ViewUtility;
+import com.surelogic.common.ui.ViewUtility;
 import com.surelogic.sierra.client.eclipse.views.*;
 import com.surelogic.sierra.jdbc.finding.FindingDetail;
 

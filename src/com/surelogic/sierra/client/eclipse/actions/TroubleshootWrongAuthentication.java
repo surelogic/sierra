@@ -3,7 +3,7 @@ package com.surelogic.sierra.client.eclipse.actions;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.ui.PlatformUI;
 
-import com.surelogic.common.eclipse.logging.SLEclipseStatusUtility;
+import com.surelogic.common.core.logging.SLEclipseStatusUtility;
 import com.surelogic.sierra.client.eclipse.dialogs.ServerAuthenticationDialog;
 import com.surelogic.sierra.client.eclipse.preferences.ServerFailureReport;
 import com.surelogic.sierra.tool.message.ServerLocation;

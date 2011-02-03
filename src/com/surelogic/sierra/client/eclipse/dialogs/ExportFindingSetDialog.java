@@ -19,7 +19,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 import com.surelogic.common.CommonImages;
-import com.surelogic.common.eclipse.SLImages;
+import com.surelogic.common.ui.SLImages;
 import com.surelogic.sierra.client.eclipse.jobs.ExportFindingSetInCSVFormatJob;
 import com.surelogic.sierra.client.eclipse.jobs.ExportFindingSetInHTMLFormatJob;
 import com.surelogic.sierra.client.eclipse.jobs.ExportFindingSetJob;

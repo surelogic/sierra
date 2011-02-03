@@ -37,11 +37,11 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.progress.UIJob;
 
 import com.surelogic.common.SLUtility;
-import com.surelogic.common.eclipse.CascadingList;
-import com.surelogic.common.eclipse.ISearchBoxObserver;
-import com.surelogic.common.eclipse.SearchBox;
-import com.surelogic.common.eclipse.jobs.SLUIJob;
 import com.surelogic.common.logging.SLLogger;
+import com.surelogic.common.ui.CascadingList;
+import com.surelogic.common.ui.ISearchBoxObserver;
+import com.surelogic.common.ui.SearchBox;
+import com.surelogic.common.ui.jobs.SLUIJob;
 import com.surelogic.sierra.client.eclipse.model.selection.Filter;
 import com.surelogic.sierra.client.eclipse.model.selection.IFilterObserver;
 import com.surelogic.sierra.client.eclipse.model.selection.Selection;

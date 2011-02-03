@@ -23,10 +23,10 @@ import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.progress.UIJob;
 
 import com.surelogic.common.CommonImages;
-import com.surelogic.common.eclipse.CascadingList;
-import com.surelogic.common.eclipse.SLImages;
-import com.surelogic.common.eclipse.jobs.SLUIJob;
 import com.surelogic.common.logging.SLLogger;
+import com.surelogic.common.ui.CascadingList;
+import com.surelogic.common.ui.SLImages;
+import com.surelogic.common.ui.jobs.SLUIJob;
 import com.surelogic.sierra.client.eclipse.actions.NewScanDialogAction;
 import com.surelogic.sierra.client.eclipse.actions.PreferencesAction;
 import com.surelogic.sierra.client.eclipse.dialogs.DeleteSearchDialog;

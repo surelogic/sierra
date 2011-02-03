@@ -17,7 +17,7 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
 import org.xml.sax.SAXException;
 
-import com.surelogic.common.eclipse.EclipseUtility;
+import com.surelogic.common.core.EclipseUtility;
 import com.surelogic.sierra.client.eclipse.Activator;
 import com.surelogic.sierra.tool.ToolUtil;
 

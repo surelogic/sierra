@@ -5,8 +5,8 @@ import java.util.List;
 import org.eclipse.jdt.core.IJavaProject;
 
 import com.surelogic.common.CommonImages;
-import com.surelogic.common.eclipse.SLImages;
-import com.surelogic.common.eclipse.dialogs.JavaProjectSelectionDialog;
+import com.surelogic.common.ui.SLImages;
+import com.surelogic.common.ui.dialogs.JavaProjectSelectionDialog;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
 
 public class PublishScanDialogAction extends PublishScanAction {

@@ -5,8 +5,8 @@ import java.util.logging.Level;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.ui.PlatformUI;
 
-import com.surelogic.common.eclipse.BalloonUtility;
-import com.surelogic.common.eclipse.dialogs.ErrorDialogUtility;
+import com.surelogic.common.ui.BalloonUtility;
+import com.surelogic.common.ui.dialogs.ErrorDialogUtility;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.preferences.ServerFailureReport;
 import com.surelogic.sierra.tool.message.ServerLocation;

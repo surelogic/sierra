@@ -8,7 +8,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.progress.UIJob;
 
-import com.surelogic.common.eclipse.jobs.SLUIJob;
+import com.surelogic.common.ui.jobs.SLUIJob;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.model.AbstractDatabaseObserver;
 import com.surelogic.sierra.client.eclipse.model.DatabaseHub;

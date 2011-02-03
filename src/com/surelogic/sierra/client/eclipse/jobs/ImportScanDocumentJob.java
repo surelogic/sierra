@@ -8,7 +8,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 
-import com.surelogic.common.eclipse.jobs.SLProgressMonitorWrapper;
+import com.surelogic.common.core.jobs.SLProgressMonitorWrapper;
 import com.surelogic.common.jobs.SLProgressMonitor;
 import com.surelogic.sierra.client.eclipse.model.BuglinkData;
 

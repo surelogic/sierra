@@ -14,11 +14,11 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaProject;
 
-import com.surelogic.common.eclipse.BalloonUtility;
-import com.surelogic.common.eclipse.JDTUtility;
-import com.surelogic.common.eclipse.actions.AbstractProjectSelectedMenuAction;
-import com.surelogic.common.eclipse.dialogs.ErrorDialogUtility;
-import com.surelogic.common.eclipse.logging.SLEclipseStatusUtility;
+import com.surelogic.common.ui.BalloonUtility;
+import com.surelogic.common.core.JDTUtility;
+import com.surelogic.common.ui.actions.AbstractProjectSelectedMenuAction;
+import com.surelogic.common.ui.dialogs.ErrorDialogUtility;
+import com.surelogic.common.core.logging.SLEclipseStatusUtility;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.jdbc.DBQuery;
 import com.surelogic.common.jdbc.Query;

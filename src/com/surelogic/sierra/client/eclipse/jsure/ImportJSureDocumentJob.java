@@ -13,8 +13,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
-import com.surelogic.common.eclipse.ViewUtility;
-import com.surelogic.common.eclipse.jobs.SLProgressMonitorWrapper;
+import com.surelogic.common.ui.ViewUtility;
+import com.surelogic.common.core.jobs.SLProgressMonitorWrapper;
 import com.surelogic.common.jobs.SLProgressMonitor;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.jsure.xml.JSureXMLReader;

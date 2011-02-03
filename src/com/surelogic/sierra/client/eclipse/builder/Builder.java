@@ -6,7 +6,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
-import com.surelogic.common.eclipse.builder.*;
+import com.surelogic.common.core.builder.*;
 
 public class Builder extends AbstractJavaBuilder {
 

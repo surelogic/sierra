@@ -32,9 +32,9 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.UIJob;
 
 import com.surelogic.common.CommonImages;
-import com.surelogic.common.eclipse.JDTUtility;
-import com.surelogic.common.eclipse.SLImages;
-import com.surelogic.common.eclipse.jobs.SLUIJob;
+import com.surelogic.common.core.JDTUtility;
+import com.surelogic.common.ui.SLImages;
+import com.surelogic.common.ui.jobs.SLUIJob;
 import com.surelogic.sierra.client.eclipse.actions.SynchronizeProjectAction;
 import com.surelogic.sierra.client.eclipse.model.ConnectedServerManager;
 import com.surelogic.sierra.client.eclipse.model.Projects;

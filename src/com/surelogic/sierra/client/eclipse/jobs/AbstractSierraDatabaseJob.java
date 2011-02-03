@@ -1,6 +1,6 @@
 package com.surelogic.sierra.client.eclipse.jobs;
 
-import com.surelogic.common.eclipse.jobs.DatabaseJob;
+import com.surelogic.common.core.jobs.DatabaseJob;
 
 public abstract class AbstractSierraDatabaseJob extends DatabaseJob {
 	public AbstractSierraDatabaseJob(String name) {

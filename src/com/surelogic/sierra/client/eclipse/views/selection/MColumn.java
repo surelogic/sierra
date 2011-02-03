@@ -5,8 +5,8 @@ import java.util.logging.Logger;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;
 
-import com.surelogic.common.eclipse.CascadingList;
 import com.surelogic.common.logging.SLLogger;
+import com.surelogic.common.ui.CascadingList;
 import com.surelogic.sierra.client.eclipse.model.AbstractUpdatable;
 import com.surelogic.sierra.client.eclipse.model.selection.Selection;
 

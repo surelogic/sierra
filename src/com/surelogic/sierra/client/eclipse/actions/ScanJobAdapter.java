@@ -8,7 +8,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 
-import com.surelogic.common.eclipse.BalloonUtility;
+import com.surelogic.common.ui.BalloonUtility;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.dialogs.ConfirmPerspectiveSwitch;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;

@@ -7,9 +7,9 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 
-import com.surelogic.common.eclipse.dialogs.ErrorDialogUtility;
-import com.surelogic.common.eclipse.jobs.SLUIJob;
-import com.surelogic.common.eclipse.logging.SLEclipseStatusUtility;
+import com.surelogic.common.ui.dialogs.ErrorDialogUtility;
+import com.surelogic.common.ui.jobs.SLUIJob;
+import com.surelogic.common.core.logging.SLEclipseStatusUtility;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.actions.TroubleshootConnection;

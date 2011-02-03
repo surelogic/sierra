@@ -17,9 +17,9 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.UIJob;
 
 import com.surelogic.common.XUtil;
-import com.surelogic.common.eclipse.BalloonUtility;
-import com.surelogic.common.eclipse.JDTUtility;
-import com.surelogic.common.eclipse.jobs.WorkspaceLockingJob;
+import com.surelogic.common.ui.BalloonUtility;
+import com.surelogic.common.core.JDTUtility;
+import com.surelogic.common.core.jobs.WorkspaceLockingJob;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.dialogs.ScanTestCodeSelectionDialog;

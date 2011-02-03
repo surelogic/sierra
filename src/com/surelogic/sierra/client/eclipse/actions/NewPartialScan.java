@@ -10,9 +10,9 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.ICompilationUnit;
 
-import com.surelogic.common.eclipse.JDTUtility;
-import com.surelogic.common.eclipse.jobs.DatabaseJob;
-import com.surelogic.common.eclipse.jobs.SLProgressMonitorWrapper;
+import com.surelogic.common.core.JDTUtility;
+import com.surelogic.common.core.jobs.DatabaseJob;
+import com.surelogic.common.core.jobs.SLProgressMonitorWrapper;
 import com.surelogic.common.jobs.SLProgressMonitor;
 import com.surelogic.sierra.client.eclipse.jobs.AbstractSierraDatabaseJob;
 import com.surelogic.sierra.client.eclipse.jobs.ScanDocumentUtility;

@@ -15,11 +15,12 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.progress.UIJob;
 import org.osgi.framework.BundleContext;
 
-import com.surelogic.common.eclipse.EclipseUtility;
-import com.surelogic.common.eclipse.SWTUtility;
-import com.surelogic.common.eclipse.dialogs.ErrorDialogUtility;
-import com.surelogic.common.eclipse.jobs.SLUIJob;
-import com.surelogic.common.eclipse.logging.SLEclipseStatusUtility;
+import com.surelogic.common.core.EclipseUtility;
+import com.surelogic.common.ui.DialogTouchNotificationUI;
+import com.surelogic.common.ui.SWTUtility;
+import com.surelogic.common.ui.dialogs.ErrorDialogUtility;
+import com.surelogic.common.ui.jobs.SLUIJob;
+import com.surelogic.common.core.logging.SLEclipseStatusUtility;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.jdbc.FutureDatabaseException;
 import com.surelogic.common.license.SLLicenseProduct;
@@ -77,10 +78,11 @@ public final class Activator extends AbstractUIPlugin implements
 	public void run(final IProgressMonitor monitor)
 			throws InvocationTargetException, InterruptedException {
 		monitor.beginTask("Initializing the Sierra tool", 8);
+		
 		/*
-		 * "Touch" common-eclipse so the logging gets Eclipse-ified.
+		 * "Touch" common-core-eclipse so the logging gets Eclipse-ified.
 		 */
-		SLEclipseStatusUtility.touch();
+		SLEclipseStatusUtility.touch(new DialogTouchNotificationUI());
 		monitor.worked(1);
 
 		try {

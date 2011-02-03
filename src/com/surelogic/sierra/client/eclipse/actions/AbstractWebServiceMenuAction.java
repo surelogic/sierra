@@ -9,11 +9,11 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
-import com.surelogic.common.eclipse.ViewUtility;
-import com.surelogic.common.eclipse.actions.AbstractProjectSelectedMenuAction;
-import com.surelogic.common.eclipse.dialogs.ErrorDialogUtility;
-import com.surelogic.common.eclipse.logging.SLEclipseStatusUtility;
+import com.surelogic.common.core.logging.SLEclipseStatusUtility;
 import com.surelogic.common.i18n.I18N;
+import com.surelogic.common.ui.ViewUtility;
+import com.surelogic.common.ui.actions.AbstractProjectSelectedMenuAction;
+import com.surelogic.common.ui.dialogs.ErrorDialogUtility;
 import com.surelogic.sierra.client.eclipse.dialogs.ServerLocationDialog;
 import com.surelogic.sierra.client.eclipse.dialogs.ServerSelectionDialog;
 import com.surelogic.sierra.client.eclipse.jobs.ServerProjectGroupJob;

@@ -36,8 +36,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.UIJob;
 
 import com.surelogic.common.SLUtility;
-import com.surelogic.common.eclipse.jobs.DatabaseJob;
-import com.surelogic.common.eclipse.jobs.SLUIJob;
+import com.surelogic.common.ui.jobs.SLUIJob;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;

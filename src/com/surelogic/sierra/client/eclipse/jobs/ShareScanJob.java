@@ -12,9 +12,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
-import com.surelogic.common.eclipse.jobs.SLProgressMonitorWrapper;
-import com.surelogic.common.eclipse.jobs.ShareScanRule;
-import com.surelogic.common.eclipse.logging.SLEclipseStatusUtility;
+import com.surelogic.common.core.jobs.SLProgressMonitorWrapper;
+import com.surelogic.common.core.jobs.ShareScanRule;
+import com.surelogic.common.core.logging.SLEclipseStatusUtility;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.jobs.SLProgressMonitor;
 import com.surelogic.common.logging.SLLogger;

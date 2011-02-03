@@ -4,7 +4,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
 
 import com.surelogic.common.CommonImages;
-import com.surelogic.common.eclipse.SLImages;
+import com.surelogic.common.ui.SLImages;
 
 public final class DeleteSearchDialog extends AbstractSearchDialog {
 	public DeleteSearchDialog(Shell parentShell) {

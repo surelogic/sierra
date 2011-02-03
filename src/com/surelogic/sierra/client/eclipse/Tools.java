@@ -25,11 +25,12 @@ import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.ui.PlatformUI;
 
 import com.surelogic.common.XUtil;
-import com.surelogic.common.eclipse.jobs.SLUIJob;
+import com.surelogic.common.core.EclipseUtility;
 import com.surelogic.common.jdbc.NullDBQuery;
 import com.surelogic.common.jdbc.Query;
 import com.surelogic.common.jdbc.TransactionException;
 import com.surelogic.common.logging.SLLogger;
+import com.surelogic.common.ui.jobs.SLUIJob;
 import com.surelogic.sierra.client.eclipse.wizards.ArtifactTypeSetupWizard;
 import com.surelogic.sierra.jdbc.settings.Categories;
 import com.surelogic.sierra.jdbc.settings.CategoryDO;
@@ -61,8 +62,7 @@ public final class Tools {
 				// Look up locations of these plugins
 				final List<File> tools = new ArrayList<File>();
 				for (final String id : getToolPluginIds()) {
-					final String path = com.surelogic.common.eclipse.Activator
-							.getDefault().getDirectoryOf(id);
+					final String path = EclipseUtility.getDirectoryOf(id);
 					final File dir = new File(path);
 
 					// Sanity check for these directories

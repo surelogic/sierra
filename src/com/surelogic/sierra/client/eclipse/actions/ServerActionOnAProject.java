@@ -2,7 +2,7 @@ package com.surelogic.sierra.client.eclipse.actions;
 
 import org.eclipse.swt.widgets.Shell;
 
-import com.surelogic.common.eclipse.SWTUtility;
+import com.surelogic.common.ui.SWTUtility;
 import com.surelogic.sierra.client.eclipse.dialogs.ServerAuthenticationDialog;
 import com.surelogic.sierra.client.eclipse.model.ConnectedServerManager;
 import com.surelogic.sierra.client.eclipse.model.ConnectedServerStats;
