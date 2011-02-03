@@ -1,9 +1,10 @@
 package com.surelogic.sierra.client.eclipse.preferences;
 
+import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.jface.preference.IPreferenceStore;
 
 import com.surelogic.common.FileUtility;
-import com.surelogic.common.core.preferences.AbstractPrefInitializer;
+import com.surelogic.common.core.EclipseUtility;
 import com.surelogic.sierra.client.eclipse.Activator;
 import com.surelogic.sierra.client.eclipse.Tools;
 import com.surelogic.sierra.client.eclipse.views.ServerStatusSort;
@@ -14,7 +15,7 @@ import com.surelogic.sierra.tool.message.Importance;
 /**
  * Class used to initialize default preference values.
  */
-public class PreferenceInitializer extends AbstractPrefInitializer {
+public class PreferenceInitializer extends AbstractPreferenceInitializer {
 
 	@Override
 	public void initializeDefaultPreferences() {
@@ -25,10 +26,9 @@ public class PreferenceInitializer extends AbstractPrefInitializer {
 		store.setDefault(PreferenceConstants.P_SIERRA_BALLOON_FLAG, true);
 		store.setDefault(PreferenceConstants.P_PROMPT_PERSPECTIVE_SWITCH, true);
 		store.setDefault(PreferenceConstants.P_AUTO_PERSPECTIVE_SWITCH, true);
-		store
-				.setDefault(
-						PreferenceConstants.P_SIERRA_SHOW_MARKERS_AT_OR_ABOVE_IMPORTANCE,
-						Importance.HIGH.toString());
+		store.setDefault(
+				PreferenceConstants.P_SIERRA_SHOW_MARKERS_AT_OR_ABOVE_IMPORTANCE,
+				Importance.HIGH.toString());
 
 		store.setDefault(PreferenceConstants.P_SIERRA_ALWAYS_SAVE_RESOURCES,
 				false);
@@ -52,13 +52,13 @@ public class PreferenceInitializer extends AbstractPrefInitializer {
 				PreferenceConstants.P_SERVER_INTERACTION_RETRY_THRESHOLD, 4);
 		store.setDefault(PreferenceConstants.P_SERVER_FAILURE_REPORTING,
 				ServerFailureReport.SHOW_BALLOON.toString());
-		store.setDefault(PreferenceConstants.P_DATA_DIRECTORY,
-				getDefaultDataDirectory(FileUtility.SIERRA_DATA_PATH_FRAGMENT));
+		store.setDefault(PreferenceConstants.P_DATA_DIRECTORY, EclipseUtility
+				.getADataDirectoryPath(FileUtility.SIERRA_DATA_PATH_FRAGMENT));
 
 		// Get the data directory and ensure that it actually exists.
 		final String path = store
 				.getString(PreferenceConstants.P_DATA_DIRECTORY);
-		ensureDataDirectoryExists(path);
+		FileUtility.ensureDirectoryExists(path);
 
 		// Check if tools dir setup yet
 		final String toolsDirSet = System
