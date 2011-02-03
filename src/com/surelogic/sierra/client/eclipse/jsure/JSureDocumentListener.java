@@ -1,6 +1,6 @@
 package com.surelogic.sierra.client.eclipse.jsure;
 
-import static com.surelogic.jsure.xml.JSureXMLReader.*;
+import static com.surelogic.common.jsure.xml.JSureXMLReader.*;
 
 import org.xml.sax.Attributes;
 

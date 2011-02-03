@@ -281,7 +281,7 @@ public class JSureFindingDetailsMediator extends AbstractSierraViewMediator
 		Filter(boolean lookAtChildren, Iterable<FindingRelation> relations) {
 			this.lookAtChildren = lookAtChildren;
 			for (FindingRelation r : relations) {
-				if (!com.surelogic.jsure.xml.JSureXMLReader.DEPONENT.equals(r
+				if (!com.surelogic.common.jsure.xml.JSureXMLReader.DEPONENT.equals(r
 						.getRelationType())) {
 					nonDeponents.put(getId(r), r);
 				}
@@ -293,7 +293,7 @@ public class JSureFindingDetailsMediator extends AbstractSierraViewMediator
 		}
 
 		public boolean filterOut(FindingRelation r) {
-			if (com.surelogic.jsure.xml.JSureXMLReader.DEPONENT.equals(r
+			if (com.surelogic.common.jsure.xml.JSureXMLReader.DEPONENT.equals(r
 					.getRelationType())) {
 				Long id = getId(r);
 				return nonDeponents.get(id) != null;

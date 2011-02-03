@@ -17,7 +17,7 @@ import com.surelogic.common.ui.ViewUtility;
 import com.surelogic.common.core.jobs.SLProgressMonitorWrapper;
 import com.surelogic.common.jobs.SLProgressMonitor;
 import com.surelogic.common.logging.SLLogger;
-import com.surelogic.jsure.xml.JSureXMLReader;
+import com.surelogic.common.jsure.xml.JSureXMLReader;
 import com.surelogic.sierra.client.eclipse.jobs.AbstractSierraDatabaseJob;
 import com.surelogic.sierra.client.eclipse.jobs.ScanDocumentUtility;
 import com.surelogic.sierra.client.eclipse.model.DatabaseHub;
