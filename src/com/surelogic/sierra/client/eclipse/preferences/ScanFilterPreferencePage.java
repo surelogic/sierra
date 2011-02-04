@@ -40,9 +40,6 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.UIJob;
 
-import com.surelogic.common.ui.HTMLPrinter;
-import com.surelogic.common.ui.dialogs.ErrorDialogUtility;
-import com.surelogic.common.ui.jobs.SLUIJob;
 import com.surelogic.common.core.logging.SLEclipseStatusUtility;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.jdbc.NullDBQuery;
@@ -52,7 +49,10 @@ import com.surelogic.common.jdbc.Row;
 import com.surelogic.common.jdbc.RowHandler;
 import com.surelogic.common.jdbc.TransactionException;
 import com.surelogic.common.logging.SLLogger;
-import com.surelogic.sierra.client.eclipse.Activator;
+import com.surelogic.common.ui.EclipseUIUtility;
+import com.surelogic.common.ui.HTMLPrinter;
+import com.surelogic.common.ui.dialogs.ErrorDialogUtility;
+import com.surelogic.common.ui.jobs.SLUIJob;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.StyleSheetHelper;
 import com.surelogic.sierra.client.eclipse.jobs.AbstractSierraDatabaseJob;
@@ -148,8 +148,8 @@ public class ScanFilterPreferencePage extends PreferencePage implements
 						"IO failure writing " + output + " filter set file", e);
 			}
 		}
-		final Job job = new AbstractSierraDatabaseJob("Updating Global Sierra Settings",
-				Job.INTERACTIVE) {
+		final Job job = new AbstractSierraDatabaseJob(
+				"Updating Global Sierra Settings", Job.INTERACTIVE) {
 			@Override
 			protected IStatus run(final IProgressMonitor monitor) {
 				monitor.beginTask("Updating Global Sierra Settings",
@@ -203,10 +203,9 @@ public class ScanFilterPreferencePage extends PreferencePage implements
 								@Override
 								protected IStatus run(
 										final IProgressMonitor monitor) {
-									monitor
-											.beginTask(
-													"Querying Sierra Artifact Type Description",
-													IProgressMonitor.UNKNOWN);
+									monitor.beginTask(
+											"Querying Sierra Artifact Type Description",
+											IProgressMonitor.UNKNOWN);
 									return queryFindingTypeHTMLDescriptionOf(findingTypeId);
 								}
 							};
@@ -274,7 +273,8 @@ public class ScanFilterPreferencePage extends PreferencePage implements
 		}
 		clearHTMLDescription();
 
-		final Job job = new AbstractSierraDatabaseJob("Querying Sierra Artifacts") {
+		final Job job = new AbstractSierraDatabaseJob(
+				"Querying Sierra Artifacts") {
 			@Override
 			protected IStatus run(final IProgressMonitor monitor) {
 				monitor.beginTask("Querying Sierra Artifacts",
@@ -287,8 +287,11 @@ public class ScanFilterPreferencePage extends PreferencePage implements
 		/*
 		 * Allow access to help via the F1 key.
 		 */
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,
-				"com.surelogic.sierra.client.eclipse.preferences-sierra");
+		PlatformUI
+				.getWorkbench()
+				.getHelpSystem()
+				.setHelp(parent,
+						"com.surelogic.sierra.client.eclipse.preferences-sierra");
 
 		return f_panel;
 	}
@@ -324,9 +327,9 @@ public class ScanFilterPreferencePage extends PreferencePage implements
 								}
 							}).call());
 
-					f_filterList.addAll(SettingQueries.scanFilterForUid(
-							SettingQueries.LOCAL_UUID).perform(q)
-							.getIncludedFindingTypes());
+					f_filterList.addAll(SettingQueries
+							.scanFilterForUid(SettingQueries.LOCAL_UUID)
+							.perform(q).getIncludedFindingTypes());
 
 				}
 			});
@@ -496,8 +499,9 @@ public class ScanFilterPreferencePage extends PreferencePage implements
 		return Status.OK_STATUS;
 	}
 
+	@Override
 	public void init(final IWorkbench workbench) {
-		setPreferenceStore(Activator.getDefault().getPreferenceStore());
+		setPreferenceStore(EclipseUIUtility.getPreferences());
 		setDescription("Use this page to select rules to include from the scan.");
 	}
 
