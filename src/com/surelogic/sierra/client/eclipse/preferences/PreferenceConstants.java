@@ -4,7 +4,7 @@ import java.io.File;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 
-import com.surelogic.common.core.preferences.IAutoPerspectiveSwitchPreferences;
+import com.surelogic.common.core.preferences.AutoPerspectiveSwitchPreferences;
 import com.surelogic.common.core.preferences.IPreferenceAccessor;
 import com.surelogic.sierra.client.eclipse.Activator;
 import com.surelogic.sierra.client.eclipse.views.ServerStatusSort;
@@ -14,7 +14,7 @@ import com.surelogic.sierra.tool.message.Importance;
 /**
  * Constant definitions for plug-in preferences
  */
-public class PreferenceConstants implements IAutoPerspectiveSwitchPreferences {
+public class PreferenceConstants extends AutoPerspectiveSwitchPreferences {
 
 	private static final String PREFIX = "com.surelogic.sierra.";
 
@@ -248,32 +248,6 @@ public class PreferenceConstants implements IAutoPerspectiveSwitchPreferences {
 				P_SERVER_FAILURE_REPORTING, s.toString());
 	}
 
-	public static final String P_PROMPT_PERSPECTIVE_SWITCH = PREFIX
-			+ PROMPT_PERSPECTIVE_SWITCH;
-
-	public boolean getPromptForPerspectiveSwitch() {
-		return Activator.getDefault().getPreferenceStore().getBoolean(
-				P_PROMPT_PERSPECTIVE_SWITCH);
-	}
-
-	public void setPromptForPerspectiveSwitch(final boolean value) {
-		Activator.getDefault().getPreferenceStore().setValue(
-				P_PROMPT_PERSPECTIVE_SWITCH, value);
-	}
-
-	public static final String P_AUTO_PERSPECTIVE_SWITCH = PREFIX
-			+ AUTO_PERSPECTIVE_SWITCH;
-
-	public boolean getAutoPerspectiveSwitch() {
-		return Activator.getDefault().getPreferenceStore().getBoolean(
-				P_AUTO_PERSPECTIVE_SWITCH);
-	}
-
-	public void setAutoPerspectiveSwitch(final boolean value) {
-		Activator.getDefault().getPreferenceStore().setValue(
-				P_AUTO_PERSPECTIVE_SWITCH, value);
-	}
-
 	public static final String P_DATA_DIRECTORY = PREFIX + "data.directory";
 
 	public static File getSierraDataDirectory() {
@@ -300,7 +274,8 @@ public class PreferenceConstants implements IAutoPerspectiveSwitchPreferences {
 
 	public static final PreferenceConstants prototype = new PreferenceConstants();
 
-	public String getPrefConstant(final String suffix) {
+	@Override
+	public String getConstant(final String suffix) {
 		return PREFIX + suffix;
 	}
 
