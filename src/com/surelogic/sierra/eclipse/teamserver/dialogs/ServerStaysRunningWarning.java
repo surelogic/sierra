@@ -14,10 +14,10 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 
 import com.surelogic.common.CommonImages;
+import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.ui.SLImages;
 import com.surelogic.common.ui.SWTUtility;
-import com.surelogic.common.i18n.I18N;
-import com.surelogic.sierra.eclipse.teamserver.preferences.PreferenceConstants;
+import com.surelogic.sierra.eclipse.teamserver.preferences.LocalTeamServerPreferencesUtility;
 
 public final class ServerStaysRunningWarning extends Dialog {
 
@@ -76,8 +76,8 @@ public final class ServerStaysRunningWarning extends Dialog {
 		check.setText("Please do not show this warning again");
 		check.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
-				PreferenceConstants.setWarnAboutServerStaysRunning(!check
-						.getSelection());
+				LocalTeamServerPreferencesUtility
+						.setWarnAboutServerStaysRunning(!check.getSelection());
 			}
 		});
 
@@ -88,7 +88,7 @@ public final class ServerStaysRunningWarning extends Dialog {
 	protected void createButtonsForButtonBar(Composite parent) {
 		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL,
 				true);
-		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL,
-				false);		
+		createButton(parent, IDialogConstants.CANCEL_ID,
+				IDialogConstants.CANCEL_LABEL, false);
 	}
 }

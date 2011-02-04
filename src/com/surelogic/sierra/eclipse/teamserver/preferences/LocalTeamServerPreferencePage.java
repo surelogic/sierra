@@ -20,7 +20,7 @@ import org.eclipse.ui.PlatformUI;
 
 import com.surelogic.common.core.MemoryUtility;
 import com.surelogic.common.i18n.I18N;
-import com.surelogic.sierra.eclipse.teamserver.Activator;
+import com.surelogic.common.ui.EclipseUIUtility;
 
 public class LocalTeamServerPreferencePage extends PreferencePage implements
 		IWorkbenchPreferencePage {
@@ -32,7 +32,7 @@ public class LocalTeamServerPreferencePage extends PreferencePage implements
 	RadioGroupFieldEditor f_showAbove;
 
 	public void init(IWorkbench workbench) {
-		setPreferenceStore(Activator.getDefault().getPreferenceStore());
+		setPreferenceStore(EclipseUIUtility.getPreferences());
 		setDescription(I18N
 				.msg("sierra.eclipse.teamserver.preference.page.msg"));
 	}
@@ -49,22 +49,22 @@ public class LocalTeamServerPreferencePage extends PreferencePage implements
 				.msg("sierra.eclipse.teamserver.preference.page.group.memory"));
 
 		final int estimatedMax = MemoryUtility.computeMaxMemorySizeInMb();
-		int mb = PreferenceConstants.getServerMemoryMB();
+		int mb = LocalTeamServerPreferencesUtility.getServerMemoryMB();
 		if (mb > estimatedMax) {
 			mb = estimatedMax;
-			PreferenceConstants.setServerMemoryMB(mb);
+			LocalTeamServerPreferencesUtility.setServerMemoryMB(mb);
 		}
 
 		final String label = I18N.msg(SERVER_MB_LABEL, mb);
 		f_serverMemoryMB = new ScaleFieldEditor(
-				PreferenceConstants.P_SERVER_MEMORY_MB, label + "     ",
-				memoryGroup);
+				LocalTeamServerPreferencesUtility.SERVER_MEMORY_MB, label
+						+ "     ", memoryGroup);
 		f_serverMemoryMB.fillIntoGrid(memoryGroup, 2);
 		f_serverMemoryMB.setMinimum(256);
 		f_serverMemoryMB.setMaximum(estimatedMax);
 		f_serverMemoryMB.setPageIncrement(256);
 		f_serverMemoryMB.setPage(this);
-		f_serverMemoryMB.setPreferenceStore(getPreferenceStore());
+		f_serverMemoryMB.setPreferenceStore(EclipseUIUtility.getPreferences());
 		f_serverMemoryMB.load();
 		f_serverMemoryMB.getScaleControl().addListener(SWT.Selection,
 				new Listener() {
@@ -78,8 +78,7 @@ public class LocalTeamServerPreferencePage extends PreferencePage implements
 				false, 2, 1));
 		f_estimate
 				.setText(I18N
-						.msg(
-								"sierra.eclipse.teamserver.preference.page.computedMaxToolMemoryLabel",
+						.msg("sierra.eclipse.teamserver.preference.page.computedMaxToolMemoryLabel",
 								estimatedMax));
 
 		memoryGroup.setLayout(new GridLayout(2, false));
@@ -92,7 +91,7 @@ public class LocalTeamServerPreferencePage extends PreferencePage implements
 						.msg("sierra.eclipse.teamserver.preference.page.group.logging"));
 
 		f_showAbove = new RadioGroupFieldEditor(
-				PreferenceConstants.P_SERVER_LOGGING_LEVEL,
+				LocalTeamServerPreferencesUtility.SERVER_LOGGING_LEVEL,
 				I18N.msg("sierra.eclipse.teamserver.preference.page.showAbove"),
 				1, new String[][] {
 						{ Level.SEVERE.toString(), Level.SEVERE.toString() },
@@ -103,14 +102,17 @@ public class LocalTeamServerPreferencePage extends PreferencePage implements
 						{ Level.FINEST.toString(), Level.FINEST.toString() } },
 				loggingGroup);
 		f_showAbove.setPage(this);
-		f_showAbove.setPreferenceStore(getPreferenceStore());
+		f_showAbove.setPreferenceStore(EclipseUIUtility.getPreferences());
 		f_showAbove.load();
 
 		/*
 		 * Allow access to help via the F1 key.
 		 */
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,
-				"com.surelogic.sierra.client.eclipse.preferences-sierra");
+		PlatformUI
+				.getWorkbench()
+				.getHelpSystem()
+				.setHelp(parent,
+						"com.surelogic.sierra.client.eclipse.preferences-sierra");
 
 		return panel;
 	}

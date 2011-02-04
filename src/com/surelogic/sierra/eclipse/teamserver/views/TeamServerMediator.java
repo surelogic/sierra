@@ -12,7 +12,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
@@ -38,12 +37,12 @@ import org.eclipse.ui.progress.UIJob;
 
 import com.surelogic.common.CommonImages;
 import com.surelogic.common.FileUtility;
-import com.surelogic.common.ui.SLImages;
-import com.surelogic.common.ui.dialogs.ErrorDialogUtility;
-import com.surelogic.common.ui.jobs.SLUIJob;
 import com.surelogic.common.core.logging.SLEclipseStatusUtility;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.logging.SLLogger;
+import com.surelogic.common.ui.SLImages;
+import com.surelogic.common.ui.dialogs.ErrorDialogUtility;
+import com.surelogic.common.ui.jobs.SLUIJob;
 import com.surelogic.sierra.eclipse.teamserver.dialogs.ServerStaysRunningWarning;
 import com.surelogic.sierra.eclipse.teamserver.model.IServerLogObserver;
 import com.surelogic.sierra.eclipse.teamserver.model.ITeamServerObserver;
@@ -51,7 +50,7 @@ import com.surelogic.sierra.eclipse.teamserver.model.JettyConsoleLog;
 import com.surelogic.sierra.eclipse.teamserver.model.JettyRequestLog;
 import com.surelogic.sierra.eclipse.teamserver.model.ServerLog;
 import com.surelogic.sierra.eclipse.teamserver.model.TeamServer;
-import com.surelogic.sierra.eclipse.teamserver.preferences.PreferenceConstants;
+import com.surelogic.sierra.eclipse.teamserver.preferences.LocalTeamServerPreferencesUtility;
 
 public final class TeamServerMediator implements ITeamServerObserver {
 
@@ -98,7 +97,7 @@ public final class TeamServerMediator implements ITeamServerObserver {
 			f_item = item;
 		}
 
-		public void notify(final ServerLog log) {		
+		public void notify(final ServerLog log) {
 			if (!f_teamServer.isRunning() && !f_teamServer.isNotRunning()) {
 				return;
 			}
@@ -130,13 +129,13 @@ public final class TeamServerMediator implements ITeamServerObserver {
 		}
 
 		public void handleEvent(Event event) {
-		    /*
-			if (!f_teamServer.isRunning() && !f_teamServer.isNotRunning()) {
-				return;
-			}
-*/
+			/*
+			 * if (!f_teamServer.isRunning() && !f_teamServer.isNotRunning()) {
+			 * return; }
+			 */
 			updateLogText(f_log.getText());
-			PreferenceConstants.setLogShowing(f_logShowingPersistenceNumber);
+			LocalTeamServerPreferencesUtility
+					.setLogShowing(f_logShowingPersistenceNumber);
 		}
 	}
 
@@ -161,7 +160,8 @@ public final class TeamServerMediator implements ITeamServerObserver {
 		f_showLogAction = showLogAction;
 		f_deleteServerDbAction = deleteServerDb;
 
-		f_teamServer = new TeamServer(PreferenceConstants.getPort(), f_executor);
+		f_teamServer = new TeamServer(
+				LocalTeamServerPreferencesUtility.getPort(), f_executor);
 		f_jettyConsoleLog = new JettyConsoleLog(f_executor);
 		f_jettyConsoleLogObserver = new LogObserver(f_jettyConsoleLogItem);
 		f_jettyRequestLog = new JettyRequestLog(f_executor);
@@ -229,7 +229,8 @@ public final class TeamServerMediator implements ITeamServerObserver {
 		/*
 		 * Which log is showing is persisted.
 		 */
-		final int logShowing = PreferenceConstants.getLogShowing();
+		final int logShowing = LocalTeamServerPreferencesUtility
+				.getLogShowing();
 		if (logShowing == 0) {
 			f_jettyConsoleLogItem.setSelection(true);
 		} else {
@@ -339,21 +340,24 @@ public final class TeamServerMediator implements ITeamServerObserver {
 	}
 
 	void toggleLogVisibility() {
-		PreferenceConstants.setLogVisible(!PreferenceConstants.isLogVisible());
+		LocalTeamServerPreferencesUtility
+				.setLogVisible(!LocalTeamServerPreferencesUtility
+						.isLogVisible());
 		adjustLogVisibility();
 	}
 
 	void deleteServerDb() {
-		if (MessageDialog.openConfirm(f_command.getShell(), I18N
-				.msg("sierra.eclipse.teamserver.confirmDataWipe.title"), I18N
-				.msg("sierra.eclipse.teamserver.confirmDataWipe.msg"))) {
-			FileUtility.recursiveDelete(PreferenceConstants
+		if (MessageDialog.openConfirm(f_command.getShell(),
+				I18N.msg("sierra.eclipse.teamserver.confirmDataWipe.title"),
+				I18N.msg("sierra.eclipse.teamserver.confirmDataWipe.msg"))) {
+			FileUtility.recursiveDelete(LocalTeamServerPreferencesUtility
 					.getSierraLocalTeamServerDirectory());
 		}
 	}
 
 	private void adjustLogVisibility() {
-		final boolean visible = PreferenceConstants.isLogVisible();
+		final boolean visible = LocalTeamServerPreferencesUtility
+				.isLogVisible();
 		f_logGroup.setVisible(visible);
 		f_showLogAction.setChecked(visible);
 		f_toggleLogVisibilityMenuItem.setSelection(visible);
@@ -363,7 +367,7 @@ public final class TeamServerMediator implements ITeamServerObserver {
 		if (f_teamServer.isRunning()) {
 			f_teamServer.stop();
 		} else if (f_teamServer.isNotRunning()) {
-			if (PreferenceConstants.warnAboutServerStaysRunning()) {
+			if (LocalTeamServerPreferencesUtility.warnAboutServerStaysRunning()) {
 				final ServerStaysRunningWarning dialog = new ServerStaysRunningWarning();
 				final int result = dialog.open();
 				if (result == Window.CANCEL) {
@@ -373,7 +377,7 @@ public final class TeamServerMediator implements ITeamServerObserver {
 			final int portFromForm = Integer.parseInt(f_port.getText());
 			if (portFromForm != f_teamServer.getPort() && portFromForm > 0) {
 				f_teamServer.setPort(portFromForm);
-				PreferenceConstants.setPort(portFromForm);
+				LocalTeamServerPreferencesUtility.setPort(portFromForm);
 			}
 			f_teamServer.start();
 		} else {
@@ -408,8 +412,8 @@ public final class TeamServerMediator implements ITeamServerObserver {
 		/*
 		 * We are not being called from the SWT thread.
 		 */
-		startupFailureHelper(server.getProcessExitValue(), server
-				.getProcessConsoleOutput());
+		startupFailureHelper(server.getProcessExitValue(),
+				server.getProcessConsoleOutput());
 	}
 
 	/**
@@ -436,8 +440,10 @@ public final class TeamServerMediator implements ITeamServerObserver {
 		final String name = "Sierra Server";
 
 		try {
-			final IWebBrowser browser = PlatformUI.getWorkbench()
-					.getBrowserSupport().createBrowser(
+			final IWebBrowser browser = PlatformUI
+					.getWorkbench()
+					.getBrowserSupport()
+					.createBrowser(
 							IWorkbenchBrowserSupport.LOCATION_BAR
 									| IWorkbenchBrowserSupport.NAVIGATION_BAR
 									| IWorkbenchBrowserSupport.STATUS, name,

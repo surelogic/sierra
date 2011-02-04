@@ -22,7 +22,7 @@ import com.surelogic.common.core.EclipseUtility;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.eclipse.teamserver.Activator;
-import com.surelogic.sierra.eclipse.teamserver.preferences.PreferenceConstants;
+import com.surelogic.sierra.eclipse.teamserver.preferences.LocalTeamServerPreferencesUtility;
 
 public final class TeamServer {
 
@@ -266,14 +266,15 @@ public final class TeamServer {
 	public void start() {
 		final CommandlineJava command = getJettyTemplate();
 
-		command.setMaxmemory(PreferenceConstants.getServerMemoryMB() + "m");
+		command.setMaxmemory(LocalTeamServerPreferencesUtility
+				.getServerMemoryMB() + "m");
 		if (System.getProperty("com.surelogic.debugServer") != null) {
 			command.createVmArgument()
 					.setValue(
 							"-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000");
 		}
 		// Ensure the local team server directory exists for logging
-		final File serverDir = PreferenceConstants
+		final File serverDir = LocalTeamServerPreferencesUtility
 				.getSierraLocalTeamServerDirectory();
 		if (!serverDir.exists()) {
 			serverDir.mkdir();
@@ -285,8 +286,8 @@ public final class TeamServer {
 
 		final Environment.Variable loggingLevel = new Environment.Variable();
 		loggingLevel.setKey(SLLogger.SL_LOGGING_PROPERTY);
-		loggingLevel.setValue(PreferenceConstants.getServerLoggingLevel()
-				.toString());
+		loggingLevel.setValue(LocalTeamServerPreferencesUtility
+				.getServerLoggingLevel().toString());
 		command.addSysproperty(loggingLevel);
 
 		final String jettyConfig = launder(f_pluginDir + JETTY_CONFIG);
