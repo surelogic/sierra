@@ -8,10 +8,11 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 
-import com.surelogic.common.ui.BalloonUtility;
+import com.surelogic.common.core.EclipseUtility;
 import com.surelogic.common.logging.SLLogger;
+import com.surelogic.common.ui.BalloonUtility;
 import com.surelogic.sierra.client.eclipse.dialogs.ConfirmPerspectiveSwitch;
-import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
+import com.surelogic.sierra.client.eclipse.preferences.SierraPreferencesUtility;
 
 /**
  * The adapter for various scan jobs, handles all the possible cases for status
@@ -57,7 +58,8 @@ class ScanJobAdapter extends JobChangeAdapter {
 				LOG.fine("Completed " + scan + " for " + f_scanName);
 			}
 			ConfirmPerspectiveSwitch.prototype.submitUIJob();
-			if (PreferenceConstants.showBalloonNotifications())
+			if (EclipseUtility
+					.getBooleanPreference(SierraPreferencesUtility.SHOW_BALLOON_NOTIFICATIONS))
 				BalloonUtility.showMessage("Sierra " + scan + " completed on "
 						+ f_scanName, "You may now examine the results.");
 

@@ -31,12 +31,13 @@ import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.ui.PreferenceConstants;
 
 import com.surelogic.common.SLUtility;
 import com.surelogic.common.core.EclipseUtility;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Tools;
-import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
+import com.surelogic.sierra.client.eclipse.preferences.SierraPreferencesUtility;
 import com.surelogic.sierra.tool.IToolExtension;
 import com.surelogic.sierra.tool.IToolFactory;
 import com.surelogic.sierra.tool.SierraToolConstants;
@@ -73,7 +74,7 @@ public final class ConfigGenerator {
 			SierraToolConstants.SIERRA_RESULTS_PATH);
 
 	/** The default folder from the preference page */
-	private final String f_sierraPath = PreferenceConstants
+	private final String f_sierraPath = SierraPreferencesUtility
 			.getSierraDataDirectory().getAbsolutePath();
 
 	/** The plug-in directory that has tools folder */
@@ -377,7 +378,8 @@ public final class ConfigGenerator {
 	private void setupTools(Config config, IJavaProject javaProject) {
 		config.setJavaVendor(System.getProperty("java.vendor"));
 		config.setJavaVersion(System.getProperty("java.version"));
-		config.setMemorySize(PreferenceConstants.getToolMemoryMB());
+		config.setMemorySize(EclipseUtility
+				.getIntPreference(SierraPreferencesUtility.TOOL_MEMORY_MB));
 		config.setToolsDirectory(new File(tools));
 		config.setPluginDirs(pluginDirs);
 		config.setComplianceLevel(javaProject.getOption(
@@ -392,7 +394,7 @@ public final class ConfigGenerator {
 		f_numberofExcludedTools = 0;
 
 		for (IToolFactory f : Tools.findToolFactories()) {
-			if (!PreferenceConstants.runTool(f)
+			if (!SierraPreferencesUtility.runTool(f)
 					|| "Checkstyle".equals(f.getId())) {
 				// Only need to add a comma if this isn't the first one
 				if (f_numberofExcludedTools != 0) {

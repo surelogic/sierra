@@ -20,24 +20,27 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.PlatformUI;
 
-import com.surelogic.common.ui.adhoc.views.ExportQueryDialog;
 import com.surelogic.common.CommonImages;
 import com.surelogic.common.FileUtility;
 import com.surelogic.common.XUtil;
+import com.surelogic.common.core.EclipseUtility;
 import com.surelogic.common.core.MemoryUtility;
-import com.surelogic.common.ui.SLImages;
-import com.surelogic.common.ui.SWTUtility;
-import com.surelogic.common.ui.dialogs.ChangeDataDirectoryDialog;
-import com.surelogic.common.ui.dialogs.ErrorDialogUtility;
 import com.surelogic.common.core.logging.SLEclipseStatusUtility;
-import com.surelogic.common.ui.preferences.AbstractCommonPreferencePage;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.jobs.NullSLProgressMonitor;
 import com.surelogic.common.jobs.SLJob;
 import com.surelogic.common.jobs.SLSeverity;
 import com.surelogic.common.jobs.SLStatus;
+import com.surelogic.common.ui.EclipseUIUtility;
+import com.surelogic.common.ui.SLImages;
+import com.surelogic.common.ui.SWTUtility;
+import com.surelogic.common.ui.adhoc.views.ExportQueryDialog;
+import com.surelogic.common.ui.dialogs.ChangeDataDirectoryDialog;
+import com.surelogic.common.ui.dialogs.ErrorDialogUtility;
+import com.surelogic.common.ui.preferences.AbstractCommonPreferencePage;
 import com.surelogic.sierra.client.eclipse.Activator;
-import com.surelogic.sierra.client.eclipse.jobs.*;
+import com.surelogic.sierra.client.eclipse.jobs.BootDatabase;
+import com.surelogic.sierra.client.eclipse.jobs.DisconnectDatabase;
 import com.surelogic.sierra.client.eclipse.views.adhoc.AdHocDataSource;
 import com.surelogic.sierra.tool.message.Importance;
 
@@ -56,7 +59,8 @@ public class SierraPreferencePage extends AbstractCommonPreferencePage {
 	private Label f_dataDirectory;
 
 	public SierraPreferencePage() {
-		super("sierra.eclipse.", PreferenceConstants.prototype);
+		super("sierra.eclipse.", SierraPreferencesUtility
+				.getSwitchPreferences());
 	}
 
 	@Override
@@ -82,16 +86,16 @@ public class SierraPreferencePage extends AbstractCommonPreferencePage {
 		change.setLayoutData(new GridData(SWT.DEFAULT, SWT.DEFAULT, false,
 				false));
 		change.addListener(SWT.Selection, new Listener() {
+			@Override
 			public void handleEvent(final Event event) {
-				final File existing = PreferenceConstants
+				final File existing = SierraPreferencesUtility
 						.getSierraDataDirectory();
 				final ChangeDataDirectoryDialog dialog = new ChangeDataDirectoryDialog(
 						change.getShell(),
 						existing,
 						I18N.msg("sierra.change.data.directory.dialog.title"),
 						SLImages.getImage(CommonImages.IMG_FL_LOGO),
-						I18N
-								.msg("sierra.change.data.directory.dialog.information"));
+						I18N.msg("sierra.change.data.directory.dialog.information"));
 
 				if (dialog.open() != Window.OK)
 					return;
@@ -107,11 +111,13 @@ public class SierraPreferencePage extends AbstractCommonPreferencePage {
 						null);
 				SLStatus result = moveJob.run(new NullSLProgressMonitor());
 				if (result.getSeverity() == SLSeverity.OK) {
-					PreferenceConstants.setSierraDataDirectory(destination);
+					SierraPreferencesUtility
+							.setSierraDataDirectory(destination);
 					updateDataDirectory();
 					new BootDatabase().run(new NullSLProgressMonitor());
 				} else {
-					IStatus status = SLEclipseStatusUtility.convert(result, Activator.getDefault());
+					IStatus status = SLEclipseStatusUtility.convert(result,
+							Activator.getDefault());
 					ErrorDialogUtility.open(change.getShell(), I18N
 							.msg("sierra.change.data.directory.dialog.failed"),
 							status);
@@ -124,55 +130,57 @@ public class SierraPreferencePage extends AbstractCommonPreferencePage {
 		diGroup.setText(I18N.msg("sierra.eclipse.preference.page.group.app"));
 
 		f_findingsListLimit = new IntegerFieldEditor(
-				PreferenceConstants.P_FINDINGS_LIST_LIMIT,
+				SierraPreferencesUtility.FINDINGS_LIST_LIMIT,
 				I18N.msg("sierra.eclipse.preference.page.findingsListLimit"),
 				diGroup);
 		f_findingsListLimit.fillIntoGrid(diGroup, 2);
 		f_findingsListLimit.setPage(this);
-		f_findingsListLimit.setPreferenceStore(getPreferenceStore());
+		f_findingsListLimit.setPreferenceStore(EclipseUIUtility
+				.getPreferences());
 		f_findingsListLimit.load();
 
 		f_balloonFlag = new BooleanFieldEditor(
-				PreferenceConstants.P_SIERRA_BALLOON_FLAG, I18N
-						.msg("sierra.eclipse.preference.page.balloonFlag"),
-				diGroup);
+				SierraPreferencesUtility.SHOW_BALLOON_NOTIFICATIONS,
+				I18N.msg("sierra.eclipse.preference.page.balloonFlag"), diGroup);
 		f_balloonFlag.fillIntoGrid(diGroup, 2);
 		f_balloonFlag.setPage(this);
-		f_balloonFlag.setPreferenceStore(getPreferenceStore());
+		f_balloonFlag.setPreferenceStore(EclipseUIUtility.getPreferences());
 		f_balloonFlag.load();
 
 		setupForPerspectiveSwitch(diGroup);
 
 		f_selectProjectsToScan = new BooleanFieldEditor(
-				PreferenceConstants.P_SELECT_PROJECTS_TO_SCAN,
+				SierraPreferencesUtility.ALWAYS_ALLOW_USER_TO_SELECT_PROJECTS_TO_SCAN,
 				I18N.msg("sierra.eclipse.preference.page.selectProjectsToScan"),
 				diGroup);
 		f_selectProjectsToScan.fillIntoGrid(diGroup, 2);
 		f_selectProjectsToScan.setPage(this);
-		f_selectProjectsToScan.setPreferenceStore(getPreferenceStore());
+		f_selectProjectsToScan.setPreferenceStore(EclipseUIUtility
+				.getPreferences());
 		f_selectProjectsToScan.load();
 
 		f_showJSureResultsFlag = new BooleanFieldEditor(
-				PreferenceConstants.P_SIERRA_SHOW_JSURE_FINDINGS,
+				SierraPreferencesUtility.SHOW_JSURE_FINDINGS,
 				I18N.msg("sierra.eclipse.preference.page.showJSureResultsFlag"),
 				diGroup);
 		f_showJSureResultsFlag.fillIntoGrid(diGroup, 2);
 		f_showJSureResultsFlag.setPage(this);
-		f_showJSureResultsFlag.setPreferenceStore(getPreferenceStore());
+		f_showJSureResultsFlag.setPreferenceStore(EclipseUIUtility
+				.getPreferences());
 		f_showJSureResultsFlag.load();
 
 		f_showMarkersInJavaEditorFlag = new BooleanFieldEditor(
-				PreferenceConstants.P_SIERRA_SHOW_MARKERS,
-				I18N
-						.msg("sierra.eclipse.preference.page.showMarkersInJavaEditorFlag"),
+				SierraPreferencesUtility.SHOW_MARKERS,
+				I18N.msg("sierra.eclipse.preference.page.showMarkersInJavaEditorFlag"),
 				diGroup);
 		f_showMarkersInJavaEditorFlag.fillIntoGrid(diGroup, 2);
 		f_showMarkersInJavaEditorFlag.setPage(this);
-		f_showMarkersInJavaEditorFlag.setPreferenceStore(getPreferenceStore());
+		f_showMarkersInJavaEditorFlag.setPreferenceStore(EclipseUIUtility
+				.getPreferences());
 		f_showMarkersInJavaEditorFlag.load();
 
 		f_showAbove = new RadioGroupFieldEditor(
-				PreferenceConstants.P_SIERRA_SHOW_MARKERS_AT_OR_ABOVE_IMPORTANCE,
+				SierraPreferencesUtility.SHOW_MARKERS_AT_OR_ABOVE_IMPORTANCE,
 				I18N.msg("sierra.eclipse.preference.page.showAbove"), 1,
 				new String[][] {
 						{ Importance.CRITICAL.toStringSentenceCase(),
@@ -189,7 +197,7 @@ public class SierraPreferencePage extends AbstractCommonPreferencePage {
 				diGroup);
 		f_showAbove.fillIntoGrid(diGroup, 2);
 		f_showAbove.setPage(this);
-		f_showAbove.setPreferenceStore(getPreferenceStore());
+		f_showAbove.setPreferenceStore(EclipseUIUtility.getPreferences());
 		f_showAbove.load();
 
 		diGroup.setLayout(new GridLayout(2, false));
@@ -200,25 +208,28 @@ public class SierraPreferencePage extends AbstractCommonPreferencePage {
 				.msg("sierra.eclipse.preference.page.group.scan"));
 
 		final int estimatedMax = MemoryUtility.computeMaxMemorySizeInMb();
-		int mb = PreferenceConstants.getToolMemoryMB();
+		int mb = EclipseUtility
+				.getIntPreference(SierraPreferencesUtility.TOOL_MEMORY_MB);
 		if (mb > estimatedMax) {
 			mb = estimatedMax;
-			PreferenceConstants.setToolMemoryMB(mb);
+			EclipseUtility.setIntPreference(
+					SierraPreferencesUtility.TOOL_MEMORY_MB, mb);
 		}
 
 		final String label = I18N.msg(TOOL_MB_LABEL, mb);
 		f_toolMemoryMB = new ScaleFieldEditor(
-				PreferenceConstants.P_TOOL_MEMORY_MB, label + "     ",
+				SierraPreferencesUtility.TOOL_MEMORY_MB, label + "     ",
 				memoryGroup);
 		f_toolMemoryMB.fillIntoGrid(memoryGroup, 2);
 		f_toolMemoryMB.setMinimum(256);
 		f_toolMemoryMB.setMaximum(estimatedMax);
 		f_toolMemoryMB.setPageIncrement(256);
 		f_toolMemoryMB.setPage(this);
-		f_toolMemoryMB.setPreferenceStore(getPreferenceStore());
+		f_toolMemoryMB.setPreferenceStore(EclipseUIUtility.getPreferences());
 		f_toolMemoryMB.load();
 		f_toolMemoryMB.getScaleControl().addListener(SWT.Selection,
 				new Listener() {
+					@Override
 					public void handleEvent(final Event event) {
 						updateMBInLabel();
 					}
@@ -232,12 +243,12 @@ public class SierraPreferencePage extends AbstractCommonPreferencePage {
 				estimatedMax));
 
 		f_saveResources = new BooleanFieldEditor(
-				PreferenceConstants.P_SIERRA_ALWAYS_SAVE_RESOURCES, I18N
-						.msg("sierra.eclipse.preference.page.saveModified"),
+				SierraPreferencesUtility.ALWAYS_SAVE_RESOURCES,
+				I18N.msg("sierra.eclipse.preference.page.saveModified"),
 				memoryGroup);
 		f_saveResources.fillIntoGrid(memoryGroup, 2);
 		f_saveResources.setPage(this);
-		f_saveResources.setPreferenceStore(getPreferenceStore());
+		f_saveResources.setPreferenceStore(EclipseUIUtility.getPreferences());
 		f_saveResources.load();
 
 		memoryGroup.setLayout(new GridLayout(2, false));
@@ -245,14 +256,18 @@ public class SierraPreferencePage extends AbstractCommonPreferencePage {
 		/*
 		 * Allow access to help via the F1 key.
 		 */
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,
-				"com.surelogic.sierra.client.eclipse.preferences-sierra");
+		PlatformUI
+				.getWorkbench()
+				.getHelpSystem()
+				.setHelp(parent,
+						"com.surelogic.sierra.client.eclipse.preferences-sierra");
 		if (XUtil.useExperimental()) {
 			final Button exportButton = new Button(parent, SWT.PUSH);
 			exportButton.setText("Export New Queries File");
 			exportButton.setLayoutData(new GridData(SWT.DEFAULT, SWT.DEFAULT,
 					false, false));
 			exportButton.addListener(SWT.Selection, new Listener() {
+				@Override
 				public void handleEvent(final Event event) {
 					new ExportQueryDialog(SWTUtility.getShell(),
 							AdHocDataSource.getManager()).open();
@@ -268,8 +283,8 @@ public class SierraPreferencePage extends AbstractCommonPreferencePage {
 	}
 
 	private void updateDataDirectory() {
-		f_dataDirectory.setText(PreferenceConstants.getSierraDataDirectory()
-				.getAbsolutePath());
+		f_dataDirectory.setText(SierraPreferencesUtility
+				.getSierraDataDirectory().getAbsolutePath());
 	}
 
 	@Override

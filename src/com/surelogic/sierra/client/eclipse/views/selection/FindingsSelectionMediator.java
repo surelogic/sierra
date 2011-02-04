@@ -23,6 +23,7 @@ import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.progress.UIJob;
 
 import com.surelogic.common.CommonImages;
+import com.surelogic.common.core.EclipseUtility;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.common.ui.CascadingList;
 import com.surelogic.common.ui.SLImages;
@@ -39,7 +40,7 @@ import com.surelogic.sierra.client.eclipse.model.selection.Filter;
 import com.surelogic.sierra.client.eclipse.model.selection.ISelectionManagerObserver;
 import com.surelogic.sierra.client.eclipse.model.selection.Selection;
 import com.surelogic.sierra.client.eclipse.model.selection.SelectionManager;
-import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
+import com.surelogic.sierra.client.eclipse.preferences.SierraPreferencesUtility;
 import com.surelogic.sierra.client.eclipse.views.IViewCallback;
 import com.surelogic.sierra.client.eclipse.views.IViewMediator;
 
@@ -204,8 +205,8 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 			item.addListener(SWT.Selection, new Listener() {
 				public void handleEvent(Event event) {
 					if (f_workingSelection != null) {
-						f_workingSelection.setColumnVisible(name, item
-								.getSelection());
+						f_workingSelection.setColumnVisible(name,
+								item.getSelection());
 					}
 				}
 			});
@@ -435,10 +436,11 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 		f_first.selectAll();
 	}
 
+	@Override
 	public void findingsLimited(boolean isLimited) {
 		if (isLimited) {
-			final int findingsListLimit = PreferenceConstants
-					.getFindingsListLimit();
+			final int findingsListLimit = EclipseUtility
+					.getIntPreference(SierraPreferencesUtility.FINDINGS_LIST_LIMIT);
 			final int shouldBeShowing = f_workingSelection
 					.getFindingCountPorous();
 			final Image warning = SLImages.getImage(CommonImages.IMG_WARNING);

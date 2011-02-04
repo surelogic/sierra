@@ -13,13 +13,13 @@ import java.util.logging.Level;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.IJavaProject;
 
-import com.surelogic.common.ui.BalloonUtility;
 import com.surelogic.common.core.JDTUtility;
 import com.surelogic.common.core.jobs.DatabaseJob;
+import com.surelogic.common.ui.BalloonUtility;
 import com.surelogic.sierra.client.eclipse.jobs.ImportScanDocumentJob;
 import com.surelogic.sierra.client.eclipse.model.ConfigGenerator;
 import com.surelogic.sierra.client.eclipse.model.DatabaseHub;
-import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
+import com.surelogic.sierra.client.eclipse.preferences.SierraPreferencesUtility;
 import com.surelogic.sierra.tool.SierraToolConstants;
 import com.surelogic.sierra.tool.message.Config;
 
@@ -55,7 +55,8 @@ public class NewScan extends AbstractScan<IJavaProject> {
 
 		for (final Config config : configs) {
 			if (config.hasNothingToScan()) {
-				BalloonUtility.showMessage("Nothing to scan",
+				BalloonUtility.showMessage(
+						"Nothing to scan",
 						"There are no source files to scan in "
 								+ config.getProject());
 			} else {
@@ -68,8 +69,8 @@ public class NewScan extends AbstractScan<IJavaProject> {
 
 					/* Rename the scan document */
 					File scanDocument = config.getScanDocument();
-					File newScanDocument = generateScanDocumentFile(config
-							.getProject(), scanDocument.getName());
+					File newScanDocument = generateScanDocumentFile(
+							config.getProject(), scanDocument.getName());
 					/*
 					 * This approach assures that the scan document generation
 					 * will not crash. The tool will simply override the
@@ -81,8 +82,9 @@ public class NewScan extends AbstractScan<IJavaProject> {
 					scanDocument.renameTo(newScanDocument);
 				}
 			};
-			DatabaseJob importJob = new ImportScanDocumentJob(config
-					.getScanDocument(), config.getProject(), runAfterImport);
+			DatabaseJob importJob = new ImportScanDocumentJob(
+					config.getScanDocument(), config.getProject(),
+					runAfterImport);
 			importJob.addJobChangeListener(new ScanJobAdapter(config
 					.getProject()));
 
@@ -97,20 +99,23 @@ public class NewScan extends AbstractScan<IJavaProject> {
 	private static File generateScanDocumentFile(String project, String name) {
 		for (String suffix : SierraToolConstants.PARSED_FILE_SUFFIXES) {
 			if (name.endsWith(suffix)) {
-				return new File(PreferenceConstants.getSierraDataDirectory()
-						+ File.separator + project + suffix);
+				return new File(
+						SierraPreferencesUtility.getSierraDataDirectory(),
+						project + suffix);
 			}
 		}
-		return new File(PreferenceConstants.getSierraDataDirectory()
-				+ File.separator + project
-				+ (USE_ZIP ? PARSED_ZIP_FILE_SUFFIX : PARSED_FILE_SUFFIX));
+		return new File(SierraPreferencesUtility.getSierraDataDirectory(),
+				project
+						+ (USE_ZIP ? PARSED_ZIP_FILE_SUFFIX
+								: PARSED_FILE_SUFFIX));
 	}
 
 	public static File findScanDocumentFile(String projectName) {
 		for (String suffix : SierraToolConstants.PARSED_FILE_SUFFIXES) {
 			String scanFileName = projectName + suffix;
-			File scanFile = new File(PreferenceConstants
-					.getSierraDataDirectory(), scanFileName);
+			File scanFile = new File(
+					SierraPreferencesUtility.getSierraDataDirectory(),
+					scanFileName);
 			if (scanFile.exists()) {
 				return scanFile;
 			}

@@ -1,6 +1,7 @@
 package com.surelogic.sierra.client.eclipse.views;
 
-import java.util.concurrent.atomic.*;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -8,31 +9,32 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.ui.progress.UIJob;
 
-import com.surelogic.common.ui.jobs.SLUIJob;
+import com.surelogic.common.core.EclipseUtility;
 import com.surelogic.common.logging.SLLogger;
+import com.surelogic.common.ui.jobs.SLUIJob;
 import com.surelogic.sierra.client.eclipse.actions.SynchronizeAllProjectsAction;
-import com.surelogic.sierra.client.eclipse.jobs.*;
+import com.surelogic.sierra.client.eclipse.jobs.ServerProjectGroupJob;
 import com.surelogic.sierra.client.eclipse.model.ConnectedServerManager;
 import com.surelogic.sierra.client.eclipse.model.ServerSyncType;
-import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
 import com.surelogic.sierra.client.eclipse.preferences.ServerFailureReport;
+import com.surelogic.sierra.client.eclipse.preferences.SierraPreferencesUtility;
 import com.surelogic.sierra.jdbc.settings.ConnectedServer;
 
 public class SierraServersAutoSync {
-	private static final AtomicLong lastServerUpdateTime = new AtomicLong(System
-			.currentTimeMillis());
+	private static final AtomicLong lastServerUpdateTime = new AtomicLong(
+			System.currentTimeMillis());
 
 	private static final AtomicReference<ServerProjectGroupJob> lastSyncGroup = new AtomicReference<ServerProjectGroupJob>();
-	
+
 	private static AutoJob f_doServerAutoSync = null;
 
 	static void asyncSyncWithServer(final ServerSyncType type, final int delay) {
-		asyncSyncWithServer(type, delay, PreferenceConstants.getServerFailureReporting());
+		asyncSyncWithServer(type, delay,
+				SierraPreferencesUtility.getServerFailureReporting());
 	}
-	
-		
-	static void asyncSyncWithServer(final ServerSyncType type, final int delay, 
-			                        final ServerFailureReport reporting) {
+
+	static void asyncSyncWithServer(final ServerSyncType type, final int delay,
+			final ServerFailureReport reporting) {
 		final long now = System.currentTimeMillis();
 		lastServerUpdateTime.set(now); // Sync >> update
 		SLLogger.getLogger().fine("Sync at: " + now);
@@ -42,8 +44,8 @@ public class SierraServersAutoSync {
 			public IStatus runInUIThread(final IProgressMonitor monitor) {
 				final Job group = lastSyncGroup.get();
 				if ((group == null) || (group.getResult() != null)) {
-					final SynchronizeAllProjectsAction sync = 
-						new SynchronizeAllProjectsAction(type, reporting, false, delay);
+					final SynchronizeAllProjectsAction sync = new SynchronizeAllProjectsAction(
+							type, reporting, false, delay);
 					sync.run(null);
 					lastSyncGroup.set(sync.getGroup());
 				} else {
@@ -54,25 +56,25 @@ public class SierraServersAutoSync {
 		};
 		job.schedule();
 	}
-	
+
 	public static synchronized void start() {
 		if (f_doServerAutoSync == null) {
 			f_doServerAutoSync = new AutoJob();
 			f_doServerAutoSync.schedule(f_doServerAutoSync.getDelay());
 		}
 	}
-	
+
 	public static synchronized void stop() {
-		if (f_doServerAutoSync != null) {	
+		if (f_doServerAutoSync != null) {
 			f_doServerAutoSync.stop();
 			f_doServerAutoSync = null;
 		}
 	}
-	
+
 	private static class AutoJob extends Job {
 		final AtomicLong lastTime;
 		boolean enabled = true;
-		
+
 		public AutoJob() {
 			super("Server auto-sync");
 			setSystem(true);
@@ -106,28 +108,31 @@ public class SierraServersAutoSync {
 			return enabled;
 		}
 
-		public void stop() {		
+		public void stop() {
 			enabled = false;
 			super.cancel();
 		}
-		
+
 		// In msec
 		protected long getDelay() {
-			return PreferenceConstants
-					.getServerInteractionPeriodInMinutes() * 60000;
+			final int serverInteractionPeriodInMinutes = EclipseUtility
+					.getIntPreference(SierraPreferencesUtility.SERVER_INTERACTION_PERIOD_IN_MINUTES);
+			return serverInteractionPeriodInMinutes * 60000;
 		}
 
 		protected void run() {
 			// Check if any servers have auto-sync on
 			boolean autoSync = false;
-			for(ConnectedServer s : ConnectedServerManager.getInstance().getServers()) {
+			for (ConnectedServer s : ConnectedServerManager.getInstance()
+					.getServers()) {
 				if (s.getLocation().isAutoSync()) {
 					autoSync = true;
 					break;
 				}
 			}
 			if (autoSync) {
-				SierraServersAutoSync.asyncSyncWithServer(ServerSyncType.BY_SERVER_SETTINGS, 2000);
+				SierraServersAutoSync.asyncSyncWithServer(
+						ServerSyncType.BY_SERVER_SETTINGS, 2000);
 			}
 		}
 	}

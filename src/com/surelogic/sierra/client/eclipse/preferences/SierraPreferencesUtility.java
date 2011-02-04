@@ -6,10 +6,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import com.surelogic.common.FileUtility;
 import com.surelogic.common.core.EclipseUtility;
 import com.surelogic.common.core.preferences.AutoPerspectiveSwitchPreferences;
-import com.surelogic.sierra.client.eclipse.Tools;
 import com.surelogic.sierra.client.eclipse.views.ServerStatusSort;
 import com.surelogic.sierra.tool.IToolFactory;
-import com.surelogic.sierra.tool.ToolUtil;
 import com.surelogic.sierra.tool.message.Importance;
 
 /**
@@ -28,7 +26,7 @@ public final class SierraPreferencesUtility {
 			true);
 
 	/**
-	 * Sets up the default values for the JSure tool.
+	 * Sets up the default values for the Sierra tool.
 	 * <p>
 	 * <b>WARNING:</b> Because this class exports strings that are declared to
 	 * be {@code public static final} simply referencing these constants may not
@@ -40,7 +38,8 @@ public final class SierraPreferencesUtility {
 	 */
 	public static void initializeDefaultScope() {
 		if (f_initializationNeeded.compareAndSet(true, false)) {
-			EclipseUtility.setDefaultBooleanPreference(BALLOON_FLAG, true);
+			EclipseUtility.setDefaultBooleanPreference(
+					SHOW_BALLOON_NOTIFICATIONS, true);
 			EclipseUtility.setDefaultBooleanPreference(getSwitchPreferences()
 					.getAutoPerspectiveSwitchConstant(), true);
 			EclipseUtility.setDefaultBooleanPreference(getSwitchPreferences()
@@ -59,8 +58,6 @@ public final class SierraPreferencesUtility {
 					WARN_MAXIMUM_FINDINGS_SHOWN, true);
 			EclipseUtility.setDefaultBooleanPreference(
 					ALWAYS_ALLOW_USER_TO_SELECT_PROJECTS_TO_SCAN, true);
-			EclipseUtility.setDefaultBooleanPreference(
-					HIDE_EMPTY_SYNCHRONIZE_ENTRIES, false);
 			EclipseUtility.setDefaultStringPreference(SERVER_STATUS_SORT,
 					ServerStatusSort.BY_SERVER.toString());
 			EclipseUtility.setDefaultIntPreference(
@@ -86,7 +83,8 @@ public final class SierraPreferencesUtility {
 			+ "always-save-resources";
 	public static final String DELETE_DB_ON_STARTUP = PREFIX
 			+ "delete-db-on-startup";
-	public static final String BALLOON_FLAG = PREFIX + "balloon-flag";
+	public static final String SHOW_BALLOON_NOTIFICATIONS = PREFIX
+			+ "show-balloon-notifications";
 	public static final String SHOW_MARKERS = PREFIX + "show-markers";
 	public static final String SHOW_JSURE_FINDINGS = PREFIX
 			+ "show-jsure-findings";
@@ -152,7 +150,8 @@ public final class SierraPreferencesUtility {
 	}
 
 	public static boolean runTool(final IToolFactory f) {
-		return EclipseUtility.getBooleanPreference(getToolPreferenceConstant(f));
+		return EclipseUtility
+				.getBooleanPreference(getToolPreferenceConstant(f));
 	}
 
 	public static Importance showMarkersAtOrAboveImportance() {

@@ -75,8 +75,8 @@ import com.surelogic.sierra.client.eclipse.model.IProjectsObserver;
 import com.surelogic.sierra.client.eclipse.model.ISierraServerObserver;
 import com.surelogic.sierra.client.eclipse.model.Projects;
 import com.surelogic.sierra.client.eclipse.model.ServerSyncType;
-import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
 import com.surelogic.sierra.client.eclipse.preferences.ServerFailureReport;
+import com.surelogic.sierra.client.eclipse.preferences.SierraPreferencesUtility;
 import com.surelogic.sierra.jdbc.finding.ClientFindingManager;
 import com.surelogic.sierra.jdbc.finding.FindingAudits;
 import com.surelogic.sierra.jdbc.project.ClientProjectManager;
@@ -289,8 +289,8 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 		 * view.addToActionBar(f_serverSyncAction); view.addToActionBar(new
 		 * Separator());
 		 */
-		f_newServerAction = new ActionListener(SLImages
-				.getImage(CommonImages.IMG_EDIT_NEW),
+		f_newServerAction = new ActionListener(
+				SLImages.getImage(CommonImages.IMG_EDIT_NEW),
 				"New team server location") {
 			@Override
 			public void run() {
@@ -309,8 +309,8 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 			}
 		};
 
-		f_deleteServerAction = new IJavaProjectsActionListener(SLImages
-				.getImage(CommonImages.IMG_EDIT_DELETE),
+		f_deleteServerAction = new IJavaProjectsActionListener(
+				SLImages.getImage(CommonImages.IMG_EDIT_DELETE),
 				"Deletes the selected team server location",
 				"No server to delete") {
 			@Override
@@ -446,8 +446,8 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 					 */
 					if (SendScanFiltersJob.ENABLED) {
 						final Job job = new SendScanFiltersJob(
-								ServerFailureReport.SHOW_DIALOG, server, dialog
-										.getText());
+								ServerFailureReport.SHOW_DIALOG, server,
+								dialog.getText());
 						job.schedule();
 					}
 				}
@@ -538,7 +538,8 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 		// f_view.addToViewMenu(f_toggleAutoSyncAction);
 		f_view.addToViewMenu(new Separator());
 
-		final ServerStatusSort sort = PreferenceConstants.getServerStatusSort();
+		final ServerStatusSort sort = SierraPreferencesUtility
+				.getServerStatusSort();
 		final Action sortByServerAction = new Action("Show by Team Server",
 				IAction.AS_RADIO_BUTTON) {
 			@Override
@@ -935,8 +936,10 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 		final String name = "Sierra Server '" + server.getName() + "'";
 
 		try {
-			final IWebBrowser browser = PlatformUI.getWorkbench()
-					.getBrowserSupport().createBrowser(
+			final IWebBrowser browser = PlatformUI
+					.getWorkbench()
+					.getBrowserSupport()
+					.createBrowser(
 							IWorkbenchBrowserSupport.LOCATION_BAR
 									| IWorkbenchBrowserSupport.NAVIGATION_BAR
 									| IWorkbenchBrowserSupport.STATUS,
@@ -955,8 +958,8 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 		} else {
 			sort = ServerStatusSort.BY_PROJECT;
 		}
-		if (sort != PreferenceConstants.getServerStatusSort()) {
-			PreferenceConstants.setServerStatusSort(sort);
+		if (sort != SierraPreferencesUtility.getServerStatusSort()) {
+			SierraPreferencesUtility.setServerStatusSort(sort);
 			updateContentsInUI(projects, localFilters);
 		}
 	}
@@ -1042,8 +1045,8 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 					// Check for server problems
 					final ConnectedServer server = f_manager.getServer(name);
 					final int numServerProblems = server == null ? -1
-							: ConnectedServerManager.getInstance().getStats(
-									server).getProblemCount();
+							: ConnectedServerManager.getInstance()
+									.getStats(server).getProblemCount();
 					final int numProjectProblems = Projects.getInstance()
 							.getProblemCount(name);
 
@@ -1113,8 +1116,8 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 		// .useAuditThreshold()) {
 		// return false;
 		// }
-		final int auditThreshold = PreferenceConstants
-				.getServerInteractionAuditThreshold();
+		final int auditThreshold = EclipseUtility
+				.getIntPreference(SierraPreferencesUtility.SERVER_INTERACTION_AUDIT_THRESHOLD);
 		if (auditThreshold > 0) {
 			final ConnectedServerManager manager = ConnectedServerManager
 					.getInstance();
@@ -1234,7 +1237,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 		} else if (!someProjects) {
 			return new TreeInput(true, createServerItems());
 		} else {
-			switch (PreferenceConstants.getServerStatusSort()) {
+			switch (SierraPreferencesUtility.getServerStatusSort()) {
 			case BY_PROJECT:
 				return new TreeInput(false, createProjectItems());
 			case BY_SERVER:
@@ -1418,8 +1421,8 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 			final ConnectedServer server = f_manager.getServer(ps.name);
 			if (server == null) {
 				if (parent == null) {
-					parent = new ServersViewContent(null, SLImages
-							.getImage(CommonImages.IMG_CONSOLE));
+					parent = new ServersViewContent(null,
+							SLImages.getImage(CommonImages.IMG_CONSOLE));
 					children = new ArrayList<ServersViewContent>();
 				}
 				final ServersViewContent project = new ServersViewContent(
@@ -1549,8 +1552,8 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 	private ServersViewContent createProjectItem(
 			final ServersViewContent parent, final ConnectedServer server,
 			final String projectName) {
-		final ServersViewContent root = new ServersViewContent(parent, SLImages
-				.getImage(CommonImages.IMG_PROJECT));
+		final ServersViewContent root = new ServersViewContent(parent,
+				SLImages.getImage(CommonImages.IMG_PROJECT));
 		root.setText(projectName + " [" + server.getName() + ']');
 		return root;
 	}
@@ -1568,14 +1571,15 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 
 				if (ps.scanInfo.isPartial()) {
 					// Latest is a re-scan
-					scan = new ServersViewContent(root, SLImages
-							.getImage(CommonImages.IMG_SIERRA_INVESTIGATE));
+					scan = new ServersViewContent(
+							root,
+							SLImages.getImage(CommonImages.IMG_SIERRA_INVESTIGATE));
 					scan.setText("Re-scan done locally on "
 							+ dateFormat.format(lastScanTime)
 							+ " ... click to start full scan");
 				} else {
-					scan = new ServersViewContent(root, SLImages
-							.getImage(CommonImages.IMG_SIERRA_SCAN));
+					scan = new ServersViewContent(root,
+							SLImages.getImage(CommonImages.IMG_SIERRA_SCAN));
 					scan.setText("Last full scan done locally on "
 							+ dateFormat.format(lastScanTime));
 				}
@@ -1583,8 +1587,8 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 
 			} else {
 				final Date docModified = new Date(ps.scanDoc.lastModified());
-				scan = new ServersViewContent(root, SLImages
-						.getImage(CommonImages.IMG_SIERRA_SCAN));
+				scan = new ServersViewContent(root,
+						SLImages.getImage(CommonImages.IMG_SIERRA_SCAN));
 				scan.setText("Last full scan done locally on "
 						+ dateFormat.format(docModified));
 				scan.setData(ps.scanDoc);
@@ -1677,8 +1681,8 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 		int i = 0;
 		for (final ProjectStatus ps : projects) {
 			final ConnectedServer server = f_manager.getServer(ps.name);
-			content[i] = new ServersViewContent(null, SLImages
-					.getImage(CommonImages.IMG_PROJECT));
+			content[i] = new ServersViewContent(null,
+					SLImages.getImage(CommonImages.IMG_PROJECT));
 			initProjectItem(content[i], server, ps);
 			i++;
 		}
@@ -1693,8 +1697,8 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 
 	void addNothingSelected_MenuItems(final Menu contextMenu) {
 		final MenuItem newServerItem = AbstractSierraView.createMenuItem(
-				contextMenu, "New...", SLImages
-						.getImage(CommonImages.IMG_EDIT_NEW));
+				contextMenu, "New...",
+				SLImages.getImage(CommonImages.IMG_EDIT_NEW));
 		newServerItem.addListener(SWT.Selection, f_newServerAction);
 	}
 
@@ -1703,12 +1707,12 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 			final boolean enableSendFilters) {
 
 		final MenuItem browseServerItem = AbstractSierraView.createMenuItem(
-				contextMenu, "Browse", SLImages
-						.getImage(CommonImages.IMG_SIERRA_SERVER));
+				contextMenu, "Browse",
+				SLImages.getImage(CommonImages.IMG_SIERRA_SERVER));
 
 		final MenuItem deleteServerItem = AbstractSierraView.createMenuItem(
-				contextMenu, "Delete", SLImages
-						.getImage(CommonImages.IMG_EDIT_DELETE));
+				contextMenu, "Delete",
+				SLImages.getImage(CommonImages.IMG_EDIT_DELETE));
 
 		browseServerItem.addListener(SWT.Selection, f_openInBrowserAction);
 		deleteServerItem.addListener(SWT.Selection, f_deleteServerAction);

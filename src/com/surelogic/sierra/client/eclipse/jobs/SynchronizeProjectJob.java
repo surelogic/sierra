@@ -7,6 +7,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
+import com.surelogic.common.core.EclipseUtility;
 import com.surelogic.common.core.jobs.KeywordAccessRule;
 import com.surelogic.common.core.jobs.SLProgressMonitorWrapper;
 import com.surelogic.common.i18n.I18N;
@@ -21,8 +22,8 @@ import com.surelogic.sierra.client.eclipse.model.ConnectedServerManager;
 import com.surelogic.sierra.client.eclipse.model.DatabaseHub;
 import com.surelogic.sierra.client.eclipse.model.Projects;
 import com.surelogic.sierra.client.eclipse.model.ServerSyncType;
-import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
 import com.surelogic.sierra.client.eclipse.preferences.ServerFailureReport;
+import com.surelogic.sierra.client.eclipse.preferences.SierraPreferencesUtility;
 import com.surelogic.sierra.jdbc.project.ClientProjectManager;
 import com.surelogic.sierra.jdbc.settings.ConnectedServer;
 import com.surelogic.sierra.tool.message.ServerLocation;
@@ -60,12 +61,12 @@ public class SynchronizeProjectJob extends AbstractServerProjectJob {
 
 	@Override
 	protected IStatus run(final IProgressMonitor monitor) {
-		final int threshold = PreferenceConstants
-				.getServerInteractionRetryThreshold();
-		final int numProblems = ConnectedServerManager.getInstance().getStats(
-				getServer()).getProblemCount()
+		final int retryThreshold = EclipseUtility
+				.getIntPreference(SierraPreferencesUtility.SERVER_INTERACTION_RETRY_THRESHOLD);
+		final int numProblems = ConnectedServerManager.getInstance()
+				.getStats(getServer()).getProblemCount()
 				+ Projects.getInstance().getProblemCount(f_projectName);
-		if (!f_force && (numProblems > threshold)) {
+		if (!f_force && (numProblems > retryThreshold)) {
 			return Status.CANCEL_STATUS;
 		}
 		final SLProgressMonitor slMonitor = new SLProgressMonitorWrapper(

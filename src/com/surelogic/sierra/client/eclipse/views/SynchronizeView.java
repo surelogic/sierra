@@ -7,8 +7,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 
+import com.surelogic.common.core.EclipseUtility;
 import com.surelogic.common.ui.TableUtility;
-import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
+import com.surelogic.sierra.client.eclipse.preferences.SierraPreferencesUtility;
 
 public final class SynchronizeView extends
 		AbstractSierraView<SynchronizeMediator> {
@@ -55,8 +56,9 @@ public final class SynchronizeView extends
 				f_mediator.setHideEmptyEntries(isChecked());
 			}
 		};
-		omitEmptyEntriesAction.setChecked(PreferenceConstants
-				.hideEmptySynchronizeEntries());
+		omitEmptyEntriesAction
+				.setChecked(EclipseUtility
+						.getBooleanPreference(SierraPreferencesUtility.HIDE_EMPTY_SYNCHRONIZE_ENTRIES));
 		addToViewMenu(omitEmptyEntriesAction);
 
 		return new SynchronizeMediator(this, syncTable);

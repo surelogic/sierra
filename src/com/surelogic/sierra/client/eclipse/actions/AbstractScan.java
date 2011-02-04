@@ -17,14 +17,15 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.UIJob;
 
 import com.surelogic.common.XUtil;
-import com.surelogic.common.ui.BalloonUtility;
+import com.surelogic.common.core.EclipseUtility;
 import com.surelogic.common.core.JDTUtility;
 import com.surelogic.common.core.jobs.WorkspaceLockingJob;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.logging.SLLogger;
+import com.surelogic.common.ui.BalloonUtility;
 import com.surelogic.sierra.client.eclipse.dialogs.ScanTestCodeSelectionDialog;
 import com.surelogic.sierra.client.eclipse.model.ConfigCompilationUnit;
-import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
+import com.surelogic.sierra.client.eclipse.preferences.SierraPreferencesUtility;
 import com.surelogic.sierra.tool.message.Config;
 
 public abstract class AbstractScan<T extends IJavaElement> {
@@ -44,7 +45,8 @@ public abstract class AbstractScan<T extends IJavaElement> {
 		boolean saved;
 
 		// Bug 1075 Fix - Ask for saving editors
-		if (!PreferenceConstants.alwaysSaveResources()) {
+		if (!EclipseUtility
+				.getBooleanPreference(SierraPreferencesUtility.ALWAYS_SAVE_RESOURCES)) {
 			saved = PlatformUI.getWorkbench().saveAllEditors(true);
 		} else {
 			saved = PlatformUI.getWorkbench().saveAllEditors(false);
@@ -100,19 +102,20 @@ public abstract class AbstractScan<T extends IJavaElement> {
 			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				final boolean saved = trySavingEditors();
-				new WorkspaceLockingJob("Checking if source code is built and compiles") {
+				new WorkspaceLockingJob(
+						"Checking if source code is built and compiles") {
 					@Override
 					public IStatus runInWorkspace(IProgressMonitor monitor)
 							throws CoreException {
 						try {
-							boolean built = checkIfBuilt(elements);							
-							Collection<String> erroneous = 
-								JDTUtility.findCompilationErrors(elements, monitor);
+							boolean built = checkIfBuilt(elements);
+							Collection<String> erroneous = JDTUtility
+									.findCompilationErrors(elements, monitor);
 							boolean compiled = erroneous.isEmpty();
 							if (monitor.isCanceled()) {
 								return Status.CANCEL_STATUS;
 							}
-							
+
 							if (saved & built & compiled) {
 								final StringBuilder sb = computeLabel(names);
 								// TODO ^ merge w/ showStartBalloon?
@@ -149,18 +152,19 @@ public abstract class AbstractScan<T extends IJavaElement> {
 	}
 
 	protected void showStartBalloon(final StringBuilder label) {
-		if (PreferenceConstants.showBalloonNotifications()) {
+		if (EclipseUtility
+				.getBooleanPreference(SierraPreferencesUtility.SHOW_BALLOON_NOTIFICATIONS)) {
 			label.append(". ");
 			label.append("You may continue your work. ");
 			label.append("You will be notified when the");
 			if (!isRescan) {
 				label.append(" scan has completed.");
-				BalloonUtility.showMessage("Sierra scan started", label
-						.toString());
+				BalloonUtility.showMessage("Sierra scan started",
+						label.toString());
 			} else {
 				label.append(" re-scan has completed.");
-				BalloonUtility.showMessage("Sierra re-scan started", label
-						.toString());
+				BalloonUtility.showMessage("Sierra re-scan started",
+						label.toString());
 			}
 		}
 	}

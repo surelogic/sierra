@@ -16,16 +16,17 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
 import com.surelogic.common.CommonImages;
-import com.surelogic.common.ui.SLImages;
+import com.surelogic.common.core.EclipseUtility;
 import com.surelogic.common.core.logging.SLEclipseStatusUtility;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.jdbc.NullDBTransaction;
+import com.surelogic.common.ui.SLImages;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.actions.SynchronizeProjectDialogAction;
 import com.surelogic.sierra.client.eclipse.jobs.AbstractSierraDatabaseJob;
-import com.surelogic.sierra.client.eclipse.model.Projects;
 import com.surelogic.sierra.client.eclipse.model.ConnectedServerManager;
-import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
+import com.surelogic.sierra.client.eclipse.model.Projects;
+import com.surelogic.sierra.client.eclipse.preferences.SierraPreferencesUtility;
 import com.surelogic.sierra.jdbc.finding.SynchOverview;
 import com.surelogic.sierra.jdbc.settings.ConnectedServer;
 
@@ -92,7 +93,7 @@ public final class SynchronizeMediator extends AbstractSierraViewMediator {
 	public void serverSynchronized() {
 		asyncUpdateContents();
 	}
-	
+
 	@Override
 	public void projectSynchronized() {
 		asyncUpdateContents();
@@ -100,7 +101,8 @@ public final class SynchronizeMediator extends AbstractSierraViewMediator {
 
 	private void asyncUpdateContents() {
 		final Job job = new AbstractSierraDatabaseJob(
-				"Updating set of server synchronization events", Job.INTERACTIVE) {
+				"Updating set of server synchronization events",
+				Job.INTERACTIVE) {
 			@Override
 			protected IStatus run(final IProgressMonitor monitor) {
 				monitor.beginTask("Updating list", IProgressMonitor.UNKNOWN);
@@ -143,7 +145,8 @@ public final class SynchronizeMediator extends AbstractSierraViewMediator {
 		f_syncTable.removeAll();
 
 		for (final SynchOverview so : synchList) {
-			if (PreferenceConstants.hideEmptySynchronizeEntries()
+			if (EclipseUtility
+					.getBooleanPreference(SierraPreferencesUtility.HIDE_EMPTY_SYNCHRONIZE_ENTRIES)
 					&& so.isEmpty()) {
 				continue;
 			}
@@ -191,9 +194,12 @@ public final class SynchronizeMediator extends AbstractSierraViewMediator {
 	}
 
 	public void setHideEmptyEntries(final boolean hide) {
-		final boolean old = PreferenceConstants.hideEmptySynchronizeEntries();
+		final boolean old = EclipseUtility
+				.getBooleanPreference(SierraPreferencesUtility.HIDE_EMPTY_SYNCHRONIZE_ENTRIES);
 		if (old != hide) {
-			PreferenceConstants.setHideEmptySynchronizeEntries(hide);
+			EclipseUtility.setBooleanPreference(
+					SierraPreferencesUtility.HIDE_EMPTY_SYNCHRONIZE_ENTRIES,
+					hide);
 			asyncUpdateContents();
 		}
 	}

@@ -16,14 +16,15 @@ import com.surelogic.common.adhoc.AdHocManager;
 import com.surelogic.common.adhoc.AdHocManagerAdapter;
 import com.surelogic.common.adhoc.AdHocQueryResult;
 import com.surelogic.common.adhoc.IAdHocDataSource;
-import com.surelogic.common.ui.ViewUtility;
-import com.surelogic.common.ui.jobs.SLUIJob;
+import com.surelogic.common.core.EclipseUtility;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.jdbc.DBConnection;
 import com.surelogic.common.logging.SLLogger;
+import com.surelogic.common.ui.ViewUtility;
+import com.surelogic.common.ui.jobs.SLUIJob;
 import com.surelogic.sierra.client.eclipse.Activator;
 import com.surelogic.sierra.client.eclipse.Data;
-import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
+import com.surelogic.sierra.client.eclipse.preferences.SierraPreferencesUtility;
 
 public final class AdHocDataSource extends AdHocManagerAdapter implements
 		IAdHocDataSource {
@@ -58,7 +59,8 @@ public final class AdHocDataSource extends AdHocManagerAdapter implements
 	}
 
 	public int getMaxRowsPerQuery() {
-		return PreferenceConstants.getFindingsListLimit();
+		return EclipseUtility
+				.getIntPreference(SierraPreferencesUtility.FINDINGS_LIST_LIMIT);
 	}
 
 	public File getQuerySaveFile() {
@@ -73,8 +75,11 @@ public final class AdHocDataSource extends AdHocManagerAdapter implements
 	}
 
 	public URL getDefaultQueryUrl() {
-		return Thread.currentThread().getContextClassLoader().getResource(
-				"/com/surelogic/sierra/schema/default-sierra-queries.xml");
+		return Thread
+				.currentThread()
+				.getContextClassLoader()
+				.getResource(
+						"/com/surelogic/sierra/schema/default-sierra-queries.xml");
 	}
 
 	public static AdHocManager getManager() {

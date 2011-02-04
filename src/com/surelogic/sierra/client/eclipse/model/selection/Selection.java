@@ -15,12 +15,13 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 
+import com.surelogic.common.core.EclipseUtility;
 import com.surelogic.common.core.logging.SLEclipseStatusUtility;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.sierra.client.eclipse.jobs.AbstractSierraDatabaseJob;
 import com.surelogic.sierra.client.eclipse.model.AbstractDatabaseObserver;
 import com.surelogic.sierra.client.eclipse.model.DatabaseHub;
-import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
+import com.surelogic.sierra.client.eclipse.preferences.SierraPreferencesUtility;
 import com.surelogic.sierra.client.eclipse.views.selection.MListOfFindingsColumn;
 
 /**
@@ -51,11 +52,12 @@ public final class Selection extends AbstractDatabaseObserver {
 		allFilters.add(FilterProject.FACTORY);
 		allFilters.add(FilterSelection.FACTORY);
 		allFilters.add(FilterTool.FACTORY);
-		
-		if (PreferenceConstants.showJSureFindings()) {
+
+		if (EclipseUtility
+				.getBooleanPreference(SierraPreferencesUtility.SHOW_JSURE_FINDINGS)) {
 			allFilters.add(FilterVerificationStatus.FACTORY);
 			allFilters.add(FilterResultType.FACTORY);
-			//allFilters.add(FilterModels.FACTORY);
+			// allFilters.add(FilterModels.FACTORY);
 		}
 		f_allFilters = Collections.unmodifiableSet(allFilters);
 	}
@@ -153,8 +155,8 @@ public final class Selection extends AbstractDatabaseObserver {
 	 * 
 	 * @param filter
 	 *            a filter within this selection.
-	 * @return <code>true</code> if the passed filter is the last filter of
-	 *         this selection, <code>false</code> otherwise.
+	 * @return <code>true</code> if the passed filter is the last filter of this
+	 *         selection, <code>false</code> otherwise.
 	 */
 	public boolean isLastFilter(Filter filter) {
 		return f_filters.getLast() == filter;
@@ -269,14 +271,14 @@ public final class Selection extends AbstractDatabaseObserver {
 
 	/**
 	 * Constructs a filter at the end of this selections chain of filters. Adds
-	 * an optional observer to that filter. This method does <i>not</i>
-	 * initiate the query to populate the filter.
+	 * an optional observer to that filter. This method does <i>not</i> initiate
+	 * the query to populate the filter.
 	 * 
 	 * @param factory
 	 *            a filter factory used to select the filter to be constructed.
 	 * @param observer
-	 *            an observer for the new filter, may be <code>null</code> if
-	 *            no observer is desired.
+	 *            an observer for the new filter, may be <code>null</code> if no
+	 *            observer is desired.
 	 * @return the new filter.
 	 */
 	public Filter construct(ISelectionFilterFactory factory,
@@ -334,8 +336,8 @@ public final class Selection extends AbstractDatabaseObserver {
 	}
 
 	/**
-	 * Adds the correct <code>from</code> and <code>where</code> clause to
-	 * make a query get the set of findings defined by this selection from the
+	 * Adds the correct <code>from</code> and <code>where</code> clause to make
+	 * a query get the set of findings defined by this selection from the
 	 * <code>FINDINGS_OVERVIEW</code> table.
 	 * 
 	 * @param b
@@ -419,7 +421,8 @@ public final class Selection extends AbstractDatabaseObserver {
 		 * The database has changed. Refresh this selection if it has any
 		 * filters.
 		 */
-		final Job job = new AbstractSierraDatabaseJob("Refresh selection", Job.INTERACTIVE) {
+		final Job job = new AbstractSierraDatabaseJob("Refresh selection",
+				Job.INTERACTIVE) {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
@@ -428,7 +431,8 @@ public final class Selection extends AbstractDatabaseObserver {
 				} catch (Exception e) {
 					final int errNo = 53;
 					final String msg = I18N.err(errNo);
-					return SLEclipseStatusUtility.createErrorStatus(errNo, msg, e);
+					return SLEclipseStatusUtility.createErrorStatus(errNo, msg,
+							e);
 				}
 				return Status.OK_STATUS;
 			}
@@ -445,7 +449,8 @@ public final class Selection extends AbstractDatabaseObserver {
 	 */
 	public void refreshFilters() {
 		final long now = startingUpdate();
-		final Job job = new AbstractSierraDatabaseJob("Refresh selection", Job.INTERACTIVE) {
+		final Job job = new AbstractSierraDatabaseJob("Refresh selection",
+				Job.INTERACTIVE) {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
@@ -453,7 +458,8 @@ public final class Selection extends AbstractDatabaseObserver {
 				} catch (Exception e) {
 					final int errNo = 53;
 					final String msg = I18N.err(errNo);
-					return SLEclipseStatusUtility.createErrorStatus(errNo, msg, e);
+					return SLEclipseStatusUtility.createErrorStatus(errNo, msg,
+							e);
 				}
 				return Status.OK_STATUS;
 			}
@@ -493,7 +499,8 @@ public final class Selection extends AbstractDatabaseObserver {
 	 *            a filter that is part of this selection.
 	 */
 	void filterChanged(final Filter changedFilter) {
-		final Job job = new AbstractSierraDatabaseJob("Refresh filter", Job.INTERACTIVE) {
+		final Job job = new AbstractSierraDatabaseJob("Refresh filter",
+				Job.INTERACTIVE) {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
@@ -502,7 +509,8 @@ public final class Selection extends AbstractDatabaseObserver {
 				} catch (Exception e) {
 					final int errNo = 53;
 					final String msg = I18N.err(errNo);
-					return SLEclipseStatusUtility.createErrorStatus(errNo, msg, e);
+					return SLEclipseStatusUtility.createErrorStatus(errNo, msg,
+							e);
 				}
 
 				return Status.OK_STATUS;

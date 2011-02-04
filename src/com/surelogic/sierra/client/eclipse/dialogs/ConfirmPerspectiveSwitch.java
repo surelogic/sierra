@@ -5,7 +5,7 @@ import org.eclipse.swt.widgets.Shell;
 import com.surelogic.common.CommonImages;
 import com.surelogic.common.ui.dialogs.AbstractConfirmPerspectiveSwitch;
 import com.surelogic.sierra.client.eclipse.perspectives.CodeReviewPerspective;
-import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
+import com.surelogic.sierra.client.eclipse.preferences.SierraPreferencesUtility;
 
 public final class ConfirmPerspectiveSwitch extends
 		AbstractConfirmPerspectiveSwitch {
@@ -13,8 +13,8 @@ public final class ConfirmPerspectiveSwitch extends
 	public static final ConfirmPerspectiveSwitch prototype = new ConfirmPerspectiveSwitch();
 
 	private ConfirmPerspectiveSwitch() {
-		super(CodeReviewPerspective.class.getName(),
-				PreferenceConstants.prototype);
+		super(CodeReviewPerspective.class.getName(), SierraPreferencesUtility
+				.getSwitchPreferences());
 	}
 
 	@Override

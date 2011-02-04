@@ -15,14 +15,14 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.Preferences.IPropertyChangeListener;
-import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IPackageDeclaration;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.ui.JavaUI;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
@@ -37,13 +37,14 @@ import org.eclipse.ui.progress.UIJob;
 
 import com.surelogic.common.SLUtility;
 import com.surelogic.common.ui.jobs.SLUIJob;
+import com.surelogic.common.core.EclipseUtility;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.jobs.AbstractSierraDatabaseJob;
 import com.surelogic.sierra.client.eclipse.model.AbstractDatabaseObserver;
 import com.surelogic.sierra.client.eclipse.model.DatabaseHub;
-import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
+import com.surelogic.sierra.client.eclipse.preferences.SierraPreferencesUtility;
 import com.surelogic.sierra.jdbc.finding.FindingOverview;
 import com.surelogic.sierra.tool.message.Importance;
 
@@ -198,7 +199,8 @@ public final class MarkersHandler extends AbstractDatabaseObserver implements
 								+ (System.currentTimeMillis() - startDelete));
 				}
 
-				if (PreferenceConstants.showMarkers()) {
+				if (EclipseUtility
+						.getBooleanPreference(SierraPreferencesUtility.SHOW_MARKERS)) {
 					f_selectedFile = (IFile) resource;
 					if (!f_selectedFile.getFileExtension().equalsIgnoreCase(
 							"java")) {
@@ -227,7 +229,7 @@ public final class MarkersHandler extends AbstractDatabaseObserver implements
 									elementName.length() - 5);
 							String projectName = f_selectedFile.getProject()
 									.getName();
-							
+
 							final long now = this.startingUpdate();
 							Job queryMarkersJob = new QueryMarkersJob(
 									"Querying markers for " + className,
@@ -236,11 +238,9 @@ public final class MarkersHandler extends AbstractDatabaseObserver implements
 							queryMarkersJob.schedule();
 
 						} catch (JavaModelException e) {
-							LOG
-									.log(
-											Level.SEVERE,
-											"Cannot get the package declarations from compilation unit.",
-											e);
+							LOG.log(Level.SEVERE,
+									"Cannot get the package declarations from compilation unit.",
+									e);
 						}
 					}
 				}
@@ -304,11 +304,11 @@ public final class MarkersHandler extends AbstractDatabaseObserver implements
 					marker = file.createMarker(SIERRA_MARKER);
 				}
 				marker.setAttribute(IMarker.LINE_NUMBER, o.getLineOfCode());
-				marker.setAttribute(IMarker.MESSAGE, "("
-						+ o.getImportance().toStringSentenceCase() + ") "
-						+ o.getSummary());
-				marker.setAttribute("findingid", String.valueOf(o
-						.getFindingId()));
+				marker.setAttribute(IMarker.MESSAGE,
+						"(" + o.getImportance().toStringSentenceCase() + ") "
+								+ o.getSummary());
+				marker.setAttribute("findingid",
+						String.valueOf(o.getFindingId()));
 			}
 		} catch (CoreException e) {
 			LOG.log(Level.SEVERE, "Error while creating markers.", e);
@@ -451,7 +451,8 @@ public final class MarkersHandler extends AbstractDatabaseObserver implements
 		private final long f_startTime;
 
 		public QueryMarkersJob(String name, String projectName,
-				String className, String packageName, IFile currentFile, long now) {
+				String className, String packageName, IFile currentFile,
+				long now) {
 			super(name, DECORATE);
 			f_className = className;
 			f_packageName = packageName;
@@ -469,7 +470,7 @@ public final class MarkersHandler extends AbstractDatabaseObserver implements
 				Connection conn = Data.getInstance().readOnlyConnection();
 				try {
 					long start = !debug ? 0 : System.currentTimeMillis();
-					Importance level = PreferenceConstants
+					Importance level = SierraPreferencesUtility
 							.showMarkersAtOrAboveImportance();
 					if (level == null) {
 						f_overview = FindingOverview.getView()
@@ -487,7 +488,7 @@ public final class MarkersHandler extends AbstractDatabaseObserver implements
 
 					if (f_overview != null) {
 						finishedUpdate(f_startTime);
-						
+
 						final UIJob job = new SLUIJob() {
 							@Override
 							public IStatus runInUIThread(
@@ -514,14 +515,14 @@ public final class MarkersHandler extends AbstractDatabaseObserver implements
 	}
 
 	/**
-	 * Refersh markers on property change
+	 * Refresh markers on a change to
+	 * {@link SierraPreferencesUtility#SHOW_MARKERS_AT_OR_ABOVE_IMPORTANCE}
+	 * property.
 	 */
+	@Override
 	public void propertyChange(PropertyChangeEvent event) {
-
-		if (event
-				.getProperty()
-				.equals(
-						PreferenceConstants.P_SIERRA_SHOW_MARKERS_AT_OR_ABOVE_IMPORTANCE)) {
+		if (event.getProperty().equals(
+				SierraPreferencesUtility.SHOW_MARKERS_AT_OR_ABOVE_IMPORTANCE)) {
 			final UIJob job = new RefreshMarkersUIJob();
 			job.schedule();
 		}

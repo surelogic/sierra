@@ -27,9 +27,9 @@ import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 
 import com.surelogic.common.CommonImages;
-import com.surelogic.common.ui.SLImages;
 import com.surelogic.common.logging.SLLogger;
-import com.surelogic.sierra.client.eclipse.Activator;
+import com.surelogic.common.ui.EclipseUIUtility;
+import com.surelogic.common.ui.SLImages;
 import com.surelogic.sierra.client.eclipse.Tools;
 import com.surelogic.sierra.client.eclipse.actions.PreferencesAction;
 import com.surelogic.sierra.tool.IToolFactory;
@@ -41,6 +41,7 @@ public class ToolsPreferencePage extends PreferencePage implements
 	private static final String TAB_SPACE = "\t";
 
 	static final Listener LINK_LISTENER = new Listener() {
+		@Override
 		public void handleEvent(Event event) {
 			final String name = event.text;
 			if (name != null) {
@@ -95,6 +96,7 @@ public class ToolsPreferencePage extends PreferencePage implements
 		// Sort tools by name
 		final List<IToolFactory> factories = Tools.findToolFactories();
 		Collections.sort(factories, new Comparator<IToolFactory>() {
+			@Override
 			public int compare(IToolFactory o1, IToolFactory o2) {
 				return o1.getName().compareTo(o2.getName());
 			}
@@ -103,10 +105,10 @@ public class ToolsPreferencePage extends PreferencePage implements
 		final List<BooleanFieldEditor> editors = new ArrayList<BooleanFieldEditor>();
 		for (IToolFactory tf : factories) {
 			BooleanFieldEditor flag = new BooleanFieldEditor(
-					PreferenceConstants.getToolPref(tf), tf.getName(),
-					toolsGroup);
+					SierraPreferencesUtility.getToolPreferenceConstant(tf),
+					tf.getName(), toolsGroup);
 			flag.setPage(this);
-			flag.setPreferenceStore(getPreferenceStore());
+			flag.setPreferenceStore(EclipseUIUtility.getPreferences());
 			flag.load();
 			addSpacedText(toolsGroup, tf.getHTMLInfo());
 			editors.add(flag);
@@ -134,14 +136,18 @@ public class ToolsPreferencePage extends PreferencePage implements
 		/*
 		 * Allow access to help via the F1 key.
 		 */
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,
-				"com.surelogic.sierra.client.eclipse.preferences-sierra");
+		PlatformUI
+				.getWorkbench()
+				.getHelpSystem()
+				.setHelp(parent,
+						"com.surelogic.sierra.client.eclipse.preferences-sierra");
 
 		return panel;
 	}
 
+	@Override
 	public void init(IWorkbench workbench) {
-		setPreferenceStore(Activator.getDefault().getPreferenceStore());
+		setPreferenceStore(EclipseUIUtility.getPreferences());
 		setDescription("Use this page to select the tools run during a Sierra scan.");
 	}
 

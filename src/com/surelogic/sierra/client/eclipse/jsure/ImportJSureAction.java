@@ -11,7 +11,7 @@ import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.PlatformUI;
 
 import com.surelogic.common.regression.RegressionUtility;
-import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
+import com.surelogic.sierra.client.eclipse.preferences.SierraPreferencesUtility;
 
 public final class ImportJSureAction implements IWorkbenchWindowActionDelegate {
 	private static final boolean debug = true;
@@ -26,13 +26,14 @@ public final class ImportJSureAction implements IWorkbenchWindowActionDelegate {
 
 	private FileDialog fd = null;
 
+	@Override
 	public void run(IAction action) {
 		// TODO check if there's a scan for the project(s)
 		if (fd == null && !debug) {
 			fd = new FileDialog(PlatformUI.getWorkbench()
 					.getActiveWorkbenchWindow().getShell(), SWT.OPEN);
 			fd.setText("Import Scan");
-			fd.setFilterPath(PreferenceConstants.getSierraDataDirectory()
+			fd.setFilterPath(SierraPreferencesUtility.getSierraDataDirectory()
 					.getAbsolutePath());
 			fd.setFilterExtensions(new String[] { "*.sea.xml", "*.sea.xml.gz",
 					"*.*" });
@@ -64,7 +65,8 @@ public final class ImportJSureAction implements IWorkbenchWindowActionDelegate {
 	public static void asyncImportJSureDocument(File runDocument) {
 		if (runDocument.canRead()) {
 			final String name = runDocument.getName();
-			final int last = name.length() - RegressionUtility.JSURE_SNAPSHOT_SUFFIX.length();
+			final int last = name.length()
+					- RegressionUtility.JSURE_SNAPSHOT_SUFFIX.length();
 			final String proj = name.substring(0, last);
 			final ImportJSureDocumentJob job = new ImportJSureDocumentJob(proj,
 					runDocument);

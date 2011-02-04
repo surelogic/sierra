@@ -28,7 +28,7 @@ import com.surelogic.common.ui.jobs.SLUIJob;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.model.ConnectedServerManager;
 import com.surelogic.sierra.client.eclipse.model.DatabaseHub;
-import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
+import com.surelogic.sierra.client.eclipse.preferences.SierraPreferencesUtility;
 import com.surelogic.sierra.jdbc.project.ClientProjectManager;
 import com.surelogic.sierra.tool.SierraToolConstants;
 
@@ -46,9 +46,15 @@ public final class DeleteProjectDataJob implements IRunnableWithProgress {
 
 	public void runJob() {
 		try {
-			PlatformUI.getWorkbench().getProgressService().runInUI(
-					PlatformUI.getWorkbench().getActiveWorkbenchWindow(), this,
-					KeywordAccessRule.getInstance(JobConstants.ACCESS_KEY));
+			PlatformUI
+					.getWorkbench()
+					.getProgressService()
+					.runInUI(
+							PlatformUI.getWorkbench()
+									.getActiveWorkbenchWindow(),
+							this,
+							KeywordAccessRule
+									.getInstance(JobConstants.ACCESS_KEY));
 		} catch (Exception e) {
 			SLLogger.getLogger().log(Level.SEVERE, f_jobFailureMsg, e);
 		}
@@ -70,11 +76,11 @@ public final class DeleteProjectDataJob implements IRunnableWithProgress {
 			b.append("Server will automatically delete ");
 			b.append("data in your Eclipse workspace about ");
 			if (multiDelete) {
-				b.append("these ").append(projectNames.size()).append(
-						" projects,");
+				b.append("these ").append(projectNames.size())
+						.append(" projects,");
 			} else {
-				b.append("the project '").append(projectNames.get(0)).append(
-						"',");
+				b.append("the project '").append(projectNames.get(0))
+						.append("',");
 			}
 			b.append(" but will not change or delete any information that ");
 			b.append("you have already published to the server.\n\n");
@@ -82,11 +88,11 @@ public final class DeleteProjectDataJob implements IRunnableWithProgress {
 		} else {
 			b.append("Deleting the data in your Eclipse workspace about ");
 			if (multiDelete) {
-				b.append("these ").append(projectNames.size()).append(
-						" projects,");
+				b.append("these ").append(projectNames.size())
+						.append(" projects,");
 			} else {
-				b.append("the project '").append(projectNames.get(0)).append(
-						"',");
+				b.append("the project '").append(projectNames.get(0))
+						.append("',");
 			}
 			b.append(" will not change or delete any information that ");
 			b.append("you have already published to the server.\n\n");
@@ -167,9 +173,9 @@ public final class DeleteProjectDataJob implements IRunnableWithProgress {
 
 	private void deleteProjectScanDocument(final String projectName,
 			String suffix) {
-		final File scanDocument = new File(PreferenceConstants
-				.getSierraDataDirectory()
-				+ File.separator + projectName + suffix);
+		final File scanDocument = new File(
+				SierraPreferencesUtility.getSierraDataDirectory(), projectName
+						+ suffix);
 		if (scanDocument.exists() && scanDocument.isFile()) {
 			final boolean success = scanDocument.delete();
 			if (!success) {

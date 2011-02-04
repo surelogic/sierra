@@ -16,15 +16,16 @@ import org.eclipse.ui.progress.UIJob;
 import org.osgi.framework.BundleContext;
 
 import com.surelogic.common.core.EclipseUtility;
-import com.surelogic.common.ui.DialogTouchNotificationUI;
-import com.surelogic.common.ui.SWTUtility;
-import com.surelogic.common.ui.dialogs.ErrorDialogUtility;
-import com.surelogic.common.ui.jobs.SLUIJob;
 import com.surelogic.common.core.logging.SLEclipseStatusUtility;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.jdbc.FutureDatabaseException;
 import com.surelogic.common.license.SLLicenseProduct;
 import com.surelogic.common.logging.SLLogger;
+import com.surelogic.common.ui.DialogTouchNotificationUI;
+import com.surelogic.common.ui.EclipseUIUtility;
+import com.surelogic.common.ui.SWTUtility;
+import com.surelogic.common.ui.dialogs.ErrorDialogUtility;
+import com.surelogic.common.ui.jobs.SLUIJob;
 import com.surelogic.sierra.client.eclipse.actions.MarkersHandler;
 import com.surelogic.sierra.client.eclipse.jobs.AbstractSierraDatabaseJob;
 import com.surelogic.sierra.client.eclipse.jobs.DeleteUnfinishedScans;
@@ -32,7 +33,6 @@ import com.surelogic.sierra.client.eclipse.model.BuglinkData;
 import com.surelogic.sierra.client.eclipse.model.ConnectedServerManager;
 import com.surelogic.sierra.client.eclipse.model.Projects;
 import com.surelogic.sierra.client.eclipse.model.selection.SelectionManager;
-import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
 import com.surelogic.sierra.client.eclipse.preferences.SierraPreferencesUtility;
 import com.surelogic.sierra.client.eclipse.views.SierraServersAutoSync;
 import com.surelogic.sierra.client.eclipse.views.adhoc.AdHocDataSource;
@@ -119,8 +119,8 @@ public final class Activator extends AbstractUIPlugin implements
 			// listen changes to the active editor and preference listener
 			final MarkersHandler handler = MarkersHandler.getInstance();
 			handler.addMarkerListener();
-			getDefault().getPluginPreferences().addPropertyChangeListener(
-					handler);
+			EclipseUIUtility.getPreferences()
+					.addPropertyChangeListener(handler);
 			monitor.worked(1);
 
 			new AbstractSierraDatabaseJob("Initializing model") {
@@ -162,7 +162,8 @@ public final class Activator extends AbstractUIPlugin implements
 			 * version of Sierra. (RFR requirement 3.1.15)
 			 */
 			f_databaseInSync.set(false);
-			PreferenceConstants.setDeleteDatabaseOnStartup(true);
+			EclipseUtility.setBooleanPreference(
+					SierraPreferencesUtility.DELETE_DB_ON_STARTUP, true);
 			final int errNo = 37;
 			final String msg = I18N.err(errNo, e.getSchemaVersion(),
 					e.getCodeVersion());

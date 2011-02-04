@@ -14,16 +14,18 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
 
+import com.surelogic.common.core.EclipseUtility;
 import com.surelogic.common.i18n.I18N;
-import com.surelogic.sierra.client.eclipse.Activator;
+import com.surelogic.common.ui.EclipseUIUtility;
 
 public class ServerInteractionPreferencePage extends PreferencePage implements
 		IWorkbenchPreferencePage {
 
 	static private final String SERVER_PERIOD_LABEL = "sierra.eclipse.serverInteractionPeriodPreferenceLabel";
 
+	@Override
 	public void init(IWorkbench workbench) {
-		setPreferenceStore(Activator.getDefault().getPreferenceStore());
+		setPreferenceStore(EclipseUIUtility.getPreferences());
 		setDescription("Use this page to control automatic interaction with connected team servers.");
 	}
 
@@ -38,37 +40,38 @@ public class ServerInteractionPreferencePage extends PreferencePage implements
 		GridLayout grid = new GridLayout();
 		panel.setLayout(grid);
 
-		int periodMin = PreferenceConstants
-				.getServerInteractionPeriodInMinutes();
+		int periodMin = EclipseUtility
+				.getIntPreference(SierraPreferencesUtility.SERVER_INTERACTION_PERIOD_IN_MINUTES);
 		final String label = I18N.msg(SERVER_PERIOD_LABEL, periodMin);
 		f_periodInMinutes = new ScaleFieldEditor(
-				PreferenceConstants.P_SERVER_INTERACTION_PERIOD_IN_MINUTES,
+				SierraPreferencesUtility.SERVER_INTERACTION_PERIOD_IN_MINUTES,
 				label + "     ", panel);
 		f_periodInMinutes.fillIntoGrid(panel, 2);
 		f_periodInMinutes.setMinimum(1);
 		f_periodInMinutes.setMaximum(20);
 		f_periodInMinutes.setPageIncrement(1);
 		f_periodInMinutes.setPage(ServerInteractionPreferencePage.this);
-		f_periodInMinutes.setPreferenceStore(getPreferenceStore());
+		f_periodInMinutes.setPreferenceStore(EclipseUIUtility.getPreferences());
 		f_periodInMinutes.load();
 		f_periodInMinutes.getScaleControl().addListener(SWT.Selection,
 				new Listener() {
+					@Override
 					public void handleEvent(Event event) {
 						updateScaleLabelText();
 					}
 				});
 
 		f_auditThreshold = new IntegerFieldEditor(
-				PreferenceConstants.P_SERVER_INTERACTION_AUDIT_THRESHOLD,
+				SierraPreferencesUtility.SERVER_INTERACTION_AUDIT_THRESHOLD,
 				"Audit threshold (# of audits that have not been synchronized):",
 				panel);
 		f_auditThreshold.fillIntoGrid(panel, 2);
 		f_auditThreshold.setPage(this);
-		f_auditThreshold.setPreferenceStore(getPreferenceStore());
+		f_auditThreshold.setPreferenceStore(EclipseUIUtility.getPreferences());
 		f_auditThreshold.load();
 
 		f_serverFailureReporting = new RadioGroupFieldEditor(
-				PreferenceConstants.P_SERVER_FAILURE_REPORTING,
+				SierraPreferencesUtility.SERVER_FAILURE_REPORTING,
 				"Policy for handling server failures:",
 				1,
 				new String[][] {
@@ -80,16 +83,17 @@ public class ServerInteractionPreferencePage extends PreferencePage implements
 				panel);
 		f_serverFailureReporting.fillIntoGrid(panel, 2);
 		f_serverFailureReporting.setPage(this);
-		f_serverFailureReporting.setPreferenceStore(getPreferenceStore());
+		f_serverFailureReporting.setPreferenceStore(EclipseUIUtility
+				.getPreferences());
 		f_serverFailureReporting.load();
 
 		f_retryThreshold = new IntegerFieldEditor(
-				PreferenceConstants.P_SERVER_INTERACTION_RETRY_THRESHOLD,
+				SierraPreferencesUtility.SERVER_INTERACTION_RETRY_THRESHOLD,
 				"Retry threshold (# of consecutive failures before switching into manual mode):",
 				panel);
 		f_retryThreshold.fillIntoGrid(panel, 2);
 		f_retryThreshold.setPage(this);
-		f_retryThreshold.setPreferenceStore(getPreferenceStore());
+		f_retryThreshold.setPreferenceStore(EclipseUIUtility.getPreferences());
 		f_retryThreshold.load();
 
 		panel.setLayout(new GridLayout(2, false));
@@ -97,8 +101,11 @@ public class ServerInteractionPreferencePage extends PreferencePage implements
 		/*
 		 * Allow access to help via the F1 key.
 		 */
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,
-				"com.surelogic.sierra.client.eclipse.preferences-sierra");
+		PlatformUI
+				.getWorkbench()
+				.getHelpSystem()
+				.setHelp(parent,
+						"com.surelogic.sierra.client.eclipse.preferences-sierra");
 
 		return panel;
 	}
