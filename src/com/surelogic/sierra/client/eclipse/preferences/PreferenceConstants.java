@@ -50,7 +50,7 @@ public class PreferenceConstants extends AutoPerspectiveSwitchPreferences {
 				P_SIERRA_BALLOON_FLAG);
 	}
 
-	public static final String P_RUN_PREFIX = PREFIX + "run-";
+	private static final String P_RUN_PREFIX = PREFIX + "run-";
 
 	public static final String getToolPref(final IToolFactory f) {
 		return P_RUN_PREFIX + f.getId();

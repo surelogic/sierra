@@ -33,6 +33,7 @@ import com.surelogic.sierra.client.eclipse.model.ConnectedServerManager;
 import com.surelogic.sierra.client.eclipse.model.Projects;
 import com.surelogic.sierra.client.eclipse.model.selection.SelectionManager;
 import com.surelogic.sierra.client.eclipse.preferences.PreferenceConstants;
+import com.surelogic.sierra.client.eclipse.preferences.SierraPreferencesUtility;
 import com.surelogic.sierra.client.eclipse.views.SierraServersAutoSync;
 import com.surelogic.sierra.client.eclipse.views.adhoc.AdHocDataSource;
 
@@ -71,18 +72,32 @@ public final class Activator extends AbstractUIPlugin implements
 	@Override
 	public void start(final BundleContext context) throws Exception {
 		super.start(context);
+
 		SWTUtility.startup(this);
 	}
 
 	// Used for startup
+	@Override
 	public void run(final IProgressMonitor monitor)
 			throws InvocationTargetException, InterruptedException {
-		monitor.beginTask("Initializing the Sierra tool", 8);
-		
+		monitor.beginTask("Initializing the Sierra tool", 10);
+
 		/*
 		 * "Touch" common-core-eclipse so the logging gets Eclipse-ified.
 		 */
 		SLEclipseStatusUtility.touch(new DialogTouchNotificationUI());
+		monitor.worked(1);
+
+		/*
+		 * "Touch" the JSure preference initialization.
+		 */
+		SierraPreferencesUtility.initializeDefaultScope();
+		monitor.worked(1);
+
+		/*
+		 * Setup the tool directories.
+		 */
+		Tools.initializeToolDirectories();
 		monitor.worked(1);
 
 		try {
@@ -117,6 +132,7 @@ public final class Activator extends AbstractUIPlugin implements
 					return Status.OK_STATUS;
 				}
 			}.schedule();
+
 			new AbstractSierraDatabaseJob("Checking for new artifact types.") {
 
 				@Override
@@ -148,8 +164,8 @@ public final class Activator extends AbstractUIPlugin implements
 			f_databaseInSync.set(false);
 			PreferenceConstants.setDeleteDatabaseOnStartup(true);
 			final int errNo = 37;
-			final String msg = I18N.err(errNo, e.getSchemaVersion(), e
-					.getCodeVersion());
+			final String msg = I18N.err(errNo, e.getSchemaVersion(),
+					e.getCodeVersion());
 			final IStatus reason = SLEclipseStatusUtility.createWarningStatus(
 					errNo, msg, e);
 			ErrorDialogUtility.open(null, null, reason);

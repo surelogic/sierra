@@ -31,6 +31,7 @@ import com.surelogic.common.jdbc.Query;
 import com.surelogic.common.jdbc.TransactionException;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.common.ui.jobs.SLUIJob;
+import com.surelogic.sierra.client.eclipse.preferences.SierraPreferencesUtility;
 import com.surelogic.sierra.client.eclipse.wizards.ArtifactTypeSetupWizard;
 import com.surelogic.sierra.jdbc.settings.Categories;
 import com.surelogic.sierra.jdbc.settings.CategoryDO;
@@ -46,6 +47,30 @@ import com.surelogic.sierra.tool.ToolUtil;
 
 public final class Tools {
 	private static final Logger LOG = SLLogger.getLogger();
+	
+	public static void initializeToolDirectories() {
+		File sierraDataDir = SierraPreferencesUtility.getSierraDataDirectory();
+
+		// Check if tools dir setup yet
+		final String toolsDirSet = System
+				.getProperty(ToolUtil.CUSTOM_TOOLS_PATH_PROP_NAME);
+		if (toolsDirSet == null) {
+			final String origToolsDir = System
+					.getProperty(ToolUtil.TOOLS_PATH_PROP_NAME);
+			// set Sierra tools dir if unavailable
+			if (origToolsDir == null) {
+				System.setProperty(ToolUtil.CUSTOM_TOOLS_PATH_PROP_NAME, "");
+				System.setProperty(ToolUtil.TOOLS_PATH_PROP_NAME,
+						sierraDataDir.getAbsolutePath());
+			} else {
+				System.setProperty(ToolUtil.CUSTOM_TOOLS_PATH_PROP_NAME,
+						origToolsDir);
+			}
+		}
+		for (final IToolFactory f : Tools.findToolFactories()) {
+			EclipseUtility.setBooleanPreference(SierraPreferencesUtility.getToolPreferenceConstant(f), true);
+		}
+	}
 
 	public static final String TOOL_PLUGIN_ID = "com.surelogic.sierra.tool";
 
@@ -76,7 +101,7 @@ public final class Tools {
 	}
 
 	/**
-	 * Collect plugins
+	 * Collect plug-ins
 	 */
 	public static Set<String> getToolPluginIds() {
 		final Set<String> ids = new HashSet<String>();
@@ -121,15 +146,15 @@ public final class Tools {
 						final List<ArtifactTypeDO> temp = ft
 								.getToolArtifactTypes(t.getId(), t.getVersion());
 						for (final ArtifactTypeDO a : temp) {
-							knownTypes.add(ArtifactType.create(t, null, "", a
-									.getMnemonic(), ""));
+							knownTypes.add(ArtifactType.create(t, null, "",
+									a.getMnemonic(), ""));
 						}
 					}
 
 					final Map<IToolExtension, List<ArtifactType>> newExtensions = new HashMap<IToolExtension, List<ArtifactType>>();
 					for (final IToolFactory t : factories) {
 						for (final IToolExtension e : t.getExtensions()) {
-							//System.out.println("Ext: "+e.getId());
+							// System.out.println("Ext: "+e.getId());
 							final List<ArtifactType> unknown = new ArrayList<ArtifactType>();
 							for (final ArtifactType a : e.getArtifactTypes()) {
 								if (!knownTypes.contains(a)) {
@@ -177,9 +202,7 @@ public final class Tools {
 									 */
 									final ArtifactTypeSetupWizard wizard = new ArtifactTypeSetupWizard(
 											incompleteTypes, findingTypes, cats);
-									wizard
-											.init(PlatformUI.getWorkbench(),
-													null);
+									wizard.init(PlatformUI.getWorkbench(), null);
 									final WizardDialog d = new WizardDialog(
 											PlatformUI.getWorkbench()
 													.getActiveWorkbenchWindow()
@@ -199,9 +222,9 @@ public final class Tools {
 														q);
 												for (final Map.Entry<IToolExtension, List<ArtifactType>> e : newExtensions
 														.entrySet()) {
-													setupDatabase(q, ft, e
-															.getKey(), e
-															.getValue());
+													setupDatabase(q, ft,
+															e.getKey(),
+															e.getValue());
 												}
 											}
 										});
@@ -216,13 +239,14 @@ public final class Tools {
 			});
 			// FIX Show dialog
 		} catch (final TransactionException e) {
-			SLLogger.getLogger().log(Level.SEVERE, "Problem handling new artifact types", e);
+			SLLogger.getLogger().log(Level.SEVERE,
+					"Problem handling new artifact types", e);
 		}
 	}
 
 	private static void setupDatabase(final Query q, final FindingTypes ft,
 			final IToolExtension te, final List<ArtifactType> unknown) {
-		//System.out.println(te.getId());
+		// System.out.println(te.getId());
 		Collections.sort(unknown);
 		String extPath = "";
 		if (!te.isCore()) {
@@ -233,32 +257,36 @@ public final class Tools {
 					&& !tef.getParentFile().equals(
 							ToolUtil.getSierraToolDirectory()));
 			if (tef == null) {
-				throw new IllegalStateException("The extension" + te.getId()
-						+ " does not appear to be under the sierra data directory.");
+				throw new IllegalStateException(
+						"The extension"
+								+ te.getId()
+								+ " does not appear to be under the sierra data directory.");
 			}
 			extPath = tef.getPath();
 		}
-		
-		final ExtensionDO ext = new ExtensionDO(te.getId(), te.getVersion(), extPath);
+
+		final ExtensionDO ext = new ExtensionDO(te.getId(), te.getVersion(),
+				extPath);
 		for (final ArtifactType a : unknown) {
-			//SLLogger.getLogger().warning("Couldn't find "+a.type+" for "+a.tool+", v"+a.toolVersion);
-			/*System.out.println("Couldn't find " + a.type + " for " + a.tool
-					+ ", v" + a.toolVersion);
-            */
+			// SLLogger.getLogger().warning("Couldn't find "+a.type+" for "+a.tool+", v"+a.toolVersion);
+			/*
+			 * System.out.println("Couldn't find " + a.type + " for " + a.tool +
+			 * ", v" + a.toolVersion);
+			 */
 			if (a.getFindingType() == null) {
 				// Check if there's already a finding type with the same name
 				if (ft.getFindingType(a.type) == null) {
-				    //System.out.println(a.type);
-					
+					// System.out.println(a.type);
+
 					final FindingTypeDO ftDO = new FindingTypeDO();
 					ftDO.setName(a.type);
 					ftDO.setUid(a.type);
 					ftDO.setShortMessage(a.type);
-					ftDO.setInfo(a.type);					
+					ftDO.setInfo(a.type);
 					ext.addFindingType(ftDO);
 
 				} else {
-					//System.out.println("Exists: "+a.type);
+					// System.out.println("Exists: "+a.type);
 				}
 				a.setFindingType(a.type);
 			}
