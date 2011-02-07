@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: FindBugs\u2122
+Bundle-Name: FindBugs™
 Bundle-SymbolicName: com.surelogic.sierra.fb;singleton:=true
 Bundle-Version: 1.3.9.qualifier
 Bundle-ClassPath: lib/annotations.jar,
