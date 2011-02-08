@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project default="deploy" name="deploy-to-jetty-java-5-firefox">
-	<property name="gwt.module" value="com.surelogic.sierra.gwt.SierraPortalFirefox"/>
-	
-	<import file="lib/deploy.xml" />
-
-	<target name="deploy" depends="deploy-site,deploy-missing-java-5-libs" />
-</project>
