@@ -15,8 +15,8 @@ import org.eclipse.swt.widgets.Shell;
 
 import com.surelogic.common.CommonImages;
 import com.surelogic.common.i18n.I18N;
+import com.surelogic.common.ui.EclipseUIUtility;
 import com.surelogic.common.ui.SLImages;
-import com.surelogic.common.ui.SWTUtility;
 import com.surelogic.sierra.eclipse.teamserver.preferences.LocalTeamServerPreferencesUtility;
 
 public final class ServerStaysRunningWarning extends Dialog {
@@ -24,7 +24,7 @@ public final class ServerStaysRunningWarning extends Dialog {
 	private static final int f_widthHint = 350;
 
 	public ServerStaysRunningWarning() {
-		super(SWTUtility.getShell());
+		super(EclipseUIUtility.getShell());
 	}
 
 	@Override
