@@ -4,12 +4,16 @@ import java.util.List;
 
 import org.eclipse.jdt.core.IJavaProject;
 
+import com.surelogic.common.CommonImages;
+import com.surelogic.common.ui.SLImages;
 import com.surelogic.common.ui.actions.AbstractProjectSelectedMenuAction;
+import com.surelogic.common.ui.dialogs.JavaProjectSelectionDialog;
 import com.surelogic.common.jobs.NullSLProgressMonitor;
 import com.surelogic.common.jobs.SLStatus;
 import com.surelogic.common.license.SLLicenseProduct;
 import com.surelogic.common.license.SLLicenseUtility;
 import com.surelogic.common.logging.SLLogger;
+import com.surelogic.sierra.client.eclipse.preferences.SierraPreferencesUtility;
 
 public class NewScanAction extends AbstractProjectSelectedMenuAction {
 	@Override
@@ -33,5 +37,16 @@ public class NewScanAction extends AbstractProjectSelectedMenuAction {
 		} else {
 			s.scan(selectedProjects, projectNames);
 		}
+	}
+
+	@Override
+	protected JavaProjectSelectionDialog.Configuration getDialogInfo(
+			List<IJavaProject> selectedProjects) {
+		return new JavaProjectSelectionDialog.Configuration(
+				"Select project(s) to scan:",
+				"Scan Project",
+				SLImages.getImage(CommonImages.IMG_SIERRA_SCAN),
+				selectedProjects,
+				SierraPreferencesUtility.ALWAYS_ALLOW_USER_TO_SELECT_PROJECTS_TO_SCAN);
 	}
 }

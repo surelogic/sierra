@@ -63,6 +63,7 @@ public class NewScan extends AbstractScan<IJavaProject> {
 				started = true;
 			}
 			final Runnable runAfterImport = new Runnable() {
+				@Override
 				public void run() {
 					/* Notify that scan was completed */
 					DatabaseHub.getInstance().notifyScanLoaded();

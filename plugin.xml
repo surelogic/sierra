@@ -63,11 +63,6 @@
 		<keyword label="Server" id="com.surelogic.sierra.client.key7" />
 	</extension>
 
-	<extension point="org.eclipse.core.runtime.preferences">
-		<initializer
-			class="com.surelogic.sierra.client.eclipse.preferences.PreferenceInitializer" />
-	</extension>
-
 	<!-- Sierra menus -->
 
 	<extension point="org.eclipse.ui.actionSets">
@@ -120,8 +115,8 @@
 				enablesFor="*" helpContextId="menu-re-scan-changes-in-project">
 			</action>
 			<action
-				class="com.surelogic.sierra.client.eclipse.actions.NewScanDialogAction"
-				id="com.surelogic.sierra.client.eclipse.actions.ScanDialogAction"
+				class="com.surelogic.sierra.client.eclipse.actions.NewScanAction"
+				id="com.surelogic.sierra.client.eclipse.actions.NewScanAction"
 				icon="platform:/plugin/com.surelogic.common/lib/images/sierra_scan.gif"
 				label="Scan Project" menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/client"
 				enablesFor="*" helpContextId="menu-scan-project">
