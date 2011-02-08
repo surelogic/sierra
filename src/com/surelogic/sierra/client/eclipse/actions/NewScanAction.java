@@ -11,9 +11,6 @@ import com.surelogic.common.license.SLLicenseProduct;
 import com.surelogic.common.license.SLLicenseUtility;
 import com.surelogic.common.logging.SLLogger;
 
-/**
- * @author Edwin.Chan
- */
 public class NewScanAction extends AbstractProjectSelectedMenuAction {
 	@Override
 	protected void run(final List<IJavaProject> selectedProjects,
