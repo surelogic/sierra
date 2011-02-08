@@ -11,9 +11,9 @@ import com.surelogic.sierra.client.eclipse.preferences.SierraPreferencesUtility;
 
 public class DisconnectDialogAction extends DisconnectAction {
 	@Override
-	protected JavaProjectSelectionDialog.Config getDialogInfo(
+	protected JavaProjectSelectionDialog.Configuration getDialogInfo(
 			List<IJavaProject> selectedProjects) {
-		return new JavaProjectSelectionDialog.Config(
+		return new JavaProjectSelectionDialog.Configuration(
 				"Select project(s) to disconnect:",
 				"Disconnect Project",
 				SLImages.getImage(CommonImages.IMG_SIERRA_DISCONNECT),

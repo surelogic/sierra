@@ -11,9 +11,9 @@ import com.surelogic.sierra.client.eclipse.preferences.SierraPreferencesUtility;
 
 public class ScanChangedProjectsDialogAction extends ScanChangedProjectsAction {
 	@Override
-	protected JavaProjectSelectionDialog.Config getDialogInfo(
+	protected JavaProjectSelectionDialog.Configuration getDialogInfo(
 			List<IJavaProject> selectedProjects) {
-		return new JavaProjectSelectionDialog.Config(
+		return new JavaProjectSelectionDialog.Configuration(
 				"Select project(s) to re-scan changes within:",
 				"Re-Scan Changes in Project",
 				SLImages.getImage(CommonImages.IMG_SIERRA_SCAN_DELTA),
