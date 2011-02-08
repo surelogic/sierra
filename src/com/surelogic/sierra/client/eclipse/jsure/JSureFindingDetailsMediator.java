@@ -26,12 +26,12 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 
-import com.surelogic.common.ui.JDTUIUtility;
-import com.surelogic.common.ui.ViewUtility;
 import com.surelogic.common.core.logging.SLEclipseStatusUtility;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.jdbc.ConnectionQuery;
 import com.surelogic.common.jdbc.Query;
+import com.surelogic.common.ui.EclipseUIUtility;
+import com.surelogic.common.ui.JDTUIUtility;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.jobs.AbstractSierraDatabaseJob;
 import com.surelogic.sierra.client.eclipse.views.AbstractSierraViewMediator;
@@ -146,7 +146,7 @@ public class JSureFindingDetailsMediator extends AbstractSierraViewMediator
 	public Listener getNoDataListener() {
 		return new Listener() {
 			public void handleEvent(Event event) {
-				ViewUtility.showView(FindingsSelectionView.ID);
+				EclipseUIUtility.showView(FindingsSelectionView.ID);
 			}
 		};
 	}
@@ -191,8 +191,9 @@ public class JSureFindingDetailsMediator extends AbstractSierraViewMediator
 		final Long findingIdObj = detail.getFindingId();
 		f_finding = detail;
 
-		final Job job = new AbstractSierraDatabaseJob("Querying JSure details of finding "
-				+ findingIdObj, Job.INTERACTIVE) {
+		final Job job = new AbstractSierraDatabaseJob(
+				"Querying JSure details of finding " + findingIdObj,
+				Job.INTERACTIVE) {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				monitor.beginTask("Querying finding data",
@@ -281,8 +282,8 @@ public class JSureFindingDetailsMediator extends AbstractSierraViewMediator
 		Filter(boolean lookAtChildren, Iterable<FindingRelation> relations) {
 			this.lookAtChildren = lookAtChildren;
 			for (FindingRelation r : relations) {
-				if (!com.surelogic.common.jsure.xml.JSureXMLReader.DEPONENT.equals(r
-						.getRelationType())) {
+				if (!com.surelogic.common.jsure.xml.JSureXMLReader.DEPONENT
+						.equals(r.getRelationType())) {
 					nonDeponents.put(getId(r), r);
 				}
 			}
@@ -423,8 +424,8 @@ public class JSureFindingDetailsMediator extends AbstractSierraViewMediator
 				FindingRelation fr = (FindingRelation) elt;
 				fd = getDetail(fr, lookAtChildren);
 			}
-			return JSureUtil.getImageFor(fd.getFindingType(), fd
-					.getAssuranceType());
+			return JSureUtil.getImageFor(fd.getFindingType(),
+					fd.getAssuranceType());
 		}
 
 		public String getText(Object elt) {

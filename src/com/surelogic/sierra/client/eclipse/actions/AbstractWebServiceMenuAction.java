@@ -11,7 +11,7 @@ import org.eclipse.ui.PlatformUI;
 
 import com.surelogic.common.core.logging.SLEclipseStatusUtility;
 import com.surelogic.common.i18n.I18N;
-import com.surelogic.common.ui.ViewUtility;
+import com.surelogic.common.ui.EclipseUIUtility;
 import com.surelogic.common.ui.actions.AbstractProjectSelectedMenuAction;
 import com.surelogic.common.ui.dialogs.ErrorDialogUtility;
 import com.surelogic.sierra.client.eclipse.dialogs.ServerLocationDialog;
@@ -31,10 +31,11 @@ public abstract class AbstractWebServiceMenuAction extends
 		final ConnectedServerManager manager = ConnectedServerManager
 				.getInstance();
 		ConnectedServer unconnectedProjectsServer = null;
-		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		IWorkbenchWindow window = PlatformUI.getWorkbench()
+				.getActiveWorkbenchWindow();
 		final Shell shell = window == null ? null : window.getShell();
-		final ServerProjectGroupJob family = new ServerProjectGroupJob(manager
-				.getServers());
+		final ServerProjectGroupJob family = new ServerProjectGroupJob(
+				manager.getServers());
 		final ServerActionOnAProject serverAction = new ServerActionOnAProject() {
 			@Override
 			public void run(String projectName, ConnectedServer server,
@@ -65,7 +66,7 @@ public abstract class AbstractWebServiceMenuAction extends
 					final IStatus reason = SLEclipseStatusUtility
 							.createErrorStatus(17, msg);
 					ErrorDialogUtility.open(shell, "No Sierra Servers", reason);
-					ViewUtility.showView(SierraServersView.ID);
+					EclipseUIUtility.showView(SierraServersView.ID);
 					ServerLocationDialog.newServer(shell);
 					return;
 				}

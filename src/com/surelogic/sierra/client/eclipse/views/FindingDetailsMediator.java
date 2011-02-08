@@ -45,17 +45,17 @@ import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.progress.UIJob;
 
 import com.surelogic.common.CommonImages;
+import com.surelogic.common.core.logging.SLEclipseStatusUtility;
+import com.surelogic.common.i18n.I18N;
+import com.surelogic.common.logging.SLLogger;
 import com.surelogic.common.ui.AuditTrail;
+import com.surelogic.common.ui.EclipseUIUtility;
 import com.surelogic.common.ui.FocusAction;
 import com.surelogic.common.ui.HTMLPrinter;
 import com.surelogic.common.ui.JDTUIUtility;
 import com.surelogic.common.ui.SLImages;
 import com.surelogic.common.ui.TextEditedListener;
-import com.surelogic.common.ui.ViewUtility;
 import com.surelogic.common.ui.jobs.SLUIJob;
-import com.surelogic.common.core.logging.SLEclipseStatusUtility;
-import com.surelogic.common.i18n.I18N;
-import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.StyleSheetHelper;
 import com.surelogic.sierra.client.eclipse.Utility;
@@ -191,8 +191,8 @@ public class FindingDetailsMediator extends AbstractSierraViewMediator
 		f_artifactTab = artifactTab;
 		f_artifacts = artifacts;
 
-		f_BackgroundColorRGB = parent.getDisplay().getSystemColor(
-				SWT.COLOR_LIST_BACKGROUND).getRGB();
+		f_BackgroundColorRGB = parent.getDisplay()
+				.getSystemColor(SWT.COLOR_LIST_BACKGROUND).getRGB();
 
 		f_viewCut = new FocusAction(parent) {
 			@Override
@@ -234,7 +234,7 @@ public class FindingDetailsMediator extends AbstractSierraViewMediator
 	public Listener getNoDataListener() {
 		return new Listener() {
 			public void handleEvent(final Event event) {
-				ViewUtility.showView(FindingsSelectionView.ID);
+				EclipseUIUtility.showView(FindingsSelectionView.ID);
 			}
 		};
 	}
@@ -323,8 +323,8 @@ public class FindingDetailsMediator extends AbstractSierraViewMediator
 					final Importance desired = (Importance) event.widget
 							.getData();
 					if (desired != current) {
-						FindingMutationUtility.asyncChangeImportance(f_finding
-								.getFindingId(), current, desired);
+						FindingMutationUtility.asyncChangeImportance(
+								f_finding.getFindingId(), current, desired);
 					}
 				}
 			}
@@ -342,8 +342,9 @@ public class FindingDetailsMediator extends AbstractSierraViewMediator
 				return;
 			}
 
-			JDTUIUtility.tryToOpenInEditor(f_finding.getProjectName(), src
-					.getPackageName(), src.getClassName(), src.getLineOfCode());
+			JDTUIUtility.tryToOpenInEditor(f_finding.getProjectName(),
+					src.getPackageName(), src.getClassName(),
+					src.getLineOfCode());
 		}
 	};
 
@@ -385,8 +386,8 @@ public class FindingDetailsMediator extends AbstractSierraViewMediator
 						final String commentText = f_commentText.getText();
 						if (!(commentText == null || commentText.trim().equals(
 								""))) {
-							FindingMutationUtility.asyncComment(f_finding
-									.getFindingId(), commentText);
+							FindingMutationUtility.asyncComment(
+									f_finding.getFindingId(), commentText);
 						}
 						final UIJob job = new SLUIJob() {
 							@Override
@@ -457,9 +458,7 @@ public class FindingDetailsMediator extends AbstractSierraViewMediator
 		final MenuItem lowItem = new MenuItem(f_importanceRadioPopupMenu,
 				SWT.RADIO);
 		lowItem.setText("Low");
-		lowItem
-				.setImage(SLImages
-						.getImage(CommonImages.IMG_ASTERISK_ORANGE_25));
+		lowItem.setImage(SLImages.getImage(CommonImages.IMG_ASTERISK_ORANGE_25));
 		lowItem.setData(Importance.LOW);
 		lowItem.addListener(SWT.Selection, f_radioListener);
 
@@ -491,8 +490,8 @@ public class FindingDetailsMediator extends AbstractSierraViewMediator
 				new TextEditedListener.TextEditedAction() {
 					public void textEditedAction(final String newText) {
 						if (!f_finding.getSummary().equals(newText)) {
-							FindingMutationUtility.asyncChangeSummary(f_finding
-									.getFindingId(), newText);
+							FindingMutationUtility.asyncChangeSummary(
+									f_finding.getFindingId(), newText);
 						}
 					}
 				});

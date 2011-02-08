@@ -7,8 +7,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbenchPage;
 
+import com.surelogic.common.ui.EclipseUIUtility;
 import com.surelogic.common.ui.LinkTrail;
-import com.surelogic.common.ui.ViewUtility;
 import com.surelogic.sierra.jdbc.finding.SynchOverview;
 
 public final class SynchronizeDetailsView extends
@@ -44,9 +44,9 @@ public final class SynchronizeDetailsView extends
 			boolean moveFocus) {
 		SynchronizeDetailsView view;
 		if (moveFocus) {
-			view = (SynchronizeDetailsView) ViewUtility.showView(ID);
+			view = (SynchronizeDetailsView) EclipseUIUtility.showView(ID);
 		} else {
-			view = (SynchronizeDetailsView) ViewUtility.showView(ID, null,
+			view = (SynchronizeDetailsView) EclipseUIUtility.showView(ID, null,
 					IWorkbenchPage.VIEW_VISIBLE);
 		}
 		view.f_mediator.asyncQueryAndShow(syncOverview);

@@ -29,13 +29,13 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.IWorkbenchPage;
 
 import com.surelogic.common.CommonImages;
-import com.surelogic.common.ui.AuditTrail;
-import com.surelogic.common.ui.SLImages;
-import com.surelogic.common.ui.TableUtility;
-import com.surelogic.common.ui.ViewUtility;
-import com.surelogic.common.ui.dialogs.ErrorDialogUtility;
 import com.surelogic.common.core.logging.SLEclipseStatusUtility;
 import com.surelogic.common.i18n.I18N;
+import com.surelogic.common.ui.AuditTrail;
+import com.surelogic.common.ui.EclipseUIUtility;
+import com.surelogic.common.ui.SLImages;
+import com.surelogic.common.ui.TableUtility;
+import com.surelogic.common.ui.dialogs.ErrorDialogUtility;
 import com.surelogic.sierra.tool.message.Importance;
 
 public class FindingDetailsView extends
@@ -327,9 +327,9 @@ public class FindingDetailsView extends
 	public static void findingSelected(long findingID, boolean moveFocus) {
 		FindingDetailsView view;
 		if (moveFocus) {
-			view = (FindingDetailsView) ViewUtility.showView(ID);
+			view = (FindingDetailsView) EclipseUIUtility.showView(ID);
 		} else {
-			view = (FindingDetailsView) ViewUtility.showView(ID, null,
+			view = (FindingDetailsView) EclipseUIUtility.showView(ID, null,
 					IWorkbenchPage.VIEW_VISIBLE);
 		}
 		if (view != null) {

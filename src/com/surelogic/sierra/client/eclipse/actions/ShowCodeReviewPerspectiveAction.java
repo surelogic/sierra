@@ -5,10 +5,11 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 
-import com.surelogic.common.ui.ViewUtility;
+import com.surelogic.common.ui.EclipseUIUtility;
 import com.surelogic.sierra.client.eclipse.perspectives.CodeReviewPerspective;
 
-public final class ShowCodeReviewPerspectiveAction implements IWorkbenchWindowActionDelegate {
+public final class ShowCodeReviewPerspectiveAction implements
+		IWorkbenchWindowActionDelegate {
 
 	public void dispose() {
 		// Nothing to do
@@ -19,7 +20,7 @@ public final class ShowCodeReviewPerspectiveAction implements IWorkbenchWindowAc
 	}
 
 	public void run(IAction action) {
-		ViewUtility.showPerspective(CodeReviewPerspective.class.getName());
+		EclipseUIUtility.showPerspective(CodeReviewPerspective.class.getName());
 	}
 
 	public void selectionChanged(IAction action, ISelection selection) {

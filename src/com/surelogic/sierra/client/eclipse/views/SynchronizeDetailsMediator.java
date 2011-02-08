@@ -18,12 +18,12 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 
-import com.surelogic.common.ui.LinkTrail;
-import com.surelogic.common.ui.ViewUtility;
-import com.surelogic.common.ui.jobs.SLUIJob;
 import com.surelogic.common.core.logging.SLEclipseStatusUtility;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.jdbc.NullDBTransaction;
+import com.surelogic.common.ui.EclipseUIUtility;
+import com.surelogic.common.ui.LinkTrail;
+import com.surelogic.common.ui.jobs.SLUIJob;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.jobs.AbstractSierraDatabaseJob;
 import com.surelogic.sierra.jdbc.finding.AuditDetail;
@@ -56,7 +56,7 @@ public class SynchronizeDetailsMediator extends AbstractSierraViewMediator {
 	public Listener getNoDataListener() {
 		return new Listener() {
 			public void handleEvent(Event event) {
-				ViewUtility.showView(SynchronizeView.ID);
+				EclipseUIUtility.showView(SynchronizeView.ID);
 			}
 		};
 	}
@@ -177,9 +177,7 @@ public class SynchronizeDetailsMediator extends AbstractSierraViewMediator {
 					Job.INTERACTIVE) {
 				@Override
 				protected IStatus run(IProgressMonitor monitor) {
-					monitor
-							.beginTask("Updating list",
-									IProgressMonitor.UNKNOWN);
+					monitor.beginTask("Updating list", IProgressMonitor.UNKNOWN);
 					try {
 						updateEventTableContents(syncOverview);
 					} catch (Exception e) {

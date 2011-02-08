@@ -5,7 +5,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 
-import com.surelogic.common.ui.ViewUtility;
+import com.surelogic.common.ui.EclipseUIUtility;
 import com.surelogic.sierra.client.eclipse.views.SierraServersView;
 
 public final class ConfigureTeamServersAction implements
@@ -20,7 +20,7 @@ public final class ConfigureTeamServersAction implements
 	}
 
 	public void run(IAction action) {
-		ViewUtility.showView(SierraServersView.ID);
+		EclipseUIUtility.showView(SierraServersView.ID);
 	}
 
 	public void selectionChanged(IAction action, ISelection selection) {

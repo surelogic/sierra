@@ -13,11 +13,11 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
-import com.surelogic.common.ui.ViewUtility;
 import com.surelogic.common.core.jobs.SLProgressMonitorWrapper;
 import com.surelogic.common.jobs.SLProgressMonitor;
-import com.surelogic.common.logging.SLLogger;
 import com.surelogic.common.jsure.xml.JSureXMLReader;
+import com.surelogic.common.logging.SLLogger;
+import com.surelogic.common.ui.EclipseUIUtility;
 import com.surelogic.sierra.client.eclipse.jobs.AbstractSierraDatabaseJob;
 import com.surelogic.sierra.client.eclipse.jobs.ScanDocumentUtility;
 import com.surelogic.sierra.client.eclipse.model.DatabaseHub;
@@ -62,7 +62,8 @@ public class ImportJSureDocumentJob extends AbstractSierraDatabaseJob {
 		if (wrapper.isCanceled()) {
 			return Status.CANCEL_STATUS;
 		} else {
-			ViewUtility.showPerspective(CodeReviewPerspective.class.getName());
+			EclipseUIUtility.showPerspective(CodeReviewPerspective.class
+					.getName());
 			return Status.OK_STATUS;
 		}
 	}
@@ -93,9 +94,7 @@ public class ImportJSureDocumentJob extends AbstractSierraDatabaseJob {
 					if (aGenerator != null) {
 						aGenerator.rollback();
 					}
-					log
-							.log(Level.SEVERE,
-									"Exception while reading snapshot", e);
+					log.log(Level.SEVERE, "Exception while reading snapshot", e);
 				}
 				return generator.finished();
 			}

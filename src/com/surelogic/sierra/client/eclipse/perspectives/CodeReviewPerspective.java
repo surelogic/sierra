@@ -4,7 +4,7 @@ import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
 
-import com.surelogic.common.ui.ViewUtility;
+import com.surelogic.common.core.EclipseUtility;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.views.FindingDetailsView;
 import com.surelogic.sierra.client.eclipse.views.SierraServersView;
@@ -32,7 +32,7 @@ public final class CodeReviewPerspective implements IPerspectiveFactory {
 		 * The local team server view only will exist if that optional feature
 		 * is loaded. So we need to check before we add this to the perspective.
 		 */
-		if (ViewUtility.bundleExists(localTeamServerId)) {
+		if (EclipseUtility.bundleExists(localTeamServerId)) {
 			aboveEditorArea.addView(localTeamServerView);
 		} else {
 			SLLogger.getLogger().fine("No team server");
