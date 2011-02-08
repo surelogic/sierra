@@ -10,11 +10,11 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.progress.UIJob;
 
-import com.surelogic.common.ui.SWTUtility;
 import com.surelogic.common.core.jobs.SLProgressMonitorWrapper;
 import com.surelogic.common.core.logging.SLEclipseStatusUtility;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.jobs.SLProgressMonitor;
+import com.surelogic.common.ui.EclipseUIUtility;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.jobs.AbstractSierraDatabaseJob;
 import com.surelogic.sierra.jdbc.finding.ClientFindingManager;
@@ -34,9 +34,7 @@ public final class FindingMutationUtility {
 
 		@Override
 		protected final IStatus run(final IProgressMonitor monitor) {
-			monitor
-					.beginTask("Updating finding data",
-							IProgressMonitor.UNKNOWN);
+			monitor.beginTask("Updating finding data", IProgressMonitor.UNKNOWN);
 			try {
 				final Connection c = Data.getInstance().transactionConnection();
 				Exception exc = null;
@@ -173,7 +171,7 @@ public final class FindingMutationUtility {
 								final IProgressMonitor monitor) {
 							MessageDialog
 									.openInformation(
-											SWTUtility.getShell(),
+											EclipseUIUtility.getShell(),
 											"Scan settings owned by server.",
 											"This finding belongs to a project whose settings are not managed locally.  You will need to update the project's scan filter on the server.");
 							return Status.OK_STATUS;

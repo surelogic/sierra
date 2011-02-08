@@ -52,9 +52,9 @@ import com.surelogic.common.jdbc.QB;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.common.ui.CascadingList;
 import com.surelogic.common.ui.CascadingList.IColumn;
+import com.surelogic.common.ui.EclipseUIUtility;
 import com.surelogic.common.ui.JDTUIUtility;
 import com.surelogic.common.ui.SLImages;
-import com.surelogic.common.ui.SWTUtility;
 import com.surelogic.common.ui.jobs.SLUIJob;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.Utility;
@@ -1213,7 +1213,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 		export.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(final Event event) {
 				final ExportFindingSetDialog dialog = new ExportFindingSetDialog(
-						SWTUtility.getShell(), getQuery());
+						EclipseUIUtility.getShell(), getQuery());
 				dialog.open();
 			}
 		});

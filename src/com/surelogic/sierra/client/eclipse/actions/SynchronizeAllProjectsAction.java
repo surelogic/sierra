@@ -10,7 +10,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 
 import com.surelogic.common.ui.BalloonUtility;
-import com.surelogic.common.ui.SWTUtility;
+import com.surelogic.common.ui.EclipseUIUtility;
 import com.surelogic.sierra.client.eclipse.jobs.ServerProjectGroupJob;
 import com.surelogic.sierra.client.eclipse.jobs.SynchronizeJob;
 import com.surelogic.sierra.client.eclipse.jobs.SynchronizeProjectsJob;
@@ -40,8 +40,8 @@ public class SynchronizeAllProjectsAction implements
 		this(ServerSyncType.ALL, ServerFailureReport.SHOW_DIALOG, true, 0);
 	}
 
-	private static final AtomicLong lastSyncTime = new AtomicLong(System
-			.currentTimeMillis());
+	private static final AtomicLong lastSyncTime = new AtomicLong(
+			System.currentTimeMillis());
 
 	public static AtomicLong getLastSyncTime() {
 		return lastSyncTime;
@@ -64,20 +64,21 @@ public class SynchronizeAllProjectsAction implements
 		final ConnectedServerManager manager = ConnectedServerManager
 				.getInstance();
 		setTime();
-		
+
 		if (manager.isEmpty()) {
 			switch (f_strategy) {
 			case SHOW_BALLOON:
 			case SHOW_DIALOG:
-				BalloonUtility.showMessage("No servers to sync", "There are no servers to synchronize");
+				BalloonUtility.showMessage("No servers to sync",
+						"There are no servers to synchronize");
 				return;
 			case IGNORE:
 				return;
 			}
-		} 		
-				
-		final ServerProjectGroupJob joinJob = new ServerProjectGroupJob(manager
-				.getServers());
+		}
+
+		final ServerProjectGroupJob joinJob = new ServerProjectGroupJob(
+				manager.getServers());
 
 		int totalDelay = 0;
 		for (final ConnectedServer server : manager.getServers()) {
@@ -122,7 +123,7 @@ public class SynchronizeAllProjectsAction implements
 			final ConnectedServer server,
 			final ServerActionOnAProject serverAction) {
 		ServerActionOnAProject.promptPasswordIfNecessary(projectName, server,
-				SWTUtility.getShell(), serverAction);
+				EclipseUIUtility.getShell(), serverAction);
 	}
 
 	public void selectionChanged(final IAction action,

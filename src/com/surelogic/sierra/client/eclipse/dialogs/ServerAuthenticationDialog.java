@@ -15,9 +15,9 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 import com.surelogic.common.CommonImages;
-import com.surelogic.common.ui.SLImages;
-import com.surelogic.common.ui.SWTUtility;
 import com.surelogic.common.i18n.I18N;
+import com.surelogic.common.ui.EclipseUIUtility;
+import com.surelogic.common.ui.SLImages;
 import com.surelogic.sierra.tool.message.ServerLocation;
 
 /**
@@ -44,7 +44,7 @@ public final class ServerAuthenticationDialog extends Dialog {
 		if (location == null)
 			throw new IllegalArgumentException(I18N.err(44, "location"));
 		if (parentShell == null)
-			parentShell = SWTUtility.getShell();
+			parentShell = EclipseUIUtility.getShell();
 
 		final ServerAuthenticationDialog dialog = new ServerAuthenticationDialog(
 				parentShell, location);

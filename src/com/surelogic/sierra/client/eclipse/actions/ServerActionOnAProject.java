@@ -2,7 +2,7 @@ package com.surelogic.sierra.client.eclipse.actions;
 
 import org.eclipse.swt.widgets.Shell;
 
-import com.surelogic.common.ui.SWTUtility;
+import com.surelogic.common.ui.EclipseUIUtility;
 import com.surelogic.sierra.client.eclipse.dialogs.ServerAuthenticationDialog;
 import com.surelogic.sierra.client.eclipse.model.ConnectedServerManager;
 import com.surelogic.sierra.client.eclipse.model.ConnectedServerStats;
@@ -41,7 +41,7 @@ public abstract class ServerActionOnAProject {
 			ConnectedServer server, Shell shell,
 			final ServerActionOnAProject action) {
 		if (shell == null)
-			shell = SWTUtility.getShell();
+			shell = EclipseUIUtility.getShell();
 
 		final ConnectedServerManager mgr = ConnectedServerManager.getInstance();
 		final ServerLocation location = server.getLocation();
@@ -58,8 +58,8 @@ public abstract class ServerActionOnAProject {
 				 */
 				return;
 			}
-			server = mgr.changeAuthorizationFor(server, fixed.getUser(), fixed
-					.getPass(), fixed.isSavePassword());
+			server = mgr.changeAuthorizationFor(server, fixed.getUser(),
+					fixed.getPass(), fixed.isSavePassword());
 			stats.setUsed();
 		}
 		action.run(projectName, server, shell);

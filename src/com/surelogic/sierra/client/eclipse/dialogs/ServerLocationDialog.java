@@ -21,9 +21,9 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 import com.surelogic.common.CommonImages;
-import com.surelogic.common.ui.SLImages;
-import com.surelogic.common.ui.SWTUtility;
 import com.surelogic.common.i18n.I18N;
+import com.surelogic.common.ui.EclipseUIUtility;
+import com.surelogic.common.ui.SLImages;
 import com.surelogic.sierra.client.eclipse.jobs.ValidateServerLocationJob;
 import com.surelogic.sierra.client.eclipse.model.ConnectedServerManager;
 import com.surelogic.sierra.jdbc.settings.ConnectedServer;
@@ -45,7 +45,7 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 	 */
 	public static void newServer(Shell shell) {
 		if (shell == null) {
-			shell = SWTUtility.getShell();
+			shell = EclipseUIUtility.getShell();
 		}
 
 		final String title = I18N.msg("sierra.dialog.serverlocation.newTitle");
@@ -254,8 +254,8 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 		passwordText.setText(f_location.getPassOrEmptyString());
 		passwordText.setEchoChar('\u25CF');
 
-		final Button savePasswordButton = makeCheckButton(panel, I18N
-				.msg("sierra.dialog.serverlocation.savePassword"),
+		final Button savePasswordButton = makeCheckButton(panel,
+				I18N.msg("sierra.dialog.serverlocation.savePassword"),
 				f_savePassword);
 		savePasswordButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(final Event event) {
@@ -279,8 +279,9 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 		saveWarning.setLayoutData(data);
 		saveWarning.setText(I18N.msg("sierra.dialog.savePasswordWarning"));
 
-		final Button autoSyncButton = makeCheckButton(panel, I18N
-				.msg("sierra.dialog.serverlocation.enableAutoSync"), f_autoSync);
+		final Button autoSyncButton = makeCheckButton(panel,
+				I18N.msg("sierra.dialog.serverlocation.enableAutoSync"),
+				f_autoSync);
 		autoSyncButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(final Event event) {
 				f_autoSync = autoSyncButton.getSelection();
@@ -379,8 +380,8 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 			if (!validCP) {
 				valid = false;
 				showInfo = false;
-				setMessage(I18N
-						.msg("sierra.eclipse.badServerLocationContextPath"),
+				setMessage(
+						I18N.msg("sierra.eclipse.badServerLocationContextPath"),
 						IMessageProvider.ERROR);
 			}
 

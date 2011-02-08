@@ -23,7 +23,6 @@ import com.surelogic.common.license.SLLicenseProduct;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.common.ui.DialogTouchNotificationUI;
 import com.surelogic.common.ui.EclipseUIUtility;
-import com.surelogic.common.ui.SWTUtility;
 import com.surelogic.common.ui.dialogs.ErrorDialogUtility;
 import com.surelogic.common.ui.jobs.SLUIJob;
 import com.surelogic.sierra.client.eclipse.actions.MarkersHandler;
@@ -73,7 +72,7 @@ public final class Activator extends AbstractUIPlugin implements
 	public void start(final BundleContext context) throws Exception {
 		super.start(context);
 
-		SWTUtility.startup(this);
+		EclipseUIUtility.startup(this);
 	}
 
 	// Used for startup

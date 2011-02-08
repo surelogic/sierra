@@ -6,7 +6,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 
 import com.surelogic.common.CommonImages;
-import com.surelogic.common.ui.SWTUtility;
+import com.surelogic.common.ui.EclipseUIUtility;
 import com.surelogic.common.ui.dialogs.InstallTutorialProjectsDialog;
 
 public class ImportTutorialProjectsAction implements
@@ -21,13 +21,14 @@ public class ImportTutorialProjectsAction implements
 	}
 
 	public void run(final IAction action) {
-		InstallTutorialProjectsDialog.open(SWTUtility.getShell(),
+		InstallTutorialProjectsDialog.open(
+				EclipseUIUtility.getShell(),
 				CommonImages.IMG_SIERRA_LOGO,
 				"/com.surelogic.sierra.client.eclipse.help/ch01s04.html",
-				Thread.currentThread().getContextClassLoader().getResource(
-						"/resources/ShowOff.zip"), Thread.currentThread()
-						.getContextClassLoader().getResource(
-								"/resources/SmallWorld.zip"));
+				Thread.currentThread().getContextClassLoader()
+						.getResource("/resources/ShowOff.zip"),
+				Thread.currentThread().getContextClassLoader()
+						.getResource("/resources/SmallWorld.zip"));
 	}
 
 	public void selectionChanged(final IAction action,

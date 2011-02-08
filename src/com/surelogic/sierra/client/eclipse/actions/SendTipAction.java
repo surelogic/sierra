@@ -7,7 +7,7 @@ import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 
 import com.surelogic.common.CommonImages;
 import com.surelogic.common.core.EclipseUtility;
-import com.surelogic.common.ui.SWTUtility;
+import com.surelogic.common.ui.EclipseUIUtility;
 import com.surelogic.common.ui.dialogs.SendTipDialog;
 import com.surelogic.sierra.client.eclipse.Activator;
 
@@ -22,8 +22,8 @@ public final class SendTipAction implements IWorkbenchWindowActionDelegate {
 	}
 
 	public void run(IAction action) {
-		SendTipDialog.open(SWTUtility.getShell(), 
-				"Sierra "+EclipseUtility.getVersion(Activator.getDefault()),
+		SendTipDialog.open(EclipseUIUtility.getShell(), "Sierra "
+				+ EclipseUtility.getVersion(Activator.getDefault()),
 				CommonImages.IMG_SIERRA_LOGO);
 	}
 
