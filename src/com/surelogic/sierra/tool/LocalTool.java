@@ -174,7 +174,7 @@ final class LocalTool extends AbstractLocalSLJob implements IToolInstance {
 	}
 
 	@Override
-	protected void finishSetupJVM(final boolean debug, final CommandlineJava cmdj) {
+	protected void finishSetupJVM(final boolean debug, final CommandlineJava cmdj, Project proj) {
 		setupConfigFile(cmdj);
 		// setupCustomClassLoader(debug, cmdj);
 		// cmdj.createBootclasspath(proj);
@@ -188,7 +188,7 @@ final class LocalTool extends AbstractLocalSLJob implements IToolInstance {
 	}
 
 	@Override 
-	protected void setupClassPath(boolean debug, Project proj, Path path) {			
+	protected void setupClassPath(boolean debug, CommandlineJava cmdj, Project proj, Path path) {			
 		final Set<File> jars = new HashSet<File>();
 		final ConfigHelper util = new ConfigHelper(config);
 		util.addPluginToPath(debug, jars, SierraToolConstants.COMMON_PLUGIN_ID);
