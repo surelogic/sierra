@@ -662,9 +662,9 @@ the caller.</p>]]>
   </findingType>
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <findingType>
-    <id>SelfProtectedPromiseDrop</id> 
-    <artifact tool="JSure" mnemonic="SelfProtectedPromiseDrop"/>
-    <name>@SelfProtected</name>
+    <id>ThreadSafePromiseDrop</id> 
+    <artifact tool="JSure" mnemonic="ThreadSafePromiseDrop"/>
+    <name>@ThreadSafe</name>
     <shortMessage>Marker annotation that indicates that the annotated type protects itself.</shortMessage>
     <info>
 <![CDATA[<p>Marker annotation that indicates that the annotated type

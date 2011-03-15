@@ -2666,7 +2666,7 @@
         <info></info>
         <filter><type>LockModel</type></filter>		
 		    <filter><type>RequiresLockPromiseDrop</type></filter>
-		    <filter><type>SelfProtectedPromiseDrop</type></filter>
+		    <filter><type>ThreadSafePromiseDrop</type></filter>
 		    <filter><type>SingleThreadedPromiseDrop</type></filter>
     </filterSets>  
     <filterSets>
