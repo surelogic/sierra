@@ -38,7 +38,7 @@ public class JSure1_0ToolInfoGenerator {
 		"RegionModel",
 		"LockModel",		
 		"RequiresLockPromiseDrop",
-		"SelfProtectedPromiseDrop",
+		"ThreadSafePromiseDrop",
 		"SingleThreadedPromiseDrop",
 		"TransparentPromiseDrop",
 		"PromisePromiseDrop",
