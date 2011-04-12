@@ -503,4 +503,9 @@ public class Config implements Cloneable, ILocalConfig {
 	public void addExtension(ToolExtension t) {
 		extensions.add(t);
 	}
+
+    @Override
+    public String getLogPath() {
+        return null;
+    }
 }
