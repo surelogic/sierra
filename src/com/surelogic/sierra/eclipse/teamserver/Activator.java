@@ -7,6 +7,7 @@ import org.osgi.framework.BundleContext;
 
 import com.surelogic.common.core.logging.SLEclipseStatusUtility;
 import com.surelogic.common.ui.DialogTouchNotificationUI;
+import com.surelogic.sierra.eclipse.teamserver.preferences.LocalTeamServerPreferencesUtility;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -34,6 +35,8 @@ public class Activator extends AbstractUIPlugin {
 		 * "Touch" common-core-eclipse so the logging gets Eclipse-ified.
 		 */
 		SLEclipseStatusUtility.touch(new DialogTouchNotificationUI());
+		
+		LocalTeamServerPreferencesUtility.initializeDefaultScope();
 	}
 
 	public void stop(BundleContext context) throws Exception {
