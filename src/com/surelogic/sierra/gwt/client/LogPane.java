@@ -13,86 +13,105 @@ import com.google.gwt.user.client.ui.Widget;
 import com.surelogic.sierra.gwt.client.ui.ImageHelper;
 
 public class LogPane extends Composite {
-	private static final String PRIMARY_STYLE = "log-panel";
-	private static final String ITEM_STYLE = "log-item";
-	private static final String ITEM_TEXT_STYLE = "log-item-text";
-	private final VerticalPanel rootPanel = new VerticalPanel();
-	private final Image logIcon = ImageHelper.getImage("log-icon.png");
-	private final Tree log = new Tree();
+    private static final String PRIMARY_STYLE = "log-panel";
+    private static final String ITEM_STYLE = "log-item";
+    private static final String ITEM_TEXT_STYLE = "log-item-text";
+    private static final int ITEM_COUNT = 100;
 
-	public static LogPane getInstance() {
-		return (LogPane) RootPanel.get("log-pane").getWidget(0);
-	}
+    private final VerticalPanel rootPanel = new VerticalPanel();
+    private final Image logIcon = ImageHelper.getImage("log-icon.png");
+    private final Tree log = new Tree();
 
-	public LogPane() {
-		super();
-		initWidget(rootPanel);
-		rootPanel.setWidth("100%");
+    public static LogPane getInstance() {
+        return (LogPane) RootPanel.get("log-pane").getWidget(0);
+    }
 
-		log.addStyleName(PRIMARY_STYLE);
+    public LogPane() {
+        super();
+        initWidget(rootPanel);
+        rootPanel.setWidth("100%");
 
-		logIcon.addClickListener(new ClickListener() {
+        log.addStyleName(PRIMARY_STYLE);
 
-			public void onClick(final Widget sender) {
-				toggleLogVisible();
-			}
+        logIcon.addClickListener(new ClickListener() {
 
-		});
-	}
+            public void onClick(final Widget sender) {
+                toggleLogVisible();
+            }
 
-	public void log(final Throwable cause) {
-		showLogIcon();
-		appendThrowable(cause, null);
-	}
+        });
+    }
 
-	private void appendThrowable(final Throwable cause, final TreeItem parent) {
-		final Label logItemLabel = new Label(buildLogText(cause));
-		logItemLabel.addStyleName(ITEM_TEXT_STYLE);
+    public void log(final Throwable cause) {
+        showLogIcon();
+        appendThrowable(cause, null);
+    }
 
-		TreeItem logItem;
-		if (parent == null) {
-			logItem = log.addItem(logItemLabel);
-		} else {
-			logItem = parent.addItem(logItemLabel);
-		}
-		logItem.addStyleName(ITEM_STYLE);
+    private TreeItem addLogItem(final Label label, final Tree tree) {
+        if (tree.getItemCount() < ITEM_COUNT) {
+            return tree.addItem(label);
+        }
+        return null;
+    }
 
-		final StackTraceElement[] trace = cause.getStackTrace();
-		for (int i = 0; i < trace.length; i++) {
-			logItem.addItem(trace[i].toString());
-		}
+    private TreeItem addLogItem(final Label label, final TreeItem tree) {
+        if (tree.getChildCount() < ITEM_COUNT) {
+            return tree.addItem(label);
+        }
+        return null;
+    }
 
-		final Throwable nestedCause = cause.getCause();
-		if (nestedCause != null) {
-			appendThrowable(nestedCause, logItem);
-		}
-	}
+    private void appendThrowable(final Throwable cause, final TreeItem parent) {
+        final Label logItemLabel = new Label(buildLogText(cause));
+        logItemLabel.addStyleName(ITEM_TEXT_STYLE);
 
-	private String buildLogText(final Throwable cause) {
-		final StringBuffer log = new StringBuffer();
-		log.append(cause.toString());
+        TreeItem logItem;
+        if (parent == null) {
+            logItem = addLogItem(logItemLabel, log);
+        } else {
+            logItem = addLogItem(logItemLabel, parent);
+            parent.addItem(logItemLabel);
+        }
+        if (logItem != null) {
+            logItem.addStyleName(ITEM_STYLE);
 
-		final StackTraceElement[] trace = cause.getStackTrace();
-		if (trace.length == 0) {
-			log.append(" (no stack trace available)");
-		}
+            final StackTraceElement[] trace = cause.getStackTrace();
+            for (int i = 0; i < trace.length; i++) {
+                logItem.addItem(trace[i].toString());
+            }
 
-		return log.toString();
-	}
+            final Throwable nestedCause = cause.getCause();
+            if (nestedCause != null) {
+                appendThrowable(nestedCause, logItem);
+            }
+        }
+    }
 
-	private void showLogIcon() {
-		if (rootPanel.getWidgetIndex(logIcon) == -1) {
-			rootPanel.insert(logIcon, 0);
-			rootPanel.setCellHorizontalAlignment(logIcon,
-					HasHorizontalAlignment.ALIGN_RIGHT);
-		}
-	}
+    private String buildLogText(final Throwable cause) {
+        final StringBuffer log = new StringBuffer();
+        log.append(cause.toString());
 
-	private void toggleLogVisible() {
-		if (rootPanel.getWidgetIndex(log) == -1) {
-			rootPanel.add(log);
-		} else {
-			rootPanel.remove(log);
-		}
-	}
+        final StackTraceElement[] trace = cause.getStackTrace();
+        if (trace.length == 0) {
+            log.append(" (no stack trace available)");
+        }
+
+        return log.toString();
+    }
+
+    private void showLogIcon() {
+        if (rootPanel.getWidgetIndex(logIcon) == -1) {
+            rootPanel.insert(logIcon, 0);
+            rootPanel.setCellHorizontalAlignment(logIcon,
+                    HasHorizontalAlignment.ALIGN_RIGHT);
+        }
+    }
+
+    private void toggleLogVisible() {
+        if (rootPanel.getWidgetIndex(log) == -1) {
+            rootPanel.add(log);
+        } else {
+            rootPanel.remove(log);
+        }
+    }
 }
