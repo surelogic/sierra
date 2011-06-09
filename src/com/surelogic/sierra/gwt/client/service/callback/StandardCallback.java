@@ -5,19 +5,19 @@ import com.surelogic.sierra.gwt.client.util.ExceptionUtil;
 
 public abstract class StandardCallback<T> implements AsyncCallback<T> {
 
-	public final void onFailure(Throwable caught) {
-		ExceptionUtil.handle(caught);
-		doException(caught);
-	}
+    public void onFailure(final Throwable caught) {
+        ExceptionUtil.handle(caught);
+        doException(caught);
+    }
 
-	public final void onSuccess(T result) {
-		doSuccess(result);
-	}
+    public final void onSuccess(final T result) {
+        doSuccess(result);
+    }
 
-	protected abstract void doSuccess(T result);
+    protected abstract void doSuccess(T result);
 
-	protected void doException(Throwable cause) {
-		// override for extra exception handling
-	}
+    protected void doException(final Throwable cause) {
+        // override for extra exception handling
+    }
 
 }
