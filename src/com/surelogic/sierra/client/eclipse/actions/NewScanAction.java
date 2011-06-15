@@ -43,6 +43,6 @@ public class NewScanAction extends AbstractProjectSelectedMenuAction {
 				SLImages.getImage(CommonImages.IMG_SIERRA_SCAN),
 				selectedProjects,
 				SierraPreferencesUtility.ALWAYS_ALLOW_USER_TO_SELECT_PROJECTS_TO_SCAN,
-				null);
+				SierraPreferencesUtility.LAST_TIME_PROJECTS_TO_SCAN);
 	}
 }

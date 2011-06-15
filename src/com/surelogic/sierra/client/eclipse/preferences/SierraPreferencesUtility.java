@@ -33,8 +33,8 @@ public final class SierraPreferencesUtility {
 	 * trigger Eclipse to load the containing plug-in. This is because the
 	 * constants are copied by the Java compiler into using class files. This
 	 * means that each using plug-in <b>must</b> invoke
-	 * {@link #initializeDefaultScope()} in its plug-in activator's
-	 * {@code start} method.
+	 * {@link #initializeDefaultScope()} in its plug-in activator's {@code
+	 * start} method.
 	 */
 	public static void initializeDefaultScope() {
 		if (f_initializationNeeded.compareAndSet(true, false)) {
@@ -45,8 +45,8 @@ public final class SierraPreferencesUtility {
 			EclipseUtility.setDefaultBooleanPreference(getSwitchPreferences()
 					.getPromptPerspectiveSwitchConstant(), true);
 			EclipseUtility.setDefaultStringPreference(
-					SHOW_MARKERS_AT_OR_ABOVE_IMPORTANCE,
-					Importance.HIGH.toString());
+					SHOW_MARKERS_AT_OR_ABOVE_IMPORTANCE, Importance.HIGH
+							.toString());
 			EclipseUtility.setDefaultBooleanPreference(ALWAYS_SAVE_RESOURCES,
 					false);
 			EclipseUtility.setDefaultBooleanPreference(SHOW_MARKERS, true);
@@ -97,6 +97,12 @@ public final class SierraPreferencesUtility {
 			+ "warn-maximum-findings-shown";
 	public static final String ALWAYS_ALLOW_USER_TO_SELECT_PROJECTS_TO_SCAN = PREFIX
 			+ "always-allow-user-to-select-projects-to-scan";
+	public static final String LAST_TIME_PROJECTS_TO_SCAN = PREFIX
+			+ "last-time-projects-to-scan";
+	public static final String LAST_TIME_PROJECTS_TO_PUBLISH = PREFIX
+			+ "last-time-projects-to-publish";
+	public static final String LAST_TIME_PROJECTS_TO_SYNC = PREFIX
+			+ "last-time-projects-to-sync";
 	public static final String HIDE_EMPTY_SYNCHRONIZE_ENTRIES = PREFIX
 			+ "hide-empty-synchronize-entries";
 	public static final String SERVER_STATUS_SORT = PREFIX
@@ -141,8 +147,8 @@ public final class SierraPreferencesUtility {
 	}
 
 	public static void getServerFailureReporting(final ServerFailureReport s) {
-		EclipseUtility.setStringPreference(SERVER_FAILURE_REPORTING,
-				s.toString());
+		EclipseUtility.setStringPreference(SERVER_FAILURE_REPORTING, s
+				.toString());
 	}
 
 	public static final String getToolPreferenceConstant(final IToolFactory f) {
@@ -198,8 +204,8 @@ public final class SierraPreferencesUtility {
 	 */
 	public static void setSierraDataDirectory(final File dir) {
 		if (dir != null && dir.isDirectory()) {
-			EclipseUtility.setStringPreference(SIERRA_DATA_DIRECTORY,
-					dir.getAbsolutePath());
+			EclipseUtility.setStringPreference(SIERRA_DATA_DIRECTORY, dir
+					.getAbsolutePath());
 		} else {
 			throw new IllegalArgumentException("Bad Sierra data directory "
 					+ dir + " it doesn't exist on the disk");
