@@ -86,17 +86,15 @@ public abstract class AbstractScan<T extends IJavaElement> {
 	}
 
 	public void scan(final Collection<T> elements) {
-		List<String> names = new ArrayList<String>(elements.size());
+		if (elements == null || elements.isEmpty()) {
+			return;
+		}
+
+		final List<String> names = new ArrayList<String>(elements.size());
 		for (T elt : elements) {
 			names.add(elt.getElementName());
 		}
-		scan(elements, names);
-	}
 
-	protected void scan(final Collection<T> elements, final List<String> names) {
-		if (elements.size() <= 0) {
-			return;
-		}
 		new UIJob(PlatformUI.getWorkbench().getDisplay(),
 				"Checking if editors need to be saved") {
 			@Override
@@ -159,12 +157,12 @@ public abstract class AbstractScan<T extends IJavaElement> {
 			label.append("You will be notified when the");
 			if (!isRescan) {
 				label.append(" scan has completed.");
-				BalloonUtility.showMessage("Sierra scan started",
-						label.toString());
+				BalloonUtility.showMessage("Sierra scan started", label
+						.toString());
 			} else {
 				label.append(" re-scan has completed.");
-				BalloonUtility.showMessage("Sierra re-scan started",
-						label.toString());
+				BalloonUtility.showMessage("Sierra re-scan started", label
+						.toString());
 			}
 		}
 	}

@@ -44,8 +44,7 @@ public class ScanChangedProjectsAction extends
 	protected static final Logger LOG = SLLogger.getLogger();
 
 	@Override
-	protected void run(final List<IJavaProject> projects,
-			final List<String> projectNames) {
+	protected void runActionOn(final List<IJavaProject> projects) {
 		run(projects);
 	}
 
@@ -59,10 +58,10 @@ public class ScanChangedProjectsAction extends
 		 * License check: A hack because Sierra is not using SLJobs yet.
 		 */
 		final SLStatus failed = SLLicenseUtility.validateSLJob(
-				SLLicenseProduct.SIERRA,
-				new NullSLProgressMonitor());
+				SLLicenseProduct.SIERRA, new NullSLProgressMonitor());
 		if (failed != null) {
-			IStatus status = SLEclipseStatusUtility.convert(failed, Activator.getDefault());
+			IStatus status = SLEclipseStatusUtility.convert(failed, Activator
+					.getDefault());
 			ErrorDialogUtility.open(null, null, status, true);
 			return;
 		}
@@ -77,7 +76,6 @@ public class ScanChangedProjectsAction extends
 							final Map<IJavaProject, Date> times = new HashMap<IJavaProject, Date>(
 									projects.size());
 							List<IJavaProject> noScanYet = null;
-							List<String> projectNames = null;
 							final Scans scans = new Scans(q);
 							for (final IJavaProject p : projects) {
 								final ScanInfo info = scans.getLatestScanInfo(p
@@ -88,10 +86,8 @@ public class ScanChangedProjectsAction extends
 									// No scan on the project yet
 									if (noScanYet == null) {
 										noScanYet = new ArrayList<IJavaProject>();
-										projectNames = new ArrayList<String>();
 									}
 									noScanYet.add(p);
-									projectNames.add(p.getElementName());
 								}
 							}
 
@@ -107,7 +103,7 @@ public class ScanChangedProjectsAction extends
 								startedScan = true;
 							}
 							if (noScanYet != null) {
-								new NewScan().scan(noScanYet, projectNames);
+								new NewScan().scan(noScanYet);
 								startedScan = true;
 							}
 

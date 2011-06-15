@@ -17,8 +17,9 @@ import com.surelogic.sierra.client.eclipse.preferences.SierraPreferencesUtility;
 
 public class NewScanAction extends AbstractProjectSelectedMenuAction {
 	@Override
-	protected void run(final List<IJavaProject> selectedProjects,
-			final List<String> projectNames) {
+	protected void runActionOn(final List<IJavaProject> selectedProjects) {
+		if (selectedProjects == null || selectedProjects.isEmpty())
+			return;
 
 		/*
 		 * License check: A hack because Sierra is not using SLJobs yet.
@@ -30,13 +31,7 @@ public class NewScanAction extends AbstractProjectSelectedMenuAction {
 					failed.getMessage(), failed.getException());
 			return;
 		}
-
-		NewScan s = new NewScan();
-		if (projectNames == null || projectNames.isEmpty()) {
-			s.scan(selectedProjects);
-		} else {
-			s.scan(selectedProjects, projectNames);
-		}
+		(new NewScan()).scan(selectedProjects);
 	}
 
 	@Override
@@ -47,6 +42,7 @@ public class NewScanAction extends AbstractProjectSelectedMenuAction {
 				"Scan Project",
 				SLImages.getImage(CommonImages.IMG_SIERRA_SCAN),
 				selectedProjects,
-				SierraPreferencesUtility.ALWAYS_ALLOW_USER_TO_SELECT_PROJECTS_TO_SCAN);
+				SierraPreferencesUtility.ALWAYS_ALLOW_USER_TO_SELECT_PROJECTS_TO_SCAN,
+				null);
 	}
 }

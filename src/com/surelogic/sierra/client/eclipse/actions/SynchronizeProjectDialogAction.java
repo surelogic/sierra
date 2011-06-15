@@ -18,6 +18,7 @@ public class SynchronizeProjectDialogAction extends SynchronizeProjectAction {
 				"Synchronize Project",
 				SLImages.getImage(CommonImages.IMG_SIERRA_SYNC),
 				selectedProjects,
-				SierraPreferencesUtility.ALWAYS_ALLOW_USER_TO_SELECT_PROJECTS_TO_SCAN);
+				SierraPreferencesUtility.ALWAYS_ALLOW_USER_TO_SELECT_PROJECTS_TO_SCAN,
+				null);
 	}
 }

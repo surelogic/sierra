@@ -10,8 +10,8 @@ import com.surelogic.sierra.client.eclipse.jobs.DeleteProjectDataJob;
 public class DisconnectAction extends AbstractProjectSelectedMenuAction {
 
 	@Override
-	protected void run(List<IJavaProject> selectedProjects,
-			List<String> projectNames) {
+	protected void runActionOn(List<IJavaProject> selectedProjects) {
+		final List<String> projectNames = getNames(selectedProjects);
 		if (!projectNames.isEmpty())
 			DeleteProjectDataJob.utility(projectNames, null, true);
 	}

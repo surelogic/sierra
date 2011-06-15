@@ -55,8 +55,7 @@ public class NewScan extends AbstractScan<IJavaProject> {
 
 		for (final Config config : configs) {
 			if (config.hasNothingToScan()) {
-				BalloonUtility.showMessage(
-						"Nothing to scan",
+				BalloonUtility.showMessage("Nothing to scan",
 						"There are no source files to scan in "
 								+ config.getProject());
 			} else {
@@ -70,8 +69,8 @@ public class NewScan extends AbstractScan<IJavaProject> {
 
 					/* Rename the scan document */
 					File scanDocument = config.getScanDocument();
-					File newScanDocument = generateScanDocumentFile(
-							config.getProject(), scanDocument.getName());
+					File newScanDocument = generateScanDocumentFile(config
+							.getProject(), scanDocument.getName());
 					/*
 					 * This approach assures that the scan document generation
 					 * will not crash. The tool will simply override the
@@ -83,9 +82,8 @@ public class NewScan extends AbstractScan<IJavaProject> {
 					scanDocument.renameTo(newScanDocument);
 				}
 			};
-			DatabaseJob importJob = new ImportScanDocumentJob(
-					config.getScanDocument(), config.getProject(),
-					runAfterImport);
+			DatabaseJob importJob = new ImportScanDocumentJob(config
+					.getScanDocument(), config.getProject(), runAfterImport);
 			importJob.addJobChangeListener(new ScanJobAdapter(config
 					.getProject()));
 
@@ -100,9 +98,8 @@ public class NewScan extends AbstractScan<IJavaProject> {
 	private static File generateScanDocumentFile(String project, String name) {
 		for (String suffix : SierraToolConstants.PARSED_FILE_SUFFIXES) {
 			if (name.endsWith(suffix)) {
-				return new File(
-						SierraPreferencesUtility.getSierraDataDirectory(),
-						project + suffix);
+				return new File(SierraPreferencesUtility
+						.getSierraDataDirectory(), project + suffix);
 			}
 		}
 		return new File(SierraPreferencesUtility.getSierraDataDirectory(),
@@ -114,9 +111,8 @@ public class NewScan extends AbstractScan<IJavaProject> {
 	public static File findScanDocumentFile(String projectName) {
 		for (String suffix : SierraToolConstants.PARSED_FILE_SUFFIXES) {
 			String scanFileName = projectName + suffix;
-			File scanFile = new File(
-					SierraPreferencesUtility.getSierraDataDirectory(),
-					scanFileName);
+			File scanFile = new File(SierraPreferencesUtility
+					.getSierraDataDirectory(), scanFileName);
 			if (scanFile.exists()) {
 				return scanFile;
 			}

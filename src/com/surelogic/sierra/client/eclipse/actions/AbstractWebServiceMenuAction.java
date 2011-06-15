@@ -25,8 +25,7 @@ public abstract class AbstractWebServiceMenuAction extends
 		AbstractProjectSelectedMenuAction {
 
 	@Override
-	protected void run(List<IJavaProject> selectedProjects,
-			List<String> projectNames) {
+	protected void runActionOn(List<IJavaProject> selectedProjects) {
 
 		final ConnectedServerManager manager = ConnectedServerManager
 				.getInstance();
@@ -34,8 +33,8 @@ public abstract class AbstractWebServiceMenuAction extends
 		IWorkbenchWindow window = PlatformUI.getWorkbench()
 				.getActiveWorkbenchWindow();
 		final Shell shell = window == null ? null : window.getShell();
-		final ServerProjectGroupJob family = new ServerProjectGroupJob(
-				manager.getServers());
+		final ServerProjectGroupJob family = new ServerProjectGroupJob(manager
+				.getServers());
 		final ServerActionOnAProject serverAction = new ServerActionOnAProject() {
 			@Override
 			public void run(String projectName, ConnectedServer server,
@@ -43,6 +42,8 @@ public abstract class AbstractWebServiceMenuAction extends
 				runServerAction(family, projectName, server, shell);
 			}
 		};
+
+		final List<String> projectNames = getNames(selectedProjects);
 		runningOnProjects(projectNames);
 
 		for (String projectName : projectNames) {

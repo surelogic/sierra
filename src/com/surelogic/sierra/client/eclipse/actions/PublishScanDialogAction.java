@@ -18,6 +18,7 @@ public class PublishScanDialogAction extends PublishScanAction {
 				"Publish Scan for Project",
 				SLImages.getImage(CommonImages.IMG_SIERRA_PUBLISH),
 				selectedProjects,
-				SierraPreferencesUtility.ALWAYS_ALLOW_USER_TO_SELECT_PROJECTS_TO_SCAN);
+				SierraPreferencesUtility.ALWAYS_ALLOW_USER_TO_SELECT_PROJECTS_TO_SCAN,
+				null);
 	}
 }
