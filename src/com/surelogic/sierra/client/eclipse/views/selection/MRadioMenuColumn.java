@@ -37,13 +37,13 @@ public final class MRadioMenuColumn extends MColumn implements
 			MColumn previousColumn) {
 		super(cascadingList, selection, previousColumn);
 	}
-	
+
 	@Override
 	void init() {
-		final CascadingList.IScrolledColumn m = new CascadingList.IScrolledColumn() {
+		final CascadingList.IColumn m = new CascadingList.IColumn() {
 			final Filter previousFilter = getFilterFromColumn(getPreviousColumn());
 
-			public void createContents(Composite panel) {
+			public Composite createContents(Composite panel) {
 				f_menu = new RadioArrowMenu(panel);
 				if (previousFilter != null) {
 					f_menu.addChoice("Show", null);
@@ -53,9 +53,10 @@ public final class MRadioMenuColumn extends MColumn implements
 					f_menu.addChoice(f, null);
 				}
 				f_menu.addObserver(MRadioMenuColumn.this);
+				return f_menu.getPanel();
 			}
 		};
-		getCascadingList().addColumn(m, true);
+		getCascadingList().addScrolledColumn(m, true);
 		initOfNextColumnComplete();
 	}
 
@@ -90,17 +91,17 @@ public final class MRadioMenuColumn extends MColumn implements
 	void setSelection(Object choice) {
 		f_menu.setSelection(choice);
 	}
-	
+
 	void clearSelection() {
-	  f_menu.clearSelection();
+		f_menu.clearSelection();
 	}
 
 	@Override
 	public void forceFocus() {
-	  f_menu.forceFocus();
-	  getCascadingList().show(index);
+		f_menu.forceFocus();
+		getCascadingList().show(index);
 	}
-	
+
 	public void selected(Object choice, RadioArrowMenu menu) {
 		f_menu.setEnabled(false);
 		final int column = getColumnIndex();
@@ -133,46 +134,46 @@ public final class MRadioMenuColumn extends MColumn implements
 			getSelection().changed();
 		} else if ("Show".equals(choice)) {
 			final MListOfFindingsColumn fsr = new MListOfFindingsColumn(
-					getCascadingList(), getSelection(), this);		
+					getCascadingList(), getSelection(), this);
 			fsr.setObserver(observer);
 			fsr.init();
-			
+
 		}
 	}
 
 	public void goBack(RadioArrowMenu menu) {
-	  MColumn c = getPreviousColumn();
-	  if (c != null) {
-	    c.forceFocus();
-	  }
+		MColumn c = getPreviousColumn();
+		if (c != null) {
+			c.forceFocus();
+		}
 	}
-	
+
 	public void goNext(RadioArrowMenu menu) {
-    MColumn c = getNextColumn();
-    if (c != null) {
-      c.forceFocus();
-    }
-  }
-	
-	public void escape(RadioArrowMenu menu) {
-	  if (getNextColumn() == null) {
-	    MColumn prev  = getPreviousColumn();
-	    if (prev != null) {
-	      // Not the first menu
-	      MColumn prev2 = prev.getPreviousColumn();
-	      if (prev2 instanceof MRadioMenuColumn) {
-	        MRadioMenuColumn menuColumn = (MRadioMenuColumn) prev2;
-	        menuColumn.escape(menuColumn.f_menu);
-	      }
-	    }
-	  } else {
-	    getSelection().emptyAfter(getFilterFromColumn(getNextColumn()));	    
-	    clearSelection();
-	    emptyAfter();
-	    forceFocus();
-	  }
+		MColumn c = getNextColumn();
+		if (c != null) {
+			c.forceFocus();
+		}
 	}
-	
+
+	public void escape(RadioArrowMenu menu) {
+		if (getNextColumn() == null) {
+			MColumn prev = getPreviousColumn();
+			if (prev != null) {
+				// Not the first menu
+				MColumn prev2 = prev.getPreviousColumn();
+				if (prev2 instanceof MRadioMenuColumn) {
+					MRadioMenuColumn menuColumn = (MRadioMenuColumn) prev2;
+					menuColumn.escape(menuColumn.f_menu);
+				}
+			}
+		} else {
+			getSelection().emptyAfter(getFilterFromColumn(getNextColumn()));
+			clearSelection();
+			emptyAfter();
+			forceFocus();
+		}
+	}
+
 	class DrawFilterAndMenu implements IFilterObserver {
 
 		public void filterQueryFailure(final Filter filter, final Exception e) {
@@ -184,8 +185,8 @@ public final class MRadioMenuColumn extends MColumn implements
 					final int errNo = 27;
 					final String msg = I18N.err(errNo, filter.getFactory()
 							.getFilterLabel());
-					final IStatus reason = SLEclipseStatusUtility.createErrorStatus(errNo,
-							msg, e);
+					final IStatus reason = SLEclipseStatusUtility
+							.createErrorStatus(errNo, msg, e);
 					ErrorDialogUtility.open(null, "Selection Error", reason);
 					return Status.OK_STATUS;
 				}
@@ -245,13 +246,13 @@ public final class MRadioMenuColumn extends MColumn implements
 		Collections.sort(result);
 		return result;
 	}
-	
-  @Override 
-  void selectAll() {
-    if (f_menu.isFocusControl()) {
-      // Do nothing
-    } else {
-      super.selectAll();
-    }
-  }
+
+	@Override
+	void selectAll() {
+		if (f_menu.isFocusControl()) {
+			// Do nothing
+		} else {
+			super.selectAll();
+		}
+	}
 }
