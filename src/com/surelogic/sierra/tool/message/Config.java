@@ -37,7 +37,8 @@ public class Config implements Cloneable, ILocalConfig {
 	private String complianceLevel = null;
 	private String sourceLevel = null;
 	private String targetLevel = null;
-
+	private String consolePath = null;
+	
 	private boolean verbose = false;
 	
 	/**
@@ -506,6 +507,10 @@ public class Config implements Cloneable, ILocalConfig {
 
     @Override
     public String getLogPath() {
-        return null;
+        return consolePath;
+    }
+    
+    public void setLogPath(String path) {
+    	consolePath = path;
     }
 }
