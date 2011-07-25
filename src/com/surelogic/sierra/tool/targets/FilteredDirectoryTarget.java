@@ -107,7 +107,7 @@ public class FilteredDirectoryTarget extends DirectoryTarget {
 	initPatterns();
    include:
     if (includePatterns != null) {
-      for(IPattern p : excludePatterns) {
+      for(IPattern p : includePatterns) {
         if (p.matches(relativePath)) {
           break include; // now check exclusions
         }
