@@ -1,6 +1,3 @@
-/*
- * Created on Jan 11, 2008
- */
 package com.surelogic.sierra.tool;
 
 import java.io.*;
@@ -10,7 +7,7 @@ import java.util.logging.*;
 
 import javax.xml.bind.*;
 
-import org.apache.commons.lang.SystemUtils;
+import org.apache.commons.lang3.SystemUtils;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.types.*;
 
