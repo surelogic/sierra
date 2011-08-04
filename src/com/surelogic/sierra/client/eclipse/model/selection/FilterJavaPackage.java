@@ -33,6 +33,6 @@ public final class FilterJavaPackage extends Filter {
 
 	@Override
 	public Image getImageFor(String value) {
-		return SLImages.getImage(CommonImages.IMG_PROJECT);
+		return SLImages.getImage(CommonImages.IMG_PACKAGE);
 	}
 }
