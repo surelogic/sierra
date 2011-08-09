@@ -26,8 +26,8 @@ import com.surelogic.sierra.client.eclipse.model.AbstractUpdatable;
 /**
  * Abstract base class for all findings filters. Intended to be subclassed.
  * <p>
- * This class depends upon the form of the <code>FINDINGS_OVERVIEW</code>
- * table in the database.
+ * This class depends upon the form of the <code>FINDINGS_OVERVIEW</code> table
+ * in the database.
  * <p>
  * This class is thread-safe.
  */
@@ -181,7 +181,7 @@ public abstract class Filter extends AbstractUpdatable {
 			return;
 		}
 		if (keepGoing) {
-			finishedUpdate(now);			
+			finishedUpdate(now);
 			notifyFilterChanged();
 		}
 	}
@@ -208,7 +208,7 @@ public abstract class Filter extends AbstractUpdatable {
 				if (!continueUpdate(now)) {
 					return false;
 				}
-				
+
 				final ResultSet rs = st.executeQuery(query);
 				try {
 					while (rs.next()) {
@@ -229,7 +229,7 @@ public abstract class Filter extends AbstractUpdatable {
 			c.close();
 		}
 		f_countTotal = countTotal;
-		
+
 		return true;
 	}
 
@@ -356,8 +356,7 @@ public abstract class Filter extends AbstractUpdatable {
 	}
 
 	/**
-	 * Gets the column name from <code>FINDINGS_OVERVIEW</code> for this
-	 * filter.
+	 * Gets the column name from <code>FINDINGS_OVERVIEW</code> for this filter.
 	 * 
 	 * @return the column name from <code>FINDINGS_OVERVIEW</code> for this
 	 *         filter.
@@ -528,6 +527,16 @@ public abstract class Filter extends AbstractUpdatable {
 		f_selection.filterChanged(this);
 	}
 
+	/**
+	 * A helper method when persistent selections are loaded to set what values
+	 * are porous. This method skips all notifications to obvservers.
+	 * 
+	 * @param value
+	 *            a value managed by this filter.
+	 * @param porous
+	 *            <code>true</code> sets the value to be porous,
+	 *            <code>false</code> makes it non-porous.
+	 */
 	void setPorousOnLoad(String value, boolean porous) {
 		synchronized (this) {
 			if (porous)
@@ -594,9 +603,8 @@ public abstract class Filter extends AbstractUpdatable {
 	}
 
 	/**
-	 * Subclasses may need to set this to <code>false</code> if they don't
-	 * want values quoted in the SQL query. For example, if the values are
-	 * integers.
+	 * Subclasses may need to set this to <code>false</code> if they don't want
+	 * values quoted in the SQL query. For example, if the values are integers.
 	 */
 	protected volatile boolean f_quote = true;
 
@@ -656,7 +664,7 @@ public abstract class Filter extends AbstractUpdatable {
 		final String query = getBaseCountsQuery();
 		final String column = getTablePrefix(usesJoin()) + getColumnName();
 		b.append(QB.get(query, column, getWhereClause(false), column));
-	    // System.out.println("Counts: "+b.toString());
+		// System.out.println("Counts: "+b.toString());
 		return b;
 	}
 
@@ -693,7 +701,8 @@ public abstract class Filter extends AbstractUpdatable {
 		 * porous. This should make the query faster than listing everything
 		 * explicitly.
 		 */
-		return !isFilterExpressionClear() || !f_porousValues.containsAll(f_allValues);
+		return !isFilterExpressionClear()
+				|| !f_porousValues.containsAll(f_allValues);
 	}
 
 	/**
@@ -794,8 +803,9 @@ public abstract class Filter extends AbstractUpdatable {
 	protected final String createInClause(String column, Iterable<String> values) {
 		return createInClause(f_quote, column, values);
 	}
-	
-	protected final String createInClause(boolean quote, String column, Iterable<String> values) {
+
+	protected final String createInClause(boolean quote, String column,
+			Iterable<String> values) {
 		if (values == null) {
 			return "";
 		}
@@ -844,8 +854,9 @@ public abstract class Filter extends AbstractUpdatable {
 
 	/**
 	 * Any caller must be holding a lock on <code>this</code>.
-	 */		
-	private static void addValueTo(boolean quote, StringBuilder b, String dbValue) {
+	 */
+	private static void addValueTo(boolean quote, StringBuilder b,
+			String dbValue) {
 		if (quote) {
 			b.append("'").append(JDBCUtils.escapeString(dbValue)).append("'");
 		} else {
