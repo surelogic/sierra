@@ -111,11 +111,6 @@ public class SierraJavacAdapter extends DefaultCompilerAdapter {
 				libHome+"sierra-tool.jar");		
 		config.putPluginDir(SierraToolConstants.JUNIT4_PLUGIN_ID,
 				libHome+"junit");		
-		if (SystemUtils.IS_JAVA_1_5) {
-			System.out.println("Home: "+scan.getHome());
-			config.putPluginDir(SierraToolConstants.JAVA5_PLUGIN_ID,
-					            scan.getHome());		
-		}
 		//System.out.println("Using source level "+scan.getSource());
 		config.setSourceLevel(scan.getSource());
 		
