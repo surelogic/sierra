@@ -118,6 +118,7 @@
 				class="com.surelogic.sierra.client.eclipse.actions.NewScanAction"
 				id="com.surelogic.sierra.client.eclipse.actions.NewScanAction"
 				icon="platform:/plugin/com.surelogic.common/lib/images/sierra_scan.gif"
+				definitionId="com.surelogic.sierra.NewScanAction"
 				label="Scan Project" menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/client"
 				enablesFor="*" helpContextId="menu-scan-project">
 			</action>
@@ -157,6 +158,23 @@
 				helpContextId="menu-configure-team-servers">
 			</action>
 		</actionSet>
+	</extension>
+	
+	<!-- Keyboard shortcut to start a scan: first we associate a command with the "definitionId" above, then we define a key binding -->
+	
+	<extension
+         point="org.eclipse.ui.commands">
+         <command
+            name="Scan Project"
+            id="com.surelogic.sierra.NewScanAction" />
+    </extension>
+
+	<extension point="org.eclipse.ui.bindings">
+		<key
+     	 sequence="Alt+Ctrl+Shift+S"
+     	 commandId="com.surelogic.sierra.NewScanAction"
+     	 schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
+		</key>
 	</extension>
 
 	<extension point="org.eclipse.ui.popupMenus">
