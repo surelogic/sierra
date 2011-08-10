@@ -171,7 +171,7 @@
 
 	<extension point="org.eclipse.ui.bindings">
 		<key
-     	 sequence="Alt+Ctrl+Shift+S"
+     	 sequence="Ctrl+Alt+Shift+S"
      	 commandId="com.surelogic.sierra.NewScanAction"
      	 schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
 		</key>
