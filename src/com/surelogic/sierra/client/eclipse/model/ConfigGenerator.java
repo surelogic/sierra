@@ -65,8 +65,7 @@ public final class ConfigGenerator {
 			 * SierraToolConstants.FB_PLUGIN_ID,
 			 */
 			SierraToolConstants.JUNIT4_PLUGIN_ID,
-			SierraToolConstants.JUNIT_PLUGIN_ID,
-			SierraToolConstants.JAVA5_PLUGIN_ID, };
+			SierraToolConstants.JUNIT_PLUGIN_ID };
 
 	private static final ConfigGenerator INSTANCE = new ConfigGenerator();
 	/** The location to store tool results */
