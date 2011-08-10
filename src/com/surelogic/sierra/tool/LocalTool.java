@@ -1,20 +1,37 @@
 package com.surelogic.sierra.tool;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.net.URI;
-import java.util.*;
-import java.util.logging.*;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.logging.Level;
 
-import javax.xml.bind.*;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 
-import org.apache.commons.lang3.SystemUtils;
 import org.apache.tools.ant.Project;
-import org.apache.tools.ant.types.*;
+import org.apache.tools.ant.types.CommandlineJava;
+import org.apache.tools.ant.types.Path;
 
-import com.surelogic.common.jobs.remote.*;
+import com.surelogic.common.jobs.remote.AbstractLocalSLJob;
+import com.surelogic.common.jobs.remote.ConfigHelper;
+import com.surelogic.common.jobs.remote.RemoteSLJobException;
+import com.surelogic.common.jobs.remote.TestCode;
 import com.surelogic.sierra.tool.analyzer.ILazyArtifactGenerator;
-import com.surelogic.sierra.tool.message.*;
-import com.surelogic.sierra.tool.targets.*;
+import com.surelogic.sierra.tool.message.ArtifactGenerator;
+import com.surelogic.sierra.tool.message.Config;
+import com.surelogic.sierra.tool.targets.FileTarget;
+import com.surelogic.sierra.tool.targets.FilteredDirectoryTarget;
+import com.surelogic.sierra.tool.targets.FullDirectoryTarget;
+import com.surelogic.sierra.tool.targets.IToolTarget;
+import com.surelogic.sierra.tool.targets.JarTarget;
 
 final class LocalTool extends AbstractLocalSLJob implements IToolInstance {
 	private static final JAXBContext ctx = createContext();
@@ -188,22 +205,13 @@ final class LocalTool extends AbstractLocalSLJob implements IToolInstance {
 	protected void setupClassPath(boolean debug, CommandlineJava cmdj, Project proj, Path path) {			
 		final Set<File> jars = new HashSet<File>();
 		final ConfigHelper util = new ConfigHelper(config);
-		util.addPluginToPath(debug, jars, SierraToolConstants.COMMON_PLUGIN_ID);
-		util.addPluginJarsToPath(debug, jars, SierraToolConstants.COMMON_PLUGIN_ID, "lib/runtime/commons-lang3-3.0.jar");
+		util.addPluginToPath(debug, jars, SierraToolConstants.TOOL_PLUGIN_ID);
+		util.addPluginJarsToPath(debug, jars, SierraToolConstants.TOOL_PLUGIN_ID, "lib/commons-lang3-3.0.jar");
 
 		// sierra-tool needs special handling since it is unpacked, due to
 		// Reckoner (and other tools)
 		util.addPluginToPath(debug, jars, SierraToolConstants.TOOL_PLUGIN_ID, true);
 		util.addPluginToPath(debug, jars, SierraToolConstants.MESSAGE_PLUGIN_ID);
-
-		// JAXB is included in Java 6 and beyond
-		if (SystemUtils.IS_JAVA_1_5) {
-			util.addAllPluginJarsToPath(debug, jars, SierraToolConstants.JAVA5_PLUGIN_ID, "lib/jaxb");
-		} else {
-			// FIX
-			// Called just to mark it as "used";
-			util.getPluginDir(debug, SierraToolConstants.JAVA5_PLUGIN_ID, false);
-		}
 
 		// FIX which tool needs this?
 		if (util.addPluginJarsToPath(debug, jars,

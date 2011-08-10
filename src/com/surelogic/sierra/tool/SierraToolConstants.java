@@ -17,7 +17,6 @@ public final class SierraToolConstants {
 	public static final String PMD_PLUGIN_ID = "com.surelogic.sierra.pmd";
 	public static final String FB_PLUGIN_ID = "com.surelogic.sierra.fb";
 	public static final String RECKONER_PLUGIN_ID = "com.surelogic.sierra.reckoner";
-	public static final String JAVA5_PLUGIN_ID = "com.surelogic.sierra.java5.compatibility";
 	public static final String JDT_CORE_PLUGIN_ID = "org.eclipse.jdt.core";
 	public static final String CORE_RUNTIME_PLUGIN_ID = "org.eclipse.core.runtime";
 
