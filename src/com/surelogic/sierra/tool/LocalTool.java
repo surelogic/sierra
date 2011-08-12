@@ -34,264 +34,280 @@ import com.surelogic.sierra.tool.targets.IToolTarget;
 import com.surelogic.sierra.tool.targets.JarTarget;
 
 final class LocalTool extends AbstractLocalSLJob implements IToolInstance {
-	private static final JAXBContext ctx = createContext();
+    private static final JAXBContext ctx = createContext();
 
-	private static final Marshaller marshaller = createMarshaller(ctx);
+    private static final Marshaller marshaller = createMarshaller(ctx);
 
-	private static final IToolFactory factory = 
-		new DummyToolFactory("Local", "1.0", "Local",
-		"Local tool for running other tools in another JVM");
+    private static final IToolFactory factory = new DummyToolFactory("Local",
+            "1.0", "Local", "Local tool for running other tools in another JVM");
 
-	private static JAXBContext createContext() {
-		try {
-			return JAXBContext.newInstance(Config.class, FileTarget.class,
-					JarTarget.class, FullDirectoryTarget.class,
-					FilteredDirectoryTarget.class);
-		} catch (JAXBException e) {
-			LOG.log(Level.SEVERE, "Couldn't create JAXB context", e);
-			return null;
-		}
-	}
+    private static JAXBContext createContext() {
+        try {
+            return JAXBContext.newInstance(Config.class, FileTarget.class,
+                    JarTarget.class, FullDirectoryTarget.class,
+                    FilteredDirectoryTarget.class);
+        } catch (JAXBException e) {
+            LOG.log(Level.SEVERE, "Couldn't create JAXB context", e);
+            return null;
+        }
+    }
 
-	private static Marshaller createMarshaller(JAXBContext ctx) {
-		if (ctx == null) {
-			LOG.severe("No JAXB context to create marshaller with");
-			return null;
-		}
-		try {
-			Marshaller marshaller = ctx.createMarshaller();
-			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-			return marshaller;
-		} catch (JAXBException e) {
-			LOG.log(Level.SEVERE, "Couldn't create JAXB marshaller", e);
-			return null;
-		}
-	}
+    private static Marshaller createMarshaller(final JAXBContext ctx) {
+        if (ctx == null) {
+            LOG.severe("No JAXB context to create marshaller with");
+            return null;
+        }
+        try {
+            Marshaller marshaller = ctx.createMarshaller();
+            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+            return marshaller;
+        } catch (JAXBException e) {
+            LOG.log(Level.SEVERE, "Couldn't create JAXB marshaller", e);
+            return null;
+        }
+    }
 
-	private final Config config;
-	
-	public LocalTool(Config config) {
-		//super("Sierra tool",, 
-		//		TestCode.getTestCode(config.getTestCode()), 
-		//		config.getMemorySize(), /*true ||*/ config.isVerbose());
-		super("Sierra tool", ToolUtil.getNumTools(config), config);
-		this.config = config;
-	}
+    private final Config config;
 
-	protected RemoteSLJobException newException(int number, Object... args) {
-		throw new ToolException(number, args);
-	}
+    public LocalTool(final Config config) {
+        // super("Sierra tool",,
+        // TestCode.getTestCode(config.getTestCode()),
+        // config.getMemorySize(), /*true ||*/ config.isVerbose());
+        super("Sierra tool", ToolUtil.getNumTools(config), config);
+        this.config = config;
+    }
 
-	public void addTarget(IToolTarget target) {
-		if (verbose) {
-			System.out.println("Currently ignoring, since already in config: "+ target.getLocation());
-		}
-	}
+    @Override
+    protected RemoteSLJobException newException(final int number,
+            final Object... args) {
+        throw new ToolException(number, args);
+    }
 
-	public void addToClassPath(URI loc) {
-		config.addToClassPath(loc);
-	}
+    @Override
+    public void addTarget(final IToolTarget target) {
+        if (verbose) {
+            System.out.println("Currently ignoring, since already in config: "
+                    + target.getLocation());
+        }
+    }
 
-	public ArtifactGenerator getGenerator() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public void addToClassPath(final URI loc) {
+        config.addToClassPath(loc);
+    }
 
-	public void reportError(String msg, Throwable t) {
-		// TODO Auto-generated method stub
+    @Override
+    public ArtifactGenerator getGenerator() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	}
+    @Override
+    public void reportError(final String msg, final Throwable t) {
+        // TODO Auto-generated method stub
 
-	public void reportError(String msg) {
-		// TODO Auto-generated method stub
+    }
 
-	}
+    @Override
+    public void reportError(final String msg) {
+        // TODO Auto-generated method stub
 
-	public void setOption(String key, String option) {
-		if (verbose) {
-			System.out.println("Currently ignoring, since already in config: "+ key);
-		}
-	}
+    }
 
-	@SuppressWarnings("unused")
-	private void setupCustomClassLoader(final boolean debug,
-			CommandlineJava cmdj) {
-		// String tools = getPluginDir(debug,
-		// SierraToolConstants.TOOL_PLUGIN_ID);
-		File commonLoading = new File(config.getToolsDirectory(),
-		"common-loading.jar");
-		cmdj.createVmArgument().setValue(
-				"-Xbootclasspath/a:" + commonLoading.getAbsolutePath());
-		cmdj
-		.createVmArgument()
-		.setValue(
-		"-Djava.system.class.loader=com.surelogic.common.loading.CustomClassLoader");
-		
-		try {
-			if (TestCode.BAD_AUX_PATH.equals(testCode)) {
-				throw new IOException("Testing error with aux path");
-			}
-			File auxPathFile = File.createTempFile("auxPath", ".txt");
-			PrintWriter pw = new PrintWriter(auxPathFile);
-			cmdj.createVmArgument().setValue(
-					"-D" + SierraToolConstants.AUX_PATH_PROPERTY + "="
-					+ auxPathFile.getAbsolutePath());
+    @Override
+    public void setOption(final String key, final String option) {
+        if (verbose) {
+            System.out.println("Currently ignoring, since already in config: "
+                    + key);
+        }
+    }
 
-			// FIX to support PMD's type resolution
-			for (IToolTarget t : config.getTargets()) {
-				if (t.getType() == IToolTarget.Type.AUX) {
-					// path.add(new Path(proj, new
-					// File(t.getLocation()).getAbsolutePath()));
-					pw.println(t.getLocation().toURL());
-				}
-			}
-			pw.close();
-			auxPathFile.deleteOnExit();
-		} catch (IOException e) {
-			throw new ToolException(
-					SierraToolConstants.ERROR_CREATING_AUX_PATH, e);
-		}
-	}
+    @SuppressWarnings("unused")
+    private void setupCustomClassLoader(final boolean debug,
+            final CommandlineJava cmdj) {
+        // String tools = getPluginDir(debug,
+        // SierraToolConstants.TOOL_PLUGIN_ID);
+        File commonLoading = new File(config.getToolsDirectory(),
+                "common-loading.jar");
+        cmdj.createVmArgument().setValue(
+                "-Xbootclasspath/a:" + commonLoading.getAbsolutePath());
+        cmdj.createVmArgument()
+                .setValue(
+                        "-Djava.system.class.loader=com.surelogic.common.loading.CustomClassLoader");
 
-	private File setupConfigFile(CommandlineJava cmdj) {
-		try {
-			if (TestCode.BAD_CONFIG.equals(testCode)) {
-				throw new JAXBException("Testing error with config file");
-			}
-			File file = File.createTempFile("config", ".xml");
-			file.deleteOnExit();
+        try {
+            if (TestCode.BAD_AUX_PATH.equals(testCode)) {
+                throw new IOException("Testing error with aux path");
+            }
+            File auxPathFile = File.createTempFile("auxPath", ".txt");
+            PrintWriter pw = new PrintWriter(auxPathFile);
+            cmdj.createVmArgument().setValue(
+                    "-D" + SierraToolConstants.AUX_PATH_PROPERTY + "="
+                            + auxPathFile.getAbsolutePath());
 
-			OutputStream out = new FileOutputStream(file);
-			if (marshaller == null) {
-				System.out.println("Couldn't create config file");
-				return null;
-			}
-			marshaller.marshal(config, out);
-			out.close();
+            // FIX to support PMD's type resolution
+            for (IToolTarget t : config.getTargets()) {
+                if (t.getType() == IToolTarget.Type.AUX) {
+                    // path.add(new Path(proj, new
+                    // File(t.getLocation()).getAbsolutePath()));
+                    pw.println(t.getLocation().toURL());
+                }
+            }
+            pw.close();
+            auxPathFile.deleteOnExit();
+        } catch (IOException e) {
+            throw new ToolException(
+                    SierraToolConstants.ERROR_CREATING_AUX_PATH, e);
+        }
+    }
 
-			cmdj.createVmArgument().setValue(
-					"-D" + SierraToolConstants.CONFIG_PROPERTY + "="
-					+ file.getAbsolutePath());
-			return file;
-		} catch (IOException e) {
-			throw new ToolException(
-					SierraToolConstants.ERROR_CREATING_CONFIG, e);
-		} catch (JAXBException e) {
-			throw new ToolException(
-					SierraToolConstants.ERROR_CREATING_CONFIG, e);
-		}
-	}
+    private File setupConfigFile(final CommandlineJava cmdj) {
+        try {
+            if (TestCode.BAD_CONFIG.equals(testCode)) {
+                throw new JAXBException("Testing error with config file");
+            }
+            File file = File.createTempFile("config", ".xml");
+            file.deleteOnExit();
 
-	@Override
-	protected Class<?> getRemoteClass() {
-		return RemoteTool.class;
-	}
+            OutputStream out = new FileOutputStream(file);
+            if (marshaller == null) {
+                System.out.println("Couldn't create config file");
+                return null;
+            }
+            marshaller.marshal(config, out);
+            out.close();
 
-	@Override
-	protected void finishSetupJVM(final boolean debug, final CommandlineJava cmdj, Project proj) {
-		setupConfigFile(cmdj);
-		// setupCustomClassLoader(debug, cmdj);
-		// cmdj.createBootclasspath(proj);
+            cmdj.createVmArgument().setValue(
+                    "-D" + SierraToolConstants.CONFIG_PROPERTY + "="
+                            + file.getAbsolutePath());
+            return file;
+        } catch (IOException e) {
+            throw new ToolException(SierraToolConstants.ERROR_CREATING_CONFIG,
+                    e);
+        } catch (JAXBException e) {
+            throw new ToolException(SierraToolConstants.ERROR_CREATING_CONFIG,
+                    e);
+        }
+    }
 
-		//cmdj.createVmArgument().setValue("-Dfindbugs.debug.PluginLoader=true");
-		//cmdj.createVmArgument().setValue("-Dfindbugs.verbose=true");
-		//cmdj.createVmArgument().setValue("-Dfindbugs.debug=true");
-		//cmdj.createVmArgument().setValue("-Dfindbugs.execplan.debug=true");			
-		cmdj.createVmArgument().setValue("-D"+ToolUtil.TOOLS_PATH_PROP_NAME+"="+
-				                         ToolUtil.getSierraToolDirectory());
-	}
+    @Override
+    protected Class<?> getRemoteClass() {
+        return RemoteTool.class;
+    }
 
-	@Override 
-	protected void setupClassPath(boolean debug, CommandlineJava cmdj, Project proj, Path path) {			
-		final Set<File> jars = new HashSet<File>();
-		final ConfigHelper util = new ConfigHelper(config);
-		util.addPluginToPath(debug, jars, SierraToolConstants.COMMON_PLUGIN_ID);
-		util.addPluginJarsToPath(debug, jars, SierraToolConstants.COMMON_PLUGIN_ID, "lib/runtime/commons-lang3-3.0.jar");
+    @Override
+    protected void finishSetupJVM(final boolean debug,
+            final CommandlineJava cmdj, final Project proj) {
+        setupConfigFile(cmdj);
+        // setupCustomClassLoader(debug, cmdj);
+        // cmdj.createBootclasspath(proj);
 
-		// sierra-tool needs special handling since it is unpacked, due to
-		// Reckoner (and other tools)
-		util.addPluginToPath(debug, jars, SierraToolConstants.TOOL_PLUGIN_ID, true);
-		util.addPluginToPath(debug, jars, SierraToolConstants.MESSAGE_PLUGIN_ID);
+        // cmdj.createVmArgument().setValue("-Dfindbugs.debug.PluginLoader=true");
+        // cmdj.createVmArgument().setValue("-Dfindbugs.verbose=true");
+        // cmdj.createVmArgument().setValue("-Dfindbugs.debug=true");
+        // cmdj.createVmArgument().setValue("-Dfindbugs.execplan.debug=true");
+        cmdj.createVmArgument().setValue(
+                "-D" + ToolUtil.TOOLS_PATH_PROP_NAME + "="
+                        + ToolUtil.getSierraToolDirectory());
+    }
 
-		// FIX which tool needs this?
-		if (util.addPluginJarsToPath(debug, jars,
-				SierraToolConstants.JUNIT4_PLUGIN_ID, true, "junit.jar",
-		"junit-4.1.jar")) {
-			// Called just to mark it as "used";
-			util.getPluginDir(debug, SierraToolConstants.JUNIT_PLUGIN_ID, false);
-		} else {
-			util.addPluginJarsToPath(debug, jars,
-					SierraToolConstants.JUNIT_PLUGIN_ID, "junit.jar");
-		}			
-		addToolPluginJars(debug, jars);
+    @Override
+    protected void setupClassPath(final boolean debug,
+            final CommandlineJava cmdj, final Project proj, final Path path) {
+        final Set<File> jars = new HashSet<File>();
+        final ConfigHelper util = new ConfigHelper(config);
+        util.addPluginToPath(debug, jars, SierraToolConstants.COMMON_PLUGIN_ID,
+                true);
+        util.addPluginJarsToPath(debug, jars,
+                SierraToolConstants.COMMON_PLUGIN_ID,
+                "lib/runtime/commons-lang3-3.0.jar");
 
-		for(File jar : jars) {
-			addToPath(proj, path, jar, true);
-		}			
-		/*
-		if (false) {
-			for(String elt : path.list()) {
-				System.out.println("Path: "+elt);
-			}
-		}
-		*/
-	}
+        // sierra-tool needs special handling since it is unpacked, due to
+        // Reckoner (and other tools)
+        util.addPluginToPath(debug, jars, SierraToolConstants.TOOL_PLUGIN_ID,
+                true);
+        util.addPluginToPath(debug, jars, SierraToolConstants.MESSAGE_PLUGIN_ID);
 
-	private void addToolPluginJars(boolean debug, Set<File> path) {
-		// TODO need to deactivate some?
-		for(IToolFactory f : ToolUtil.findToolFactories()) {
-			for(File jar : f.getRequiredJars(config)) {
-				path.add(jar);		
-			}
-		}
-	}
+        // FIX which tool needs this?
+        if (util.addPluginJarsToPath(debug, jars,
+                SierraToolConstants.JUNIT4_PLUGIN_ID, true, "junit.jar",
+                "junit-4.1.jar")) {
+            // Called just to mark it as "used";
+            util.getPluginDir(debug, SierraToolConstants.JUNIT_PLUGIN_ID, false);
+        } else {
+            util.addPluginJarsToPath(debug, jars,
+                    SierraToolConstants.JUNIT_PLUGIN_ID, "junit.jar");
+        }
+        addToolPluginJars(debug, jars);
 
-	public IToolInstance create() {
-		throw new UnsupportedOperationException();
-	}
+        for (File jar : jars) {
+            addToPath(proj, path, jar, true);
+        }
+        /*
+         * if (false) { for(String elt : path.list()) {
+         * System.out.println("Path: "+elt); } }
+         */
+    }
 
-	public IToolInstance create(String name, ILazyArtifactGenerator generator) {
-		throw new UnsupportedOperationException();
-	}
+    private void addToolPluginJars(final boolean debug, final Set<File> path) {
+        // TODO need to deactivate some?
+        for (IToolFactory f : ToolUtil.findToolFactories()) {
+            for (File jar : f.getRequiredJars(config)) {
+                path.add(jar);
+            }
+        }
+    }
 
-	public Set<ArtifactType> getArtifactTypes() {
-		return Collections.emptySet();
-	}
+    public IToolInstance create() {
+        throw new UnsupportedOperationException();
+    }
 
-	public List<File> getRequiredJars() {
-		return Collections.emptyList();
-	}
+    public IToolInstance create(final String name,
+            final ILazyArtifactGenerator generator) {
+        throw new UnsupportedOperationException();
+    }
 
-	public String getHTMLInfo() {
-		return factory.getHTMLInfo();
-	}
+    public Set<ArtifactType> getArtifactTypes() {
+        return Collections.emptySet();
+    }
 
-	public String getId() {
-		return factory.getId();
-	}
+    public List<File> getRequiredJars() {
+        return Collections.emptyList();
+    }
 
-	public String getVersion() {
-		return factory.getVersion();
-	}
+    @Override
+    public String getHTMLInfo() {
+        return factory.getHTMLInfo();
+    }
 
-	public static void main(String[] args) {
-		try {
-			JAXBContext ctx = JAXBContext.newInstance(Config.class);
-			Config c = new Config();
-			File file = File.createTempFile("sdfsda", "xml");
-			file.deleteOnExit();
+    @Override
+    public String getId() {
+        return factory.getId();
+    }
 
-			OutputStream out = new FileOutputStream(file);
-			ctx.createMarshaller().marshal(c, out);
-			out.close();
+    @Override
+    public String getVersion() {
+        return factory.getVersion();
+    }
 
-			Config c2 = (Config) ctx.createUnmarshaller().unmarshal(file);
-			System.out.println(c.equals(c2));
-		} catch (JAXBException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+    public static void main(final String[] args) {
+        try {
+            JAXBContext ctx = JAXBContext.newInstance(Config.class);
+            Config c = new Config();
+            File file = File.createTempFile("sdfsda", "xml");
+            file.deleteOnExit();
+
+            OutputStream out = new FileOutputStream(file);
+            ctx.createMarshaller().marshal(c, out);
+            out.close();
+
+            Config c2 = (Config) ctx.createUnmarshaller().unmarshal(file);
+            System.out.println(c.equals(c2));
+        } catch (JAXBException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
 }
