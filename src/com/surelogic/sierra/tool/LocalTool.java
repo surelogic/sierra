@@ -85,10 +85,8 @@ final class LocalTool extends AbstractLocalSLJob implements IToolInstance {
 
     @Override
     public void addTarget(final IToolTarget target) {
-        if (verbose) {
-            System.out.println("Currently ignoring, since already in config: "
-                    + target.getLocation());
-        }
+    	println("Currently ignoring, since already in config: "
+    			+ target.getLocation());
     }
 
     @Override
@@ -116,10 +114,7 @@ final class LocalTool extends AbstractLocalSLJob implements IToolInstance {
 
     @Override
     public void setOption(final String key, final String option) {
-        if (verbose) {
-            System.out.println("Currently ignoring, since already in config: "
-                    + key);
-        }
+    	println("Currently ignoring, since already in config: "+key);        
     }
 
     @SuppressWarnings("unused")
