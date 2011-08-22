@@ -51,7 +51,7 @@ public class NewScanJob extends WorkspaceLockingJob {
 			}
 		}
 		if (!monitor.isCanceled()) {
-			if (status.getException() != null) {
+			if (status.getSeverity() == SLSeverity.ERROR && status.getException() != null) {
 				return dealWithException(status.getException());
 			}
 			if (status != SLStatus.OK_STATUS) {
