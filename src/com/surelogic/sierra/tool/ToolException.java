@@ -5,11 +5,11 @@ import com.surelogic.common.jobs.remote.RemoteSLJobException;
 public class ToolException extends RemoteSLJobException {  
   private static final long serialVersionUID = 1L;
 
-  ToolException(final int number, Object... args) {
-	super(number, args);
+  ToolException(String label, final int number, Object... args) {
+	super(label, number, args);
   }
   
-  ToolException(final int number, Throwable t) {
-    super(number, t);
+  ToolException(String label, final int number, Throwable t) {
+    super(label, number, t);
   }
 }

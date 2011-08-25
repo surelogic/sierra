@@ -80,7 +80,7 @@ final class LocalTool extends AbstractLocalSLJob implements IToolInstance {
     @Override
     protected RemoteSLJobException newException(final int number,
             final Object... args) {
-        throw new ToolException(number, args);
+        throw new ToolException(getName(), number, args);
     }
 
     @Override
@@ -151,7 +151,7 @@ final class LocalTool extends AbstractLocalSLJob implements IToolInstance {
             pw.close();
             auxPathFile.deleteOnExit();
         } catch (IOException e) {
-            throw new ToolException(
+            throw new ToolException(getName(), 
                     SierraToolConstants.ERROR_CREATING_AUX_PATH, e);
         }
     }
@@ -177,10 +177,10 @@ final class LocalTool extends AbstractLocalSLJob implements IToolInstance {
                             + file.getAbsolutePath());
             return file;
         } catch (IOException e) {
-            throw new ToolException(SierraToolConstants.ERROR_CREATING_CONFIG,
+            throw new ToolException(getName(), SierraToolConstants.ERROR_CREATING_CONFIG,
                     e);
         } catch (JAXBException e) {
-            throw new ToolException(SierraToolConstants.ERROR_CREATING_CONFIG,
+            throw new ToolException(getName(), SierraToolConstants.ERROR_CREATING_CONFIG,
                     e);
         }
     }
