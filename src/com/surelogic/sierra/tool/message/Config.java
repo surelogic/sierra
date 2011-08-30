@@ -39,6 +39,7 @@ public class Config implements Cloneable, ILocalConfig {
 	private String targetLevel = null;
 	private String consolePath = null;
 	private String excludedPackages = null;
+	private String excludedFolders = null;
 	
 	private boolean verbose = false;
 	
@@ -521,5 +522,13 @@ public class Config implements Cloneable, ILocalConfig {
     
 	public void setExcludedPackages(String pkgs) {
 		excludedPackages = pkgs;		
+	}
+	
+    public String getExcludedSourceFolders() {
+    	return excludedFolders;
+    }
+    
+	public void setExcludedSourceFolders(String folders) {
+		excludedFolders = folders;		
 	}
 }
