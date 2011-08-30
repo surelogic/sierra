@@ -35,7 +35,10 @@ import org.eclipse.jdt.ui.PreferenceConstants;
 
 import com.surelogic.common.SLUtility;
 import com.surelogic.common.core.EclipseUtility;
+import com.surelogic.common.core.JDTUtility;
+import com.surelogic.common.core.JDTUtility.CompUnitFilter;
 import com.surelogic.common.logging.SLLogger;
+import com.surelogic.common.tool.ToolProperties;
 import com.surelogic.sierra.client.eclipse.Tools;
 import com.surelogic.sierra.client.eclipse.preferences.SierraPreferencesUtility;
 import com.surelogic.sierra.tool.IToolExtension;
@@ -232,8 +235,8 @@ public final class ConfigGenerator {
 		Config config = null;
 		if (!compilationUnits.isEmpty()) {
 			final ICompilationUnit firstCU = compilationUnits.get(0);
-			String projectPath = firstCU.getJavaProject().getResource()
-					.getLocation().toString();
+			IPath projectLoc = firstCU.getJavaProject().getResource().getLocation();
+			String projectPath = projectLoc.toString();
 			File baseDir = new File(projectPath);
 			IJavaProject javaProject = firstCU.getJavaProject();
 			File scanDocument = new File(computeScanDocumentName(javaProject,
@@ -247,11 +250,23 @@ public final class ConfigGenerator {
 			config.setScanDocument(scanDocument);
 			setupTools(config, javaProject);
 
+			final ToolProperties props = ToolProperties.readFromProject(projectLoc.toFile());
+			final String[] excludedPaths = props != null ? props.getExcludedSourcePaths() : ToolProperties.noStrings;
+			final String[] excludedPkgs = props != null ? props.getExcludedPackages() : ToolProperties.noStrings;			
+			if (props != null) {
+				config.setExcludedSourceFolders(props.getProperty(ToolProperties.EXCLUDE_PATH));
+				config.setExcludedPackages(props.getProperty(ToolProperties.EXCLUDED_PKGS));
+			}
+			final CompUnitFilter filter = JDTUtility.getFilter(javaProject.getProject(), excludedPaths, excludedPkgs);			
+			
 			try {
 				String defaultOutputLocation = javaProject.getOutputLocation()
 						.makeRelative().toOSString();
 
 				for (ICompilationUnit c : compilationUnits) {
+					if (filter.matches(c)) {
+						continue; // Excluded
+					}
 					String outputLocation = computeOutputLocation(javaProject,
 							c, defaultOutputLocation);
 					IType[] types = c.getAllTypes();
@@ -348,7 +363,8 @@ public final class ConfigGenerator {
 		File scanDocument = new File(computeScanDocumentName(project, false));
 
 		Config config = new Config();
-
+		config.setProject(project.getProject().getName());
+		
 		try {
 			setupToolForProject(config, project, true);
 		} catch (JavaModelException e) {
@@ -357,7 +373,6 @@ public final class ConfigGenerator {
 		}
 
 		config.setBaseDirectory(baseDir);
-		config.setProject(project.getProject().getName());
 		config.setDestDirectory(f_resultRoot);
 		config.setScanDocument(scanDocument);
 		setupTools(config, project);
@@ -523,9 +538,19 @@ public final class ConfigGenerator {
 		}
 		handled.add(p);
 
+		final ToolProperties props = ToolProperties.readFromProject(p.getProject().getLocation().toFile());
+		final String[] exclusions;
+		if (props != null) {
+			exclusions = props.getExcludedSourcePaths();
+			cfg.setExcludedSourceFolders(props.getProperty(ToolProperties.EXCLUDE_PATH));
+			cfg.setExcludedPackages(props.getProperty(ToolProperties.EXCLUDED_PKGS));
+		} else {
+			exclusions = ToolProperties.noStrings;
+		}
+		
 		final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		for (IClasspathEntry cpe : p.getResolvedClasspath(true)) {
-			handleClasspathEntry(cfg, handled, toBeAnalyzed, root, cpe);
+			handleClasspathEntry(cfg, handled, toBeAnalyzed, root, exclusions, cpe);
 		}
 		handleOutputLocation(cfg, p.getOutputLocation(), toBeAnalyzed);
 	}
@@ -546,9 +571,13 @@ public final class ConfigGenerator {
 				out));
 	}
 
+	interface ClasspathFilter {
+		boolean filter(IResource r);
+	}
+	
 	private static void handleClasspathEntry(final Config cfg,
 			Set<IJavaProject> handled, final boolean toBeAnalyzed,
-			final IWorkspaceRoot root, IClasspathEntry cpe)
+			final IWorkspaceRoot root, String[] excludedPaths, IClasspathEntry cpe)
 			throws JavaModelException {
 		switch (cpe.getEntryKind()) {
 		case IClasspathEntry.CPE_SOURCE:
@@ -561,10 +590,30 @@ public final class ConfigGenerator {
 				if ((excludePatterns != null && excludePatterns.length > 0)
 						|| (includePatterns != null && includePatterns.length > 0)) {
 					final String[] inclusions = convertPaths(includePatterns);
-					final String[] exclusions = convertPaths(excludePatterns);
+					final String[] exclusions;
+					if (excludedPaths.length > 0) {
+						Set<String> temp = new HashSet<String>();
+						for(String p : convertPaths(excludePatterns)) {
+							temp.add(p);
+						}
+						// Only add the applicable exclude paths
+						final String path = res.getFullPath().toString();
+						for(String p : makeAbsolute(cfg.getProject(), excludedPaths)) {
+							if (p.startsWith(path)) {
+								temp.add(p);
+							}
+						}
+						exclusions = temp.toArray(ToolProperties.noStrings);
+					} else {
+						exclusions = convertPaths(excludePatterns);
+					}
 					cfg.addTarget(new FilteredDirectoryTarget(
 							IToolTarget.Type.SOURCE, loc, inclusions,
 							exclusions));
+				} else if (excludedPaths.length > 0) {
+					cfg.addTarget(new FilteredDirectoryTarget(
+							IToolTarget.Type.SOURCE, loc, null,
+							makeAbsolute(cfg.getProject(), excludedPaths)));
 				} else {
 					cfg.addTarget(new FullDirectoryTarget(
 							IToolTarget.Type.SOURCE, loc));
@@ -590,6 +639,14 @@ public final class ConfigGenerator {
 			break;
 		default:
 		}
+	}
+
+	private static String[] makeAbsolute(String project, String[] excludedPaths) {
+		String[] rv = new String[excludedPaths.length];
+		for(int i=0; i<rv.length; i++) {
+			rv[i] = '/'+project+'/'+excludedPaths[i];
+		}
+		return rv;
 	}
 
 	private static String[] convertPaths(IPath[] patterns) {
