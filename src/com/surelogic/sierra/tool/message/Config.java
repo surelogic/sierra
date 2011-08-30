@@ -38,6 +38,7 @@ public class Config implements Cloneable, ILocalConfig {
 	private String sourceLevel = null;
 	private String targetLevel = null;
 	private String consolePath = null;
+	private String excludedPackages = null;
 	
 	private boolean verbose = false;
 	
@@ -513,4 +514,12 @@ public class Config implements Cloneable, ILocalConfig {
     public void setLogPath(String path) {
     	consolePath = path;
     }
+
+    public String getExcludedPackages() {
+    	return excludedPackages;
+    }
+    
+	public void setExcludedPackages(String pkgs) {
+		excludedPackages = pkgs;		
+	}
 }
