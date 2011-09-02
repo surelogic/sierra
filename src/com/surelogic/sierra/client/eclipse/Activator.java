@@ -21,6 +21,7 @@ import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.jdbc.FutureDatabaseException;
 import com.surelogic.common.license.SLLicenseProduct;
 import com.surelogic.common.logging.SLLogger;
+import com.surelogic.common.serviceability.scan.SierraScanCrashReport;
 import com.surelogic.common.ui.DialogTouchNotificationUI;
 import com.surelogic.common.ui.EclipseUIUtility;
 import com.surelogic.common.ui.dialogs.ErrorDialogUtility;
@@ -79,7 +80,7 @@ public final class Activator extends AbstractUIPlugin implements
 	@Override
 	public void run(final IProgressMonitor monitor)
 			throws InvocationTargetException, InterruptedException {
-		monitor.beginTask("Initializing the Sierra tool", 10);
+		monitor.beginTask("Initializing the Sierra tool", 11);
 
 		/*
 		 * "Touch" common-core-eclipse so the logging gets Eclipse-ified.
@@ -91,6 +92,13 @@ public final class Activator extends AbstractUIPlugin implements
 		 * "Touch" the JSure preference initialization.
 		 */
 		SierraPreferencesUtility.initializeDefaultScope();
+		monitor.worked(1);
+
+		/*
+		 * Set the scan crash reporter to an Eclipse implementation.
+		 */
+		SierraScanCrashReport.getInstance().setReporter(
+				EclipseScanCrashReporter.getInstance());
 		monitor.worked(1);
 
 		/*
