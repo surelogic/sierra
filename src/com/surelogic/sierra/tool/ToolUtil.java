@@ -19,6 +19,7 @@ import com.surelogic.common.XUtil;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.jobs.SLProgressMonitor;
 import com.surelogic.common.jobs.SLStatus;
+import com.surelogic.common.jobs.remote.AbstractRemoteSLJob;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.tool.analyzer.LazyZipDirArtifactGenerator;
 import com.surelogic.sierra.tool.message.Config;
@@ -165,7 +166,8 @@ public class ToolUtil {
 		tempDir.mkdir();
 		copy.setScanDocument(new File(tempDir, factory.getId()
 				+ MessageWarehouse.TOOL_STREAM_SUFFIX));
-
+		copy.setLogPath(new File(tempDir, factory.getId()+AbstractRemoteSLJob.LOG_SUFFIX).getAbsolutePath());
+		
 		// Set it to only run this one tool
 		StringBuilder sb = new StringBuilder();
 		List<IToolFactory> factories = findToolFactories();
