@@ -1,5 +1,7 @@
 package com.surelogic.sierra.client.eclipse.actions;
 
+import java.io.File;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -12,6 +14,7 @@ import com.surelogic.common.core.logging.SLEclipseStatusUtility;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.jobs.*;
 import com.surelogic.common.logging.SLLogger;
+import com.surelogic.common.serviceability.scan.SierraScanCrashReport;
 import com.surelogic.sierra.client.eclipse.Activator;
 import com.surelogic.sierra.tool.ToolException;
 import com.surelogic.sierra.tool.ToolUtil;
@@ -42,7 +45,7 @@ public class NewScanJob extends WorkspaceLockingJob {
 		try {
 			status = ToolUtil.scan(config, wrapper, true);
 
-			if (afterJob != null) {
+			if (afterJob != null && !monitor.isCanceled() && status.getSeverity() != SLSeverity.ERROR) {
 				afterJob.schedule();
 			}
 		} catch (Throwable ex) {
@@ -51,8 +54,9 @@ public class NewScanJob extends WorkspaceLockingJob {
 			}
 		}
 		if (!monitor.isCanceled()) {
-			if (status.getSeverity() == SLSeverity.ERROR && status.getException() != null) {
-				return dealWithException(status.getException());
+			if (status.getSeverity() == SLSeverity.ERROR/* && status.getException() != null*/) {
+				//return dealWithException(status.getException());
+				return dealWithException(status);
 			}
 			if (status != SLStatus.OK_STATUS) {
 				return SLEclipseStatusUtility.convert(status, Activator.getDefault());
@@ -76,7 +80,13 @@ public class NewScanJob extends WorkspaceLockingJob {
 			errNo = 46;
 			msg = I18N.err(errNo, getName());
 		}
-		return SLEclipseStatusUtility.createErrorStatus(errNo, msg, e);
+		SLStatus status = SLStatus.createErrorStatus(errNo, msg, e);
+		return dealWithException(status);
+	}
+	
+	private IStatus dealWithException(SLStatus status) { 
+		SierraScanCrashReport.getInstance().getReporter().reportScanCrash(status, new File(config.getLogPath()));
+		return Status.CANCEL_STATUS;
 	}
 
 	private Throwable unwrapException(Throwable e) {
