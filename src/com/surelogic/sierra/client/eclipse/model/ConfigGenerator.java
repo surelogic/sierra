@@ -37,6 +37,7 @@ import com.surelogic.common.SLUtility;
 import com.surelogic.common.core.EclipseUtility;
 import com.surelogic.common.core.JDTUtility;
 import com.surelogic.common.core.JDTUtility.CompUnitFilter;
+import com.surelogic.common.jobs.remote.AbstractRemoteSLJob;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.common.tool.ToolProperties;
 import com.surelogic.sierra.client.eclipse.Tools;
@@ -239,8 +240,8 @@ public final class ConfigGenerator {
 			String projectPath = projectLoc.toString();
 			File baseDir = new File(projectPath);
 			IJavaProject javaProject = firstCU.getJavaProject();
-			File scanDocument = new File(computeScanDocumentName(javaProject,
-					true));
+			final String docPrefix = computeDocumentPrefix(javaProject, true);
+			final File scanDocument = new File(completeScanDocumentName(docPrefix));
 
 			config = new Config();
 
@@ -248,6 +249,7 @@ public final class ConfigGenerator {
 			config.setProject(firstCU.getResource().getProject().getName());
 			config.setDestDirectory(f_resultRoot);
 			config.setScanDocument(scanDocument);
+			config.setLogPath(completeLogPath(docPrefix));
 			setupTools(config, javaProject);
 
 			final ToolProperties props = ToolProperties.readFromProject(projectLoc.toFile());
@@ -360,7 +362,8 @@ public final class ConfigGenerator {
 	public Config getProjectConfig(IJavaProject project) {
 		String projectPath = project.getResource().getLocation().toString();
 		File baseDir = new File(projectPath);
-		File scanDocument = new File(computeScanDocumentName(project, false));
+		final String docPrefix = computeDocumentPrefix(project, false);
+		final File scanDocument = new File(completeScanDocumentName(docPrefix));
 
 		Config config = new Config();
 		config.setProject(project.getProject().getName());
@@ -374,7 +377,8 @@ public final class ConfigGenerator {
 
 		config.setBaseDirectory(baseDir);
 		config.setDestDirectory(f_resultRoot);
-		config.setScanDocument(scanDocument);
+		config.setScanDocument(scanDocument);		
+		config.setLogPath(completeLogPath(docPrefix));
 		setupTools(config, project);
 
 		// Get clean option
@@ -382,13 +386,21 @@ public final class ConfigGenerator {
 		// Get excluded dirs - project specific
 		return config;
 	}
-
-	private String computeScanDocumentName(IJavaProject project, boolean partial) {
+	
+	private String computeDocumentPrefix(IJavaProject project, boolean partial) {
 		return f_sierraPath + File.separator + project.getProject().getName()
-				+ (partial ? ".partial." : ".") + ToolUtil.getTimeStamp()
+				+ (partial ? ".partial." : ".") + ToolUtil.getTimeStamp();
+	}
+	
+	private String completeScanDocumentName(String prefix) {
+		return prefix 
 				+ (USE_ZIP ? PARSED_ZIP_FILE_SUFFIX : PARSED_FILE_SUFFIX);
 	}
 
+	private String completeLogPath(String prefix) {
+		return prefix+AbstractRemoteSLJob.LOG_SUFFIX;
+	}
+	
 	private void setupTools(Config config, IJavaProject javaProject) {
 		config.setJavaVendor(System.getProperty("java.vendor"));
 		config.setJavaVersion(System.getProperty("java.version"));
