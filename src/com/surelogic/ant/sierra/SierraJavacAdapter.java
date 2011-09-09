@@ -12,6 +12,7 @@ import org.apache.tools.ant.types.*;
 import org.apache.tools.ant.util.StringUtils;
 
 import com.surelogic.common.jobs.*;
+import com.surelogic.common.jobs.remote.AbstractRemoteSLJob;
 import com.surelogic.sierra.tool.*;
 import com.surelogic.sierra.tool.message.Config;
 import com.surelogic.sierra.tool.message.ToolExtension;
@@ -117,6 +118,7 @@ public class SierraJavacAdapter extends DefaultCompilerAdapter {
 		File scanDocument = new File(scan.getDocument() + 
 				                     (USE_ZIP ? PARSED_ZIP_FILE_SUFFIX : PARSED_FILE_SUFFIX));
 		config.setScanDocument(scanDocument);
+		config.setLogPath(scan.getDocument()+AbstractRemoteSLJob.LOG_SUFFIX);
 		return config;
 	}
 
