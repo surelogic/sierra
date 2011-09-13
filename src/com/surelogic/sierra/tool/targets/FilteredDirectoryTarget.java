@@ -74,7 +74,10 @@ public class FilteredDirectoryTarget extends DirectoryTarget {
 			  addToPattern(sb, p);
 			  sb.append(".*"); // Match any suffix
 		  }
-		  final Pattern regex = Pattern.compile(sb.toString());
+		  final String s = sb.toString();
+		  System.out.println("Compiling '"+p+"' as "+s);
+		  
+		  final Pattern regex = Pattern.compile(s);
 		  final Matcher match = regex.matcher("");
 		  result[i] = new IPattern() {
 			public boolean matches(String path) {
@@ -89,17 +92,35 @@ public class FilteredDirectoryTarget extends DirectoryTarget {
   
   private static void addToPattern(StringBuilder sb, String p) {
 	  StringTokenizer st = new StringTokenizer(p, "?*", true);
+	  boolean lastWasStar = false; // To handle **
+	  
 	  while (st.hasMoreTokens()) {
+		  //System.out.println("Pattern so far: "+sb);
 		  String frag = st.nextToken();
+		  if (lastWasStar) {
+			  lastWasStar = false;
+			  
+			  if (frag.equals("*")) {
+				  // Found **
+				  sb.append(".*");
+				  continue;
+			  } else {
+				  sb.append("[^/]*");
+				  // Now handle frag
+			  }
+		  }
 		  if (frag.equals("?")) {
 			  sb.append('.');
 		  }
 		  else if (frag.equals("*")) {
-			  sb.append("[^/]*");
+			  lastWasStar = true;
 		  }
 		  else {
 			  sb.append(Pattern.quote(frag));
 		  }
+	  }
+	  if (lastWasStar) {
+		  sb.append("[^/]*");
 	  }
   }
   
@@ -117,6 +138,7 @@ public class FilteredDirectoryTarget extends DirectoryTarget {
     if (excludePatterns != null) {
       for(IPattern p : excludePatterns) {
         if (p.matches(relativePath)) {
+          System.out.println("Excluded: "+relativePath);
           return true;
         }
       }
