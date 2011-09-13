@@ -566,10 +566,10 @@ public final class ConfigGenerator {
 		for (IClasspathEntry cpe : p.getResolvedClasspath(true)) {
 			handleClasspathEntry(cfg, handled, toBeAnalyzed, root, excludedFolders, excludedPackages, cpe);
 		}
-		handleOutputLocation(cfg, p.getOutputLocation(), toBeAnalyzed);
+		handleOutputLocation(cfg, p.getOutputLocation(), excludedPackages, toBeAnalyzed);
 	}
 
-	private static void handleOutputLocation(final Config cfg, IPath outLoc,
+	private static void handleOutputLocation(final Config cfg, IPath outLoc, String[] excludedPkgs,
 			final boolean toBeAnalyzed) {
 		if (outLoc == null) {
 			return;
@@ -579,10 +579,13 @@ public final class ConfigGenerator {
 		if (res == null) {
 			return;
 		}
-		URI out = res.getLocationURI();
-		cfg.addTarget(new FullDirectoryTarget(
-				toBeAnalyzed ? IToolTarget.Type.BINARY : IToolTarget.Type.AUX,
-				out));
+		final URI out = res.getLocationURI();
+		final IToolTarget.Type type = toBeAnalyzed ? IToolTarget.Type.BINARY : IToolTarget.Type.AUX;
+		if (excludedPkgs != null && excludedPkgs.length > 0) {
+			cfg.addTarget(new FilteredDirectoryTarget(type, out, null, excludedPkgs));
+		} else {
+			cfg.addTarget(new FullDirectoryTarget(type, out));
+		}
 	}
 
 	interface ClasspathFilter {
@@ -636,7 +639,7 @@ public final class ConfigGenerator {
 							IToolTarget.Type.SOURCE, loc));
 				}
 			}
-			handleOutputLocation(cfg, cpe.getOutputLocation(), toBeAnalyzed);
+			handleOutputLocation(cfg, cpe.getOutputLocation(), excludedPkgs, toBeAnalyzed);
 			break;
 		case IClasspathEntry.CPE_LIBRARY:
 			IPath srcPath = cpe.getSourceAttachmentPath();
