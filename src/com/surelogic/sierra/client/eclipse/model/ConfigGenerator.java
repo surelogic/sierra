@@ -551,18 +551,20 @@ public final class ConfigGenerator {
 		handled.add(p);
 
 		final ToolProperties props = ToolProperties.readFromProject(p.getProject().getLocation().toFile());
-		final String[] exclusions;
+		final String[] excludedFolders, excludedPackages;
 		if (props != null) {
-			exclusions = props.getExcludedSourcePaths();
+			excludedFolders = makeAbsolute(p.getElementName(), props.getExcludedSourcePaths());			
 			cfg.setExcludedSourceFolders(props.getProperty(ToolProperties.EXCLUDE_PATH));
 			cfg.setExcludedPackages(props.getProperty(ToolProperties.EXCLUDED_PKGS));
+			excludedPackages = ToolProperties.convertPkgsToRelativePaths(props.getExcludedPackages());
 		} else {
-			exclusions = ToolProperties.noStrings;
+			excludedFolders = ToolProperties.noStrings;
+			excludedPackages = ToolProperties.noStrings;
 		}
 		
 		final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		for (IClasspathEntry cpe : p.getResolvedClasspath(true)) {
-			handleClasspathEntry(cfg, handled, toBeAnalyzed, root, exclusions, cpe);
+			handleClasspathEntry(cfg, handled, toBeAnalyzed, root, excludedFolders, excludedPackages, cpe);
 		}
 		handleOutputLocation(cfg, p.getOutputLocation(), toBeAnalyzed);
 	}
@@ -589,11 +591,18 @@ public final class ConfigGenerator {
 	
 	private static void handleClasspathEntry(final Config cfg,
 			Set<IJavaProject> handled, final boolean toBeAnalyzed,
-			final IWorkspaceRoot root, String[] excludedPaths, IClasspathEntry cpe)
+			final IWorkspaceRoot root, String[] excludedPaths, String[] excludedPkgs, IClasspathEntry cpe)
 			throws JavaModelException {
 		switch (cpe.getEntryKind()) {
 		case IClasspathEntry.CPE_SOURCE:
 			if (toBeAnalyzed) {
+				// Check if excluded
+				final String path = cpe.getPath().toPortableString();
+				for(String excluded : excludedPaths) {
+					if (path.equals(excluded)) {
+						return;
+					}
+				}
 				IResource res = root.findMember(cpe.getPath());
 				URI loc = res.getLocationURI();
 
@@ -603,18 +612,15 @@ public final class ConfigGenerator {
 						|| (includePatterns != null && includePatterns.length > 0)) {
 					final String[] inclusions = convertPaths(includePatterns);
 					final String[] exclusions;
-					if (excludedPaths.length > 0) {
+					if (excludedPkgs.length > 0) {	
+						// Fold the exclude pkgs in with the exclude patterns
 						Set<String> temp = new HashSet<String>();
 						for(String p : convertPaths(excludePatterns)) {
 							temp.add(p);
 						}
-						// Only add the applicable exclude paths
-						final String path = res.getFullPath().toString();
-						for(String p : makeAbsolute(cfg.getProject(), excludedPaths)) {
-							if (p.startsWith(path)) {
-								temp.add(p);
-							}
-						}
+						for(String p : excludedPkgs) {
+							temp.add(p);							
+						}						
 						exclusions = temp.toArray(ToolProperties.noStrings);
 					} else {
 						exclusions = convertPaths(excludePatterns);
@@ -622,10 +628,9 @@ public final class ConfigGenerator {
 					cfg.addTarget(new FilteredDirectoryTarget(
 							IToolTarget.Type.SOURCE, loc, inclusions,
 							exclusions));
-				} else if (excludedPaths.length > 0) {
+				} else if (excludedPkgs.length > 0) {
 					cfg.addTarget(new FilteredDirectoryTarget(
-							IToolTarget.Type.SOURCE, loc, null,
-							makeAbsolute(cfg.getProject(), excludedPaths)));
+							IToolTarget.Type.SOURCE, loc, null, excludedPkgs));
 				} else {
 					cfg.addTarget(new FullDirectoryTarget(
 							IToolTarget.Type.SOURCE, loc));
@@ -652,7 +657,7 @@ public final class ConfigGenerator {
 		default:
 		}
 	}
-
+	
 	private static String[] makeAbsolute(String project, String[] excludedPaths) {
 		String[] rv = new String[excludedPaths.length];
 		for(int i=0; i<rv.length; i++) {
