@@ -1,0 +1,33 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Sierra Client
+Bundle-SymbolicName: com.surelogic.sierra.client.eclipse;singleton:=true
+Bundle-Vendor: SureLogic, Inc.
+Bundle-Version: 4.0.2.qualifier
+Bundle-Activator: com.surelogic.sierra.client.eclipse.Activator
+Require-Bundle: com.surelogic.common,
+ com.surelogic.common.core,
+ com.surelogic.common.ui,
+ com.surelogic.sierra.message,
+ com.surelogic.sierra.tool,
+ com.surelogic.sierra.jdbc,
+ org.eclipse.ui,
+ org.eclipse.ui.console,
+ org.eclipse.ui.ide,
+ org.eclipse.core.runtime,
+ org.eclipse.core.resources,
+ org.eclipse.jdt,
+ org.eclipse.jdt.core,
+ org.eclipse.jdt.ui,
+ org.eclipse.jdt.launching,
+ org.apache.ant,
+ org.eclipse.ui.browser,
+ org.eclipse.ui.editors,
+ org.eclipse.jface.text,
+ org.eclipse.ui.workbench.texteditor
+Eclipse-LazyStart: true
+Bundle-ActivationPolicy: lazy
+Bundle-ClassPath: .
+Export-Package: com.surelogic.sierra.client.eclipse.jsure,
+ com.surelogic.sierra.client.eclipse.preferences
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6

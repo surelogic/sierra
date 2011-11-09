@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Eclipse-LazyStart: true
+Bundle-ActivationPolicy: lazy
+Require-Bundle: com.surelogic.sierra.tool;bundle-version="2.2.1",
+ com.surelogic.sierra.message;bundle-version="2.2.1",
+ com.surelogic.common;bundle-version="2.2.1"
+Bundle-ClassPath: .
