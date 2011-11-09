@@ -1,0 +1,5 @@
+	Tool: PMD Version: 4.2.5 Mnemonic: CallSuperFirst
+	Tool: PMD Version: 4.2.5 Mnemonic: CallSuperLast
+	Tool: PMD Version: 4.2.5 Mnemonic: ProtectLogD
+	Tool: PMD Version: 4.2.5 Mnemonic: ProtectLogV
+	Tool: PMD Version: 4.2.5 Mnemonic: AvoidThrowingNewInstanceOfSameException

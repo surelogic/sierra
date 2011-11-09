@@ -1,0 +1,155 @@
+
+Javadoc Comments
+com.puppycrawl.tools.checkstyle.checks.javadoc.PackageHtml 	Checks that all packages have a package documentation.
+com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocMethod 	Checks the Javadoc of a method or constructor.
+com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocStyle 	Custom Checkstyle Check to validate Javadoc.
+com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocType 	Checks the Javadoc of a type.
+com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocVariable 	Checks that a variable has Javadoc comment.
+com.puppycrawl.tools.checkstyle.checks.javadoc.WriteTag 	Outputs a JavaDoc tag as information.
+
+Naming Conventions
+com.puppycrawl.tools.checkstyle.checks.naming.AbstractClassName   	 Ensures that the names of abstract classes conforming to some regular expression.
+com.puppycrawl.tools.checkstyle.checks.naming.ConstantName 	Checks that constant names conform to a format specified by the format property.
+com.puppycrawl.tools.checkstyle.checks.naming.LocalFinalVariableName 	Checks that local final variable names conform to a format specified by the format property.
+com.puppycrawl.tools.checkstyle.checks.naming.LocalVariableName 	Checks that local, non-final variable names conform to a format specified by the format property.
+com.puppycrawl.tools.checkstyle.checks.naming.MemberName 	Checks that instance variable names conform to a format specified by the format property.
+com.puppycrawl.tools.checkstyle.checks.naming.MethodName 	Checks that method names conform to a format specified by the format property.
+com.puppycrawl.tools.checkstyle.checks.naming.PackageName 	Checks that package names conform to a format specified by the format property.
+com.puppycrawl.tools.checkstyle.checks.naming.ParameterName 	Checks that parameter names conform to a format specified by the format property.
+com.puppycrawl.tools.checkstyle.checks.naming.StaticVariableName 	Checks that static, non-final variable names conform to a format specified by the format property.
+com.puppycrawl.tools.checkstyle.checks.naming.TypeName 	Checks that type names conform to a format specified by the format property.
+
+Headers
+com.puppycrawl.tools.checkstyle.checks.header.Header 	Checks the header of the source against a fixed header file.
+com.puppycrawl.tools.checkstyle.checks.header.RegexpHeader 	Checks the header of the source against a header file that contains a regular expression for each line of the source header.
+com.puppycrawl.tools.checkstyle.checks.header.CrossLanguageRegexpHeader 	Checks the header of each source file against a header that contains a regular expression for each line of the source header.
+
+Imports
+com.puppycrawl.tools.checkstyle.checks.imports.AvoidStarImport 	Check that finds import statements that use the * notation.
+com.puppycrawl.tools.checkstyle.checks.imports.IllegalImport 	Checks for imports from a set of illegal packages.
+com.puppycrawl.tools.checkstyle.checks.imports.RedundantImport 	Checks for imports that are redundant.
+com.puppycrawl.tools.checkstyle.checks.imports.UnusedImports 	Checks for unused import statements.
+com.puppycrawl.tools.checkstyle.checks.imports.ImportOrder 	Class to check the ordering/grouping of imports.
+com.puppycrawl.tools.checkstyle.checks.imports.ImportControl 	Check that controls what packages can be imported in each package.
+
+Size Violations
+com.puppycrawl.tools.checkstyle.checks.sizes.ExecutableStatementCount 	Restricts the number of executable statements to a specified limit (default = 30).
+com.puppycrawl.tools.checkstyle.checks.sizes.FileLength 	Checks for long source files.
+com.puppycrawl.tools.checkstyle.checks.sizes.LineLength 	Checks for long lines.
+com.puppycrawl.tools.checkstyle.checks.sizes.MethodLength 	Checks for long methods.
+com.puppycrawl.tools.checkstyle.checks.sizes.AnonInnerLength 	Checks for long anonymous inner classes.
+com.puppycrawl.tools.checkstyle.checks.sizes.ParameterNumber 	Checks the number of parameters that a method or constructor has.
+
+Whitespace
+com.puppycrawl.tools.checkstyle.checks.whitespace.EmptyForInitializerPad 	Checks the padding of an empty for initializer; that is whether a space is required at an empty for initializer, or such spaces are forbidden.
+com.puppycrawl.tools.checkstyle.checks.whitespace.EmptyForIteratorPad 	Checks the padding of an empty for iterator; that is whether a space is required at an empty for iterator, or such spaces are forbidden.
+com.puppycrawl.tools.checkstyle.checks.whitespace.MethodParamPad 	Checks the padding between the identifier of a method definition, constructor definition, method call, or constructor invocation; and the left parenthesis of the parameter list.
+com.puppycrawl.tools.checkstyle.checks.whitespace.NoWhitespaceAfter 	Checks that there is no whitespace after a token.
+com.puppycrawl.tools.checkstyle.checks.whitespace.NoWhitespaceBefore 	Checks that there is no whitespace before a token.
+com.puppycrawl.tools.checkstyle.checks.whitespace.OperatorWrap 	Checks line wrapping for operators.
+com.puppycrawl.tools.checkstyle.checks.whitespace.ParenPad 	Checks the padding of parentheses; that is whether a space is required after a left parenthesis and before a right parenthesis, or such spaces are forbidden, with the exception that it does not check for padding of the right parenthesis at an empty for iterator.
+com.puppycrawl.tools.checkstyle.checks.whitespace.TypecastParenPad 	Checks the padding of parentheses for typecasts.
+com.puppycrawl.tools.checkstyle.checks.whitespace.TabCharacter 	Reports tab characters ('\t') in the source code.
+com.puppycrawl.tools.checkstyle.checks.whitespace.WhitespaceAfter 	Checks that a token is followed by whitespace, with the exception that it does not check for whitespace after the semicolon of an empty for iterator.
+com.puppycrawl.tools.checkstyle.checks.whitespace.WhitespaceAround 	Checks that a token is surrounded by whitespace.
+
+Modifiers
+com.puppycrawl.tools.checkstyle.checks.modifier.ModifierOrder 	Checks that the order of modifiers conforms to the suggestions in the Java Language specification, sections 8.1.1, 8.3.1 and 8.4.3.
+com.puppycrawl.tools.checkstyle.checks.modifier.RedundantModifier 	Checks for redundant modifiers in interface and annotation definitions.
+
+Block Checks
+com.puppycrawl.tools.checkstyle.checks.blocks.EmptyBlock 	Checks for empty blocks.
+com.puppycrawl.tools.checkstyle.checks.blocks.LeftCurly 	Checks the placement of left curly braces on types, methods and other blocks:
+com.puppycrawl.tools.checkstyle.checks.blocks.NeedBraces 	Checks for braces around code blocks.
+com.puppycrawl.tools.checkstyle.checks.blocks.RightCurly 	Checks the placement of right curly braces.
+com.puppycrawl.tools.checkstyle.checks.blocks.AvoidNestedBlocks 	Finds nested blocks.
+
+Coding
+com.puppycrawl.tools.checkstyle.checks.coding.ArrayTrailingComma 	Checks if array initialization contains optional trailing comma.
+com.puppycrawl.tools.checkstyle.checks.coding.AvoidInlineConditionals 	Detects inline conditionals.
+com.puppycrawl.tools.checkstyle.checks.coding.CovariantEquals 	Checks that if a class defines a covariant method equals, then it defines method equals(java.lang.Object).
+com.puppycrawl.tools.checkstyle.checks.coding.DoubleCheckedLocking 	Detect the double-checked locking idiom, a technique that tries to avoid synchronization overhead but is incorrect because of subtle artifacts of the java memory model.
+com.puppycrawl.tools.checkstyle.checks.coding.EmptyStatement 	Detects empty statements (standalone ';').
+com.puppycrawl.tools.checkstyle.checks.coding.EqualsHashCode 	Checks that classes that override equals() also override hashCode().
+com.puppycrawl.tools.checkstyle.checks.coding.FinalLocalVariable 	Ensures that local variables that never get their values changed, must be declared final.
+com.puppycrawl.tools.checkstyle.checks.coding.HiddenField 	Checks that a local variable or a parameter does not shadow a field that is defined in the same class.
+com.puppycrawl.tools.checkstyle.checks.coding.IllegalInstantiation 	Checks for illegal instantiations where a factory method is preferred.
+com.puppycrawl.tools.checkstyle.checks.coding.IllegalToken 	Checks for illegal tokens.
+com.puppycrawl.tools.checkstyle.checks.coding.IllegalTokenText 	Checks for illegal token text.
+com.puppycrawl.tools.checkstyle.checks.coding.InnerAssignment 	Checks for assignments in subexpressions, such as in String s = Integer.toString(i = 2);.
+com.puppycrawl.tools.checkstyle.checks.coding.MagicNumber 	Checks for magic numbers.
+com.puppycrawl.tools.checkstyle.checks.coding.MissingSwitchDefault 	Checks that switch statement has "default" clause.
+com.puppycrawl.tools.checkstyle.checks.coding.ModifiedControlVariable 	Check for ensuring that for loop control variables are not modified inside the for block.
+com.puppycrawl.tools.checkstyle.checks.coding.RedundantThrows 	Checks for redundant exceptions declared in throws clause such as duplicates, unchecked exceptions or subclasses of another declared exception.
+com.puppycrawl.tools.checkstyle.checks.coding.SimplifyBooleanExpression 	Checks for overly complicated boolean expressions.
+com.puppycrawl.tools.checkstyle.checks.coding.SimplifyBooleanReturn 	Checks for overly complicated boolean return statements.
+com.puppycrawl.tools.checkstyle.checks.coding.StringLiteralEquality 	Checks that string literals are not used with == or !=.
+com.puppycrawl.tools.checkstyle.checks.coding.NestedIfDepth 	Restricts nested if-else blocks to a specified depth (default = 1).
+com.puppycrawl.tools.checkstyle.checks.coding.NestedTryDepth 	Restricts nested try-catch-finally blocks to a specified depth (default = 1).
+com.puppycrawl.tools.checkstyle.checks.coding.SuperClone 	Checks that an overriding clone() method invokes super.clone().
+com.puppycrawl.tools.checkstyle.checks.coding.SuperFinalize 	Checks that an overriding finalize() method invokes super.finalize().
+com.puppycrawl.tools.checkstyle.checks.coding.IllegalCatch 	Catching java.lang.Exception, java.lang.Error or java.lang.RuntimeException is almost never acceptable.
+com.puppycrawl.tools.checkstyle.checks.coding.IllegalThrows 	Throwing java.lang.Error or java.lang.RuntimeException is almost never acceptable.
+com.puppycrawl.tools.checkstyle.checks.coding.PackageDeclaration 	Ensures there is a package declaration.
+com.puppycrawl.tools.checkstyle.checks.coding.JUnitTestCase 	Ensures that the setUp(), tearDown()methods are named correctly, have no arguments, return void and are either public or protected.
+com.puppycrawl.tools.checkstyle.checks.coding.ReturnCount 	Restricts return statements to a specified count (default = 2).
+com.puppycrawl.tools.checkstyle.checks.coding.IllegalType 	Checks that particular class are never used as types in variable declarations, return values or parameters.
+com.puppycrawl.tools.checkstyle.checks.coding.DeclarationOrder 	Checks that the parts of a class or interface declaration appear in the order suggested by the Code Conventions for the Java Programming Language.
+com.puppycrawl.tools.checkstyle.checks.coding.ParameterAssignment 	Disallow assignment of parameters.
+com.puppycrawl.tools.checkstyle.checks.coding.ExplicitInitialization 	Checks if any class or object member explicitly initialized to default for its type value (null for object references, zero for numeric types and char and false for boolean.
+com.puppycrawl.tools.checkstyle.checks.coding.DefaultComesLast 	Check that the default is after all the cases in a switch statement.
+com.puppycrawl.tools.checkstyle.checks.coding.MissingCtor 	Checks that classes (except abstract one) define a ctor and don't rely on the default one.
+com.puppycrawl.tools.checkstyle.checks.coding.FallThrough 	Checks for fall through in switch statements Finds locations where a case contains Java code - but lacks a break, return, throw or continue statement.
+com.puppycrawl.tools.checkstyle.checks.coding.MultipleStringLiterals 	Checks for multiple occurrences of the same string literal within a single file.
+com.puppycrawl.tools.checkstyle.checks.coding.MultipleVariableDeclarations 	Checks that each variable declaration is in its own statement and on its own line.
+com.puppycrawl.tools.checkstyle.checks.coding.RequireThis 	Checks that code doesn't rely on the "this" default.
+com.puppycrawl.tools.checkstyle.checks.coding.UnnecessaryParentheses 	Checks if unnecessary parentheses are used in a statement or expression.
+
+Class Design
+com.puppycrawl.tools.checkstyle.checks.design.VisibilityModifier 	Checks visibility of class members.
+com.puppycrawl.tools.checkstyle.checks.design.FinalClass 	Checks that class which has only private ctors is declared as final.
+com.puppycrawl.tools.checkstyle.checks.design.InterfaceIsType 	Implements Bloch, Effective Java, Item 17 - Use Interfaces only to define types.
+com.puppycrawl.tools.checkstyle.checks.design.HideUtilityClassConstructor 	Make sure that utility classes (classes that contain only static methods) do not have a public constructor.
+com.puppycrawl.tools.checkstyle.checks.design.DesignForExtension 	Checks that classes are designed for inheritance.
+com.puppycrawl.tools.checkstyle.checks.design.MutableException 	Ensures that exceptions (defined as any class name conforming to some regular expression) are immutable.
+com.puppycrawl.tools.checkstyle.checks.design.ThrowsCount 	Restricts throws statements to a specified count (default = 1).
+
+Duplicate Code
+com.puppycrawl.tools.checkstyle.checks.duplicates.StrictDuplicateCode 	Performs a line-by-line comparison of all code lines and reports duplicate code if a sequence of lines differs only in indentation.
+
+Metrics
+com.puppycrawl.tools.checkstyle.checks.metrics.BooleanExpressionComplexity 	Restricts nested boolean operators (&&, || and ^) to a specified depth (default = 3).
+com.puppycrawl.tools.checkstyle.checks.metrics.ClassDataAbstractionCoupling 	This metric measures the number of instantiations of other classes within the given class.
+com.puppycrawl.tools.checkstyle.checks.metrics.ClassFanOutComplexity 	The number of other classes a given class relies on.
+com.puppycrawl.tools.checkstyle.checks.metrics.CyclomaticComplexity 	Checks cyclomatic complexity against a specified limit.
+com.puppycrawl.tools.checkstyle.checks.metrics.NPathComplexity 	Checks the npath complexity against a specified limt (default = 200).
+com.puppycrawl.tools.checkstyle.checks.metrics.JavaNCSS 	This check calculates the Non Commenting Source Statements (NCSS) metric for java source files and methods.
+
+Miscellaneous
+com.puppycrawl.tools.checkstyle.checks.GenericIllegalRegexp 	A generic check for code problems, the user can search for any pattern.
+com.puppycrawl.tools.checkstyle.checks.NewlineAtEndOfFile 	Checks that there is a newline at the end of each file.
+com.puppycrawl.tools.checkstyle.checks.TodoComment 	A check for TODO comments.
+com.puppycrawl.tools.checkstyle.checks.Translation 	The TranslationCheck class helps to ensure the correct translation of code by checking property files for consistency regarding their keys.
+com.puppycrawl.tools.checkstyle.checks.UncommentedMain 	Detects uncommented main methods.
+com.puppycrawl.tools.checkstyle.checks.UpperEll 	Checks that long constants are defined with an upper ell.
+com.puppycrawl.tools.checkstyle.checks.ArrayTypeStyle 	Checks the style of array type definitions.
+com.puppycrawl.tools.checkstyle.checks.FinalParameters 	Check that method/constructor/catch/foreach parameters are final.
+com.puppycrawl.tools.checkstyle.checks.DescendantToken 	Checks for restricted tokens beneath other tokens.
+com.puppycrawl.tools.checkstyle.checks.Indentation 	Checks correct indentation of Java Code.
+com.puppycrawl.tools.checkstyle.checks.TrailingComment 	The check to ensure that requires that comments be the only thing on a line.
+com.puppycrawl.tools.checkstyle.checks.RequiredRegexp 	A check that makes sure that a specified pattern exists in the code.
+com.puppycrawl.tools.checkstyle.checks.Regexp 	A check that makes sure that a specified pattern exists (or not) in the file.
+
+J2EE Checks
+com.puppycrawl.tools.checkstyle.checks.j2ee.EntityBean 	Checks that an EntityBean implementation satisfies EntityBean requirements.
+com.puppycrawl.tools.checkstyle.checks.j2ee.FinalStatic 	Checks that all static fields are declared final.
+com.puppycrawl.tools.checkstyle.checks.j2ee.LocalHomeInterface 	Checks the local home interface requirements: 
+	* every method must not throw the java.rmi.RemoteException
+	Reference: Enterprise JavaBeansTM Specification,Version 2.0, section 9.6.2.
+com.puppycrawl.tools.checkstyle.checks.j2ee.LocalInterface 	Checks the methods of a local interface.
+com.puppycrawl.tools.checkstyle.checks.j2ee.MessageBean 	Checks that a MessageBean implementation satisfies MessageBean requirements.
+com.puppycrawl.tools.checkstyle.checks.j2ee.RemoteHomeInterface 	Checks the methods of a remote home interface.
+com.puppycrawl.tools.checkstyle.checks.j2ee.RemoteInterface 	Checks the methods of a remote interface.
+com.puppycrawl.tools.checkstyle.checks.j2ee.SessionBean 	Checks that a SessionBean implementation satisfies SessionBean requirements.
+com.puppycrawl.tools.checkstyle.checks.j2ee.ThisParameter 	Checks that 'this' is not a parameter of any method calls or constructors for a bean.
+com.puppycrawl.tools.checkstyle.checks.j2ee.ThisReturn 	Checks that 'this' is not returned by a bean method.

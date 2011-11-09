@@ -1,0 +1,14 @@
+Tool: FindBugs Version: 1.3.9 Mnemonic: TESTING
+Tool: FindBugs Version: 1.3.9 Mnemonic: TESTING2
+Tool: FindBugs Version: 1.3.9 Mnemonic: UR_UNINIT_READ_CALLED_FROM_SUPER_CONSTRUCTOR
+Tool: FindBugs Version: 1.3.9 Mnemonic: SIC_THREADLOCAL_DEADLY_EMBRACE
+Tool: FindBugs Version: 1.3.9 Mnemonic: NP_CLOSING_NULL
+Tool: FindBugs Version: 1.3.9 Mnemonic: RC_REF_COMPARISON_BAD_PRACTICE
+Tool: FindBugs Version: 1.3.9 Mnemonic: RC_REF_COMPARISON_BAD_PRACTICE_BOOLEAN
+Tool: FindBugs Version: 1.3.9 Mnemonic: VA_FORMAT_STRING_EXPECTED_MESSAGE_FORMAT_SUPPLIED
+Tool: FindBugs Version: 1.3.9 Mnemonic: JLM_JSR166_UTILCONCURRENT_MONITORENTER
+Tool: FindBugs Version: 1.3.9 Mnemonic: EC_INCOMPATIBLE_ARRAY_COMPARE
+Tool: FindBugs Version: 1.3.9 Mnemonic: BC_IMPOSSIBLE_DOWNCAST
+Tool: FindBugs Version: 1.3.9 Mnemonic: BC_IMPOSSIBLE_DOWNCAST_OF_TOARRAY
+Tool: FindBugs Version: 1.3.9 Mnemonic: RV_RETURN_VALUE_OF_PUTIFABSENT_IGNORED
+Tool: FindBugs Version: 1.3.9 Mnemonic: LG_LOST_LOGGER_DUE_TO_WEAK_REFERENCE
