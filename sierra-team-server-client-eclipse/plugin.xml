@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+
+	<!-- Sierra views -->
+
+	<extension point="org.eclipse.ui.views">
+		<view name="Local Team Server"
+			icon="platform:/plugin/com.surelogic.common/lib/images/sierra_server_local.gif"
+			category="com.surelogic.sierra.client.eclipse"
+			class="com.surelogic.sierra.eclipse.teamserver.views.TeamServerView"
+			id="com.surelogic.sierra.eclipse.teamserver.views.TeamServerView">
+		</view>
+	</extension>
+
+	<!-- Code Review perspective links and Java perspective links -->
+
+	<extension point="org.eclipse.ui.perspectiveExtensions">
+		<perspectiveExtension
+			targetID="com.surelogic.sierra.client.eclipse.perspectives.CodeReviewPerspective">
+			<viewShortcut
+				id="com.surelogic.sierra.eclipse.teamserver.views.TeamServerView">
+			</viewShortcut>
+		</perspectiveExtension>
+	</extension>
+
+	<extension point="org.eclipse.ui.perspectiveExtensions">
+		<perspectiveExtension
+			targetID="org.eclipse.jdt.ui.JavaPerspective">
+			<viewShortcut
+				id="com.surelogic.sierra.eclipse.teamserver.views.TeamServerView">
+			</viewShortcut>
+		</perspectiveExtension>
+	</extension>
+
+	<!-- Sierra preferences -->
+
+	<extension point="org.eclipse.ui.preferencePages">
+		<page
+			class="com.surelogic.sierra.eclipse.teamserver.preferences.LocalTeamServerPreferencePage"
+			id="com.surelogic.sierra.eclipse.teamserver.preferences.LocalTeamServerPreferencePage"
+			name="Local Team Server"
+			category="com.surelogic.sierra.client.eclipse.preferences.SierraPreferencePage">
+			<keywordReference id="com.surelogic.sierra.teamserver.key1" />
+			<keywordReference id="com.surelogic.sierra.teamserver.key2" />
+			<keywordReference id="com.surelogic.sierra.client.key1" />
+			<keywordReference id="com.surelogic.sierra.client.key2" />
+			<keywordReference id="com.surelogic.sierra.client.key6" />
+		</page>
+	</extension>
+
+	<extension point="org.eclipse.ui.keywords">
+		<keyword label="Team" id="com.surelogic.sierra.teamserver.key1" />
+		<keyword label="Server"
+			id="com.surelogic.sierra.teamserver.key2" />
+	</extension>
+
+	<extension point="org.eclipse.core.runtime.preferences">
+		<initializer
+			class="com.surelogic.sierra.eclipse.teamserver.preferences.PreferenceInitializer" />
+	</extension>
+
+</plugin>
