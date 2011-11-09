@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="server-deployment">
+	<!-- NOTE: This script is included from .. so its paths are WRONG if it is run directly -->
+
+	<description>Sierra server and portal Jetty with embedded Derby deployment</description>
+
+	<target name="deploy-site" depends="deploy-team-server, deploy-root" />
+
+	<target name="deploy-team-server">
+		<!-- Update undeploy-app with any changes made to the deployment -->
+		<copy file="./etc/sierra-embedded-derby.xml" todir="../jetty/etc/" />
+		<copy file="./etc/keystore" todir="../jetty/etc/" />
+		<copy file="./lib/derby.jar" todir="../jetty/lib/ext/" />
+		<copy file="./lib/mail.jar" todir="../jetty/lib/ext/" />
+		<copy file="../sierra-portal-servlets/lib/jcommon-1.0.12.jar" todir="../sierra-portal/lib/web-dependencies/" />
+		<copy file="../sierra-portal-servlets/lib/jfreechart-1.0.9.jar" todir="../sierra-portal/lib/web-dependencies/" />
+		<copy file="../sierra-portal-servlets/lib/commons-lang3-3.0.jar" todir="../sierra-portal/lib/web-dependencies/" />
+		<copy file="../sierra-message/srpc/commons-codec-1.3.jar" todir="../sierra-portal/lib/web-dependencies/"/>
+		<copy file="../sierra-message/srpc/commons-httpclient-3.1.jar" todir="../sierra-portal/lib/web-dependencies/"/>
+		<copy file="../sierra-message/srpc/commons-logging-1.1.1.jar" todir="../sierra-portal/lib/web-dependencies/"/>
+		<copy file="../sierra-message/srpc/commons-fileupload-1.2.1.jar" todir="../sierra-portal/lib/web-dependencies/"/>
+		<copy file="../sierra-message/srpc/commons-io-1.4.jar" todir="../sierra-portal/lib/web-dependencies/"/>
+		<jar destfile="../sierra-portal/lib/web-dependencies/common.jar" basedir="../common/bin" />
+		<jar destfile="../sierra-portal/lib/web-dependencies/sierra-jdbc.jar" basedir="../sierra-jdbc/bin" />
+		<jar destfile="../sierra-portal/lib/web-dependencies/sierra-jdbc-server.jar" basedir="../sierra-jdbc-server/bin" />
+		<jar destfile="../sierra-portal/lib/web-dependencies/sierra-message.jar" basedir="../sierra-message/bin" />
+		<jar destfile="../sierra-portal/lib/web-dependencies/sierra-portal-servlets.jar" basedir="../sierra-portal-servlets/bin" />
+		<path id="gwt.class.path">
+			<pathelement path="${java.class.path}/" />
+			<pathelement location="../sierra-portal/src" />
+			<pathelement path="../sierra-portal/lib/gwt/gwt-user.jar" />
+			<pathelement path="../sierra-portal/lib/gwt/gwt-dev.jar" />
+		</path>
+		<delete dir="../sierra-portal/www" />
+		<java classpathref="gwt.class.path" classname="com.google.gwt.dev.Compiler" fork="true" maxmemory="512m">
+			<arg value="-localWorkers" />
+			<arg value="2" />
+			<arg value="-war" />
+			<arg value="../sierra-portal/www" />
+			<arg value="${gwt.module}" />
+		</java>
+		<war destfile="../jetty/webapps/sl.war" webxml="../sierra-portal/web.xml">
+			<fileset dir="../sierra-portal/www/com.surelogic.sierra.gwt.SierraPortal" />
+			<classes dir="../sierra-portal/bin" />
+			<classes dir="../sierra-services/bin" />
+			<lib dir="../sierra-portal/lib/web-dependencies" />
+		</war>
+	</target>
+
+	<target name="deploy-root">
+		<war destfile="../jetty/webapps/root.war" webxml="./webroot/web.xml">
+			<fileset dir="./webroot">
+				<exclude name="web.xml" />
+			</fileset>
+		</war>
+	</target>
+
+	<target name="undeploy-site" depends="undeploy-team-server, undeploy-root" />
+
+	<target name="undeploy-team-server">
+		<delete quiet="true" file="../jetty/etc/sierra-embedded-derby.xml" />
+		<delete quiet="true" file="../jetty/etc/keystore" />
+		<delete quiet="true" file="../jetty/etc/sierraRealm.properties" />
+		<delete quiet="true" file="../jetty/lib/ext/derby.jar" />
+		<delete quiet="true" file="../jetty/lib/ext/derbyclient.jar" />
+		<delete quiet="true" file="../jetty/lib/ext/mail.jar" />
+		<!-- ../jetty/lib/ext/common.jar is obsolete after Jan 08 -->
+		<delete quiet="true" file="../jetty/lib/ext/common.jar" />
+
+		<!-- If the deployment was Java 5 then we need to clean out JAXB libraries -->
+		<delete quiet="true" file="../jetty/lib/ext/activation.jar" />
+		<delete quiet="true" file="../jetty/lib/ext/jaxb-api.jar" />
+		<delete quiet="true" file="../jetty/lib/ext/jaxb-impl.jar" />
+		<delete quiet="true" file="../jetty/lib/ext/jaxb-xjc.jar" />
+		<delete quiet="true" file="../jetty/lib/ext/jaxb1-impl.jar" />
+		<delete quiet="true" file="../jetty/lib/ext/jsr173_1.0_api.jar" />
+		<delete quiet="true" file="../jetty/lib/ext/sjsxp.jar" />
+
+		<delete quiet="true" file="../sierra-services/lib/web-dependencies/jcommon-1.0.12.jar" />
+		<delete quiet="true" file="../sierra-services/lib/web-dependencies/jfreechart-1.0.9.jar" />
+		<delete quiet="true" file="../sierra-services/lib/web-dependencies/common.jar" />
+		<delete quiet="true" file="../sierra-services/lib/web-dependencies/sierra-jdbc.jar" />
+		<delete quiet="true" file="../sierra-services/lib/web-dependencies/sierra-jdbc-server.jar" />
+		<delete quiet="true" file="../sierra-services/lib/web-dependencies/sierra-message.jar" />
+		<!-- sierra-services.war is obsolete after Jan 31 -->
+		<delete quiet="true" file="../jetty/webapps/sierra-services.war" />
+		<!-- services.war is obsolete after Mar 17 -->
+		<delete quiet="true" file="../jetty/webapps/services.war" />
+		<delete quiet="true" file="../sierra-portal/lib/web-dependencies/common.jar" />
+		<delete quiet="true" file="../sierra-portal/lib/web-dependencies/sierra-jdbc.jar" />
+		<delete quiet="true" file="../sierra-portal/lib/web-dependencies/sierra-message.jar" />
+		<!-- sierra-portal-rpc.jar is obsolete after Jan 08 -->
+		<delete quiet="true" file="../sierra-portal/lib/web-dependencies/sierra-portal-rpc.jar" />
+		<delete quiet="true" file="../sierra-portal/lib/web-dependencies/sierra-portal-servlets.jar" />
+		<delete quiet="true" file="../sierra-portal/lib/web-dependencies/commons-codec-1.3.jar.jar" />
+		<delete quiet="true" file="../sierra-portal/lib/web-dependencies/commons-httpclient-3.1.jar" />
+		<delete quiet="true" file="../sierra-portal/lib/web-dependencies/commons-logging-1.1.1.jar" />
+		<delete quiet="true" includeemptydirs="true">
+			<fileset dir="../sierra-portal/www/${gwt.module}" includes="**/*" />
+		</delete>
+		<!-- sierra-portal.war is obsolete after Jan 31 -->
+		<delete quiet="true" file="../jetty/webapps/sierra-portal.war" />
+		<!-- portal.war is obsolete after Mar 17 -->
+		<delete quiet="true" file="../jetty/webapps/portal.war" />
+		<delete quiet="true" file="../jetty/webapps/sl.war" />
+	</target>
+
+	<target name="undeploy-root">
+		<delete quiet="true" file="../jetty/webapps/root.war" />
+	</target>
+</project>

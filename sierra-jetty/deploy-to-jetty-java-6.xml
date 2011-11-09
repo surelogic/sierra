@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project default="deploy-site" name="deploy-to-jetty-java-6">
+	<property name="gwt.module" value="com.surelogic.sierra.gwt.SierraPortal"/>
+	
+	<import file="lib/deploy.xml" />
+</project>
