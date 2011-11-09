@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="test-ant" default="scan" basedir=".">
+  <taskdef resource="com/surelogic/sierra/tool/ant/antlib.xml"/>
+
+	<target name="scan">
+	  <echo message="${basedir}/src"/>
+	  <sierra-scan 
+	       srcdir="${basedir}/src"
+         destdir="${basedir}/bin"
+         debug="on"
+         verbose="on"
+         source="1.5"
+    />
+    <echo message="${basedir}/bin"/>
+	</target>
+</project>

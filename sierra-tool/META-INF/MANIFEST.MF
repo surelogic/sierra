@@ -1,0 +1,19 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Sierra Analysis Tool Integration
+Bundle-SymbolicName: com.surelogic.sierra.tool;singleton:=true
+Bundle-Version: 4.0.2.qualifier
+Require-Bundle: com.surelogic.common,
+ com.surelogic.sierra.message,
+ org.eclipse.jdt.core,
+ org.eclipse.core.runtime
+Export-Package: com.surelogic.sierra.tool,
+ com.surelogic.sierra.tool.analyzer,
+ com.surelogic.sierra.tool.reckoner
+Bundle-ClassPath: .,
+ Tools/reckoner/reckoner.jar,
+ lib/commons-cli-1.1.jar
+Bundle-Vendor: SureLogic, Inc.
+Sierra-Tool: com.surelogic.sierra.tool.reckoner.ReckonerFactory
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+
