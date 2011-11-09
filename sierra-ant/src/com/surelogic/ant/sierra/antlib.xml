@@ -1,0 +1,14 @@
+<antlib>
+	<!-- For ant < 1.6 -->
+	<taskdef resource="com/surelogic/ant/sierra/ant.properties"/>
+		
+	<taskdef
+		name="sierra-scan"
+		classname="com.surelogic.ant.sierra.SierraScan"
+		onerror="ignore" />		
+
+	<taskdef
+		name="sierra-publish"
+		classname="com.surelogic.ant.sierra.SierraPublish"
+		onerror="ignore" />		
+</antlib>

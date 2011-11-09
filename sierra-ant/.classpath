@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/sierra-tool"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/sierra-message"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/common"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/sierra-jdbc"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/sierra-fb"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/sierra-metrics"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/sierra-pmd"/>
+	<classpathentry kind="lib" path="ant.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

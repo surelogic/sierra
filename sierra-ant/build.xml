@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="build-ant-task" default="all">
+	<description>Build for SL Ant tasks</description>
+
+  <target name="all" depends="clean,build,zip"/>
+  
+  <target name="clean-build" depends="clean,build"/>
+  
+  <target name="clean">
+    <delete dir="./lib"/>
+  </target>
+  
+	<target name="build">
+	  <mkdir dir="./lib"/>
+	  
+	  <mkdir dir="./lib/tools/pmd"/>
+	  <copy todir="./lib/tools/pmd">
+	    <fileset dir="../sierra-pmd" excludes="src/"/>	      
+	  </copy>
+	  
+	  <mkdir dir="./lib/tools/findbugs"/>
+	  <copy todir="./lib/tools/findbugs">
+	    <fileset dir="../sierra-fb" excludes="src/"/>	      
+	  </copy>
+	  
+	  <mkdir dir="./lib/tools/reckoner"/>
+	  <copy todir="./lib/tools/reckoner">
+	    <fileset dir="../sierra-tool" excludes="src/"/>	    
+	  </copy>
+	  <copy todir="./lib/tools/reckoner/reckoner/lib">
+	    <fileset dir="../sierra-metrics/lib">
+	      <include name="*.jar"/>
+	    </fileset>
+	  </copy>
+ 
+		<jar destfile="./lib/common.jar" basedir="../common/bin" />
+	  <mkdir dir="./lib/common"/>
+	  <copy todir="./lib/common">
+	    <fileset dir="../common/lib"/>
+	  </copy>
+	  
+		<jar destfile="./lib/sierra-jdbc.jar" basedir="../sierra-jdbc/bin" />
+	  
+		<jar destfile="./lib/sierra-message.jar" basedir="../sierra-message/bin" />
+	  <mkdir dir="./lib/message"/>
+	  <copy todir="./lib/message">
+	    <fileset dir="../sierra-message/srpc"/>
+	  </copy>
+	  
+		<jar destfile="./lib/sierra-tool.jar" basedir="../sierra-tool/bin" />
+	  
+	  <copy todir="./lib/junit">
+	    <fileset dir="./org.junit4_4.3.1"/>
+	  </copy>
+	  
+	  <copy todir="./lib/jaxb">
+	  	    <fileset dir="./jaxb"/>
+	  </copy>
+	  
+		<jar destfile="./lib/sierra-ant.jar" basedir="../sierra-ant/bin" />
+	  
+	</target>
+	  
+	<target name="zip">
+	  <zip destfile="./lib/tools/findbugs/com.surelogic.sierra.fb.jar" basedir="./lib/tools/findbugs/bin"/>
+	  <zip destfile="./lib/tools/pmd/com.surelogic.sierra.pmd.jar" basedir="./lib/tools/pmd/bin"/>
+	  <zip destfile="./lib/tools/reckoner/com.surelogic.sierra.tool.jar" basedir="./lib/tools/reckoner/bin"/>
+
+	  <zip destfile="./sierra-ant.zip" basedir=".."
+	       includes="sierra-ant/lib/**/*.jar, sierra-ant/lib/**/*.MF, sierra-ant/README.txt"/>
+	</target>
+</project>
+	  
