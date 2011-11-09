@@ -1,0 +1,685 @@
+@CHARSET "ISO-8859-1";
+
+/* Set default font sizes */
+body {
+	font-family: Helvetica, Verdana, Arial, sans-serif;
+	font-size: 100%;
+}
+
+p, ul, ol, td {
+	font-size: 90%;
+}
+
+h1 { font-size: 160%; }
+h2 { font-size: 140%; }
+h3 { font-size: 120%; }
+h4 { font-size: 100%; }
+h5 { font-size: 90%; }
+
+a {
+	color: #005596;
+	text-decoration: underline;
+	font-size: 90%;
+}
+
+a.hover {
+	color: #005596;
+	text-decoration: underline;
+}
+
+img {
+	border: none;
+}
+
+.font-italic {
+	font-style: italic;
+}
+
+.font-gray {
+	color: #999999;
+}
+
+.font-strong {
+	color: #FF7010;
+	font-size: 100%;
+	font-weight: bold;
+	margin-top: 5px;
+	margin-left: 2px;
+}
+
+.outlined-table {
+	border: 1px solid black;
+}
+
+.outlined-widget {
+	border: 1px solid #001166;
+}
+
+.logo {
+	margin: 4px;
+}
+
+/* Header */
+.header {
+	background-color: #FFFFFF;
+	background-repeat: repeat-x;
+	width: 100%;
+	padding: 0px 0px 0px 0px;
+	margin: 0px 0px 0px 0px;
+}
+
+.header-tab-panel {
+	width: 100%;
+	border-spacing: 0px;
+}
+
+.header-tab-left {
+	border-top: 1px solid #FFFFFF;
+	border-right: 1px solid #000000;
+	border-bottom: 1px solid #000000;
+}
+	
+.header-tab-right {
+	border-top: 1px solid #FFFFFF;
+	border-bottom: 1px solid #000000;
+}
+
+.header-tab {
+	font-weight: normal;
+	text-align: center;
+	white-space: nowrap;
+	cursor: pointer;
+	cursor: hand;
+	padding-left: 1ex;
+	padding-right: 1ex;
+	color: #FFFFFF;
+	border-bottom: 1px solid #000000;
+}
+
+.header-tab a {
+	color: #FFFFFF;
+	text-decoration: none;
+}
+
+.header-tab-spacer {
+	width: 10px;
+	border-top: solid 1px #FFFFFF;
+	border-right: solid 1px #000000;
+	border-bottom: 1px solid #000000;
+}
+
+.header-tab-welcome {
+	background-color: #7096b3;
+	border-right: solid 1px #000000;
+	border-top: solid 1px #000000;
+}
+
+.header-tab-buglink {
+	background-color: #7096b3;
+	border-right: solid 1px #000000;
+	border-top: solid 1px #000000;
+}
+
+.header-tab-team {
+	background-color: #7096b3;
+	border-right: solid 1px #000000;
+	border-top: solid 1px #000000;
+}
+
+.header-tab-admin {
+	background-color: #7096b3;
+	border-right: solid 1px #000000;
+	border-top: solid 1px #000000;
+}
+
+.header-tab-selected {
+	cursor: pointer;
+	cursor: hand;
+	background-color: #FFFFFF;
+	border-top: 1px solid #000000;
+	border-right: 1px solid #000000;
+	border-bottom: 1px solid #FFFFFF;
+	color: #000000;
+}
+	
+.header-tab-selected a {
+	color: #000000;
+}
+
+.sl-HeaderComposite-utility {
+	color: #333333;
+	margin-right: 5px;
+	margin-top: 5px;
+}
+
+.sl-HeaderComposite-utility-clickable {
+	text-decoration: underline;
+	cursor: pointer;
+	cursor: hand;
+}
+
+.user {
+	color: #FF7010;
+}
+
+/* Log */
+#log-pane {
+	
+}
+
+.log-panel {
+	color: #666666;
+	border: 1px solid;
+}
+
+.log-item {
+	
+}
+
+.log-item-text {
+	font-size: small;
+}
+
+/* Login Panel */
+.login-panel {
+	border: 2px groove;
+	padding: 10px;
+	position: absolute;
+	top: 40%;
+	left: 35%;
+	width: 30%;
+}
+
+.login-errormessage {
+	color: #FF3333;
+}
+
+/* One-time server configuration form */
+.one-time-form {
+	border: 2px groove;
+	padding: 10px;
+	position: absolute;
+	top: 40%;
+	left: 35%;
+	width: 30%;
+}
+
+/* Class for items that can be clicked */
+.clickable {
+	color: #005596;
+	text-decoration: underline;
+	cursor: pointer;
+	cursor: hand;
+}
+
+/* Temp non-styled clickable */
+.clickable2 {
+	cursor: pointer;
+	cursor: hand;
+}
+
+.error {
+	color: red;
+}
+
+.success {
+	color: green;
+}
+
+.padded {
+	padding: 4px;
+}
+
+.padded-bottom {
+	padding-bottom: 4px;
+}
+
+/* SureLogic Component Styling */
+.sl-ContentComposite {
+	width: 100%;
+	height: 100%;
+}
+
+.sl-ContentComposite-title {
+	color: #FF7010;
+	font-size: medium;
+	margin-bottom: 1ex;
+	margin-top: 1ex;
+}
+
+.sl-TabComposite {
+	width: 100%;
+}
+
+/* Action panel - holds a horizontal set of action links */
+.sl-ActionPanel {
+	padding-bottom: 4px;
+}
+
+.sl-ActionPanel .sl-ActionPanel-item {
+	color: #005596;
+	text-decoration: underline;
+	cursor: pointer;
+	cursor: hand;
+	padding-right: 1ex;
+}
+
+/* Paging Panel */
+.sl-PagingPanel-text {
+	font-size: small;
+}
+
+.sl-PagingPanel-button {
+	height: 16px;
+	font-size: small;
+}
+
+/* Overview tables */
+.dashboard {
+	margin: 0px;
+}
+
+.dashboard-cell {
+	vertical-align: top;
+}
+
+.dashboard-blankedit {
+	border: 1px dotted gray;
+}
+
+/* Table Section */
+.sl-TableSection {
+	border-spacing: 0px;
+	width: 100%;
+	border-bottom: 1px solid #D3D3D3;
+}
+
+.sl-TableSection-header {
+	text-align: left;
+	color: white;
+	background-color: #7096b3;
+}
+
+.sl-TableSection-header td {
+	border-collapse: collapse;
+	padding-right: 5px;
+	padding-left: 5px;
+}
+
+.sl-TableSection-data td {
+	border-right: 1px solid #d3d3d3;
+	border-left: 1px solid #d3d3d3;
+	border-collapse: collapse;
+	padding-right: 5px;
+	padding-left: 5px;
+	empty-cells: show;
+}
+
+.cell-text {
+	text-align: left;
+}
+
+.cell-number {
+	text-align: right;
+}
+
+.cell-date {
+	text-align: center;
+}
+
+.cell-widget {
+	text-align: center;
+}
+
+/* Settings Page */
+.settings-info-text {
+	font-size: smaller;
+}
+
+.settings-label-text {
+	text-align: right;
+}
+
+/* Finding content */
+.audit {
+	margin-top: 0px;
+	margin-bottom: 0px;
+	text-indent: 3em;
+}
+
+/* Section */
+.sl-Section {
+	border-spacing: 1px;
+	padding: 3px;
+}
+
+.sl-Section-titlepanel {
+	width: 100%;
+	background-color: #DDDDDD;
+	padding: 2px 4px 4px 2px;
+	border: 1px solid #666699;
+}
+
+.sl-Section-title {
+	
+}
+
+.sl-Section-info {
+	font-weight: bold;
+}
+
+.sl-Section-actionpanel {
+	font-size: small;
+	font-weight: bold;
+	text-decoration: underline;
+	cursor: pointer;
+	cursor: hand;
+}
+
+.sl-Section-actionpanel-item {
+	padding-left: 10px;
+}
+
+.sl-Section-contentpanel {
+	border: 1px solid #666699;
+	width: 100%;
+	padding: 1px;
+}
+
+.sl-Section-contentpanel-editing {
+	border: 3px groove #666699;
+}
+
+.sl-Subsection-titlepanel {
+	background-color: #FFFFFF;
+	border-top: none;
+	border-left: none;
+	border-right: none;
+	border-bottom: 1px solid #000000;
+}
+
+.sl-Subsection-contentpanel {
+	border: none;
+}
+
+/* SL Button */
+.sl-Button {
+	border: 2px groove #001166;
+	text-align: center;
+	background-color: #DDDDDD;
+	cursor: pointer;
+	cursor: hand;
+}
+
+.sl-Button-up {
+	
+}
+
+.sl-Button-down {
+	background-color: #333366;
+}
+
+.sl-Button-up-hovering {
+	background-color: #EEEEFF;
+}
+
+.sl-Button-up-disabled {
+	background-color: #EEEEEE;
+	border: 2px groove #999999;
+	color: #999999;
+	cursor: default;
+}
+
+.sl-Button-down-disabled {
+	background-color: #EEEEEE;
+	border: 2px groove #999999;
+	color: #999999;
+	cursor: default;
+}
+
+/* Grid panel */
+.sl-GridPanel {
+	width: 100%;
+	border: 1px solid;
+	background-color: #7096b3;
+}
+
+.sl-GridPanel .sl-GridPanel-actions {
+	padding: 1px;
+	color: white;
+}
+
+.sl-GridPanel .sl-GridPanel-table {
+	
+}
+
+.sl-Grid {
+	border-collapse: separate;
+	border-spacing: 0px;
+	width: 100%;
+}
+
+.sl-Grid-Editable {
+	text-decoration: underline;
+}
+
+.sl-Grid .sl-Grid-headerrow {
+	
+}
+
+.sl-Grid .sl-Grid-header {
+	border: 2px groove;
+	color: white;
+}
+
+.sl-Grid .sl-Grid-itemrow {
+	background-color: #FFFFFF;
+	border-bottom: 1px solid;
+}
+
+.sl-Grid .sl-Grid-item {
+	padding: 3px;
+}
+
+.sl-Grid .sl-Grid-error {
+	color: red;
+}
+
+.sl-Grid .sl-Grid-info {
+	font-style: italic;
+}
+
+/* SL Item Label */
+.sl-ItemLabel {
+	border-collapse: collapse;
+	border: 1px solid #FFFFFF;
+	cursor: pointer;
+	cursor: hand;
+}
+
+.sl-ItemLabel-text {
+	font-size: small;
+}
+
+.sl-ItemLabel-over {
+	border: 1px solid #AAAAFF;
+	background-color: #EEEEFF;
+}
+
+.sl-ItemLabel-selected {
+	border: 1px solid #666699;
+	background-color: #DDDDDD;
+}
+
+/* SL Content Link */
+.sl-ContentLink {
+	/*	width: 100%;  */
+	white-space: nowrap;
+	overflow: hidden;
+}
+
+/* SL FormDialog */
+.sl-FormDialog-buttonpanel {
+	border-top: 1px solid #666699;
+	border-left: none;
+	border-right: none;
+	border-bottom: none;
+	padding-top: 2px;
+}
+	
+/* GWT Component Styling */ /* DialogBox Styling */
+.gwt-DialogBox {
+	border: 3px groove #666699;
+	background-color: white;
+	padding: 3px;
+}
+
+.gwt-DialogBox .Caption {
+	border: 2px groove #666699;
+	background-color: #DDDDDD;
+	padding: 3px;
+	margin-bottom: 2px;
+	font-weight: bold;
+	text-align: center;
+	cursor: default;
+}
+
+/* Tab Panel Styling */
+.gwt-TabPanel {
+	color: #bfd4e4;
+	width: 100%;
+}
+
+.gwt-TabPanelBottom {
+	background-color: #E8EEF7;
+}
+
+.gwt-TabBar {
+	background-color: #005495;
+	font-size: small;
+	font-weight: normal;
+	text-align: center;
+	color: white;
+}
+
+.gwt-TabBar .gwt-TabBarFirst {
+	width: 10px;
+	border-bottom: solid 1px #000000;
+	background-image: url(../images/tab-first-gradient.png);
+	background-repeat: repeat-y;
+}
+
+.gwt-TabBar .gwt-TabBarRest {
+	border-bottom: solid 1px #000000;
+	background-image: url(../images/tab-rest-gradient.png);
+	background-repeat: repeat-y;
+}
+
+.gwt-TabBar .gwt-TabBarItem {
+	cursor: pointer;
+	cursor: hand;
+	padding-left: 1ex;
+	padding-right: 1ex;
+	border-bottom: solid 1px #000000;
+	border-left: solid 1px #001166;
+	border-right: solid 1px #001166;
+	border-top: solid 3px #001166;
+	color: #FFFFFF;
+}
+
+.gwt-TabBar .gwt-TabBarItem-selected {
+	cursor: pointer;
+	cursor: hand;
+	background-color: #FFFFFF;
+	border-top: solid 3px #000000;
+	border-left: solid 1px #000000;
+	border-right: solid 1px #000000;
+	border-bottom: none;
+	font-weight: bold;
+	color: #000000;
+}
+
+/*
+ * Scan filter content styling
+ */
+.scan-filter-entry-title {
+	text-decoration: underline;
+}
+
+/*
+ * Disclosure panel styling
+ */
+.gwt-DisclosurePanel {
+	width: 100%;
+}
+
+.gwt-DisclosurePanel-open {
+	
+}
+
+.gwt-DisclosurePanel-open .header {
+	background-color: #DDDDDD;
+	border: 1px solid #666699;
+}
+
+.gwt-DisclosurePanel-closed .header {
+	background-color: #EEEEFF;
+	border: 1px solid #666699;
+}
+
+.gwt-DisclosurePanel .header td {
+	font-size: smaller;
+}
+
+.gwt-DisclosurePanel .content {
+	width: 100%;
+}
+
+/* TextArea styling */
+.gwt-TextArea {
+	width: 100%;
+	border: 1px solid #001166;
+	padding: 5px;
+	cursor: text;
+}
+
+.gwt-TextArea-readonly {
+	border: none;
+	padding: 6px;
+	cursor: default;
+}
+
+/* TextBox styling */
+.gwt-TextBox {
+	border: 1px solid #001166;
+	padding: 2px;
+}
+
+/* PasswordTextBox styling */
+.gwt-PasswordTextBox {
+	border: 1px solid #001166;
+	padding: 2px;
+}
+
+/* ListBox styling */
+.gwt-ListBox {
+	border: 1px solid #001166;
+}
+
+.gwt-SuggestBoxPopup {
+	border: thin solid #001166;
+	background-color: white;
+}
+
+.gwt-SuggestBoxPopup .item-selected {
+	background-color: yellow;
+}
+
+/* Tree */
+.gwt-TreeItem {
+    font-size: small;
+}
+
+.gwt-TreeItem-selected {
+    font-size: small;
+}
