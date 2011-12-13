@@ -386,7 +386,7 @@ public class AbstractFindBugsTool extends AbstractToolInstance {
 		}
 
 		public void reportMissingClass(ClassDescriptor desc) {
-			if ("package-info".equals(desc.getSimpleName())
+			if (AnnotationConstants.PACKAGE_INFO.equals(desc.getSimpleName())
 					|| desc.getClassName().charAt(0) == '[') {
 				return;
 			}
