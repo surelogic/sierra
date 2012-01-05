@@ -1,9 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="server-deployment">
+<project name="server-deployment" xmlns:flashlight="antlib:com.surelogic.flashlight.ant">
 	<!-- NOTE: This script is included from .. so its paths are WRONG if it is run directly -->
 
 	<description>Sierra server and portal Jetty with embedded Derby deployment</description>
 
+	<taskdef uri="antlib:com.surelogic.flashlight.ant" resource="com/surelogic/flashlight/ant/antlib.xml">
+		<classpath>
+			<pathelement path="../../flashlight/flashlight-ant/flashlight-ant.jar" />
+		</classpath>
+	</taskdef>
+
+	
 	<target name="deploy-site" depends="deploy-team-server, deploy-root" />
 
 	<target name="deploy-team-server">
@@ -47,6 +54,37 @@
 		</war>
 	</target>
 
+	<target name="deploy-site-flashlight">
+		<flashlight:instrument-archive 
+			srcfile="../jetty/webapps/sl.war"
+			destfile="../jetty/webapps/sl-fl.war"
+			runtime="../../flashlight/flashlight-instrumentation-5.0/flashlight-runtime.jar"
+			properties="fl.properties">
+			<sources>
+				<pathelement path="../../common/common/src" />
+				<pathelement path="../sierra-ant/src" />
+				<pathelement path="../sierra-checkstyle/src" />
+				<pathelement path="../sierra-client-eclipse/src" />
+				<pathelement path="../sierra-fb/src" />
+				<pathelement path="../sierra-jdbc/src" />
+				<pathelement path="../sierra-jdbc-server/src" />
+				<pathelement path="../sierra-message/src" />
+				<pathelement path="../sierra-metrics/src" />
+				<pathelement path="../sierra-pmd/src" />
+				<pathelement path="../sierra-portal/src" />
+				<pathelement path="../sierra-portal-servlets/src" />
+				<pathelement path="../sierra-services/src" />
+				<pathelement path="../sierra-team-server-client-eclipse/src" />
+				<pathelement path="../sierra-tool/src" />
+			</sources>
+			<libraries>
+				<pathelement path="../jetty/lib/servlet-api-2.5-6.1.7.jar" />
+			</libraries>
+		</flashlight:instrument-archive>
+		<delete quiet="true" file="../jetty/webapps/sl.war" />
+		<move file="../jetty/webapps/sl-fl.war" tofile="../jetty/webapps/sl.war" />
+	</target>
+	
 	<target name="deploy-root">
 		<war destfile="../jetty/webapps/root.war" webxml="./webroot/web.xml">
 			<fileset dir="./webroot">
