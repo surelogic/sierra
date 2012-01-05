@@ -54,7 +54,7 @@
 		</war>
 	</target>
 
-	<target name="deploy-site-flashlight">
+	<target name="deploy-site-flashlight" depends="deploy-site">
 		<flashlight:instrument-archive 
 			srcfile="../jetty/webapps/sl.war"
 			destfile="../jetty/webapps/sl-fl.war"
