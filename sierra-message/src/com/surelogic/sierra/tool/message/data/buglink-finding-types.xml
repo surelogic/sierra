@@ -11543,4 +11543,550 @@ after the call to initLogging, the logger configuration is lost
     </info>
     <name>Potential lost logger changes due to weak reference in OpenJDK</name>
   </findingType>
+
+  <!-- - PMD 4.3 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+  <findingType>
+    <id>DoNotHardCodeSDCard</id>
+    <artifact tool="PMD" mnemonic="DoNotHardCodeSDCard"/>
+    <name>Do not hardcode /sdcard</name>
+    <shortMessage>Use Environment.getExternalStorageDirectory() instead of "/sdcard"</shortMessage>
+    <info>
+<![CDATA[<p>Use Environment.getExternalStorageDirectory() instead of "/sdcard"</p>]]>
+    </info>
+  </findingType>
+  
+  <!-- - PMD 4.3 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+  <findingType>
+    <id>DontCallThreadRun</id>
+    <artifact tool="PMD" mnemonic="DontCallThreadRun"/>
+    <name>Don't call Thread.run()</name>
+    <shortMessage>Don't call Thread.run() explicitly, use Thread.start()</shortMessage>
+    <info>
+<![CDATA[<p>Explicitly calling Thread.run() method will execute in the caller's thread of control.  Instead, call Thread.start() for the intended behavior.
+</p>]]>
+    </info>
+  </findingType>
+  
+  <!-- - PMD 4.3 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+  <findingType>
+    <id>AvoidLiteralsInIfCondition</id>
+    <artifact tool="PMD" mnemonic="AvoidLiteralsInIfCondition"/>
+    <name>Avoid using Literals in Conditional Statements</name>
+    <shortMessage>Avoid using Literals in Conditional Statements</shortMessage>
+    <info>
+<![CDATA[<p>Avoid using hard coded literals in conditional statements, declare those as static variables or private members.</p>]]>
+    </info>
+  </findingType>
+  
+  <!-- - PMD 4.3 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+  <findingType>
+    <id>UseConcurrentHashMap</id>
+    <artifact tool="PMD" mnemonic="UseConcurrentHashMap"/>
+    <name>Use ConcurrentHashMap</name>
+    <shortMessage>Use ConcurrentHashMap in concurrent code</shortMessage>
+    <info>
+<![CDATA[<p>If you run in Java 5 or above and have concurrent accesses, you should use Java's ConcurrentHashMap implementation, 
+which is specifically designed for concurrent applications.</p>]]>
+    </info>
+  </findingType>
+  
+  <!-- - PMD 4.3 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+  <findingType>
+    <id>GuardDebugLogging</id>
+    <artifact tool="PMD" mnemonic="GuardDebugLogging"/>
+    <name>Guard Debug Logging</name>
+    <shortMessage>Guard debug logging involving string concatenation with isDebugEnabled()</shortMessage>
+    <info>
+<![CDATA[<p>When log messages are composed by concatenating strings, the whole section should be guarded
+            by an isDebugEnabled() check to avoid performance and memory issues.</p>]]>
+    </info>
+  </findingType>
+  
+  <!-- - PMD 4.3 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+  <findingType>
+    <id>GenericsNaming</id>
+    <artifact tool="PMD" mnemonic="GenericsNaming"/>
+    <name>Naming of Type Variables</name>
+    <shortMessage>Use one-letter uppercase names for type variables</shortMessage>
+    <info>
+<![CDATA[<p>Names for type variables appearing in generics should be one letter long and upper case.</p>]]>
+    </info>
+  </findingType>
+  
+  <!-- - PMD 4.3 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+  <findingType>
+    <id>AvoidCatchingGenericException</id>
+    <artifact tool="PMD" mnemonic="AvoidCatchingGenericException"/>
+    <name>Avoid Catching Generic Exceptions</name>
+    <shortMessage>Avoid catching generic exceptions, such as RuntimeException</shortMessage>
+    <info>
+<![CDATA[<p>Avoid catching generic exceptions such as NullPointerException, RuntimeException, Exception in try-catch block</p>]]>
+    </info>
+  </findingType>
+  
+  <!-- - PMD 4.3 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+  <findingType>
+    <id>AvoidLosingExceptionInformation</id>
+    <artifact tool="PMD" mnemonic="AvoidLosingExceptionInformation"/>
+    <name>Avoid Losing Information from Exceptions</name>
+    <shortMessage>Avoid statements in a catch block that invoke accessors on the exception without using the information</shortMessage>
+    <info>
+<![CDATA[<p>Statements in a catch block that invoke accessors on the exception without using the information
+		only add to code size.  Either remove the invocation, or use the return result.</p>]]>
+    </info>
+  </findingType>
+  
+  <!-- - FB 2.0 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+  <findingType>
+    <id>AT_OPERATION_SEQUENCE_ON_CONCURRENT_ABSTRACTION</id>
+    <artifact tool="FindBugs" mnemonic="AT_OPERATION_SEQUENCE_ON_CONCURRENT_ABSTRACTION">
+    </artifact>
+    <name>Non-atomic Sequence of "Concurrent" Operations</name>
+    <shortMessage>Sequence of calls to concurrent abstraction may not be atomic</shortMessage>
+    <info>
+<![CDATA[<p>This code contains a sequence of calls to a concurrent abstraction
+            (such as a concurrent hash map).
+            These calls will not be executed atomically.</p>]]>
+    </info>
+  </findingType>
+  
+  <!-- - FB 2.0 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+  <findingType>
+    <id>VO_VOLATILE_INCREMENT</id>
+    <artifact tool="FindBugs" mnemonic="VO_VOLATILE_INCREMENT">
+    </artifact>
+    <name>Increment of a Volatile Field</name>
+    <shortMessage>An increment to a volatile field isn't atomic</shortMessage>
+    <info>
+<![CDATA[<p>This code increments a volatile field. Increments of volatile fields aren't
+atomic. If more than one thread is incrementing the field at the same time,
+increments could be lost.</p>]]>
+    </info>
+  </findingType>
+  
+  <!-- - FB 2.0 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+  <findingType>
+    <id>TESTING1</id>
+    <artifact tool="FindBugs" mnemonic="TESTING1">
+    </artifact>
+    <name>Testing 1</name>
+    <shortMessage>Test warning 1</shortMessage>
+    <info>
+<![CDATA[<p>This bug pattern is only generated by new, incompletely implemented
+bug detectors.</p>]]>
+    </info>
+  </findingType>
+  
+  <findingType>
+    <id>TESTING3</id>
+    <artifact tool="FindBugs" mnemonic="TESTING3">
+    </artifact>
+    <name>Testing 3</name>
+    <shortMessage>Test warning 3</shortMessage>
+    <info>
+<![CDATA[<p>This bug pattern is only generated by new, incompletely implemented
+bug detectors.</p>]]>
+    </info>
+  </findingType>
+  
+  <!-- - FB 2.0 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+  <findingType>
+    <id>DMI_BIGDECIMAL_CONSTRUCTED_FROM_DOUBLE</id>
+    <artifact tool="FindBugs" mnemonic="DMI_BIGDECIMAL_CONSTRUCTED_FROM_DOUBLE">
+    </artifact>
+    <name>BigDecimal Constructed From Double</name>
+    <shortMessage>BigDecimal constructed from double that isn't represented precisely</shortMessage>
+    <info>
+<![CDATA[<p>This code creates a BigDecimal from a double value that doesn't translate well to a
+decimal number.
+For example, one might assume that writing new BigDecimal(0.1) in Java creates a BigDecimal which is exactly equal to 0.1 (an unscaled value of 1, with a scale of 1), but it is actually equal to 0.1000000000000000055511151231257827021181583404541015625.
+You probably want to use the BigDecimal.valueOf(double d) method, which uses the String representation
+of the double to create the BigDecimal (e.g., BigDecimal.valueOf(0.1) gives 0.1).</p>]]>
+    </info>
+  </findingType>
+  
+  <!-- - FB 2.0 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+  <findingType>
+    <id>BX_UNBOXING_IMMEDIATELY_REBOXED</id>
+    <artifact tool="FindBugs" mnemonic="BX_UNBOXING_IMMEDIATELY_REBOXED">
+    </artifact>
+    <name>Value is Immediately Reboxed</name>
+    <shortMessage>Unboxed value is immediately reboxed</shortMessage>
+    <info>
+<![CDATA[<p>A boxed value is unboxed and then immediately reboxed.</p>]]>
+    </info>
+  </findingType>
+  
+  <!-- - FB 2.0 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+  <findingType>
+    <id>CO_COMPARETO_RESULTS_MIN_VALUE</id>
+    <artifact tool="FindBugs" mnemonic="CO_COMPARETO_RESULTS_MIN_VALUE">
+    </artifact>
+    <name>compareTo() Returns Integer.MIN_VALUE</name>
+    <shortMessage>compareTo()/compare() returns Integer.MIN_VALUE</shortMessage>
+    <info>
+<![CDATA[<p>In some situation, this compareTo or compare method returns 
+the constant Integer.MIN_VALUE, which is an exceptionally bad practice.
+  The only thing that matters about the return value of compareTo is the sign of the result.
+    But people will sometimes negate the return value of compareTo, expecting that this will negate
+    the sign of the result. And it will, except in the case where the value returned is Integer.MIN_VALUE.
+    So just return -1 rather than Integer.MIN_VALUE.</p>]]>
+    </info>
+  </findingType>
+  
+  <!-- - FB 2.0 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+  <findingType>
+    <id>RV_NEGATING_RESULT_OF_COMPARETO</id>
+    <artifact tool="FindBugs" mnemonic="RV_NEGATING_RESULT_OF_COMPARETO">
+    </artifact>
+    <name>Negating Result of compareTo()</name>
+    <shortMessage>Negating the result of compareTo()/compare()</shortMessage>
+    <info>
+<![CDATA[<p>This code negatives the return value of a compareTo or compare method.
+This is a questionable or bad programming practice, since if the return
+value is Integer.MIN_VALUE, negating the return value won't
+negate the sign of the result. You can achieve the same intended result
+by reversing the order of the operands rather than by negating the results.</p>]]>
+    </info>
+  </findingType>
+  
+  <!-- - FB 2.0 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+  <findingType>
+    <id>UUF_UNUSED_PUBLIC_OR_PROTECTED_FIELD</id>
+    <artifact tool="FindBugs" mnemonic="UUF_UNUSED_PUBLIC_OR_PROTECTED_FIELD">
+    </artifact>
+    <name>Unused public or protected field</name>
+    <shortMessage>Unused public or protected field</shortMessage>
+    <info>
+<![CDATA[<p>This field is never used.&nbsp;
+The field is public or protected, so perhaps
+    it is intended to be used with classes not seen as part of the analysis. If not,
+consider removing it from the class.</p>]]>
+    </info>
+  </findingType>
+  
+  <!-- - FB 2.0 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+  <findingType>
+    <id>URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD</id>
+    <artifact tool="FindBugs" mnemonic="URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD">
+    </artifact>
+    <name>Unread public or protected field</name>
+    <shortMessage>Unread public or protected field</shortMessage>
+    <info>
+<![CDATA[<p>This field is never read.&nbsp
+The field is public or protected, so perhaps
+    it is intended to be used with classes not seen as part of the analysis. If not,
+consider removing it from the class.</p>]]>
+    </info>
+  </findingType>
+  
+  <!-- - FB 2.0 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+  <findingType>
+    <id>NP_UNWRITTEN_PUBLIC_OR_PROTECTED_FIELD</id>
+    <artifact tool="FindBugs" mnemonic="NP_UNWRITTEN_PUBLIC_OR_PROTECTED_FIELD">
+    </artifact>
+    <name>Read of unwritten public or protected field</name>
+    <shortMessage>Read of unwritten public or protected field</shortMessage>
+    <info>
+<![CDATA[<p>The program is dereferencing a public or protected
+field that does not seem to ever have a non-null value written to it.
+Unless the field is initialized via some mechanism not seen by the analysis,
+dereferencing this value will generate a null pointer exception.</p>]]>
+    </info>
+  </findingType>
+  
+  <!-- - FB 2.0 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+  <findingType>
+    <id>UWF_UNWRITTEN_PUBLIC_OR_PROTECTED_FIELD</id>
+    <artifact tool="FindBugs" mnemonic="UWF_UNWRITTEN_PUBLIC_OR_PROTECTED_FIELD">
+    </artifact>
+    <name>Unwritten public or protected field</name>
+    <shortMessage>Unwritten public or protected field</shortMessage>
+    <info>
+<![CDATA[<p>No writes were seen to this public/protected field.&nbsp; All reads of it will return the default
+value. Check for errors (should it have been initialized?), or remove it if it is useless.</p>]]>
+    </info>
+  </findingType>
+  
+  <!-- - FB 2.0 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+  <findingType>
+    <id>RV_RETURN_VALUE_IGNORED_INFERRED</id>
+    <artifact tool="FindBugs" mnemonic="RV_RETURN_VALUE_IGNORED_INFERRED">
+    </artifact>
+    <name>Method ignores return value</name>
+    <shortMessage>Method ignores potentially important return value</shortMessage>
+    <info>
+<![CDATA[<p>This code calls a method and ignores the return value. The return value
+is the same type as the type the method is invoked on, and from our analysis it looks
+like the return value might be important (e.g., like ignoring the
+return value of <code>String.toLowerCase()</code>). 
+</p>
+<p>We are guessing that ignoring the return value might be a bad idea just from 
+a simple analysis of the body of the method. You can use a @CheckReturnValue annotation
+to instruct FindBugs as to whether ignoring the return value of this method
+is important or acceptable.
+</p>
+<p>Please investigate this closely to decide whether it is OK to ignore the return value.</p>]]>
+    </info>
+  </findingType>
+  
+  <!-- - FB 2.0 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+  <findingType>
+    <id>RV_CHECK_COMPARETO_FOR_SPECIFIC_RETURN_VALUE</id>
+    <artifact tool="FindBugs" mnemonic="RV_CHECK_COMPARETO_FOR_SPECIFIC_RETURN_VALUE">
+    </artifact>
+    <name>Checks for Specific Values from compareTo()</name>
+    <shortMessage>Code checks for specific values returned by compareTo</shortMessage>
+    <info>
+<![CDATA[<p>This code invoked a compareTo or compare method, and checks to see if the return value is a specific value,
+such as 1 or -1. When invoking these methods, you should only check the sign of the result, not for any specific
+non-zero value. While many or most compareTo and compare methods only return -1, 0 or 1, some of them
+will return other values. </p>]]>
+    </info>
+  </findingType>
+  
+  <!-- - FB 2.0 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+  <findingType>
+    <id>DMI_ARGUMENTS_WRONG_ORDER</id>
+    <artifact tool="FindBugs" mnemonic="DMI_ARGUMENTS_WRONG_ORDER">
+    </artifact>
+    <name>Reversed method arguments</name>
+    <shortMessage>Arguments in wrong order for invocation</shortMessage>
+    <info>
+<![CDATA[<p>The arguments to this method call seem to be in the wrong order.
+For example, a call <code>Preconditions.checkNotNull("message", message)</code>
+has reserved arguments: the value to be checked is the first argument.</p>]]>
+    </info>
+  </findingType>
+  
+  <!-- - FB 2.0 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+  <findingType>
+    <id>VA_FORMAT_STRING_USES_NEWLINE</id>
+    <artifact tool="FindBugs" mnemonic="VA_FORMAT_STRING_USES_NEWLINE">
+    </artifact>
+    <name>Format String Should Use %n</name>
+    <shortMessage>Format string should use %n rather than \n</shortMessage>
+    <info>
+<![CDATA[<p>This format string include a newline character (\n). In format strings, it is generally
+ preferable better to use %n, which will produce the platform-specific line separator.</p>]]>
+    </info>
+  </findingType>
+  
+  <!-- - FB 2.0 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+  <findingType>
+    <id>SA_LOCAL_SELF_ASSIGNMENT_INSTEAD_OF_FIELD</id>
+    <artifact tool="FindBugs" mnemonic="SA_LOCAL_SELF_ASSIGNMENT_INSTEAD_OF_FIELD">
+    </artifact>
+    <name>Mistaken Self Assignment of Local</name>
+    <shortMessage>Self assignment of local, rather than assignment to field</shortMessage>
+    <info>
+<![CDATA[<p>This method contains a self assignment of a local variable, and there
+is a field with an identical name.
+assignment appears to have been ; e.g.</p>
+<pre>
+  int foo;
+  public void setFoo(int foo) {
+    foo = foo;
+  }
+</pre>
+<p>The assignment is useless. Did you mean to assign to the field instead?</p>]]>
+    </info>
+  </findingType>
+  
+  <!-- - FB 2.0 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+  <findingType>
+    <id>INT_BAD_COMPARISON_WITH_INT_VALUE</id>
+    <artifact tool="FindBugs" mnemonic="INT_BAD_COMPARISON_WITH_INT_VALUE">
+    </artifact>
+    <name>Bad Comparison of Int with Long Constant</name>
+    <shortMessage>Bad comparison of int value with long constant</shortMessage>
+    <info>
+<![CDATA[<p>This code compares an int value with a long constant that is outside
+the range of values that can be represented as an int value.
+This comparison is vacuous and possibly to be incorrect.</p>]]>
+    </info>
+  </findingType>
+  
+  <!-- - FB 2.0 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+  <findingType>
+    <id>JML_JSR166_CALLING_WAIT_RATHER_THAN_AWAIT</id>
+    <artifact tool="FindBugs" mnemonic="JML_JSR166_CALLING_WAIT_RATHER_THAN_AWAIT">
+    </artifact>
+    <name>Calling wait(), instead of await()</name>
+    <shortMessage>Using monitor style wait methods on util.concurrent abstraction</shortMessage>
+    <info>
+<![CDATA[<p>This method calls
+<code>wait()</code>,
+<code>notify()</code> or
+<code>notifyAll()()</code>
+on an object that also provides an
+<code>await()</code>,
+<code>signal()</code>,
+<code>signalAll()</code> method (such as util.concurrent Condition objects).
+This probably isn't what you want, and even if you do want it, you should consider changing
+your design, as other developers will find it exceptionally confusing.</p>]]>
+    </info>
+  </findingType>
+  
+  <!-- - FB 2.0 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+  <findingType>
+    <id>DLS_DEAD_LOCAL_STORE_SHADOWS_FIELD</id>
+    <artifact tool="FindBugs" mnemonic="DLS_DEAD_LOCAL_STORE_SHADOWS_FIELD">
+    </artifact>
+    <name>Dead Store to Local that Shadows Field</name>
+    <shortMessage>Dead store to local variable that shadows a field</shortMessage>
+    <info>
+<![CDATA[<p>This instruction assigns a value to a local variable,
+but the value is not read or used in any subsequent instruction.
+Often, this indicates an error, because the value computed is never
+used. There is a field with the same name as the local variable. Did you
+mean to assign to that variable instead?</p>]]>
+    </info>
+  </findingType>
+  
+  <!-- - FB 2.0 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+  <findingType>
+    <id>ICAST_INT_2_LONG_AS_INSTANT</id>
+    <artifact tool="FindBugs" mnemonic="ICAST_INT_2_LONG_AS_INSTANT">
+    </artifact>
+    <name>Int Used as Absolute Time Value</name>
+    <shortMessage>int value converted to long and used as absolute time</shortMessage>
+    <info>
+<![CDATA[<p>This code converts a 32-bit int value to a 64-bit long value, and then
+passes that value for a method parameter that requires an absolute time value.
+An absolute time value is the number
+of milliseconds since the standard base time known as "the epoch", namely January 1, 1970, 00:00:00 GMT.
+For example, the following method, intended to convert seconds since the epoc into a Date, is badly
+broken:</p>
+<pre>
+Date getDate(int seconds) { return new Date(seconds * 1000); }
+</pre>
+<p>The multiplication is done using 32-bit arithmetic, and then converted to a 64-bit value.
+When a 32-bit value is converted to 64-bits and used to express an absolute time
+value, only dates in December 1969 and January 1970 can be represented.</p>
+
+<p>Correct implementations for the above method are:</p>
+
+<pre>
+// Fails for dates after 2037
+Date getDate(int seconds) { return new Date(seconds * 1000L); }
+
+// better, works for all dates
+Date getDate(long seconds) { return new Date(seconds * 1000); }
+</pre>
+</p>]]>
+    </info>
+  </findingType>
+  
+  <!-- - FB 2.0 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+  <findingType>
+    <id>PZ_DONT_REUSE_ENTRY_OBJECTS_IN_ITERATORS</id>
+    <artifact tool="FindBugs" mnemonic="PZ_DONT_REUSE_ENTRY_OBJECTS_IN_ITERATORS">
+    </artifact>
+    <name>Don't Reuse Entry Objects in Iterators</name>
+    <shortMessage>Don't reuse entry objects in iterators</shortMessage>
+    <info>
+<![CDATA[<p>The entrySet() method is allowed to return a view of the 
+     underlying Map in which an Iterator and Map.Entry. This clever
+     idea was used in several Map implementations, but introduces the possibility
+     of nasty coding mistakes. If a map <code>m</code> returns
+     such an iterator for an entrySet, then
+     <code>c.addAll(m.entrySet())</code> will go badly wrong. All of
+     the Map implementations in OpenJDK 1.7 have been rewritten to avoid this,
+     you should to.</p>]]>
+    </info>
+  </findingType>
+  
+  <!-- - FB 2.0 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+  <findingType>
+    <id>DMI_ENTRY_SETS_MAY_REUSE_ENTRY_OBJECTS</id>
+    <artifact tool="FindBugs" mnemonic="DMI_ENTRY_SETS_MAY_REUSE_ENTRY_OBJECTS">
+    </artifact>
+    <name>Adding Elements of Entry Set May Fail</name>
+    <shortMessage>Adding elements of an entry set may fail due to reuse of Entry objects</shortMessage>
+    <info>
+<![CDATA[<p>The entrySet() method is allowed to return a view of the 
+     underlying Map in which a single Entry object is reused and returned
+     during the iteration.  As of Java 1.6, both IdentityHashMap
+     and EnumMap did so. When iterating through such a Map,
+     the Entry value is only valid until you advance to the next iteration.
+     If, for example, you try to pass such an entrySet to an addAll method,
+     things will go badly wrong.</p>]]>
+    </info>
+  </findingType>
+  
+  <!-- - FB 2.0 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+  <findingType>
+    <id>DMI_DOH</id>
+    <artifact tool="FindBugs" mnemonic="DMI_DOH">
+    </artifact>
+    <name>Nonsensical Method Invocation</name>
+    <shortMessage>D'oh! A nonsensical method invocation</shortMessage>
+    <info>
+<![CDATA[<p>This particular method invocation doesn't make sense, for reasons that should be apparent from inspection.</p>]]>
+    </info>
+  </findingType>
+  
+  <!-- - FB 2.0 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+  <findingType>
+    <id>OBL_UNSATISFIED_OBLIGATION_EXCEPTION_EDGE</id>
+    <artifact tool="FindBugs" mnemonic="OBL_UNSATISFIED_OBLIGATION_EXCEPTION_EDGE">
+    </artifact>
+    <name>May Fail Cleanup on Checked Exception</name>
+    <shortMessage>Method may fail to clean up stream or resource on checked exception</shortMessage>
+    <info>
+<![CDATA[<p>This method may fail to clean up (close, dispose of) a stream,
+          database object, or other
+          resource requiring an explicit cleanup operation.
+          </p>
+
+          <p>
+          In general, if a method opens a stream or other resource,
+          the method should use a try/finally block to ensure that
+          the stream or resource is cleaned up before the method
+          returns.
+          </p>
+
+          <p>
+          This bug pattern is essentially the same as the
+          OS_OPEN_STREAM and ODR_OPEN_DATABASE_RESOURCE
+          bug patterns, but is based on a different
+          (and hopefully better) static analysis technique.
+          We are interested is getting feedback about the
+          usefulness of this bug pattern.
+          To send feedback, either:
+          </p>
+          <ul>
+            <li>send email to findbugs@cs.umd.edu</li>
+            <li>file a bug report: <a href="http://findbugs.sourceforge.net/reportingBugs.html">http://findbugs.sourceforge.net/reportingBugs.html</a></li>
+          </ul>
+
+          <p>
+          In particular,
+          the false-positive suppression heuristics for this
+          bug pattern have not been extensively tuned, so
+          reports about false positives are helpful to us.
+          </p>
+
+          <p>
+          See Weimer and Necula, <i>Finding and Preventing Run-Time Error Handling Mistakes</i>, for
+          a description of the analysis technique.</p>]]>
+    </info>
+  </findingType>
+  
+  <!-- - FB 2.0 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+  <findingType>
+    <id>DM_DEFAULT_ENCODING</id>
+    <artifact tool="FindBugs" mnemonic="DM_DEFAULT_ENCODING">
+    </artifact>
+    <name>Reliance on Default Encoding</name>
+    <shortMessage>Reliance on default encoding</shortMessage>
+    <info>
+<![CDATA[<p>Found a call to a method which will perform a byte to String (or String to byte) conversion, 
+and will assume that the default platform encoding is suitable. This will cause the application behaviour 
+to vary between platforms. Use an alternative API and specify a charset name or Charset object explicitly.</p>]]>
+    </info>
+  </findingType>
+  
+  <!-- - END - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
 </findingTypes>
