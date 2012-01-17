@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<config>
+    <baseDirectory>C:\work\jsure-test-4.2-workspace\jEdit-4.1</baseDirectory>
+    <cleanTempFiles>false</cleanTempFiles>
+    <complianceLevel>1.5</complianceLevel>
+    <destDirectory>C:\Users\Edwin\AppData\Local\Temp\.SierraResults</destDirectory>
+    <extensions>
+        <id>edu.umd.cs.findbugs.plugins.core</id>
+        <tool>FindBugs</tool>
+        <version>v0.0</version>
+    </extensions>
+    <extensions>
+        <id>Basic Rules</id>
+        <tool>PMD</tool>
+        <version>v0.0</version>
+    </extensions>
+    <extensions>
+        <id>Braces Rules</id>
+        <tool>PMD</tool>
+        <version>v0.0</version>
+    </extensions>
+    <extensions>
+        <id>Clone Implementation Rules</id>
+        <tool>PMD</tool>
+        <version>v0.0</version>
+    </extensions>
+    <extensions>
+        <id>Code Size Rules</id>
+        <tool>PMD</tool>
+        <version>v0.0</version>
+    </extensions>
+    <extensions>
+        <id>Controversial Rules</id>
+        <tool>PMD</tool>
+        <version>v0.0</version>
+    </extensions>
+    <extensions>
+        <id>Coupling Rules</id>
+        <tool>PMD</tool>
+        <version>v0.0</version>
+    </extensions>
+    <extensions>
+        <id>Design Rules</id>
+        <tool>PMD</tool>
+        <version>v0.0</version>
+    </extensions>
+    <extensions>
+        <id>Finalizer Rules</id>
+        <tool>PMD</tool>
+        <version>v0.0</version>
+    </extensions>
+    <extensions>
+        <id>Import Statement Rules</id>
+        <tool>PMD</tool>
+        <version>v0.0</version>
+    </extensions>
+    <extensions>
+        <id>J2EE Rules</id>
+        <tool>PMD</tool>
+        <version>v0.0</version>
+    </extensions>
+    <extensions>
+        <id>JavaBean Rules</id>
+        <tool>PMD</tool>
+        <version>v0.0</version>
+    </extensions>
+    <extensions>
+        <id>JUnit Rules</id>
+        <tool>PMD</tool>
+        <version>v0.0</version>
+    </extensions>
+    <extensions>
+        <id>Jakarta Commons Logging Rules</id>
+        <tool>PMD</tool>
+        <version>v0.0</version>
+    </extensions>
+    <extensions>
+        <id>Java Logging Rules</id>
+        <tool>PMD</tool>
+        <version>v0.0</version>
+    </extensions>
+    <extensions>
+        <id>Migration Rules</id>
+        <tool>PMD</tool>
+        <version>v0.0</version>
+    </extensions>
+    <extensions>
+        <id>Naming Rules</id>
+        <tool>PMD</tool>
+        <version>v0.0</version>
+    </extensions>
+    <extensions>
+        <id>Optimization Rules</id>
+        <tool>PMD</tool>
+        <version>v0.0</version>
+    </extensions>
+    <extensions>
+        <id>Strict Exception Rules</id>
+        <tool>PMD</tool>
+        <version>v0.0</version>
+    </extensions>
+    <extensions>
+        <id>String and StringBuffer Rules</id>
+        <tool>PMD</tool>
+        <version>v0.0</version>
+    </extensions>
+    <extensions>
+        <id>Security Code Guidelines</id>
+        <tool>PMD</tool>
+        <version>v0.0</version>
+    </extensions>
+    <extensions>
+        <id>Unused Code Rules</id>
+        <tool>PMD</tool>
+        <version>v0.0</version>
+    </extensions>
+    <javaVendor>Sun Microsystems Inc.</javaVendor>
+    <javaVersion>1.6.0_22</javaVersion>
+    <logPath>C:\work\jsure-test-4.2-workspace\.sierra-data\jEdit-4.1.2012.01.17-at-11.09.24.407.log.txt</logPath>
+    <memorySize>1024</memorySize>
+    <multithreaded>false</multithreaded>
+    <pluginDirs>
+        <entry>
+            <key>com.surelogic.common</key>
+            <value>/C:/work/git/common/common/</value>
+        </entry>
+        <entry>
+            <key>org.eclipse.core.runtime</key>
+            <value>/C:/work/eclipse-3.5.2-git/plugins/org.eclipse.core.runtime_3.5.0.v20090525.jar</value>
+        </entry>
+        <entry>
+            <key>org.eclipse.equinox.common</key>
+            <value>/C:/work/eclipse-3.5.2-git/plugins/org.eclipse.equinox.common_3.5.1.R35x_v20090807-1100.jar</value>
+        </entry>
+        <entry>
+            <key>com.surelogic.sierra.tool</key>
+            <value>/C:/work/git/sierra/sierra-tool/</value>
+        </entry>
+        <entry>
+            <key>org.eclipse.core.commands</key>
+            <value>/C:/work/eclipse-3.5.2-git/plugins/org.eclipse.core.commands_3.5.0.I20090525-2000.jar</value>
+        </entry>
+        <entry>
+            <key>com.surelogic.sierra.message</key>
+            <value>/C:/work/git/sierra/sierra-message/</value>
+        </entry>
+        <entry>
+            <key>org.eclipse.core.contenttype</key>
+            <value>/C:/work/eclipse-3.5.2-git/plugins/org.eclipse.core.contenttype_3.4.1.R35x_v20090826-0451.jar</value>
+        </entry>
+        <entry>
+            <key>org.eclipse.core.filesystem</key>
+            <value>/C:/work/eclipse-3.5.2-git/plugins/org.eclipse.core.filesystem_1.2.1.R35x_v20091203-1235.jar</value>
+        </entry>
+        <entry>
+            <key>org.eclipse.core.resources</key>
+            <value>/C:/work/eclipse-3.5.2-git/plugins/org.eclipse.core.resources_3.5.2.R35x_v20091203-1235.jar</value>
+        </entry>
+        <entry>
+            <key>org.eclipse.equinox.preferences</key>
+            <value>/C:/work/eclipse-3.5.2-git/plugins/org.eclipse.equinox.preferences_3.2.301.R35x_v20091117.jar</value>
+        </entry>
+        <entry>
+            <key>org.eclipse.core.runtime.compatibility.auth</key>
+            <value>/C:/work/eclipse-3.5.2-git/plugins/org.eclipse.core.runtime.compatibility.auth_3.2.100.v20090413.jar</value>
+        </entry>
+        <entry>
+            <key>org.eclipse.core.variables</key>
+            <value>/C:/work/eclipse-3.5.2-git/plugins/org.eclipse.core.variables_3.2.200.v20090521.jar</value>
+        </entry>
+        <entry>
+            <key>org.eclipse.ant.core</key>
+            <value>/C:/work/eclipse-3.5.2-git/plugins/org.eclipse.ant.core_3.2.101.v20091110_r352.jar</value>
+        </entry>
+        <entry>
+            <key>org.eclipse.equinox.registry</key>
+            <value>/C:/work/eclipse-3.5.2-git/plugins/org.eclipse.equinox.registry_3.4.100.v20090520-1800.jar</value>
+        </entry>
+        <entry>
+            <key>org.eclipse.osgi</key>
+            <value>/C:/work/eclipse-3.5.2-git/plugins/org.eclipse.osgi_3.5.2.R35x_v20100126.jar</value>
+        </entry>
+        <entry>
+            <key>org.junit4</key>
+            <value>/C:/work/eclipse-3.5.2-git/plugins/org.junit4_4.5.0.v20090824/</value>
+        </entry>
+        <entry>
+            <key>com.surelogic.sierra.fb</key>
+            <value>/C:/work/git/sierra/sierra-fb/</value>
+        </entry>
+        <entry>
+            <key>org.junit</key>
+            <value>/C:/work/eclipse-3.5.2-git/plugins/org.junit_3.8.2.v20090203-1005/</value>
+        </entry>
+        <entry>
+            <key>org.eclipse.core.jobs</key>
+            <value>/C:/work/eclipse-3.5.2-git/plugins/org.eclipse.core.jobs_3.4.100.v20090429-1800.jar</value>
+        </entry>
+        <entry>
+            <key>org.eclipse.core.expressions</key>
+            <value>/C:/work/eclipse-3.5.2-git/plugins/org.eclipse.core.expressions_3.4.101.R35x_v20100209.jar</value>
+        </entry>
+        <entry>
+            <key>org.eclipse.jdt.core</key>
+            <value>/C:/work/eclipse-3.5.2-git/plugins/org.eclipse.jdt.core_3.5.2.v_981_R35x.jar</value>
+        </entry>
+        <entry>
+            <key>org.eclipse.text</key>
+            <value>/C:/work/eclipse-3.5.2-git/plugins/org.eclipse.text_3.5.0.v20090513-2000.jar</value>
+        </entry>
+        <entry>
+            <key>org.eclipse.team.core</key>
+            <value>/C:/work/eclipse-3.5.2-git/plugins/org.eclipse.team.core_3.5.1.r35x_20100113-0800.jar</value>
+        </entry>
+        <entry>
+            <key>org.eclipse.equinox.app</key>
+            <value>/C:/work/eclipse-3.5.2-git/plugins/org.eclipse.equinox.app_1.2.1.R35x_v20091203.jar</value>
+        </entry>
+        <entry>
+            <key>com.surelogic.sierra.pmd</key>
+            <value>/C:/work/git/sierra/sierra-pmd/</value>
+        </entry>
+    </pluginDirs>
+    <project>jEdit-4.1</project>
+    <scanDocument>C:\work\jsure-test-4.2-workspace\.sierra-data\jEdit-4.1.2012.01.17-at-11.09.24.407.sierra.gz</scanDocument>
+    <sourceLevel>1.5</sourceLevel>
+    <targetLevel>1.5</targetLevel>
+    <targets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="filteredDirectoryTarget">
+        <location>file:/C:/work/jsure-test-4.2-workspace/jEdit-4.1</location>
+        <type>SOURCE</type>
+        <exclusions>bin/</exclusions>
+        <exclusions>doc/</exclusions>
+        <exclusions>doclet/</exclusions>
+        <exclusions>jars/</exclusions>
+        <exclusions>jeditshell/</exclusions>
+        <exclusions>macros/</exclusions>
+        <exclusions>modes/</exclusions>
+        <exclusions>properties/</exclusions>
+        <exclusions>startup/</exclusions>
+    </targets>
+    <targets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="jarTarget">
+        <location>file:/C:/Program%20Files/Java/jre7/lib/resources.jar</location>
+        <type>AUX</type>
+    </targets>
+    <targets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="jarTarget">
+        <location>file:/C:/Program%20Files/Java/jre7/lib/rt.jar</location>
+        <type>AUX</type>
+    </targets>
+    <targets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="jarTarget">
+        <location>file:/C:/Program%20Files/Java/jre7/lib/jsse.jar</location>
+        <type>AUX</type>
+    </targets>
+    <targets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="jarTarget">
+        <location>file:/C:/Program%20Files/Java/jre7/lib/jce.jar</location>
+        <type>AUX</type>
+    </targets>
+    <targets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="jarTarget">
+        <location>file:/C:/Program%20Files/Java/jre7/lib/charsets.jar</location>
+        <type>AUX</type>
+    </targets>
+    <targets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="jarTarget">
+        <location>file:/C:/Program%20Files/Java/jre7/lib/ext/dnsns.jar</location>
+        <type>AUX</type>
+    </targets>
+    <targets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="jarTarget">
+        <location>file:/C:/Program%20Files/Java/jre7/lib/ext/localedata.jar</location>
+        <type>AUX</type>
+    </targets>
+    <targets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="jarTarget">
+        <location>file:/C:/Program%20Files/Java/jre7/lib/ext/sunec.jar</location>
+        <type>AUX</type>
+    </targets>
+    <targets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="jarTarget">
+        <location>file:/C:/Program%20Files/Java/jre7/lib/ext/sunjce_provider.jar</location>
+        <type>AUX</type>
+    </targets>
+    <targets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="jarTarget">
+        <location>file:/C:/Program%20Files/Java/jre7/lib/ext/sunmscapi.jar</location>
+        <type>AUX</type>
+    </targets>
+    <targets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="jarTarget">
+        <location>file:/C:/Program%20Files/Java/jre7/lib/ext/zipfs.jar</location>
+        <type>AUX</type>
+    </targets>
+    <targets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="jarTarget">
+        <location>file:/C:/work/jsure-test-4.2-workspace/jEdit-4.1/promises-4.0.2.jar</location>
+        <type>AUX</type>
+    </targets>
+    <targets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="fullDirectoryTarget">
+        <location>file:/C:/work/jsure-test-4.2-workspace/jEdit-4.1/bin</location>
+        <type>BINARY</type>
+    </targets>
+    <toolsDirectory>C:\work\git\sierra\sierra-tool\Tools</toolsDirectory>
+    <verbose>false</verbose>
+</config>
