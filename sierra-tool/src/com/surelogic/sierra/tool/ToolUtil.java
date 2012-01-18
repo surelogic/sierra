@@ -87,13 +87,21 @@ public class ToolUtil {
 		}
 	}
 
+	public static Set<File> findToolDirs() {
+		return findToolDirs(null);
+	}
+	
 	public static Set<File> findToolDirs(PrintStream out) {
 		Set<File> dirs = new HashSet<File>();
 		for (IToolFinder f : finders) {
-			out.println("Using finder: "+f.toString());
+			if (out != null) {
+				out.println("Using finder: "+f.toString());
+			}
 			for (File dir : f.findToolDirectories()) {
 				if (!dirs.contains(dir)) {
-					out.println("\tFound tool dir: "+dir);
+					if (out != null) {
+						out.println("\tFound tool dir: "+dir);
+					}
 					dirs.add(dir);
 				}
 			}
@@ -102,7 +110,7 @@ public class ToolUtil {
 	}
 
 	public static List<IToolFactory> findToolFactories() {
-		return findToolFactories(System.out);
+		return findToolFactories(null);
 	}
 	
 	public static List<IToolFactory> findToolFactories(PrintStream out) {
@@ -110,18 +118,24 @@ public class ToolUtil {
 	}
 
 	public static List<IToolFactory> findToolFactories(PrintStream out, boolean all) {
-		out.println("Finding tool factories ...");
+		if (out != null) {
+			out.println("Finding tool factories ...");
+		}
 		final File home = getSierraToolDirectory();
 		List<IToolFactory> factories = new ArrayList<IToolFactory>();
 		for (File dir : findToolDirs(out)) {
 			try {
 				Attributes manifest = readManifest(dir);
 				for (IToolFactory f : instantiateToolFactories(dir, manifest)) {
-					out.println("Considering factory "+f);
+					if (out != null) {
+						out.println("Considering factory "+f);
+					}
 					if (all || f.isProduction()) {
 						f.init(home, dir);
 						factories.add(f);
-						out.println("Added factory "+f.getName());
+						if (out != null) {
+							out.println("Added factory "+f.getName());
+						}
 					}
 				}
 			} catch (IOException e) {
