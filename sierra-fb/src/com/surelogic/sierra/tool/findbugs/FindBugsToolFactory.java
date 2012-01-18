@@ -48,11 +48,8 @@ public class FindBugsToolFactory extends AbstractToolFactory {
 			final String pluginId = plugin.getPluginId();			
 			final Manifest manifest = findSierraManifest(plugin);
 			Set<ArtifactType> types = new HashSet<ArtifactType>();
-			/*
-			for(BugCode code : iterable(plugin.bugCodeIterator())) {				
-			}
-			*/
-			for(BugPattern pattern : iterable(plugin.bugPatternIterator())) {
+			
+			for(BugPattern pattern : plugin.getBugPatterns()) {
 				ArtifactType t = ArtifactType.create(this, manifest, pluginId, 
 		                                          pattern.getType(), pattern.getCategory());
 				types.add(t);
