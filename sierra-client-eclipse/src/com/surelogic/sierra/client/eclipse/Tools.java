@@ -113,7 +113,7 @@ public final class Tools {
 	}
 
 	public static void checkForNewArtifactTypes() {
-		for (final File plugin : ToolUtil.findToolDirs()) {
+		for (final File plugin : ToolUtil.findToolDirs(System.out)) {
 			LOG.fine("Found plugin @ " + plugin.getPath());
 		}
 		final List<IToolFactory> factories = ToolUtil.findToolFactories();

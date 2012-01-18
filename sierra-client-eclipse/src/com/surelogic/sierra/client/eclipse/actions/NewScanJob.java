@@ -43,7 +43,7 @@ public class NewScanJob extends WorkspaceLockingJob {
 				this.getName());
 		SLStatus status = null;
 		try {
-			status = ToolUtil.scan(config, wrapper, true);
+			status = ToolUtil.scan(System.out, config, wrapper, true);
 
 			if (afterJob != null && !monitor.isCanceled() && status.getSeverity() != SLSeverity.ERROR) {
 				afterJob.schedule();
