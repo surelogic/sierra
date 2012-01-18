@@ -5,10 +5,7 @@ import java.net.URI;
 import java.util.*;
 import java.util.logging.Logger;
 
-import javax.xml.bind.annotation.XmlAccessOrder;
-import javax.xml.bind.annotation.XmlAccessorOrder;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.*;
 
 import com.surelogic.common.jobs.remote.ILocalConfig;
 import com.surelogic.common.logging.SLLogger;
@@ -49,7 +46,7 @@ public class Config implements Cloneable, ILocalConfig {
 	private int memorySize = 1024;
 
 	// Map from plugin id to their locations
-	private final Map<String, String> pluginDirs = new HashMap<String, String>();
+	private final HashMap<String, String> pluginDirs = new HashMap<String, String>();
 
 	// directory to store tool output in
 	private File destDirectory = null;
@@ -73,12 +70,12 @@ public class Config implements Cloneable, ILocalConfig {
 	// Whether the tools are run in multiple threads
 	private boolean multithreaded = false;
 
-	private List<URI> paths = new ArrayList<URI>();
+	private ArrayList<URI> paths = new ArrayList<URI>();
 
-	private List<ToolTarget> targets = new ArrayList<ToolTarget>();
+	private ArrayList<ToolTarget> targets = new ArrayList<ToolTarget>();
 	private Set<ToolTarget> targetsAdded = null;
 	
-	private List<ToolExtension> extensions = new ArrayList<ToolExtension>();
+	private ArrayList<ToolExtension> extensions = new ArrayList<ToolExtension>();
 
 	public Config() {
 		// Nothing to do
@@ -164,14 +161,43 @@ public class Config implements Cloneable, ILocalConfig {
 		this.toolsDirectory = toolsDirectory;
 	}
 
+	@XmlElement
+	public List<KeyValuePair> getPluginDirectories() {
+		List<KeyValuePair> pairs = new ArrayList<KeyValuePair>();
+		for(Map.Entry<String, String> e : pluginDirs.entrySet()) {
+			KeyValuePair p = new KeyValuePair();
+			p.setKey(e.getKey());
+			p.setValue(e.getValue());
+			pairs.add(p);
+		}
+		return pairs;
+	}
+
+	// This is here for Java 7
+	// These shouldn't both be necessary
+	public void setPluginDirectories(List<KeyValuePair> pairs) {
+		if (pairs.isEmpty()) {
+			return;
+		}
+		this.pluginDirs.clear();
+		for(KeyValuePair p : pairs) {
+			this.pluginDirs.put(p.getKey(), p.getValue());
+		}
+	}
+		
 	public Map<String, String> getPluginDirs() {
 		return pluginDirs;
 	}
 
+	// This is here for Java 6
+	// These shouldn't both be necessary
 	public void setPluginDirs(Map<String, String> dirs) {
+		if (dirs.isEmpty()) {
+			return;
+		}
 		this.pluginDirs.clear();
 		this.pluginDirs.putAll(dirs);
-	}
+	}    
 
 	public void putPluginDir(String id, String location) {
 		pluginDirs.put(id, location);
@@ -428,7 +454,7 @@ public class Config implements Cloneable, ILocalConfig {
 	}
 
 	public void setPaths(List<URI> p) {
-		paths = p;
+		paths = new ArrayList<URI>(p);
 	}
 
 	public List<URI> getPaths() {
@@ -451,7 +477,7 @@ public class Config implements Cloneable, ILocalConfig {
 	}
 
 	public void setTargets(List<ToolTarget> t) {
-		targets = t;
+		targets = new ArrayList<ToolTarget>(t);
 	}
 
 	public List<ToolTarget> getTargets() {
@@ -496,7 +522,7 @@ public class Config implements Cloneable, ILocalConfig {
 	}
 	
 	public void setExtensions(List<ToolExtension> t) {
-		extensions = t;
+		extensions = new ArrayList<ToolExtension>(t);
 	}
 
 	public List<ToolExtension> getExtensions() {
