@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -86,11 +87,13 @@ public class ToolUtil {
 		}
 	}
 
-	public static Set<File> findToolDirs() {
+	public static Set<File> findToolDirs(PrintStream out) {
 		Set<File> dirs = new HashSet<File>();
 		for (IToolFinder f : finders) {
+			out.println("Using finder: "+f.toString());
 			for (File dir : f.findToolDirectories()) {
 				if (!dirs.contains(dir)) {
+					out.println("\tFound tool dir: "+dir);
 					dirs.add(dir);
 				}
 			}
@@ -99,19 +102,26 @@ public class ToolUtil {
 	}
 
 	public static List<IToolFactory> findToolFactories() {
-		return findToolFactories(XUtil.useExperimental());
+		return findToolFactories(System.out);
+	}
+	
+	public static List<IToolFactory> findToolFactories(PrintStream out) {
+		return findToolFactories(out, XUtil.useExperimental());
 	}
 
-	public static List<IToolFactory> findToolFactories(boolean all) {
+	public static List<IToolFactory> findToolFactories(PrintStream out, boolean all) {
+		out.println("Finding tool factories ...");
 		final File home = getSierraToolDirectory();
 		List<IToolFactory> factories = new ArrayList<IToolFactory>();
-		for (File dir : findToolDirs()) {
+		for (File dir : findToolDirs(out)) {
 			try {
 				Attributes manifest = readManifest(dir);
 				for (IToolFactory f : instantiateToolFactories(dir, manifest)) {
+					out.println("Considering factory "+f);
 					if (all || f.isProduction()) {
 						f.init(home, dir);
 						factories.add(f);
+						out.println("Added factory "+f.getName());
 					}
 				}
 			} catch (IOException e) {
@@ -122,16 +132,19 @@ public class ToolUtil {
 		return factories;
 	}
 
-	public static IToolInstance create(Config config, boolean runRemotely) {
+	public static IToolInstance create(PrintStream out, Config config, boolean runRemotely) {
 		// runRemotely = false;
 		if (runRemotely) {
 			if (SierraToolConstants.RUN_TOGETHER) {
 				return new LocalTool(config);
 			} else {
 				// Alternately, run in each in separate JVMs
+				out.println("Finding tools ...");
 				final MultiTool t = new MultiTool(config);
-				for (IToolFactory f : findToolFactories()) {
+				for (IToolFactory f : findToolFactories(out)) {
+					out.println("Checking for "+f.getId());
 					if (config.isToolIncluded(f.getId())) {
+						out.println("Adding tool: "+f.getId());
 						final Config c = updateForTool(config, f);
 						t.addTool(new LocalTool(c));
 					}
@@ -148,7 +161,7 @@ public class ToolUtil {
 			}
 		}
 		final MultiTool t = new MultiTool(config);
-		for (IToolFactory f : findToolFactories()) {
+		for (IToolFactory f : findToolFactories(out)) {
 			if (config.isToolIncluded(f.getId())) {
 				// System.out.println("Creating "+f.getId());
 				t.addTool(f);
@@ -520,10 +533,10 @@ public class ToolUtil {
 		return count;
 	}
 
-	public static SLStatus scan(Config config, SLProgressMonitor mon,
+	public static SLStatus scan(PrintStream out, Config config, SLProgressMonitor mon,
 			boolean runRemotely) {
 		final boolean fineIsLoggable = LOG.isLoggable(Level.FINE);
-		final IToolInstance ti = ToolUtil.create(config, runRemotely);
+		final IToolInstance ti = ToolUtil.create(out, config, runRemotely);
 
 		if (fineIsLoggable) {
 			LOG.fine("Excluded: " + config.getExcludedToolsList());

@@ -137,7 +137,7 @@ abstract class AbstractArtifactFileGenerator extends DefaultArtifactGenerator {
 			monitor.worked(1);
 
 			if (metricsHolder.exists()) {
-				monitor.subTask("Writing metrics");
+				monitor.subTask("Writing metrics: "+metricsHolder.length());
 
 				finalFile.write(METRICS_START);
 				copyContents(metricsHolder, finalFile);
@@ -148,7 +148,7 @@ abstract class AbstractArtifactFileGenerator extends DefaultArtifactGenerator {
 			}
 
 			if (artifactsHolder.exists()) {
-				monitor.subTask("Writing artifacts");
+				monitor.subTask("Writing artifacts: "+artifactsHolder.length());
 
 				finalFile.write(ARTIFACTS_START);
 				copyContents(artifactsHolder, finalFile);
@@ -165,7 +165,7 @@ abstract class AbstractArtifactFileGenerator extends DefaultArtifactGenerator {
 			}
 
 			if (errorsHolder.exists()) {
-				monitor.subTask("Writing errors");
+				monitor.subTask("Writing errors: "+errorsHolder.length());
 
 				finalFile.write(ERROR_START);
 				copyContents(errorsHolder, finalFile);
