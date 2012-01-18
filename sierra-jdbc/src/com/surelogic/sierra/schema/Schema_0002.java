@@ -10,9 +10,11 @@ public class Schema_0002 implements SchemaAction {
 
 	public void run(final Connection conn) throws SQLException {
 		FindBugs1_3_9ToolInfoGenerator.generateTool(conn);
+		/*
 		SchemaUtil.updateFindingTypes(conn);
 		SchemaUtil.setupLocalScanFilter(conn);
 		SchemaUtil.generateBuglinkCategories(conn);
+		*/
 	}
 
 }

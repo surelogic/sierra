@@ -2,7 +2,6 @@ package com.surelogic.sierra.tool.findbugs;
 
 import java.io.*;
 import java.net.URI;
-import java.net.URL;
 import java.util.*;
 import java.util.logging.Level;
 
@@ -47,7 +46,7 @@ public class AbstractFindBugsTool extends AbstractToolInstance {
 			return;
 		}
 		engine.setProject(p);
-		engine.setUserPreferences(UserPreferences.getUserPreferences());
+		engine.setUserPreferences(UserPreferences.createDefaultUserPreferences());
 		// engine.setAnalysisFeatureSettings(arg0);
 		
 		// Collect the set of active tool extensions
@@ -57,7 +56,25 @@ public class AbstractFindBugsTool extends AbstractToolInstance {
 				active.add(ext.getId());
 			}
 		}
+		
 		// Customize the set of plugins based on the Config above
+		List<Plugin> plugins = new ArrayList<Plugin>(DetectorFactoryCollection.instance().plugins());
+		Iterator<Plugin> it = plugins.iterator();
+		while (it.hasNext()) {
+			Plugin pl = it.next();
+			if (!active.contains(pl.getPluginId())) {
+				monitor.subTask("Deactivated plugin: "+pl.getPluginId());
+				it.remove();
+				monitor.subTaskDone();
+			} else {
+				monitor.subTask("Active plugin: "+pl.getPluginId());
+				monitor.subTaskDone();
+			}
+		}
+		engine.setDetectorFactoryCollection(new DetectorFactoryCollection(plugins) {
+			// Just to access the constructor
+		});
+		/* This was for FB 1.3.9
 		final List<URL> urls = new ArrayList<URL>();
 		for(Plugin plugin : FindBugsToolFactory.iterable(DetectorFactoryCollection.instance().pluginIterator())) {
 			URL url = plugin.getPluginLoader().getURL();
@@ -69,6 +86,7 @@ public class AbstractFindBugsTool extends AbstractToolInstance {
 		engine.setDetectorFactoryCollection(new DetectorFactoryCollection() {
 			{ setPluginList(urls.toArray(new URL[urls.size()])); }
 		});
+		*/
 		// engine.setClassScreener(new Screener());
 
 		Monitor mon = new Monitor(this, monitor);
@@ -457,6 +475,11 @@ public class AbstractFindBugsTool extends AbstractToolInstance {
 
 		public void startArchive(String arg0) {
 			// FIX what to do?
+		}
+
+		public BugCollection getBugCollection() {
+			// TODO Auto-generated method stub
+			return null;
 		}
 	}
 
