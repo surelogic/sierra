@@ -407,7 +407,9 @@ public final class ConfigGenerator {
 		config.setMemorySize(EclipseUtility
 				.getIntPreference(SierraPreferencesUtility.TOOL_MEMORY_MB));
 		config.setToolsDirectory(new File(tools));
-		config.setPluginDirs(pluginDirs);
+		for(Map.Entry<String, String> e : pluginDirs.entrySet()) {
+			config.putPluginDir(e.getKey(), e.getValue());
+		}
 		config.setComplianceLevel(javaProject.getOption(
 				JavaCore.COMPILER_COMPLIANCE, true));
 		config.setSourceLevel(javaProject.getOption(JavaCore.COMPILER_SOURCE,
@@ -430,10 +432,12 @@ public final class ConfigGenerator {
 				f_numberofExcludedTools++;
 			} else {
 				for (final IToolExtension t : f.getExtensions()) {
+					/*
 					if (t.isCore()) {
 						// Implied by the above
 						continue;
 					}
+					*/
 					final ToolExtension ext = new ToolExtension();
 					ext.setTool(f.getId());
 					ext.setId(t.getId());
