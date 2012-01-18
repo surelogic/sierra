@@ -60,7 +60,7 @@ public final class MessageWarehouse {
 	private MessageWarehouse() {
 		try {
 			ctx = JAXBContext.newInstance(Scan.class, ScanFilter.class,
-					FilterSet.class, FindingTypes.class, Config.class,
+					FilterSet.class, FindingTypes.class, Config.class, KeyValuePair.class,
 					ToolTarget.class, FileTarget.class, JarTarget.class,
 					Error.class, FullDirectoryTarget.class,
 					FilteredDirectoryTarget.class);

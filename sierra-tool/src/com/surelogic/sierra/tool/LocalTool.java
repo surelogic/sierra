@@ -27,6 +27,7 @@ import com.surelogic.common.jobs.remote.TestCode;
 import com.surelogic.sierra.tool.analyzer.ILazyArtifactGenerator;
 import com.surelogic.sierra.tool.message.ArtifactGenerator;
 import com.surelogic.sierra.tool.message.Config;
+import com.surelogic.sierra.tool.message.KeyValuePair;
 import com.surelogic.sierra.tool.targets.FileTarget;
 import com.surelogic.sierra.tool.targets.FilteredDirectoryTarget;
 import com.surelogic.sierra.tool.targets.FullDirectoryTarget;
@@ -44,7 +45,7 @@ final class LocalTool extends AbstractLocalSLJob implements IToolInstance {
     private static JAXBContext createContext() {
         try {
             return JAXBContext.newInstance(Config.class, FileTarget.class,
-                    JarTarget.class, FullDirectoryTarget.class,
+                    JarTarget.class, FullDirectoryTarget.class, KeyValuePair.class,
                     FilteredDirectoryTarget.class);
         } catch (JAXBException e) {
             LOG.log(Level.SEVERE, "Couldn't create JAXB context", e);

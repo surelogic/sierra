@@ -38,7 +38,7 @@ final class RemoteTool extends AbstractRemoteSLJob {
 		FileInputStream file = new FileInputStream(configName);
 		out.println("Got file: " + configName);
 
-		JAXBContext ctx = JAXBContext.newInstance(Config.class,
+		JAXBContext ctx = JAXBContext.newInstance(Config.class, KeyValuePair.class,
 				FileTarget.class, JarTarget.class,
 				FullDirectoryTarget.class, FilteredDirectoryTarget.class);
 		XMLInputFactory xmlif = XMLInputFactory.newInstance();
@@ -66,7 +66,9 @@ final class RemoteTool extends AbstractRemoteSLJob {
 		// out.println(line);
 		// line = br.readLine();
 		// }
-
+		for (Map.Entry<String,String> e : config.getPluginDirs().entrySet()) {
+			out.println(e.getKey()+" -> "+e.getValue());
+		}
 		for (URI location : config.getPaths()) {
 			out.println("URI = " + location);
 		}
@@ -74,11 +76,15 @@ final class RemoteTool extends AbstractRemoteSLJob {
 			out.println(t.getType() + " = " + t.getLocation());
 		}
 		out.println("Excluded tools = "+config.getExcludedToolsList());
+		out.println("Extensions ...");		
+		for(ToolExtension te : config.getExtensions()) {
+			out.println(te.getTool()+" has extension "+te.getId());
+		}
 		out.flush();
 
-		addToolFinder(config);
+		addToolFinder(out, config);
 		
-		final IToolInstance ti = ToolUtil.create(config, false);
+		final IToolInstance ti = ToolUtil.create(out, config, false);
 		out.println("Java version: " + config.getJavaVersion());
 		out.println("Rules file: " + config.getPmdRulesFile());
 		/*
@@ -93,10 +99,12 @@ final class RemoteTool extends AbstractRemoteSLJob {
 		return ti;
 	}
 
-	private void addToolFinder(final Config config) {
+	private void addToolFinder(PrintStream out, final Config config) {
+		out.println("Setting up remote tool finder ...");
 		final List<File> dirs = new ArrayList<File>();
 		for(Map.Entry<String, String> e : config.getPluginDirs().entrySet()) {
 			final File f = new File(e.getValue());
+			out.println("Checking if it's a tool plugin: "+f);
 			if (ToolUtil.isToolPlugin(f)) {
 				dirs.add(f);
 			}
