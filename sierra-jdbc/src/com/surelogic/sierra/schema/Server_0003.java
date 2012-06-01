@@ -7,7 +7,7 @@ import java.sql.Statement;
 
 import com.surelogic.common.jdbc.SchemaAction;
 
-public class Server_0002 implements SchemaAction {
+public class Server_0003 implements SchemaAction {
 
 	public void run(final Connection c) throws SQLException {
 		final Statement st = c.createStatement();
