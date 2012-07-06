@@ -48,7 +48,7 @@ public class ScanDataPreferencePage extends PreferencePage implements
 		final Group pGroup = new Group(panel, SWT.NONE);
 		GridData data = new GridData(SWT.FILL, SWT.TOP, true, false);
 		pGroup.setLayoutData(data);
-		pGroup.setText("Scanned Projects");
+		pGroup.setText("Scanned projects");
 		grid = new GridLayout();
 		grid.numColumns = 2;
 		pGroup.setLayout(grid);
