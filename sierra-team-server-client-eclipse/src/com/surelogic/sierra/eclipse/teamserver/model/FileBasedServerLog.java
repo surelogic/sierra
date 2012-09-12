@@ -107,6 +107,7 @@ public abstract class FileBasedServerLog extends ServerLog {
 	 */
 	protected abstract FilenameFilter getFilenameFilter();
 
+	@SuppressWarnings("unused")
 	private String getTextFileContents(final File file) {
 		final StringBuilder result = new StringBuilder();
 		return getTextFileContents(result, file).toString();

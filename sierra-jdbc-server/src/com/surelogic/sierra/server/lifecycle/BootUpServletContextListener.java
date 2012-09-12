@@ -2,8 +2,6 @@ package com.surelogic.sierra.server.lifecycle;
 
 import java.io.File;
 import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.FileHandler;
@@ -14,7 +12,6 @@ import javax.servlet.ServletContextListener;
 
 import com.surelogic.common.FileUtility;
 import com.surelogic.common.i18n.I18N;
-import com.surelogic.common.jdbc.FutureDatabaseException;
 import com.surelogic.common.jdbc.SchemaUtility;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.jdbc.scan.ScanQueries;

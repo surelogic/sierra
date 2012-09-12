@@ -659,6 +659,7 @@ public class ToolUtil {
 	 * 
 	 * For those not familiar with class loading trickery, be wary
 	 */
+	@SuppressWarnings("unused")
 	private static class ParentLastURLClassLoader extends ClassLoader 
 	{
 	    private ChildURLClassLoader childClassLoader;
