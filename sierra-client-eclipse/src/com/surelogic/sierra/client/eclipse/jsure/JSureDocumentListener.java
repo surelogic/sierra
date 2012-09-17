@@ -54,17 +54,17 @@ public class JSureDocumentListener extends AbstractXMLResultListener {
 			assuranceType = warning ? AssuranceType.INCONSISTENT : AssuranceType.CONSISTENT;
 
 			if (isResultDrop) {
-				aType = e.getAttribute(RESULT_ATTR);
+				aType = e.getAttribute("RESULT_ATTR");
 			} else {
 				final String type = e.getAttribute(TYPE_ATTR);
 				aType = "MethodControlFlow".equals(type) ? "UniquenessAssurance"
 						: type;
 			}
-		} else if (IR_DROP.equals(name)) {
+		} else if (HINT_DROP.equals(name)) {
 			final String type = e.getAttribute(TYPE_ATTR);
 			warning = "WarningDrop".equals(type);
 
-			final String result = e.getAttribute(RESULT_ATTR);
+			final String result = e.getAttribute("RESULT_ATTR");
 			aType = result != null ? result : "JSure";
 		} else {
 			return false;
