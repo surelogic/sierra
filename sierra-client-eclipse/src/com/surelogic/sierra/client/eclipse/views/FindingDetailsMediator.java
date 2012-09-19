@@ -60,7 +60,6 @@ import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.StyleSheetHelper;
 import com.surelogic.sierra.client.eclipse.Utility;
 import com.surelogic.sierra.client.eclipse.jobs.AbstractSierraDatabaseJob;
-import com.surelogic.sierra.client.eclipse.jsure.JSureFindingDetailsView;
 import com.surelogic.sierra.client.eclipse.model.FindingMutationUtility;
 import com.surelogic.sierra.client.eclipse.views.selection.FindingsSelectionView;
 import com.surelogic.sierra.jdbc.finding.ArtifactDetail;
@@ -705,12 +704,6 @@ public class FindingDetailsMediator extends AbstractSierraViewMediator
 
 		updateTabTitles();
 		f_parent.layout(true, true);
-
-		// if (XUtil.useExperimental()) {
-		if (f_finding.getAssuranceType() != null) {
-			JSureFindingDetailsView.findingSelected(f_finding, false);
-		}
-		// }
 	}
 
 	private String getFindingSynopsis() {

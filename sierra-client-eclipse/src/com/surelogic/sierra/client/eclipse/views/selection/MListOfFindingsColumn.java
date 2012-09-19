@@ -60,7 +60,6 @@ import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.Utility;
 import com.surelogic.sierra.client.eclipse.dialogs.ExportFindingSetDialog;
 import com.surelogic.sierra.client.eclipse.jobs.AbstractSierraDatabaseJob;
-import com.surelogic.sierra.client.eclipse.jsure.JSureUtil;
 import com.surelogic.sierra.client.eclipse.model.FindingMutationUtility;
 import com.surelogic.sierra.client.eclipse.model.selection.Column;
 import com.surelogic.sierra.client.eclipse.model.selection.ColumnSort;
@@ -69,7 +68,6 @@ import com.surelogic.sierra.client.eclipse.model.selection.Selection;
 import com.surelogic.sierra.client.eclipse.preferences.SierraPreferencesUtility;
 import com.surelogic.sierra.client.eclipse.views.FindingDetailsMediator;
 import com.surelogic.sierra.client.eclipse.views.FindingDetailsView;
-import com.surelogic.sierra.tool.message.AssuranceType;
 import com.surelogic.sierra.tool.message.Importance;
 
 public final class MListOfFindingsColumn extends MColumn implements
@@ -195,7 +193,6 @@ public final class MListOfFindingsColumn extends MColumn implements
 		String f_findingType;
 		String f_findingTypeName;
 		String f_toolName;
-		AssuranceType f_assuranceType;
 		int index;
 
 		public FindingData(int i) {
@@ -302,10 +299,6 @@ public final class MListOfFindingsColumn extends MColumn implements
 
 			@Override
 			Image getImage(final FindingData data) {
-				if (data.f_assuranceType != null) {
-					return JSureUtil.getImageFor(data.f_findingType,
-							data.f_assuranceType);
-				}
 				return Utility.getImageFor(data.f_importance);
 			}
 		});
@@ -442,8 +435,6 @@ public final class MListOfFindingsColumn extends MColumn implements
 								data.f_toolName = rs.getString(10);
 
 								final String aType = rs.getString(11);
-								data.f_assuranceType = AssuranceType
-										.fromFlag(aType);
 								f_rows.add(data);
 								i++;
 							} else {

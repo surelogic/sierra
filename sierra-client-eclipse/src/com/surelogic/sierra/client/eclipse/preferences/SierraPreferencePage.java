@@ -31,7 +31,6 @@ public class SierraPreferencePage extends AbstractCommonPreferencePage {
 
 	private BooleanFieldEditor f_balloonFlag;
 	private BooleanFieldEditor f_selectProjectsToScan;
-	private BooleanFieldEditor f_showJSureResultsFlag;
 	private BooleanFieldEditor f_showMarkersInJavaEditorFlag;
 	private RadioGroupFieldEditor f_showAbove;
 	private BooleanFieldEditor f_saveResources;
@@ -95,16 +94,6 @@ public class SierraPreferencePage extends AbstractCommonPreferencePage {
 		f_selectProjectsToScan.setPreferenceStore(EclipseUIUtility
 				.getPreferences());
 		f_selectProjectsToScan.load();
-
-		f_showJSureResultsFlag = new BooleanFieldEditor(
-				SierraPreferencesUtility.SHOW_JSURE_FINDINGS,
-				I18N.msg("sierra.eclipse.preference.page.showJSureResultsFlag"),
-				diGroup);
-		f_showJSureResultsFlag.fillIntoGrid(diGroup, 2);
-		f_showJSureResultsFlag.setPage(this);
-		f_showJSureResultsFlag.setPreferenceStore(EclipseUIUtility
-				.getPreferences());
-		f_showJSureResultsFlag.load();
 
 		f_showMarkersInJavaEditorFlag = new BooleanFieldEditor(
 				SierraPreferencesUtility.SHOW_MARKERS,
@@ -223,7 +212,6 @@ public class SierraPreferencePage extends AbstractCommonPreferencePage {
 	protected void performDefaults() {
 		f_balloonFlag.loadDefault();
 		f_selectProjectsToScan.loadDefault();
-		f_showJSureResultsFlag.loadDefault();
 		f_showMarkersInJavaEditorFlag.loadDefault();
 		f_showAbove.loadDefault();
 		f_saveResources.loadDefault();
@@ -238,7 +226,6 @@ public class SierraPreferencePage extends AbstractCommonPreferencePage {
 	public boolean performOk() {
 		f_balloonFlag.store();
 		f_selectProjectsToScan.store();
-		f_showJSureResultsFlag.store();
 		f_showMarkersInJavaEditorFlag.store();
 		f_showAbove.store();
 		f_saveResources.store();

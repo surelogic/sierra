@@ -50,8 +50,6 @@ public final class SierraPreferencesUtility {
 			EclipseUtility.setDefaultBooleanPreference(ALWAYS_SAVE_RESOURCES,
 					false);
 			EclipseUtility.setDefaultBooleanPreference(SHOW_MARKERS, true);
-			EclipseUtility.setDefaultBooleanPreference(SHOW_JSURE_FINDINGS,
-					false);
 			EclipseUtility.setDefaultIntPreference(FINDINGS_LIST_LIMIT, 2000);
 			EclipseUtility.setDefaultIntPreference(TOOL_MEMORY_MB, 1024);
 			EclipseUtility.setDefaultBooleanPreference(
@@ -86,8 +84,6 @@ public final class SierraPreferencesUtility {
 	public static final String SHOW_BALLOON_NOTIFICATIONS = PREFIX
 			+ "show-balloon-notifications";
 	public static final String SHOW_MARKERS = PREFIX + "show-markers";
-	public static final String SHOW_JSURE_FINDINGS = PREFIX
-			+ "show-jsure-findings";
 	public static final String SHOW_MARKERS_AT_OR_ABOVE_IMPORTANCE = PREFIX
 			+ "show-markers-at-or-above-importance";
 	public static final String FINDINGS_LIST_LIMIT = PREFIX
