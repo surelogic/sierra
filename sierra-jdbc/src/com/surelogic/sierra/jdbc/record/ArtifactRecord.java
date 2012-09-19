@@ -7,120 +7,108 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import com.surelogic.sierra.tool.message.AssuranceType;
 import com.surelogic.sierra.tool.message.Priority;
 import com.surelogic.sierra.tool.message.Severity;
 
 public final class ArtifactRecord extends LongRecord {
 
-	private Long scanId;
-	private Long findingTypeId;
-	private Priority priority;
-	private Severity severity;
-	private String message;
-	private SourceRecord primary;
-	private Integer scanNumber;
-	private AssuranceType assurance;
+    private Long scanId;
+    private Long findingTypeId;
+    private Priority priority;
+    private Severity severity;
+    private String message;
+    private SourceRecord primary;
+    private Integer scanNumber;
 
-	public ArtifactRecord(RecordMapper mapper) {
-		super(mapper);
-	}
+    public ArtifactRecord(RecordMapper mapper) {
+        super(mapper);
+    }
 
-	public Long getScanId() {
-		return scanId;
-	}
+    public Long getScanId() {
+        return scanId;
+    }
 
-	public void setScanId(Long scanId) {
-		this.scanId = scanId;
-	}
+    public void setScanId(Long scanId) {
+        this.scanId = scanId;
+    }
 
-	public Long getArtifactTypeId() {
-		return findingTypeId;
-	}
+    public Long getArtifactTypeId() {
+        return findingTypeId;
+    }
 
-	public void setFindingTypeId(Long findingTypeId) {
-		this.findingTypeId = findingTypeId;
-	}
+    public void setFindingTypeId(Long findingTypeId) {
+        this.findingTypeId = findingTypeId;
+    }
 
-	public Priority getPriority() {
-		return priority;
-	}
+    public Priority getPriority() {
+        return priority;
+    }
 
-	public void setPriority(Priority priority) {
-		this.priority = priority;
-	}
+    public void setPriority(Priority priority) {
+        this.priority = priority;
+    }
 
-	public Severity getSeverity() {
-		return severity;
-	}
+    public Severity getSeverity() {
+        return severity;
+    }
 
-	public void setSeverity(Severity severity) {
-		this.severity = severity;
-	}
+    public void setSeverity(Severity severity) {
+        this.severity = severity;
+    }
 
-	public String getMessage() {
-		return message;
-	}
+    public String getMessage() {
+        return message;
+    }
 
-	public void setMessage(String message) {
-		this.message = message;
-	}
+    public void setMessage(String message) {
+        this.message = message;
+    }
 
-	public SourceRecord getPrimary() {
-		return primary;
-	}
+    public SourceRecord getPrimary() {
+        return primary;
+    }
 
-	public void setPrimary(SourceRecord primary) {
-		this.primary = primary;
-	}
+    public void setPrimary(SourceRecord primary) {
+        this.primary = primary;
+    }
 
-	public void setScanNumber(int number) {
-		scanNumber = number;
-	}
+    public void setScanNumber(int number) {
+        scanNumber = number;
+    }
 
-	public Integer getScanNumber() {
-		return scanNumber;
-	}
+    public Integer getScanNumber() {
+        return scanNumber;
+    }
 
-	public void setScanNumber(Integer scanNumber) {
-		this.scanNumber = scanNumber;
-	}
+    public void setScanNumber(Integer scanNumber) {
+        this.scanNumber = scanNumber;
+    }
 
-	public AssuranceType getAssurance() {
-		return assurance;
-	}
+    @Override
+    protected int fill(PreparedStatement st, int idx) throws SQLException {
+        st.setLong(idx++, scanId);
+        st.setLong(idx++, findingTypeId);
+        st.setLong(idx++, primary.getId());
+        setNullableInt(idx++, st, priority == null ? null : priority.ordinal());
+        setNullableInt(idx++, st, severity == null ? null : severity.ordinal());
+        setNullableString(idx++, st, message);
+        setNullableInt(idx++, st, scanNumber);
+        return idx;
+    }
 
-	public void setAssurance(AssuranceType assurance) {
-		this.assurance = assurance;
-	}
+    @Override
+    protected int readAttributes(ResultSet set, int idx) throws SQLException {
+        scanId = set.getLong(idx++);
+        findingTypeId = set.getLong(idx++);
+        priority = Priority.values()[set.getInt(idx++)];
+        severity = Severity.values()[set.getInt(idx++)];
+        message = set.getString(idx++);
+        return idx;
+    }
 
-	@Override
-	protected int fill(PreparedStatement st, int idx) throws SQLException {
-		st.setLong(idx++, scanId);
-		st.setLong(idx++, findingTypeId);
-		st.setLong(idx++, primary.getId());
-		setNullableInt(idx++, st, priority == null ? null : priority.ordinal());
-		setNullableInt(idx++, st, severity == null ? null : severity.ordinal());
-		setNullableString(idx++, st, message);
-		setNullableInt(idx++, st, scanNumber);
-		setNullableString(idx++, st, assurance == null ? null : assurance
-				.flag());
-		return idx;
-	}
-
-	@Override
-	protected int readAttributes(ResultSet set, int idx) throws SQLException {
-		scanId = set.getLong(idx++);
-		findingTypeId = set.getLong(idx++);
-		priority = Priority.values()[set.getInt(idx++)];
-		severity = Severity.values()[set.getInt(idx++)];
-		message = set.getString(idx++);
-		return idx;
-	}
-
-	@Override
-	protected int fillWithNk(PreparedStatement st, int idx) throws SQLException {
-		return fillWithPk(st, idx);
-	}
+    @Override
+    protected int fillWithNk(PreparedStatement st, int idx) throws SQLException {
+        return fillWithPk(st, idx);
+    }
 
 }
