@@ -28,6 +28,7 @@ import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IPackageDeclaration;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
@@ -35,10 +36,9 @@ import org.eclipse.jdt.core.JavaModelException;
 
 import com.surelogic.common.SLUtility;
 import com.surelogic.common.core.EclipseUtility;
-import com.surelogic.common.core.JDTUtility;
-import com.surelogic.common.core.JDTUtility.CompUnitFilter;
 import com.surelogic.common.jobs.remote.AbstractRemoteSLJob;
 import com.surelogic.common.logging.SLLogger;
+import com.surelogic.common.tool.SureLogicToolsFilter;
 import com.surelogic.common.tool.SureLogicToolsPropertiesUtility;
 import com.surelogic.sierra.client.eclipse.Tools;
 import com.surelogic.sierra.client.eclipse.preferences.SierraPreferencesUtility;
@@ -230,20 +230,28 @@ public final class ConfigGenerator {
       config.setLogPath(completeLogPath(docPrefix));
       setupTools(config, javaProject);
 
-      final Properties props = SureLogicToolsPropertiesUtility.readFileOrNull(new File(projectLoc.toFile(), SureLogicToolsPropertiesUtility.PROPS_FILE));
-      final String[] excludedPaths = SureLogicToolsPropertiesUtility.getExcludedSourceFolders(props);
-      final String[] excludedPkgs = SureLogicToolsPropertiesUtility.getExcludedPackagePatterns(props);
+      final Properties props = SureLogicToolsPropertiesUtility.readFileOrNull(new File(projectLoc.toFile(),
+          SureLogicToolsPropertiesUtility.PROPS_FILE));
+      final String[] excludedSourceFolders = SureLogicToolsPropertiesUtility.getExcludedSourceFolders(props);
+      final String[] excludedPackagePatterns = SureLogicToolsPropertiesUtility.getExcludedPackagePatterns(props);
       if (props != null) {
         config.setExcludedSourceFolders(props.getProperty(SureLogicToolsPropertiesUtility.SCAN_EXCLUDE_SOURCE_FOLDER));
         config.setExcludedPackages(props.getProperty(SureLogicToolsPropertiesUtility.SCAN_EXCLUDE_SOURCE_PACKAGE));
       }
-      final CompUnitFilter filter = JDTUtility.getFilter(javaProject.getProject(), excludedPaths, excludedPkgs);
+      final SureLogicToolsFilter filter = SureLogicToolsPropertiesUtility.getFilterFor(excludedSourceFolders,
+          excludedPackagePatterns);
 
       try {
         String defaultOutputLocation = javaProject.getOutputLocation().makeRelative().toOSString();
 
         for (ICompilationUnit c : compilationUnits) {
-          if (filter.matches(c)) {
+          String cuPackageName = "";
+          for (IPackageDeclaration pd : c.getPackageDeclarations()) {
+            cuPackageName = pd.getElementName();
+          }
+          final IPath path = c.getResource().getFullPath();
+          boolean excludeFilterMatchesCU = filter.matches(path.toFile().getAbsolutePath(), cuPackageName);
+          if (excludeFilterMatchesCU) {
             continue; // Excluded
           }
           String outputLocation = computeOutputLocation(javaProject, c, defaultOutputLocation);
@@ -498,7 +506,8 @@ public final class ConfigGenerator {
 
     final Properties props = SureLogicToolsPropertiesUtility.readFileOrNull(new File(p.getProject().getLocation().toFile(),
         SureLogicToolsPropertiesUtility.PROPS_FILE));
-    final String[] excludedFolders = makeAbsolute(p.getElementName(), SureLogicToolsPropertiesUtility.getExcludedSourceFolders(props));
+    final String[] excludedFolders = makeAbsolute(p.getElementName(),
+        SureLogicToolsPropertiesUtility.getExcludedSourceFolders(props));
     final String[] excludedPackages = convertPkgsToSierraStyle(SureLogicToolsPropertiesUtility.getExcludedSourceFolders(props));
     if (props != null) {
       cfg.setExcludedSourceFolders(props.getProperty(SureLogicToolsPropertiesUtility.SCAN_EXCLUDE_SOURCE_FOLDER));
