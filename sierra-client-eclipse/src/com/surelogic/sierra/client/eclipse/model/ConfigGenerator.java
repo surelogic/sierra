@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.logging.Level;
 
@@ -31,7 +32,6 @@ import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.ui.PreferenceConstants;
 
 import com.surelogic.common.SLUtility;
 import com.surelogic.common.core.EclipseUtility;
@@ -230,12 +230,12 @@ public final class ConfigGenerator {
       config.setLogPath(completeLogPath(docPrefix));
       setupTools(config, javaProject);
 
-      final ToolProperties props = ToolProperties.readFromProject(projectLoc.toFile());
-      final String[] excludedPaths = props != null ? props.getExcludedSourcePaths() : SLUtility.EMPTY_STRING_ARRAY;
-      final String[] excludedPkgs = props != null ? props.getExcludedPackages() : SLUtility.EMPTY_STRING_ARRAY;
+      final Properties props = ToolProperties.readFileOrNull(new File(projectLoc.toFile(), ToolProperties.PROPS_FILE));
+      final String[] excludedPaths = ToolProperties.getExcludedSourceFolders(props);
+      final String[] excludedPkgs = ToolProperties.getExcludedPackagePatterns(props);
       if (props != null) {
-        config.setExcludedSourceFolders(props.getProperty(ToolProperties.EXCLUDE_PATH));
-        config.setExcludedPackages(props.getProperty(ToolProperties.EXCLUDED_PKGS));
+        config.setExcludedSourceFolders(props.getProperty(ToolProperties.SCAN_EXCLUDE_SOURCE_FOLDER));
+        config.setExcludedPackages(props.getProperty(ToolProperties.SCAN_EXCLUDE_SOURCE_PACKAGE));
       }
       final CompUnitFilter filter = JDTUtility.getFilter(javaProject.getProject(), excludedPaths, excludedPkgs);
 
@@ -496,16 +496,13 @@ public final class ConfigGenerator {
     }
     handled.add(p);
 
-    final ToolProperties props = ToolProperties.readFromProject(p.getProject().getLocation().toFile());
-    final String[] excludedFolders, excludedPackages;
+    final Properties props = ToolProperties.readFileOrNull(new File(p.getProject().getLocation().toFile(),
+        ToolProperties.PROPS_FILE));
+    final String[] excludedFolders = makeAbsolute(p.getElementName(), ToolProperties.getExcludedSourceFolders(props));
+    final String[] excludedPackages = convertPkgsToSierraStyle(ToolProperties.getExcludedSourceFolders(props));
     if (props != null) {
-      excludedFolders = makeAbsolute(p.getElementName(), props.getExcludedSourcePaths());
-      cfg.setExcludedSourceFolders(props.getProperty(ToolProperties.EXCLUDE_PATH));
-      cfg.setExcludedPackages(props.getProperty(ToolProperties.EXCLUDED_PKGS));
-      excludedPackages = ToolProperties.convertPkgsToRelativePaths(props.getExcludedPackages());
-    } else {
-      excludedFolders = SLUtility.EMPTY_STRING_ARRAY;
-      excludedPackages = SLUtility.EMPTY_STRING_ARRAY;
+      cfg.setExcludedSourceFolders(props.getProperty(ToolProperties.SCAN_EXCLUDE_SOURCE_FOLDER));
+      cfg.setExcludedPackages(props.getProperty(ToolProperties.SCAN_EXCLUDE_SOURCE_PACKAGE));
     }
 
     final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
@@ -513,6 +510,19 @@ public final class ConfigGenerator {
       handleClasspathEntry(cfg, handled, toBeAnalyzed, root, excludedFolders, excludedPackages, cpe);
     }
     handleOutputLocation(cfg, p.getOutputLocation(), excludedPackages, toBeAnalyzed);
+  }
+
+  private static String[] convertPkgsToSierraStyle(String[] pkgs) {
+    if (pkgs == null || pkgs.length == 0) {
+      return SLUtility.EMPTY_STRING_ARRAY;
+    }
+    final String[] paths = new String[pkgs.length];
+    int i = 0;
+    for (String p : pkgs) {
+      paths[i] = p.replace('.', '/').replaceAll("\\*", "**");
+      i++;
+    }
+    return paths;
   }
 
   private static void handleOutputLocation(final Config cfg, IPath outLoc, String[] excludedPkgs, final boolean toBeAnalyzed) {
