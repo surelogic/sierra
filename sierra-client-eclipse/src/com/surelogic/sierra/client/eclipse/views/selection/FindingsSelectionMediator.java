@@ -309,10 +309,10 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 		disposeWorkingSelection();
 		f_workingSelection = newSelection;
 		f_workingSelection.initAndSyncToDatabase();
+		f_workingSelection.refreshFilters();
 		f_first = new MRadioMenuColumn(f_cascadingList, f_workingSelection,
 				null);
 		f_first.init();
-		f_workingSelection.refreshFilters();
 
 		MRadioMenuColumn prevMenu = (MRadioMenuColumn) f_first;
 		for (Filter filter : f_workingSelection.getFilters()) {
