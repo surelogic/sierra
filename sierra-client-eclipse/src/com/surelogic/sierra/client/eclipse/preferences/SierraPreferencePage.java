@@ -187,7 +187,7 @@ public class SierraPreferencePage extends AbstractCommonPreferencePage {
 				.getHelpSystem()
 				.setHelp(parent,
 						"com.surelogic.sierra.client.eclipse.preferences-sierra");
-		if (XUtil.useExperimental()) {
+		if (XUtil.useExperimental) {
 			final Button exportButton = new Button(parent, SWT.PUSH);
 			exportButton.setText("Export New Queries File");
 			exportButton.setLayoutData(new GridData(SWT.DEFAULT, SWT.DEFAULT,

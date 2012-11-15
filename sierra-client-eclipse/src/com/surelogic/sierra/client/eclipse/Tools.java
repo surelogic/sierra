@@ -193,7 +193,7 @@ public final class Tools {
 										incompleteTypes.add(t);
 									}
 								}
-								if (XUtil.useDeveloperMode()
+								if (false // was old developer mode
 										&& !incompleteTypes.isEmpty()) {
 									/*
 									 * ArtifactTypeMappingDialog d = new

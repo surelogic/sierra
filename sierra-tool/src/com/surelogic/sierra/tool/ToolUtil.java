@@ -114,7 +114,7 @@ public class ToolUtil {
 	}
 	
 	public static List<IToolFactory> findToolFactories(PrintStream out) {
-		return findToolFactories(out, XUtil.useExperimental());
+		return findToolFactories(out, XUtil.useExperimental);
 	}
 
 	public static List<IToolFactory> findToolFactories(PrintStream out, boolean all) {

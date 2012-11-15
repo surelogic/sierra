@@ -171,7 +171,7 @@ public abstract class AbstractScan<T extends IJavaElement> {
 		if (configs.isEmpty()) {
 			return false;
 		}
-		if (!XUtil.useExperimental()) {
+		if (!XUtil.useExperimental) {
 			return true;
 		}
 		UIJob job = new UIJob("Put up test dialog") {
@@ -199,7 +199,7 @@ public abstract class AbstractScan<T extends IJavaElement> {
 	}
 
 	protected final boolean setupCUConfigs(List<ConfigCompilationUnit> cuConfigs) {
-		if (!XUtil.useExperimental()) {
+		if (!XUtil.useExperimental) {
 			return true;
 		}
 		List<Config> configs = new ArrayList<Config>();
