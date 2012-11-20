@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import com.surelogic.sierra.tool.message.AssuranceType;
 import com.surelogic.sierra.tool.message.Importance;
 
 /**
@@ -33,7 +32,6 @@ public class FindingOverview {
     private final String tool;
     private final String findingType;
     private final String summary;
-    private final AssuranceType assuranceType;
 
     private final boolean examined;
     private final Date lastChanged;
@@ -63,9 +61,6 @@ public class FindingOverview {
         findingType = set.getString(idx++);
         tool = set.getString(idx++);
         summary = set.getString(idx++);
-
-        final String aType = set.getString(idx++);
-        assuranceType = AssuranceType.fromFlag(aType);
     }
 
     public long getFindingId() {
@@ -98,10 +93,6 @@ public class FindingOverview {
 
     public String getSummary() {
         return summary;
-    }
-
-    public AssuranceType getAssuranceType() {
-        return assuranceType;
     }
 
     public boolean isExamined() {

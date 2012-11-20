@@ -105,7 +105,6 @@ public class Artifact {
         private String message;
         private SourceLocation primarySourceLocation;
         private Integer scanNumber;
-        private AssuranceType assurance;
 
         public Builder() {
             clear();
@@ -117,11 +116,6 @@ public class Artifact {
             artifactType.setVersion(version);
             artifactType.setMnemonic(mnemonic);
 
-            return this;
-        }
-
-        public Builder assurance(AssuranceType assurance) {
-            this.assurance = assurance;
             return this;
         }
 
@@ -190,7 +184,6 @@ public class Artifact {
             sources.clear();
             message = null;
             primarySourceLocation = null;
-            assurance = null;
             scanNumber = null;
         }
     }
