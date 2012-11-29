@@ -66,11 +66,7 @@ public final class SierraPreferencesUtility {
 					SERVER_INTERACTION_RETRY_THRESHOLD, 4);
 			EclipseUtility.setDefaultStringPreference(SERVER_FAILURE_REPORTING,
 					ServerFailureReport.SHOW_BALLOON.toString());
-			EclipseUtility
-					.setDefaultStringPreference(
-							SIERRA_DATA_DIRECTORY,
-							EclipseUtility
-									.getADataDirectoryPath(FileUtility.SIERRA_DATA_PATH_FRAGMENT));
+      EclipseUtility.setDefaultStringPreference(SIERRA_DATA_DIRECTORY, EclipseUtility.getSierraDataDirectory().getAbsolutePath());
 			/*
 			 * We'll take the default-default for the other preferences.
 			 */
