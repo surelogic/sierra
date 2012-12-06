@@ -6,6 +6,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.ui.PlatformUI;
 
 import com.surelogic.common.ui.BalloonUtility;
+import com.surelogic.common.ui.EclipseUIUtility;
 import com.surelogic.common.ui.dialogs.ErrorDialogUtility;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.preferences.ServerFailureReport;
@@ -95,7 +96,7 @@ public abstract class TroubleshootConnection {
 	}
 
 	protected ServerLocation showDialog() {
-		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+	  EclipseUIUtility.asyncExec(new Runnable() {
 			public void run() {
 				ErrorDialogUtility.open(null, getLabel(), f_status);
 			}

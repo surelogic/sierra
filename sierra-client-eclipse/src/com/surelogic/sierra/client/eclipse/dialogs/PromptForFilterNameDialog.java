@@ -13,6 +13,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 import com.surelogic.common.CommonImages;
+import com.surelogic.common.ui.EclipseUIUtility;
 import com.surelogic.common.ui.SLImages;
 
 public final class PromptForFilterNameDialog extends MessageDialog {
@@ -49,7 +50,7 @@ public final class PromptForFilterNameDialog extends MessageDialog {
 		/*
 		 * We have to run this a bit later so that the OK button is created.
 		 */
-		f_name.getDisplay().asyncExec(new Runnable() {
+		EclipseUIUtility.asyncExec(new Runnable() {
 			public void run() {
 				setButtonState();
 			}
