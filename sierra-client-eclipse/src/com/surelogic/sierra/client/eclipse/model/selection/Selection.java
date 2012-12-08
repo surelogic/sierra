@@ -413,8 +413,7 @@ public final class Selection extends AbstractDatabaseObserver {
 		 * The database has changed. Refresh this selection if it has any
 		 * filters.
 		 */
-		final Job job = new AbstractSierraDatabaseJob("Refresh selection",
-				Job.INTERACTIVE) {
+		final Job job = new AbstractSierraDatabaseJob("Refresh selection") {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
@@ -441,8 +440,7 @@ public final class Selection extends AbstractDatabaseObserver {
 	 */
 	public void refreshFilters() {
 		final long now = startingUpdate();
-		final Job job = new AbstractSierraDatabaseJob("Refresh selection",
-				Job.INTERACTIVE) {
+		final Job job = new AbstractSierraDatabaseJob("Refresh selection") {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
@@ -491,8 +489,7 @@ public final class Selection extends AbstractDatabaseObserver {
 	 *            a filter that is part of this selection.
 	 */
 	void filterChanged(final Filter changedFilter) {
-		final Job job = new AbstractSierraDatabaseJob("Refresh filter",
-				Job.INTERACTIVE) {
+		final Job job = new AbstractSierraDatabaseJob("Refresh filter") {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {

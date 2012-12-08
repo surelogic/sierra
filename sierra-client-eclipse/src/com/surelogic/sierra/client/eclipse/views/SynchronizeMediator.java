@@ -101,8 +101,7 @@ public final class SynchronizeMediator extends AbstractSierraViewMediator {
 
 	private void asyncUpdateContents() {
 		final Job job = new AbstractSierraDatabaseJob(
-				"Updating set of server synchronization events",
-				Job.INTERACTIVE) {
+				"Updating set of server synchronization events") {
 			@Override
 			protected IStatus run(final IProgressMonitor monitor) {
 				monitor.beginTask("Updating list", IProgressMonitor.UNKNOWN);

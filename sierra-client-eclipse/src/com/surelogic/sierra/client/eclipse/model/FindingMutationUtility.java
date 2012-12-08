@@ -28,7 +28,7 @@ public final class FindingMutationUtility {
 
 	static abstract class MutationJob extends AbstractSierraDatabaseJob {
 		public MutationJob(final String name) {
-			super(name, Job.INTERACTIVE);
+			super(name);
 			setSystem(false);
 		}
 

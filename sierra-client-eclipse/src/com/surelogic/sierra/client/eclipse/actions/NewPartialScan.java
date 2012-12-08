@@ -11,7 +11,6 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.ICompilationUnit;
 
 import com.surelogic.common.core.JDTUtility;
-import com.surelogic.common.core.jobs.DatabaseJob;
 import com.surelogic.common.core.jobs.SLProgressMonitorWrapper;
 import com.surelogic.common.jobs.SLProgressMonitor;
 import com.surelogic.sierra.client.eclipse.jobs.AbstractSierraDatabaseJob;
@@ -40,7 +39,7 @@ public class NewPartialScan extends AbstractScan<ICompilationUnit> {
 
 		for (final ConfigCompilationUnit ccu : configs) {
 			final Config config = ccu.getConfig();
-			DatabaseJob importJob = new ImportPartialScanDocumentJob(ccu);
+			AbstractSierraDatabaseJob importJob = new ImportPartialScanDocumentJob(ccu);
 			importJob.addJobChangeListener(new ScanJobAdapter(config
 					.getProject(), true));
 

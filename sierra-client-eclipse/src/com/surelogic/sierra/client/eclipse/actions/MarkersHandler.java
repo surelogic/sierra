@@ -453,7 +453,8 @@ public final class MarkersHandler extends AbstractDatabaseObserver implements
 		public QueryMarkersJob(String name, String projectName,
 				String className, String packageName, IFile currentFile,
 				long now) {
-			super(name, DECORATE);
+			super(name);
+			setPriority(DECORATE);
 			f_className = className;
 			f_packageName = packageName;
 			f_projectName = projectName;

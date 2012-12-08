@@ -988,7 +988,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 		final long now = startingUpdate();
 
 		final Job job = new AbstractSierraDatabaseJob(
-				"Updating project status", Job.INTERACTIVE) {
+				"Updating project status") {
 			@Override
 			protected IStatus run(final IProgressMonitor monitor) {
 				monitor.beginTask("Updating list", IProgressMonitor.UNKNOWN);

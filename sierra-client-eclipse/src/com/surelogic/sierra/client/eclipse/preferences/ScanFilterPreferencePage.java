@@ -149,7 +149,7 @@ public class ScanFilterPreferencePage extends PreferencePage implements
 			}
 		}
 		final Job job = new AbstractSierraDatabaseJob(
-				"Updating Global Sierra Settings", Job.INTERACTIVE) {
+				"Updating Global Sierra Settings") {
 			@Override
 			protected IStatus run(final IProgressMonitor monitor) {
 				monitor.beginTask("Updating Global Sierra Settings",
@@ -198,8 +198,7 @@ public class ScanFilterPreferencePage extends PreferencePage implements
 						if (!findingTypeId.equals(f_selectedFindingTypeId)) {
 							f_selectedFindingTypeId = findingTypeId;
 							final Job job = new AbstractSierraDatabaseJob(
-									"Querying Sierra Artifact Type Description",
-									Job.INTERACTIVE) {
+									"Querying Sierra Artifact Type Description") {
 								@Override
 								protected IStatus run(
 										final IProgressMonitor monitor) {

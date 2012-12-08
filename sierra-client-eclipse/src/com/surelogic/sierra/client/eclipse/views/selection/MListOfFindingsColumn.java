@@ -152,7 +152,7 @@ public final class MListOfFindingsColumn extends MColumn implements ISelectionOb
           getSelection().removeObserver(MListOfFindingsColumn.this);
         } else {
           final long now = startingUpdate();
-          final Job job = new AbstractSierraDatabaseJob("Refresh list of findings", Job.INTERACTIVE) {
+          final Job job = new AbstractSierraDatabaseJob("Refresh list of findings") {
             @Override
             protected IStatus run(final IProgressMonitor monitor) {
               boolean keepGoing = false;

@@ -6,7 +6,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
-import com.surelogic.common.core.jobs.DatabaseJob;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.model.ConnectedServerManager;
 import com.surelogic.sierra.jdbc.settings.ServerLocations;
@@ -40,5 +39,4 @@ public class LoadConnectedServersJob extends AbstractSierraDatabaseJob {
 						ServerLocations.fetchQuery(f_passwords)));
 		return Status.OK_STATUS;
 	}
-
 }

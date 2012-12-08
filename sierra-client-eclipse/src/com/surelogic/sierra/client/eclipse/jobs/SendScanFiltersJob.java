@@ -9,7 +9,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 
-import com.surelogic.common.core.jobs.DatabaseJob;
 import com.surelogic.common.core.jobs.SLProgressMonitorWrapper;
 import com.surelogic.common.core.logging.SLEclipseStatusUtility;
 import com.surelogic.common.i18n.I18N;

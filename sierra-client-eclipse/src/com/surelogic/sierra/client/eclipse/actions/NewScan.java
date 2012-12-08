@@ -14,8 +14,8 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.IJavaProject;
 
 import com.surelogic.common.core.JDTUtility;
-import com.surelogic.common.core.jobs.DatabaseJob;
 import com.surelogic.common.ui.BalloonUtility;
+import com.surelogic.sierra.client.eclipse.jobs.AbstractSierraDatabaseJob;
 import com.surelogic.sierra.client.eclipse.jobs.ImportScanDocumentJob;
 import com.surelogic.sierra.client.eclipse.model.ConfigGenerator;
 import com.surelogic.sierra.client.eclipse.model.DatabaseHub;
@@ -82,7 +82,7 @@ public class NewScan extends AbstractScan<IJavaProject> {
 					scanDocument.renameTo(newScanDocument);
 				}
 			};
-			DatabaseJob importJob = new ImportScanDocumentJob(config
+			AbstractSierraDatabaseJob importJob = new ImportScanDocumentJob(config
 					.getScanDocument(), config.getProject(), runAfterImport);
 			importJob.addJobChangeListener(new ScanJobAdapter(config
 					.getProject()));

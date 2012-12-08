@@ -246,7 +246,7 @@ public class FindingDetailsMediator extends AbstractSierraViewMediator
 		 * == findingId) { return; }
 		 */
 		final Job job = new AbstractSierraDatabaseJob(
-				"Querying details of finding " + findingId, Job.INTERACTIVE) {
+				"Querying details of finding " + findingId) {
 			@Override
 			protected IStatus run(final IProgressMonitor monitor) {
 				monitor.beginTask("Querying finding data",
