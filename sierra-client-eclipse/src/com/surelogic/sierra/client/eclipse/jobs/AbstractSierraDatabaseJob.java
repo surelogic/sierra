@@ -1,8 +1,8 @@
 package com.surelogic.sierra.client.eclipse.jobs;
 
-import com.surelogic.common.core.jobs.AbstractEclipseAccessKeysJob;
+import com.surelogic.common.core.jobs.EclipseAccessKeysJob;
 
-public abstract class AbstractSierraDatabaseJob extends AbstractEclipseAccessKeysJob {
+public abstract class AbstractSierraDatabaseJob extends EclipseAccessKeysJob {
   public AbstractSierraDatabaseJob(String name) {
     super(name, JobConstants.ACCESS_KEY);
   }
