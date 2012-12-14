@@ -25,7 +25,7 @@ final class MultiTool extends AbstractSLJob implements IToolInstance, Iterable<I
 	}
 	
 	private MultiTool(Config config, boolean close) {
-		super(factory.getId());
+		super(factory.getName());
 		this.config = config;
 		genHandle = AbstractToolFactory.createGenerator(config);
 		closeWhenDone = close;		
@@ -57,10 +57,6 @@ final class MultiTool extends AbstractSLJob implements IToolInstance, Iterable<I
 
 	public final String getId() {
 		return factory.getId();
-	}
-
-	public final String getName() {
-		return factory.getName();
 	}
 
 	public final String getVersion() {

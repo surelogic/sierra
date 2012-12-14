@@ -71,10 +71,6 @@ public abstract class AbstractToolInstance extends AbstractSLJob implements IToo
 	  return factory.getId();
   }
 
-  public final String getName() {
-	  return factory.getName();
-  }
-
   public final String getVersion() {
 	  return factory.getVersion();
   }

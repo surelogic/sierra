@@ -1,29 +1,34 @@
 package com.surelogic.ant.sierra;
 
+import static com.surelogic.sierra.tool.SierraToolConstants.PARSED_FILE_SUFFIX;
+import static com.surelogic.sierra.tool.SierraToolConstants.PARSED_ZIP_FILE_SUFFIX;
+import static com.surelogic.sierra.tool.SierraToolConstants.USE_ZIP;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.util.StringTokenizer;
 
-import org.apache.commons.lang.SystemUtils;
-import org.apache.tools.ant.*;
-import org.apache.tools.ant.taskdefs.compilers.*;
-import org.apache.tools.ant.types.*;
+import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.Project;
+import org.apache.tools.ant.taskdefs.compilers.DefaultCompilerAdapter;
+import org.apache.tools.ant.types.Path;
 import org.apache.tools.ant.util.StringUtils;
 
-import com.surelogic.common.jobs.*;
+import com.surelogic.common.jobs.NullSLProgressMonitor;
 import com.surelogic.common.jobs.remote.AbstractRemoteSLJob;
-import com.surelogic.sierra.tool.*;
+import com.surelogic.sierra.tool.IToolExtension;
+import com.surelogic.sierra.tool.IToolFactory;
+import com.surelogic.sierra.tool.SierraToolConstants;
+import com.surelogic.sierra.tool.ToolUtil;
 import com.surelogic.sierra.tool.message.Config;
 import com.surelogic.sierra.tool.message.ToolExtension;
-import com.surelogic.sierra.tool.targets.*;
+import com.surelogic.sierra.tool.targets.FileTarget;
+import com.surelogic.sierra.tool.targets.FullDirectoryTarget;
 import com.surelogic.sierra.tool.targets.IToolTarget.Type;
-
-import static com.surelogic.sierra.tool.SierraToolConstants.*;
+import com.surelogic.sierra.tool.targets.JarTarget;
 
 public class SierraJavacAdapter extends DefaultCompilerAdapter {
-	boolean keepRunning = true;
-
 	Path sourcepath = null;
 	final SierraScan scan;
 
@@ -43,7 +48,7 @@ public class SierraJavacAdapter extends DefaultCompilerAdapter {
 		}
 		try {
 			Config config = createConfig();
-			ToolUtil.scan(System.out, config, new Monitor(), true);
+			ToolUtil.scan(System.out, config, new NullSLProgressMonitor(), true);
 		} catch (Throwable t) {
 			t.printStackTrace();
 			throw new BuildException("Exception while scanning", t);
@@ -265,24 +270,5 @@ public class SierraJavacAdapter extends DefaultCompilerAdapter {
 			}
 		}
 		return null;
-	}
-
-	class Monitor extends NullSLProgressMonitor {
-		public void failed(String msg) {
-			System.err.println(msg);
-		}
-
-		public void failed(String msg, Throwable t) {
-			System.err.println(msg);
-			t.printStackTrace(System.err);
-		}
-
-		public boolean isCanceled() {
-			return !keepRunning;
-		}
-
-		public void setCanceled(boolean value) {
-			keepRunning = false;
-		}
 	}
 }
