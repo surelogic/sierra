@@ -101,7 +101,8 @@ public class Config implements Cloneable, ILocalConfig {
 		return runDateTime;
 	}
 
-	public int getMemorySize() {
+	@Override
+  public int getMemorySize() {
 		return memorySize;
 	}
 
@@ -109,7 +110,8 @@ public class Config implements Cloneable, ILocalConfig {
 		memorySize = (size > 0) ? size : 1024;
 	}
 
-	public final boolean isVerbose() {
+	@Override
+  public final boolean isVerbose() {
 		return verbose;
 	}
 
@@ -117,7 +119,8 @@ public class Config implements Cloneable, ILocalConfig {
 		this.verbose = verbose;
 	}
 	
-	public String getTestCode() {
+	@Override
+  public String getTestCode() {
 		return testCode;
 	}
 
@@ -207,7 +210,8 @@ public class Config implements Cloneable, ILocalConfig {
 		return getPluginDir(id, true);
 	}
 
-	public String getPluginDir(String id, boolean required) {
+	@Override
+  public String getPluginDir(String id, boolean required) {
 		String loc = pluginDirs.get(id);
 		if (required && loc == null) {
 			LOG.warning("No location for " + id);

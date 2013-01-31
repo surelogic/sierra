@@ -62,7 +62,8 @@ public class BaseMapper implements RecordMapper {
 	 * 
 	 * @see com.surelogic.sierra.jdbc.RecordMapper#insert(com.surelogic.sierra.jdbc.AbstractRecord)
 	 */
-	public void insert(AbstractRecord<?> record) throws SQLException {
+	@Override
+  public void insert(AbstractRecord<?> record) throws SQLException {
 		if (insert == null)
 			throw new UnsupportedOperationException();
 		record.fill(insert, 1);
@@ -84,7 +85,8 @@ public class BaseMapper implements RecordMapper {
 	 * 
 	 * @see com.surelogic.sierra.jdbc.RecordMapper#remove(com.surelogic.sierra.jdbc.AbstractRecord)
 	 */
-	public void remove(AbstractRecord<?> record) throws SQLException {
+	@Override
+  public void remove(AbstractRecord<?> record) throws SQLException {
 		if (delete == null)
 			throw new UnsupportedOperationException();
 		record.fillWithPk(delete, 1);
@@ -96,7 +98,8 @@ public class BaseMapper implements RecordMapper {
 	 * 
 	 * @see com.surelogic.sierra.jdbc.RecordMapper#select(com.surelogic.sierra.jdbc.AbstractRecord)
 	 */
-	public boolean select(AbstractRecord<?> record) throws SQLException {
+	@Override
+  public boolean select(AbstractRecord<?> record) throws SQLException {
 		if (select == null)
 			throw new UnsupportedOperationException();
 		record.fillWithNk(select, 1);

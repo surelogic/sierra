@@ -28,12 +28,14 @@ public final class BuglinkData extends DatabaseObservable<IBuglinkDataObserver>
 		return INSTANCE;
 	}
 
-	public void init() {
+	@Override
+  public void init() {
 		DatabaseHub.getInstance().addObserver(this);
 		refresh();
 	}
 
-	public void dispose() {
+	@Override
+  public void dispose() {
 		DatabaseHub.getInstance().removeObserver(this);
 	}
 

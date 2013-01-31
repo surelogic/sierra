@@ -10,7 +10,8 @@ public final class RefreshDatabaseJob extends AbstractSLJob {
 		super("Refreshing Sierra database.");
 	}
 
-	public SLStatus run(SLProgressMonitor monitor) {
+	@Override
+  public SLStatus run(SLProgressMonitor monitor) {
 		//final String msg = "Refreshing the database from the file system.";
 		monitor.begin();
 		

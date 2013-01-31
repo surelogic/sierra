@@ -32,7 +32,8 @@ public class NewSierraToolProjectWizard extends Wizard implements INewWizard {
 		// TODO Auto-generated constructor stub
 	}
 
-	public void init(IWorkbench workbench, IStructuredSelection selection) {
+	@Override
+  public void init(IWorkbench workbench, IStructuredSelection selection) {
 		setNeedsProgressMonitor(true);
 	}
 	

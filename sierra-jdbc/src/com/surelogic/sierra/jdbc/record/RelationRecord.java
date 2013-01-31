@@ -35,11 +35,13 @@ public abstract class RelationRecord<U, V> extends
 		return idx;
 	}
 
-	public PK<U, V> getId() {
+	@Override
+  public PK<U, V> getId() {
 		return id;
 	}
 
-	public void setId(PK<U, V> id) {
+	@Override
+  public void setId(PK<U, V> id) {
 		this.id = id;
 	}
 

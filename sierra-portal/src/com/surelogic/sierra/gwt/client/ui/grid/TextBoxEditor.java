@@ -22,16 +22,19 @@ public class TextBoxEditor extends InplaceEditor {
 		super(grid, row, column);
 	}
 
-	protected FocusWidget createEditor() {
+	@Override
+  protected FocusWidget createEditor() {
 		return new TextBox();
 	}
 
-	protected void initEditor(SelectableGrid grid, int row, int column) {
+	@Override
+  protected void initEditor(SelectableGrid grid, int row, int column) {
 		initialValue = grid.getText(row, column);
 		getTextEditor().setText(initialValue);
 	}
 
-	protected void closeEditor(SelectableGrid grid, int row, int column,
+	@Override
+  protected void closeEditor(SelectableGrid grid, int row, int column,
 			boolean canceled) {
 		String cellValue = initialValue;
 		if (!canceled) {

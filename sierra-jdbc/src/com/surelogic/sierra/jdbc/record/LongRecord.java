@@ -19,7 +19,8 @@ public abstract class LongRecord extends AbstractRecord<Long> {
 		super(mapper);
 	}
 
-	public Long getId() {
+	@Override
+  public Long getId() {
 		return id;
 	}
 
@@ -35,7 +36,8 @@ public abstract class LongRecord extends AbstractRecord<Long> {
 		return idx;
 	}
 
-	public void setId(Long id) {
+	@Override
+  public void setId(Long id) {
 		this.id = id;
 	}
 

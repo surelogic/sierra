@@ -42,7 +42,8 @@ public class PMDToolFactory extends AbstractToolFactory {
 	static final String rulesets = "all.xml"; // location of the XML rule file
 
 	static final Iterable<RulePair> ERROR = new Iterable<RulePair>() {
-		public Iterator<RulePair> iterator() {
+		@Override
+    public Iterator<RulePair> iterator() {
 			return null;
 		}
 	};
@@ -101,7 +102,8 @@ public class PMDToolFactory extends AbstractToolFactory {
 		return jars;
 	}
 
-	public Collection<IToolExtension> getExtensions() {
+	@Override
+  public Collection<IToolExtension> getExtensions() {
 		try {
 			return extractArtifactTypes(getRuleSets());
 		} catch (final RuleSetNotFoundException e) {
@@ -338,13 +340,16 @@ public class PMDToolFactory extends AbstractToolFactory {
 		}
 		final Manifest findingTypeProps = ft_props;
 		return new Iterable<RulePair>() {
-			public Iterator<RulePair> iterator() {
+			@Override
+      public Iterator<RulePair> iterator() {
 				return new Iterator<RulePair>() {
-					public boolean hasNext() {
+					@Override
+          public boolean hasNext() {
 						return st.hasMoreTokens();
 					}
 
-					public RulePair next() {
+					@Override
+          public RulePair next() {
 						final String ruleset = st.nextToken();
 						final ZipEntry entry = zf.getEntry(ruleset);
 						if (entry == null) {
@@ -363,7 +368,8 @@ public class PMDToolFactory extends AbstractToolFactory {
 						return new RulePair(ruleset, stream, findingTypeProps);
 					}
 
-					public void remove() {
+					@Override
+          public void remove() {
 						throw new UnsupportedOperationException();
 					}
 
@@ -378,7 +384,8 @@ public class PMDToolFactory extends AbstractToolFactory {
 			return Collections.emptyList();
 		}
 		final File[] jars = lib.listFiles(new FilenameFilter() {
-			public boolean accept(final File dir, final String name) {
+			@Override
+      public boolean accept(final File dir, final String name) {
 				return name.endsWith(".jar") || name.endsWith(".zip");
 			}
 		});

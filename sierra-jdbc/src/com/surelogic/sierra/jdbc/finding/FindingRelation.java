@@ -18,7 +18,8 @@ public class FindingRelation {
 	}
 	
 	static class Handler implements RowHandler<FindingRelation> {
-		public FindingRelation handle(Row r) {
+		@Override
+    public FindingRelation handle(Row r) {
 			return new FindingRelation(r);
 		}		
 	}

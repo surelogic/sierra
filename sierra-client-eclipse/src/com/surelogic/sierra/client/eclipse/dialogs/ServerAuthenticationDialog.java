@@ -158,7 +158,8 @@ public final class ServerAuthenticationDialog extends Dialog {
 		f_savePasswordButton.setText("Save Password");
 		f_savePasswordButton.setSelection(f_savePassword);
 		f_savePasswordButton.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event event) {
+			@Override
+      public void handleEvent(Event event) {
 				f_savePassword = f_savePasswordButton.getSelection();
 			}
 		});

@@ -21,21 +21,25 @@ public class SynchronizeBugLinkServerAction implements
 		this.force = force;
 	}
 
-	public void dispose() {
+	@Override
+  public void dispose() {
 		// FIX what to do?
 	}
 
-	public void init(final IWorkbenchWindow window) {
+	@Override
+  public void init(final IWorkbenchWindow window) {
 		// FIX what to do?
 	}
 
-	public void run(final IAction action) {
+	@Override
+  public void run(final IAction action) {
 		final SynchronizeJob job = new SynchronizeJob(null, f_server, force,
 				f_strategy);
 		job.schedule();
 	}
 
-	public void selectionChanged(final IAction action,
+	@Override
+  public void selectionChanged(final IAction action,
 			final ISelection selection) {
 		// FIX what to do?
 	}

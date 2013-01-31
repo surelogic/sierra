@@ -246,7 +246,8 @@ public class FindingTypes {
 
 	private class ExtensionDOHandler implements RowHandler<ExtensionDO> {
 
-		public ExtensionDO handle(final Row r) {
+		@Override
+    public ExtensionDO handle(final Row r) {
 			final long id = r.nextLong();
 			final ExtensionDO e = new ExtensionDO(r.nextString(), r
 					.nextString(), r.nextString());
@@ -285,7 +286,8 @@ public class FindingTypes {
 
 	private static class ArtifactTypeDOHandler implements
 			RowHandler<ArtifactTypeDO> {
-		public ArtifactTypeDO handle(final Row r) {
+		@Override
+    public ArtifactTypeDO handle(final Row r) {
 			return new ArtifactTypeDO(r.nextLong(), r.nextString(), r
 					.nextString(), r.nextString(), r.nextString());
 		}

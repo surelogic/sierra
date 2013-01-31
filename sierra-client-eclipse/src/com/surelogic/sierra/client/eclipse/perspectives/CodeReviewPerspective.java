@@ -17,7 +17,8 @@ import com.surelogic.sierra.client.eclipse.views.selection.FindingsSelectionView
  */
 public final class CodeReviewPerspective implements IPerspectiveFactory {
 
-	public void createInitialLayout(IPageLayout layout) {
+	@Override
+  public void createInitialLayout(IPageLayout layout) {
 		final String localTeamServerId = "com.surelogic.sierra.eclipse.teamserver";
 		final String localTeamServerView = "com.surelogic.sierra.eclipse.teamserver.views.TeamServerView";
 		final String packageExplorer = "org.eclipse.jdt.ui.PackageExplorer";

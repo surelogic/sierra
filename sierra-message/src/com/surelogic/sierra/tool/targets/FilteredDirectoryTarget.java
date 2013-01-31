@@ -80,7 +80,8 @@ public class FilteredDirectoryTarget extends DirectoryTarget {
 		  final Pattern regex = Pattern.compile(s);
 		  final Matcher match = regex.matcher("");
 		  result[i] = new IPattern() {
-			public boolean matches(String path) {
+			@Override
+      public boolean matches(String path) {
 				match.reset(path);
 				return match.matches();
 			}			  
@@ -124,6 +125,7 @@ public class FilteredDirectoryTarget extends DirectoryTarget {
 	  }
   }
   
+  @Override
   public boolean exclude(String relativePath) {
 	initPatterns();
    include:

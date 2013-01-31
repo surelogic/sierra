@@ -9,11 +9,13 @@ import com.surelogic.sierra.jdbc.tool.FindingTypeDO;
 public final class FilterFindingType extends Filter {
 
 	public static final ISelectionFilterFactory FACTORY = new AbstractFilterFactory() {
-		public Filter construct(Selection selection, Filter previous) {
+		@Override
+    public Filter construct(Selection selection, Filter previous) {
 			return new FilterFindingType(selection, previous);
 		}
 
-		public String getFilterLabel() {
+		@Override
+    public String getFilterLabel() {
 			return "Finding Type";
 		}
 	};
@@ -45,7 +47,8 @@ public final class FilterFindingType extends Filter {
 		
 		final BuglinkData buglink = BuglinkData.getInstance();
 		Collections.sort(f_allValues, new Comparator<String>() {
-			public int compare(String o1, String o2) {
+			@Override
+      public int compare(String o1, String o2) {
 				// FIX cache one of these?
 				FindingTypeDO def1 = buglink.getFindingType(o1);
 				FindingTypeDO def2 = buglink.getFindingType(o2);

@@ -353,17 +353,20 @@ public final class MarkersHandler extends AbstractDatabaseObserver implements
 			}
 		}
 
-		public void partBroughtToTop(IWorkbenchPartReference partRef) {
+		@Override
+    public void partBroughtToTop(IWorkbenchPartReference partRef) {
 			ensureMarkersSetForPart(partRef);
 		}
 
-		public void partActivated(IWorkbenchPartReference partRef) {
+		@Override
+    public void partActivated(IWorkbenchPartReference partRef) {
 			if (keepMarkersForAllVisibleEditors) {
 				ensureMarkersSetForPart(partRef);
 			}
 		}
 
-		public void partClosed(IWorkbenchPartReference partRef) {
+		@Override
+    public void partClosed(IWorkbenchPartReference partRef) {
 			if (JavaUI.ID_CU_EDITOR.equals(partRef.getId())) {
 				IEditorPart editor = partRef.getPage().getActiveEditor();
 				if (editor == null) {
@@ -377,11 +380,13 @@ public final class MarkersHandler extends AbstractDatabaseObserver implements
 			}
 		}
 
-		public void partDeactivated(IWorkbenchPartReference partRef) {
+		@Override
+    public void partDeactivated(IWorkbenchPartReference partRef) {
 			// Nothing to do, since it could still be visible, just not selected
 		}
 
-		public void partHidden(IWorkbenchPartReference partRef) {
+		@Override
+    public void partHidden(IWorkbenchPartReference partRef) {
 			if (keepMarkersForAllVisibleEditors) {
 				if (JavaUI.ID_CU_EDITOR.equals(partRef.getId())) {
 					IEditorPart editor = partRef.getPage().getActiveEditor();
@@ -392,18 +397,21 @@ public final class MarkersHandler extends AbstractDatabaseObserver implements
 			}
 		}
 
-		public void partInputChanged(IWorkbenchPartReference partRef) {
+		@Override
+    public void partInputChanged(IWorkbenchPartReference partRef) {
 			// Nothing to do
 		}
 
-		public void partOpened(IWorkbenchPartReference partRef) {
+		@Override
+    public void partOpened(IWorkbenchPartReference partRef) {
 			if (keepMarkersForAllVisibleEditors) {
 				ensureMarkersSetForPart(partRef);
 			}
 
 		}
 
-		public void partVisible(IWorkbenchPartReference partRef) {
+		@Override
+    public void partVisible(IWorkbenchPartReference partRef) {
 			if (keepMarkersForAllVisibleEditors) {
 				ensureMarkersSetForPart(partRef);
 			}

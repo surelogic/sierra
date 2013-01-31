@@ -54,27 +54,32 @@ public final class AdHocDataSource extends AdHocManagerAdapter implements
 		AdHocManager.shutdown();
 	}
 
-	public DBConnection getDB() {
+	@Override
+  public DBConnection getDB() {
 		return Data.getInstance();
 	}
 
-	public int getMaxRowsPerQuery() {
+	@Override
+  public int getMaxRowsPerQuery() {
 		return EclipseUtility
 				.getIntPreference(SierraPreferencesUtility.FINDINGS_LIST_LIMIT);
 	}
 
-	public File getQuerySaveFile() {
+	@Override
+  public File getQuerySaveFile() {
 		final IPath pluginState = Activator.getDefault().getStateLocation();
 		return new File(pluginState.toOSString()
 				+ System.getProperty("file.separator") + "queries.xml");
 	}
 
-	public void badQuerySaveFileNotification(final Exception e) {
+	@Override
+  public void badQuerySaveFileNotification(final Exception e) {
 		SLLogger.getLogger().log(Level.SEVERE,
 				I18N.err(4, getQuerySaveFile().getAbsolutePath()), e);
 	}
 
-	public URL getDefaultQueryUrl() {
+	@Override
+  public URL getDefaultQueryUrl() {
 		return Thread
 				.currentThread()
 				.getContextClassLoader()
@@ -104,11 +109,13 @@ public final class AdHocDataSource extends AdHocManagerAdapter implements
 		job.schedule();
 	}
 
-	public String getEditorViewId() {
+	@Override
+  public String getEditorViewId() {
 		return QueryEditorView.class.getName();
 	}
 
-	public String[] getCurrentAccessKeys() {
+	@Override
+  public String[] getCurrentAccessKeys() {
 		return new String[] { "sierra" };
 	}
 }

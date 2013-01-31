@@ -13,7 +13,8 @@ public class DisconnectDatabase extends AbstractSLJob {
 		super("Disconnect the Sierra database");
 	}
 
-	public SLStatus run(SLProgressMonitor monitor) {
+	@Override
+  public SLStatus run(SLProgressMonitor monitor) {
 		monitor.begin();
 		try {
 			/*

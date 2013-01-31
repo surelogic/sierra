@@ -136,7 +136,8 @@ public class SynchronizeJob extends AbstractServerProjectJob {
 			this.slMonitor = slMonitor;
 		}
 
-		public Boolean perform(final Connection conn) throws Exception {
+		@Override
+    public Boolean perform(final Connection conn) throws Exception {
 			final Query q = new ConnectionQuery(conn);
 			SettingQueries.updateServerInfo(getServer().getLocation()).perform(
 					q);

@@ -37,7 +37,8 @@ abstract class AbstractArtifactTypePage extends WizardPage {
 		setPageComplete(false);
 	}
 
-	public void createControl(Composite panel) {
+	@Override
+  public void createControl(Composite panel) {
 		GridLayout gridLayout = new GridLayout();
 		gridLayout.numColumns = 2;
 		panel.setLayout(gridLayout);
@@ -93,7 +94,8 @@ abstract class AbstractArtifactTypePage extends WizardPage {
 			    	newEditor.setText(DEFAULT);
 			    }
 				newEditor.addModifyListener(new ModifyListener() {
-					public void modifyText(ModifyEvent e) {
+					@Override
+          public void modifyText(ModifyEvent e) {
 						Combo text = (Combo)editor.getEditor();
 						String name = text.getText();
 						convertFromName(type, name);						

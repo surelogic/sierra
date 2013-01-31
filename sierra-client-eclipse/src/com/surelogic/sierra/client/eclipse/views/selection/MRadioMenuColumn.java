@@ -43,7 +43,8 @@ public final class MRadioMenuColumn extends MColumn implements
 		final CascadingList.IColumn m = new CascadingList.IColumn() {
 			final Filter previousFilter = getFilterFromColumn(getPreviousColumn());
 
-			public Composite createContents(Composite panel) {
+			@Override
+      public Composite createContents(Composite panel) {
 				f_menu = new RadioArrowMenu(panel);
 				if (previousFilter != null) {
 					f_menu.addChoice("Show", null);
@@ -102,7 +103,8 @@ public final class MRadioMenuColumn extends MColumn implements
 		getCascadingList().show(index);
 	}
 
-	public void selected(Object choice, RadioArrowMenu menu) {
+	@Override
+  public void selected(Object choice, RadioArrowMenu menu) {
 		f_menu.setEnabled(false);
 		final int column = getColumnIndex();
 
@@ -111,7 +113,8 @@ public final class MRadioMenuColumn extends MColumn implements
 		 */
 		getCascadingList().addColumnAfter(new CascadingList.IColumn() {
 
-			public Composite createContents(Composite cascadingListContents) {
+			@Override
+      public Composite createContents(Composite cascadingListContents) {
 				final Composite panel = new Composite(cascadingListContents,
 						SWT.NONE);
 				final Color background = getCascadingList()
@@ -141,21 +144,24 @@ public final class MRadioMenuColumn extends MColumn implements
 		}
 	}
 
-	public void goBack(RadioArrowMenu menu) {
+	@Override
+  public void goBack(RadioArrowMenu menu) {
 		MColumn c = getPreviousColumn();
 		if (c != null) {
 			c.forceFocus();
 		}
 	}
 
-	public void goNext(RadioArrowMenu menu) {
+	@Override
+  public void goNext(RadioArrowMenu menu) {
 		MColumn c = getNextColumn();
 		if (c != null) {
 			c.forceFocus();
 		}
 	}
 
-	public void escape(RadioArrowMenu menu) {
+	@Override
+  public void escape(RadioArrowMenu menu) {
 		if (getNextColumn() == null) {
 			MColumn prev = getPreviousColumn();
 			if (prev != null) {
@@ -176,7 +182,8 @@ public final class MRadioMenuColumn extends MColumn implements
 
 	class DrawFilterAndMenu implements IFilterObserver {
 
-		public void filterQueryFailure(final Filter filter, final Exception e) {
+		@Override
+    public void filterQueryFailure(final Filter filter, final Exception e) {
 			filter.removeObserver(this);
 			// beware the thread context this method call might be made in.
 			final UIJob job = new SLUIJob() {
@@ -194,7 +201,8 @@ public final class MRadioMenuColumn extends MColumn implements
 			job.schedule();
 		}
 
-		public void filterChanged(final Filter filter) {
+		@Override
+    public void filterChanged(final Filter filter) {
 			filter.removeObserver(this);
 			// beware the thread context this method call might be made in.
 			final UIJob job = new SLUIJob() {
@@ -216,7 +224,8 @@ public final class MRadioMenuColumn extends MColumn implements
 			job.schedule();
 		}
 
-		public void filterDisposed(Filter filter) {
+		@Override
+    public void filterDisposed(Filter filter) {
 			filter.removeObserver(this);
 			SLLogger.getLogger().log(Level.SEVERE, I18N.err(28, filter),
 					new Exception());

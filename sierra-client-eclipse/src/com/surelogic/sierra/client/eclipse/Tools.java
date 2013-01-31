@@ -83,7 +83,8 @@ public final class Tools {
 	static {
 		ToolUtil.addToolFinder(new IToolFinder() {
 			// FIX what about duplicate finders?
-			public List<File> findToolDirectories() {
+			@Override
+      public List<File> findToolDirectories() {
 				// Look up locations of these plugins
 				final List<File> tools = new ArrayList<File>();
 				for (final String id : getToolPluginIds()) {

@@ -127,7 +127,8 @@ public class SynchronizeProjectJob extends AbstractServerProjectJob {
 			this.slMonitor = slMonitor;
 		}
 
-		public Boolean perform(final Connection conn) throws Exception {
+		@Override
+    public Boolean perform(final Connection conn) throws Exception {
 			final boolean updated = ClientProjectManager.getInstance(conn)
 					.synchronizeProject(getServer(), f_projectName, slMonitor);
 			ConnectedServerManager.getInstance().getStats(getServer())

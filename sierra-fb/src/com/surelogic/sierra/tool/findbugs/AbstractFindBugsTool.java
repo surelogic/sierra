@@ -110,7 +110,8 @@ public class AbstractFindBugsTool extends AbstractToolInstance {
 	protected Project createProject() throws Exception {
 		final Project p = new Project();
 		prepClassFiles(new TargetPrep() {
-			public void prep(File f) {
+			@Override
+      public void prep(File f) {
 				p.addFile(f.getAbsolutePath());
 			}
 		});
@@ -210,17 +211,20 @@ public class AbstractFindBugsTool extends AbstractToolInstance {
 
 		/* For FindBugsProgress */
 
-		public void reportNumberOfArchives(int numArchives) {
+		@Override
+    public void reportNumberOfArchives(int numArchives) {
 			System.out.println("# Archives: " + numArchives);
 			monitor.begin(numArchives);
 		}
 
-		public void finishArchive() {
+		@Override
+    public void finishArchive() {
 			// System.out.println("Finished an archive");
 			monitor.worked(1);
 		}
 
-		public void predictPassCount(int[] classesPerPass) {
+		@Override
+    public void predictPassCount(int[] classesPerPass) {
 			int i = 1;
 			int total = 0;
 			for (int count : classesPerPass) {
@@ -231,31 +235,37 @@ public class AbstractFindBugsTool extends AbstractToolInstance {
 			monitor.begin(total);
 		}
 
-		public void startAnalysis(int numClasses) {
+		@Override
+    public void startAnalysis(int numClasses) {
 			System.out.println("startAnalysis: " + numClasses);
 		}
 
-		public void finishClass() {
+		@Override
+    public void finishClass() {
 			// System.out.println("Finished a class");
 			monitor.worked(1);
 		}
 
-		public void finishPerClassAnalysis() {
+		@Override
+    public void finishPerClassAnalysis() {
 			System.out.println("finishPerClassAnalysis");
 		}
 
 		/* For BugReporter */
 
-		public void finish() {
+		@Override
+    public void finish() {
 			System.out.println("Called finish()");
 		}
 
-		public void addObserver(BugReporterObserver observer) {
+		@Override
+    public void addObserver(BugReporterObserver observer) {
 			// FIX what to do?
 			// throw new UnsupportedOperationException();
 		}
 
-		public ProjectStats getProjectStats() {
+		@Override
+    public ProjectStats getProjectStats() {
 			return stats;
 		}
 
@@ -263,7 +273,8 @@ public class AbstractFindBugsTool extends AbstractToolInstance {
 			return this;
 		}
 
-		public void reportBug(BugInstance bug) {
+		@Override
+    public void reportBug(BugInstance bug) {
 			if (LOG.isLoggable(Level.FINE)) {
 				System.out.println("Bug reported: " + bug.getAbridgedMessage());
 			}
@@ -363,15 +374,18 @@ public class AbstractFindBugsTool extends AbstractToolInstance {
 			return sourceLocation;
 		}
 
-		public void reportQueuedErrors() {
+		@Override
+    public void reportQueuedErrors() {
 			// Do nothing
 		}
 
-		public void setErrorVerbosity(int level) {
+		@Override
+    public void setErrorVerbosity(int level) {
 			// Do nothing
 		}
 
-		public void setPriorityThreshold(int threshold) {
+		@Override
+    public void setPriorityThreshold(int threshold) {
 			// Do nothing
 		}
 
@@ -382,17 +396,20 @@ public class AbstractFindBugsTool extends AbstractToolInstance {
 			tool.reportWarning(message);
 		}
 		
-		public void logError(String message) {
+		@Override
+    public void logError(String message) {
 			LOG.warning(message);
 			tool.reportError(message);
 		}
 
-		public void logError(String message, Throwable e) {
+		@Override
+    public void logError(String message, Throwable e) {
 			LOG.log(Level.WARNING, message, e);
 			tool.reportError(message, e);
 		}
 
-		public void reportMissingClass(ClassNotFoundException ex) {
+		@Override
+    public void reportMissingClass(ClassNotFoundException ex) {
 			String msg = ex.getMessage();
 			if (msg == null) {
 				msg = ex.toString();
@@ -403,7 +420,8 @@ public class AbstractFindBugsTool extends AbstractToolInstance {
 			}
 		}
 
-		public void reportMissingClass(ClassDescriptor desc) {
+		@Override
+    public void reportMissingClass(ClassDescriptor desc) {
 			if (AnnotationConstants.PACKAGE_INFO.equals(desc.getSimpleName())
 					|| desc.getClassName().charAt(0) == '[') {
 				return;
@@ -416,7 +434,8 @@ public class AbstractFindBugsTool extends AbstractToolInstance {
 			}
 		}
 
-		public void reportSkippedAnalysis(MethodDescriptor method) {
+		@Override
+    public void reportSkippedAnalysis(MethodDescriptor method) {
 			String sig = method.getName() + method.getSignature();
 			if (handleWarning(sig)) {
 				LOG.info("Skipped analysis: " + sig);
@@ -425,7 +444,8 @@ public class AbstractFindBugsTool extends AbstractToolInstance {
 
 		/* For IClassObserver */
 
-		public void observeClass(ClassDescriptor desc) {
+		@Override
+    public void observeClass(ClassDescriptor desc) {
 			monitor.subTask("Scanning " + desc.getDottedClassName());
 		}
 
@@ -473,11 +493,13 @@ public class AbstractFindBugsTool extends AbstractToolInstance {
 			return null;
 		}
 
-		public void startArchive(String arg0) {
+		@Override
+    public void startArchive(String arg0) {
 			// FIX what to do?
 		}
 
-		public BugCollection getBugCollection() {
+		@Override
+    public BugCollection getBugCollection() {
 			// TODO Auto-generated method stub
 			return null;
 		}

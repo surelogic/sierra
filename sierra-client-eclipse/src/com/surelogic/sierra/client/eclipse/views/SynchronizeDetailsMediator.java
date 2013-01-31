@@ -44,24 +44,28 @@ public class SynchronizeDetailsMediator extends AbstractSierraViewMediator {
 		f_detailsComposite = detailsComposite;
 	}
 
-	public String getHelpId() {
+	@Override
+  public String getHelpId() {
 		return "com.surelogic.sierra.client.eclipse.view-synchronize-history-details";
 	}
 
-	public String getNoDataI18N() {
+	@Override
+  public String getNoDataI18N() {
 		return "sierra.eclipse.noDataSynchronizeDetails";
 	}
 
 	@Override
 	public Listener getNoDataListener() {
 		return new Listener() {
-			public void handleEvent(Event event) {
+			@Override
+      public void handleEvent(Event event) {
 				EclipseUIUtility.showView(SynchronizeView.ID);
 			}
 		};
 	}
 
-	public void setFocus() {
+	@Override
+  public void setFocus() {
 		f_detailsComposite.setFocus();
 	}
 
@@ -79,7 +83,8 @@ public class SynchronizeDetailsMediator extends AbstractSierraViewMediator {
 				SynchDetail sd = SynchDetail.getSyncDetail(conn, so);
 				final List<AuditDetail> auditList = sd.getAudits();
 				asyncUpdateContentsForUI(new IViewUpdater() {
-					public void updateContentsForUI() {
+					@Override
+          public void updateContentsForUI() {
 						updateEventTableContents(so, auditList);
 					}
 				});
@@ -88,7 +93,8 @@ public class SynchronizeDetailsMediator extends AbstractSierraViewMediator {
 	}
 
 	private final Listener f_linkListener = new Listener() {
-		public void handleEvent(Event event) {
+		@Override
+    public void handleEvent(Event event) {
 			final String name = event.text;
 			final long findingId = Long.parseLong(name);
 			focusOnFindingId(findingId);

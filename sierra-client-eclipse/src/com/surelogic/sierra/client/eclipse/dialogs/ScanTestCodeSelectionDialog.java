@@ -53,11 +53,13 @@ public class ScanTestCodeSelectionDialog extends Dialog {
 			}
 			c.select(0);
 			c.addSelectionListener(new SelectionListener() {
-				public void widgetDefaultSelected(SelectionEvent e) {
+				@Override
+        public void widgetDefaultSelected(SelectionEvent e) {
 					widgetSelected(e);
 				}
 
-				public void widgetSelected(SelectionEvent e) {
+				@Override
+        public void widgetSelected(SelectionEvent e) {
 					int selected = c.getSelectionIndex();
 					config.setTestCode(c.getItem(selected));
 				}

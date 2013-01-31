@@ -88,38 +88,46 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 		f_columnSelectionItem = columnSelectionItem;
 	}
 
-	public String getHelpId() {
+	@Override
+  public String getHelpId() {
 		return "com.surelogic.sierra.client.eclipse.view-findings-quick-search";
 	}
 
-	public String getNoDataI18N() {
+	@Override
+  public String getNoDataI18N() {
 		return "sierra.eclipse.noDataFindingsQuickSearch";
 	}
 
-	public Listener getNoDataListener() {
+	@Override
+  public Listener getNoDataListener() {
 		return new Listener() {
-			public void handleEvent(Event event) {
+			@Override
+      public void handleEvent(Event event) {
 				new NewScanAction().run();
 			}
 		};
 	}
 
-	public void init() {
+	@Override
+  public void init() {
 		f_clearSelectionItem.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event event) {
+			@Override
+      public void handleEvent(Event event) {
 				clearToNewWorkingSelection();
 			}
 		});
 
 		f_breadcrumbs.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event event) {
+			@Override
+      public void handleEvent(Event event) {
 				final int column = Integer.parseInt(event.text);
 				f_cascadingList.show(column);
 			}
 		});
 
 		f_findingsStatus.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event event) {
+			@Override
+      public void handleEvent(Event event) {
 				PreferencesUtil.createPreferenceDialogOn(null,
 						PreferencesAction.PREF_ID, PreferencesAction.FILTER,
 						null).open();
@@ -127,7 +135,8 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 		});
 
 		f_openSearchItem.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event event) {
+			@Override
+      public void handleEvent(Event event) {
 				OpenSearchDialog dialog = new OpenSearchDialog(f_cascadingList
 						.getShell());
 				if (Window.CANCEL != dialog.open()) {
@@ -143,7 +152,8 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 		});
 
 		f_saveSearchesAsItem.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event event) {
+			@Override
+      public void handleEvent(Event event) {
 				SaveSearchAsDialog dialog = new SaveSearchAsDialog(
 						f_cascadingList.getShell());
 				if (Window.CANCEL != dialog.open()) {
@@ -162,7 +172,8 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 		});
 
 		f_deleteSearchItem.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event event) {
+			@Override
+      public void handleEvent(Event event) {
 				DeleteSearchDialog dialog = new DeleteSearchDialog(
 						f_cascadingList.getShell());
 				dialog.open();
@@ -170,7 +181,8 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 		});
 
 		f_savedSelections.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event event) {
+			@Override
+      public void handleEvent(Event event) {
 				final String selectionName = event.text;
 				/*
 				 * open the current selection.
@@ -203,7 +215,8 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 			item.setText(name);
 			// item.setSelection(data.visible);
 			item.addListener(SWT.Selection, new Listener() {
-				public void handleEvent(Event event) {
+				@Override
+        public void handleEvent(Event event) {
 					if (f_workingSelection != null) {
 						f_workingSelection.setColumnVisible(name,
 								item.getSelection());
@@ -212,7 +225,8 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 			});
 		}
 		f_columnSelectionItem.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event event) {
+			@Override
+      public void handleEvent(Event event) {
 				if (event.detail == SWT.ARROW) {
 					Point p = new Point(event.x, event.y);
 					p = display.map(f_columnSelectionItem.getParent(), null, p);
@@ -229,11 +243,13 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 		notify(Projects.getInstance());
 	}
 
-	public void setFocus() {
+	@Override
+  public void setFocus() {
 		f_cascadingList.setFocus();
 	}
 
-	public void dispose() {
+	@Override
+  public void dispose() {
 		f_cascadingList.removeObserver(this);
 		f_manager.removeObserver(this);
 		if (f_workingSelection != null) {
@@ -242,7 +258,8 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 		Projects.getInstance().removeObserver(this);
 	}
 
-	public void notify(Projects p) {
+	@Override
+  public void notify(Projects p) {
 		/*
 		 * We are checking if there is anything in the database at all. If not
 		 * we show a helpful message, if so we display the findings selection
@@ -358,12 +375,14 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 		}
 	}
 
-	public void notify(CascadingList cascadingList) {
+	@Override
+  public void notify(CascadingList cascadingList) {
 		updateBreadcrumbs();
 		updateSavedSelections();
 	}
 
-	public void savedSelectionsChanged(SelectionManager manager) {
+	@Override
+  public void savedSelectionsChanged(SelectionManager manager) {
 		updateSavedSelections();
 	}
 
@@ -456,7 +475,8 @@ public final class FindingsSelectionMediator implements IProjectsObserver,
 		f_findingsPage.layout();
 	}
 
-	public void findingsDisposed() {
+	@Override
+  public void findingsDisposed() {
 		findingsLimited(false);
 	}
 }

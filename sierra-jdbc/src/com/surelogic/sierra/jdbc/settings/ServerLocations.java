@@ -168,7 +168,8 @@ public final class ServerLocations {
 		final Map<String, String> passMap = passwords == null ? empty
 				: passwords;
 		return new DBQuery<Map<ConnectedServer, Collection<String>>>() {
-			public Map<ConnectedServer, Collection<String>> perform(
+			@Override
+      public Map<ConnectedServer, Collection<String>> perform(
 					final Query q) {
 				final Queryable<List<String>> projects = q.prepared(
 						"ServerLocations.listServerProjects",
@@ -177,7 +178,8 @@ public final class ServerLocations {
 						.statement(
 								"ServerLocations.listLocations",
 								new ResultHandler<Map<ConnectedServer, Collection<String>>>() {
-									public Map<ConnectedServer, Collection<String>> handle(
+									@Override
+                  public Map<ConnectedServer, Collection<String>> handle(
 											final Result result) {
 										final Map<ConnectedServer, Collection<String>> map = new HashMap<ConnectedServer, Collection<String>>();
 										// ID,LABEL,PROTOCOL,HOST,PORT,

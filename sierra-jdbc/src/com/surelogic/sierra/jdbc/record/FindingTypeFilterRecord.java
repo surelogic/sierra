@@ -67,11 +67,13 @@ public class FindingTypeFilterRecord extends
 		return idx;
 	}
 
-	public PK getId() {
+	@Override
+  public PK getId() {
 		return id;
 	}
 
-	public void setId(PK id) {
+	@Override
+  public void setId(PK id) {
 		this.id = id;
 	}
 

@@ -71,7 +71,8 @@ public class AbstractPMDTool extends AbstractToolInstance {
 
 		final List<DataSource> files = new ArrayList<DataSource>();
 		prepJavaFiles(new TargetPrep() {
-			public void prep(File f) {
+			@Override
+      public void prep(File f) {
 				files.add(new FileDataSource(f));
 			}					
 		});
@@ -95,31 +96,38 @@ public class AbstractPMDTool extends AbstractToolInstance {
 			monitor = m;
 		}
 
-		public Writer getWriter() {
+		@Override
+    public Writer getWriter() {
 			throw new UnsupportedOperationException();
 		}
 
-		public String render(Report report) {
+		@Override
+    public String render(Report report) {
 			throw new UnsupportedOperationException();
 		}
 
-		public void render(Writer writer, Report report) throws IOException {
+		@Override
+    public void render(Writer writer, Report report) throws IOException {
 			throw new UnsupportedOperationException();
 		}
 
-		public void setWriter(Writer writer) {
+		@Override
+    public void setWriter(Writer writer) {
 			throw new UnsupportedOperationException();
 		}
 
-		public void showSuppressedViolations(boolean show) {
+		@Override
+    public void showSuppressedViolations(boolean show) {
 			// Do nothing
 		}
 
-		public void start() throws IOException {
+		@Override
+    public void start() throws IOException {
 			// Do nothing
 		}
 
-		public synchronized void startFileAnalysis(DataSource dataSource) {
+		@Override
+    public synchronized void startFileAnalysis(DataSource dataSource) {
 			String msg = "Scanning " + dataSource.getNiceFileName(false, "");
 			monitor.subTask(msg);
 			if (first) {
@@ -131,7 +139,8 @@ public class AbstractPMDTool extends AbstractToolInstance {
 				LOG.fine(msg);
 		}
 
-		public synchronized void renderFileReport(Report report)
+		@Override
+    public synchronized void renderFileReport(Report report)
 				throws IOException {
 			Iterator<IRuleViolation> it = report.iterator();
 			while (it.hasNext()) {
@@ -220,7 +229,8 @@ public class AbstractPMDTool extends AbstractToolInstance {
 			// System.out.println("Done with report");
 		}
 
-		public void end() throws IOException {
+		@Override
+    public void end() throws IOException {
 			// Do nothing
 		}
 	}

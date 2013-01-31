@@ -12,7 +12,8 @@ import com.surelogic.sierra.tool.message.data.JSureInfo;
 
 public class Schema_0000 implements SchemaAction {
 
-	public void run(final Connection conn) throws SQLException {
+	@Override
+  public void run(final Connection conn) throws SQLException {
 		CPD4_1ToolInfoGenerator.generateTool(conn);
 		FindBugs1_3_8ToolInfoGenerator.generateTool(conn);
 		PMD4_2_5ToolInfoGenerator.generateTool(conn);

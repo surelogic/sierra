@@ -45,15 +45,18 @@ public class NewPartialScanAction implements IWorkbenchWindowActionDelegate,
 	private IStructuredSelection f_currentSelection = null;
 	private IEditorPart f_currentEditor = null;
 
-	public void dispose() {
+	@Override
+  public void dispose() {
 		// Nothing for now
 	}
 
-	public void init(IWorkbenchWindow window) {
+	@Override
+  public void init(IWorkbenchWindow window) {
 		// Nothing for now
 	}
 
-	public void run(IAction action) {
+	@Override
+  public void run(IAction action) {
 		final List<ICompilationUnit> selectedCompilationUnits = new ArrayList<ICompilationUnit>();
 		final List<IPackageFragment> selectedPackageFragments = new ArrayList<IPackageFragment>();
 		boolean inClassPath = false;
@@ -202,7 +205,8 @@ public class NewPartialScanAction implements IWorkbenchWindowActionDelegate,
 		return false;
 	}
 
-	public void selectionChanged(IAction action, ISelection selection) {
+	@Override
+  public void selectionChanged(IAction action, ISelection selection) {
 		if (selection instanceof IStructuredSelection) {
 			f_currentSelection = (IStructuredSelection) selection;
 		} else {
@@ -210,7 +214,8 @@ public class NewPartialScanAction implements IWorkbenchWindowActionDelegate,
 		}
 	}
 
-	public void setActiveEditor(IAction action, IEditorPart targetEditor) {
+	@Override
+  public void setActiveEditor(IAction action, IEditorPart targetEditor) {
 		f_currentEditor = targetEditor;
 	}
 }

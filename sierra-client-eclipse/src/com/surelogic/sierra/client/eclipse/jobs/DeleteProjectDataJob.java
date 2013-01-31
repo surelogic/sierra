@@ -106,7 +106,8 @@ public final class DeleteProjectDataJob implements IRunnableWithProgress {
 		}
 	}
 
-	public void run(IProgressMonitor monitor) throws InvocationTargetException,
+	@Override
+  public void run(IProgressMonitor monitor) throws InvocationTargetException,
 			InterruptedException {
 		SLProgressMonitor slMonitor = new SLProgressMonitorWrapper(monitor,
 				"Deleting selected projects");

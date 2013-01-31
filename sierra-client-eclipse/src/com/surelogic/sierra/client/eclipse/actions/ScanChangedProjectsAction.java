@@ -72,7 +72,8 @@ public class ScanChangedProjectsAction extends
 				monitor.beginTask(getName(), projects.size() + 1);
 				try {
 					Data.getInstance().withReadOnly(new DBQuery<Void>() {
-						public Void perform(final Query q) {
+						@Override
+            public Void perform(final Query q) {
 							final Map<IJavaProject, Date> times = new HashMap<IJavaProject, Date>(
 									projects.size());
 							List<IJavaProject> noScanYet = null;

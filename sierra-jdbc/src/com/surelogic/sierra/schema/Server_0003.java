@@ -9,7 +9,8 @@ import com.surelogic.common.jdbc.SchemaAction;
 
 public class Server_0003 implements SchemaAction {
 
-	public void run(final Connection c) throws SQLException {
+	@Override
+  public void run(final Connection c) throws SQLException {
 		final Statement st = c.createStatement();
 		try {
 			final ResultSet set = c.createStatement().executeQuery(

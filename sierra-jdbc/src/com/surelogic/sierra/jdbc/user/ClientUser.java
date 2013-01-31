@@ -24,11 +24,13 @@ public final class ClientUser implements User {
 		this.userName = userName;
 	}
 
-	public long getId() {
+	@Override
+  public long getId() {
 		return id;
 	}
 
-	public String getName() {
+	@Override
+  public String getName() {
 		return userName;
 	}
 
@@ -90,7 +92,8 @@ public final class ClientUser implements User {
 		}
 	}
 
-	public boolean isActive() {
+	@Override
+  public boolean isActive() {
 		return true;
 	}
 }

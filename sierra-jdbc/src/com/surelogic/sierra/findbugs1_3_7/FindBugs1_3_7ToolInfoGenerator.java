@@ -17,6 +17,7 @@ public class FindBugs1_3_7ToolInfoGenerator extends AbstractFBToolInfoGenerator 
   /**
    * This needs to be in this class to load the right resources
    */
+  @Override
   protected InputStream getStream(String name) {
     return Thread.currentThread().getContextClassLoader().getResourceAsStream(name);
   }

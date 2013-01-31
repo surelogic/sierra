@@ -92,7 +92,8 @@ public class ScanDataPreferencePage extends PreferencePage implements
 		return panel;
 	}
 
-	public void init(final IWorkbench workbench) {
+	@Override
+  public void init(final IWorkbench workbench) {
 		setDescription("Use this page to delete obsolete scan data.");
 	}
 
@@ -111,7 +112,8 @@ public class ScanDataPreferencePage extends PreferencePage implements
 
 		void init() {
 			final IProjectsObserver obs = new IProjectsObserver() {
-				public void notify(final Projects p) {
+				@Override
+        public void notify(final Projects p) {
 					// Get into a UI thread!
 					final UIJob job = new SLUIJob() {
 						@Override
@@ -129,14 +131,16 @@ public class ScanDataPreferencePage extends PreferencePage implements
 			obs.notify(Projects.getInstance());
 
 			f_projectTable.addListener(SWT.Selection, new Listener() {
-				public void handleEvent(final Event event) {
+				@Override
+        public void handleEvent(final Event event) {
 					f_deleteSelectedProjects.setEnabled(f_projectTable
 							.getSelectionCount() != 0);
 				}
 			});
 
 			f_deleteSelectedProjects.addListener(SWT.Selection, new Listener() {
-				public void handleEvent(final Event event) {
+				@Override
+        public void handleEvent(final Event event) {
 					final TableItem[] selection = f_projectTable.getSelection();
 					final List<String> projectNames = new ArrayList<String>();
 					for (final TableItem item : selection) {
@@ -153,7 +157,8 @@ public class ScanDataPreferencePage extends PreferencePage implements
 			});
 
 			f_deleteDatabase.addListener(SWT.Selection, new Listener() {
-				public void handleEvent(final Event event) {
+				@Override
+        public void handleEvent(final Event event) {
 					final StringBuilder b = new StringBuilder();
 					b.append("Are you sure you want to delete all ");
 					b.append("Sierra data in your Eclipse workspace?\n\n");

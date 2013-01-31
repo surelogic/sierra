@@ -22,7 +22,8 @@ public class FindingSearchImportWizard extends Wizard implements IImportWizard {
 		addPage(f_mainPage);
 	}
 
-	public void init(IWorkbench workbench, IStructuredSelection selection) {
+	@Override
+  public void init(IWorkbench workbench, IStructuredSelection selection) {
 		setWindowTitle("Import");
 		setDefaultPageImageDescriptor(SLImages
 				.getImageDescriptor(CommonImages.IMG_EXPORT_WEB));

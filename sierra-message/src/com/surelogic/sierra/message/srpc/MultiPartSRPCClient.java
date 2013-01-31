@@ -49,7 +49,8 @@ public class MultiPartSRPCClient implements InvocationHandler {
 		this.url = location.createServiceURL(service);
 	}
 
-	public Object invoke(final Object proxy, final Method method,
+	@Override
+  public Object invoke(final Object proxy, final Method method,
 			final Object[] args) throws Throwable {
 		if (!methods.contains(method)) {
 			// This is a normal method for this object. Pass it along.

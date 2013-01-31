@@ -115,7 +115,8 @@ public class ArtifactTypeMappingDialog extends Dialog {
 			    	newEditor.setText(findingTypes.get(0).getName());
 			    }
 				newEditor.addModifyListener(new ModifyListener() {
-					public void modifyText(ModifyEvent e) {
+					@Override
+          public void modifyText(ModifyEvent e) {
 						Combo text = (Combo)editor.getEditor();
 						String name = text.getText();
 						type.setFindingType(lookupFindingType(name));						

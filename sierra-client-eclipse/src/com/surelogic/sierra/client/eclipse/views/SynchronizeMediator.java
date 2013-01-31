@@ -39,18 +39,21 @@ public final class SynchronizeMediator extends AbstractSierraViewMediator {
 		f_syncTable = syncTable;
 	}
 
-	public String getHelpId() {
+	@Override
+  public String getHelpId() {
 		return "com.surelogic.sierra.client.eclipse.view-synchronize-history";
 	}
 
-	public String getNoDataI18N() {
+	@Override
+  public String getNoDataI18N() {
 		return "sierra.eclipse.noDataSynchronizeHistory";
 	}
 
 	@Override
 	public Listener getNoDataListener() {
 		return new Listener() {
-			public void handleEvent(final Event event) {
+			@Override
+      public void handleEvent(final Event event) {
 				new SynchronizeProjectDialogAction().run();
 			}
 		};
@@ -60,7 +63,8 @@ public final class SynchronizeMediator extends AbstractSierraViewMediator {
 	public void init() {
 		super.init();
 		f_syncTable.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(final Event event) {
+			@Override
+      public void handleEvent(final Event event) {
 				final TableItem[] items = f_syncTable.getSelection();
 				if (items.length > 0) {
 					final TableItem item = items[0];
@@ -75,7 +79,8 @@ public final class SynchronizeMediator extends AbstractSierraViewMediator {
 		asyncUpdateContents();
 	}
 
-	public void setFocus() {
+	@Override
+  public void setFocus() {
 		f_syncTable.setFocus();
 	}
 
@@ -127,7 +132,8 @@ public final class SynchronizeMediator extends AbstractSierraViewMediator {
 				final List<SynchOverview> synchList = SynchOverview
 						.listOverviews(conn);
 				asyncUpdateContentsForUI(new IViewUpdater() {
-					public void updateContentsForUI() {
+					@Override
+          public void updateContentsForUI() {
 						updateSyncTableContents(synchList);
 					}
 				});

@@ -33,14 +33,16 @@ public class FindBugsToolFactory extends AbstractToolFactory {
 
 	static <T> Iterable<T> iterable(final Iterator<T> it) {
 		return new Iterable<T>() {
-			public Iterator<T> iterator() {
+			@Override
+      public Iterator<T> iterator() {
 				return it;
 			}			
 		};
 	}
 	
 //	@Override
-	public final Collection<IToolExtension> getExtensions() {
+	@Override
+  public final Collection<IToolExtension> getExtensions() {
 		List<IToolExtension> extensions = new ArrayList<IToolExtension>();
 
 		// Code to get meta-data from FindBugs
@@ -71,7 +73,8 @@ public class FindBugsToolFactory extends AbstractToolFactory {
 			}
 			final boolean isCore = CORE.equals(plugin.getPluginId());
 			extensions.add(new AbstractToolExtension(getId(), plugin.getPluginId(), loc, types) {
-				public boolean isCore() {
+				@Override
+        public boolean isCore() {
 					return isCore;
 				};
 			});

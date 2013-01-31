@@ -29,7 +29,8 @@ public class TeamServerView extends ViewPart {
 
 	private TeamServerMediator f_mediator = null;
 
-	public void createPartControl(Composite parent) {
+	@Override
+  public void createPartControl(Composite parent) {
 		GridData data;
 
 		final GridLayout gridLayout = new GridLayout();

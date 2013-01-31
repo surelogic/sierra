@@ -19,17 +19,20 @@ import com.surelogic.sierra.client.eclipse.preferences.SierraPreferencesUtility;
  */
 public final class ImportScanAction implements IWorkbenchWindowActionDelegate {
 
-	public void dispose() {
+	@Override
+  public void dispose() {
 		// Nothing to do
 	}
 
-	public void init(IWorkbenchWindow window) {
+	@Override
+  public void init(IWorkbenchWindow window) {
 		// Nothing to do
 	}
 
 	private FileDialog fd = null;
 
-	public void run(IAction action) {
+	@Override
+  public void run(IAction action) {
 		if (fd == null) {
 			fd = new FileDialog(PlatformUI.getWorkbench()
 					.getActiveWorkbenchWindow().getShell(), SWT.OPEN);
@@ -54,7 +57,8 @@ public final class ImportScanAction implements IWorkbenchWindowActionDelegate {
 		}
 	}
 
-	public void selectionChanged(IAction action, ISelection selection) {
+	@Override
+  public void selectionChanged(IAction action, ISelection selection) {
 		// Nothing to do
 	}
 }

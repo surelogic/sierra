@@ -31,7 +31,8 @@ public class NewSierraToolProjectWizardPage extends WizardPage {
 	Text description;
 
 	private final Listener nameModifyListener = new Listener() {
-		public void handleEvent(Event e) {
+		@Override
+    public void handleEvent(Event e) {
 			boolean valid = validatePage();
 			setPageComplete(valid);                
 		}
@@ -51,7 +52,8 @@ public class NewSierraToolProjectWizardPage extends WizardPage {
 		super.setVisible(visible);
 	}
 
-	public void createControl(Composite parent) {
+	@Override
+  public void createControl(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NULL);
 		composite.setLayout(new GridLayout());
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));

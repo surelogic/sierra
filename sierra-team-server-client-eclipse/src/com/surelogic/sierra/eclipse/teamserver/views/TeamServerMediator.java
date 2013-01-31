@@ -76,7 +76,8 @@ public final class TeamServerMediator implements ITeamServerObserver {
 	private final IServerLogObserver f_jettyRequestLogObserver;
 
 	private final Listener f_portNumberVerify = new Listener() {
-		public void handleEvent(Event event) {
+		@Override
+    public void handleEvent(Event event) {
 			String text = event.text;
 			char[] chars = new char[text.length()];
 			text.getChars(0, chars.length, chars, 0);
@@ -97,7 +98,8 @@ public final class TeamServerMediator implements ITeamServerObserver {
 			f_item = item;
 		}
 
-		public void notify(final ServerLog log) {
+		@Override
+    public void notify(final ServerLog log) {
 			if (!f_teamServer.isRunning() && !f_teamServer.isNotRunning()) {
 				return;
 			}
@@ -128,7 +130,8 @@ public final class TeamServerMediator implements ITeamServerObserver {
 			f_logShowingPersistenceNumber = logShowingPersistenceNumber;
 		}
 
-		public void handleEvent(Event event) {
+		@Override
+    public void handleEvent(Event event) {
 			/*
 			 * if (!f_teamServer.isRunning() && !f_teamServer.isNotRunning()) {
 			 * return; }
@@ -182,7 +185,8 @@ public final class TeamServerMediator implements ITeamServerObserver {
 
 	void init() {
 		f_status.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event event) {
+			@Override
+      public void handleEvent(Event event) {
 				final String urlString = getURLString();
 				try {
 					final URL url = new URL(urlString);
@@ -194,7 +198,8 @@ public final class TeamServerMediator implements ITeamServerObserver {
 			}
 		});
 		f_trafficLight.addPaintListener(new PaintListener() {
-			public void paintControl(PaintEvent e) {
+			@Override
+      public void paintControl(PaintEvent e) {
 				final Image trafficLightImage = getTrafficLightImage();
 				if (e.widget instanceof Scrollable) {
 					final Rectangle r = ((Scrollable) e.widget).getClientArea();
@@ -216,7 +221,8 @@ public final class TeamServerMediator implements ITeamServerObserver {
 			}
 		});
 		f_command.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event event) {
+			@Override
+      public void handleEvent(Event event) {
 				doCommand();
 			}
 		});
@@ -239,7 +245,8 @@ public final class TeamServerMediator implements ITeamServerObserver {
 
 		f_toggleLogVisibilityMenuItem.addListener(SWT.Selection,
 				new Listener() {
-					public void handleEvent(Event event) {
+					@Override
+          public void handleEvent(Event event) {
 						toggleLogVisibility();
 					}
 				});
@@ -401,14 +408,16 @@ public final class TeamServerMediator implements ITeamServerObserver {
 		f_port.setFocus();
 	}
 
-	public void notify(TeamServer server) {
+	@Override
+  public void notify(TeamServer server) {
 		/*
 		 * We are not being called from the SWT thread.
 		 */
 		refresh();
 	}
 
-	public void notifyStartupFailure(TeamServer server) {
+	@Override
+  public void notifyStartupFailure(TeamServer server) {
 		/*
 		 * We are not being called from the SWT thread.
 		 */

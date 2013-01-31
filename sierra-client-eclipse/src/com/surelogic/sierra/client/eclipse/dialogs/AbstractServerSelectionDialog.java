@@ -92,7 +92,8 @@ public abstract class AbstractServerSelectionDialog extends Dialog {
 		addToEntryPanel(entryPanel);
 
 		f_serverTable.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event event) {
+			@Override
+      public void handleEvent(Event event) {
 				final TableItem[] sa = f_serverTable.getSelection();
 				if (sa.length > 0) {
 					final TableItem selection = sa[0];

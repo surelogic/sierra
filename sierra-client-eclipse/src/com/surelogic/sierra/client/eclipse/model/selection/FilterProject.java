@@ -11,11 +11,13 @@ import com.surelogic.sierra.client.eclipse.model.Projects;
 public final class FilterProject extends Filter {
 
 	public static final ISelectionFilterFactory FACTORY = new AbstractFilterFactory() {
-		public Filter construct(Selection selection, Filter previous) {
+		@Override
+    public Filter construct(Selection selection, Filter previous) {
 			return new FilterProject(selection, previous);
 		}
 
-		public String getFilterLabel() {
+		@Override
+    public String getFilterLabel() {
 			return "Project";
 		}
 	};

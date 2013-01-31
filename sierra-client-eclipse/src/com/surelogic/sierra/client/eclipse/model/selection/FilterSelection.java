@@ -5,11 +5,13 @@ import java.util.*;
 public final class FilterSelection extends Filter {
 
 	public static final ISelectionFilterFactory FACTORY = new AbstractFilterFactory() {
-		public Filter construct(Selection selection, Filter previous) {
+		@Override
+    public Filter construct(Selection selection, Filter previous) {
 			return new FilterSelection(selection, previous);
 		}
 
-		public String getFilterLabel() {
+		@Override
+    public String getFilterLabel() {
 			return "Status";
 		}
 		

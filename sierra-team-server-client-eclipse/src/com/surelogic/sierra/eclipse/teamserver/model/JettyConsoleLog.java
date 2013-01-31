@@ -16,7 +16,8 @@ public final class JettyConsoleLog extends FileBasedServerLog {
 	public JettyConsoleLog(ScheduledExecutorService executor) {
 		super(executor);
 		f_filenameFilter = new FilenameFilter() {
-			public boolean accept(File dir, String name) {
+			@Override
+      public boolean accept(File dir, String name) {
 				return (name.startsWith("log-jetty-console") && name
 						.endsWith("txt"));
 			}

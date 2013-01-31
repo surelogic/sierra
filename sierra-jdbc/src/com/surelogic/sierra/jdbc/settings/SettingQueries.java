@@ -67,7 +67,8 @@ public class SettingQueries {
 	public static DBQuery<ScanFilterView> scanFilterFor(
 			final ScanFilterDO scanFilter) {
 		return new DBQuery<ScanFilterView>() {
-			public ScanFilterView perform(final Query q) {
+			@Override
+      public ScanFilterView perform(final Query q) {
 				return scanFilterView(q, scanFilter);
 			}
 		};
@@ -75,7 +76,8 @@ public class SettingQueries {
 
 	public static final DBQuery<ListCategoryRequest> categoryRequest() {
 		return new DBQuery<ListCategoryRequest>() {
-			public ListCategoryRequest perform(final Query q) {
+			@Override
+      public ListCategoryRequest perform(final Query q) {
 				final ListCategoryRequest r = new ListCategoryRequest();
 				r.getServerRevisions().addAll(
 						q.statement("FilterSets.latestServerRevisions",
@@ -87,7 +89,8 @@ public class SettingQueries {
 
 	public static final DBQuery<List<ExtensionName>> localExtensions() {
 		return new DBQuery<List<ExtensionName>>() {
-			public List<ExtensionName> perform(final Query q) {
+			@Override
+      public List<ExtensionName> perform(final Query q) {
 				return new FindingTypes(q).getExtensionNames();
 			}
 		};
@@ -158,7 +161,8 @@ public class SettingQueries {
 			final ListCategoryResponse categories,
 			final GetExtensionsResponse newExtensions, final boolean update) {
 		return new DBQuery<ListCategoryResponse>() {
-			public ListCategoryResponse perform(final Query q) {
+			@Override
+      public ListCategoryResponse perform(final Query q) {
 				final Categories sets = new Categories(q);
 				final FindingTypes types = new FindingTypes(q);
 				final Queryable<Void> delete = update ? q
@@ -201,7 +205,8 @@ public class SettingQueries {
 
 	public static final DBQuery<List<CategoryDO>> getLocalCategories() {
 		return new DBQuery<List<CategoryDO>>() {
-			public List<CategoryDO> perform(final Query q) {
+			@Override
+      public List<CategoryDO> perform(final Query q) {
 				final Categories sets = new Categories(q);
 				return sets.listCategories();
 			}
@@ -210,7 +215,8 @@ public class SettingQueries {
 
 	public static final DBQuery<ListScanFilterRequest> scanFilterRequest() {
 		return new DBQuery<ListScanFilterRequest>() {
-			public ListScanFilterRequest perform(final Query q) {
+			@Override
+      public ListScanFilterRequest perform(final Query q) {
 				final ListScanFilterRequest r = new ListScanFilterRequest();
 				r.getServerRevisions().addAll(
 						q.statement("ScanFilters.latestServerRevisions",
@@ -245,7 +251,8 @@ public class SettingQueries {
 				: service.getExtensions(req);
 		final Set<ScanFilter> changed = new HashSet<ScanFilter>();
 		return new DBQuery<ServerScanFilterInfo>() {
-			public ServerScanFilterInfo perform(final Query q) {
+			@Override
+      public ServerScanFilterInfo perform(final Query q) {
 				final FindingTypes types = new FindingTypes(q);
 				final ScanFilters filters = new ScanFilters(q);
 				if (update) {
@@ -296,7 +303,8 @@ public class SettingQueries {
 	 */
 	public static final DBQuery<Map<NamedServer, List<ScanFilter>>> getLocalScanFilters() {
 		return new DBQuery<Map<NamedServer, List<ScanFilter>>>() {
-			public Map<NamedServer, List<ScanFilter>> perform(final Query q) {
+			@Override
+      public Map<NamedServer, List<ScanFilter>> perform(final Query q) {
 				final Map<NamedServer, List<ScanFilter>> m = new HashMap<NamedServer, List<ScanFilter>>();
 				final ScanFilters filters = new ScanFilters(q);
 				final List<ScanFilterDO> sfs = filters.listScanFilters();
@@ -339,7 +347,8 @@ public class SettingQueries {
 	public static final DBQuery<ScanFilterView> scanFilterForUid(
 			final String uid) {
 		return new DBQuery<ScanFilterView>() {
-			public ScanFilterView perform(final Query q) {
+			@Override
+      public ScanFilterView perform(final Query q) {
 				final ScanFilters filters = new ScanFilters(q);
 				final ScanFilterDO sf = filters.getScanFilter(uid);
 				if (sf == null) {
@@ -363,7 +372,8 @@ public class SettingQueries {
 	public static final DBQuery<ScanFilterView> scanFilterForProject(
 			final String projectName) {
 		return new DBQuery<ScanFilterView>() {
-			public ScanFilterView perform(final Query q) {
+			@Override
+      public ScanFilterView perform(final Query q) {
 				final ScanFilters filters = new ScanFilters(q);
 				final ScanFilterDO sf = filters
 						.getScanFilterByProject(projectName);
@@ -375,7 +385,8 @@ public class SettingQueries {
 	public static final DBQuery<String> scanFilterNameForProject(
 			final String projectName) {
 		return new DBQuery<String>() {
-			public String perform(final Query q) {
+			@Override
+      public String perform(final Query q) {
 				final ScanFilters filters = new ScanFilters(q);
 				final ScanFilterDO sf = filters
 						.getScanFilterByProject(projectName);
@@ -398,7 +409,8 @@ public class SettingQueries {
 			throw new IllegalArgumentException("Arguments may not be null.");
 		}
 		return new DBQuery<ScanFilterView>() {
-			public ScanFilterView perform(final Query q) {
+			@Override
+      public ScanFilterView perform(final Query q) {
 				final ScanFilterDO normFilter = new ScanFilterDO();
 				normFilter.setName(filter.getName());
 				normFilter.setUid(filter.getUuid());
@@ -452,7 +464,8 @@ public class SettingQueries {
 	public static DBQuery<ScanFilterDO> updateDefaultScanFilter(
 			final String scanFilterUuid) {
 		return new DBQuery<ScanFilterDO>() {
-			public ScanFilterDO perform(final Query q) {
+			@Override
+      public ScanFilterDO perform(final Query q) {
 				final ScanFilters filters = new ScanFilters(q);
 				final ScanFilterDO sf = filters.getScanFilter(scanFilterUuid);
 				if (sf == null) {
@@ -479,7 +492,8 @@ public class SettingQueries {
 	public static DBQuery<ScanFilterDO> updateDefaultScanFilter(
 			final Collection<String> uids) {
 		return new DBQuery<ScanFilterDO>() {
-			public ScanFilterDO perform(final Query q) {
+			@Override
+      public ScanFilterDO perform(final Query q) {
 				final ScanFilters s = new ScanFilters(q);
 				final ScanFilterDO scanFilter = new ScanFilterDO();
 				scanFilter.setName(LOCAL_NAME);
@@ -632,7 +646,8 @@ public class SettingQueries {
 		final ServerInfoReply reply = ServerInfoServiceClient.create(server)
 				.getServerInfo(new ServerInfoRequest());
 		return new DBQuery<ConnectedServer>() {
-			public ConnectedServer perform(final Query q) {
+			@Override
+      public ConnectedServer perform(final Query q) {
 				ServerLocations.updateServerIdentities(reply.getServers())
 						.perform(q);
 				final String name = reply.getName() == null ? reply.getUid()

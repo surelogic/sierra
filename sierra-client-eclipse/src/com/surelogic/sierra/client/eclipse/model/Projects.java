@@ -38,12 +38,14 @@ public final class Projects extends DatabaseObservable<IProjectsObserver>
 		// singleton
 	}
 
-	public void init() {
+	@Override
+  public void init() {
 		DatabaseHub.getInstance().addObserver(this);
 		refresh();
 	}
 
-	public void dispose() {
+	@Override
+  public void dispose() {
 		DatabaseHub.getInstance().removeObserver(this);
 	}
 

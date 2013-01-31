@@ -11,23 +11,28 @@ public class GuestHeader extends HeaderComposite {
 		return instance;
 	}
 
-	protected void onInitialize(VerticalPanel rootPanel) {
+	@Override
+  protected void onInitialize(VerticalPanel rootPanel) {
 		// nothing to do
 	}
 
-	protected void onActivate(Context context, UserAccount user) {
+	@Override
+  protected void onActivate(Context context, UserAccount user) {
 		// nothing to do
 	}
 
-	protected void onUpdateContext(Context context) {
+	@Override
+  protected void onUpdateContext(Context context) {
 		// nothing to do
 	}
 
-	protected void onUpdateUser(UserAccount user) {
+	@Override
+  protected void onUpdateUser(UserAccount user) {
 		// nothing to do
 	}
 
-	protected void onDeactivate() {
+	@Override
+  protected void onDeactivate() {
 		// nothing to do
 	}
 }

@@ -95,7 +95,8 @@ public final class Categories {
 			set.getFilters().addAll(
 					q.prepared("FilterSets.listFilterSetFilters",
 							new RowHandler<CategoryEntryDO>() {
-								public CategoryEntryDO handle(final Row r) {
+								@Override
+                public CategoryEntryDO handle(final Row r) {
 									return new CategoryEntryDO(r.nextString(),
 											"Y".equals(r.nextString()));
 								}

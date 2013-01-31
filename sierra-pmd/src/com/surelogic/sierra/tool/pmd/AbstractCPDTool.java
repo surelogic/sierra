@@ -45,16 +45,19 @@ public abstract class AbstractCPDTool extends AbstractToolInstance {
 			cpd.skipDuplicates();
 		}
 		cpd.setCpdListener(new CPDListener() {
-			public void addedFile(int fileCount, File file) {
+			@Override
+      public void addedFile(int fileCount, File file) {
 				// System.out.println(fileCount+": "+file.getName());
 			}
 
-			public void phaseUpdate(int phase) {
+			@Override
+      public void phaseUpdate(int phase) {
 				System.out.println("CPD Phase " + phase);
 			}
 		});
 		final SourceRoots roots = collectSourceRoots(new TargetPrep() {
-			public void prep(File f) throws IOException {				
+			@Override
+      public void prep(File f) throws IOException {				
 				cpd.add(f);
 			}}
 		);

@@ -56,7 +56,8 @@ public final class Scans {
 
 	private static class ScanInfoHandler implements RowHandler<ScanInfo> {
 
-		public ScanInfo handle(final Row r) {
+		@Override
+    public ScanInfo handle(final Row r) {
 			return new ScanInfo(r.nextString(), r.nextString(), r.nextString(),
 					r.nextString(), r.nextString(), r.nextDate(), ScanStatus
 							.valueOf(r.nextString()), r.nextBoolean());

@@ -147,7 +147,8 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 			setImageDescriptor(new ImageImageDescriptor(image));
 		}
 
-		public final void handleEvent(final Event event) {
+		@Override
+    public final void handleEvent(final Event event) {
 			run();
 		}
 
@@ -247,7 +248,8 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 
 		f_statusTree = statusTree;
 		f_statusTree.getTree().addListener(SWT.MenuDetect, new Listener() {
-			public void handleEvent(final Event event) {
+			@Override
+      public void handleEvent(final Event event) {
 				final Menu contextMenu = new Menu(statusTree.getTree()
 						.getShell(), SWT.POP_UP);
 				setupContextMenu(contextMenu);
@@ -516,11 +518,13 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 		};
 	}
 
-	public String getHelpId() {
+	@Override
+  public String getHelpId() {
 		return "com.surelogic.sierra.client.eclipse.view-team-servers";
 	}
 
-	public String getNoDataI18N() {
+	@Override
+  public String getNoDataI18N() {
 		return "sierra.eclipse.noDataSierraServers";
 	}
 
@@ -564,7 +568,8 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 		notify(f_manager);
 
 		f_statusTree.addDoubleClickListener(new IDoubleClickListener() {
-			public void doubleClick(final DoubleClickEvent event) {
+			@Override
+      public void doubleClick(final DoubleClickEvent event) {
 				if (event.getSelection().isEmpty()) {
 					return; // FIX
 				}
@@ -596,7 +601,8 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 		});
 		f_statusTree
 				.addSelectionChangedListener(new ISelectionChangedListener() {
-					public void selectionChanged(
+					@Override
+          public void selectionChanged(
 							final SelectionChangedEvent event) {
 						final List<ConnectedServer> servers = collectServers().indirect;
 						final boolean onlyServer = servers.size() == 1;
@@ -894,7 +900,8 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 
 	private abstract class ProjectsActionListener extends
 			ProjectStatusCollector<IJavaProject> implements Listener {
-		public final void handleEvent(final Event event) {
+		@Override
+    public final void handleEvent(final Event event) {
 			// FIX merge with collectProjects?
 			final IStructuredSelection si = (IStructuredSelection) f_statusTree
 					.getSelection();
@@ -917,15 +924,18 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 		super.dispose();
 	}
 
-	public void setFocus() {
+	@Override
+  public void setFocus() {
 		f_statusTree.getControl().setFocus();
 	}
 
-	public void notify(final ConnectedServerManager manager) {
+	@Override
+  public void notify(final ConnectedServerManager manager) {
 		asyncUpdateContents();
 	}
 
-	public void notify(final Projects p) {
+	@Override
+  public void notify(final Projects p) {
 		asyncUpdateContents();
 	}
 
@@ -978,7 +988,8 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 
 	private void asyncUpdateContents() {
 		asyncUpdateContentsForUI(new IViewUpdater() {
-			public void updateContentsForUI() {
+			@Override
+      public void updateContentsForUI() {
 				// FIX switch to waiting if there's already stale data?
 				if (f_view.getStatus() != IViewCallback.Status.DATA_READY) {
 					f_view.setStatus(IViewCallback.Status.WAITING_FOR_DATA);
@@ -1067,7 +1078,8 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 			finishedUpdate(now);
 
 			asyncUpdateContentsForUI(new IViewUpdater() {
-				public void updateContentsForUI() {
+				@Override
+        public void updateContentsForUI() {
 					updateContentsInUI(projects, filters);
 				}
 			});
@@ -1196,27 +1208,33 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 				}
 			}
 			return new IStructuredSelection() {
-				public boolean isEmpty() {
+				@Override
+        public boolean isEmpty() {
 					return selected.isEmpty();
 				}
 
-				public Object getFirstElement() {
+				@Override
+        public Object getFirstElement() {
 					return selected.get(0);
 				}
 
-				public Iterator iterator() {
+				@Override
+        public Iterator iterator() {
 					return selected.iterator();
 				}
 
-				public int size() {
+				@Override
+        public int size() {
 					return selected.size();
 				}
 
-				public Object[] toArray() {
+				@Override
+        public Object[] toArray() {
 					return selected.toArray();
 				}
 
-				public List toList() {
+				@Override
+        public List toList() {
 					return selected;
 				}
 			};
@@ -1802,7 +1820,8 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 	}
 
 	private class ContentProvider implements ITreeContentProvider {
-		public Object[] getChildren(final Object parentElement) {
+		@Override
+    public Object[] getChildren(final Object parentElement) {
 			if (parentElement instanceof ServersViewContent) {
 				final ServersViewContent[] children = ((ServersViewContent) parentElement)
 						.getChildren();
@@ -1811,14 +1830,16 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 			return null;
 		}
 
-		public Object getParent(final Object element) {
+		@Override
+    public Object getParent(final Object element) {
 			if (element instanceof ServersViewContent) {
 				return ((ServersViewContent) element).parent;
 			}
 			return null;
 		}
 
-		public boolean hasChildren(final Object element) {
+		@Override
+    public boolean hasChildren(final Object element) {
 			if (element instanceof ServersViewContent) {
 				final ServersViewContent[] children = ((ServersViewContent) element)
 						.getChildren();
@@ -1827,16 +1848,19 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 			return false;
 		}
 
-		public Object[] getElements(final Object inputElement) {
+		@Override
+    public Object[] getElements(final Object inputElement) {
 			final TreeInput input = (TreeInput) inputElement;
 			return input.content;
 		}
 
-		public void dispose() {
+		@Override
+    public void dispose() {
 			// TODO Auto-generated method stub
 		}
 
-		public void inputChanged(final Viewer viewer, final Object oldInput,
+		@Override
+    public void inputChanged(final Viewer viewer, final Object oldInput,
 				final Object newInput) {
 			// TODO Auto-generated method stub
 		}
@@ -1846,7 +1870,8 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 		final ILabelDecorator decorator = PlatformUI.getWorkbench()
 				.getDecoratorManager().getLabelDecorator();
 
-		public Image getImage(final Object element) {
+		@Override
+    public Image getImage(final Object element) {
 			if (element instanceof ServersViewContent) {
 				// System.out.println("Getting image for "+element);
 				final Image i1 = ((ServersViewContent) element).getImage();
@@ -1856,28 +1881,33 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 			return null;
 		}
 
-		public String getText(final Object element) {
+		@Override
+    public String getText(final Object element) {
 			if (element instanceof ServersViewContent) {
 				return ((ServersViewContent) element).getText();
 			}
 			return null;
 		}
 
-		public void addListener(final ILabelProviderListener listener) {
+		@Override
+    public void addListener(final ILabelProviderListener listener) {
 			decorator.addListener(listener);
 		}
 
-		public void dispose() {
+		@Override
+    public void dispose() {
 			// TODO Auto-generated method stub
 		}
 
-		public boolean isLabelProperty(final Object element,
+		@Override
+    public boolean isLabelProperty(final Object element,
 				final String property) {
 			// TODO Auto-generated method stub
 			return true;
 		}
 
-		public void removeListener(final ILabelProviderListener listener) {
+		@Override
+    public void removeListener(final ILabelProviderListener listener) {
 			decorator.addListener(listener);
 		}
 

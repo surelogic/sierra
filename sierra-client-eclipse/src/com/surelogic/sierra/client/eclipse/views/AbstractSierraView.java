@@ -111,7 +111,8 @@ public abstract class AbstractSierraView<M extends IViewMediator> extends
 
 	protected abstract M createMorePartControls(Composite parent);
 
-	public final void hasData(boolean data) {
+	@Override
+  public final void hasData(boolean data) {
 		if (data) {
 			f_pages.showPage(f_dataPage);
 		} else {
@@ -123,7 +124,8 @@ public abstract class AbstractSierraView<M extends IViewMediator> extends
 	 * Note that this should be negated, since it doesn't take the wait state
 	 * into account
 	 */
-	public final boolean matchesStatus(boolean showing) {
+	@Override
+  public final boolean matchesStatus(boolean showing) {
 		return matchesStatus(showing, 0);
 	}
 
@@ -150,7 +152,8 @@ public abstract class AbstractSierraView<M extends IViewMediator> extends
 		}
 	}
 
-	public final void setStatus(Status s) {
+	@Override
+  public final void setStatus(Status s) {
 		switch (s) {
 		default:
 		case NO_DATA:
@@ -165,7 +168,8 @@ public abstract class AbstractSierraView<M extends IViewMediator> extends
 		}
 	}
 
-	public final Status getStatus() {
+	@Override
+  public final Status getStatus() {
 		if (f_pages.getPage() == f_noDataPage) {
 			return Status.NO_DATA;
 		}
@@ -175,7 +179,8 @@ public abstract class AbstractSierraView<M extends IViewMediator> extends
 		return Status.DATA_READY;
 	}
 
-	public final void setGlobalActionHandler(String id, IAction action) {
+	@Override
+  public final void setGlobalActionHandler(String id, IAction action) {
 		getViewSite().getActionBars().setGlobalActionHandler(id, action);
 	}
 
@@ -183,12 +188,14 @@ public abstract class AbstractSierraView<M extends IViewMediator> extends
 		return getViewSite().getActionBars().getMenuManager();
 	}
 
-	public final void addToViewMenu(IAction action) {
+	@Override
+  public final void addToViewMenu(IAction action) {
 		final IMenuManager menu = getMenuManager();
 		menu.prependToGroup(VIEW_GROUP, action);
 	}
 
-	public final void addToViewMenu(IContributionItem item) {
+	@Override
+  public final void addToViewMenu(IContributionItem item) {
 		final IMenuManager menu = getMenuManager();
 		menu.prependToGroup(VIEW_GROUP, item);
 	}
@@ -197,12 +204,14 @@ public abstract class AbstractSierraView<M extends IViewMediator> extends
 		return getViewSite().getActionBars().getToolBarManager();
 	}
 
-	public final void addToActionBar(IAction action) {
+	@Override
+  public final void addToActionBar(IAction action) {
 		final IToolBarManager bar = getToolBarManager();
 		bar.appendToGroup(VIEW_GROUP, action);
 	}
 
-	public final void addToActionBar(IContributionItem item) {
+	@Override
+  public final void addToActionBar(IContributionItem item) {
 		final IToolBarManager bar = getToolBarManager();
 		bar.appendToGroup(VIEW_GROUP, item);
 	}

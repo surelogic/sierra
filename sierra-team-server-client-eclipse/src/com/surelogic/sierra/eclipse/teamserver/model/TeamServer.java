@@ -148,7 +148,8 @@ public final class TeamServer {
 
 	public void init() {
 		final Runnable checkIfServerIsRunning = new Runnable() {
-			public void run() {
+			@Override
+      public void run() {
 				boolean isRunning;
 				boolean isNotRunning;
 				final Logger log = SLLogger.getLogger();

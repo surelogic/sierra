@@ -33,18 +33,22 @@ public abstract class AbstractToolTarget extends ToolTarget {
     }
   }
   
+  @Override
   public final boolean isSource() {
     return type == Type.SOURCE;
   }
   
+  @Override
   public final Type getType() {
     return type;
   }
 
+  @Override
   public final URI getLocation() {
     return location;
   }
   
+  @Override
   public final IToolTarget getAuxSources() {
     return auxSources;
   }

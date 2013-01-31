@@ -30,7 +30,8 @@ public class FindingSearchImportPage extends AbstractImportWizardPage {
 	/*
 	 * @see IDialogPage#createControl(Composite)
 	 */
-	public void createControl(Composite parent) {
+	@Override
+  public void createControl(Composite parent) {
 
 		initializeDialogUnits(parent);
 

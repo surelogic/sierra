@@ -202,7 +202,8 @@ public class FindingListDialog extends PopupDialog {
 
 			f_findingsList.addMouseListener(new MouseListener() {
 
-				public void mouseDoubleClick(MouseEvent e) {
+				@Override
+        public void mouseDoubleClick(MouseEvent e) {
 					if (f_findingsList != null) {
 						String summary = f_findingsList.getSelection()[0];
 						long id = getValue(summary);
@@ -215,11 +216,13 @@ public class FindingListDialog extends PopupDialog {
 					}
 				}
 
-				public void mouseDown(MouseEvent e) {
+				@Override
+        public void mouseDown(MouseEvent e) {
 					// Nothing to do
 				}
 
-				public void mouseUp(MouseEvent e) {
+				@Override
+        public void mouseUp(MouseEvent e) {
 					// Nothing to do
 				}
 

@@ -52,15 +52,18 @@ public class SynchronizeAllProjectsAction implements
 		lastSyncTime.set(now);
 	}
 
-	public void dispose() {
+	@Override
+  public void dispose() {
 		// Nothing to do
 	}
 
-	public void init(final IWorkbenchWindow window) {
+	@Override
+  public void init(final IWorkbenchWindow window) {
 		// Nothing to do
 	}
 
-	public void run(final IAction action) {
+	@Override
+  public void run(final IAction action) {
 		final ConnectedServerManager manager = ConnectedServerManager
 				.getInstance();
 		setTime();
@@ -126,7 +129,8 @@ public class SynchronizeAllProjectsAction implements
 				EclipseUIUtility.getShell(), serverAction);
 	}
 
-	public void selectionChanged(final IAction action,
+	@Override
+  public void selectionChanged(final IAction action,
 			final ISelection selection) {
 		// Nothing to do
 	}

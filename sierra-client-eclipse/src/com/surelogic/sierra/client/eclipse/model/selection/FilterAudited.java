@@ -5,11 +5,13 @@ import java.util.Arrays;
 public final class FilterAudited extends Filter {
 
 	public static final ISelectionFilterFactory FACTORY = new AbstractFilterFactory() {
-		public Filter construct(Selection selection, Filter previous) {
+		@Override
+    public Filter construct(Selection selection, Filter previous) {
 			return new FilterAudited(selection, previous);
 		}
 
-		public String getFilterLabel() {
+		@Override
+    public String getFilterLabel() {
 			return "Audited";
 		}
 	};

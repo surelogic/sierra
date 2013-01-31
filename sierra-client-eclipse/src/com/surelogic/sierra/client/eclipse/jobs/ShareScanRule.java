@@ -14,10 +14,12 @@ public class ShareScanRule implements ISchedulingRule {
     return INSTANCE;
   }
 
+  @Override
   public boolean contains(final ISchedulingRule rule) {
     return rule == this;
   }
 
+  @Override
   public boolean isConflicting(final ISchedulingRule rule) {
     return rule == this;
   }

@@ -12,15 +12,18 @@ import com.surelogic.common.ui.dialogs.InstallTutorialProjectsDialog;
 public class ImportTutorialProjectsAction implements
 		IWorkbenchWindowActionDelegate {
 
-	public void dispose() {
+	@Override
+  public void dispose() {
 		// Do nothing
 	}
 
-	public void init(final IWorkbenchWindow window) {
+	@Override
+  public void init(final IWorkbenchWindow window) {
 		// Do nothing
 	}
 
-	public void run(final IAction action) {
+	@Override
+  public void run(final IAction action) {
 		InstallTutorialProjectsDialog.open(
 				EclipseUIUtility.getShell(),
 				CommonImages.IMG_SIERRA_LOGO,
@@ -31,7 +34,8 @@ public class ImportTutorialProjectsAction implements
 						.getResource("/resources/SmallWorld.zip"));
 	}
 
-	public void selectionChanged(final IAction action,
+	@Override
+  public void selectionChanged(final IAction action,
 			final ISelection selection) {
 		// Do nothing
 	}

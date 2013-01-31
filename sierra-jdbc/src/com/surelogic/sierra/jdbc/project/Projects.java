@@ -26,7 +26,8 @@ public final class Projects {
 
 	public List<ProjectDO> listProjects() {
 		return q.prepared("Projects.listProjects", new RowHandler<ProjectDO>() {
-			public ProjectDO handle(final Row r) {
+			@Override
+      public ProjectDO handle(final Row r) {
 				final ProjectDO project = new ProjectDO();
 				final long id = r.nextLong();
 				final String uuid = r.nextString();

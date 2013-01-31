@@ -55,7 +55,8 @@ class JDBCPartialScanGenerator implements ScanGenerator {
 		extensions = new HashMap<String, String>();
 	}
 
-	public ArtifactGenerator build() {
+	@Override
+  public ArtifactGenerator build() {
 		try {
 			scan.setTimestamp(JDBCUtils.now());
 			scan.setPartial(true);
@@ -103,37 +104,45 @@ class JDBCPartialScanGenerator implements ScanGenerator {
 		}
 	}
 
-	public ScanGenerator uid(final String uid) {
+	@Override
+  public ScanGenerator uid(final String uid) {
 		return this;
 	}
 
-	public ScanGenerator javaVendor(final String vendor) {
+	@Override
+  public ScanGenerator javaVendor(final String vendor) {
 		return this;
 	}
 
-	public ScanGenerator javaVersion(final String version) {
+	@Override
+  public ScanGenerator javaVersion(final String version) {
 		return this;
 	}
 
-	public ScanGenerator project(final String projectName) {
+	@Override
+  public ScanGenerator project(final String projectName) {
 		this.projectName = projectName;
 		return this;
 	}
 
-	public ScanGenerator timeseries(final Collection<String> timeseries) {
+	@Override
+  public ScanGenerator timeseries(final Collection<String> timeseries) {
 		return this;
 	}
 
-	public ScanGenerator user(final String user) {
+	@Override
+  public ScanGenerator user(final String user) {
 		return this;
 	}
 
-	public ScanGenerator extension(final String name, final String version) {
+	@Override
+  public ScanGenerator extension(final String name, final String version) {
 		extensions.put(name, version);
 		return this;
 	}
 
-	public String finished() {
+	@Override
+  public String finished() {
 		generator.finished(new NullSLProgressMonitor());
 		scan.setStatus(ScanStatus.FINISHED);
 		try {

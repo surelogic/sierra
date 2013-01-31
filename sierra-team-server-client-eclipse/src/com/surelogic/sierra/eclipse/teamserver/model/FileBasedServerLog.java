@@ -30,7 +30,8 @@ public abstract class FileBasedServerLog extends ServerLog {
 				lastLen = log.length();
 			}
 
-			public void run() {
+			@Override
+      public void run() {
 				boolean notifyObservers = false;
 				final File logFile = getLatestLogFile();
 				synchronized (f_logText) {

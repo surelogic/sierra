@@ -23,7 +23,8 @@ public class FindingSearchExportPage extends AbstractExportWizardPage<String> {
 		setDescription("Export the selected finding searches");
 	}
 
-	public void createControl(Composite parent) {
+	@Override
+  public void createControl(Composite parent) {
     setupControl(parent, "Select the finding searches to export:",
         new FindingSearchContentProvider(), new FindingSearchLabelProvider(),
         String.class, "sierra-finding-searches.xml");
@@ -47,7 +48,8 @@ public class FindingSearchExportPage extends AbstractExportWizardPage<String> {
 	private static class FindingSearchContentProvider implements
 			IStructuredContentProvider {
 
-		public Object[] getElements(Object inputElement) {
+		@Override
+    public Object[] getElements(Object inputElement) {
 			if (inputElement instanceof List) {
 				List<?> searchList = (List<?>) inputElement;
 				return searchList.toArray();
@@ -55,24 +57,28 @@ public class FindingSearchExportPage extends AbstractExportWizardPage<String> {
 			return null;
 		}
 
-		public void dispose() {
+		@Override
+    public void dispose() {
 			// Nothing to do
 		}
 
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+		@Override
+    public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			// Nothing to do
 		}
 	}
 
 	private static class FindingSearchLabelProvider implements ILabelProvider {
-		public Image getImage(Object element) {
+		@Override
+    public Image getImage(Object element) {
 			if (element instanceof String) {
 				return SLImages.getImage(CommonImages.IMG_SIERRA_INVESTIGATE);
 			}
 			return null;
 		}
 
-		public String getText(Object element) {
+		@Override
+    public String getText(Object element) {
 			if (element instanceof String) {
 				String holder = (String) element;
 				return holder;
@@ -80,20 +86,24 @@ public class FindingSearchExportPage extends AbstractExportWizardPage<String> {
 			return null;
 		}
 
-		public void addListener(ILabelProviderListener listener) {
+		@Override
+    public void addListener(ILabelProviderListener listener) {
 			// Nothing to do
 		}
 
-		public void dispose() {
+		@Override
+    public void dispose() {
 			// Nothing to do
 		}
 
-		public boolean isLabelProperty(Object element, String property) {
+		@Override
+    public boolean isLabelProperty(Object element, String property) {
 			// Nothing to do
 			return false;
 		}
 
-		public void removeListener(ILabelProviderListener listener) {
+		@Override
+    public void removeListener(ILabelProviderListener listener) {
 			// Nothing to do
 		}
 	}

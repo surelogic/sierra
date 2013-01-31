@@ -64,6 +64,7 @@ public abstract class AbstractExportWizardPage<T> extends WizardPage {
     f_TableViewer.setContentProvider(content);
     f_TableViewer.setLabelProvider(labels);
     f_TableViewer.addCheckStateListener(new ICheckStateListener() {
+      @Override
       public void checkStateChanged(CheckStateChangedEvent event) {
         if (clazz.isInstance(event.getElement())) {
           @SuppressWarnings("unchecked")
@@ -157,7 +158,8 @@ public abstract class AbstractExportWizardPage<T> extends WizardPage {
   	browseButton.addListener(SWT.Selection, new Listener() {
   		private FileDialog fd;
   
-  		public void handleEvent(Event event) {
+  		@Override
+      public void handleEvent(Event event) {
   			if (fd == null) {
   				fd = new FileDialog(getShell(), SWT.SAVE);
   				fd.setText("Destination File");
@@ -184,7 +186,8 @@ public abstract class AbstractExportWizardPage<T> extends WizardPage {
   	});
   
   	ModifyListener listener = new ModifyListener() {
-  		public void modifyText(ModifyEvent e) {
+  		@Override
+      public void modifyText(ModifyEvent e) {
   			updateEnablement();
   		}
   	};

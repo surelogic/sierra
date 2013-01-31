@@ -8,11 +8,13 @@ import com.surelogic.common.ui.SLImages;
 public final class FilterJavaPackage extends Filter {
 
 	public static final ISelectionFilterFactory FACTORY = new AbstractFilterFactory() {
-		public Filter construct(Selection selection, Filter previous) {
+		@Override
+    public Filter construct(Selection selection, Filter previous) {
 			return new FilterJavaPackage(selection, previous);
 		}
 
-		public String getFilterLabel() {
+		@Override
+    public String getFilterLabel() {
 			return "Java Package";
 		}
 	};

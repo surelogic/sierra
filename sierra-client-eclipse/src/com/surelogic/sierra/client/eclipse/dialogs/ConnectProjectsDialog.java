@@ -79,7 +79,8 @@ public final class ConnectProjectsDialog extends Dialog {
 			}
 		}
 		Collections.sort(projects, new Comparator<IJavaProject>() {
-			public int compare(final IJavaProject o1, final IJavaProject o2) {
+			@Override
+      public int compare(final IJavaProject o1, final IJavaProject o2) {
 				return o1.getElementName().compareTo(o2.getElementName());
 			}
 
@@ -177,17 +178,20 @@ public final class ConnectProjectsDialog extends Dialog {
 
 		private void init() {
 			f_allButton.addListener(SWT.Selection, new Listener() {
-				public void handleEvent(final Event event) {
+				@Override
+        public void handleEvent(final Event event) {
 					setCheckedAll(true);
 				}
 			});
 			f_noneButton.addListener(SWT.Selection, new Listener() {
-				public void handleEvent(final Event event) {
+				@Override
+        public void handleEvent(final Event event) {
 					setCheckedAll(false);
 				}
 			});
 			f_projectTable.addListener(SWT.Selection, new Listener() {
-				public void handleEvent(final Event event) {
+				@Override
+        public void handleEvent(final Event event) {
 					setOKState();
 				}
 			});

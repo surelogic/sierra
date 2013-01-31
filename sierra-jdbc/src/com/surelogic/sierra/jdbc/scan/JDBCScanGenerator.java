@@ -71,7 +71,8 @@ class JDBCScanGenerator implements ScanGenerator {
 		this.filter = filter;
 	}
 
-	public ArtifactGenerator build() {
+	@Override
+  public ArtifactGenerator build() {
 		ProjectRecord p;
 		try {
 			p = ProjectRecordFactory.getInstance(conn).newProject();
@@ -156,44 +157,52 @@ class JDBCScanGenerator implements ScanGenerator {
 		}
 	}
 
-	public ScanGenerator uid(final String uid) {
+	@Override
+  public ScanGenerator uid(final String uid) {
 		this.uid = uid;
 		return this;
 	}
 
-	public ScanGenerator javaVendor(final String vendor) {
+	@Override
+  public ScanGenerator javaVendor(final String vendor) {
 		javaVendor = vendor;
 		return this;
 	}
 
-	public ScanGenerator javaVersion(final String version) {
+	@Override
+  public ScanGenerator javaVersion(final String version) {
 		javaVersion = version;
 		return this;
 	}
 
-	public ScanGenerator project(final String projectName) {
+	@Override
+  public ScanGenerator project(final String projectName) {
 		this.projectName = projectName;
 		return this;
 	}
 
-	public ScanGenerator timeseries(final Collection<String> timeseries) {
+	@Override
+  public ScanGenerator timeseries(final Collection<String> timeseries) {
 		if (timeseries != null && !timeseries.isEmpty()) {
 			this.timeseries.addAll(timeseries);
 		}
 		return this;
 	}
 
-	public ScanGenerator user(final String user) {
+	@Override
+  public ScanGenerator user(final String user) {
 		this.user = user;
 		return this;
 	}
 
-	public ScanGenerator extension(final String name, final String version) {
+	@Override
+  public ScanGenerator extension(final String name, final String version) {
 		extensions.put(name, version);
 		return this;
 	}
 
-	public String finished() {
+	@Override
+  public String finished() {
 		generator.finished(new NullSLProgressMonitor());
 		scan.setStatus(ScanStatus.GENERATED);
 		try {

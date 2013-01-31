@@ -118,11 +118,13 @@ public final class AuditRecord extends AbstractRecord<String> {
 		return idx;
 	}
 
-	public String getId() {
+	@Override
+  public String getId() {
 		return uuid;
 	}
 
-	public void setId(final String id) {
+	@Override
+  public void setId(final String id) {
 		uuid = id;
 	}
 

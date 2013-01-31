@@ -22,14 +22,17 @@ public class JarTarget extends AbstractToolTarget {
     super(Type.AUX, loc);
   }
   
+  @Override
   public final Kind getKind() {
     return Kind.JAR;
   }
 
+  @Override
   public boolean exclude(String relativePath) {
     return false;
   }
 
+  @Override
   public Iterable<URI> getFiles() {
     throw new UnsupportedOperationException();
   }  

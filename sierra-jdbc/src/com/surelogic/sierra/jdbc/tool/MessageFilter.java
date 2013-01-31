@@ -42,7 +42,8 @@ public class MessageFilter implements FindingFilter {
 	 * @see
 	 * com.surelogic.sierra.jdbc.tool.FindingTypeFilter#accept(java.lang.Long)
 	 */
-	public boolean accept(final Long artifactTypeId) {
+	@Override
+  public boolean accept(final Long artifactTypeId) {
 		return !filtered.contains(artifactTypeId);
 	}
 
@@ -54,7 +55,8 @@ public class MessageFilter implements FindingFilter {
 	 * java.lang.Long, com.surelogic.sierra.tool.message.Priority,
 	 * com.surelogic.sierra.tool.message.Severity)
 	 */
-	public Importance calculateImportance(final Long findingTypeId,
+	@Override
+  public Importance calculateImportance(final Long findingTypeId,
 			final Priority priority, final Severity severity) {
 		switch (severity) {
 		case ERROR:

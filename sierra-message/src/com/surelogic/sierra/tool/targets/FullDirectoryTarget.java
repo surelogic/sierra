@@ -18,6 +18,7 @@ public class FullDirectoryTarget extends DirectoryTarget {
     super(type, loc);
   }
 
+  @Override
   public boolean exclude(String relativePath) {
     return false;
   }

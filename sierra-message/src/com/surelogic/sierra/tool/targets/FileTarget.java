@@ -31,14 +31,17 @@ public final class FileTarget extends AbstractToolTarget {
     this(Type.SOURCE, loc, root);
   }
   
+  @Override
   public boolean exclude(String relativePath) {
     return false;
   }
 
+  @Override
   public final Kind getKind() {
     return Kind.FILE;
   }
 
+  @Override
   public Iterable<URI> getFiles() {
     List<URI> l = new ArrayList<URI>(1);
     l.add(getLocation());

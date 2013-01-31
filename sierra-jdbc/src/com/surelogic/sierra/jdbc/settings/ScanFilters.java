@@ -262,7 +262,8 @@ public class ScanFilters {
 		}
 		return q.prepared("Scans.selectSettingsEntry",
 				SingleRowHandler.from(new RowHandler<ScanFilterDO>() {
-					public ScanFilterDO handle(final Row r) {
+					@Override
+          public ScanFilterDO handle(final Row r) {
 						final ScanFilterDO settings = new ScanFilterDO();
 						settings.setUid(r.nextString());
 						settings.setName(r.nextString());
@@ -298,7 +299,8 @@ public class ScanFilters {
 	private static class FilterSetHandler implements
 			RowHandler<CategoryFilterDO> {
 
-		public CategoryFilterDO handle(final Row r) {
+		@Override
+    public CategoryFilterDO handle(final Row r) {
 			return new CategoryFilterDO(r.nextString(), toImportance(r
 					.nullableInt()));
 		}
@@ -306,7 +308,8 @@ public class ScanFilters {
 
 	private static class FilterHandler implements RowHandler<TypeFilterDO> {
 
-		public TypeFilterDO handle(final Row r) {
+		@Override
+    public TypeFilterDO handle(final Row r) {
 			return new TypeFilterDO(r.nextString(), toImportance(r
 					.nullableInt()), r.nextBoolean());
 		}

@@ -3,11 +3,13 @@ package com.surelogic.sierra.client.eclipse.model.selection;
 public final class FilterArtifactCount extends FilterNumberValue {
 
 	public static final ISelectionFilterFactory FACTORY = new AbstractFilterFactory() {
-		public Filter construct(Selection selection, Filter previous) {
+		@Override
+    public Filter construct(Selection selection, Filter previous) {
 			return new FilterArtifactCount(selection, previous);
 		}
 
-		public String getFilterLabel() {
+		@Override
+    public String getFilterLabel() {
 			return "Tool Artifacts";
 		}
 	};

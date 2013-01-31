@@ -31,7 +31,8 @@ public class LocalTeamServerPreferencePage extends PreferencePage implements
 	ScaleFieldEditor f_serverMemoryMB;
 	RadioGroupFieldEditor f_showAbove;
 
-	public void init(IWorkbench workbench) {
+	@Override
+  public void init(IWorkbench workbench) {
 		setPreferenceStore(EclipseUIUtility.getPreferences());
 		setDescription(I18N
 				.msg("sierra.eclipse.teamserver.preference.page.msg"));
@@ -68,7 +69,8 @@ public class LocalTeamServerPreferencePage extends PreferencePage implements
 		f_serverMemoryMB.load();
 		f_serverMemoryMB.getScaleControl().addListener(SWT.Selection,
 				new Listener() {
-					public void handleEvent(Event event) {
+					@Override
+          public void handleEvent(Event event) {
 						updateMBInLabel();
 					}
 				});

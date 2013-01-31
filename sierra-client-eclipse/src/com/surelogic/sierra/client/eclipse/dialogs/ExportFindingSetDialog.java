@@ -71,7 +71,8 @@ public final class ExportFindingSetDialog extends Dialog {
 		f_csvFormat.setText("Comma Separated Values (CSV)");
 		f_csvFormat.setSelection(true);
 		f_csvFormat.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(final Event event) {
+			@Override
+      public void handleEvent(final Event event) {
 				changeFileExtension("html", "csv");
 			}
 		});
@@ -80,7 +81,8 @@ public final class ExportFindingSetDialog extends Dialog {
 		f_htmlFormat.setText("HTML Table");
 		f_htmlFormat.setSelection(false);
 		f_htmlFormat.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(final Event event) {
+			@Override
+      public void handleEvent(final Event event) {
 				changeFileExtension("csv", "html");
 			}
 		});
@@ -102,7 +104,8 @@ public final class ExportFindingSetDialog extends Dialog {
 		browseButton.addListener(SWT.Selection, new Listener() {
 			private FileDialog fd;
 
-			public void handleEvent(final Event event) {
+			@Override
+      public void handleEvent(final Event event) {
 				if (fd == null) {
 					fd = new FileDialog(getShell(), SWT.SAVE);
 					fd.setText("Destination File");

@@ -30,7 +30,8 @@ public class UpdateBaseMapper extends BaseMapper implements UpdateRecordMapper {
 		}
 	}
 
-	public void update(AbstractUpdatableRecord<?> record) throws SQLException {
+	@Override
+  public void update(AbstractUpdatableRecord<?> record) throws SQLException {
 		if (update == null) {
 			throw new UnsupportedOperationException();
 		}

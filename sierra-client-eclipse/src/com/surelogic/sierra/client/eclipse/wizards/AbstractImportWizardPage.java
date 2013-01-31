@@ -41,6 +41,7 @@ public abstract class AbstractImportWizardPage extends WizardPage {
     f_importFileBrowseButton.addListener(SWT.Selection, new Listener() {
       private FileDialog fd;
 
+      @Override
       public void handleEvent(Event event) {
         if (fd == null) {
           fd = new FileDialog(getShell(), SWT.OPEN);
@@ -60,6 +61,7 @@ public abstract class AbstractImportWizardPage extends WizardPage {
     new Label(parent, SWT.NONE); // vertical spacer
 
     ModifyListener listener = new ModifyListener() {
+      @Override
       public void modifyText(ModifyEvent e) {
         File holder = new File(f_importFilenameField.getText());
 

@@ -19,7 +19,8 @@ public class BootDatabase extends AbstractSLJob {
 		super("Boot the Sierra database");
 	}
 
-	public SLStatus run(SLProgressMonitor monitor) {
+	@Override
+  public SLStatus run(SLProgressMonitor monitor) {
 		monitor.begin();
 		try {
 			/*

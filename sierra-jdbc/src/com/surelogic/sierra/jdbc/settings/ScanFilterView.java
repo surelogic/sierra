@@ -131,7 +131,8 @@ public class ScanFilterView implements FindingFilter {
 	/**
 	 * Whether or not an artifact type is allowed by this filter.
 	 */
-	public boolean accept(final Long artifactTypeId) {
+	@Override
+  public boolean accept(final Long artifactTypeId) {
 		return allowed.contains(artifactTypeId);
 	}
 
@@ -139,7 +140,8 @@ public class ScanFilterView implements FindingFilter {
 	 * Calculate the importance of a finding based on finding type as well as
 	 * artifact priority and severity
 	 */
-	public Importance calculateImportance(final Long findingTypeId,
+	@Override
+  public Importance calculateImportance(final Long findingTypeId,
 			final Priority priority, final Severity severity) {
 		Importance i = importances.get(findingTypeId);
 		if (i == null) {

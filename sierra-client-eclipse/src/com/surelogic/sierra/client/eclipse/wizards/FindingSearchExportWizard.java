@@ -22,7 +22,8 @@ public class FindingSearchExportWizard extends Wizard implements IExportWizard {
 		addPage(fMainPage);
 	}
 
-	public void init(IWorkbench workbench, IStructuredSelection selection) {
+	@Override
+  public void init(IWorkbench workbench, IStructuredSelection selection) {
 		setWindowTitle("Export");
 		setDefaultPageImageDescriptor(SLImages
 				.getImageDescriptor(CommonImages.IMG_EXPORT_WEB));

@@ -15,14 +15,16 @@ import com.surelogic.sierra.jdbc.tool.FindingTypeDO;
 public final class FilterAdHocFindingCategory extends Filter implements
 		IBuglinkDataObserver {
 	public static final ISelectionFilterFactory FACTORY = new AbstractFilterFactory() {
-		public Filter construct(Selection selection, Filter previous) {
+		@Override
+    public Filter construct(Selection selection, Filter previous) {
 			FilterAdHocFindingCategory f = new FilterAdHocFindingCategory(
 					selection, previous);
 			BuglinkData.getInstance().addObserver(f);
 			return f;
 		}
 
-		public String getFilterLabel() {
+		@Override
+    public String getFilterLabel() {
 			return "Finding Category";
 		}
 	};
@@ -60,7 +62,8 @@ public final class FilterAdHocFindingCategory extends Filter implements
 		synchronized (buglink) {
 			f_allValues.addAll(buglink.getCategoryUids());
 			Collections.sort(f_allValues, new Comparator<String>() {
-				public int compare(String o1, String o2) {
+				@Override
+        public int compare(String o1, String o2) {
 					// FIX cache one of these?
 					CategoryDO cat1 = buglink.getCategoryDef(o1);
 					CategoryDO cat2 = buglink.getCategoryDef(o2);
@@ -118,7 +121,8 @@ public final class FilterAdHocFindingCategory extends Filter implements
 		}
 	}
 
-	public void notify(BuglinkData bd) {
+	@Override
+  public void notify(BuglinkData bd) {
 		refresh();
 	}
 

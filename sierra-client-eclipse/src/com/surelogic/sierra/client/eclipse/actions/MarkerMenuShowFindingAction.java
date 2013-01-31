@@ -51,7 +51,8 @@ public class MarkerMenuShowFindingAction implements IUpdate,
 		f_markers = new ArrayList<IMarker>();
 	}
 
-	public void update() {
+	@Override
+  public void update() {
 		final int numMarkers = f_markers.size();
 		if (numMarkers > 0) {
 			try {
@@ -89,7 +90,8 @@ public class MarkerMenuShowFindingAction implements IUpdate,
 
 	}
 
-	public void setActiveEditor(IAction action, IEditorPart targetEditor) {
+	@Override
+  public void setActiveEditor(IAction action, IEditorPart targetEditor) {
 		Control control;
 		if (f_editor != null) {
 			if (f_ruler != null) {
@@ -124,7 +126,8 @@ public class MarkerMenuShowFindingAction implements IUpdate,
 
 	}
 
-	public void run(IAction action) {
+	@Override
+  public void run(IAction action) {
 		f_action = action;
 		obtainSierraMarkers();
 		if (!f_markers.isEmpty()) {
@@ -200,17 +203,20 @@ public class MarkerMenuShowFindingAction implements IUpdate,
 		return null;
 	}
 
-	public void selectionChanged(IAction action, ISelection selection) {
+	@Override
+  public void selectionChanged(IAction action, ISelection selection) {
 		f_action = action;
 
 	}
 
-	public void mouseDoubleClick(MouseEvent e) {
+	@Override
+  public void mouseDoubleClick(MouseEvent e) {
 		// Nothing to do
 
 	}
 
-	public void mouseDown(MouseEvent e) {
+	@Override
+  public void mouseDown(MouseEvent e) {
 		// if (e.button == 1) {
 		// obtainSierraMarkers();
 		// if (f_markers.size() > 0) {
@@ -220,7 +226,8 @@ public class MarkerMenuShowFindingAction implements IUpdate,
 
 	}
 
-	public void mouseUp(MouseEvent e) {
+	@Override
+  public void mouseUp(MouseEvent e) {
 		if (e.button == 1) {
 			obtainSierraMarkers();
 			if (!f_markers.isEmpty()) {
@@ -230,7 +237,8 @@ public class MarkerMenuShowFindingAction implements IUpdate,
 
 	}
 
-	public void menuAboutToShow(IMenuManager manager) {
+	@Override
+  public void menuAboutToShow(IMenuManager manager) {
 		if (f_action != null) {
 			obtainSierraMarkers();
 			f_action.setEnabled(!f_markers.isEmpty());

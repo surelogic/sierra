@@ -22,10 +22,12 @@ public abstract class DirectoryTarget extends AbstractToolTarget {
     super(type, loc);
   }
   
+  @Override
   public final Kind getKind() {
     return Kind.DIRECTORY;
   }
 
+  @Override
   public Iterable<URI> getFiles() {
     List<URI> files = new ArrayList<URI>();
     findFiles(files, new File(getLocation()));

@@ -27,7 +27,8 @@ public class Activator extends AbstractUIPlugin {
 		f_plugin = this;
 	}
 
-	public void start(BundleContext context) throws Exception {
+	@Override
+  public void start(BundleContext context) throws Exception {
 		super.start(context);
 		f_plugin = this;
 
@@ -39,7 +40,8 @@ public class Activator extends AbstractUIPlugin {
 		LocalTeamServerPreferencesUtility.initializeDefaultScope();
 	}
 
-	public void stop(BundleContext context) throws Exception {
+	@Override
+  public void stop(BundleContext context) throws Exception {
 		f_plugin = null;
 		super.stop(context);
 	}

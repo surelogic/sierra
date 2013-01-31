@@ -97,7 +97,8 @@ public abstract class TroubleshootConnection {
 
 	protected ServerLocation showDialog() {
 	  EclipseUIUtility.asyncExec(new Runnable() {
-			public void run() {
+			@Override
+      public void run() {
 				ErrorDialogUtility.open(null, getLabel(), f_status);
 			}
 		});

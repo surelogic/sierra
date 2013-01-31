@@ -62,11 +62,13 @@ public final class MatchRecord extends AbstractUpdatableRecord<MatchRecord.PK> {
 		return idx;
 	}
 
-	public PK getId() {
+	@Override
+  public PK getId() {
 		return id;
 	}
 
-	public void setId(PK id) {
+	@Override
+  public void setId(PK id) {
 		this.id = id;
 	}
 

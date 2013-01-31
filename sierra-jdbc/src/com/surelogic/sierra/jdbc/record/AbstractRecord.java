@@ -12,15 +12,18 @@ public abstract class AbstractRecord<T> implements Record<T> {
 		this.mapper = mapper;
 	}
 
-	public void delete() throws SQLException {
+	@Override
+  public void delete() throws SQLException {
 		mapper.remove(this);
 	}
 
-	public void insert() throws SQLException {
+	@Override
+  public void insert() throws SQLException {
 		mapper.insert(this);
 	}
 
-	public boolean select() throws SQLException {
+	@Override
+  public boolean select() throws SQLException {
 		return mapper.select(this);
 
 	}

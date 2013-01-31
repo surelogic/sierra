@@ -29,7 +29,8 @@ public class ManifestLocationPage extends WizardPage {
 		}
 	}
 
-	public void createControl(Composite panel) {
+	@Override
+  public void createControl(Composite panel) {
 		GridLayout gridLayout = new GridLayout();
 		gridLayout.numColumns = 2;
 		panel.setLayout(gridLayout);

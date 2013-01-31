@@ -71,7 +71,8 @@ public final class ScanDocumentUtility {
 			final Map<String, List<String>> compilations)
 			throws ScanPersistenceException {
 		final Parser p = new Parser() {
-			public String parse(final File scanDocument, final Connection conn,
+			@Override
+      public String parse(final File scanDocument, final Connection conn,
 					final ScanManager sMan, final FindingFilter filter,
 					final Set<Long> findingIds, final SLProgressMonitor monitor)
 					throws ScanPersistenceException {
@@ -89,7 +90,8 @@ public final class ScanDocumentUtility {
 						scanDocument, gen, monitor);
 			}
 
-			public void updateOverview(final ClientFindingManager fm,
+			@Override
+      public void updateOverview(final ClientFindingManager fm,
 					final String uid, final FindingFilter filter,
 					final Set<Long> findingIds, final SLProgressMonitor monitor) {
 				fm.updateScanFindings(projectName, uid, compilations, filter,

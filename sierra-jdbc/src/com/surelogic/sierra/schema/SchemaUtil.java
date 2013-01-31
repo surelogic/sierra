@@ -195,7 +195,8 @@ public class SchemaUtil {
 	}
 
 	private static class CatEntryHandler implements RowHandler<CatEntry> {
-		public CatEntry handle(final Row r) {
+		@Override
+    public CatEntry handle(final Row r) {
 			final CatEntry ce = new CatEntry();
 			ce.tool = r.nextString();
 			ce.cat = r.nextString();

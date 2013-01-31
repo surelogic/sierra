@@ -75,7 +75,8 @@ public final class ServerStaysRunningWarning extends Dialog {
 		check.setLayoutData(data);
 		check.setText("Please do not show this warning again");
 		check.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event event) {
+			@Override
+      public void handleEvent(Event event) {
 				LocalTeamServerPreferencesUtility
 						.setWarnAboutServerStaysRunning(!check.getSelection());
 			}

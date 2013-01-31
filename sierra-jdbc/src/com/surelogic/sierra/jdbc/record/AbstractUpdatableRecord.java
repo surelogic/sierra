@@ -13,7 +13,8 @@ public abstract class AbstractUpdatableRecord<R> extends AbstractRecord<R>
 		this.mapper = mapper;
 	}
 
-	public void update() throws SQLException {
+	@Override
+  public void update() throws SQLException {
 		mapper.update(this);
 	}
 

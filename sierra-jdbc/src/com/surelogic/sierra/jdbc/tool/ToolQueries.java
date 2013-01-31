@@ -45,7 +45,8 @@ public class ToolQueries {
 		final EnsureExtensionResponse response = service
 				.ensureExtensions(eerReq);
 		return new DBQuery<List<Extension>>() {
-			public List<Extension> perform(final Query q) {
+			@Override
+      public List<Extension> perform(final Query q) {
 				final List<Extension> extensions = new ArrayList<Extension>();
 				final FindingTypes t = new FindingTypes(q);
 				for (final ExtensionName unknown : response

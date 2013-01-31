@@ -15,7 +15,8 @@ public final class ScanQueries {
 	public static DBTransaction<Void> deleteUnfinishedScans(
 			final SLProgressMonitor mon) {
 		return new DBTransaction<Void>() {
-			public Void perform(final Connection conn) throws Exception {
+			@Override
+      public Void perform(final Connection conn) throws Exception {
 				ScanManager.getInstance(conn).deleteScans(
 						new Scans(new ConnectionQuery(conn)).unfinishedScans(),
 						mon);

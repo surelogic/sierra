@@ -23,15 +23,18 @@ public abstract class AbstractSierraViewMediator extends
 		f_view = cb;
 	}
 
-	public Listener getNoDataListener() {
+	@Override
+  public Listener getNoDataListener() {
 		return null;
 	}
 
-	public void init() {
+	@Override
+  public void init() {
 		DatabaseHub.getInstance().addObserver(this);
 	}
 
-	public void dispose() {
+	@Override
+  public void dispose() {
 		DatabaseHub.getInstance().removeObserver(this);
 	}
 

@@ -11,19 +11,23 @@ import com.surelogic.sierra.client.eclipse.perspectives.CodeReviewPerspective;
 public final class ShowCodeReviewPerspectiveAction implements
 		IWorkbenchWindowActionDelegate {
 
-	public void dispose() {
+	@Override
+  public void dispose() {
 		// Nothing to do
 	}
 
-	public void init(IWorkbenchWindow window) {
+	@Override
+  public void init(IWorkbenchWindow window) {
 		// Nothing to do
 	}
 
-	public void run(IAction action) {
+	@Override
+  public void run(IAction action) {
 		EclipseUIUtility.showPerspective(CodeReviewPerspective.class.getName());
 	}
 
-	public void selectionChanged(IAction action, ISelection selection) {
+	@Override
+  public void selectionChanged(IAction action, ISelection selection) {
 		// Nothing to do
 	}
 }

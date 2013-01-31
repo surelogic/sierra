@@ -34,7 +34,8 @@ public final class TroubleshootWrongAuthentication extends
 	protected ServerLocation showDialog() {
 		final ServerLocation s = getLocation();
 		PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-			public void run() {
+			@Override
+      public void run() {
 				f_modifiedLocation = ServerAuthenticationDialog.open(null,
 						getLocation());
 			}

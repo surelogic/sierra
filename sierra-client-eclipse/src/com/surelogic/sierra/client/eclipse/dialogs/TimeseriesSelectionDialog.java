@@ -108,13 +108,15 @@ public final class TimeseriesSelectionDialog extends Dialog {
 				+ f_projectName + "'");
 		useForAll.setSelection(f_useForRemainingOnSameServer);
 		useForAll.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event event) {
+			@Override
+      public void handleEvent(Event event) {
 				f_useForRemainingOnSameServer = useForAll.getSelection();
 			}
 		});
 
 		f_timeseriesTable.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event event) {
+			@Override
+      public void handleEvent(Event event) {
 				f_selectedTimeseries.clear();
 				final TableItem[] sa = f_timeseriesTable.getSelection();
 				for (TableItem item : sa) {

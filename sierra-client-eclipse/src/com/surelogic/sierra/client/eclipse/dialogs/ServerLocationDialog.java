@@ -173,7 +173,8 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 		portText.setText(Integer.toString(f_location.getPort()));
 		portText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		portText.addListener(SWT.Verify, new Listener() {
-			public void handleEvent(final Event event) {
+			@Override
+      public void handleEvent(final Event event) {
 				final String text = event.text;
 				final char[] chars = new char[text.length()];
 				text.getChars(0, chars.length, chars, 0);
@@ -216,7 +217,8 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 			http.setSelection(true);
 		}
 		final Listener protListener = new Listener() {
-			public void handleEvent(final Event event) {
+			@Override
+      public void handleEvent(final Event event) {
 				f_isSecure = https.getSelection();
 			}
 		};
@@ -258,7 +260,8 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 				I18N.msg("sierra.dialog.serverlocation.savePassword"),
 				f_savePassword);
 		savePasswordButton.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(final Event event) {
+			@Override
+      public void handleEvent(final Event event) {
 				f_savePassword = savePasswordButton.getSelection();
 			}
 		});
@@ -283,7 +286,8 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 				I18N.msg("sierra.dialog.serverlocation.enableAutoSync"),
 				f_autoSync);
 		autoSyncButton.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(final Event event) {
+			@Override
+      public void handleEvent(final Event event) {
 				f_autoSync = autoSyncButton.getSelection();
 			}
 		});
@@ -346,7 +350,8 @@ public final class ServerLocationDialog extends TitleAreaDialog {
 
 		void init() {
 			final Listener checkContentsListener = new Listener() {
-				public void handleEvent(final Event event) {
+				@Override
+        public void handleEvent(final Event event) {
 					checkDialogContents();
 				}
 			};

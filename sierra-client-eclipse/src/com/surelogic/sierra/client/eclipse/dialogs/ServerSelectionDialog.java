@@ -24,6 +24,7 @@ public class ServerSelectionDialog extends AbstractServerSelectionDialog {
     useForAll.setText("Use this server for all unconnected projects");
     useForAll.setSelection(f_useForAllUnconnectedProjects);
     useForAll.addListener(SWT.Selection, new Listener() {
+      @Override
       public void handleEvent(Event event) {
         f_useForAllUnconnectedProjects = useForAll.getSelection();
       }

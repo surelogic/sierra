@@ -74,7 +74,8 @@ class ServersViewContent implements IServerActionFilter {
 		return changeStatus;
 	}
 
-	public boolean testAttribute(Object target, String name, String value) {
+	@Override
+  public boolean testAttribute(Object target, String name, String value) {
 		if (target != this) {
 			return false;
 		}

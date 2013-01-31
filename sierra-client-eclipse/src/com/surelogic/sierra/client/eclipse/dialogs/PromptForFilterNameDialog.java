@@ -43,7 +43,8 @@ public final class PromptForFilterNameDialog extends MessageDialog {
 		f_name.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		f_name.addListener(SWT.Modify, new Listener() {
-			public void handleEvent(Event event) {
+			@Override
+      public void handleEvent(Event event) {
 				setButtonState();
 			}
 		});
@@ -51,7 +52,8 @@ public final class PromptForFilterNameDialog extends MessageDialog {
 		 * We have to run this a bit later so that the OK button is created.
 		 */
 		EclipseUIUtility.asyncExec(new Runnable() {
-			public void run() {
+			@Override
+      public void run() {
 				setButtonState();
 			}
 		});

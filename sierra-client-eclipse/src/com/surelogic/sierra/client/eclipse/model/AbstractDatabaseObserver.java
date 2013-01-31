@@ -6,31 +6,38 @@ package com.surelogic.sierra.client.eclipse.model;
 public abstract class AbstractDatabaseObserver extends AbstractUpdatable
 implements IDatabaseObserver {
 
-	public void changed() {
+	@Override
+  public void changed() {
 		// Do nothing
 	}
 
-	public void projectDeleted() {
+	@Override
+  public void projectDeleted() {
 		// Do nothing
 	}
 
-	public void scanLoaded() {
+	@Override
+  public void scanLoaded() {
 		// Do nothing
 	}
 
-	public void serverSynchronized() {
+	@Override
+  public void serverSynchronized() {
 		// Do nothing
 	}
 	
-	public void projectSynchronized() {
+	@Override
+  public void projectSynchronized() {
 		// Do nothing
 	}
 
-	public void findingMutated() {
+	@Override
+  public void findingMutated() {
 		// Do nothing
 	}
 
-	public void databaseDeleted() {
+	@Override
+  public void databaseDeleted() {
 		// Do nothing
 	}
 }

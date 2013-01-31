@@ -13,6 +13,7 @@ public class SierraServiceClientAuthenticator extends Authenticator {
         this.password = password;
     }
 
+    @Override
     public PasswordAuthentication getPasswordAuthentication() {
         return new PasswordAuthentication(this.username,
             ((this.password == null) ? null : this.password.toCharArray()));

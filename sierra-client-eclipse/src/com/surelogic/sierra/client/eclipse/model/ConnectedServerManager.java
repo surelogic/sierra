@@ -47,12 +47,14 @@ public final class ConnectedServerManager extends
 		// singleton
 	}
 
-	public void init() {
+	@Override
+  public void init() {
 		load();
 		DatabaseHub.getInstance().addObserver(this);
 	}
 
-	public void dispose() {
+	@Override
+  public void dispose() {
 		DatabaseHub.getInstance().removeObserver(this);
 	}
 

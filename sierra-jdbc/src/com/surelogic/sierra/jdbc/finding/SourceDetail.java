@@ -60,6 +60,7 @@ public class SourceDetail implements Comparable<SourceDetail> {
 		return identifier;
 	}
 
+  @Override
   public int compareTo(SourceDetail other) {
     int rv = packageName.compareTo(other.packageName);
     if (rv == 0) {

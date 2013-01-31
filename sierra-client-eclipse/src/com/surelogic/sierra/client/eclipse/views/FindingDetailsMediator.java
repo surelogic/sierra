@@ -221,18 +221,21 @@ public class FindingDetailsMediator extends AbstractSierraViewMediator
 		f_importanceRadioPopupMenu = new Menu(parent.getShell(), SWT.POP_UP);
 	}
 
-	public String getHelpId() {
+	@Override
+  public String getHelpId() {
 		return "com.surelogic.sierra.client.eclipse.view-finding-details";
 	}
 
-	public String getNoDataI18N() {
+	@Override
+  public String getNoDataI18N() {
 		return "sierra.eclipse.noDataFindingDetails";
 	}
 
 	@Override
 	public Listener getNoDataListener() {
 		return new Listener() {
-			public void handleEvent(final Event event) {
+			@Override
+      public void handleEvent(final Event event) {
 				EclipseUIUtility.showView(FindingsSelectionView.ID);
 			}
 		};
@@ -315,7 +318,8 @@ public class FindingDetailsMediator extends AbstractSierraViewMediator
 	}
 
 	private final Listener f_radioListener = new Listener() {
-		public void handleEvent(final Event event) {
+		@Override
+    public void handleEvent(final Event event) {
 			final Importance current = f_finding.getImportance();
 			if (event.widget != null) {
 				if (event.widget.getData() instanceof Importance) {
@@ -331,7 +335,8 @@ public class FindingDetailsMediator extends AbstractSierraViewMediator
 	};
 
 	private final Listener f_locationListener = new Listener() {
-		public void handleEvent(final Event event) {
+		@Override
+    public void handleEvent(final Event event) {
 			final TreeItem item = (TreeItem) event.item;
 			if (item == null) {
 				return;
@@ -356,11 +361,13 @@ public class FindingDetailsMediator extends AbstractSierraViewMediator
 		f_irrelevantButton.addListener(SWT.Selection, f_radioListener);
 
 		f_folder.addSelectionListener(new SelectionListener() {
-			public void widgetDefaultSelected(final SelectionEvent e) {
+			@Override
+      public void widgetDefaultSelected(final SelectionEvent e) {
 				// I'm not sure when this is called (if ever) for a tab folder.
 			}
 
-			public void widgetSelected(final SelectionEvent e) {
+			@Override
+      public void widgetSelected(final SelectionEvent e) {
 				/*
 				 * Invoked when the tab selection changes.
 				 */
@@ -369,7 +376,8 @@ public class FindingDetailsMediator extends AbstractSierraViewMediator
 		});
 
 		final Listener commentListener = new Listener() {
-			public void handleEvent(final Event event) {
+			@Override
+      public void handleEvent(final Event event) {
 				f_commentButton.setEnabled(false);
 				/*
 				 * All this job stuff is to try and avoid pressing the button
@@ -404,7 +412,8 @@ public class FindingDetailsMediator extends AbstractSierraViewMediator
 			}
 		};
 		f_commentText.addListener(SWT.KeyDown, new Listener() {
-			public void handleEvent(final Event e) {
+			@Override
+      public void handleEvent(final Event e) {
 				if (e.character != SWT.CR) {
 					return;
 				}
@@ -470,7 +479,8 @@ public class FindingDetailsMediator extends AbstractSierraViewMediator
 		irrelevantItem.addListener(SWT.Selection, f_radioListener);
 
 		f_summaryIcon.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(final Event event) {
+			@Override
+      public void handleEvent(final Event event) {
 				Point point = new Point(event.x, event.y);
 				point = f_parent.getDisplay().map(f_summaryIcon.getParent(),
 						null, point);
@@ -479,7 +489,8 @@ public class FindingDetailsMediator extends AbstractSierraViewMediator
 			}
 		});
 		f_findingSynopsis.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(final Event event) {
+			@Override
+      public void handleEvent(final Event event) {
 				final String target = event.text;
 				showTab(target);
 			}
@@ -487,7 +498,8 @@ public class FindingDetailsMediator extends AbstractSierraViewMediator
 
 		final Listener tel = new TextEditedListener(
 				new TextEditedListener.TextEditedAction() {
-					public void textEditedAction(final String newText) {
+					@Override
+          public void textEditedAction(final String newText) {
 						if (!f_finding.getSummary().equals(newText)) {
 							FindingMutationUtility.asyncChangeSummary(
 									f_finding.getFindingId(), newText);
@@ -498,7 +510,8 @@ public class FindingDetailsMediator extends AbstractSierraViewMediator
 		f_summaryText.addListener(SWT.FocusOut, tel);
 
 		f_artifacts.addListener(SWT.MouseDoubleClick, new Listener() {
-			public void handleEvent(final Event arg0) {
+			@Override
+      public void handleEvent(final Event arg0) {
 				final TableItem[] items = f_artifacts.getSelection();
 				if (items.length > 0) {
 					final TableItem item = items[0];
@@ -518,7 +531,8 @@ public class FindingDetailsMediator extends AbstractSierraViewMediator
 		 * way to do this.
 		 */
 		f_locationTree.addListener(SWT.Resize, new Listener() {
-			public void handleEvent(final Event event) {
+			@Override
+      public void handleEvent(final Event event) {
 				final int[] weights = f_synopsisSash.getWeights();
 				if (weights != null && weights.length == 2) {
 					f_sashLocationWeight = weights[0];
@@ -559,7 +573,8 @@ public class FindingDetailsMediator extends AbstractSierraViewMediator
 		super.dispose();
 	}
 
-	public void setFocus() {
+	@Override
+  public void setFocus() {
 		final TabItem[] items = f_folder.getSelection();
 		if (items.length > 0) {
 			final TabItem item = items[0];
@@ -574,7 +589,8 @@ public class FindingDetailsMediator extends AbstractSierraViewMediator
 	/**
 	 * Must be invoked from the SWT thread.
 	 */
-	public void updateContentsForUI() {
+	@Override
+  public void updateContentsForUI() {
 		final boolean showFinding = f_finding != null;
 
 		// Page doesn't match our state

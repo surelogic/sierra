@@ -4,7 +4,8 @@ import java.util.Set;
 
 public abstract class AbstractFilterFactory implements ISelectionFilterFactory {
 
-	public final int compareTo(ISelectionFilterFactory o) {
+	@Override
+  public final int compareTo(ISelectionFilterFactory o) {
 		return getFilterLabel().compareTo(o.getFilterLabel());
 	}
 
@@ -27,7 +28,8 @@ public abstract class AbstractFilterFactory implements ISelectionFilterFactory {
 		return getFilterLabel();
 	}
 	
-	public boolean addWhereClauseIfUnusedFilter(Set<ISelectionFilterFactory> unused,
+	@Override
+  public boolean addWhereClauseIfUnusedFilter(Set<ISelectionFilterFactory> unused,
 			                                    StringBuilder b, boolean first,
 			                                    boolean usesJoin) {
 		return first;
