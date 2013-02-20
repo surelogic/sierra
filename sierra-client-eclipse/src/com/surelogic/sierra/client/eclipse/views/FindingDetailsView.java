@@ -124,7 +124,7 @@ public class FindingDetailsView extends
         layoutData = new GridData(SWT.FILL, SWT.CENTER, true, false);
         findingSynopsis.setLayoutData(layoutData);
 
-        SashForm synopsisSash = new SashForm(synopsisPane, SWT.VERTICAL);
+        SashForm synopsisSash = new SashForm(synopsisPane, SWT.VERTICAL | SWT.SMOOTH);
         synopsisSash.setLayout(new FillLayout());
         layoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
         synopsisSash.setLayoutData(layoutData);
@@ -243,7 +243,7 @@ public class FindingDetailsView extends
         /*
          * Showing the audit trail (on the right-hand-side).
          */
-        SashForm rhs = new SashForm(auditPane, SWT.VERTICAL);
+        SashForm rhs = new SashForm(auditPane, SWT.VERTICAL | SWT.SMOOTH);
         layoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
         rhs.setLayoutData(layoutData);
         rhs.setLayout(new FillLayout());
