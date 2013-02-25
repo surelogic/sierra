@@ -14,6 +14,7 @@ import org.eclipse.ui.progress.UIJob;
 
 import com.surelogic.common.adhoc.AdHocManager;
 import com.surelogic.common.adhoc.AdHocManagerAdapter;
+import com.surelogic.common.adhoc.AdHocQuery;
 import com.surelogic.common.adhoc.AdHocQueryResult;
 import com.surelogic.common.adhoc.IAdHocDataSource;
 import com.surelogic.common.core.EclipseUtility;
@@ -26,96 +27,90 @@ import com.surelogic.sierra.client.eclipse.Activator;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.preferences.SierraPreferencesUtility;
 
-public final class AdHocDataSource extends AdHocManagerAdapter implements
-		IAdHocDataSource {
+public final class AdHocDataSource extends AdHocManagerAdapter implements IAdHocDataSource {
 
-	private static final AdHocDataSource INSTANCE = new AdHocDataSource();
+  private static final AdHocDataSource INSTANCE = new AdHocDataSource();
 
-	private AdHocDataSource() {
-		// Do nothing
-	}
+  private AdHocDataSource() {
+    // Do nothing
+  }
 
-	static {
-		INSTANCE.init();
-	}
+  static {
+    INSTANCE.init();
+  }
 
-	public static AdHocDataSource getInstance() {
-		return INSTANCE;
-	}
+  public static AdHocDataSource getInstance() {
+    return INSTANCE;
+  }
 
-	public void init() {
-		getManager().addObserver(this);
-		getManager().setGlobalVariableValue(AdHocManager.DATABASE,
-				"Sierra Client Database");
-	}
+  public void init() {
+    getManager().addObserver(this);
+    getManager().setGlobalVariableValue(AdHocManager.DATABASE, "Sierra Client Database");
+  }
 
-	public void dispose() {
-		getManager().removeObserver(this);
-		AdHocManager.shutdown();
-	}
+  public void dispose() {
+    getManager().removeObserver(this);
+    AdHocManager.shutdown();
+  }
 
-	@Override
+  @Override
   public DBConnection getDB() {
-		return Data.getInstance();
-	}
+    return Data.getInstance();
+  }
 
-	@Override
+  @Override
   public int getMaxRowsPerQuery() {
-		return EclipseUtility
-				.getIntPreference(SierraPreferencesUtility.FINDINGS_LIST_LIMIT);
-	}
+    return EclipseUtility.getIntPreference(SierraPreferencesUtility.FINDINGS_LIST_LIMIT);
+  }
 
-	@Override
+  @Override
   public File getQuerySaveFile() {
-		final IPath pluginState = Activator.getDefault().getStateLocation();
-		return new File(pluginState.toOSString()
-				+ System.getProperty("file.separator") + "queries.xml");
-	}
+    final IPath pluginState = Activator.getDefault().getStateLocation();
+    return new File(pluginState.toOSString() + System.getProperty("file.separator") + "queries.xml");
+  }
 
-	@Override
+  @Override
   public void badQuerySaveFileNotification(final Exception e) {
-		SLLogger.getLogger().log(Level.SEVERE,
-				I18N.err(4, getQuerySaveFile().getAbsolutePath()), e);
-	}
+    SLLogger.getLogger().log(Level.SEVERE, I18N.err(4, getQuerySaveFile().getAbsolutePath()), e);
+  }
 
-	@Override
+  @Override
   public URL getDefaultQueryUrl() {
-		return Thread
-				.currentThread()
-				.getContextClassLoader()
-				.getResource(
-						"/com/surelogic/sierra/schema/default-sierra-queries.xml");
-	}
+    return Thread.currentThread().getContextClassLoader().getResource("/com/surelogic/sierra/schema/default-sierra-queries.xml");
+  }
 
-	public static AdHocManager getManager() {
-		return AdHocManager.getInstance(INSTANCE);
-	}
+  public static AdHocManager getManager() {
+    return AdHocManager.getInstance(INSTANCE);
+  }
 
-	@Override
-	public void notifySelectedResultChange(final AdHocQueryResult result) {
-		final UIJob job = new SLUIJob() {
-			@Override
-			public IStatus runInUIThread(final IProgressMonitor monitor) {
-				final IViewPart view = EclipseUIUtility.showView(
-						QueryResultsView.class.getName(), null,
-						IWorkbenchPage.VIEW_VISIBLE);
-				if (view instanceof QueryResultsView) {
-					final QueryResultsView queryResultsView = (QueryResultsView) view;
-					queryResultsView.displayResult(result);
-				}
-				return Status.OK_STATUS;
-			}
-		};
-		job.schedule();
-	}
+  @Override
+  public void notifySelectedResultChange(final AdHocQueryResult result) {
+    final UIJob job = new SLUIJob() {
+      @Override
+      public IStatus runInUIThread(final IProgressMonitor monitor) {
+        final IViewPart view = EclipseUIUtility.showView(QueryResultsView.class.getName(), null, IWorkbenchPage.VIEW_VISIBLE);
+        if (view instanceof QueryResultsView) {
+          final QueryResultsView queryResultsView = (QueryResultsView) view;
+          queryResultsView.displayResult(result);
+        }
+        return Status.OK_STATUS;
+      }
+    };
+    job.schedule();
+  }
 
-	@Override
+  @Override
   public String getEditorViewId() {
-		return QueryEditorView.class.getName();
-	}
+    return QueryEditorView.class.getName();
+  }
 
-	@Override
+  @Override
   public String[] getCurrentAccessKeys() {
-		return new String[] { "sierra" };
-	}
+    return new String[] { "sierra" };
+  }
+
+  @Override
+  public boolean queryResultWillBeEmpty(AdHocQuery query) {
+    return false;
+  }
 }
