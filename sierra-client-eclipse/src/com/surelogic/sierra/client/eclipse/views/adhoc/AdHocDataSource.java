@@ -22,7 +22,7 @@ import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.jdbc.DBConnection;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.common.ui.EclipseUIUtility;
-import com.surelogic.common.ui.adhoc.views.results.IQueryResultCustomDisplay;
+import com.surelogic.common.ui.adhoc.IQueryResultCustomDisplay;
 import com.surelogic.common.ui.jobs.SLUIJob;
 import com.surelogic.sierra.client.eclipse.Activator;
 import com.surelogic.sierra.client.eclipse.Data;
