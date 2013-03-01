@@ -7,6 +7,6 @@ public final class QueryResultsView extends AbstractQueryResultsView {
 
 	@Override
 	public AdHocManager getManager() {
-		return AdHocDataSource.getManager();
+		return SierraDataSource.getManager();
 	}
 }

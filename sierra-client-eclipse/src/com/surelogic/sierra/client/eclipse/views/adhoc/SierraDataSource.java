@@ -31,11 +31,11 @@ import com.surelogic.sierra.client.eclipse.Activator;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.preferences.SierraPreferencesUtility;
 
-public final class AdHocDataSource extends AdHocManagerAdapter implements IAdHocDataSource {
+public final class SierraDataSource extends AdHocManagerAdapter implements IAdHocDataSource {
 
-  private static final AdHocDataSource INSTANCE = new AdHocDataSource();
+  private static final SierraDataSource INSTANCE = new SierraDataSource();
 
-  private AdHocDataSource() {
+  private SierraDataSource() {
     // Do nothing
   }
 
@@ -43,7 +43,7 @@ public final class AdHocDataSource extends AdHocManagerAdapter implements IAdHoc
     INSTANCE.init();
   }
 
-  public static AdHocDataSource getInstance() {
+  public static SierraDataSource getInstance() {
     return INSTANCE;
   }
 

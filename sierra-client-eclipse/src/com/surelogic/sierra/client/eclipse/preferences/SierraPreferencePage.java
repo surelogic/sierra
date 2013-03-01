@@ -23,7 +23,7 @@ import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.ui.EclipseUIUtility;
 import com.surelogic.common.ui.adhoc.views.ExportQueryDialog;
 import com.surelogic.common.ui.preferences.AbstractCommonPreferencePage;
-import com.surelogic.sierra.client.eclipse.views.adhoc.AdHocDataSource;
+import com.surelogic.sierra.client.eclipse.views.adhoc.SierraDataSource;
 import com.surelogic.sierra.tool.message.Importance;
 
 public class SierraPreferencePage extends AbstractCommonPreferencePage {
@@ -196,7 +196,7 @@ public class SierraPreferencePage extends AbstractCommonPreferencePage {
 				@Override
 				public void handleEvent(final Event event) {
 					new ExportQueryDialog(EclipseUIUtility.getShell(),
-							AdHocDataSource.getManager()).open();
+							SierraDataSource.getManager()).open();
 				}
 			});
 		}
