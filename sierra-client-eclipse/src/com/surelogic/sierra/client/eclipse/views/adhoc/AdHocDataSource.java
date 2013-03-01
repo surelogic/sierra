@@ -12,6 +12,8 @@ import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.progress.UIJob;
 
+import com.surelogic.Nullable;
+import com.surelogic.common.CommonImages;
 import com.surelogic.common.adhoc.AdHocManager;
 import com.surelogic.common.adhoc.AdHocManagerAdapter;
 import com.surelogic.common.adhoc.AdHocQuery;
@@ -118,5 +120,11 @@ public final class AdHocDataSource extends AdHocManagerAdapter implements IAdHoc
   @Override
   public IQueryResultCustomDisplay getCustomDisplay(String className) {
     throw new UnsupportedOperationException();
+  }
+
+  @Override
+  @Nullable
+  public URL getQuerydocImageURL(String imageName) {
+    return CommonImages.getImageURL(imageName);
   }
 }
