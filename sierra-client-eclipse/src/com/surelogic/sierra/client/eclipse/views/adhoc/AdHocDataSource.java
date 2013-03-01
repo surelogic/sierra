@@ -12,6 +12,7 @@ import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.progress.UIJob;
 
+import com.surelogic.NonNull;
 import com.surelogic.Nullable;
 import com.surelogic.common.CommonImages;
 import com.surelogic.common.adhoc.AdHocManager;
@@ -56,28 +57,23 @@ public final class AdHocDataSource extends AdHocManagerAdapter implements IAdHoc
     AdHocManager.shutdown();
   }
 
-  @Override
   public DBConnection getDB() {
     return Data.getInstance();
   }
 
-  @Override
   public int getMaxRowsPerQuery() {
     return EclipseUtility.getIntPreference(SierraPreferencesUtility.FINDINGS_LIST_LIMIT);
   }
 
-  @Override
   public File getQuerySaveFile() {
     final IPath pluginState = Activator.getDefault().getStateLocation();
     return new File(pluginState.toOSString() + System.getProperty("file.separator") + "queries.xml");
   }
 
-  @Override
   public void badQuerySaveFileNotification(final Exception e) {
     SLLogger.getLogger().log(Level.SEVERE, I18N.err(4, getQuerySaveFile().getAbsolutePath()), e);
   }
 
-  @Override
   public URL getDefaultQueryUrl() {
     return Thread.currentThread().getContextClassLoader().getResource("/com/surelogic/sierra/schema/default-sierra-queries.xml");
   }
@@ -86,7 +82,6 @@ public final class AdHocDataSource extends AdHocManagerAdapter implements IAdHoc
     return AdHocManager.getInstance(INSTANCE);
   }
 
-  @Override
   public void notifySelectedResultChange(final AdHocQueryResult result) {
     final UIJob job = new SLUIJob() {
       @Override
@@ -102,29 +97,35 @@ public final class AdHocDataSource extends AdHocManagerAdapter implements IAdHoc
     job.schedule();
   }
 
-  @Override
-  public String getEditorViewId() {
-    return QueryEditorView.class.getName();
-  }
-
-  @Override
   public String[] getCurrentAccessKeys() {
     return new String[] { "sierra" };
   }
 
-  @Override
   public boolean queryResultWillBeEmpty(AdHocQuery query) {
     return false;
   }
 
-  @Override
   public IQueryResultCustomDisplay getCustomDisplay(String className) {
     throw new UnsupportedOperationException();
   }
 
-  @Override
   @Nullable
   public URL getQuerydocImageURL(String imageName) {
     return CommonImages.getImageURL(imageName);
+  }
+
+  @NonNull
+  public String getQueryEditorViewId() {
+    return QueryEditorView.class.getName();
+  }
+
+  @NonNull
+  public String getQueryResultsViewId() {
+    return QueryResultsView.class.getName();
+  }
+
+  @NonNull
+  public String getQueryDocViewId() {
+    return QuerydocView.class.getName();
   }
 }
