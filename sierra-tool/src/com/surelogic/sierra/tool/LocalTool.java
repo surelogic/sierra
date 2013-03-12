@@ -18,6 +18,7 @@ import org.apache.tools.ant.types.CommandlineJava;
 import org.apache.tools.ant.types.Path;
 
 import com.surelogic.common.jobs.remote.AbstractLocalSLJob;
+import com.surelogic.common.jobs.remote.AbstractRemoteSLJob;
 import com.surelogic.common.jobs.remote.ConfigHelper;
 import com.surelogic.common.jobs.remote.RemoteSLJobException;
 import com.surelogic.common.jobs.remote.TestCode;
@@ -184,7 +185,7 @@ final class LocalTool extends AbstractLocalSLJob implements IToolInstance {
     }
 
     @Override
-    protected Class<?> getRemoteClass() {
+    protected Class<? extends AbstractRemoteSLJob> getRemoteClass() {
         return RemoteTool.class;
     }
 
