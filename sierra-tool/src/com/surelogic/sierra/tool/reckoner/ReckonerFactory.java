@@ -23,7 +23,7 @@ public class ReckonerFactory extends AbstractToolFactory {
 		  findJars(jars, new File(config.getToolsDirectory(), "reckoner/lib"));
 		  jars.add(new File(config.getToolsDirectory(), "reckoner/reckoner.jar"));
 		 */
-		final ConfigHelper util = new ConfigHelper(config);
+		final ConfigHelper util = new ConfigHelper(debug, config, jars);
 		
 		// TODO remove special case to save spaces
 		// 
@@ -31,7 +31,7 @@ public class ReckonerFactory extends AbstractToolFactory {
 		// company)
 		for (String id : config.getPluginDirs().keySet()) {
 			if (id.startsWith("org.eclipse")) {
-				util.addPluginToPath(debug, jars, id);
+				util.addPluginToPath(id);
 			} else {
 				//System.out.println("Unused: "+id);
 			}
@@ -40,7 +40,7 @@ public class ReckonerFactory extends AbstractToolFactory {
 		if (toolsDir.exists()) {
 			for(File f : toolsDir.listFiles()) {
 				if (f.getName().endsWith(".jar")) {
-					util.addToPath(jars, f, true);
+					util.addToPath(f, true);
 				}
 			}
 		}
@@ -51,7 +51,7 @@ public class ReckonerFactory extends AbstractToolFactory {
 		  }
 		 */
 
-		return jars;
+		return util.getPath();
 	}
 
 	@Override

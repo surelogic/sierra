@@ -6,10 +6,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.URI;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Level;
 
 import javax.xml.bind.JAXBContext;
@@ -210,33 +207,27 @@ final class LocalTool extends AbstractLocalSLJob implements IToolInstance {
     @Override
     protected void setupClassPath(final boolean debug,
             final CommandlineJava cmdj, final Project proj, final Path path) {
-        final Set<File> jars = new HashSet<File>();
-        final ConfigHelper util = new ConfigHelper(config);
-        util.addPluginToPath(debug, jars, SierraToolConstants.COMMON_PLUGIN_ID,
-                true);
-        util.addPluginJarsToPath(debug, jars,
-                SierraToolConstants.COMMON_PLUGIN_ID,
+        final ConfigHelper util = new ConfigHelper(debug, config);
+        util.addPluginToPath(SierraToolConstants.COMMON_PLUGIN_ID, true);
+        util.addPluginJarsToPath(SierraToolConstants.COMMON_PLUGIN_ID,
                 "lib/runtime/commons-lang3-3.0.jar");
 
         // sierra-tool needs special handling since it is unpacked, due to
         // Reckoner (and other tools)
-        util.addPluginToPath(debug, jars, SierraToolConstants.TOOL_PLUGIN_ID,
-                true);
-        util.addPluginToPath(debug, jars, SierraToolConstants.MESSAGE_PLUGIN_ID);
+        util.addPluginToPath(SierraToolConstants.TOOL_PLUGIN_ID, true);
+        util.addPluginToPath(SierraToolConstants.MESSAGE_PLUGIN_ID);
 
         // FIX which tool needs this?
-        if (util.addPluginJarsToPath(debug, jars,
-                SierraToolConstants.JUNIT4_PLUGIN_ID, true, "junit.jar",
+        if (util.addPluginJarsToPath(SierraToolConstants.JUNIT4_PLUGIN_ID, true, "junit.jar",
                 "junit-4.1.jar")) {
             // Called just to mark it as "used";
-            util.getPluginDir(debug, SierraToolConstants.JUNIT_PLUGIN_ID, false);
+            util.getPluginDir(SierraToolConstants.JUNIT_PLUGIN_ID, false);
         } else {
-            util.addPluginJarsToPath(debug, jars,
-                    SierraToolConstants.JUNIT_PLUGIN_ID, "junit.jar");
+            util.addPluginJarsToPath(SierraToolConstants.JUNIT_PLUGIN_ID, "junit.jar");
         }
-        addToolPluginJars(debug, jars);
+        addToolPluginJars(debug, util.getPath());
 
-        for (File jar : jars) {
+        for (File jar : util.getPath()) {
             addToPath(proj, path, jar, true);
         }
         /*
@@ -245,7 +236,7 @@ final class LocalTool extends AbstractLocalSLJob implements IToolInstance {
          */
     }
 
-    private void addToolPluginJars(final boolean debug, final Set<File> path) {
+    private void addToolPluginJars(final boolean debug, final Collection<File> path) {
         // TODO need to deactivate some?
         for (IToolFactory f : ToolUtil.findToolFactories()) {
             for (File jar : f.getRequiredJars(config)) {
