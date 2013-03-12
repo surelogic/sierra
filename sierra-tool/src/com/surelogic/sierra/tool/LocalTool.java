@@ -211,7 +211,7 @@ final class LocalTool extends AbstractLocalSLJob implements IToolInstance {
         final ConfigHelper util = new ConfigHelper(debug, config);
         util.addPluginToPath(SierraToolConstants.COMMON_PLUGIN_ID, true);
         util.addPluginJarsToPath(SierraToolConstants.COMMON_PLUGIN_ID,
-                "lib/runtime/commons-lang3-3.0.jar");
+                "lib/runtime/commons-lang3-3.1.jar");
 
         // sierra-tool needs special handling since it is unpacked, due to
         // Reckoner (and other tools)
