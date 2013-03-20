@@ -537,6 +537,11 @@ public class Config implements Cloneable, ILocalConfig {
 		extensions.add(t);
 	}
 
+	@Override
+	public String getRunDirectory() {
+		return null;
+	}
+	
     @Override
     public String getLogPath() {
         return consolePath;
