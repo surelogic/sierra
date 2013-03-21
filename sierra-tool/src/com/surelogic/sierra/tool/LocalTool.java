@@ -32,7 +32,7 @@ import com.surelogic.sierra.tool.targets.FullDirectoryTarget;
 import com.surelogic.sierra.tool.targets.IToolTarget;
 import com.surelogic.sierra.tool.targets.JarTarget;
 
-final class LocalTool extends AbstractLocalSLJob implements IToolInstance {
+final class LocalTool extends AbstractLocalSLJob<Config> implements IToolInstance {
     private static final JAXBContext ctx = createContext();
 
     private static final Marshaller marshaller = createMarshaller(ctx);
@@ -66,14 +66,11 @@ final class LocalTool extends AbstractLocalSLJob implements IToolInstance {
         }
     }
 
-    private final Config config;
-
     public LocalTool(final Config config) {
         // super("Sierra tool",,
         // TestCode.getTestCode(config.getTestCode()),
         // config.getMemorySize(), /*true ||*/ config.isVerbose());
         super("Sierra tool", ToolUtil.getNumTools(config), config);
-        this.config = config;
     }
 
     @Override
@@ -163,11 +160,11 @@ final class LocalTool extends AbstractLocalSLJob implements IToolInstance {
             File file = File.createTempFile("config", ".xml");
             file.deleteOnExit();
 
-            OutputStream out = new FileOutputStream(file);
             if (marshaller == null) {
-                System.out.println("Couldn't create config file");
+                System.out.println("Couldn't create config file");                
                 return null;
             }
+            OutputStream out = new FileOutputStream(file);
             marshaller.marshal(config, out);
             out.close();
 
@@ -206,12 +203,10 @@ final class LocalTool extends AbstractLocalSLJob implements IToolInstance {
     }
 
     @Override
-    protected void setupClassPath(final boolean debug,
+    protected void setupClassPath(final ConfigHelper util, 
             final CommandlineJava cmdj, final Project proj, final Path path) {
-        final ConfigHelper util = new ConfigHelper(debug, config);
-        util.addPluginToPath(SierraToolConstants.COMMON_PLUGIN_ID, true);
-        util.addPluginJarsToPath(SierraToolConstants.COMMON_PLUGIN_ID,
-                "lib/runtime/commons-lang3-3.1.jar");
+        util.addPluginToPath(COMMON_PLUGIN_ID, true);
+        util.addPluginJarsToPath(COMMON_PLUGIN_ID, "lib/runtime/commons-lang3-3.1.jar");
 
         // sierra-tool needs special handling since it is unpacked, due to
         // Reckoner (and other tools)
@@ -226,7 +221,7 @@ final class LocalTool extends AbstractLocalSLJob implements IToolInstance {
         } else {
             util.addPluginJarsToPath(SierraToolConstants.JUNIT_PLUGIN_ID, "junit.jar");
         }
-        addToolPluginJars(debug, util.getPath());
+        addToolPluginJars(util.debug, util.getPath());
 
         for (File jar : util.getPath()) {
             addToPath(proj, path, jar, true);

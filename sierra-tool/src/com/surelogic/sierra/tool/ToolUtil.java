@@ -20,6 +20,7 @@ import com.surelogic.common.XUtil;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.jobs.SLProgressMonitor;
 import com.surelogic.common.jobs.SLStatus;
+import com.surelogic.common.jobs.remote.AbstractLocalSLJob;
 import com.surelogic.common.jobs.remote.AbstractRemoteSLJob;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.tool.analyzer.LazyZipDirArtifactGenerator;
@@ -238,7 +239,7 @@ public class ToolUtil {
 	private static final Set<String> EXPECTED_DEPS;
 	static {
 		Set<String> temp = new HashSet<String>(4);
-		temp.add(SierraToolConstants.COMMON_PLUGIN_ID);
+		temp.add(AbstractLocalSLJob.COMMON_PLUGIN_ID);
 		temp.add(SierraToolConstants.TOOL_PLUGIN_ID);
 		temp.add(SierraToolConstants.MESSAGE_PLUGIN_ID);
 		EXPECTED_DEPS = Collections.unmodifiableSet(temp);

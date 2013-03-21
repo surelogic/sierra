@@ -36,6 +36,7 @@ import org.eclipse.jdt.core.JavaModelException;
 
 import com.surelogic.common.SLUtility;
 import com.surelogic.common.core.EclipseUtility;
+import com.surelogic.common.jobs.remote.AbstractLocalSLJob;
 import com.surelogic.common.jobs.remote.AbstractRemoteSLJob;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.common.tool.SureLogicToolsFilter;
@@ -60,7 +61,7 @@ import com.surelogic.sierra.tool.targets.ToolTarget;
  * scans, it handles both project and compilation unit configs
  */
 public final class ConfigGenerator {
-  private static final String[] PLUGINS = { SierraToolConstants.MESSAGE_PLUGIN_ID, SierraToolConstants.COMMON_PLUGIN_ID,
+  private static final String[] PLUGINS = { SierraToolConstants.MESSAGE_PLUGIN_ID, AbstractLocalSLJob.COMMON_PLUGIN_ID,
       SierraToolConstants.TOOL_PLUGIN_ID,
       /*
        * SierraToolConstants.PMD_PLUGIN_ID, SierraToolConstants.FB_PLUGIN_ID,

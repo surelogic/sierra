@@ -16,6 +16,7 @@ import org.apache.tools.ant.types.Path;
 import org.apache.tools.ant.util.StringUtils;
 
 import com.surelogic.common.jobs.NullSLProgressMonitor;
+import com.surelogic.common.jobs.remote.AbstractLocalSLJob;
 import com.surelogic.common.jobs.remote.AbstractRemoteSLJob;
 import com.surelogic.sierra.tool.IToolExtension;
 import com.surelogic.sierra.tool.IToolFactory;
@@ -107,7 +108,7 @@ public class SierraJavacAdapter extends DefaultCompilerAdapter {
 			}
 		}
 		config.setToolsDirectory(new File(toolsDir+"reckoner"));
-		config.putPluginDir(SierraToolConstants.COMMON_PLUGIN_ID,
+		config.putPluginDir(AbstractLocalSLJob.COMMON_PLUGIN_ID,
 				libHome+"common.jar");
 		config.putPluginDir(SierraToolConstants.MESSAGE_PLUGIN_ID,
 				libHome+"sierra-message.jar");
