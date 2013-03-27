@@ -116,6 +116,7 @@ public class Reckoner {
 			w = new PrintWriter(System.out);
 		} else {
 			File dataFile = new File(outputFile);
+			@SuppressWarnings("resource") // closed via f_mrg
 			OutputStream stream = new FileOutputStream(dataFile);
 			OutputStreamWriter osw = new OutputStreamWriter(stream,
 					MetricsResultsGenerator.ENCODING);

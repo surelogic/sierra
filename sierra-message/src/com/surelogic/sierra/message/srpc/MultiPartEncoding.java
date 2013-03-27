@@ -354,12 +354,16 @@ class MultiPartEncoding {
 	private static void writeFileContents(final File f, final OutputStream out)
 			throws IOException {
 		final InputStream in = new BufferedInputStream(new FileInputStream(f));
-		final byte[] buf = new byte[4096];
-		int read = 0;
-		while ((read = in.read(buf, 0, 4096)) > 0) {
-			out.write(buf, 0, read);
+		try {
+			final byte[] buf = new byte[4096];
+			int read = 0;
+			while ((read = in.read(buf, 0, 4096)) > 0) {
+				out.write(buf, 0, read);
+			}
+		} finally {
+			in.close();
+			out.close();
 		}
-		out.close();
 	}
 
 	private static void writeStreamContents(final InputStream in, final File f)

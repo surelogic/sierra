@@ -23,37 +23,40 @@ public abstract class AbstractFindingTypeCreator {
 		Reader r = new FileReader(missingTypes);
 		BufferedReader br = new BufferedReader(r);
 		String line;
-		
-		while ((line = br.readLine()) != null) {
-			final StringTokenizer st = new StringTokenizer(line);
-			for(int i=0; i<3; i++) {
-				final String tag   = st.nextToken();
-				final String value = st.nextToken();
-				if (TOOL.equals(tag)) {
-					if (tool == null) {
-						tool = value;
-					} 
-					else if (!tool.equals(value)){
-						throw new IllegalStateException(tool+" != "+value);
-					}
-				}
-				else if (VERSION.equals(tag)) {
-					if (version == null) {
-						version = value;
+		try {
+			while ((line = br.readLine()) != null) {
+				final StringTokenizer st = new StringTokenizer(line);
+				for(int i=0; i<3; i++) {
+					final String tag   = st.nextToken();
+					final String value = st.nextToken();
+					if (TOOL.equals(tag)) {
 						if (tool == null) {
-							throw new IllegalStateException("No tool defined: "+line);
-						} else {
-							path = "./src/com/surelogic/sierra/"+tool.toLowerCase()+value.replace('.', '_');
+							tool = value;
+						} 
+						else if (!tool.equals(value)){
+							throw new IllegalStateException(tool+" != "+value);
 						}
-					} 
-					else if (!version.equals(value)){
-						throw new IllegalStateException(version+" != "+value);
 					}
-				}
-				else if (MNEMONIC.equals(tag)) {
-					mnemonics.add(value);
+					else if (VERSION.equals(tag)) {
+						if (version == null) {
+							version = value;
+							if (tool == null) {
+								throw new IllegalStateException("No tool defined: "+line);
+							} else {
+								path = "./src/com/surelogic/sierra/"+tool.toLowerCase()+value.replace('.', '_');
+							}
+						} 
+						else if (!version.equals(value)){
+							throw new IllegalStateException(version+" != "+value);
+						}
+					}
+					else if (MNEMONIC.equals(tag)) {
+						mnemonics.add(value);
+					}
 				}
 			}
+		} finally {
+			br.close();
 		}
 		return this;
 	}
