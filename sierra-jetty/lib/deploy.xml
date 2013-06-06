@@ -27,12 +27,14 @@
 		<copy file="../sierra-message/srpc/commons-logging-1.1.1.jar" todir="../sierra-portal/lib/web-dependencies/"/>
 		<copy file="../sierra-message/srpc/commons-fileupload-1.2.1.jar" todir="../sierra-portal/lib/web-dependencies/"/>
 		<copy file="../sierra-message/srpc/commons-io-1.4.jar" todir="../sierra-portal/lib/web-dependencies/"/>
+		<copy file="../sierra-portal/lib/gwt/gwt-user.jar" todir="../sierra-portal/lib/web-dependencies/" />
 		<jar destfile="../sierra-portal/lib/web-dependencies/common.jar" basedir="../../common/common/bin" />
 		<jar destfile="../sierra-portal/lib/web-dependencies/sierra-jdbc.jar" basedir="../sierra-jdbc/bin" />
 		<jar destfile="../sierra-portal/lib/web-dependencies/sierra-jdbc-server.jar" basedir="../sierra-jdbc-server/bin" />
 		<jar destfile="../sierra-portal/lib/web-dependencies/sierra-message.jar" basedir="../sierra-message/bin" />
 		<jar destfile="../sierra-portal/lib/web-dependencies/sierra-portal-servlets.jar" basedir="../sierra-portal-servlets/bin" />
-		<path id="gwt.class.path">
+		
+			<path id="gwt.class.path">
 			<pathelement path="${java.class.path}/" />
 			<pathelement location="../sierra-portal/src" />
 			<pathelement path="../sierra-portal/lib/gwt/gwt-user.jar" />
@@ -133,6 +135,7 @@
 		<delete quiet="true" file="../sierra-portal/lib/web-dependencies/commons-codec-1.3.jar.jar" />
 		<delete quiet="true" file="../sierra-portal/lib/web-dependencies/commons-httpclient-3.1.jar" />
 		<delete quiet="true" file="../sierra-portal/lib/web-dependencies/commons-logging-1.1.1.jar" />
+		<delete quiet="true" file="../sierra-portal/lib/web-dependencies/gwt-user.jar" />
 		<delete quiet="true" includeemptydirs="true">
 			<fileset dir="../sierra-portal/www/${gwt.module}" includes="**/*" />
 		</delete>
