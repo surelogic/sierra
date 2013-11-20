@@ -141,7 +141,7 @@ public final class SelectionPersistence {
   }
 
   public static void load(final SelectionManager manager, final File saveFile) {
-    if (saveFile.exists()) {
+    if (saveFile.exists() && saveFile.length() > 0) {
       try {
         InputStream stream = new FileInputStream(saveFile);
         SAXParserFactory factory = SAXParserFactory.newInstance();
