@@ -72,9 +72,6 @@ public final class ConfigGenerator {
   /** The location to store tool results */
   private final File f_resultRoot = new File(SierraToolConstants.SIERRA_RESULTS_PATH);
 
-  /** The default folder from the preference page */
-  private final String f_sierraPath = SierraPreferencesUtility.getSierraDataDirectory().getAbsolutePath();
-
   /** The plug-in directory that has tools folder */
   private final String tools;
 
@@ -83,6 +80,11 @@ public final class ConfigGenerator {
   /** The number of excluded tools : Default 0 */
   private int f_numberofExcludedTools = 0;
 
+  /** The default folder from the preference page */  
+  private static String getSierraPath() {
+	  return SierraPreferencesUtility.getSierraDataDirectory().getAbsolutePath();
+  }
+  
   private ConfigGenerator() {
     // singleton
     tools = EclipseUtility.getDirectoryOf(SierraToolConstants.TOOL_PLUGIN_ID) + SierraToolConstants.TOOLS_FOLDER;
@@ -357,7 +359,7 @@ public final class ConfigGenerator {
   }
 
   private String computeDocumentPrefix(IJavaProject project, boolean partial) {
-    return f_sierraPath + File.separator + project.getProject().getName() + (partial ? ".partial." : ".") + ToolUtil.getTimeStamp();
+    return getSierraPath() + File.separator + project.getProject().getName() + (partial ? ".partial." : ".") + ToolUtil.getTimeStamp();
   }
 
   private String completeScanDocumentName(String prefix) {
