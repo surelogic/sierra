@@ -16,6 +16,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.logging.Level;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -34,6 +35,8 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 
+import com.surelogic.common.FileUtility;
+import com.surelogic.common.Pair;
 import com.surelogic.common.SLUtility;
 import com.surelogic.common.core.EclipseUtility;
 import com.surelogic.common.jobs.remote.AbstractLocalSLJob;
@@ -53,6 +56,7 @@ import com.surelogic.sierra.tool.targets.FileTarget;
 import com.surelogic.sierra.tool.targets.FilteredDirectoryTarget;
 import com.surelogic.sierra.tool.targets.FullDirectoryTarget;
 import com.surelogic.sierra.tool.targets.IToolTarget;
+import com.surelogic.sierra.tool.targets.IToolTarget.Type;
 import com.surelogic.sierra.tool.targets.JarTarget;
 import com.surelogic.sierra.tool.targets.ToolTarget;
 
@@ -224,7 +228,8 @@ public final class ConfigGenerator {
       final String docPrefix = computeDocumentPrefix(javaProject, true);
       final File scanDocument = new File(completeScanDocumentName(docPrefix));
 
-      config = new Config();
+      final Copier copier = new Copier(new File(docPrefix));
+      config = copier.config;
 
       config.setBaseDirectory(baseDir);
       config.setProject(firstCU.getResource().getProject().getName());
@@ -259,7 +264,7 @@ public final class ConfigGenerator {
           }
           String outputLocation = computeOutputLocation(javaProject, c, defaultOutputLocation);
           IType[] types = c.getAllTypes();
-          Set<IFile> classFiles = new HashSet<IFile>();
+          Set<ClassFile> classFiles = new HashSet<ClassFile>();
           for (IType t : types) {
 
             String qualifiedName = t.getFullyQualifiedName();
@@ -282,27 +287,39 @@ public final class ConfigGenerator {
 
             IResource classFolder = ResourcesPlugin.getWorkspace().getRoot().findMember(folder);
             if (classFolder != null) {
-              getClassFiles(classFolder, javaType, classFiles);
+              Set<IFile> files = new HashSet<IFile>();
+              getClassFiles(classFolder, javaType, files);
+              for(IFile f : files) {
+            	  classFiles.add(new ClassFile(packageName, f));
+              }
             } else {
               throw new IllegalStateException("Unable to find binaries for project " + t.getJavaProject().getElementName());
             }
 
           }
 
-          for (IFile f : classFiles) {
-            String osLoc = f.getLocation().toOSString();
+          for (ClassFile f : classFiles) {
+            String osLoc = f.second().getLocation().toOSString();
             File osFile = new File(osLoc);
-            config.addTarget(new FileTarget(IToolTarget.Type.BINARY, osFile.toURI(), null));
+            if (copyBeforeScan) {
+                copier.addFileTarget(f);
+            } else {
+            	config.addTarget(new FileTarget(IToolTarget.Type.BINARY, osFile.toURI(), null));
+            }
           }
 
           String srcLoc = c.getResource().getLocation().toOSString();
           File srcFile = new File(srcLoc);
           IPackageFragmentRoot p = (IPackageFragmentRoot) c.getAncestor(IJavaElement.PACKAGE_FRAGMENT_ROOT);
           File rootFile = new File(p.getResource().getLocation().toOSString());
-          config.addTarget(new FileTarget(srcFile.toURI(), rootFile.toURI()));
+          if (copyBeforeScan) {
+              copier.addFileTarget(Type.SOURCE, (IFile) c.getResource(), p.getResource());
+          } else {
+        	  config.addTarget(new FileTarget(srcFile.toURI(), rootFile.toURI()));
+          }
         }
 
-        setupToolForProject(config, javaProject, false);
+        setupToolForProject(copier, javaProject, false);
       } catch (JavaModelException e) {
         SLLogger.getLogger().log(Level.SEVERE, "Error when getting compilation unit types", e);
       } catch (CoreException e) {
@@ -337,11 +354,12 @@ public final class ConfigGenerator {
     final String docPrefix = computeDocumentPrefix(project, false);
     final File scanDocument = new File(completeScanDocumentName(docPrefix));
 
-    Config config = new Config();
+    Copier copier = new Copier(new File(docPrefix));
+    Config config = copier.config;
     config.setProject(project.getProject().getName());
 
     try {
-      setupToolForProject(config, project, true);
+      setupToolForProject(copier, project, true);
     } catch (JavaModelException e) {
       SLLogger.getLogger().log(Level.SEVERE, "Error when getting output location", e);
     }
@@ -415,14 +433,16 @@ public final class ConfigGenerator {
 
   }
 
+  static class ClassFile extends Pair<String,IFile> {
+	  ClassFile(String path, IFile f) {
+		  super(path, f);
+	  }
+  }
+  
   /**
    * Returns a list of all the java files in a given project
-   * 
-   * @param javaFileName
-   * @param classFiles
-   * 
-   * @param project
-   * @return
+   * that match javaFileName
+   * @param javaFileName The name to match
    * @throws CoreException
    */
   private Set<IFile> getClassFiles(IResource resource, String javaFileName, Set<IFile> files) throws CoreException {
@@ -496,17 +516,18 @@ public final class ConfigGenerator {
    * @param toBeAnalyzed
    *          Whether the project will be analyzed, or is simply referred to
    */
-  private static void setupToolForProject(final Config cfg, IJavaProject p, final boolean toBeAnalyzed) throws JavaModelException {
+  private static void setupToolForProject(final Copier cfg, IJavaProject p, final boolean toBeAnalyzed) throws JavaModelException {
     setupToolForProject(cfg, new HashSet<IJavaProject>(), p, toBeAnalyzed);
   }
 
-  private static void setupToolForProject(final Config cfg, Set<IJavaProject> handled, IJavaProject p, final boolean toBeAnalyzed)
+  private static void setupToolForProject(final Copier copier, Set<IJavaProject> handled, IJavaProject p, final boolean toBeAnalyzed)
       throws JavaModelException {
     if (handled.contains(p)) {
       return;
     }
     handled.add(p);
 
+    final Config cfg = copier.config;
     final Properties props = SureLogicToolsPropertiesUtility.readFileOrNull(new File(p.getProject().getLocation().toFile(),
         SureLogicToolsPropertiesUtility.PROPS_FILE));
     final String[] excludedFolders = makeAbsolute(p.getElementName(),
@@ -519,9 +540,9 @@ public final class ConfigGenerator {
 
     final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
     for (IClasspathEntry cpe : p.getResolvedClasspath(true)) {
-      handleClasspathEntry(cfg, handled, toBeAnalyzed, root, excludedFolders, excludedPackages, cpe);
+      handleClasspathEntry(copier, handled, toBeAnalyzed, root, excludedFolders, excludedPackages, cpe);
     }
-    handleOutputLocation(cfg, p.getOutputLocation(), excludedPackages, toBeAnalyzed);
+    handleOutputLocation(copier, p.getOutputLocation(), excludedPackages, toBeAnalyzed);
   }
 
   private static String[] convertPkgsToSierraStyle(String[] pkgs) {
@@ -537,7 +558,7 @@ public final class ConfigGenerator {
     return paths;
   }
 
-  private static void handleOutputLocation(final Config cfg, IPath outLoc, String[] excludedPkgs, final boolean toBeAnalyzed) {
+  private static void handleOutputLocation(final Copier cfg, IPath outLoc, String[] excludedPkgs, final boolean toBeAnalyzed) {
     if (outLoc == null) {
       return;
     }
@@ -549,9 +570,17 @@ public final class ConfigGenerator {
     final URI out = res.getLocationURI();
     final IToolTarget.Type type = toBeAnalyzed ? IToolTarget.Type.BINARY : IToolTarget.Type.AUX;
     if (excludedPkgs != null && excludedPkgs.length > 0) {
-      cfg.addTarget(new FilteredDirectoryTarget(type, out, null, excludedPkgs));
+      if (copyBeforeScan) {
+    	  cfg.addFilteredDirTarget(type, outLoc, res, null, excludedPkgs);
+      } else {
+    	  cfg.config.addTarget(new FilteredDirectoryTarget(type, out, null, excludedPkgs));
+      }
     } else {
-      cfg.addTarget(new FullDirectoryTarget(type, out));
+      if (copyBeforeScan) {
+    	  cfg.addDirTarget(type, outLoc, res);
+      } else {
+    	  cfg.config.addTarget(new FullDirectoryTarget(type, out));
+      }    
     }
   }
 
@@ -559,7 +588,7 @@ public final class ConfigGenerator {
     boolean filter(IResource r);
   }
 
-  private static void handleClasspathEntry(final Config cfg, Set<IJavaProject> handled, final boolean toBeAnalyzed,
+  private static void handleClasspathEntry(final Copier copier, Set<IJavaProject> handled, final boolean toBeAnalyzed,
       final IWorkspaceRoot root, String[] excludedPaths, String[] excludedPkgs, IClasspathEntry cpe) throws JavaModelException {
     switch (cpe.getEntryKind()) {
     case IClasspathEntry.CPE_SOURCE:
@@ -592,29 +621,41 @@ public final class ConfigGenerator {
           } else {
             exclusions = convertPaths(excludePatterns);
           }
-          cfg.addTarget(new FilteredDirectoryTarget(IToolTarget.Type.SOURCE, loc, inclusions, exclusions));
+          if (copyBeforeScan) {
+              copier.addFilteredDirTarget(IToolTarget.Type.SOURCE, cpe.getPath(), res, inclusions, exclusions);
+          } else {
+        	  copier.config.addTarget(new FilteredDirectoryTarget(IToolTarget.Type.SOURCE, loc, inclusions, exclusions));
+          }
         } else if (excludedPkgs.length > 0) {
-          cfg.addTarget(new FilteredDirectoryTarget(IToolTarget.Type.SOURCE, loc, null, excludedPkgs));
+          if (copyBeforeScan) {
+        	  copier.addFilteredDirTarget(IToolTarget.Type.SOURCE, cpe.getPath(), res, null, excludedPkgs);
+          } else {
+        	  copier.config.addTarget(new FilteredDirectoryTarget(IToolTarget.Type.SOURCE, loc, null, excludedPkgs));
+          }
         } else {
-          cfg.addTarget(new FullDirectoryTarget(IToolTarget.Type.SOURCE, loc));
+          if (copyBeforeScan) {              
+              copier.addDirTarget(IToolTarget.Type.SOURCE, cpe.getPath(), res);
+          } else {   
+        	  copier.config.addTarget(new FullDirectoryTarget(IToolTarget.Type.SOURCE, loc));
+          }
         }
       }
-      handleOutputLocation(cfg, cpe.getOutputLocation(), excludedPkgs, toBeAnalyzed);
+      handleOutputLocation(copier, cpe.getOutputLocation(), excludedPkgs, toBeAnalyzed);
       break;
     case IClasspathEntry.CPE_LIBRARY:
       IPath srcPath = cpe.getSourceAttachmentPath();
       // FIX cpe.getSourceAttachmentRootPath();
       if (srcPath != null) {
-        IToolTarget srcTarget = createTarget(root, cpe.getSourceAttachmentPath(), null);
-        cfg.addTarget(createTarget(root, cpe.getPath(), srcTarget));
+        IToolTarget srcTarget = createTarget(copier, root, cpe.getSourceAttachmentPath(), null);
+        copier.config.addTarget(createTarget(copier, root, cpe.getPath(), srcTarget));
       } else {
-        cfg.addTarget(createTarget(root, cpe.getPath(), null));
+    	copier.config.addTarget(createTarget(copier, root, cpe.getPath(), null));
       }
       break;
     case IClasspathEntry.CPE_PROJECT:
       String projName = cpe.getPath().lastSegment();
       IProject proj = root.getProject(projName);
-      setupToolForProject(cfg, handled, JavaCore.create(proj), false);
+      setupToolForProject(copier, handled, JavaCore.create(proj), false);
       break;
     default:
     }
@@ -641,7 +682,7 @@ public final class ConfigGenerator {
     return exclusions;
   }
 
-  private static ToolTarget createTarget(final IWorkspaceRoot root, IPath libPath, IToolTarget src) {
+  private static ToolTarget createTarget(Copier copier, final IWorkspaceRoot root, IPath libPath, IToolTarget src) {
     URI lib;
     File libFile = new File(libPath.toOSString());
     if (libFile.exists()) {
@@ -653,10 +694,167 @@ public final class ConfigGenerator {
       }
       lib = res.getLocationURI();
     }
+    
+    if (!lib.getScheme().equals("file") && copyBeforeScan) {
+    	lib = copier.copyRecursive(root, libPath);
+    }    
     if (new File(lib).isDirectory()) {
       return new FullDirectoryTarget(IToolTarget.Type.AUX, lib);
     } else {
       return new JarTarget(lib);
     }
   }
+  
+  static final boolean copyBeforeScan = true;
+  
+  /**
+   * Helper class to copy resources into a temp dir and 
+   * to map targets to those copies
+   * 
+   * @author edwin
+   */
+  class Copier {
+	final File tmpDir;
+	final Config config = new Config(); 
+	  
+	Copier(File tmp) {
+		tmpDir = tmp;
+	}
+
+	void addFileTarget(ClassFile cf) {
+		String pkg = cf.first();
+		String dest = pkg == null || pkg.length() == 0 ? cf.second().getName() : pkg+'/'+cf.second().getName();
+		URI mappedTarget = copy(dest, cf.second());
+		if (mappedTarget != null) {
+			config.addTarget(new FileTarget(Type.BINARY, mappedTarget, null));		
+		}
+	}
+
+	void addFileTarget(Type type, IFile target, IResource root) {
+		String path = computeRelativePath(target, root);
+		URI mappedTarget = copy(path, target);
+		config.addTarget(new FileTarget(type, mappedTarget, tmpDir.toURI())); // TODO is the root correct?
+	}
+	
+	String computeRelativePath(IResource target, IResource root) {
+		return relPathHelper(target, root).toString();
+	}
+	
+	private StringBuilder relPathHelper(IResource here, IResource root) {
+		if (here == root || here == null) {
+			return new StringBuilder();
+		}		
+		StringBuilder sb = relPathHelper(here.getParent(), root);
+		if (sb.length() > 0) {
+			sb.append('/');
+		}
+		sb.append(here.getName());
+		return sb;		
+	}	
+
+	void addDirTarget(Type type, IPath outLoc, IResource res) {
+		URI mapped = copyResources(outLoc, res, nullFilter);
+		if (mapped != null) {
+			config.addTarget(new FullDirectoryTarget(type, mapped));
+		}
+	}
+
+	void addFilteredDirTarget(Type type, IPath outLoc, IResource res,
+			final String[] included, final String[] excluded) {
+		CopyFilter filter = new CopyFilter() {
+			public boolean include(String relativePath) {
+				// TODO Auto-generated method stub
+				return false;
+			}
+		};
+		URI mapped = copyResources(outLoc, res, filter);
+		if (mapped != null) {
+			config.addTarget(new FullDirectoryTarget(type, mapped));
+		}
+	}
+	
+	private URI copy(String relativePath, IFile f) {
+		final File dest = new File(tmpDir, relativePath);
+		dest.getParentFile().mkdirs();
+		try {
+			FileUtility.copy(f.getFullPath().toString(), f.getContents(), dest);
+		} catch (CoreException e) {
+			e.printStackTrace();
+			return null;
+		}
+		return dest.toURI();
+	}
+	
+	private URI copyResources(IPath relative, IResource res, CopyFilter filter) {
+		final File destRoot = new File(tmpDir, relative.toString());
+		try {
+			copyResources(res, destRoot, filter, null);
+		} catch (CoreException e) {
+			e.printStackTrace();
+			return null;
+		}
+		return destRoot.toURI();
+	}
+
+	private void copyResources(IResource res, File dest, CopyFilter filter, String relativePath) throws CoreException {
+		if (!filter.include(relativePath)) {
+			return; // TODO is this right?
+		}
+		if (res instanceof IFile) {
+			final IFile f = (IFile) res;		
+			dest.mkdirs();
+			FileUtility.copy(f.getFullPath().toString(), f.getContents(), new File(dest, f.getName()));			
+		} else { // Assumed to be container
+			final String updatedPath;
+			final File updatedDest;
+			if (relativePath == null) {
+				updatedPath = "";
+				updatedDest = dest;
+			} else {
+				updatedPath = relativePath.length() > 0 ? relativePath+'/'+res.getName() : res.getName();
+				updatedDest = new File(dest, res.getName());
+			}
+			final IContainer c = (IContainer) res;
+			for(IResource child : c.members()) {				
+				copyResources(child, updatedDest, filter, updatedPath);
+			}
+		}
+	}
+	
+	// Primarily for jars / directories of .class files
+	URI copyRecursive(IWorkspaceRoot root, IPath libPath) {	    
+	    File libFile = new File(libPath.toOSString());
+	    if (libFile.exists()) {
+	      File dest = new File(tmpDir, libPath.toString());
+	      if (libFile.isFile()) {	    	  
+	    	  dest.getParentFile().mkdirs();
+	      } else {
+	    	  dest.mkdirs();
+	      }
+	      FileUtility.recursiveCopy(libFile, dest);
+	      return dest.toURI();
+	    } else {
+	      final IResource res = root.findMember(libPath);
+	      if (res == null) {
+	        return null;
+	      }
+	      final String relativePath = computeRelativePath(res, root);
+	      if (res instanceof IFile) {
+	    	  return copy(relativePath, (IFile) res);
+	      } else {
+	    	  return copyResources(res.getFullPath(), res, nullFilter);
+	      }
+	    }
+	}
+  }
+  
+  interface CopyFilter {
+	  boolean include(String relativePath);
+  }
+  
+  static final CopyFilter nullFilter = new CopyFilter() {
+	  public boolean include(String relativePath) {
+		  return true;
+	  }
+  };
 }
