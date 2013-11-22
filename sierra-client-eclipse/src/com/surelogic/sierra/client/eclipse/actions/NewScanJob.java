@@ -9,16 +9,19 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 
+import com.surelogic.common.FileUtility;
 import com.surelogic.common.core.jobs.SLProgressMonitorWrapper;
 import com.surelogic.common.core.logging.SLEclipseStatusUtility;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.jobs.SLProgressMonitor;
 import com.surelogic.common.jobs.SLSeverity;
 import com.surelogic.common.jobs.SLStatus;
+import com.surelogic.common.jobs.remote.AbstractRemoteSLJob;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.common.serviceability.scan.SierraScanCrashReport;
 import com.surelogic.sierra.client.eclipse.Activator;
 import com.surelogic.sierra.client.eclipse.jobs.AbstractSierraDatabaseJob;
+import com.surelogic.sierra.client.eclipse.model.ConfigGenerator;
 import com.surelogic.sierra.tool.ToolException;
 import com.surelogic.sierra.tool.ToolUtil;
 import com.surelogic.sierra.tool.message.Config;
@@ -46,9 +49,21 @@ public class NewScanJob extends WorkspaceJob {
     SLStatus status = null;
     try {
       status = ToolUtil.scan(System.out, config, wrapper, true);
-
+      
       if (afterJob != null && !monitor.isCanceled() && status.getSeverity() != SLSeverity.ERROR) {
         afterJob.schedule();
+      }
+      
+      // Clean up any copied files if successful
+      if (ConfigGenerator.getInstance().copyBeforeScan()) {
+    	  final String log = config.getLogPath();
+    	  if (log.endsWith(AbstractRemoteSLJob.LOG_SUFFIX)) {
+    		  final String prefix = log.substring(0, log.length() - AbstractRemoteSLJob.LOG_SUFFIX.length());
+    		  final File dir = new File(prefix);
+    		  if (dir.isDirectory()) {
+    			  FileUtility.recursiveDelete(dir);
+    		  }
+    	  }
       }
     } catch (Throwable ex) {
       if (!monitor.isCanceled()) {

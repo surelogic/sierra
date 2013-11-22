@@ -857,4 +857,8 @@ public final class ConfigGenerator {
 		  return true;
 	  }
   };
+
+  public boolean copyBeforeScan() {
+	  return copyBeforeScan;
+  }
 }
