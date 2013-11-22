@@ -759,16 +759,17 @@ public final class ConfigGenerator {
 		}
 	}
 
-	void addFilteredDirTarget(Type type, IPath outLoc, IResource res,
-			final String[] included, final String[] excluded) {
-		CopyFilter filter = new CopyFilter() {
+	void addFilteredDirTarget(final Type type, IPath outLoc, IResource res,
+			final String[] inclusions, final String[] exclusions) {
+		final CopyFilter f = new CopyFilter() {
+			final FilteredDirectoryTarget filter = new FilteredDirectoryTarget(type, null, inclusions, exclusions);
 			public boolean include(String relativePath) {
-				// TODO Auto-generated method stub
-				return false;
+				return !filter.exclude(relativePath);
 			}
 		};
-		URI mapped = copyResources(outLoc, res, filter);
+		URI mapped = copyResources(outLoc, res, f);
 		if (mapped != null) {
+			// Filtering handled above
 			config.addTarget(new FullDirectoryTarget(type, mapped));
 		}
 	}
@@ -797,7 +798,7 @@ public final class ConfigGenerator {
 	}
 
 	private void copyResources(IResource res, File dest, CopyFilter filter, String relativePath) throws CoreException {
-		if (!filter.include(relativePath)) {
+		if (relativePath != null && !filter.include(relativePath)) {
 			return; // TODO is this right?
 		}
 		if (res instanceof IFile) {
