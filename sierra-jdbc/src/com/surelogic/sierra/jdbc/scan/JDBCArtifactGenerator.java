@@ -196,7 +196,11 @@ public class JDBCArtifactGenerator implements ArtifactGenerator {
     private void insert(Collection<? extends Record<?>> objects)
             throws SQLException {
         for (final Record<?> rec : objects) {
-            rec.insert();
+        	try {
+        		rec.insert();
+        	} catch (SQLException e) {
+        		throw e;
+        	}
         }
     }
 
