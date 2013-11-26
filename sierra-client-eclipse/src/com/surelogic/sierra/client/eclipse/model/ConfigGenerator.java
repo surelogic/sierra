@@ -584,9 +584,6 @@ public final class ConfigGenerator {
     }
   }
 
-  interface ClasspathFilter {
-    boolean filter(IResource r);
-  }
 
   private static void handleClasspathEntry(final Copier copier, Set<IJavaProject> handled, final boolean toBeAnalyzed,
       final IWorkspaceRoot root, String[] excludedPaths, String[] excludedPkgs, IClasspathEntry cpe) throws JavaModelException {
@@ -770,7 +767,7 @@ public final class ConfigGenerator {
 		URI mapped = copyResources(outLoc, res, f);
 		if (mapped != null) {
 			// Filtering handled above
-			config.addTarget(new FullDirectoryTarget(type, mapped));
+			config.addTarget(new FilteredDirectoryTarget(type, mapped, inclusions, exclusions));
 		}
 	}
 	
