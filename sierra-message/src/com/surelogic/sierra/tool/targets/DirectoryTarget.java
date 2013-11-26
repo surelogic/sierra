@@ -48,8 +48,9 @@ public abstract class DirectoryTarget extends AbstractToolTarget {
     if (uriPath.equals(locationPath)) {
       relativePath = "";
     } else {
-      relativePath = uriPath.substring(locationPath.length()+1);
+      relativePath = uriPath.substring(locationPath.endsWith("/") ? locationPath.length() : locationPath.length()+1);
     }
+    //System.out.println("Looking at "+relativePath+" in "+locationPath);
     if (exclude(relativePath)) {
       return;
     }

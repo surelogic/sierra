@@ -81,10 +81,14 @@ public class FilteredDirectoryTarget extends DirectoryTarget {
 		  final Matcher match = regex.matcher("");
 		  result[i] = new IPattern() {
 			@Override
-      public boolean matches(String path) {
+			public boolean matches(String path) {
 				match.reset(path);
 				return match.matches();
 			}			  
+			@Override
+			public String toString() {
+				return p;
+			}
 		  };
 		  i++;
 	  }
@@ -140,10 +144,11 @@ public class FilteredDirectoryTarget extends DirectoryTarget {
     if (excludePatterns != null) {
       for(IPattern p : excludePatterns) {
         if (p.matches(relativePath)) {
-          System.out.println("Excluded: "+relativePath);
+          System.out.println("Excluded by "+p+": "+relativePath);
           return true;
         }
       }
+      //System.out.println("Not excluded: "+relativePath);
     }
     return false;
   }
