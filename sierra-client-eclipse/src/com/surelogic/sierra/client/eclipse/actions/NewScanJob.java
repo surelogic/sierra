@@ -10,6 +10,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 
 import com.surelogic.common.FileUtility;
+import com.surelogic.common.XUtil;
 import com.surelogic.common.core.jobs.SLProgressMonitorWrapper;
 import com.surelogic.common.core.logging.SLEclipseStatusUtility;
 import com.surelogic.common.i18n.I18N;
@@ -48,14 +49,14 @@ public class NewScanJob extends WorkspaceJob {
     final SLProgressMonitor wrapper = new SLProgressMonitorWrapper(monitor, this.getName());
     SLStatus status = null;
     try {
-      status = ToolUtil.scan(System.out, config, wrapper, true);
+      status = ToolUtil.scan(System.out, config, wrapper, !XUtil.runJSureInMemory);
       
       if (afterJob != null && !monitor.isCanceled() && status.getSeverity() != SLSeverity.ERROR) {
         afterJob.schedule();
       }
       
       // Clean up any copied files if successful
-      if (ConfigGenerator.getInstance().copyBeforeScan()) {
+      if (status.getSeverity() == SLSeverity.OK && ConfigGenerator.getInstance().copyBeforeScan()) {
     	  final String log = config.getLogPath();
     	  if (log.endsWith(AbstractRemoteSLJob.LOG_SUFFIX)) {
     		  final String prefix = log.substring(0, log.length() - AbstractRemoteSLJob.LOG_SUFFIX.length());
