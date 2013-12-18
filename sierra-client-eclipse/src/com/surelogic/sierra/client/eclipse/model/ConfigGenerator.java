@@ -564,7 +564,7 @@ public final class ConfigGenerator {
     }
     final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
     IResource res = root.findMember(outLoc);
-    if (res == null) {
+    if (res == null || !res.exists()) {
       return;
     }
     final URI out = res.getLocationURI();
@@ -786,7 +786,10 @@ public final class ConfigGenerator {
 	private URI copyResources(IPath relative, IResource res, CopyFilter filter) {
 		final File destRoot = new File(tmpDir, relative.toString());
 		try {
-			copyResources(res, destRoot, filter, null);
+			boolean copied = copyResources(res, destRoot, filter, null);
+			if (!copied) {
+				return null;
+			}
 		} catch (CoreException e) {
 			e.printStackTrace();
 			return null;
@@ -794,14 +797,14 @@ public final class ConfigGenerator {
 		return destRoot.toURI();
 	}
 
-	private void copyResources(IResource res, File dest, CopyFilter filter, String relativePath) throws CoreException {
+	private boolean copyResources(IResource res, File dest, CopyFilter filter, String relativePath) throws CoreException {
 		if (relativePath != null && !filter.include(relativePath)) {
-			return; // TODO is this right?
+			return false; // TODO is this right?
 		}
 		if (res instanceof IFile) {
 			final IFile f = (IFile) res;		
 			dest.mkdirs();
-			FileUtility.copy(f.getFullPath().toString(), f.getContents(), new File(dest, f.getName()));			
+			return FileUtility.copy(f.getFullPath().toString(), f.getContents(), new File(dest, f.getName()));			
 		} else { // Assumed to be container
 			final String updatedPath;
 			final File updatedDest;
@@ -813,9 +816,11 @@ public final class ConfigGenerator {
 				updatedDest = new File(dest, res.getName());
 			}
 			final IContainer c = (IContainer) res;
+			boolean copied = false;
 			for(IResource child : c.members()) {				
-				copyResources(child, updatedDest, filter, updatedPath);
+				copied |= copyResources(child, updatedDest, filter, updatedPath);
 			}
+			return copied;
 		}
 	}
 	
