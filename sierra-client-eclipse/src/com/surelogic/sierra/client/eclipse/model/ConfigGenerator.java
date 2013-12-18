@@ -692,7 +692,7 @@ public final class ConfigGenerator {
       lib = res.getLocationURI();
     }
     
-    if (!lib.getScheme().equals("file") && copyBeforeScan) {
+    if (copyBeforeScan && (!lib.getScheme().equals("file") || !new File(lib).exists())) {
     	lib = copier.copyRecursive(root, libPath);
     }    
     if (new File(lib).isDirectory()) {
