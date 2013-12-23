@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: FindBugs™
 Bundle-SymbolicName: com.surelogic.sierra.fb;singleton:=true
-Bundle-Version: 2.0.0.qualifier
+Bundle-Version: 2.0.3.qualifier
 Bundle-ClassPath: lib/annotations.jar,
  lib/bcel.jar,
  lib/findbugs.jar,
@@ -14,10 +14,13 @@ Bundle-ClassPath: lib/annotations.jar,
  lib/asm-tree-3.3.jar,
  lib/asm-util-3.3.jar,
  lib/asm-xml-3.3.jar,
- lib/commons-lang-2.4.jar,
  lib/dom4j-1.6.1.jar,
- lib/jaxen-1.1.1.jar,
- lib/jFormatString.jar
+ lib/jFormatString.jar,
+ lib/commons-lang-2.6.jar,
+ lib/jaxen-1.1.6.jar,
+ lib/jcip-annotations.jar,
+ lib/jdepend-2.9.jar,
+ lib/yjp-controller-api-redist.jar
 Export-Package: edu.umd.cs.findbugs,
  edu.umd.cs.findbugs.annotations,
  edu.umd.cs.findbugs.anttask,

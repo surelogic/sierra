@@ -20,11 +20,11 @@ import java.util.logging.Level;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import net.sourceforge.pmd.Language;
 import net.sourceforge.pmd.Rule;
 import net.sourceforge.pmd.RuleSet;
 import net.sourceforge.pmd.RuleSetFactory;
 import net.sourceforge.pmd.RuleSetNotFoundException;
+import net.sourceforge.pmd.lang.Language;
 
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.common.xml.Entities;
@@ -134,7 +134,7 @@ public class PMDToolFactory extends AbstractToolFactory {
 				types.add(t);
 			}			
 			final boolean isCore = info.isCore;
-			extensions.add(new AbstractToolExtension(getId(), info.ruleset.getName(),					
+			extensions.add(new AbstractToolExtension(getId(), info.ruleset.getName(), getVersion(),					
         					                         info.location, types) {
 				@Override
 				public boolean isCore() {
@@ -152,17 +152,32 @@ public class PMDToolFactory extends AbstractToolFactory {
 		final RuleSetFactory ruleSetFactory = new RuleSetFactory();
 		final Iterator<RuleSet> it = ruleSetFactory.getRegisteredRuleSets();
 		while (it.hasNext()) {
-			final RuleSet ruleset = it.next();
-			final Language lang = ruleset.getLanguage();
+			final RuleSet ruleset = it.next();			
+			final Language lang = null;/*ruleset.getLanguage();
 			if ("Android Rules".equals(ruleset.getName())) {
 				continue;
 			}
+			*/
+			if (!hasJavaRules(ruleset)) {
+				continue;
+			}
+
 			if (lang == null || Language.JAVA.equals(lang)) {
 				// System.out.println("Found "+ruleset.getName()+" in "+ruleset.getFileName());
 				sets.add(ruleset);
 			}
+
 		}
 		return sets;
+	}
+
+	private static boolean hasJavaRules(RuleSet ruleset) {
+		for(Rule r : ruleset.getRules()) {
+			if (Language.JAVA.equals(r.getLanguage())) {
+				return true;
+			}
+ 		}
+		return false;
 	}
 
 	static List<RuleSetInfo> getRuleSets() throws RuleSetNotFoundException {
@@ -179,7 +194,9 @@ public class PMDToolFactory extends AbstractToolFactory {
 		for (final File jar : findPluginJars(false)) {
 			try {
 				for (final RulePair pair : findRuleSetsInJar(jar)) {
-					if (pair != null) {
+					if (pair != null) {		
+						throw new UnsupportedOperationException();
+						/*
 						final RuleSet set = ruleSetFactory.createRuleSet(
 								pair.stream, cl);
 						if (!containsRuleSet(rulesets, set)) {
@@ -189,6 +206,7 @@ public class PMDToolFactory extends AbstractToolFactory {
 							rulesets
 									.add(new RuleSetInfo(jar, set, false, pair.props));
 						}
+						*/
 					}
 				}
 			} catch (final IOException e) {

@@ -7,7 +7,11 @@ import java.util.logging.Level;
 
 import net.sourceforge.pmd.*;
 import net.sourceforge.pmd.Report.ProcessingError;
+import net.sourceforge.pmd.lang.LanguageVersion;
+import net.sourceforge.pmd.renderers.AbstractRenderer;
 import net.sourceforge.pmd.renderers.Renderer;
+import net.sourceforge.pmd.util.datasource.DataSource;
+import net.sourceforge.pmd.util.datasource.FileDataSource;
 
 import com.surelogic.common.*;
 import com.surelogic.common.jobs.SLProgressMonitor;
@@ -25,7 +29,8 @@ public class AbstractPMDTool extends AbstractToolInstance {
 	@Override
 	protected void execute(SLProgressMonitor monitor)
 	throws Exception {
-		int cpus = Runtime.getRuntime().availableProcessors();
+		final PMDConfiguration config = new PMDConfiguration();
+		config.setThreads(Runtime.getRuntime().availableProcessors());
 		String encoding = new InputStreamReader(System.in)
 		.getEncoding();
 		String altEncoding = Charset.defaultCharset().name();
@@ -33,28 +38,29 @@ public class AbstractPMDTool extends AbstractToolInstance {
 			System.out.println("Encoding '" + encoding + "' != "
 					+ altEncoding);
 		}
+		config.setSourceEncoding(encoding);
+		
 		final String sourceLevel = getOption(SOURCE_LEVEL);
-		final SourceType sourceType;
+		final LanguageVersion sourceType;
 		if ("1.4".equals(sourceLevel)) {
-			sourceType = SourceType.JAVA_14;
+			sourceType = LanguageVersion.JAVA_14;
 		} else if ("1.5".equals(sourceLevel)) {
-			sourceType = SourceType.JAVA_15;
+			sourceType = LanguageVersion.JAVA_15;
 		} else if ("1.3".equals(sourceLevel)) {
-			sourceType = SourceType.JAVA_13;
-		} else if ("1.6".equals(sourceLevel)
-				|| "1.7".equals(sourceLevel)) {
-			sourceType = SourceType.JAVA_16;
+			sourceType = LanguageVersion.JAVA_13;
+		} else if ("1.6".equals(sourceLevel)) {
+			sourceType = LanguageVersion.JAVA_16;
+		} else if ("1.7".equals(sourceLevel)) {
+			sourceType = LanguageVersion.JAVA_17;
 		} else {
-			sourceType = SourceType.JAVA_14;
+			sourceType = LanguageVersion.JAVA_14;
 		}
+		config.setDefaultLanguageVersion(sourceType);
+		
 		RuleContext ctx = new RuleContext(); // info about what's
 		// getting scanned
-		RuleSetFactory ruleSetFactory = new RuleSetFactory(); // only
-		// the
-		// default
-		// rules
-
-		String excludeMarker = PMD.EXCLUDE_MARKER;
+		
+		//String excludeMarker = PMD.EXCLUDE_MARKER;
 
 		// Added for PMD 4.2
 		final File auxPathFile = File.createTempFile("auxPath", ".txt");
@@ -65,10 +71,13 @@ public class AbstractPMDTool extends AbstractToolInstance {
 			}
 			pw.close();
 		}
-		final ClassLoader cl = PMD
+		/*
+		final ClassLoader cl = PMD.
 		.createClasspathClassLoader(auxPathFile.toURI().toURL()
 				.toString());
-
+				*/
+		config.prependClasspath(auxPathFile.toURI().toURL().toString());
+		
 		final List<DataSource> files = new ArrayList<DataSource>();
 		prepJavaFiles(new TargetPrep() {
 			@Override
@@ -79,19 +88,30 @@ public class AbstractPMDTool extends AbstractToolInstance {
 		final List<Renderer> renderers = new ArrayList<Renderer>(); // output
 		renderers.add(new Output(getGenerator(), monitor));
 
+		config.setRuleSets("internal-all-java");
+		RuleSetFactory ruleSetFactory = RulesetsFactoryUtils
+				.getRulesetFactory(config);
+		
 		monitor.begin(files.size() + 25);
-		PMD.processFiles(cpus, ruleSetFactory, sourceType, files, ctx,
-				renderers, PMDToolFactory.rulesets, false, "", encoding,
-				excludeMarker, cl);
+		/*
+		 static void processFiles(final PMDConfiguration configuration,
+					final RuleSetFactory ruleSetFactory, final List<DataSource> files,
+					final RuleContext ctx, final List<Renderer> renderers) {
+					*/
+		PMD.processFiles(config, ruleSetFactory, files, ctx,
+				renderers/*, PMDToolFactory.rulesets, false, "", encoding,
+				excludeMarker, cl*/);
 		auxPathFile.delete();
 	}
 
-	class Output implements Renderer {
+	class Output extends AbstractRenderer {
 		private final ArtifactGenerator generator;
 		private final SLProgressMonitor monitor;
 		private boolean first = true;
 
 		public Output(ArtifactGenerator gen, SLProgressMonitor m) {
+			// Needs to be the tool name!
+			super("PMD", "Glue code to translate PMD results to Sierra artifacts");
 			generator = gen;
 			monitor = m;
 		}
@@ -102,23 +122,13 @@ public class AbstractPMDTool extends AbstractToolInstance {
 		}
 
 		@Override
-    public String render(Report report) {
-			throw new UnsupportedOperationException();
-		}
-
-		@Override
-    public void render(Writer writer, Report report) throws IOException {
-			throw new UnsupportedOperationException();
-		}
-
-		@Override
     public void setWriter(Writer writer) {
 			throw new UnsupportedOperationException();
 		}
 
 		@Override
-    public void showSuppressedViolations(boolean show) {
-			// Do nothing
+    public void setShowSuppressedViolations(boolean show) {
+			// Do nothing?
 		}
 
 		@Override
@@ -142,9 +152,9 @@ public class AbstractPMDTool extends AbstractToolInstance {
 		@Override
     public synchronized void renderFileReport(Report report)
 				throws IOException {
-			Iterator<IRuleViolation> it = report.iterator();
+			Iterator<RuleViolation> it = report.iterator();
 			while (it.hasNext()) {
-				IRuleViolation v = it.next();
+				RuleViolation v = it.next();
 				if (LOG.isLoggable(Level.FINE)) {
 					System.out.println(v.getFilename() + ": "
 							+ v.getDescription());
@@ -192,7 +202,7 @@ public class AbstractPMDTool extends AbstractToolInstance {
 						.getName());
 				artifact.message(v.getDescription());
 
-				int priority = v.getRule().getPriority();
+				int priority = v.getRule().getPriority().getPriority();
 				Priority assignedPriority = getPMDPriority(priority);
 				Severity assignedSeverity = getPMDSeverity(priority);
 				artifact.priority(assignedPriority).severity(assignedSeverity);
@@ -233,9 +243,15 @@ public class AbstractPMDTool extends AbstractToolInstance {
     public void end() throws IOException {
 			// Do nothing
 		}
+
+		@Override
+		public String defaultFileExtension() {
+			// TODO Auto-generated method stub
+			return null;
+		}
 	}
 
-	private static Severity getPMDSeverity(int priority) {
+	static Severity getPMDSeverity(int priority) {
 		switch (priority) {
 		case 1:
 		case 2:
@@ -249,7 +265,7 @@ public class AbstractPMDTool extends AbstractToolInstance {
 		}
 	}
 
-	private static Priority getPMDPriority(int priority) {
+	static Priority getPMDPriority(int priority) {
 		switch (priority) {
 		case 1:
 		case 3:

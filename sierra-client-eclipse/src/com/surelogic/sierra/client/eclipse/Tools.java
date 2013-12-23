@@ -142,6 +142,7 @@ public final class Tools {
 					 */
 
 					final Set<ArtifactType> knownTypes = new HashSet<ArtifactType>();
+					final Set<ArtifactType> unknownTypes = new HashSet<ArtifactType>();
 					for (final IToolFactory t : factories) {
 						final List<ArtifactTypeDO> temp = ft
 								.getToolArtifactTypes(t.getId(), t.getVersion());
@@ -157,7 +158,8 @@ public final class Tools {
 							// System.out.println("Ext: "+e.getId());
 							final List<ArtifactType> unknown = new ArrayList<ArtifactType>();
 							for (final ArtifactType a : e.getArtifactTypes()) {
-								if (!knownTypes.contains(a)) {
+								if (!knownTypes.contains(a) && !unknownTypes.contains(a)) {
+									unknownTypes.add(a); // To eliminate shared/duplicate types
 									unknown.add(a);
 								}
 							}
@@ -214,6 +216,13 @@ public final class Tools {
 										}
 									}
 								}
+								/*
+								for(IToolExtension ext : newExtensions.keySet()) {
+									System.out.println("Looking to register extension: " + ext.getTool() +" "
+											+ ext.getId() + " "
+											+ ext.getVersion());
+								}
+								*/
 								Data.getInstance().withTransaction(
 										new NullDBQuery() {
 											@Override
@@ -295,8 +304,10 @@ public final class Tools {
 			ext.addType(a.getFindingType(), aDO);
 		}
 		ft.registerExtension(ext);
+		/*
 		System.out.println("Registered extension: " + ext.getName() + " "
 				+ ext.getVersion());
+	    */
 		// Find/define finding types
 		final List<FindingTypeDO> ftypes = ft.listFindingTypes();
 		for (final FindingTypeDO f : ftypes) {

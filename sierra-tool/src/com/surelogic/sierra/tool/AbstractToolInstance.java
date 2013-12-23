@@ -23,7 +23,7 @@ import com.surelogic.sierra.tool.targets.IToolTarget;
  * @author edwin
  */
 public abstract class AbstractToolInstance extends AbstractSLJob implements IToolInstance {
-  protected static final Logger LOG = SLLogger.getLogger("sierra");
+  public static final Logger LOG = SLLogger.getLogger("sierra");
   protected static final String JAVA_SUFFIX = ".java";
   protected static final int JAVA_SUFFIX_LEN = JAVA_SUFFIX.length();
 

@@ -172,6 +172,7 @@ public class FindingTypes {
 		for (final Entry<String, List<ArtifactTypeDO>> entry : e
 				.getArtifactMap().entrySet()) {
 			for (final ArtifactTypeDO art : entry.getValue()) {
+				//System.out.println("Registering "+art.getTool()+" "+art.getMnemonic());
 				final long artId = insertAT.call(art.getTool(), art
 						.getVersion(), art.getMnemonic(), art.getDisplay(),
 						Nulls.STRING, Nulls.STRING, Nulls.STRING, entry

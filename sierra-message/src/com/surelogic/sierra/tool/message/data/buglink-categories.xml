@@ -204,6 +204,14 @@
             <type>ArrayIsStoredDirectly</type>
             <filtered>false</filtered>
         </filter>
+        <filter>
+            <type>PT_ABSOLUTE_PATH_TRAVERSAL</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>PT_RELATIVE_PATH_TRAVERSAL</type>
+            <filtered>false</filtered>
+        </filter>        
     </filterSets>
     <filterSets>
         <uid>14b0a93f-fa30-4e14-a738-3faa0235cd6e</uid>
@@ -1123,6 +1131,22 @@
 			for a low false positive rate.
 		</info>
         <filter>
+            <type>NP_NONNULL_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>DLS_DEAD_LOCAL_INCREMENT_IN_RETURN</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>TQ_UNKNOWN_VALUE_USED_WHERE_ALWAYS_STRICTLY_REQUIRED</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>TQ_COMPARING_VALUES_WITH_INCOMPATIBLE_TYPE_QUALIFIERS</type>
+            <filtered>false</filtered>
+        </filter>		
+        <filter>
             <type>UR_UNINIT_READ_CALLED_FROM_SUPER_CONSTRUCTOR</type>
             <filtered>false</filtered>
         </filter>
@@ -1936,6 +1960,22 @@
 			was known as Style.
 		</info>
         <filter>
+            <type>BC_UNCONFIRMED_CAST_OF_RETURN_VALUE</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>NP_METHOD_RETURN_RELAXING_ANNOTATION</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>NP_METHOD_PARAMETER_TIGHTENS_ANNOTATION</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>NP_METHOD_PARAMETER_RELAXING_ANNOTATION</type>
+            <filtered>false</filtered>
+        </filter>		
+        <filter>
             <type>IA_AMBIGUOUS_INVOCATION_OF_INHERITED_OR_OUTER_METHOD</type>
             <filtered>false</filtered>
         </filter>
@@ -2363,6 +2403,10 @@
         <info>
 			Code that is vulnerable to attacks from untrusted code
 		</info>
+		<filter>
+            <type>MS_SHOULD_BE_REFACTORED_TO_BE_FINAL</type>
+            <filtered>false</filtered>
+        </filter>
         <filter>
             <type>DMI_CONSTANT_DB_PASSWORD</type>
             <filtered>false</filtered>
@@ -2449,6 +2493,10 @@
 			code that is not necessarily incorrect but may be
 			inefficient
 		</info>
+        <filter>
+            <type>DM_BOXED_PRIMITIVE_FOR_PARSING</type>
+            <filtered>false</filtered>
+        </filter>		
         <filter>
             <type>SIC_INNER_SHOULD_BE_STATIC_NEEDS_THIS</type>
             <filtered>false</filtered>

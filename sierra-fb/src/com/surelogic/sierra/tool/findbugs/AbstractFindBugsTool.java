@@ -278,8 +278,11 @@ public class AbstractFindBugsTool extends AbstractToolInstance {
 			if (LOG.isLoggable(Level.FINE)) {
 				System.out.println("Bug reported: " + bug.getAbridgedMessage());
 			}
-			stats.addBug(bug);
-
+			try {
+				stats.addBug(bug);
+			} catch(Exception e) {
+				LOG.log(Level.INFO, "Ignoring exception while updating stats", e);
+			}
 			ArtifactBuilder artifact = generator.artifact();
 			SourceLocations locations = computeSourceLocations(bug);
 			final SourceLineAnnotation primary = locations.getPrimary();

@@ -72,7 +72,7 @@ public class FindBugsToolFactory extends AbstractToolFactory {
 				continue;
 			}
 			final boolean isCore = CORE.equals(plugin.getPluginId());
-			extensions.add(new AbstractToolExtension(getId(), plugin.getPluginId(), loc, types) {
+			extensions.add(new AbstractToolExtension(getId(), plugin.getPluginId(), getVersion(), loc, types) {
 				@Override
         public boolean isCore() {
 					return isCore;

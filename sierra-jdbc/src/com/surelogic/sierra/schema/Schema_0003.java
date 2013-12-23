@@ -13,9 +13,11 @@ public class Schema_0003 implements SchemaAction {
   public void run(final Connection conn) throws SQLException {
 		PMD4_3ToolInfoGenerator.generateTool(conn);
 		FindBugs2_0_0ToolInfoGenerator.generateTool(conn);
+		/*
 		SchemaUtil.updateFindingTypes(conn);
 		SchemaUtil.setupLocalScanFilter(conn);
 		SchemaUtil.generateBuglinkCategories(conn);
+		*/
 	}
 
 }

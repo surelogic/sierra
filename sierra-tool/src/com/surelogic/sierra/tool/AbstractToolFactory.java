@@ -23,7 +23,7 @@ import com.surelogic.sierra.tool.targets.ToolTarget;
  * @author edwin
  */
 public abstract class AbstractToolFactory implements IToolFactory {
-    protected static final Logger LOG = SLLogger.getLogger("sierra");
+    public static final Logger LOG = SLLogger.getLogger("sierra");
 	
 	private File pluginDir;
 	private ToolInfo info;
