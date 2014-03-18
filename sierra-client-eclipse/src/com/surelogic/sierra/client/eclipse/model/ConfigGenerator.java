@@ -176,7 +176,7 @@ public final class ConfigGenerator {
       try {
         IType[] types = c.getAllTypes();
         String packageName = SLUtility.JAVA_DEFAULT_PACKAGE;
-        if (types.length > 0 || "package-info.java".equals(c.getElementName())) {
+        if (types.length > 0 || SLUtility.PACKAGE_INFO_JAVA.equals(c.getElementName())) {
           for (org.eclipse.jdt.core.IPackageDeclaration decl : c.getPackageDeclarations()) {
             packageName = decl.getElementName();
             break;
