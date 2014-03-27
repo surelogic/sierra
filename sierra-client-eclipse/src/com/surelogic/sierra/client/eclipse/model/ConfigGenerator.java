@@ -44,6 +44,7 @@ import com.surelogic.common.jobs.remote.AbstractRemoteSLJob;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.common.tool.SureLogicToolsFilter;
 import com.surelogic.common.tool.SureLogicToolsPropertiesUtility;
+import static com.surelogic.common.tool.SureLogicToolsPropertiesUtility.*;
 import com.surelogic.sierra.client.eclipse.Tools;
 import com.surelogic.sierra.client.eclipse.preferences.SierraPreferencesUtility;
 import com.surelogic.sierra.tool.IToolExtension;
@@ -242,12 +243,17 @@ public final class ConfigGenerator {
           SureLogicToolsPropertiesUtility.PROPS_FILE));
       final String[] excludedSourceFolders = SureLogicToolsPropertiesUtility.getExcludedSourceFolders(props);
       final String[] excludedPackagePatterns = SureLogicToolsPropertiesUtility.getExcludedPackagePatterns(props);
+      final String[] bytecodeSourceFolders = SureLogicToolsPropertiesUtility.getBytecodeSourceFolders(props);
+      final String[] bytecodePackagePatterns = SureLogicToolsPropertiesUtility.getExcludedPackagePatterns(props);
+      final SureLogicToolsFilter excludeFilter = getFilterFor(excludedSourceFolders, excludedPackagePatterns);
+      final SureLogicToolsFilter bytecodeFilter = getFilterFor(bytecodeSourceFolders, bytecodePackagePatterns);
       if (props != null) {
-        config.setExcludedSourceFolders(props.getProperty(SureLogicToolsPropertiesUtility.SCAN_EXCLUDE_SOURCE_FOLDER));
-        config.setExcludedPackages(props.getProperty(SureLogicToolsPropertiesUtility.SCAN_EXCLUDE_SOURCE_PACKAGE));
+        config.setExcludedSourceFolders(combineListProperties(props.getProperty(SCAN_EXCLUDE_SOURCE_FOLDER),
+        													  props.getProperty(SCAN_SOURCE_FOLDER_AS_BYTECODE)));        				
+        config.setExcludedPackages(combineListProperties(props.getProperty(SCAN_EXCLUDE_SOURCE_PACKAGE),
+				  										 props.getProperty(SCAN_SOURCE_PACKAGE_AS_BYTECODE)));        
       }
-      final SureLogicToolsFilter filter = SureLogicToolsPropertiesUtility.getFilterFor(excludedSourceFolders,
-          excludedPackagePatterns);
+      final SureLogicToolsFilter filter = combine(excludeFilter, bytecodeFilter);
 
       try {
         String defaultOutputLocation = javaProject.getOutputLocation().makeRelative().toOSString();
@@ -528,21 +534,24 @@ public final class ConfigGenerator {
     handled.add(p);
 
     final Config cfg = copier.config;
-    final Properties props = SureLogicToolsPropertiesUtility.readFileOrNull(new File(p.getProject().getLocation().toFile(),
-        SureLogicToolsPropertiesUtility.PROPS_FILE));
-    final String[] excludedFolders = makeAbsolute(p.getElementName(),
-        SureLogicToolsPropertiesUtility.getExcludedSourceFolders(props));
-    final String[] excludedPackages = convertPkgsToSierraStyle(SureLogicToolsPropertiesUtility.getExcludedSourceFolders(props));
+    final Properties props = SureLogicToolsPropertiesUtility.readFileOrNull(new File(p.getProject().getLocation().toFile(), PROPS_FILE));
+    final String[] excludedFolders = makeAbsolute(p.getElementName(), getExcludedSourceFolders(props));
+    final String[] excludedPackages = convertPkgsToSierraStyle(getExcludedSourceFolders(props));
+    final String[] bytecodeFolders = makeAbsolute(p.getElementName(), getBytecodeSourceFolders(props));
+    final String[] bytecodePackages = convertPkgsToSierraStyle(getBytecodePackagePatterns(props));
+    final String[] combinedPackages = combineLists(excludedPackages, bytecodePackages);
     if (props != null) {
-      cfg.setExcludedSourceFolders(props.getProperty(SureLogicToolsPropertiesUtility.SCAN_EXCLUDE_SOURCE_FOLDER));
-      cfg.setExcludedPackages(props.getProperty(SureLogicToolsPropertiesUtility.SCAN_EXCLUDE_SOURCE_PACKAGE));
+      cfg.setExcludedSourceFolders(combineListProperties(props.getProperty(SCAN_EXCLUDE_SOURCE_FOLDER),
+			                                             props.getProperty(SCAN_SOURCE_FOLDER_AS_BYTECODE)));        				
+      cfg.setExcludedPackages(combineListProperties(props.getProperty(SCAN_EXCLUDE_SOURCE_PACKAGE),
+			                                        props.getProperty(SCAN_SOURCE_PACKAGE_AS_BYTECODE)));  
     }
 
     final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
     for (IClasspathEntry cpe : p.getResolvedClasspath(true)) {
-      handleClasspathEntry(copier, handled, toBeAnalyzed, root, excludedFolders, excludedPackages, cpe);
+      handleClasspathEntry(copier, handled, toBeAnalyzed, root, combineLists(excludedFolders, bytecodeFolders), combinedPackages, cpe);
     }
-    handleOutputLocation(copier, p.getOutputLocation(), excludedPackages, toBeAnalyzed);
+    handleOutputLocation(copier, p.getOutputLocation(), combinedPackages, toBeAnalyzed);
   }
 
   private static String[] convertPkgsToSierraStyle(String[] pkgs) {
