@@ -38,7 +38,7 @@ public final class FilterProject extends Filter {
 
 	@Override
 	public Image getImageFor(String value) {
-		return SLImages.getImageForJavaProject();
+		return SLImages.getImageForProject(value);
 	}
 
 	@Override
