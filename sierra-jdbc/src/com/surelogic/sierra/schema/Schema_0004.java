@@ -27,9 +27,11 @@ public class Schema_0004 implements SchemaAction {
 		CPD5_0_5ToolInfoGenerator.generateTool(conn);
 		PMD5_0_5ToolInfoGenerator.generateTool(conn);
 		FindBugs2_0_3ToolInfoGenerator.generateTool(conn);
+		/*
 		SchemaUtil.updateFindingTypes(conn);
 		SchemaUtil.setupLocalScanFilter(conn);
 		SchemaUtil.generateBuglinkCategories(conn);
+		*/
     }
 
     String findName(ResultSet set) throws SQLException {

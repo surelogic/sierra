@@ -39,8 +39,11 @@ public final class CPD5_0Tool extends AbstractToolInstance {
 
 		LanguageFactory f = new LanguageFactory();
 		Language language = f.createLanguage(languageString);
-		final CPDConfiguration config = new CPDConfiguration(minimumTokens, language, encodingString);			
-		config.skipDuplicates(skipDuplicateFiles);
+		final CPDConfiguration config = new CPDConfiguration(); //minimumTokens, language, encodingString);					
+		config.setMinimumTileSize(minimumTokens);
+		config.setLanguage(language);
+		config.setEncoding(encodingString);
+		config.setSkipDuplicates(skipDuplicateFiles);
 		final CPD cpd = new CPD(config);
 
 		cpd.setCpdListener(new CPDListener() {
