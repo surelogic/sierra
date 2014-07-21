@@ -6,6 +6,7 @@ import java.util.*;
 import java.util.logging.Logger;
 
 import javax.xml.bind.annotation.*;
+import javax.xml.bind.annotation.adapters.*;
 
 import com.surelogic.common.jobs.remote.ILocalConfig;
 import com.surelogic.common.logging.SLLogger;
@@ -46,7 +47,7 @@ public class Config implements Cloneable, ILocalConfig {
 	private int memorySize = 1024;
 
 	// Map from plugin id to their locations
-	private final HashMap<String, String> pluginDirs = new HashMap<String, String>();
+	private final Map<String, String> pluginDirs = new HashMap<String, String>();
 
 	// directory to store tool output in
 	private File destDirectory = null;
@@ -188,6 +189,8 @@ public class Config implements Cloneable, ILocalConfig {
 		}
 	}
 		
+	@XmlJavaTypeAdapter(Config.MapAdapter.class)
+	@XmlElement(name="pluginDirs")
 	public Map<String, String> getPluginDirs() {
 		return pluginDirs;
 	}
@@ -565,5 +568,37 @@ public class Config implements Cloneable, ILocalConfig {
     
 	public void setExcludedSourceFolders(String folders) {
 		excludedFolders = folders;		
+	}
+	
+	public static class MapAdapter extends XmlAdapter<MapAdapter.AdaptedMap, Map<String, String>> {			 
+		public static class AdaptedMap {
+			public List<Entry> entry = new ArrayList<Entry>();
+		}
+
+		public static class Entry {
+			public String key;
+			public String value;			 
+		}
+
+		@Override
+		public Map<String, String> unmarshal(AdaptedMap adaptedMap) throws Exception {
+			Map<String, String> map = new HashMap<String, String>();
+			for(Entry entry : adaptedMap.entry) {
+				map.put(entry.key, entry.value);
+			}
+			return map;
+		}
+
+		@Override
+		public AdaptedMap marshal(Map<String, String> map) throws Exception {
+			AdaptedMap adaptedMap = new AdaptedMap();
+			for(Map.Entry<String, String> mapEntry : map.entrySet()) {
+				Entry entry = new Entry();
+				entry.key = mapEntry.getKey();
+				entry.value = mapEntry.getValue();
+				adaptedMap.entry.add(entry);
+			}
+			return adaptedMap;
+		}
 	}
 }
