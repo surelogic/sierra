@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry exported="true" kind="lib" path="lib/asm-debug-all-5.0.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/bcel-6.0-SNAPSHOT.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jcip-annotations.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jdepend-2.9.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/yjp-controller-api-redist.jar"/>
@@ -9,16 +11,9 @@
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry exported="true" kind="lib" path="lib/annotations.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/bcel.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/findbugs.jar" sourcepath="/home/edwin/work/findbugs-2.0.0"/>
 	<classpathentry exported="true" kind="lib" path="lib/jsr305.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/dom4j-1.6.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jFormatString.jar"/>
-	<classpathentry kind="lib" path="lib/asm-3.3.jar"/>
-	<classpathentry kind="lib" path="lib/asm-analysis-3.3.jar"/>
-	<classpathentry kind="lib" path="lib/asm-commons-3.3.jar"/>
-	<classpathentry kind="lib" path="lib/asm-tree-3.3.jar"/>
-	<classpathentry kind="lib" path="lib/asm-util-3.3.jar"/>
-	<classpathentry kind="lib" path="lib/asm-xml-3.3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

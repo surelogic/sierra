@@ -465,6 +465,10 @@
 			although some groups may not care about some of the bad
 			practices.
 		</info>
+        <filter>
+            <type>CNT_ROUGH_CONSTANT_VALUE</type>
+            <filtered>false</filtered>
+        </filter>		
 		<filter>
             <type>RC_REF_COMPARISON_BAD_PRACTICE</type>
             <filtered>false</filtered>
@@ -1130,6 +1134,10 @@
 			that was probably not what the developer intended. We strive
 			for a low false positive rate.
 		</info>
+        <filter>
+            <type>NP_OPTIONAL_RETURN_NULL</type>
+            <filtered>false</filtered>
+        </filter>		
         <filter>
             <type>NP_NONNULL_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR</type>
             <filtered>false</filtered>
@@ -2493,6 +2501,14 @@
 			code that is not necessarily incorrect but may be
 			inefficient
 		</info>
+        <filter>
+            <type>IIO_INEFFICIENT_INDEX_OF</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>IIO_INEFFICIENT_LAST_INDEX_OF</type>
+            <filtered>false</filtered>
+        </filter>
         <filter>
             <type>DM_BOXED_PRIMITIVE_FOR_PARSING</type>
             <filtered>false</filtered>

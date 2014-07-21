@@ -4,5 +4,5 @@ To upgrade this plugin
 2. Update all the relevant jars in /lib
 3. Create a new schema and appropriate ToolInfoGenerators for PMD/CPD in sierra-jdbc,
    copying all of the rulesets (from /src/main/resources)
-4. Run PMDFindingTypeCreator to help create ...
-5. Edit the data in sierra-message
+4. Run PMDFindingTypeCreator to help create XML
+5. Edit buglink-finding-types.xml and buglink-categories.xml in sierra-message

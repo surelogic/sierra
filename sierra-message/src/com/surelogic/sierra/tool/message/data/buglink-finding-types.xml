@@ -12325,6 +12325,66 @@ public boolean example(@Negative Integer value1, @NonNegative Integer value2) {
     </info>
     <name>Method tightens nullness annotation on parameter</name>
   </findingType>
-  
+
+  <!-- - FB 3.0.0 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+  <findingType>
+    <id>CNT_ROUGH_CONSTANT_VALUE</id>
+    <artifact tool="FindBugs"	mnemonic="CNT_ROUGH_CONSTANT_VALUE"/>
+    <shortMessage>Rough value of known constant found</shortMessage>
+    <info>
+      <![CDATA[
+      
+    <p>It's recommended to use the predefined library constant for code clarity and better precision.</p>
+
+    ]]>
+    </info>
+    <name>Rough value of known constant found</name>
+  </findingType>
+  <findingType>
+    <id>NP_OPTIONAL_RETURN_NULL</id>
+    <artifact tool="FindBugs"	mnemonic="NP_OPTIONAL_RETURN_NULL"/>
+    <shortMessage>Method with Optional return type returns explicit null</shortMessage>
+    <info>
+      <![CDATA[
+       
+       <p>
+    The usage of Optional return type always mean that explicit null returns were not desired by design.
+    Returning a null value in such case is a contract violation and will most likely break clients code.
+       </p>
+       
+       ]]>
+    </info>
+    <name>Method with Optional return type returns explicit null</name>
+  </findingType>
+  <findingType>
+    <id>IIO_INEFFICIENT_INDEX_OF</id>
+    <artifact tool="FindBugs"	mnemonic="IIO_INEFFICIENT_INDEX_OF"/>
+    <shortMessage>Inefficient use of String.indexOf(String)</shortMessage>
+    <info>
+      <![CDATA[
+
+<p> This code passes a constant string of length 1 to String.indexOf().
+It is more efficient to use the integer implementations of String.indexOf().
+f. e. call <code>myString.indexOf('.')</code> instead of <code>myString.indexOf(".")</code></p>
+
+    ]]>
+    </info>
+    <name>Inefficient use of String.indexOf(String)</name>
+  </findingType>
+  <findingType>
+    <id>IIO_INEFFICIENT_LAST_INDEX_OF</id>
+    <artifact tool="FindBugs"	mnemonic="IIO_INEFFICIENT_LAST_INDEX_OF"/>
+    <shortMessage>Inefficient use of String.lastIndexOf(String)</shortMessage>
+    <info>
+      <![CDATA[
+
+<p> This code passes a constant string of length 1 to String.lastIndexOf().
+It is more efficient to use the integer implementations of String.lastIndexOf().
+f. e. call <code>myString.lastIndexOf('.')</code> instead of <code>myString.lastIndexOf(".")</code></p>
+
+    ]]>
+    </info>
+    <name>Inefficient use of String.lastIndexOf(String)</name>
+  </findingType>  
   <!-- - END - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
 </findingTypes>

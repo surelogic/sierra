@@ -2,25 +2,20 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: FindBugs™
 Bundle-SymbolicName: com.surelogic.sierra.fb;singleton:=true
-Bundle-Version: 2.0.3.qualifier
+Bundle-Version: 3.0.0.qualifier
 Bundle-ClassPath: lib/annotations.jar,
- lib/bcel.jar,
  lib/findbugs.jar,
  lib/jsr305.jar,
  .,
- lib/asm-3.3.jar,
- lib/asm-analysis-3.3.jar,
- lib/asm-commons-3.3.jar,
- lib/asm-tree-3.3.jar,
- lib/asm-util-3.3.jar,
- lib/asm-xml-3.3.jar,
  lib/dom4j-1.6.1.jar,
  lib/jFormatString.jar,
  lib/commons-lang-2.6.jar,
  lib/jaxen-1.1.6.jar,
  lib/jcip-annotations.jar,
  lib/jdepend-2.9.jar,
- lib/yjp-controller-api-redist.jar
+ lib/yjp-controller-api-redist.jar,
+ lib/asm-debug-all-5.0.2.jar,
+ lib/bcel-6.0-SNAPSHOT.jar
 Export-Package: edu.umd.cs.findbugs,
  edu.umd.cs.findbugs.annotations,
  edu.umd.cs.findbugs.anttask,
@@ -69,4 +64,4 @@ Sierra-Id: FindBugs
 Sierra-Website: findbugs.sourceforge.net
 Sierra-Description: A static analysis tool created at University of Maryland 
   for finding bugs in Java code.
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
