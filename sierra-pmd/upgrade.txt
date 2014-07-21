@@ -1,0 +1,8 @@
+To upgrade this plugin
+======================
+1. Download the source zip for the new version
+2. Update all the relevant jars in /lib
+3. Create a new schema and appropriate ToolInfoGenerators for PMD/CPD in sierra-jdbc,
+   copying all of the rulesets (from /src/main/resources)
+4. Run PMDFindingTypeCreator to help create ...
+5. Edit the data in sierra-message
