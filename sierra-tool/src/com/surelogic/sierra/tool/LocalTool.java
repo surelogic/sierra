@@ -206,7 +206,7 @@ final class LocalTool extends AbstractLocalSLJob<Config> implements IToolInstanc
     protected void setupClassPath(final ConfigHelper util, 
             final CommandlineJava cmdj, final Project proj, final Path path) {
         util.addPluginToPath(COMMON_PLUGIN_ID, true);
-        util.addPluginJarsToPath(COMMON_PLUGIN_ID, "lib/runtime/commons-lang3-3.1.jar");
+        util.addPluginJarsToPath(COMMON_PLUGIN_ID, "lib/runtime/commons-lang3-3.3.2.jar");
 
         // sierra-tool needs special handling since it is unpacked, due to
         // Reckoner (and other tools)
