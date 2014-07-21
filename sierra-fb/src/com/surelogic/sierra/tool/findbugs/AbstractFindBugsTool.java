@@ -281,7 +281,8 @@ public class AbstractFindBugsTool extends AbstractToolInstance {
 			try {
 				stats.addBug(bug);
 			} catch(Exception e) {
-				LOG.log(Level.INFO, "Ignoring exception while updating stats", e);
+				//LOG.log(Level.INFO, "Ignoring exception while updating FB stats", e);
+				System.err.println("INFO: Ignoring exception while updating FB stats: "+bug.getAbridgedMessage());
 			}
 			ArtifactBuilder artifact = generator.artifact();
 			SourceLocations locations = computeSourceLocations(bug);
