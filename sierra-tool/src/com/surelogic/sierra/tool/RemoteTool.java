@@ -14,6 +14,7 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 
+import com.surelogic.common.FileUtility;
 import com.surelogic.common.jobs.*;
 import com.surelogic.common.jobs.remote.AbstractRemoteSLJob;
 import com.surelogic.sierra.tool.message.*;
@@ -35,7 +36,8 @@ final class RemoteTool extends AbstractRemoteSLJob {
 		if (configName == null) {
 			throw new IllegalArgumentException("No config provided");
 		}
-		FileInputStream file = new FileInputStream(configName);
+		final File configFile = new File(configName);
+		FileInputStream file = new FileInputStream(configFile);
 		out.println("Got file: " + configName);
 
 		JAXBContext ctx = JAXBContext.newInstance(Config.class, KeyValuePair.class,
@@ -56,16 +58,12 @@ final class RemoteTool extends AbstractRemoteSLJob {
 		// Config config = (Config) unmarshaller.unmarshal(file);
 		out.println("Read config");
 		file.close();
-		new File(configName).delete();
+		
+		String configTxt = FileUtility.getFileContentsAsString(configFile);
+		out.println(configTxt);
+		configFile.delete();
 
-		// String line = br.readLine();
-		// while (line != null) {
-		// if (line.equals("\n")) {
-		// break;
-		// }
-		// out.println(line);
-		// line = br.readLine();
-		// }
+		out.println("Plugin dirs:");
 		for (Map.Entry<String,String> e : config.getPluginDirs().entrySet()) {
 			out.println(e.getKey()+" -> "+e.getValue());
 		}
@@ -100,7 +98,7 @@ final class RemoteTool extends AbstractRemoteSLJob {
 	}
 
 	private void addToolFinder(PrintStream out, final Config config) {
-		out.println("Setting up remote tool finder ...");
+		out.println("Setting up remote tool finder ... "+config.getPluginDirs().size());
 		final List<File> dirs = new ArrayList<File>();
 		for(Map.Entry<String, String> e : config.getPluginDirs().entrySet()) {
 			final File f = new File(e.getValue());
