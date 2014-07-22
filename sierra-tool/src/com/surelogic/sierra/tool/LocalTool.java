@@ -1,17 +1,13 @@
 package com.surelogic.sierra.tool;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.URI;
 import java.util.*;
 import java.util.logging.Level;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
+import javax.xml.bind.*;
 
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.types.CommandlineJava;
@@ -171,6 +167,22 @@ final class LocalTool extends AbstractLocalSLJob<Config> implements IToolInstanc
             cmdj.createVmArgument().setValue(
                     "-D" + SierraToolConstants.CONFIG_PROPERTY + "="
                             + file.getAbsolutePath());
+            /*
+            // Check to see if the config is the same
+            try {
+            	XMLInputFactory xmlif = XMLInputFactory.newInstance();
+            	XMLStreamReader xmlr = xmlif.createXMLStreamReader(new FileReader(file));
+            	Unmarshaller unmarshaller = ctx.createUnmarshaller();
+            	final Config c = unmarshaller.unmarshal(xmlr, Config.class).getValue();           
+            	if (c.getPluginDirs().size() != config.getPluginDirs().size()) {
+            		System.out.println("Couldn't match size of plugin dirs");
+            	} else {
+            		System.out.println("Same");
+            	}
+            } catch(Exception e) {
+            	e.printStackTrace();
+            }
+            */
             return file;
         } catch (IOException e) {
             throw new ToolException(getName(), SierraToolConstants.ERROR_CREATING_CONFIG,
