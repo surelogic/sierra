@@ -17,6 +17,7 @@ import java.util.logging.Level;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.equinox.security.storage.*;
 
 import com.surelogic.common.ILifecycle;
 import com.surelogic.common.i18n.I18N;
@@ -425,6 +426,7 @@ public final class ConnectedServerManager extends
 	/*
 	 * Fields needed for caching the password
 	 */
+	/*
 	private static final String AUTH_SCHEME = "";
 	private static final URL FAKE_URL;
 	static {
@@ -437,15 +439,42 @@ public final class ConnectedServerManager extends
 		}
 		FAKE_URL = temp;
 	}
+	*/
+	private static final String NODE_PATH = "com/surelogic/sierra";
 
-	@SuppressWarnings( { "deprecation", "unchecked" })
+	private ISecurePreferences getSecurePrefs() {
+        ISecurePreferences prefs = SecurePreferencesFactory.getDefault();
+        ISecurePreferences node = prefs.node(NODE_PATH);
+        return node;
+	}
+	
+	private Map<String,String> getPasswords() {
+		ISecurePreferences prefs = getSecurePrefs();
+		Map<String, String> passwds = new java.util.HashMap<String, String>();
+		for(String key : prefs.keys()) {
+			try {
+				passwds.put(key, prefs.get(key, null));
+			} catch (StorageException e) {
+				SLLogger.getLogger().log(Level.SEVERE, I18N.err(42), e);
+			}
+		}
+		return passwds;
+	}
+	
+	private void savePasswords(Map<String,String> map) {
+		ISecurePreferences prefs = getSecurePrefs();
+		for(Map.Entry<String, String> e : map.entrySet()) {
+			try {
+				prefs.put(e.getKey(), e.getValue(), true);
+			} catch (StorageException e1) {
+				SLLogger.getLogger().log(Level.SEVERE, I18N.err(42), e);
+			}
+		}
+	}
+	
 	private synchronized void save() {
 		final Map<ConnectedServer, Collection<String>> servers = new HashMap<ConnectedServer, Collection<String>>();
-		Map<String, String> map = Platform.getAuthorizationInfo(FAKE_URL, "",
-				AUTH_SCHEME);
-		if (map == null) {
-			map = new java.util.HashMap<String, String>();
-		}
+		Map<String, String> map = getPasswords();
 		for (final ConnectedServer s : getServers()) {
 			servers.put(s, getProjectsConnectedTo(s));
 			final ServerLocation l = s.getLocation();
@@ -454,17 +483,13 @@ public final class ConnectedServerManager extends
 			}
 		}
 		try {
-			if (map != null) {
-				Platform.addAuthorizationInfo(FAKE_URL, "", AUTH_SCHEME, map);
-			}
+			savePasswords(map);
 			final Job j = new UpdateConnectedServersJob(servers);
 			j.setSystem(true);
 			j.schedule();
 		} catch (final TransactionException e) {
 			SLLogger.getLogger().log(Level.SEVERE,
 					I18N.err(38, "Team Servers", "database"), e);
-		} catch (final CoreException e) {
-			SLLogger.getLogger().log(Level.SEVERE, I18N.err(42), e);
 		}
 	}
 
@@ -535,10 +560,8 @@ public final class ConnectedServerManager extends
 	 * Trigger a load job so that we can get updated connected server
 	 * information.
 	 */
-	@SuppressWarnings( { "deprecation", "unchecked" })
-	private void load() {
-		final Map<String, String> passwords = Platform.getAuthorizationInfo(
-				FAKE_URL, "", AUTH_SCHEME);
+	private void load() {		
+		final Map<String, String> passwords = getPasswords();
 		try {
 			final Job j = new LoadConnectedServersJob(passwords);
 			j.setSystem(true);
