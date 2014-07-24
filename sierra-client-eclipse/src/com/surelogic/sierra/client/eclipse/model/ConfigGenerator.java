@@ -581,8 +581,10 @@ public final class ConfigGenerator {
     if (excludedPkgs != null && excludedPkgs.length > 0) {
       if (copyBeforeScan) {
     	  cfg.addFilteredDirTarget(type, outLoc, res, null, excludedPkgs);
+    	  cfg.addDirTarget(IToolTarget.Type.AUX, outLoc, res);
       } else {
     	  cfg.config.addTarget(new FilteredDirectoryTarget(type, out, null, excludedPkgs));
+    	  cfg.config.addTarget(new FullDirectoryTarget(IToolTarget.Type.AUX, out));
       }
     } else {
       if (copyBeforeScan) {
