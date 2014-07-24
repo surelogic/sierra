@@ -11,7 +11,7 @@
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry exported="true" kind="lib" path="lib/annotations.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/findbugs.jar" sourcepath="/home/edwin/work/findbugs-2.0.0"/>
+	<classpathentry exported="true" kind="lib" path="lib/findbugs.jar" sourcepath="/home/edwin/work/findbugs-3.0.0"/>
 	<classpathentry exported="true" kind="lib" path="lib/jsr305.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/dom4j-1.6.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jFormatString.jar"/>
