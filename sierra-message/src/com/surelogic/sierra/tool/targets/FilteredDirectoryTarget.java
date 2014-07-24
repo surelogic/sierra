@@ -75,7 +75,7 @@ public class FilteredDirectoryTarget extends DirectoryTarget {
 			  sb.append(".*"); // Match any suffix
 		  }
 		  final String s = sb.toString();
-		  System.out.println("Compiling '"+p+"' as "+s);
+		  //System.out.println("Compiling '"+p+"' as "+s);
 		  
 		  final Pattern regex = Pattern.compile(s);
 		  final Matcher match = regex.matcher("");
@@ -144,7 +144,7 @@ public class FilteredDirectoryTarget extends DirectoryTarget {
     if (excludePatterns != null) {
       for(IPattern p : excludePatterns) {
         if (p.matches(relativePath)) {
-          System.out.println("Excluded by "+p+": "+relativePath);
+          //System.out.println("Excluded by "+p+": "+relativePath);
           return true;
         }
       }
