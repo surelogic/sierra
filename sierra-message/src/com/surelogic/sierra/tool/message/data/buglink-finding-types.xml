@@ -12386,5 +12386,382 @@ f. e. call <code>myString.lastIndexOf('.')</code> instead of <code>myString.last
     </info>
     <name>Inefficient use of String.lastIndexOf(String)</name>
   </findingType>  
-  <!-- - END - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+  
+  <!-- - PMD 5.0.5 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+  <findingType>
+    <id>ExtendsObject</id>
+    <artifact tool="PMD"	mnemonic="ExtendsObject"/>
+    <shortMessage>No need to explicitly extend Object.</shortMessage>
+    <info>
+      <![CDATA[No need to explicitly extend Object.]]>
+    </info>
+    <name>No need to explicitly extend Object.</name>
+  </findingType>
+  <findingType>
+    <id>CheckSkipResult</id>
+    <artifact tool="PMD"	mnemonic="CheckSkipResult"/>
+    <shortMessage>Check the value returned by the skip() method of an InputStream to see if the requested number of bytes has been skipped.</shortMessage>
+    <info>
+      <![CDATA[The skip() method may skip a smaller number of bytes than requested. Check the returned value to find out if it was the case or not.]]>
+    </info>
+    <name>Check the value returned by the skip() method of an InputStream to see if the requested number of bytes has been skipped.</name>
+  </findingType>
+  <findingType>
+    <id>AvoidBranchingStatementAsLastInLoop</id>
+    <artifact tool="PMD"	mnemonic="AvoidBranchingStatementAsLastInLoop"/>
+    <shortMessage>Avoid using a branching statement as the last in a loop.</shortMessage>
+    <info>
+      <![CDATA[
+            
+Using a branching statement as the last part of a loop may be a bug, and/or is confusing.
+Ensure that the usage is not a bug, or consider using another approach.
+            
+        ]]>
+    </info>
+    <name>Avoid using a branching statement as the last in a loop.</name>
+  </findingType>
+  <findingType>
+    <id>DontUseFloatTypeForLoopIndices</id>
+    <artifact tool="PMD"	mnemonic="DontUseFloatTypeForLoopIndices"/>
+    <shortMessage>Don't use floating point for loop indices. If you must use floating point, use double.</shortMessage>
+    <info>
+      <![CDATA[
+Don't use floating point for loop indices. If you must use floating point, use double
+unless you're certain that float provides enough precision and you have a compelling
+performance need (space or time).
+    ]]>
+    </info>
+    <name>Don't use floating point for loop indices. If you must use floating point, use double.</name>
+  </findingType>
+  <findingType>
+    <id>CommentRequired</id>
+    <artifact tool="PMD"	mnemonic="CommentRequired"/>
+    <shortMessage>Comment is required</shortMessage>
+    <info>
+      <![CDATA[
+Denotes whether comments are required (or unwanted) for specific language elements.
+    ]]>
+    </info>
+    <name>Comment is required</name>
+  </findingType>
+  <findingType>
+    <id>CommentSize</id>
+    <artifact tool="PMD"	mnemonic="CommentSize"/>
+    <shortMessage>Comment is too large</shortMessage>
+    <info>
+      <![CDATA[
+Determines whether the dimensions of non-header comments found are within the specified limits.
+    ]]>
+    </info>
+    <name>Comment is too large</name>
+  </findingType>
+  <findingType>
+    <id>CommentContent</id>
+    <artifact tool="PMD"	mnemonic="CommentContent"/>
+    <shortMessage>Invalid words or phrases found</shortMessage>
+    <info>
+      <![CDATA[
+A rule for the politically correct... we don't want to offend anyone.
+  ]]>
+    </info>
+    <name>Invalid words or phrases found</name>
+  </findingType>
+  <findingType>
+    <id>OneDeclarationPerLine</id>
+    <artifact tool="PMD"	mnemonic="OneDeclarationPerLine"/>
+    <shortMessage>Use one line for each declaration, it enhances code readability.</shortMessage>
+    <info>
+      <![CDATA[
+            
+Java allows the use of several variables declaration of the same type on one line. However, it
+can lead to quite messy code. This rule looks for several declarations on the same line.
+            
+        ]]>
+    </info>
+    <name>Use one line for each declaration, it enhances code readability.</name>
+  </findingType>
+  <findingType>
+    <id>AvoidPrefixingMethodParameters</id>
+    <artifact tool="PMD"	mnemonic="AvoidPrefixingMethodParameters"/>
+    <shortMessage>Avoid prefixing parameters by in, out or inOut. Uses Javadoc to document this behavior.</shortMessage>
+    <info>
+      <![CDATA[
+            
+Prefixing parameters by 'in' or 'out' pollutes the name of the parameters and reduces code readability.
+To indicate whether or not a parameter will be modify in a method, its better to document method
+behavior with Javadoc.
+            
+        ]]>
+    </info>
+    <name>Avoid prefixing parameters by in, out or inOut. Uses Javadoc to document this behavior.</name>
+  </findingType>
+  <findingType>
+    <id>UseObjectForClearerAPI</id>
+    <artifact tool="PMD"	mnemonic="UseObjectForClearerAPI"/>
+    <shortMessage>Rather than using a lot of String arguments, consider using a container object for those values.</shortMessage>
+    <info>
+      <![CDATA[
+When you write a public method, you should be thinking in terms of an API. If your method is public, it means other class
+will use it, therefore, you want (or need) to offer a comprehensive and evolutive API. If you pass a lot of information
+as a simple series of Strings, you may think of using an Object to represent all those information. You'll get a simplier
+API (such as doWork(Workload workload), rather than a tedious series of Strings) and more importantly, if you need at some
+point to pass extra data, you'll be able to do so by simply modifying or extending Workload without any modification to
+your API.
+    ]]>
+    </info>
+    <name>Rather than using a lot of String arguments, consider using a container object for those values.</name>
+  </findingType>
+  <findingType>
+    <id>LoosePackageCoupling</id>
+    <artifact tool="PMD"	mnemonic="LoosePackageCoupling"/>
+    <shortMessage>Use of ''{0}'' outside of package hierarchy ''{1}'' is not recommended; use recommended classes instead</shortMessage>
+    <info>
+      <![CDATA[
+Avoid using classes from the configured package hierarchy outside of the package hierarchy, 
+except when using one of the configured allowed classes.
+      ]]>
+    </info>
+    <name>Use of ''{0}'' outside of package hierarchy ''{1}'' is not recommended; use recommended classes instead</name>
+  </findingType>
+  <findingType>
+    <id>LawOfDemeter</id>
+    <artifact tool="PMD"	mnemonic="LawOfDemeter"/>
+    <shortMessage>Potential violation of Law of Demeter</shortMessage>
+    <info>
+      <![CDATA[
+The Law of Demeter is a simple rule, that says "only talk to friends". It helps to reduce coupling between classes or objects. 
+See also the references:
+Andrew Hunt, David Thomas, and Ward Cunningham. The Pragmatic Programmer. From Journeyman to Master. Addison-Wesley Longman, Amsterdam, October 1999.;
+K.J. Lieberherr and I.M. Holland. Assuring good style for object-oriented programs. Software, IEEE, 6(5):38–48, 1989.;
+http://www.ccs.neu.edu/home/lieber/LoD.html;
+http://en.wikipedia.org/wiki/Law_of_Demeter
+        ]]>
+    </info>
+    <name>Potential violation of Law of Demeter</name>
+  </findingType>
+  <findingType>
+    <id>LogicInversion</id>
+    <artifact tool="PMD"	mnemonic="LogicInversion"/>
+    <shortMessage>Use opposite operator instead of the logic complement operator.</shortMessage>
+    <info>
+      <![CDATA[
+Use opposite operator instead of negating the whole expression with a logic complement operator.
+	]]>
+    </info>
+    <name>Use opposite operator instead of the logic complement operator.</name>
+  </findingType>
+  <findingType>
+    <id>UseVarargs</id>
+    <artifact tool="PMD"	mnemonic="UseVarargs"/>
+    <shortMessage>Consider using varargs for methods or constructors which take an array the last parameter.</shortMessage>
+    <info>
+      <![CDATA[
+Java 5 introduced the varargs parameter declaration for methods and constructors.  This syntactic 
+sugar provides flexibility for users of these methods and constructors, allowing them to avoid 
+having to deal with the creation of an array.
+]]>
+    </info>
+    <name>Consider using varargs for methods or constructors which take an array the last parameter.</name>
+  </findingType>
+  <findingType>
+    <id>FieldDeclarationsShouldBeAtStartOfClass</id>
+    <artifact tool="PMD"	mnemonic="FieldDeclarationsShouldBeAtStartOfClass"/>
+    <shortMessage>Fields should be declared at the top of the class, before any method declarations, constructors, initializers or inner classes.</shortMessage>
+    <info>
+      <![CDATA[
+Fields should be declared at the top of the class, before any method declarations, constructors, initializers or inner classes.
+    ]]>
+    </info>
+    <name>Fields should be declared at the top of the class, before any method declarations, constructors, initializers or inner classes.</name>
+  </findingType>
+  <findingType>
+    <id>GodClass</id>
+    <artifact tool="PMD"	mnemonic="GodClass"/>
+    <shortMessage>Possible God class</shortMessage>
+    <info>
+      <![CDATA[
+The God Class rule detects the God Class design flaw using metrics. God classes do too many things,
+are very big and overly complex. They should be split apart to be more object-oriented.
+The rule uses the detection strategy described in "Object-Oriented Metrics in Practice".
+The violations are reported against the entire class. See also the references:
+Michele Lanza and Radu Marinescu. Object-Oriented Metrics in Practice:
+Using Software Metrics to Characterize, Evaluate, and Improve the Design
+of Object-Oriented Systems. Springer, Berlin, 1 edition, October 2006. Page 80.
+        ]]>
+    </info>
+    <name>Possible God class</name>
+  </findingType>
+  <findingType>
+    <id>EmptyStatementBlock</id>
+    <artifact tool="PMD"	mnemonic="EmptyStatementBlock"/>
+    <shortMessage>Avoid empty block statements.</shortMessage>
+    <info>
+      <![CDATA[
+Empty block statements serve no purpose and should be removed.
+	]]>
+    </info>
+    <name>Avoid empty block statements.</name>
+  </findingType>
+  <findingType>
+    <id>UnnecessaryFullyQualifiedName</id>
+    <artifact tool="PMD"	mnemonic="UnnecessaryFullyQualifiedName"/>
+    <shortMessage>Unnecessary use of fully qualified name ''{0}'' due to existing import ''{1}''</shortMessage>
+    <info>
+      <![CDATA[
+Import statements allow the use of non-fully qualified names.  The use of a fully qualified name
+which is covered by an import statement is redundant.  Consider using the non-fully qualified name.
+		 ]]>
+    </info>
+    <name>Unnecessary use of fully qualified name ''{0}'' due to existing import ''{1}''</name>
+  </findingType>
+  <findingType>
+    <id>JUnitTestContainsTooManyAsserts</id>
+    <artifact tool="PMD"	mnemonic="JUnitTestContainsTooManyAsserts"/>
+    <shortMessage>JUnit tests should not contain more than ${maximumAsserts} assert(s).</shortMessage>
+    <info>
+      <![CDATA[
+JUnit tests should not contain too many asserts.  Many asserts are indicative of a complex test, for which 
+it is harder to verify correctness.  Consider breaking the test scenario into multiple, shorter test scenarios.  
+Customize the maximum number of assertions used by this Rule to suit your needs.
+		]]>
+    </info>
+    <name>JUnit tests should not contain more than ${maximumAsserts} assert(s).</name>
+  </findingType>
+  <findingType>
+    <id>UseAssertTrueInsteadOfAssertEquals</id>
+    <artifact tool="PMD"	mnemonic="UseAssertTrueInsteadOfAssertEquals"/>
+    <shortMessage>Use assertTrue(x)/assertFalse(x) instead of assertEquals(true, x)/assertEquals(false, x).</shortMessage>
+    <info>
+      <![CDATA[
+When asserting a value is the same as a boolean literal, use assertTrue/assertFalse, instead of assertEquals.
+		]]>
+    </info>
+    <name>Use assertTrue(x)/assertFalse(x) instead of assertEquals(true, x)/assertEquals(false, x).</name>
+  </findingType>
+  <findingType>
+    <id>ShortClassName</id>
+    <artifact tool="PMD"	mnemonic="ShortClassName"/>
+    <shortMessage>A Classname should have a minimum of five characters</shortMessage>
+    <info>
+      <![CDATA[
+        	
+Classnames with fewer than five characters are not recommended.
+			
+        ]]>
+    </info>
+    <name>A Classname should have a minimum of five characters</name>
+  </findingType>
+  <findingType>
+    <id>RedundantFieldInitializer</id>
+    <artifact tool="PMD"	mnemonic="RedundantFieldInitializer"/>
+    <shortMessage>Avoid using redundant field initializer for ''${variableName}''</shortMessage>
+    <info>
+      <![CDATA[
+Java will initialize fields with known default values so any explicit initialization of those same defaults
+is redundant and results in a larger class file (approximately three additional bytecode instructions per field).
+		]]>
+    </info>
+    <name>Avoid using redundant field initializer for ''${variableName}''</name>
+  </findingType>
+  <findingType>
+    <id>PrematureDeclaration</id>
+    <artifact tool="PMD"	mnemonic="PrematureDeclaration"/>
+    <shortMessage>Avoid declaring a variable if it is unreferenced before a possible exit point.</shortMessage>
+    <info>
+      <![CDATA[
+Checks for variables that are defined before they might be used. A reference is deemed to be premature if it is created right before a block of code that doesn't use it that also has the ability to return or throw an exception.
+		]]>
+    </info>
+    <name>Avoid declaring a variable if it is unreferenced before a possible exit point.</name>
+  </findingType>
+  <findingType>
+    <id>UselessParentheses</id>
+    <artifact tool="PMD"	mnemonic="UselessParentheses"/>
+    <shortMessage>Useless parentheses.</shortMessage>
+    <info>
+      <![CDATA[Useless parentheses should be removed.]]>
+    </info>
+    <name>Useless parentheses.</name>
+  </findingType>
+  
+  <!-- - PMD 5.1.1 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+  <findingType>
+    <id>UseUtilityClass</id>
+    <artifact tool="PMD"	mnemonic="UseUtilityClass"/>
+    <shortMessage>All methods are static.  Consider using a utility class instead. Alternatively, you could add a private constructor or make the class abstract to silence this warning.</shortMessage>
+    <info>
+      <![CDATA[
+    	
+For classes that only have static methods, consider making them utility classes.
+Note that this doesn't apply to abstract classes, since their subclasses may
+well include non-static methods.  Also, if you want this class to be a utility class,
+remember to add a private constructor to prevent instantiation.
+(Note, that this use was known before PMD 5.1.0 as UseSingleton).
+		
+    ]]>
+    </info>
+    <name>All methods are static.  Consider using a utility class instead. Alternatively, you could add a private constructor or make the class abstract to silence this warning.</name>
+  </findingType>
+  <findingType>
+    <id>PositionLiteralsFirstInCaseInsensitiveComparisons</id>
+    <artifact tool="PMD"	mnemonic="PositionLiteralsFirstInCaseInsensitiveComparisons"/>
+    <shortMessage>Position literals first in String comparisons for EqualsIgnoreCase</shortMessage>
+    <info>
+      <![CDATA[
+Position literals first in comparisons, if the second argument is null then NullPointerExceptions 
+can be avoided, they will just return false.
+  ]]>
+    </info>
+    <name>Position literals first in String comparisons for EqualsIgnoreCase</name>
+  </findingType>
+  <findingType>
+    <id>AvoidProtectedMethodInFinalClassNotExtending</id>
+    <artifact tool="PMD"	mnemonic="AvoidProtectedMethodInFinalClassNotExtending"/>
+    <shortMessage>Avoid protected methods in a final class that doesn't extend anything other than Object.  Change to private or package access.</shortMessage>
+    <info>
+      <![CDATA[
+Do not use protected methods in most final classes since they cannot be subclassed. This should 
+only be allowed in final classes that extend other classes with protected methods (whose
+visibility cannot be reduced). Clarify your intent by using private or package access modifiers instead.
+         ]]>
+    </info>
+    <name>Avoid protected methods in a final class that doesn't extend anything other than Object.  Change to private or package access.</name>
+  </findingType>
+  <findingType>
+    <id>GuardLogStatement</id>
+    <artifact tool="PMD"	mnemonic="GuardLogStatement"/>
+    <shortMessage>There is log block not surrounded by if</shortMessage>
+    <info>
+      <![CDATA[
+Whenever using a log level, one should check if the loglevel is actually enabled, or
+otherwise skip the associate String creation and manipulation.
+     ]]>
+    </info>
+    <name>There is log block not surrounded by if</name>
+  </findingType>
+  <findingType>
+    <id>GuardLogStatementJavaUtil</id>
+    <artifact tool="PMD"	mnemonic="GuardLogStatementJavaUtil"/>
+    <shortMessage>There is log block not surrounded by if</shortMessage>
+    <info>
+      <![CDATA[
+Whenever using a log level, one should check if the loglevel is actually enabled, or
+otherwise skip the associate String creation and manipulation.
+     ]]>
+    </info>
+    <name>There is log block not surrounded by if</name>
+  </findingType>
+  <findingType>
+    <id>ConsecutiveAppendsShouldReuse</id>
+    <artifact tool="PMD"	mnemonic="ConsecutiveAppendsShouldReuse"/>
+    <shortMessage>StringBuffer (or StringBuilder).append is called consecutively without reusing the target variable.</shortMessage>
+    <info>
+      <![CDATA[
+Consecutively calls to StringBuffer/StringBuilder .append should reuse the target object. This can improve the performance.
+    ]]>
+    </info>
+    <name>StringBuffer (or StringBuilder).append is called consecutively without reusing the target variable.</name>
+  </findingType>
+
+  <!-- - END - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->  
 </findingTypes>

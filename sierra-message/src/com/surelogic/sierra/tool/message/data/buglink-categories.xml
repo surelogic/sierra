@@ -10,6 +10,34 @@
 			questionable designs.
 		</info>
         <filter>
+            <type>UseUtilityClass</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>PositionLiteralsFirstInCaseInsensitiveComparisons</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>AvoidProtectedMethodInFinalClassNotExtending</type>
+            <filtered>false</filtered>
+        </filter>		
+        <filter>
+            <type>LogicInversion</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>UseVarargs</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>FieldDeclarationsShouldBeAtStartOfClass</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>GodClass</type>
+            <filtered>false</filtered>
+        </filter>		
+        <filter>
             <type>CloseResource</type>
             <filtered>false</filtered>
         </filter>
@@ -227,6 +255,18 @@
 			but most people really dislike :-)
 		</info>
         <filter>
+            <type>OneDeclarationPerLine</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>AvoidPrefixingMethodParameters</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>UseObjectForClearerAPI</type>
+            <filtered>false</filtered>
+        </filter>		
+        <filter>
             <type>AtLeastOneConstructor</type>
             <filtered>false</filtered>
         </filter>
@@ -354,6 +394,10 @@
 			manipulation of the class String or StringBuffer.
 		</info>
         <filter>
+            <type>ConsecutiveAppendsShouldReuse</type>
+            <filtered>false</filtered>
+        </filter>		
+        <filter>
             <type>AppendCharacterWithChar</type>
             <filtered>false</filtered>
         </filter>
@@ -415,6 +459,14 @@
 			These rules deal with different optimizations that generally
 			apply to performance best practices.
 		</info>
+        <filter>
+            <type>RedundantFieldInitializer</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>PrematureDeclaration</type>
+            <filtered>false</filtered>
+        </filter>		
         <filter>
             <type>AvoidArrayLoops</type>
             <filtered>false</filtered>
@@ -803,6 +855,10 @@
             <type>LoggerIsNotStaticFinal</type>
             <filtered>false</filtered>
         </filter>
+        <filter>
+            <type>GuardLogStatementJavaUtil</type>
+            <filtered>false</filtered>
+        </filter>        
     </filterSets>
     <filterSets>
         <uid>6e58ba42-e673-47c2-aff0-1b4c2e33a1e5</uid>
@@ -868,6 +924,10 @@
 			a class' import statements.
 		</info>
         <filter>
+            <type>UnnecessaryFullyQualifiedName</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
             <type>UnusedImports</type>
             <filtered>false</filtered>
         </filter>
@@ -897,6 +957,22 @@
 			The Basic Ruleset contains a collection of good practices
 			which everyone should follow.
 		</info>
+        <filter>
+            <type>ExtendsObject</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>CheckSkipResult</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>AvoidBranchingStatementAsLastInLoop</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>DontUseFloatTypeForLoopIndices</type>
+            <filtered>false</filtered>
+        </filter>		
         <filter>
             <type>EmptyIfStmt</type>
             <filtered>false</filtered>
@@ -1712,6 +1788,10 @@
             <type>ProperLogger</type>
             <filtered>false</filtered>
         </filter>
+        <filter>
+            <type>GuardLogStatement</type>
+            <filtered>false</filtered>
+        </filter>        
     </filterSets>
     <filterSets>
         <uid>b52a2ac5-751e-4d1a-a93a-872fa6b82103</uid>
@@ -1781,6 +1861,14 @@
             <type>CouplingBetweenObjects</type>
             <filtered>false</filtered>
         </filter>
+        <filter>
+            <type>LoosePackageCoupling</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>LawOfDemeter</type>
+            <filtered>false</filtered>
+        </filter>        
     </filterSets>
     <filterSets>
         <uid>c27440b2-e83b-4882-8e98-e920fc9a3f43</uid>
@@ -1791,6 +1879,10 @@
 			The Naming Ruleset contains a collection of rules about
 			names - too long, too short, and so forth.
 		</info>
+        <filter>
+            <type>ShortClassName</type>
+            <filtered>false</filtered>
+        </filter>		
         <filter>
             <type>MisleadingVariableName</type>
             <filtered>false</filtered>
@@ -1853,6 +1945,14 @@
 			These rules deal with different problems that can occur with
 			JUnit tests.
 		</info>
+        <filter>
+            <type>JUnitTestContainsTooManyAsserts</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>UseAssertTrueInsteadOfAssertEquals</type>
+            <filtered>false</filtered>
+        </filter>		
         <filter>
             <type>UnnecessaryBooleanAssertion</type>
             <filtered>false</filtered>
