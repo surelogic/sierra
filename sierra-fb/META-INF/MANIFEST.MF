@@ -58,10 +58,11 @@ Export-Package: edu.umd.cs.findbugs,
 Bundle-Vendor: SureLogic, Inc.
 Require-Bundle: com.surelogic.common,
  com.surelogic.sierra.message,
- com.surelogic.sierra.tool
+ com.surelogic.sierra.tool,
+ org.eclipse.jdt.core
 Sierra-Tool: com.surelogic.sierra.tool.findbugs.FindBugsToolFactory
 Sierra-Id: FindBugs
 Sierra-Website: findbugs.sourceforge.net
 Sierra-Description: A static analysis tool created at University of Maryland 
   for finding bugs in Java code.
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6

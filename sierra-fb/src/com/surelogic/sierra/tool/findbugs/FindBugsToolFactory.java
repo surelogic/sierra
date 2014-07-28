@@ -8,6 +8,9 @@ import java.util.jar.*;
 import java.util.logging.Level;
 import java.util.zip.*;
 
+import org.apache.commons.lang3.SystemUtils;
+import org.eclipse.jdt.core.IJavaProject;
+
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.tool.*;
 import com.surelogic.sierra.tool.analyzer.ILazyArtifactGenerator;
@@ -24,6 +27,14 @@ public class FindBugsToolFactory extends AbstractToolFactory {
 //	public String getVersion() {
 //		return "1.3.7"/*Version.RELEASE_BASE*/;
 //	}
+	
+	@Override
+	public String isRunnableOn(IJavaProject p) {
+		if (SystemUtils.IS_JAVA_1_7 || SystemUtils.IS_JAVA_1_8) {
+			return super.isRunnableOn(p);
+		}
+		return getName()+' '+getVersion()+" requires Java 7 or above to run";
+	}
 	
 	@Override
 	public void init(File toolHome, File pluginDir) {
@@ -43,6 +54,9 @@ public class FindBugsToolFactory extends AbstractToolFactory {
 //	@Override
 	@Override
   public final Collection<IToolExtension> getExtensions() {
+		if (!isActive()) {
+			return Collections.emptyList();
+		}
 		List<IToolExtension> extensions = new ArrayList<IToolExtension>();
 
 		// Code to get meta-data from FindBugs

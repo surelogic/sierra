@@ -38,7 +38,8 @@ Export-Package: net.sourceforge.pmd,
  net.sourceforge.pmd.util.viewer.util
 Require-Bundle: com.surelogic.common,
  com.surelogic.sierra.message,
- com.surelogic.sierra.tool
+ com.surelogic.sierra.tool,
+ org.eclipse.jdt.core
 Sierra-Tool: com.surelogic.sierra.tool.pmd.PMDToolFactory,
  com.surelogic.sierra.tool.pmd.CPDToolFactory
 Bundle-Vendor: SureLogic, Inc.

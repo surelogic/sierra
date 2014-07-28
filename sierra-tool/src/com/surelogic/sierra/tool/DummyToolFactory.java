@@ -3,6 +3,8 @@ package com.surelogic.sierra.tool;
 import java.io.File;
 import java.util.*;
 
+import org.eclipse.jdt.core.IJavaProject;
+
 import com.surelogic.sierra.tool.analyzer.ILazyArtifactGenerator;
 import com.surelogic.sierra.tool.message.Config;
 
@@ -61,5 +63,13 @@ final class DummyToolFactory implements IToolFactory {
 
 	public Collection<File> getRequiredJars(Config config) {
 		return Collections.emptyList();
+	}
+	
+	public String isRunnableOn(IJavaProject p) {
+		return null;
+	}
+	
+	public void deactivate(Throwable e) {
+		// nothing to do
 	}
 }

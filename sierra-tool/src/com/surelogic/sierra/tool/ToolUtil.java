@@ -132,7 +132,11 @@ public class ToolUtil {
 						out.println("Considering factory "+f);
 					}
 					if (all || f.isProduction()) {
-						f.init(home, dir);
+						try { 
+							f.init(home, dir);
+						} catch(Throwable e) {
+							f.deactivate(e);
+						}
 						factories.add(f);
 						if (out != null) {
 							out.println("Added factory "+f.getName());
@@ -242,6 +246,7 @@ public class ToolUtil {
 		temp.add(AbstractLocalSLJob.COMMON_PLUGIN_ID);
 		temp.add(SierraToolConstants.TOOL_PLUGIN_ID);
 		temp.add(SierraToolConstants.MESSAGE_PLUGIN_ID);
+		temp.add(SierraToolConstants.JDT_CORE_PLUGIN_ID);
 		EXPECTED_DEPS = Collections.unmodifiableSet(temp);
 	}
 
