@@ -7,6 +7,8 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.eclipse.jdt.core.IJavaProject;
+
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.tool.analyzer.ILazyArtifactGenerator;
 import com.surelogic.sierra.tool.analyzer.LazyZipArtifactGenerator;
@@ -27,9 +29,22 @@ public abstract class AbstractToolFactory implements IToolFactory {
 	
 	private File pluginDir;
 	private ToolInfo info;
+	private Throwable initError;
 	
 	public boolean isProduction() {
-		return true;
+		return isActive();
+	}
+
+	public void deactivate(Throwable e) {
+		initError = e;
+	}
+	
+	protected boolean isActive() {
+		return initError == null;
+	}
+	
+	public String isRunnableOn(IJavaProject p) {
+		return initError != null ? initError.getMessage() : null;
 	}
 	
 	public void init(File toolHome, File pluginDir) {

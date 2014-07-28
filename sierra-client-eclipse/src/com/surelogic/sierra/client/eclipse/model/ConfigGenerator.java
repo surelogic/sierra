@@ -44,6 +44,8 @@ import com.surelogic.common.jobs.remote.AbstractRemoteSLJob;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.common.tool.SureLogicToolsFilter;
 import com.surelogic.common.tool.SureLogicToolsPropertiesUtility;
+import com.surelogic.common.ui.BalloonUtility;
+
 import static com.surelogic.common.tool.SureLogicToolsPropertiesUtility.*;
 import com.surelogic.sierra.client.eclipse.Tools;
 import com.surelogic.sierra.client.eclipse.preferences.SierraPreferencesUtility;
@@ -411,13 +413,19 @@ public final class ConfigGenerator {
     f_numberofExcludedTools = 0;
 
     for (IToolFactory f : Tools.findToolFactories()) {
-      if (!SierraPreferencesUtility.runTool(f) || "Checkstyle".equals(f.getId())) {
+      final String explanation = f.isRunnableOn(javaProject);
+      if (explanation != null || !SierraPreferencesUtility.runTool(f) || "Checkstyle".equals(f.getId())) {
         // Only need to add a comma if this isn't the first one
         if (f_numberofExcludedTools != 0) {
           excludedTools.append(", ");
         }
         excludedTools.append(f.getId());
         f_numberofExcludedTools++;
+        
+        if (explanation != null) {
+        	BalloonUtility.showMessage("Unable to run "+f.getName()+" on "+javaProject.getElementName(), 
+        			                   explanation+"\n.  Sierra will attempt a scan without "+f.getName());
+        }
       } else {
         for (final IToolExtension t : f.getExtensions()) {
           /*

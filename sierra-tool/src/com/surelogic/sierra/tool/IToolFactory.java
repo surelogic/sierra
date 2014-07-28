@@ -3,6 +3,8 @@ package com.surelogic.sierra.tool;
 import java.io.File;
 import java.util.*;
 
+import org.eclipse.jdt.core.IJavaProject;
+
 import com.surelogic.sierra.tool.analyzer.ILazyArtifactGenerator;
 import com.surelogic.sierra.tool.message.Config;
 
@@ -68,4 +70,14 @@ public interface IToolFactory {
 	 * Creates an instance of the tool to do one scan
 	 */
 	IToolInstance create(Config config, ILazyArtifactGenerator gen);
+	
+	/**
+	 * @return the explanation as to why the tool cannot be run on this particular project
+	 */
+	String isRunnableOn(IJavaProject p);
+	
+	/**
+	 * Deactivate this factory due to some error in initialization
+	 */
+	void deactivate(Throwable e);
 }
