@@ -17,28 +17,30 @@ import com.surelogic.sierra.client.eclipse.model.DatabaseHub;
 
 public final class DeleteDatabaseJob extends AbstractSierraDatabaseJob {
 
-	public DeleteDatabaseJob() {
-		super("Deleting Sierra database.");
-	}
+    public DeleteDatabaseJob() {
+        super("Deleting Sierra database.");
+    }
 
-	@Override
-	protected IStatus run(final IProgressMonitor monitor) {
-		final SLProgressMonitor slMonitor = new SLProgressMonitorWrapper(
-				monitor, "Deleting the Sierra database from the file system.");
-		slMonitor.begin();
-		ConnectedServerManager.getInstance().clear();
-		// Projects.getInstance().clear();
-		Data.getInstance().destroy();
-		try {
-			Data.getInstance().bootAndCheckSchema();
-		} catch (Exception e) {
-			final int code = 171;
-			final String msg = I18N.err(code);
-			SLLogger.getLogger().log(Level.SEVERE, msg, e);
-			return SLEclipseStatusUtility.createErrorStatus(code, msg, e);
-		}
-		DatabaseHub.getInstance().notifyDatabaseDeleted();
-		SLLogger.getLogger().info("The client database has been deleted");
-		return Status.OK_STATUS;
-	}
+    @Override
+    protected IStatus run(final IProgressMonitor monitor) {
+        final SLProgressMonitor slMonitor = new SLProgressMonitorWrapper(
+                monitor, "Deleting the Sierra database from the file system.");
+        slMonitor.begin();
+        ConnectedServerManager.getInstance().clear();
+        // Projects.getInstance().clear();
+        Data.getInstance().destroy();
+        try {
+            Data.getInstance().bootAndCheckSchema();
+            // Tools.checkForNewArtifactTypes();
+        } catch (Exception e) {
+            final int code = 171;
+            final String msg = I18N.err(code);
+            SLLogger.getLogger().log(Level.SEVERE, msg, e);
+            return SLEclipseStatusUtility.createErrorStatus(code, msg, e);
+        }
+        DatabaseHub.getInstance().notifyDatabaseDeleted();
+        SLLogger.getLogger().info("The client database has been deleted");
+        return Status.OK_STATUS;
+    }
+
 }
