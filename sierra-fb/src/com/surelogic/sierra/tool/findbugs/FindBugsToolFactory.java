@@ -33,7 +33,8 @@ public class FindBugsToolFactory extends AbstractToolFactory {
 		if (SystemUtils.IS_JAVA_1_7 || SystemUtils.IS_JAVA_1_8) {
 			return super.isRunnableOn(p);
 		}
-		return getName()+' '+getVersion()+" requires Java 7 or above to run";
+		return getName()+' '+getVersion()+" requires Java 7 or above to run, but it is being run on Java "+
+		       System.getProperty("java.version");
 	}
 	
 	@Override
