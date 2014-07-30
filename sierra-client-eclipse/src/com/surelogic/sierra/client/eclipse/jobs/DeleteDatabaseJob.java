@@ -12,6 +12,7 @@ import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.jobs.SLProgressMonitor;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.client.eclipse.Data;
+import com.surelogic.sierra.client.eclipse.Tools;
 import com.surelogic.sierra.client.eclipse.model.ConnectedServerManager;
 import com.surelogic.sierra.client.eclipse.model.DatabaseHub;
 
@@ -31,7 +32,7 @@ public final class DeleteDatabaseJob extends AbstractSierraDatabaseJob {
         Data.getInstance().destroy();
         try {
             Data.getInstance().bootAndCheckSchema();
-            // Tools.checkForNewArtifactTypes();
+            Tools.checkForNewArtifactTypes();
         } catch (Exception e) {
             final int code = 171;
             final String msg = I18N.err(code);

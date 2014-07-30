@@ -1,6 +1,34 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <listCategoryResponse>
-    <filterSets>
+  <filterSets>
+    <uid>d4ed6250-181e-11e4-8c21-0800200c9a66</uid>
+    <owner>9a997ac4-ec2b-4d02-869a-423999fecfed</owner>
+    <revision>0</revision>
+    <name>Android</name>
+    <info>Rules specific to Android applications</info>
+        <filter>
+            <type>CallSuperFirst</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>CallSuperLast</type>
+            <filtered>false</filtered>
+        </filter>    
+        <filter>
+            <type>ProtectLogD</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>ProtectLogV</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>DoNotHardCodeSDCard</type>
+            <filtered>false</filtered>
+        </filter>
+  </filterSets>
+
+  <filterSets>
         <uid>040502eb-f9d6-4041-9cdd-2206c73f30d0</uid>
         <owner>9a997ac4-ec2b-4d02-869a-423999fecfed</owner>
         <revision>0</revision>
@@ -38,19 +66,11 @@
             <filtered>false</filtered>
         </filter>		
         <filter>
-            <type>CloseResource</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
             <type>UseCollectionIsEmpty</type>
             <filtered>false</filtered>
         </filter>
         <filter>
             <type>AbstractClassWithoutAnyMethod</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>UseLocaleWithCaseConversions</type>
             <filtered>false</filtered>
         </filter>
         <filter>
@@ -62,27 +82,11 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>UnsynchronizedStaticDateFormatter</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
             <type>MissingStaticMethodInNonInstantiatableClass</type>
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>OptimizableToArrayCall</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
             <type>AvoidSynchronizedAtMethodLevel</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>BadComparison</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>MissingBreakInSwitch</type>
             <filtered>false</filtered>
         </filter>
         <filter>
@@ -95,10 +99,6 @@
         </filter>
         <filter>
             <type>DefaultLabelNotLastInSwitchStmt</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>IdempotentOperations</type>
             <filtered>false</filtered>
         </filter>
         <filter>
@@ -122,10 +122,6 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>FinalFieldCouldBeStatic</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
             <type>UseSingleton</type>
             <filtered>false</filtered>
         </filter>
@@ -143,10 +139,6 @@
         </filter>
         <filter>
             <type>NonStaticInitializer</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>SimplifyBooleanReturns</type>
             <filtered>false</filtered>
         </filter>
         <filter>
@@ -225,10 +217,6 @@
 			http://java.sun.com/security/seccodeguide.html#gcg
 		</info>
         <filter>
-            <type>MethodReturnsInternalArray</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
             <type>ArrayIsStoredDirectly</type>
             <filtered>false</filtered>
         </filter>
@@ -254,6 +242,62 @@
 			discussions over UnnecessaryConstructorRule which Tom likes
 			but most people really dislike :-)
 		</info>
+        <filter>
+            <type>OBL_UNSATISFIED_OBLIGATION_EXCEPTION_EDGE</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>UseConcurrentHashMap</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>AvoidLiteralsInIfCondition</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>LG_LOST_LOGGER_DUE_TO_WEAK_REFERENCE</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>TESTING</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>TESTING1</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>TESTING3</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>TESTING2</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>IGNORE</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>NOISE_NULL_DEREFERENCE</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>NOISE_METHOD_CALL</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>NOISE_FIELD_REFERENCE</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>NOISE_OPERATION</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>OBL_UNSATISFIED_OBLIGATION</type>
+            <filtered>false</filtered>
+        </filter>
         <filter>
             <type>OneDeclarationPerLine</type>
             <filtered>false</filtered>
@@ -296,10 +340,6 @@
         </filter>
         <filter>
             <type>AvoidAccessibilityAlteration</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>AvoidFinalLocalVariable</type>
             <filtered>false</filtered>
         </filter>
         <filter>
@@ -365,6 +405,10 @@
         <info>
 			code flaws having to do with internationalization and locale
 		</info>
+        <filter>
+            <type>DM_DEFAULT_ENCODING</type>
+            <filtered>false</filtered>
+        </filter> 
         <filter>
             <type>DM_CONVERT_CASE</type>
             <filtered>false</filtered>
@@ -442,10 +486,6 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>StringToString</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
             <type>InefficientEmptyStringCheck</type>
             <filtered>false</filtered>
         </filter>
@@ -518,6 +558,30 @@
 			practices.
 		</info>
         <filter>
+            <type>PZ_DONT_REUSE_ENTRY_OBJECTS_IN_ITERATORS</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>DMI_ENTRY_SETS_MAY_REUSE_ENTRY_OBJECTS</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>VA_FORMAT_STRING_USES_NEWLINE</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>RV_NEGATING_RESULT_OF_COMPARETO</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>EQ_CHECK_FOR_OPERAND_NOT_COMPATIBLE_WITH_THIS</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>GC_UNCHECKED_TYPE_IN_GENERIC_CALL</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
             <type>CNT_ROUGH_CONSTANT_VALUE</type>
             <filtered>false</filtered>
         </filter>		
@@ -575,10 +639,6 @@
         </filter>
        <filter>
             <type>SI_INSTANCE_BEFORE_FINALS_ASSIGNED</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>OS_OPEN_STREAM</type>
             <filtered>false</filtered>
         </filter>
         <filter>
@@ -642,10 +702,6 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>NM_FUTURE_KEYWORD_USED_AS_MEMBER_IDENTIFIER</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
             <type>FI_USELESS</type>
             <filtered>false</filtered>
         </filter>
@@ -675,10 +731,6 @@
         </filter>
         <filter>
             <type>HE_INHERITS_EQUALS_USE_HASHCODE</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>WrongPackageIntentional</type>
             <filtered>false</filtered>
         </filter>
         <filter>
@@ -738,15 +790,7 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>SameSimpleNameAsSuperclass</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
             <type>RR_NOT_CHECKED</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>OS_OPEN_STREAM_EXCEPTION_PATH</type>
             <filtered>false</filtered>
         </filter>
         <filter>
@@ -775,10 +819,6 @@
         </filter>
         <filter>
             <type>SE_NONFINAL_SERIALVERSIONID</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>ODR_OPEN_DATABASE_RESOURCE</type>
             <filtered>false</filtered>
         </filter>
         <filter>
@@ -839,6 +879,10 @@
 			The Java Logging ruleset contains a collection of rules that
 			find questionable usages of the logger.
 		</info>
+        <filter>
+            <type>GuardDebugLogging</type>
+            <filtered>false</filtered>
+        </filter>
         <filter>
             <type>AvoidPrintStackTrace</type>
             <filtered>false</filtered>
@@ -940,10 +984,6 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>ImportFromSamePackage</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
             <type>DontImportJavaLang</type>
             <filtered>false</filtered>
         </filter>
@@ -957,6 +997,14 @@
 			The Basic Ruleset contains a collection of good practices
 			which everyone should follow.
 		</info>
+        <filter>
+            <type>DontCallThreadRun</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>EmptyInitializer</type>
+            <filtered>false</filtered>
+        </filter>
         <filter>
             <type>ExtendsObject</type>
             <filtered>false</filtered>
@@ -1010,19 +1058,11 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>OverrideBothEqualsAndHashcode</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
             <type>EmptyCatchBlock</type>
             <filtered>false</filtered>
         </filter>
         <filter>
             <type>AvoidUsingOctalValues</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>UnnecessaryConversionTemporary</type>
             <filtered>false</filtered>
         </filter>
         <filter>
@@ -1046,14 +1086,6 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>ClassCastExceptionWithToArray</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>DoubleCheckedLocking</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
             <type>UselessOverridingMethod</type>
             <filtered>false</filtered>
         </filter>
@@ -1063,14 +1095,6 @@
         </filter>
         <filter>
             <type>UnnecessaryReturn</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>EmptyStaticInitializer</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>BooleanInstantiation</type>
             <filtered>false</filtered>
         </filter>
         <filter>
@@ -1148,15 +1172,7 @@
 			wrapper ruleset such as migrating_to_13.xml.
 		</info>
         <filter>
-            <type>JUnitUseExpected</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
             <type>JUnit4TestShouldUseAfterAnnotation</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>ByteInstantiation</type>
             <filtered>false</filtered>
         </filter>
         <filter>
@@ -1164,23 +1180,7 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>AvoidEnumAsIdentifier</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>ShortInstantiation</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
             <type>ReplaceEnumerationWithIterator</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>LongInstantiation</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>AvoidAssertAsIdentifier</type>
             <filtered>false</filtered>
         </filter>
         <filter>
@@ -1191,10 +1191,7 @@
             <type>ReplaceHashtableWithMap</type>
             <filtered>false</filtered>
         </filter>
-        <filter>
-            <type>ReplaceVectorWithList</type>
-            <filtered>false</filtered>
-        </filter>
+
         <filter>
             <type>JUnit4TestShouldUseTestAnnotation</type>
             <filtered>false</filtered>
@@ -1211,9 +1208,141 @@
 			for a low false positive rate.
 		</info>
         <filter>
+            <type>DMI_DOH</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>ICAST_INT_2_LONG_AS_INSTANT</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>INT_BAD_COMPARISON_WITH_INT_VALUE</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>SA_LOCAL_SELF_ASSIGNMENT_INSTEAD_OF_FIELD</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>RV_CHECK_COMPARETO_FOR_SPECIFIC_RETURN_VALUE</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>DMI_ARGUMENTS_WRONG_ORDER</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>CO_COMPARETO_RESULTS_MIN_VALUE</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>DMI_BIGDECIMAL_CONSTRUCTED_FROM_DOUBLE</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>FB_UNEXPECTED_WARNING</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>FB_MISSING_EXPECTED_WARNING</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>VA_FORMAT_STRING_BAD_CONVERSION</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>VA_FORMAT_STRING_BAD_CONVERSION_TO_BOOLEAN</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>VA_FORMAT_STRING_BAD_CONVERSION_FROM_ARRAY</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>VA_FORMAT_STRING_NO_PREVIOUS_ARGUMENT</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>VA_FORMAT_STRING_BAD_ARGUMENT</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>VA_FORMAT_STRING_MISSING_ARGUMENT</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>VA_FORMAT_STRING_ILLEGAL</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>VA_FORMAT_STRING_EXTRA_ARGUMENTS_PASSED</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>BIT_ADD_OF_SIGNED_BYTE</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>DMI_INVOKING_HASHCODE_ON_ARRAY</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>DMI_USING_REMOVEALL_TO_CLEAR_COLLECTION</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>DMI_VACUOUS_SELF_COLLECTION_CALL</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>DMI_COLLECTIONS_SHOULD_NOT_CONTAIN_THEMSELVES</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>TQ_EXPLICIT_UNKNOWN_SOURCE_VALUE_REACHES_NEVER_SINK</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>TQ_EXPLICIT_UNKNOWN_SOURCE_VALUE_REACHES_ALWAYS_SINK</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>RpC_REPEATED_CONDITIONAL_TEST</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>DMI_FUTILE_ATTEMPT_TO_CHANGE_MAXPOOL_SIZE_OF_SCHEDULED_THREAD_POOL_EXECUTOR</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>DMI_SCHEDULED_THREAD_POOL_EXECUTOR_WITH_ZERO_CORE_THREADS</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>MWN_MISMATCHED_NOTIFY</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>MWN_MISMATCHED_WAIT</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>EC_NULL_ARG</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>HE_SIGNATURE_DECLARES_HASHING_OF_UNHASHABLE_CLASS</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
             <type>NP_OPTIONAL_RETURN_NULL</type>
             <filtered>false</filtered>
         </filter>		
+        <filter>
+            <type>DMI_VACUOUS_CALL_TO_EASYMOCK_METHOD</type>
+            <filtered>false</filtered>
+        </filter>
         <filter>
             <type>NP_NONNULL_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR</type>
             <filtered>false</filtered>
@@ -1275,10 +1404,6 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>UCF_USELESS_CONTROL_FLOW_NEXT_LINE</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
             <type>NP_NONNULL_PARAM_VIOLATION</type>
             <filtered>false</filtered>
         </filter>
@@ -1307,19 +1432,11 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>SA_FIELD_SELF_COMPARISON</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
             <type>EqualsDoesntOverrideInherited</type>
             <filtered>false</filtered>
         </filter>
         <filter>
             <type>RE_POSSIBLE_UNINTENDED_PATTERN</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>SA_FIELD_DOUBLE_ASSIGNMENT</type>
             <filtered>false</filtered>
         </filter>
         <filter>
@@ -1339,15 +1456,7 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>SA_LOCAL_DOUBLE_ASSIGNMENT</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
             <type>VR_UNRESOLVABLE_REFERENCE</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>SA_FIELD_SELF_COMPUTATION</type>
             <filtered>false</filtered>
         </filter>
         <filter>
@@ -1391,10 +1500,6 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>SQL_BAD_RESULTSET_ACCESS</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
             <type>NP_ARGUMENT_MIGHT_BE_NULL</type>
             <filtered>false</filtered>
         </filter>
@@ -1404,14 +1509,6 @@
         </filter>
         <filter>
             <type>UWF_NULL_FIELD</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>InvokingToStringOnArray</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>RedundantComparisonOfNullAndNonnullValue</type>
             <filtered>false</filtered>
         </filter>
         <filter>
@@ -1447,10 +1544,6 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>RV_RETURN_VALUE_IGNORED2</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
             <type>RV_DONT_JUST_NULL_CHECK_READLINE</type>
             <filtered>false</filtered>
         </filter>
@@ -1471,19 +1564,7 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>UNKNOWN</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>SuspiciousEqualsMethodName</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
             <type>SQL_BAD_PREPARED_STATEMENT_ACCESS</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>EC_UNRELATED_INTERFACES</type>
             <filtered>false</filtered>
         </filter>
         <filter>
@@ -1503,19 +1584,7 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>SA_FIELD_SELF_ASSIGNMENT</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
             <type>IJU_ASSERT_METHOD_INVOKED_FROM_RUN_METHOD</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>EC_UNRELATED_CLASS_AND_INTERFACE</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>NP_NULL_PARAM_DEREF_ALL_TARGETS_DANGEROUS</type>
             <filtered>false</filtered>
         </filter>
         <filter>
@@ -1655,10 +1724,6 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>NP_UNWRITTEN_FIELD</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
             <type>SIO_SUPERFLUOUS_INSTANCEOF</type>
             <filtered>false</filtered>
         </filter>
@@ -1687,10 +1752,6 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>BitSignedCheckHighBit</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
             <type>SE_READ_RESOLVE_IS_STATIC</type>
             <filtered>false</filtered>
         </filter>
@@ -1700,14 +1761,6 @@
         </filter>
         <filter>
             <type>RE_CANT_USE_FILE_SEPARATOR_AS_REGULAR_EXPRESSION</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>NP_NULL_ON_SOME_PATH_EXCEPTION</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>BC_NULL_INSTANCEOF</type>
             <filtered>false</filtered>
         </filter>
         <filter>
@@ -1743,10 +1796,6 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>EqualComparisonToNullArgument</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
             <type>EQ_COMPARING_CLASS_NAMES</type>
             <filtered>false</filtered>
         </filter>
@@ -1756,14 +1805,6 @@
         </filter>
         <filter>
             <type>RV_ABSOLUTE_VALUE_OF_HASHCODE</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>NP_NULL_PARAM_DEREF</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>EqualsDoesntOverride</type>
             <filtered>false</filtered>
         </filter>
         <filter>
@@ -1806,10 +1847,6 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>IfElseStmtsMustUseBraces</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
             <type>IfStmtsMustUseBraces</type>
             <filtered>false</filtered>
         </filter>
@@ -1828,11 +1865,15 @@
 			find unused code.
 		</info>
         <filter>
-            <type>UnusedLocalVariable</type>
+            <type>EmptyStatementBlock</type>
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>UnusedPrivateMethod</type>
+            <type>UselessParentheses</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>UnusedLocalVariable</type>
             <filtered>false</filtered>
         </filter>
         <filter>
@@ -1880,6 +1921,10 @@
 			names - too long, too short, and so forth.
 		</info>
         <filter>
+            <type>GenericsNaming</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
             <type>ShortClassName</type>
             <filtered>false</filtered>
         </filter>		
@@ -1901,10 +1946,6 @@
         </filter>
         <filter>
             <type>NoPackage</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>MethodWithSameNameAsEnclosingClass</type>
             <filtered>false</filtered>
         </filter>
         <filter>
@@ -1974,23 +2015,11 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>JUnitStaticSuite</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
             <type>TestClassWithoutTestCases</type>
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>UseAssertSameInsteadOfAssertTrue</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
             <type>JUnitTestsShouldIncludeAssert</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>UseAssertEqualsInsteadOfAssertTrue</type>
             <filtered>false</filtered>
         </filter>
     </filterSets>
@@ -2003,6 +2032,14 @@
 			These rules provide some strict guidelines about throwing
 			and catching exceptions.
 		</info>
+        <filter>
+            <type>AvoidCatchingGenericException</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>AvoidLosingExceptionInformation</type>
+            <filtered>false</filtered>
+        </filter>
         <filter>
             <type>AvoidCatchingNPE</type>
             <filtered>false</filtered>
@@ -2060,13 +2097,72 @@
         <revision>0</revision>
         <name>Dodgy</name>
         <info>
-			code that is confusing, anomalous, or written in a way that
+			Code that is confusing, anomalous, or written in a way that
 			leads itself to errors. Examples include dead local stores,
 			switch fall through, unconfirmed casts, and redundant null
 			check of value known to be null. More false positives
-			accepted. In previous versions of FindBugs, this category
-			was known as Style.
+			accepted.
 		</info>
+        <filter>
+            <type>CommentRequired</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>CommentSize</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>CommentContent</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>DLS_DEAD_LOCAL_STORE_SHADOWS_FIELD</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>RV_RETURN_VALUE_IGNORED_INFERRED</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>UWF_UNWRITTEN_PUBLIC_OR_PROTECTED_FIELD</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>NP_UNWRITTEN_PUBLIC_OR_PROTECTED_FIELD</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>UUF_UNUSED_PUBLIC_OR_PROTECTED_FIELD</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>NP_PARAMETER_MUST_BE_NONNULL_BUT_MARKED_AS_NULLABLE</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>DMI_UNSUPPORTED_METHOD</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>SKIPPED_CLASS_TOO_BIG</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>SA_DOUBLE_ASSIGNMENT</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>SA_SELF_ASSIGNMENT</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>RCN_REDUNDANT_COMPARISON_OF_NULL_AND_NONNULL_VALUE</type>
+            <filtered>false</filtered>
+        </filter>
         <filter>
             <type>BC_UNCONFIRMED_CAST_OF_RETURN_VALUE</type>
             <filtered>false</filtered>
@@ -2088,10 +2184,6 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>USM_USELESS_SUBCLASS_METHOD</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
             <type>DB_DUPLICATE_BRANCHES</type>
             <filtered>false</filtered>
         </filter>
@@ -2100,15 +2192,7 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
             <type>DMI_HARDCODED_ABSOLUTE_FILENAME</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>SA_LOCAL_SELF_ASSIGNMENT</type>
             <filtered>false</filtered>
         </filter>
         <filter>
@@ -2264,10 +2348,6 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>UOE_USE_OBJECT_EQUALS</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
             <type>MTIA_SUSPECT_SERVLET_INSTANCE_FIELD</type>
             <filtered>false</filtered>
         </filter>
@@ -2277,10 +2357,6 @@
         </filter>
         <filter>
             <type>DMI_USELESS_SUBSTRING</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>BC_VACUOUS_INSTANCEOF</type>
             <filtered>false</filtered>
         </filter>
         <filter>
@@ -2310,10 +2386,6 @@
 			being followed.
 		</info>
         <filter>
-            <type>MissingSerialVersionUID</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
             <type>BeanMembersShouldSerialize</type>
             <filtered>false</filtered>
         </filter>
@@ -2324,8 +2396,55 @@
         <revision>0</revision>
         <name>Multithreaded correctness</name>
         <info>
-			code flaws having to do with threads, locks, and volatiles
+			Code flaws having to do with threads, locks, and volatiles.
 		</info>
+        <filter>
+            <type>JML_JSR166_CALLING_WAIT_RATHER_THAN_AWAIT</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>AT_OPERATION_SEQUENCE_ON_CONCURRENT_ABSTRACTION</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>VO_VOLATILE_INCREMENT</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>LI_LAZY_INIT</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>JLM_JSR166_LOCK_MONITORENTER</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>UL_UNRELEASED_LOCK</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>NO_NOTIFY_NOT_NOTIFYALL</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>WA_AWAIT_NOT_IN_LOOP</type>
+            <filtered>false</filtered>
+        </filter>        <filter>
+            <type>WA_NOT_IN_LOOP</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>WS_WRITEOBJECT_SYNC</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>RS_READOBJECT_SYNC</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>SC_START_IN_CTOR</type>
+            <filtered>false</filtered>
+        </filter>
         <filter>
             <type>JLM_JSR166_UTILCONCURRENT_MONITORENTER</type>
             <filtered>false</filtered>
@@ -2334,14 +2453,6 @@
             <type>RV_RETURN_VALUE_OF_PUTIFABSENT_IGNORED</type>
             <filtered>false</filtered>
         </filter>		
-        <filter>
-            <type>UnreleasedLock</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>AvoidSynchronizationOfReadObject</type>
-            <filtered>false</filtered>
-        </filter>
         <filter>
             <type>DC_DOUBLECHECK</type>
             <filtered>false</filtered>
@@ -2352,14 +2463,6 @@
         </filter>
         <filter>
             <type>DL_SYNCHRONIZATION_ON_SHARED_CONSTANT</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>IncorrectSynchronizationOfWriteObject</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>CallToStaticDateFormat</type>
             <filtered>false</filtered>
         </filter>
         <filter>
@@ -2379,19 +2482,11 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>UseNotifyAllInsteadOfNotify</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
             <type>DL_SYNCHRONIZATION_ON_BOOLEAN</type>
             <filtered>false</filtered>
         </filter>
         <filter>
             <type>AvoidCallingSleepWithLockHeld</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>UnreleasedLockOnExceptionPath</type>
             <filtered>false</filtered>
         </filter>
         <filter>
@@ -2403,15 +2498,7 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>CallToStaticCalendar</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
             <type>DM_MONITOR_WAIT_ON_CONDITION</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>MismatchedNotify</type>
             <filtered>false</filtered>
         </filter>
         <filter>
@@ -2419,23 +2506,11 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>IncorrectLazyInitializationOfStatic</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
             <type>WL_USING_GETCLASS_RATHER_THAN_CLASS_LITERAL</type>
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>MismatchedWait</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
             <type>AvoidStaticCalendar</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>AvoidThreadStartInConstructor</type>
             <filtered>false</filtered>
         </filter>
         <filter>
@@ -2448,10 +2523,6 @@
         </filter>
         <filter>
             <type>VO_VOLATILE_REFERENCE_TO_ARRAY</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>WaitNotInLoop</type>
             <filtered>false</filtered>
         </filter>
         <filter>
@@ -2471,15 +2542,7 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>AvoidCallingSynchronizedOnLock</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
             <type>DL_SYNCHRONIZATION_ON_BOXED_PRIMITIVE</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>IncorrectLazyInitializationOfInstance</type>
             <filtered>false</filtered>
         </filter>
         <filter>
@@ -2488,10 +2551,6 @@
         </filter>
         <filter>
             <type>NN_NAKED_NOTIFY</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>AwaitNotInLoop</type>
             <filtered>false</filtered>
         </filter>
         <filter>
@@ -2598,9 +2657,17 @@
         <revision>0</revision>
         <name>Performance</name>
         <info>
-			code that is not necessarily incorrect but may be
-			inefficient
+			Code that is not necessarily incorrect but may be
+			inefficient.
 		</info>
+        <filter>
+            <type>BX_UNBOXING_IMMEDIATELY_REBOXED</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>UUF_UNUSED_FIELD</type>
+            <filtered>false</filtered>
+        </filter>
         <filter>
             <type>IIO_INEFFICIENT_INDEX_OF</type>
             <filtered>false</filtered>
@@ -2613,10 +2680,6 @@
             <type>DM_BOXED_PRIMITIVE_FOR_PARSING</type>
             <filtered>false</filtered>
         </filter>		
-        <filter>
-            <type>SIC_INNER_SHOULD_BE_STATIC_NEEDS_THIS</type>
-            <filtered>false</filtered>
-        </filter>
         <filter>
             <type>URF_UNREAD_FIELD</type>
             <filtered>false</filtered>
@@ -2670,10 +2733,6 @@
             <filtered>false</filtered>
         </filter>
         <filter>
-            <type>SIC_INNER_SHOULD_BE_STATIC_ANON</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
             <type>SS_SHOULD_BE_STATIC</type>
             <filtered>false</filtered>
         </filter>
@@ -2687,10 +2746,6 @@
         </filter>
         <filter>
             <type>DM_NUMBER_CTOR</type>
-            <filtered>false</filtered>
-        </filter>
-        <filter>
-            <type>UnusedField</type>
             <filtered>false</filtered>
         </filter>
         <filter>
@@ -2718,181 +2773,6 @@
             <filtered>false</filtered>
         </filter>
     </filterSets>
-    
-    <!-- JSure stuff --> 
-    <filterSets>
-        <uid>00000001-ef51-4f9c-92f6-351d214f46e7</uid>
-        <owner>9a997ac4-ec2b-4d02-869a-423999fecfed</owner>
-        <revision>0</revision>
-        <name>Thread Effects Assurance</name>
-        <filter><type>ThreadEffectsAnalysis_threadEffectDrop</type></filter>
-		    <filter><type>ThreadEffectsAnalysis_callPromiseDrop</type></filter>
-		    <filter><type>ThreadEffectsAnalysis_callNotPromiseDrop</type></filter>
-		    <filter><type>ThreadEffectsAnalysis_noThreadsDrop</type></filter>
-        <info></info>
-    </filterSets>    
-    <filterSets>
-        <uid>00000002-ef51-4f9c-92f6-351d214f46e7</uid>
-        <owner>9a997ac4-ec2b-4d02-869a-423999fecfed</owner>
-        <revision>0</revision>
-        <name>Lock Assurance</name>
-        <filter><type>LockAnalysis_ds_AggregationNeeded</type></filter>
-		    <filter><type>LockAnalysis_ds_UnidentifiableLock</type></filter>
-		    <filter><type>LockAnalysis_ds_NonfinalExpression</type></filter>
-		    <!-- LockAnalysis_ds_IndirectFieldAccessAssuredAlternative -->
-		    <filter><type>LockAnalysis_ds_MatchingLock</type></filter>
-		    <filter><type>LockAnalysis_ds_ReturnNotAssured</type></filter>
-		    <filter><type>LockAnalysis_ds_MasqueradingCall</type></filter>
-		    <filter><type>LockAnalysis_ds_SynchronizedStaticMethodWarningDetails</type></filter>
-		    <filter><type>LockAnalysis_ds_SynchronizationUnused</type></filter>
-		    <filter><type>LockAnalysis_ds_IndirectFieldAccessAssured</type></filter>
-		    <filter><type>LockAnalysis_ds_AggregationNeeded2</type></filter>
-		    <filter><type>LockAnalysis_ds_AggregationEvidence</type></filter>
-		    <filter><type>LockAnalysis_ds_NoMatchingUnlocks</type></filter>
-        <filter><type>LockAnalysis_ds_IndirectFieldAccessNotAssured</type></filter>
-		    <filter><type>LockAnalysis_ds_SynchronizedMethodWarningDetails</type></filter>
-		    <filter><type>LockAnalysis_ds_HeldJUCLock</type></filter>
-		    <filter><type>LockAnalysis_ds_ReturnAssured</type></filter>
-		    <filter><type>LockAnalysis_ds_MatchingUnlock</type></filter>
-		    <filter><type>LockAnalysis_ds_SynchronizedConstructorAssured</type></filter>
-		    <filter><type>LockAnalysis_ds_OnBehalfOfConstructor</type></filter>
-		    <filter><type>LockAnalysis_ds_FieldAccessNotAssured</type></filter>
-		    <filter><type>LockAnalysis_ds_DeclaredJUCLockField</type></filter>
-		    <filter><type>LockAnalysis_ds_SyncedJUCLock</type></filter>
-		    <filter><type>LockAnalysis_ds_PreconditionsAssured</type></filter>
-		    <filter><type>LockAnalysis_ds_PreconditionsNotAssured</type></filter>
-		    <filter><type>LockAnalysis_ds_PreconditionsAssuredAlternative</type></filter>
-		    <filter><type>LockAnalysis_ds_PoisonedLockCall</type></filter>
-		    <filter><type>LockAnalysis_ds_RedundantSynchronized</type></filter>
-		    <filter><type>LockAnalysis_ds_FieldAccessAssured</type></filter>
-		    <filter><type>LockAnalysis_ds_FieldAccessNotResolvable</type></filter>
-		    <filter><type>LockAnalysis_ds_MasqueradingCall2</type></filter>		    
-		    <filter><type>LockAnalysis_ds_JUCLockFields</type></filter>
-		    <filter><type>LockAnalysis_ds_PreconditionNotResolvable</type></filter>
-		    <filter><type>LockAnalysis_ds_HeldLock</type></filter>
-		    <filter><type>LockAnalysis_ds_SynchronizedConstructorNotAssured</type></filter>
-		    <filter><type>LockAnalysis_ds_FieldDeclaration</type></filter>
-		    <filter><type>LockAnalysis_ds_PoisonedUnlockCall</type></filter>
-		    <filter><type>LockAnalysis_ds_FieldAccessAssuredAlternative</type></filter>
-		    <filter><type>LockAnalysis_ds_NoMatchingLocks</type></filter>
-        <info></info>
-    </filterSets>    
-    <filterSets>
-        <uid>00000003-ef51-4f9c-92f6-351d214f46e7</uid>
-        <owner>9a997ac4-ec2b-4d02-869a-423999fecfed</owner>
-        <revision>0</revision>
-        <name>Uniqueness Assurance</name>
-        <info></info>
-        <filter><type>UniquenessAssurance_uniquenessContraints1</type></filter>
-		    <filter><type>UniquenessAssurance_uniquenessContraints2</type></filter>
-		    <filter><type>UniquenessAssurance_uniqueReturnDrop</type></filter>
-		    <filter><type>UniquenessAssurance_borrowedParametersDrop</type></filter>
-		    <filter><type>UniquenessAssurance_uniqueParametersDrop</type></filter>
-		    <filter><type>UniquenessAssurance_effectOfCallDrop</type></filter>
-		    <filter><type>UniquenessAssurance_dependencyDrop</type></filter>
-		    <filter><type>UniquenessAssurance_error</type></filter>
-		    <filter><type>UniquenessAssurance</type></filter>
-    </filterSets>      
-    <filterSets>
-        <uid>00000004-ef51-4f9c-92f6-351d214f46e7</uid>
-        <owner>9a997ac4-ec2b-4d02-869a-423999fecfed</owner>
-        <revision>0</revision>
-        <name>Thread Color Assurance</name>        
-        <info></info>
-        <filter><type>ColorSecondPass_inheritedColor</type></filter>
-		    <filter><type>ColorSecondPass_inferredColor</type></filter>
-		    <filter><type>ColorSecondPass_inheritedTransparent</type></filter>
-		    <filter><type>ColorSecondPass_colorContextDrop</type></filter>
-    </filterSets>               
-    <filterSets>
-        <uid>10000005-ef51-4f9c-92f6-351d214f46e7</uid>
-        <owner>9a997ac4-ec2b-4d02-869a-423999fecfed</owner>
-        <revision>0</revision>
-        <name>Uniqueness Annotations</name>
-        <info></info>
-        <filter><type>BorrowedPromiseDrop</type></filter>
-		    <filter><type>UniquePromiseDrop</type></filter>
-		    <filter><type>AggregatePromiseDrop</type></filter>
-    </filterSets>      
-    <filterSets>
-        <uid>20000005-ef51-4f9c-92f6-351d214f46e7</uid>
-        <owner>9a997ac4-ec2b-4d02-869a-423999fecfed</owner>
-        <revision>0</revision>
-        <name>Thread Effects Annotations</name>
-        <info></info>
-        <filter><type>StartsPromiseDrop</type></filter>
-    </filterSets>  
-    <filterSets>
-        <uid>30000005-ef51-4f9c-92f6-351d214f46e7</uid>
-        <owner>9a997ac4-ec2b-4d02-869a-423999fecfed</owner>
-        <revision>0</revision>
-        <name>Lock Annotations</name>
-        <info></info>
-        <filter><type>LockModel</type></filter>		
-		    <filter><type>RequiresLockPromiseDrop</type></filter>
-		    <filter><type>ThreadSafePromiseDrop</type></filter>
-		    <filter><type>SingleThreadedPromiseDrop</type></filter>
-    </filterSets>  
-    <filterSets>
-        <uid>40000005-ef51-4f9c-92f6-351d214f46e7</uid>
-        <owner>9a997ac4-ec2b-4d02-869a-423999fecfed</owner>
-        <revision>0</revision>
-        <name>Thread Color Annotations</name>
-        <info></info>
-        <filter><type>TransparentPromiseDrop</type></filter>
-    </filterSets>  
-    <filterSets>
-        <uid>50000005-ef51-4f9c-92f6-351d214f46e7</uid>
-        <owner>9a997ac4-ec2b-4d02-869a-423999fecfed</owner>
-        <revision>0</revision>
-        <name>Region / Effects Annotations</name>
-        <info></info>
-        <filter><type>RegionEffectsPromiseDrop</type></filter>
-		    <filter><type>InRegionPromiseDrop</type></filter>
-		    <filter><type>RegionModel</type></filter>
-    </filterSets>  
-    <filterSets>
-        <uid>60000005-ef51-4f9c-92f6-351d214f46e7</uid>
-        <owner>9a997ac4-ec2b-4d02-869a-423999fecfed</owner>
-        <revision>0</revision>
-        <name>Scoped Promise Annotations</name>
-        <info></info>
-        <filter><type>PromisePromiseDrop</type></filter>
-    </filterSets>  
-    <filterSets>
-        <uid>00000006-ef51-4f9c-92f6-351d214f46e7</uid>
-        <owner>9a997ac4-ec2b-4d02-869a-423999fecfed</owner>
-        <revision>0</revision>
-        <name>JSure Models</name>
-        <info></info>
-        <filter><type>LockModel</type></filter>
-    </filterSets>
-    <filterSets>
-        <uid>00000005-ef51-4f9c-92f6-351d214f46e7</uid>
-        <owner>9a997ac4-ec2b-4d02-869a-423999fecfed</owner>
-        <revision>0</revision>
-        <name>JSure Annotations</name>
-        <info></info>
-        <parent>10000005-ef51-4f9c-92f6-351d214f46e7</parent>
-        <parent>20000005-ef51-4f9c-92f6-351d214f46e7</parent>
-        <parent>30000005-ef51-4f9c-92f6-351d214f46e7</parent>
-        <parent>40000005-ef51-4f9c-92f6-351d214f46e7</parent>
-        <parent>50000005-ef51-4f9c-92f6-351d214f46e7</parent>
-        <parent>60000005-ef51-4f9c-92f6-351d214f46e7</parent>
-    </filterSets>    
-    <filterSets>
-        <uid>00000000-ef51-4f9c-92f6-351d214f46e7</uid>
-        <owner>9a997ac4-ec2b-4d02-869a-423999fecfed</owner>
-        <revision>0</revision>
-        <name>JSure</name>        
-        <info></info>
-        <parent>00000001-ef51-4f9c-92f6-351d214f46e7</parent>
-        <parent>00000002-ef51-4f9c-92f6-351d214f46e7</parent>
-        <parent>00000003-ef51-4f9c-92f6-351d214f46e7</parent>
-        <parent>00000004-ef51-4f9c-92f6-351d214f46e7</parent>
-        <parent>00000005-ef51-4f9c-92f6-351d214f46e7</parent>
-        <filter><type>JSure</type></filter>
-    </filterSets>     
 </listCategoryResponse>
 
 
