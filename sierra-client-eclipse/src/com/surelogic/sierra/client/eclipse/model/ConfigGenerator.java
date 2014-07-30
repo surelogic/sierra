@@ -424,7 +424,7 @@ public final class ConfigGenerator {
         
         if (explanation != null) {
         	BalloonUtility.showMessage("Unable to run "+f.getName()+" on "+javaProject.getElementName(), 
-        			                   explanation+"\n.  Sierra will attempt a scan without "+f.getName());
+        			                   explanation+".  Sierra will scan without "+f.getName());
         }
       } else {
         for (final IToolExtension t : f.getExtensions()) {

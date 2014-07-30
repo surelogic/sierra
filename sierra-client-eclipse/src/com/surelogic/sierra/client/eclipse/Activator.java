@@ -5,6 +5,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 
+import org.apache.commons.lang3.SystemUtils;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -188,6 +189,15 @@ public final class Activator extends AbstractUIPlugin implements
 		} catch (final Exception e) {
 			SLLogger.getLogger().log(Level.SEVERE,
 					"Failure to boot and check schema.", e);
+		}
+		
+		if (SystemUtils.IS_JAVA_1_6) {
+			final int errNo = 61;
+			final String msg = I18N.err(errNo, 
+					System.getProperty("java.version"), 
+					System.getProperty("java.vendor"));
+			final IStatus reason = SLEclipseStatusUtility.createWarningStatus(errNo, msg);
+			ErrorDialogUtility.open(null, null, reason);
 		}
 	}
 
