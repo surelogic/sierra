@@ -79,7 +79,7 @@ public final class MListOfFindingsColumn extends MColumn implements
 
     private Table f_table = null;
 
-    private RowData f_data;
+    private RowData f_data = new RowData();
 
     MListOfFindingsColumn(final CascadingList cascadingList,
             final Selection selection, final MColumn previousColumn) {
@@ -182,8 +182,12 @@ public final class MListOfFindingsColumn extends MColumn implements
         final boolean isLimited;
         final List<FindingData> rows;
 
-        public RowData(boolean isLimited, List<FindingData> rows) {
-            super();
+        RowData() {
+            rows = Collections.emptyList();
+            isLimited = false;
+        }
+
+        RowData(boolean isLimited, List<FindingData> rows) {
             this.isLimited = isLimited;
             this.rows = rows;
         }
