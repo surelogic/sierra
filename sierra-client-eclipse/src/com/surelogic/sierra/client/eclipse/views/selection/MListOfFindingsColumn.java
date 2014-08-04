@@ -43,6 +43,7 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.progress.UIJob;
 
+import com.surelogic.*;
 import com.surelogic.common.CommonImages;
 import com.surelogic.common.StringComparators;
 import com.surelogic.common.core.EclipseUtility;
@@ -70,6 +71,11 @@ import com.surelogic.sierra.client.eclipse.preferences.SierraPreferencesUtility;
 import com.surelogic.sierra.client.eclipse.views.FindingDetailsMediator;
 import com.surelogic.sierra.client.eclipse.views.FindingDetailsView;
 import com.surelogic.sierra.tool.message.Importance;
+
+@Regions({@Region("private Rows"),
+		  @Region("ColumnState")})
+@RegionLocks({@RegionLock("RowsLock is rowsLock protects Rows"),
+ 			  @RegionLock("ColumnLock is this protects ColumnState")})
 
 public final class MListOfFindingsColumn extends MColumn implements ISelectionObserver {
   /**
@@ -380,7 +386,9 @@ public final class MListOfFindingsColumn extends MColumn implements ISelectionOb
   }
 
   private final ReadWriteLock rowsLock = new ReentrantReadWriteLock();
+  @UniqueInRegion("Rows")
   private final List<FindingData> f_rows = new ArrayList<FindingData>();
+  @InRegion("ColumnState")
   private boolean f_isLimited = false;
 
   /**
@@ -528,7 +536,8 @@ public final class MListOfFindingsColumn extends MColumn implements ISelectionOb
     }
   };
 
-  protected void addNearSelected(final int i) {
+  @RequiresLock("RowsLock.readLock()")
+  private void addNearSelected(final int i) {
     if (i >= 0 && i < f_rows.size()) {
       nearSelected.add(f_rows.get(i));
     }
@@ -610,7 +619,8 @@ public final class MListOfFindingsColumn extends MColumn implements ISelectionOb
       return;
     }
 
-    if (rowsLock.readLock().tryLock()) {
+    //if (rowsLock.readLock().tryLock()) {
+    if (rowsLock.writeLock().tryLock()) {
       try {
         f_table.setRedraw(false);
 
@@ -739,6 +749,7 @@ public final class MListOfFindingsColumn extends MColumn implements ISelectionOb
   /**
    * Sync'd by updateTableContents()
    */
+  @RequiresLock("RowsLock.writeLock()")
   private void sortBasedOnColumns() {
     Comparator<FindingData> c = null;
     // Traverse order backwards to construct proper comparator
@@ -857,6 +868,7 @@ public final class MListOfFindingsColumn extends MColumn implements ISelectionOb
    * To be called after f_rows has been initialized Sync'd by
    * updateTableContents()
    */
+  @RequiresLock("RowsLock.readLock()")
   private boolean loadColumnAppearance(final TableColumn tc) {
     final ColumnData data = (ColumnData) tc.getData();
 
@@ -904,6 +916,7 @@ public final class MListOfFindingsColumn extends MColumn implements ISelectionOb
   /**
    * Sync'd by updateTableContents()
    */
+  @RequiresLock("RowsLock.readLock()")
   private void updateTableColumns() {
     int numVisible = 0;
     TableColumn lastVisible = null;
@@ -933,7 +946,8 @@ public final class MListOfFindingsColumn extends MColumn implements ISelectionOb
    * 
    * Sync'd by updateTableContents()
    */
-  int computeValueWidth() {
+  @RequiresLock("RowsLock.readLock()")
+  private int computeValueWidth() {
     return computeValueWidth(getDefaultColumn());
   }
 
@@ -944,7 +958,8 @@ public final class MListOfFindingsColumn extends MColumn implements ISelectionOb
 
   private static final Rectangle ZERO = new Rectangle(0, 0, 0, 0);
 
-  int computeValueWidth(final ColumnData cd) {
+  @RequiresLock("RowsLock.readLock()")
+  private int computeValueWidth(final ColumnData cd) {
     final Image imageForGC = new Image(null, 1, 1);
     final GC gc = new GC(imageForGC);
     int longest = 0;
@@ -1226,6 +1241,7 @@ public final class MListOfFindingsColumn extends MColumn implements ISelectionOb
    * @param itemIndices
    * @return
    */
+  @RequiresLock("RowsLock.readLock()")
   private List<Long> extractFindingIds(final int[] itemIndices) {
     final List<Long> ids = new ArrayList<Long>(itemIndices.length);
     final int startSize = f_rows.size();
