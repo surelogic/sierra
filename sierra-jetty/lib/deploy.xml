@@ -34,7 +34,7 @@
 		<jar destfile="../sierra-portal/lib/web-dependencies/sierra-message.jar" basedir="../sierra-message/bin" />
 		<jar destfile="../sierra-portal/lib/web-dependencies/sierra-portal-servlets.jar" basedir="../sierra-portal-servlets/bin" />
 		
-			<path id="gwt.class.path">
+		<path id="gwt.class.path">
 			<pathelement path="${java.class.path}/" />
 			<pathelement location="../sierra-portal/src" />
 			<pathelement path="../sierra-portal/lib/gwt/gwt-user.jar" />
