@@ -77,7 +77,7 @@ public class LogPane extends Composite {
 
             final StackTraceElement[] trace = cause.getStackTrace();
             for (int i = 0; i < trace.length; i++) {
-                logItem.addItem(trace[i].toString());
+                logItem.addTextItem(trace[i].toString());
             }
 
             final Throwable nestedCause = cause.getCause();

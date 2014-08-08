@@ -16,10 +16,11 @@
 <!-- The module root element -->
 <!ELEMENT module (inherits | source | public | super-source | entry-point | 
   stylesheet | script | servlet | replace-with | generate-with |
-  define-property | extend-property | set-property |
+  define-property | extend-property | set-property | set-property-fallback |
   clear-configuration-property | define-configuration-property |
   extend-configuration-property | set-configuration-property |
-  property-provider | define-linker | add-linker)*>
+  property-provider | define-linker | add-linker | collapse-all-properties |
+  collapse-property)*>
 <!ATTLIST module
 	rename-to CDATA #IMPLIED
 >
@@ -32,28 +33,28 @@
 <!ELEMENT source (include | exclude)*>
 <!ATTLIST source
 	path CDATA #REQUIRED
-		includes CDATA #IMPLIED
-		excludes CDATA #IMPLIED
-		defaultexcludes (yes | no) "yes"
-		casesensitive (true | false) "true"
+	includes CDATA #IMPLIED
+	excludes CDATA #IMPLIED
+	defaultexcludes (yes | no) "yes"
+	casesensitive (true | false) "true"
 >
 <!-- Specify the public resource path, relative to the classpath location of the module descriptor -->
 <!ELEMENT public (include | exclude)*>
 <!ATTLIST public
 	path CDATA #REQUIRED
-		includes CDATA #IMPLIED
-		excludes CDATA #IMPLIED
-		defaultexcludes (yes | no) "yes"
-		casesensitive (true | false) "true"
+	includes CDATA #IMPLIED
+	excludes CDATA #IMPLIED
+	defaultexcludes (yes | no) "yes"
+	casesensitive (true | false) "true"
 >
 <!-- Specify a source path that rebases subpackages into the root namespace -->
 <!ELEMENT super-source (include | exclude)*>
 <!ATTLIST super-source
 	path CDATA #REQUIRED
-		includes CDATA #IMPLIED
-		excludes CDATA #IMPLIED
-		defaultexcludes (yes | no) "yes"
-		casesensitive (true | false) "true"
+	includes CDATA #IMPLIED
+	excludes CDATA #IMPLIED
+	defaultexcludes (yes | no) "yes"
+	casesensitive (true | false) "true"
 >
 <!ELEMENT include EMPTY>
 <!ATTLIST include
@@ -104,6 +105,8 @@
 <!--                 ^^^ Commonly-used elements ^^^                -->
 <!--                VVV Deferred binding elements VVV              -->
 
+<!-- All possible predicates -->
+<!ENTITY % predicates "when-property-is | when-type-assignable | when-type-is | all | any | none">
 <!-- Define a property and allowable values (comma-separated identifiers) -->
 <!ELEMENT define-property EMPTY>
 <!ATTLIST define-property
@@ -117,8 +120,14 @@
 	is-multi-valued CDATA #REQUIRED
 >
 <!-- Set the value of a previously-defined property -->
-<!ELEMENT set-property EMPTY>
+<!ELEMENT set-property (%predicates;)*>
 <!ATTLIST set-property
+	name CDATA #REQUIRED
+	value CDATA #REQUIRED
+>
+<!-- Set the value of a previously-defined property -->
+<!ELEMENT set-property-fallback EMPTY>
+<!ATTLIST set-property-fallback
 	name CDATA #REQUIRED
 	value CDATA #REQUIRED
 >
@@ -133,6 +142,18 @@
 <!ATTLIST extend-property
 	name CDATA #REQUIRED
 	values CDATA #REQUIRED
+	fallback-value CDATA #IMPLIED
+>
+<!-- Collapse property values to produce soft permutations -->
+<!ELEMENT collapse-property EMPTY>
+<!ATTLIST collapse-property
+	name CDATA #REQUIRED
+	values CDATA #REQUIRED
+>
+<!-- Collapse all deferred-binding properties to produce a single permutation -->
+<!ELEMENT collapse-all-properties EMPTY>
+<!ATTLIST collapse-all-properties
+	value (true | false) "true"
 >
 <!-- Add additional allowable values to a configuration property -->
 <!ELEMENT extend-configuration-property EMPTY>
@@ -149,9 +170,8 @@
 <!ELEMENT property-provider (#PCDATA)>
 <!ATTLIST property-provider
 	name CDATA #REQUIRED
+	generator CDATA #IMPLIED
 >
-<!-- All possible predicates -->
-<!ENTITY % predicates "when-property-is | when-type-assignable | when-type-is | all | any | none">
 <!-- Deferred binding assignment to substitute a named class -->
 <!ELEMENT replace-with (%predicates;)*>
 <!ATTLIST replace-with

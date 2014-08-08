@@ -39,6 +39,8 @@
 			<pathelement location="../sierra-portal/src" />
 			<pathelement path="../sierra-portal/lib/gwt/gwt-user.jar" />
 			<pathelement path="../sierra-portal/lib/gwt/gwt-dev.jar" />
+			<pathelement path="../sierra-portal/lib/gwt/validation-api-1.0.0.GA.jar" />
+			<pathelement path="../sierra-portal/lib/gwt/validation-api-1.0.0.GA-sources.jar" />
 		</path>
 		<delete dir="../sierra-portal/www" />
 		<java classpathref="gwt.class.path" classname="com.google.gwt.dev.Compiler" fork="true" maxmemory="512m">
