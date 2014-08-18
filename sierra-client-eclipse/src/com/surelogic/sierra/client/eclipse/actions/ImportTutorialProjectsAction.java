@@ -29,9 +29,9 @@ public class ImportTutorialProjectsAction implements
 				CommonImages.IMG_SIERRA_LOGO,
 				"/com.surelogic.sierra.client.eclipse.help/ch01s04.html",
 				Thread.currentThread().getContextClassLoader()
-						.getResource("/resources/ShowOff.zip"),
+						.getResource("/lib/SierraTutorial_ShowOff.zip"),
 				Thread.currentThread().getContextClassLoader()
-						.getResource("/resources/SmallWorld.zip"));
+						.getResource("/lib/SierraTutorial_SmallWorld.zip"));
 	}
 
 	@Override
