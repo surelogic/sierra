@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jdt.core.IType;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
@@ -45,6 +46,7 @@ import com.surelogic.ThreadConfined;
 import com.surelogic.common.CommonImages;
 import com.surelogic.common.StringComparators;
 import com.surelogic.common.core.EclipseUtility;
+import com.surelogic.common.core.JDTUtility;
 import com.surelogic.common.core.logging.SLEclipseStatusUtility;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.jdbc.QB;
@@ -383,7 +385,8 @@ public final class MListOfFindingsColumn extends MColumn implements ISelectionOb
 
       @Override
       Image getImage(FindingData data) {
-        return SLImages.getImage(CommonImages.IMG_CLASS);
+        final IType jdtType = JDTUtility.findIType(data.f_projectName, data.f_packageName, data.f_typeName);
+        return SLImages.getImageFor(jdtType);
       }
     });
     prototypes.add(new ColumnData("Finding Type") {
