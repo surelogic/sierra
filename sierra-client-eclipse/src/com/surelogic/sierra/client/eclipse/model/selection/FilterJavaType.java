@@ -7,21 +7,21 @@ import com.surelogic.common.CommonImages;
 import com.surelogic.common.core.JDTUtility;
 import com.surelogic.common.ui.SLImages;
 
-public final class FilterJavaClass extends Filter {
+public final class FilterJavaType extends Filter {
 
   public static final ISelectionFilterFactory FACTORY = new AbstractFilterFactory() {
     @Override
     public Filter construct(Selection selection, Filter previous) {
-      return new FilterJavaClass(selection, previous);
+      return new FilterJavaType(selection, previous);
     }
 
     @Override
     public String getFilterLabel() {
-      return "Java Class";
+      return "Java Type";
     }
   };
 
-  FilterJavaClass(Selection selection, Filter previous) {
+  FilterJavaType(Selection selection, Filter previous) {
     super(selection, previous);
   }
 

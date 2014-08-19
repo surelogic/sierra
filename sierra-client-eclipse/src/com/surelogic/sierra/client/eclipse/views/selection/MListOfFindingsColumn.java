@@ -73,6 +73,8 @@ import com.surelogic.sierra.tool.message.Importance;
 
 public final class MListOfFindingsColumn extends MColumn implements ISelectionObserver {
 
+  static private final String SUMMARY_NAME = "Summary";
+
   @ThreadConfined
   private Table f_table = null;
 
@@ -312,7 +314,7 @@ public final class MListOfFindingsColumn extends MColumn implements ISelectionOb
 
   private static List<ColumnData> createColumnPrototypes() {
     final List<ColumnData> prototypes = new ArrayList<ColumnData>();
-    prototypes.add(new ColumnData("Summary", true, ColumnSort.SORT_UP) {
+    prototypes.add(new ColumnData(SUMMARY_NAME, true, ColumnSort.SORT_UP) {
       @Override
       String getText(final FindingData data) {
         return data.f_summary;
@@ -416,11 +418,12 @@ public final class MListOfFindingsColumn extends MColumn implements ISelectionOb
    * 
    * @return a list of names which is a copy so it can be freely mutated.
    */
-  public static ArrayList<String> getColumnNames() {
+  static ArrayList<String> getHideableColumnNames() {
     final ArrayList<String> names = new ArrayList<String>();
     for (final ColumnData data : f_columnPrototypes) {
       names.add(data.getName());
     }
+    names.remove(SUMMARY_NAME); // not hideable
     return names;
   }
 
@@ -490,8 +493,7 @@ public final class MListOfFindingsColumn extends MColumn implements ISelectionOb
       } else if (e.keyCode == SWT.ARROW_LEFT) {
         getPreviousColumn().forceFocus();
         e.doit = false; // Handled
-      } else if (e.keyCode == SWT.ARROW_RIGHT || e.character == ' ') {
-        // TODO f_doubleClick.handleEvent(null);
+      } else if (e.keyCode == SWT.ARROW_RIGHT) {
         e.doit = false; // Handled
       }
     }
@@ -540,38 +542,6 @@ public final class MListOfFindingsColumn extends MColumn implements ISelectionOb
       f_table.addKeyListener(f_keyListener);
       f_table.setItemCount(0);
       createTableColumns();
-
-      f_table.addListener(SWT.Traverse, new Listener() {
-        @Override
-        public void handleEvent(final Event e) {
-          switch (e.detail) {
-          case SWT.TRAVERSE_ESCAPE:
-            setCustomTabTraversal(e);
-            if (getPreviousColumn() instanceof MRadioMenuColumn) {
-              final MRadioMenuColumn column = (MRadioMenuColumn) getPreviousColumn();
-              column.escape(null);
-              /*
-               * column.clearSelection(); column.emptyAfter(); // e.g. eliminate
-               * myself column.forceFocus();
-               */
-            }
-            break;
-          case SWT.TRAVERSE_TAB_NEXT:
-            // Cycle back to the first columns
-            setCustomTabTraversal(e);
-            getFirstColumn().forceFocus();
-            break;
-          case SWT.TRAVERSE_TAB_PREVIOUS:
-            setCustomTabTraversal(e);
-            getPreviousColumn().forceFocus();
-            break;
-          case SWT.TRAVERSE_RETURN:
-            setCustomTabTraversal(e);
-            // TODO f_doubleClick.handleEvent(null);
-            break;
-          }
-        }
-      });
 
       final Menu menu = new Menu(f_table.getShell(), SWT.POP_UP);
       f_table.setMenu(menu);
@@ -891,7 +861,7 @@ public final class MListOfFindingsColumn extends MColumn implements ISelectionOb
     }
     if (numVisible == 1) {
       final ColumnData cd = (ColumnData) lastVisible.getData();
-   //   lastVisible.setWidth(computeValueWidth(cd));
+      // lastVisible.setWidth(computeValueWidth(cd));
     }
     updateTableColumns = false;
     f_table.setHeaderVisible(numVisible > 1);
