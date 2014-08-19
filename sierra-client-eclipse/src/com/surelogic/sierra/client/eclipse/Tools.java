@@ -170,7 +170,7 @@ public final class Tools {
 					}
 
 					if (newExtensions.isEmpty()) {
-						System.out.println("No new artifact types");
+					  SLLogger.getLogger().log(Level.FINE, "No new artifact types");
 					} else {
 						final List<ArtifactType> types = new ArrayList<ArtifactType>();
 						for (final Map.Entry<IToolExtension, List<ArtifactType>> e : newExtensions
@@ -195,34 +195,7 @@ public final class Tools {
 										incompleteTypes.add(t);
 									}
 								}
-								if (false // was old developer mode
-										&& !incompleteTypes.isEmpty()) {
-									/*
-									 * ArtifactTypeMappingDialog d = new
-									 * ArtifactTypeMappingDialog(null, types,
-									 * findingTypes, cats);
-									 */
-									final ArtifactTypeSetupWizard wizard = new ArtifactTypeSetupWizard(
-											incompleteTypes, findingTypes, cats);
-									wizard.init(PlatformUI.getWorkbench(), null);
-									final WizardDialog d = new WizardDialog(
-											PlatformUI.getWorkbench()
-													.getActiveWorkbenchWindow()
-													.getShell(), wizard);
-									if (d.open() != Window.OK) {
-										// Cancelled, so clear finding type info
-										for (final ArtifactType t : incompleteTypes) {
-											t.setFindingType(null);
-										}
-									}
-								}
-								/*
-								for(IToolExtension ext : newExtensions.keySet()) {
-									System.out.println("Looking to register extension: " + ext.getTool() +" "
-											+ ext.getId() + " "
-											+ ext.getVersion());
-								}
-								*/
+
 								Data.getInstance().withTransaction(
 										new NullDBQuery() {
 											@Override
@@ -262,7 +235,7 @@ public final class Tools {
 			File tef = te.getJar();
 			do {
 				tef = tef.getParentFile();
-			} while (tef.getParent() != null
+			} while (tef != null && tef.getParent() != null
 					&& !tef.getParentFile().equals(
 							ToolUtil.getSierraToolDirectory()));
 			if (tef == null) {
