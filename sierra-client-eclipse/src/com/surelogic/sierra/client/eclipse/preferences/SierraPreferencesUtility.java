@@ -43,7 +43,7 @@ public final class SierraPreferencesUtility {
       EclipseUtility.setDefaultStringPreference(SHOW_MARKERS_AT_OR_ABOVE_IMPORTANCE, Importance.HIGH.toString());
       EclipseUtility.setDefaultBooleanPreference(ALWAYS_SAVE_RESOURCES, false);
       EclipseUtility.setDefaultBooleanPreference(SHOW_MARKERS, true);
-      EclipseUtility.setDefaultIntPreference(FINDINGS_LIST_LIMIT, 2000);
+      EclipseUtility.setDefaultIntPreference(FINDINGS_LIST_LIMIT, 500);
       EclipseUtility.setDefaultIntPreference(TOOL_MEMORY_MB, 1024);
       EclipseUtility.setDefaultBooleanPreference(WARN_MAXIMUM_FINDINGS_SHOWN, true);
       EclipseUtility.setDefaultBooleanPreference(ALWAYS_ALLOW_USER_TO_SELECT_PROJECTS_TO_SCAN, true);

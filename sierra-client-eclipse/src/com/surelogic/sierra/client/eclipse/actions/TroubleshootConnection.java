@@ -3,7 +3,6 @@ package com.surelogic.sierra.client.eclipse.actions;
 import java.util.logging.Level;
 
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.ui.PlatformUI;
 
 import com.surelogic.common.ui.BalloonUtility;
 import com.surelogic.common.ui.EclipseUIUtility;
