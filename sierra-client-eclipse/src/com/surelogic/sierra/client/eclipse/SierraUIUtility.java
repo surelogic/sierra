@@ -14,6 +14,8 @@ import com.surelogic.sierra.tool.message.Importance;
 @Utility
 public final class SierraUIUtility {
 
+  static public final String MULTIPLE_TOOLS = "(From Multiple Tools)";
+
   private SierraUIUtility() {
     // no instances
   }
@@ -41,6 +43,10 @@ public final class SierraUIUtility {
       imageName = CommonImages.IMG_FINDBUGS_FINDING;
     } else if ("PMD".equals(toolName)) {
       imageName = CommonImages.IMG_PMD_FINDING;
+    } else if ("CPD".equals(toolName)) {
+      imageName = CommonImages.IMG_EDIT_CUT;
+    } else if (MULTIPLE_TOOLS.equals(toolName)) {
+      return SLImages.getGrayscaleImage(CommonImages.IMG_SIERRA_LOGO);
     }
     return SLImages.getImage(imageName);
   }
@@ -58,7 +64,7 @@ public final class SierraUIUtility {
    * @return an appropriate image.
    */
   @NonNull
-  public static Image getTypeImageFor(@Nullable String optionalProject, String packageName, String typeName) {
+  public static Image getImageForType(@Nullable String optionalProject, String packageName, String typeName) {
     IType jdtType = JDTUtility.findIType(optionalProject, packageName, typeName);
     if (jdtType == null)
       return SLImages.getImage(CommonImages.IMG_CLASS);

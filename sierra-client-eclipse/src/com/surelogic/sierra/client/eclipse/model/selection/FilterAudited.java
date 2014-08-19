@@ -2,43 +2,53 @@ package com.surelogic.sierra.client.eclipse.model.selection;
 
 import java.util.Arrays;
 
+import org.eclipse.swt.graphics.Image;
+
+import com.surelogic.common.CommonImages;
+import com.surelogic.common.ui.SLImages;
+
 public final class FilterAudited extends Filter {
 
-	public static final ISelectionFilterFactory FACTORY = new AbstractFilterFactory() {
-		@Override
+  public static final ISelectionFilterFactory FACTORY = new AbstractFilterFactory() {
+    @Override
     public Filter construct(Selection selection, Filter previous) {
-			return new FilterAudited(selection, previous);
-		}
+      return new FilterAudited(selection, previous);
+    }
 
-		@Override
+    @Override
     public String getFilterLabel() {
-			return "Audited";
-		}
-	};
+      return "Audited";
+    }
 
-	FilterAudited(Selection selection, Filter previous) {
-		super(selection, previous);
-	}
+    @Override
+    public Image getFilterImage() {
+      return SLImages.getGrayscaleImage(CommonImages.IMG_SIERRA_STAMP_SMALL);
+    }
+  };
 
-	@Override
-	public ISelectionFilterFactory getFactory() {
-		return FACTORY;
-	}
+  FilterAudited(Selection selection, Filter previous) {
+    super(selection, previous);
+  }
 
-	@Override
-	protected String getColumnName() {
-		return "AUDITED";
-	}
+  @Override
+  public ISelectionFilterFactory getFactory() {
+    return FACTORY;
+  }
 
-	private static final String YES = "Yes";
-	private static final String NO = "No";
+  @Override
+  protected String getColumnName() {
+    return "AUDITED";
+  }
 
-	@Override
-	protected void deriveAllValues() {
-		String[] values = new String[] { YES, NO };
-		synchronized (this) {
-			f_allValues.clear();
-			f_allValues.addAll(Arrays.asList(values));
-		}
-	}
+  private static final String YES = "Yes";
+  private static final String NO = "No";
+
+  @Override
+  protected void deriveAllValues() {
+    String[] values = new String[] { YES, NO };
+    synchronized (this) {
+      f_allValues.clear();
+      f_allValues.addAll(Arrays.asList(values));
+    }
+  }
 }

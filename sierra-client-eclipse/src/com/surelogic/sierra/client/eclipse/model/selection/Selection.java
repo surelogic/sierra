@@ -47,7 +47,7 @@ public final class Selection extends AbstractDatabaseObserver {
 		allFilters.add(FilterJavaType.FACTORY);
 		allFilters.add(FilterJavaPackage.FACTORY);
 		allFilters.add(FilterProject.FACTORY);
-		allFilters.add(FilterSelection.FACTORY);
+		allFilters.add(FilterStatus.FACTORY);
 		allFilters.add(FilterTool.FACTORY);
 
 		f_allFilters = Collections.unmodifiableSet(allFilters);

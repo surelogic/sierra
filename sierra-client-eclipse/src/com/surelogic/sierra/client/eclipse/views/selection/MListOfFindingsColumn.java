@@ -387,7 +387,7 @@ public final class MListOfFindingsColumn extends MColumn implements ISelectionOb
 
       @Override
       Image getImage(FindingData data) {
-        return SierraUIUtility.getTypeImageFor(data.f_projectName, data.f_packageName, data.f_typeName);
+        return SierraUIUtility.getImageForType(data.f_projectName, data.f_packageName, data.f_typeName);
       }
     });
     prototypes.add(new ColumnData("Finding Type") {
@@ -400,6 +400,11 @@ public final class MListOfFindingsColumn extends MColumn implements ISelectionOb
       @Override
       String getText(final FindingData data) {
         return data.f_toolName;
+      }
+
+      @Override
+      Image getImage(FindingData data) {
+        return SierraUIUtility.getImageForTool(data.f_toolName);
       }
     });
 

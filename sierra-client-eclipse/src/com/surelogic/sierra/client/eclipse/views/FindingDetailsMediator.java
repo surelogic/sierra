@@ -644,7 +644,7 @@ public class FindingDetailsMediator extends AbstractSierraViewMediator implement
       item.setText(2, artifactDetail.getPackageName());
       item.setImage(2, SLImages.getImage(CommonImages.IMG_PACKAGE));
       item.setText(3, artifactDetail.getClassName());
-      item.setImage(3, SierraUIUtility.getTypeImageFor(null, artifactDetail.getPackageName(), artifactDetail.getClassName()));
+      item.setImage(3, SierraUIUtility.getImageForType(null, artifactDetail.getPackageName(), artifactDetail.getClassName()));
       item.setText(4, Integer.toString(artifactDetail.getLineOfCode()));
     }
     for (final TableColumn c : f_artifacts.getColumns()) {
@@ -737,7 +737,7 @@ public class FindingDetailsMediator extends AbstractSierraViewMediator implement
 
       final TreeItem clazz = new TreeItem(pkg, SWT.NULL);
       clazz.setText(firstArtifact.getClassName() + " at line " + firstArtifact.getLineOfCode());
-      clazz.setImage(SierraUIUtility.getTypeImageFor(finding.getProjectName(), finding.getPackageName(), finding.getClassName()));
+      clazz.setImage(SierraUIUtility.getImageForType(finding.getProjectName(), finding.getPackageName(), finding.getClassName()));
       clazz.setData(firstArtifact.getPrimarySource());
       showAsLink(clazz);
       // clazz.addListener(SWT.Selection, f_locationListener);
@@ -802,7 +802,7 @@ public class FindingDetailsMediator extends AbstractSierraViewMediator implement
     if (clazz == null) {
       clazz = new TreeItem(pkg, SWT.NULL);
       clazz.setText(loc.getClassName());
-      clazz.setImage(SLImages.getImage(CommonImages.IMG_CLASS));
+      clazz.setImage(SierraUIUtility.getImageForType(null, loc.getPackageName(), loc.getClassName()));
       if (qualifiedClassName == null) {
         qualifiedClassName = loc.getPackageName() + '.' + loc.getClassName();
       }
@@ -826,16 +826,6 @@ public class FindingDetailsMediator extends AbstractSierraViewMediator implement
     }
     return line;
   }
-
-  /*
-   * private String getClassName() { StringBuilder b = new StringBuilder();
-   * int[] lines = f_finding.getLinesOfCode();
-   * b.append(f_finding.getClassName()); b.append(" at line"); if (lines.length
-   * > 1) b.append("s"); b.append(" "); boolean first = true; for (int line :
-   * lines) { if (first) first = false; else b.append(" ");
-   * b.append("<a href=\""); b.append(line); b.append("\">"); b.append(line);
-   * b.append("</a>"); } return b.toString(); }
-   */
 
   /**
    * Must be invoked from the SWT thread.
