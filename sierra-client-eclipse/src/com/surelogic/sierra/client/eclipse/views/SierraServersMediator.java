@@ -55,7 +55,6 @@ import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.jdbc.ConnectionQuery;
 import com.surelogic.common.jdbc.Query;
 import com.surelogic.common.logging.SLLogger;
-import com.surelogic.common.ui.ImageImageDescriptor;
 import com.surelogic.common.ui.SLImages;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.actions.NewScan;
@@ -144,7 +143,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator
 
 		ActionListener(final Image image, final String tooltip) {
 			this(tooltip, tooltip);
-			setImageDescriptor(new ImageImageDescriptor(image));
+			setImageDescriptor(SLImages.getImageDescriptorFor(image));
 		}
 
 		@Override

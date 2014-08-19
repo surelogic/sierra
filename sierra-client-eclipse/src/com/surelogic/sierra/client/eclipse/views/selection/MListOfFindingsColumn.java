@@ -12,7 +12,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Stack;
 import java.util.logging.Level;
 
 import org.apache.commons.lang3.SystemUtils;
@@ -39,8 +38,10 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.progress.UIJob;
 
+import com.surelogic.Immutable;
 import com.surelogic.NonNull;
 import com.surelogic.Nullable;
+import com.surelogic.ThreadConfined;
 import com.surelogic.common.CommonImages;
 import com.surelogic.common.StringComparators;
 import com.surelogic.common.core.EclipseUtility;
@@ -70,13 +71,15 @@ import com.surelogic.sierra.tool.message.Importance;
 
 public final class MListOfFindingsColumn extends MColumn implements ISelectionObserver {
 
+  @ThreadConfined
   private Table f_table = null;
 
+  @ThreadConfined
+  @NonNull
   private RowData f_data = new RowData();
 
   MListOfFindingsColumn(final CascadingList cascadingList, final Selection selection, final MColumn previousColumn) {
     super(cascadingList, selection, previousColumn);
-    f_tables.add(this);
   }
 
   @Override
@@ -92,7 +95,7 @@ public final class MListOfFindingsColumn extends MColumn implements ISelectionOb
       @Override
       public IStatus runInUIThread(final IProgressMonitor monitor) {
         MListOfFindingsColumn.super.initOfNextColumnComplete();
-        notifyObserversOfLimitedFindings(f_data.isLimited);
+        notifyObserversOfLimitedFindings(f_data.f_rowsAreCutoff);
         return Status.OK_STATUS;
       }
     };
@@ -140,13 +143,12 @@ public final class MListOfFindingsColumn extends MColumn implements ISelectionOb
         if (f_table != null && f_table.isDisposed()) {
           getSelection().removeObserver(MListOfFindingsColumn.this);
         } else {
-          final long now = startingUpdate();
-          final Job job = new AbstractSierraDatabaseJob("Refresh list of findings") {
+          final Job job = new AbstractSierraDatabaseJob("Refreshing list of findings") {
             @Override
             protected IStatus run(final IProgressMonitor monitor) {
               RowData data = null;
               try {
-                data = refreshData(now);
+                data = refreshData();
                 if (data != null) {
                   refreshDisplay(data);
                 }
@@ -168,37 +170,59 @@ public final class MListOfFindingsColumn extends MColumn implements ISelectionOb
     job.schedule();
   }
 
+  /**
+   * A helper class to hold the resulting rows from the database query as well
+   * as a flag to indicate if all the rows are included or the query was cutoff
+   * by the row limit set by the user.
+   */
   private static class RowData {
-    final boolean isLimited;
-    final List<FindingData> rows;
+    /**
+     * This value is {@code true} if the rows displayed is limited by the cutoff
+     * limit for rows set in the user preferences.
+     */
+    final boolean f_rowsAreCutoff;
+    final List<FindingData> f_rows;
 
     RowData() {
-      rows = Collections.emptyList();
-      isLimited = false;
+      f_rows = Collections.emptyList();
+      f_rowsAreCutoff = false;
     }
 
-    RowData(boolean isLimited, List<FindingData> rows) {
-      this.isLimited = isLimited;
-      this.rows = rows;
+    RowData(boolean rowsAreCutoff, List<FindingData> rows) {
+      f_rowsAreCutoff = rowsAreCutoff;
+      f_rows = rows;
     }
-
   }
 
+  /**
+   * A helper class to hold a model of a row of data in this display of the
+   * finding.
+   */
+  @Immutable
   private static class FindingData {
-    String f_summary;
-    Importance f_importance;
-    long f_findingId;
-    String f_projectName;
-    String f_packageName;
-    int f_lineNumber;
-    String f_typeName;
-    String f_findingType;
-    String f_findingTypeName;
-    String f_toolName;
-    int index;
+    final String f_summary;
+    final Importance f_importance;
+    final long f_findingId;
+    final String f_projectName;
+    final String f_packageName;
+    final String f_typeName;
+    final int f_lineNumber;
+    final String f_findingType;
+    final String f_findingTypeName;
+    final String f_toolName;
 
-    public FindingData(int i) {
-      index = i;
+    FindingData(String summary, Importance importance, long findingId, String projectName, String packageName, String typeName,
+        int lineNumber, String findingType, String findingTypeName, String toolName) {
+      f_summary = summary;
+      f_importance = importance;
+      f_findingId = findingId;
+      f_projectName = projectName;
+      f_packageName = packageName;
+      f_typeName = typeName;
+      f_lineNumber = lineNumber;
+      f_findingType = findingType;
+      f_findingTypeName = findingTypeName;
+      f_toolName = toolName;
     }
 
     @Override
@@ -218,7 +242,7 @@ public final class MListOfFindingsColumn extends MColumn implements ISelectionOb
 
     @Override
     public int hashCode() {
-      return (int) f_findingId;
+      return (int) f_findingId * 31;
     }
   }
 
@@ -307,17 +331,32 @@ public final class MListOfFindingsColumn extends MColumn implements ISelectionOb
       protected int compareInternal(final FindingData o1, final FindingData o2) {
         return o1.f_importance.ordinal() - o2.f_importance.ordinal();
       }
+
+      @Override
+      Image getImage(final FindingData data) {
+        return Utility.getImageFor(data.f_importance);
+      }
     });
     prototypes.add(new ColumnData("Project") {
       @Override
       String getText(final FindingData data) {
         return data.f_projectName;
       }
+
+      @Override
+      Image getImage(FindingData data) {
+        return SLImages.getImageForProject(data.f_projectName);
+      }
     });
     prototypes.add(new ColumnData("Package") {
       @Override
       String getText(final FindingData data) {
         return data.f_packageName;
+      }
+
+      @Override
+      Image getImage(FindingData data) {
+        return SLImages.getImage(CommonImages.IMG_PACKAGE);
       }
     });
     prototypes.add(new ColumnData("Line#") {
@@ -341,6 +380,11 @@ public final class MListOfFindingsColumn extends MColumn implements ISelectionOb
       String getText(final FindingData data) {
         return data.f_typeName;
       }
+
+      @Override
+      Image getImage(FindingData data) {
+        return SLImages.getImage(CommonImages.IMG_CLASS);
+      }
     });
     prototypes.add(new ColumnData("Finding Type") {
       @Override
@@ -363,8 +407,14 @@ public final class MListOfFindingsColumn extends MColumn implements ISelectionOb
     return Collections.unmodifiableList(prototypes);
   }
 
-  public static Iterable<String> getColumnNames() {
-    final List<String> names = new ArrayList<String>();
+  /**
+   * Returns all the column names that can be shown in the table that represents
+   * the list of findings.
+   * 
+   * @return a list of names which is a copy so it can be freely mutated.
+   */
+  public static ArrayList<String> getColumnNames() {
+    final ArrayList<String> names = new ArrayList<String>();
     for (final ColumnData data : f_columnPrototypes) {
       names.add(data.getName());
     }
@@ -374,45 +424,32 @@ public final class MListOfFindingsColumn extends MColumn implements ISelectionOb
   /**
    * @return true if updating
    */
-  public RowData refreshData(final long now) {
+  public RowData refreshData() {
     final String query = getQuery();
-    System.out.println(query);
+    // System.out.println(query);
     try {
       final Connection c = Data.getInstance().readOnlyConnection();
       try {
         final Statement st = c.createStatement();
         try {
-          if (SLLogger.getLogger().isLoggable(Level.FINE)) {
-            SLLogger.getLogger().fine("List of findings query: " + query);
-          }
-          if (continueUpdate(now)) {
-            final ResultSet rs = st.executeQuery(query);
-            final ArrayList<FindingData> rows = new ArrayList<FindingData>();
-            boolean limited = false;
-            final int findingsListLimit = EclipseUtility.getIntPreference(SierraPreferencesUtility.FINDINGS_LIST_LIMIT);
-            int i = 0;
-            while (rs.next()) {
-              if (i < findingsListLimit) {
-                final FindingData data = new FindingData(i);
-                data.f_summary = rs.getString(1);
-                data.f_importance = Importance.valueOf(rs.getString(2).toUpperCase());
-                data.f_findingId = rs.getLong(3);
-                data.f_projectName = rs.getString(4);
-                data.f_packageName = rs.getString(5);
-                data.f_typeName = rs.getString(6);
-                data.f_lineNumber = rs.getInt(7);
-                data.f_findingType = rs.getString(8);
-                data.f_findingTypeName = rs.getString(9);
-                data.f_toolName = rs.getString(10);
-                rows.add(data);
-                i++;
-              } else {
-                limited = true;
-                break;
-              }
+          final ResultSet rs = st.executeQuery(query);
+          final ArrayList<FindingData> rows = new ArrayList<FindingData>();
+          boolean rowsAreCutoff = false;
+          final int findingsListLimit = EclipseUtility.getIntPreference(SierraPreferencesUtility.FINDINGS_LIST_LIMIT);
+          int rowCount = 0;
+          while (rs.next()) {
+            if (rowCount < findingsListLimit) {
+              final FindingData data = new FindingData(rs.getString(1), Importance.valueOf(rs.getString(2).toUpperCase()),
+                  rs.getLong(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getInt(7), rs.getString(8), rs.getString(9),
+                  rs.getString(10));
+              rows.add(data);
+              rowCount++;
+            } else {
+              rowsAreCutoff = true;
+              break;
             }
-            return new RowData(limited, rows);
           }
+          return new RowData(rowsAreCutoff, rows);
         } finally {
           st.close();
         }
@@ -462,8 +499,6 @@ public final class MListOfFindingsColumn extends MColumn implements ISelectionOb
     }
   };
 
-  private final Stack<FindingData> f_nearSelected = new Stack<FindingData>();
-
   private final Listener f_singleClick = new Listener() {
     @Override
     public void handleEvent(final Event event) {
@@ -483,7 +518,6 @@ public final class MListOfFindingsColumn extends MColumn implements ISelectionOb
    * Only call from the UI thread
    */
   private void saveAndSelectFindingInOtherViews(@NonNull final FindingData data) {
-    addNearSelectedTo(data);
     /*
      * Ensure the view is visible but don't change the focus.
      */
@@ -492,16 +526,6 @@ public final class MListOfFindingsColumn extends MColumn implements ISelectionOb
      * Attempt to show the result in the editor
      */
     JDTUIUtility.tryToOpenInEditor(data.f_projectName, data.f_packageName, data.f_typeName, data.f_lineNumber);
-  }
-
-  /*
-   * Only call from the UI thread
-   */
-  private void addNearSelectedTo(final FindingData data) {
-    final int i = data.index;
-    if (i >= 0 && i < f_data.rows.size()) {
-      f_nearSelected.add(f_data.rows.get(i));
-    }
   }
 
   private final IColumn f_iColumn = new IColumn() {
@@ -574,11 +598,9 @@ public final class MListOfFindingsColumn extends MColumn implements ISelectionOb
 
     sortModelBasedOnColumns();
 
-    int i = 0;
-    for (final FindingData data : f_data.rows) {
+    for (final FindingData data : f_data.f_rows) {
       final TableItem item = new TableItem(f_table, SWT.NONE);
-      initTableItem(i, data, item);
-      i++;
+      initializeTableItem(data, item);
     }
 
     for (TableColumn c : f_table.getColumns()) {
@@ -716,11 +738,11 @@ public final class MListOfFindingsColumn extends MColumn implements ISelectionOb
       c = getDefaultColumn(); // The default sort
     }
     // System.out.println("Sort order = "+c);
-    Collections.sort(f_data.rows, c);
+    Collections.sort(f_data.f_rows, c);
     // Update row indices
     int i = 0;
-    for (FindingData data : f_data.rows) {
-      data.index = i;
+    for (FindingData data : f_data.f_rows) {
+      // TODO data.f_index = i;
       i++;
     }
   }
@@ -887,7 +909,7 @@ public final class MListOfFindingsColumn extends MColumn implements ISelectionOb
     FindingData longestData = null;
     int longestIndex = -1;
     gc.setFont(f_table.getFont());
-    for (final FindingData data : f_data.rows) {
+    for (final FindingData data : f_data.f_rows) {
       final Point size = gc.textExtent(cd.getText(data));
       final Image img = cd.getImage(data);
       final Rectangle rect = img == null ? ZERO : img.getBounds();
@@ -895,7 +917,7 @@ public final class MListOfFindingsColumn extends MColumn implements ISelectionOb
       if (width > longest) {
         longest = width;
         longestData = data;
-        longestIndex = data.index;
+        // TODO longestIndex = data.f_index;
       }
     }
     gc.dispose();
@@ -904,7 +926,7 @@ public final class MListOfFindingsColumn extends MColumn implements ISelectionOb
       if (longestIndex >= f_table.getItemCount()) {
         LOG.warning("Got index outside of table: " + longestIndex + ", " + f_table.getItemCount());
       } else {
-        initTableItem(longestIndex, longestData, f_table.getItem(longestIndex));
+        initializeTableItem(/* longestIndex, */longestData, f_table.getItem(longestIndex));
       }
     }
 
@@ -916,14 +938,10 @@ public final class MListOfFindingsColumn extends MColumn implements ISelectionOb
     return result;
   }
 
-  private void initTableItem(final int i, final FindingData data, final TableItem item) {
-    if (i != data.index) {
-      // Now set, because we're sorting
-      throw new IllegalArgumentException(i + " != data.index: " + data.index);
-    }
+  private void initializeTableItem(final FindingData data, final TableItem item) {
     item.setData(data);
 
-    // Init columns
+    // Setup data in all the columns
     int j = 0;
     for (final TableColumn tc : f_table.getColumns()) {
       final ColumnData cd = (ColumnData) tc.getData();
@@ -990,7 +1008,7 @@ public final class MListOfFindingsColumn extends MColumn implements ISelectionOb
           String importanceSoFar = null;
           String findingTypeSoFar = null;
           for (final int index : itemIndices) {
-            final FindingData data = f_data.rows.get(index);
+            final FindingData data = f_data.f_rows.get(index);
             final String importance = data.f_importance.toStringSentenceCase();
             if (importanceSoFar == null) {
               importanceSoFar = importance;
@@ -1102,7 +1120,7 @@ public final class MListOfFindingsColumn extends MColumn implements ISelectionOb
         final MenuItem item = (MenuItem) event.widget;
         if (item.getData() instanceof int[]) {
           final int[] itemIndices = (int[]) item.getData();
-          final FindingData data = f_data.rows.get(itemIndices[0]);
+          final FindingData data = f_data.f_rows.get(itemIndices[0]);
           if (itemIndices.length == 1) {
             handleFinding(item, data);
           } else {
@@ -1118,7 +1136,7 @@ public final class MListOfFindingsColumn extends MColumn implements ISelectionOb
     protected abstract void handleFindings(MenuItem item, FindingData data, List<Long> ids);
   }
 
-  private void refreshDisplay(final RowData data) {
+  private void refreshDisplay(final @NonNull RowData data) {
     final UIJob job = new SLUIJob() {
       @Override
       public IStatus runInUIThread(final IProgressMonitor monitor) {
@@ -1146,7 +1164,7 @@ public final class MListOfFindingsColumn extends MColumn implements ISelectionOb
   private List<Long> extractFindingIds(final int[] itemIndices) {
     final List<Long> ids = new ArrayList<Long>(itemIndices.length);
     for (final int ti : itemIndices) {
-      final FindingData fd = f_data.rows.get(ti);
+      final FindingData fd = f_data.f_rows.get(ti);
       if (fd != null) {
         ids.add(fd.f_findingId);
       }
@@ -1174,8 +1192,6 @@ public final class MListOfFindingsColumn extends MColumn implements ISelectionOb
       observer.findingsDisposed();
     }
   }
-
-  private static final Set<MListOfFindingsColumn> f_tables = new HashSet<MListOfFindingsColumn>();
 
   @Override
   public void columnsChanged(final Selection selection, final Column c) {
