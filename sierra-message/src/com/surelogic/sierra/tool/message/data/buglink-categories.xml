@@ -899,10 +899,6 @@
             <type>LoggerIsNotStaticFinal</type>
             <filtered>false</filtered>
         </filter>
-        <filter>
-            <type>GuardLogStatementJavaUtil</type>
-            <filtered>false</filtered>
-        </filter>        
     </filterSets>
     <filterSets>
         <uid>6e58ba42-e673-47c2-aff0-1b4c2e33a1e5</uid>

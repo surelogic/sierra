@@ -12395,7 +12395,7 @@ f. e. call <code>myString.lastIndexOf('.')</code> instead of <code>myString.last
     <info>
       <![CDATA[No need to explicitly extend Object.]]>
     </info>
-    <name>No need to explicitly extend Object.</name>
+    <name>No need to explicitly extend Object</name>
   </findingType>
   <findingType>
     <id>CheckSkipResult</id>
@@ -12404,7 +12404,7 @@ f. e. call <code>myString.lastIndexOf('.')</code> instead of <code>myString.last
     <info>
       <![CDATA[The skip() method may skip a smaller number of bytes than requested. Check the returned value to find out if it was the case or not.]]>
     </info>
-    <name>Check the value returned by the skip() method of an InputStream to see if the requested number of bytes has been skipped.</name>
+    <name>Check the value returned by the skip() method</name>
   </findingType>
   <findingType>
     <id>AvoidBranchingStatementAsLastInLoop</id>
@@ -12418,7 +12418,7 @@ Ensure that the usage is not a bug, or consider using another approach.
             
         ]]>
     </info>
-    <name>Avoid using a branching statement as the last in a loop.</name>
+    <name>Avoid using a branching statement as the last in a loop</name>
   </findingType>
   <findingType>
     <id>DontUseFloatTypeForLoopIndices</id>
@@ -12431,7 +12431,7 @@ unless you're certain that float provides enough precision and you have a compel
 performance need (space or time).
     ]]>
     </info>
-    <name>Don't use floating point for loop indices. If you must use floating point, use double.</name>
+    <name>Don't use float for loop indices</name>
   </findingType>
   <findingType>
     <id>CommentRequired</id>
@@ -12478,7 +12478,7 @@ can lead to quite messy code. This rule looks for several declarations on the sa
             
         ]]>
     </info>
-    <name>Use one line for each declaration, it enhances code readability.</name>
+    <name>Use one line for each declaration</name>
   </findingType>
   <findingType>
     <id>AvoidPrefixingMethodParameters</id>
@@ -12493,7 +12493,7 @@ behavior with Javadoc.
             
         ]]>
     </info>
-    <name>Avoid prefixing parameters by in, out or inOut. Uses Javadoc to document this behavior.</name>
+    <name>Avoid prefixing parameters by in, out or inOut</name>
   </findingType>
   <findingType>
     <id>UseObjectForClearerAPI</id>
@@ -12509,7 +12509,7 @@ point to pass extra data, you'll be able to do so by simply modifying or extendi
 your API.
     ]]>
     </info>
-    <name>Rather than using a lot of String arguments, consider using a container object for those values.</name>
+    <name>Consider using a container object</name>
   </findingType>
   <findingType>
     <id>LoosePackageCoupling</id>
@@ -12521,7 +12521,7 @@ Avoid using classes from the configured package hierarchy outside of the package
 except when using one of the configured allowed classes.
       ]]>
     </info>
-    <name>Use of ''{0}'' outside of package hierarchy ''{1}'' is not recommended; use recommended classes instead</name>
+    <name>Loose package coupling</name>
   </findingType>
   <findingType>
     <id>LawOfDemeter</id>
@@ -12548,7 +12548,7 @@ http://en.wikipedia.org/wiki/Law_of_Demeter
 Use opposite operator instead of negating the whole expression with a logic complement operator.
 	]]>
     </info>
-    <name>Use opposite operator instead of the logic complement operator.</name>
+    <name>Use opposite operator instead of the logic complement operator</name>
   </findingType>
   <findingType>
     <id>UseVarargs</id>
@@ -12561,7 +12561,7 @@ sugar provides flexibility for users of these methods and constructors, allowing
 having to deal with the creation of an array.
 ]]>
     </info>
-    <name>Consider using varargs for methods or constructors which take an array the last parameter.</name>
+    <name>Consider using varargs</name>
   </findingType>
   <findingType>
     <id>FieldDeclarationsShouldBeAtStartOfClass</id>
@@ -12572,7 +12572,7 @@ having to deal with the creation of an array.
 Fields should be declared at the top of the class, before any method declarations, constructors, initializers or inner classes.
     ]]>
     </info>
-    <name>Fields should be declared at the top of the class, before any method declarations, constructors, initializers or inner classes.</name>
+    <name>Fields should be declared at the top of the class</name>
   </findingType>
   <findingType>
     <id>GodClass</id>
@@ -12600,7 +12600,7 @@ of Object-Oriented Systems. Springer, Berlin, 1 edition, October 2006. Page 80.
 Empty block statements serve no purpose and should be removed.
 	]]>
     </info>
-    <name>Avoid empty block statements.</name>
+    <name>Avoid empty block statements</name>
   </findingType>
   <findingType>
     <id>UnnecessaryFullyQualifiedName</id>
@@ -12612,7 +12612,7 @@ Import statements allow the use of non-fully qualified names.  The use of a full
 which is covered by an import statement is redundant.  Consider using the non-fully qualified name.
 		 ]]>
     </info>
-    <name>Unnecessary use of fully qualified name ''{0}'' due to existing import ''{1}''</name>
+    <name>Unnecessary use of fully qualified name</name>
   </findingType>
   <findingType>
     <id>JUnitTestContainsTooManyAsserts</id>
@@ -12625,7 +12625,7 @@ it is harder to verify correctness.  Consider breaking the test scenario into mu
 Customize the maximum number of assertions used by this Rule to suit your needs.
 		]]>
     </info>
-    <name>JUnit tests should not contain more than ${maximumAsserts} assert(s).</name>
+    <name>Too many asserts in JUnit test</name>
   </findingType>
   <findingType>
     <id>UseAssertTrueInsteadOfAssertEquals</id>
@@ -12636,7 +12636,7 @@ Customize the maximum number of assertions used by this Rule to suit your needs.
 When asserting a value is the same as a boolean literal, use assertTrue/assertFalse, instead of assertEquals.
 		]]>
     </info>
-    <name>Use assertTrue(x)/assertFalse(x) instead of assertEquals(true, x)/assertEquals(false, x).</name>
+    <name>Use assertTrue instead of assertEquals</name>
   </findingType>
   <findingType>
     <id>ShortClassName</id>
@@ -12649,7 +12649,7 @@ Classnames with fewer than five characters are not recommended.
 			
         ]]>
     </info>
-    <name>A Classname should have a minimum of five characters</name>
+    <name>Class names should have a minimum of five characters</name>
   </findingType>
   <findingType>
     <id>RedundantFieldInitializer</id>
@@ -12661,7 +12661,7 @@ Java will initialize fields with known default values so any explicit initializa
 is redundant and results in a larger class file (approximately three additional bytecode instructions per field).
 		]]>
     </info>
-    <name>Avoid using redundant field initializer for ''${variableName}''</name>
+    <name>Avoid redundant field initializers</name>
   </findingType>
   <findingType>
     <id>PrematureDeclaration</id>
@@ -12672,7 +12672,7 @@ is redundant and results in a larger class file (approximately three additional 
 Checks for variables that are defined before they might be used. A reference is deemed to be premature if it is created right before a block of code that doesn't use it that also has the ability to return or throw an exception.
 		]]>
     </info>
-    <name>Avoid declaring a variable if it is unreferenced before a possible exit point.</name>
+    <name>Premature variable declaration</name>
   </findingType>
   <findingType>
     <id>UselessParentheses</id>
@@ -12681,7 +12681,7 @@ Checks for variables that are defined before they might be used. A reference is 
     <info>
       <![CDATA[Useless parentheses should be removed.]]>
     </info>
-    <name>Useless parentheses.</name>
+    <name>Useless parentheses</name>
   </findingType>
   
   <!-- - PMD 5.1.1 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
@@ -12700,7 +12700,7 @@ remember to add a private constructor to prevent instantiation.
 		
     ]]>
     </info>
-    <name>All methods are static.  Consider using a utility class instead. Alternatively, you could add a private constructor or make the class abstract to silence this warning.</name>
+    <name>Consider using a utility class instead</name>
   </findingType>
   <findingType>
     <id>PositionLiteralsFirstInCaseInsensitiveComparisons</id>
@@ -12725,22 +12725,11 @@ only be allowed in final classes that extend other classes with protected method
 visibility cannot be reduced). Clarify your intent by using private or package access modifiers instead.
          ]]>
     </info>
-    <name>Avoid protected methods in a final class that doesn't extend anything other than Object.  Change to private or package access.</name>
+    <name>Avoid protected methods in a non-extending final class</name>
   </findingType>
   <findingType>
     <id>GuardLogStatement</id>
     <artifact tool="PMD"	mnemonic="GuardLogStatement"/>
-    <shortMessage>There is log block not surrounded by if</shortMessage>
-    <info>
-      <![CDATA[
-Whenever using a log level, one should check if the loglevel is actually enabled, or
-otherwise skip the associate String creation and manipulation.
-     ]]>
-    </info>
-    <name>There is log block not surrounded by if</name>
-  </findingType>
-  <findingType>
-    <id>GuardLogStatementJavaUtil</id>
     <artifact tool="PMD"	mnemonic="GuardLogStatementJavaUtil"/>
     <shortMessage>There is log block not surrounded by if</shortMessage>
     <info>
@@ -12749,7 +12738,7 @@ Whenever using a log level, one should check if the loglevel is actually enabled
 otherwise skip the associate String creation and manipulation.
      ]]>
     </info>
-    <name>There is log block not surrounded by if</name>
+    <name>Log block not surrounded by if</name>
   </findingType>
   <findingType>
     <id>ConsecutiveAppendsShouldReuse</id>
@@ -12760,7 +12749,7 @@ otherwise skip the associate String creation and manipulation.
 Consecutively calls to StringBuffer/StringBuilder .append should reuse the target object. This can improve the performance.
     ]]>
     </info>
-    <name>StringBuffer (or StringBuilder).append is called consecutively without reusing the target variable.</name>
+    <name>Consecutive appends should reuse target object</name>
   </findingType>
 
   <!-- - END - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->  
