@@ -14,6 +14,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jdt.core.IType;
 import org.eclipse.jface.action.Action;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
@@ -45,6 +46,7 @@ import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.progress.UIJob;
 
 import com.surelogic.common.CommonImages;
+import com.surelogic.common.core.JDTUtility;
 import com.surelogic.common.core.logging.SLEclipseStatusUtility;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.logging.SLLogger;
@@ -232,8 +234,6 @@ public class FindingDetailsMediator extends AbstractSierraViewMediator implement
       }
     };
   }
-
-  // private AtomicLong findingQueryInProgress = new AtomicLong();
 
   void asyncQueryAndShow(final long findingId) {
     final Job job = new AbstractSierraDatabaseJob("Querying details of finding " + findingId) {
@@ -730,7 +730,7 @@ public class FindingDetailsMediator extends AbstractSierraViewMediator implement
     // TODO reuse old TreeItems?
     final TreeItem proj = new TreeItem(tree, SWT.NULL);
     proj.setText(finding.getProjectName());
-    proj.setImage(SLImages.getImage(CommonImages.IMG_PROJECT));
+    proj.setImage(SLImages.getImageForProject(finding.getProjectName()));
 
     final int numArtifacts = finding.getNumberOfArtifacts();
     if (numArtifacts < 1) {
@@ -749,7 +749,11 @@ public class FindingDetailsMediator extends AbstractSierraViewMediator implement
 
       final TreeItem clazz = new TreeItem(pkg, SWT.NULL);
       clazz.setText(firstArtifact.getClassName() + " at line " + firstArtifact.getLineOfCode());
-      clazz.setImage(SLImages.getImage(CommonImages.IMG_CLASS));
+      IType jdtType = JDTUtility.findIType(finding.getProjectName(), finding.getPackageName(), finding.getClassName());
+      if (jdtType == null)
+        clazz.setImage(SLImages.getImage(CommonImages.IMG_CLASS));
+      else
+        clazz.setImage(SLImages.getImageFor(jdtType));
       clazz.setData(firstArtifact.getPrimarySource());
       showAsLink(clazz);
       // clazz.addListener(SWT.Selection, f_locationListener);

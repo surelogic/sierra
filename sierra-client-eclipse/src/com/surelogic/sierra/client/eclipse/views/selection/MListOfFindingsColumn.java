@@ -891,7 +891,7 @@ public final class MListOfFindingsColumn extends MColumn implements ISelectionOb
     }
     if (numVisible == 1) {
       final ColumnData cd = (ColumnData) lastVisible.getData();
-      lastVisible.setWidth(computeValueWidth(cd));
+   //   lastVisible.setWidth(computeValueWidth(cd));
     }
     updateTableColumns = false;
     f_table.setHeaderVisible(numVisible > 1);
