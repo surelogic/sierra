@@ -58,7 +58,7 @@ import com.surelogic.common.ui.JDTUIUtility;
 import com.surelogic.common.ui.SLImages;
 import com.surelogic.common.ui.jobs.SLUIJob;
 import com.surelogic.sierra.client.eclipse.Data;
-import com.surelogic.sierra.client.eclipse.Utility;
+import com.surelogic.sierra.client.eclipse.SierraUIUtility;
 import com.surelogic.sierra.client.eclipse.dialogs.ExportFindingSetDialog;
 import com.surelogic.sierra.client.eclipse.jobs.AbstractSierraDatabaseJob;
 import com.surelogic.sierra.client.eclipse.model.FindingMutationUtility;
@@ -322,7 +322,7 @@ public final class MListOfFindingsColumn extends MColumn implements ISelectionOb
 
       @Override
       Image getImage(final FindingData data) {
-        return Utility.getImageFor(data.f_importance);
+        return SierraUIUtility.getImageFor(data.f_importance);
       }
     });
     prototypes.add(new ColumnData("Importance") {
@@ -338,7 +338,7 @@ public final class MListOfFindingsColumn extends MColumn implements ISelectionOb
 
       @Override
       Image getImage(final FindingData data) {
-        return Utility.getImageFor(data.f_importance);
+        return SierraUIUtility.getImageFor(data.f_importance);
       }
     });
     prototypes.add(new ColumnData("Project") {
@@ -387,8 +387,7 @@ public final class MListOfFindingsColumn extends MColumn implements ISelectionOb
 
       @Override
       Image getImage(FindingData data) {
-        final IType jdtType = JDTUtility.findIType(data.f_projectName, data.f_packageName, data.f_typeName);
-        return SLImages.getImageFor(jdtType);
+        return SierraUIUtility.getTypeImageFor(data.f_projectName, data.f_packageName, data.f_typeName);
       }
     });
     prototypes.add(new ColumnData("Finding Type") {

@@ -4,56 +4,62 @@ import java.util.Arrays;
 
 import org.eclipse.swt.graphics.Image;
 
-import com.surelogic.sierra.client.eclipse.Utility;
+import com.surelogic.common.CommonImages;
+import com.surelogic.common.ui.SLImages;
+import com.surelogic.sierra.client.eclipse.SierraUIUtility;
 import com.surelogic.sierra.tool.message.Importance;
 
 public final class FilterImportance extends Filter {
 
-	public static final ISelectionFilterFactory FACTORY = new AbstractFilterFactory() {
-		@Override
+  public static final ISelectionFilterFactory FACTORY = new AbstractFilterFactory() {
+    @Override
     public Filter construct(Selection selection, Filter previous) {
-			return new FilterImportance(selection, previous);
-		}
+      return new FilterImportance(selection, previous);
+    }
 
-		@Override
+    @Override
     public String getFilterLabel() {
-			return "Importance";
-		}
-	};
+      return "Importance";
+    }
 
-	FilterImportance(Selection selection, Filter previous) {
-		super(selection, previous);
-	}
+    @Override
+    public Image getFilterImage() {
+      return SLImages.getImage(CommonImages.IMG_ASTERISK_ORANGE_100);
+    }
+  };
 
-	@Override
-	public ISelectionFilterFactory getFactory() {
-		return FACTORY;
-	}
+  FilterImportance(Selection selection, Filter previous) {
+    super(selection, previous);
+  }
 
-	@Override
-	protected String getColumnName() {
-		return "IMPORTANCE";
-	}
+  @Override
+  public ISelectionFilterFactory getFactory() {
+    return FACTORY;
+  }
 
-	@Override
-	public Image getImageFor(String value) {
-		Importance aType = Importance.fromValue(value);
-		return Utility.getImageFor(aType);
-	}
-	
-	public static final String CRITICAL = "Critical";
-	public static final String HIGH = "High";
-	public static final String MEDIUM = "Medium";
-	public static final String LOW = "Low";
-	public static final String IRRELEVANT = "Irrelevant";
+  @Override
+  protected String getColumnName() {
+    return "IMPORTANCE";
+  }
 
-	@Override
-	protected void deriveAllValues() {
-		String[] values = new String[] { CRITICAL, HIGH, MEDIUM, LOW,
-				IRRELEVANT };
-		synchronized (this) {
-			f_allValues.clear();
-			f_allValues.addAll(Arrays.asList(values));
-		}
-	}
+  @Override
+  public Image getImageFor(String value) {
+    Importance aType = Importance.fromValue(value);
+    return SierraUIUtility.getImageFor(aType);
+  }
+
+  public static final String CRITICAL = "Critical";
+  public static final String HIGH = "High";
+  public static final String MEDIUM = "Medium";
+  public static final String LOW = "Low";
+  public static final String IRRELEVANT = "Irrelevant";
+
+  @Override
+  protected void deriveAllValues() {
+    String[] values = new String[] { CRITICAL, HIGH, MEDIUM, LOW, IRRELEVANT };
+    synchronized (this) {
+      f_allValues.clear();
+      f_allValues.addAll(Arrays.asList(values));
+    }
+  }
 }

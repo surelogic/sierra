@@ -14,7 +14,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jdt.core.IType;
 import org.eclipse.jface.action.Action;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
@@ -22,7 +21,6 @@ import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Button;
@@ -46,7 +44,6 @@ import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.progress.UIJob;
 
 import com.surelogic.common.CommonImages;
-import com.surelogic.common.core.JDTUtility;
 import com.surelogic.common.core.logging.SLEclipseStatusUtility;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.logging.SLLogger;
@@ -60,7 +57,7 @@ import com.surelogic.common.ui.TextEditedListener;
 import com.surelogic.common.ui.jobs.SLUIJob;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.StyleSheetHelper;
-import com.surelogic.sierra.client.eclipse.Utility;
+import com.surelogic.sierra.client.eclipse.SierraUIUtility;
 import com.surelogic.sierra.client.eclipse.jobs.AbstractSierraDatabaseJob;
 import com.surelogic.sierra.client.eclipse.model.FindingMutationUtility;
 import com.surelogic.sierra.client.eclipse.views.selection.FindingsSelectionView;
@@ -560,7 +557,7 @@ public class FindingDetailsMediator extends AbstractSierraViewMediator implement
     /*
      * We have a finding so show the details about it.
      */
-    f_summaryIcon.setImage(Utility.getImageFor(f_finding.getImportance()));
+    f_summaryIcon.setImage(SierraUIUtility.getImageFor(f_finding.getImportance()));
     f_summaryIcon.setToolTipText("The importance of this finding is " + f_finding.getImportance().toStringSentenceCase());
     f_summaryText.setText(f_finding.getSummary());
 
@@ -634,29 +631,20 @@ public class FindingDetailsMediator extends AbstractSierraViewMediator implement
     }
 
     f_artifacts.removeAll();
-    final Image findbugs = SLImages.getImage(CommonImages.IMG_FINDBUGS_FINDING);
-    final Image pmd = SLImages.getImage(CommonImages.IMG_PMD_FINDING);
-    final Image pkgImage = SLImages.getImage(CommonImages.IMG_PACKAGE);
-    final Image classImage = SLImages.getImage(CommonImages.IMG_CLASS);
 
     for (final ArtifactDetail artifactDetail : f_finding.getArtifacts()) {
       final TableItem item = new TableItem(f_artifacts, SWT.NONE);
 
       final String tool = artifactDetail.getTool();
       item.setText(0, tool);
-      if ("FindBugs".equals(tool)) {
-        item.setImage(0, findbugs);
-      } else if ("PMD".equals(tool)) {
-        item.setImage(0, pmd);
-      }
+      item.setImage(SierraUIUtility.getImageForTool(tool));
 
       item.setText(1, artifactDetail.getMessage());
 
       item.setText(2, artifactDetail.getPackageName());
-      item.setImage(2, pkgImage);
+      item.setImage(2, SLImages.getImage(CommonImages.IMG_PACKAGE));
       item.setText(3, artifactDetail.getClassName());
-      item.setImage(3, classImage);
-
+      item.setImage(3, SierraUIUtility.getTypeImageFor(null, artifactDetail.getPackageName(), artifactDetail.getClassName()));
       item.setText(4, Integer.toString(artifactDetail.getLineOfCode()));
     }
     for (final TableColumn c : f_artifacts.getColumns()) {
@@ -749,11 +737,7 @@ public class FindingDetailsMediator extends AbstractSierraViewMediator implement
 
       final TreeItem clazz = new TreeItem(pkg, SWT.NULL);
       clazz.setText(firstArtifact.getClassName() + " at line " + firstArtifact.getLineOfCode());
-      IType jdtType = JDTUtility.findIType(finding.getProjectName(), finding.getPackageName(), finding.getClassName());
-      if (jdtType == null)
-        clazz.setImage(SLImages.getImage(CommonImages.IMG_CLASS));
-      else
-        clazz.setImage(SLImages.getImageFor(jdtType));
+      clazz.setImage(SierraUIUtility.getTypeImageFor(finding.getProjectName(), finding.getPackageName(), finding.getClassName()));
       clazz.setData(firstArtifact.getPrimarySource());
       showAsLink(clazz);
       // clazz.addListener(SWT.Selection, f_locationListener);

@@ -7,34 +7,39 @@ import com.surelogic.common.ui.SLImages;
 
 public final class FilterJavaPackage extends Filter {
 
-	public static final ISelectionFilterFactory FACTORY = new AbstractFilterFactory() {
-		@Override
+  public static final ISelectionFilterFactory FACTORY = new AbstractFilterFactory() {
+    @Override
     public Filter construct(Selection selection, Filter previous) {
-			return new FilterJavaPackage(selection, previous);
-		}
+      return new FilterJavaPackage(selection, previous);
+    }
 
-		@Override
+    @Override
     public String getFilterLabel() {
-			return "Java Package";
-		}
-	};
+      return "Java Package";
+    }
 
-	FilterJavaPackage(Selection selection, Filter previous) {
-		super(selection, previous);
-	}
+    @Override
+    public Image getFilterImage() {
+      return SLImages.getImage(CommonImages.IMG_PACKAGE);
+    }
+  };
 
-	@Override
-	public ISelectionFilterFactory getFactory() {
-		return FACTORY;
-	}
+  FilterJavaPackage(Selection selection, Filter previous) {
+    super(selection, previous);
+  }
 
-	@Override
-	protected String getColumnName() {
-		return "PACKAGE";
-	}
+  @Override
+  public ISelectionFilterFactory getFactory() {
+    return FACTORY;
+  }
 
-	@Override
-	public Image getImageFor(String value) {
-		return SLImages.getImage(CommonImages.IMG_PACKAGE);
-	}
+  @Override
+  protected String getColumnName() {
+    return "PACKAGE";
+  }
+
+  @Override
+  public Image getImageFor(String value) {
+    return SLImages.getImage(CommonImages.IMG_PACKAGE);
+  }
 }

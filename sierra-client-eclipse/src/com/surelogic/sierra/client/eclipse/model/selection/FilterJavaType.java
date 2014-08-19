@@ -19,6 +19,11 @@ public final class FilterJavaType extends Filter {
     public String getFilterLabel() {
       return "Java Type";
     }
+
+    @Override
+    public Image getFilterImage() {
+      return SLImages.getImage(CommonImages.IMG_CLASS);
+    }
   };
 
   FilterJavaType(Selection selection, Filter previous) {
