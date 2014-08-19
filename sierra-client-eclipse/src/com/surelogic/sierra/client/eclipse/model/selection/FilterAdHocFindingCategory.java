@@ -57,6 +57,11 @@ public final class FilterAdHocFindingCategory extends Filter implements IBuglink
   }
 
   @Override
+  public Image getImageFor(String value) {
+    return SLImages.getGrayscaleImage(CommonImages.IMG_CATEGORY);
+  }
+
+  @Override
   protected void deriveAllValues() throws Exception {
     f_allValues.clear();
 

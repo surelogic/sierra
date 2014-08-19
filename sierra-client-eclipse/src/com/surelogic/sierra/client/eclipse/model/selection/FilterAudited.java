@@ -40,6 +40,16 @@ public final class FilterAudited extends Filter {
     return "AUDITED";
   }
 
+  @Override
+  public Image getImageFor(String value) {
+    String imageName = CommonImages.IMG_UNKNOWN;
+    if (YES.equals(value))
+      imageName = CommonImages.IMG_SIGNED_YES;
+    else if (NO.equals(value))
+      imageName = CommonImages.IMG_SIGNED_NO;
+    return SLImages.getImage(imageName);
+  }
+
   private static final String YES = "Yes";
   private static final String NO = "No";
 

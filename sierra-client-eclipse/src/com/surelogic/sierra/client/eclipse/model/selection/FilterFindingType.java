@@ -50,6 +50,11 @@ public final class FilterFindingType extends Filter {
   }
 
   @Override
+  public Image getImageFor(String value) {
+    return SLImages.getImage(CommonImages.IMG_INDEX_CARD);
+  }
+
+  @Override
   protected void deriveAllValues() throws Exception {
     f_allValues.clear();
     f_allValues.addAll(f_counts.keySet());
