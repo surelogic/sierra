@@ -269,7 +269,14 @@
 			class="com.surelogic.sierra.client.eclipse.views.selection.FindingsSelectionView"
 			id="com.surelogic.sierra.client.eclipse.views.selection.FindingsSelectionView"
 			icon="platform:/plugin/com.surelogic.common/lib/images/sierra_investigate.gif"
-			name="Findings Quick Search">
+			name="Sierra Quick Search">
+		</view>
+		
+		<view category="com.surelogic.sierra.client.eclipse"
+			class="com.surelogic.sierra.client.eclipse.views.FindingsView"
+			id="com.surelogic.sierra.client.eclipse.views.FindingsView"
+			icon="platform:/plugin/com.surelogic.common/lib/images/asterisk_diamond_orange.gif"
+			name="Findings">
 		</view>
 
 		<view category="com.surelogic.sierra.client.eclipse"

@@ -56,11 +56,10 @@ import com.surelogic.common.ui.SLImages;
 import com.surelogic.common.ui.TextEditedListener;
 import com.surelogic.common.ui.jobs.SLUIJob;
 import com.surelogic.sierra.client.eclipse.Data;
-import com.surelogic.sierra.client.eclipse.StyleSheetHelper;
 import com.surelogic.sierra.client.eclipse.SierraUIUtility;
+import com.surelogic.sierra.client.eclipse.StyleSheetHelper;
 import com.surelogic.sierra.client.eclipse.jobs.AbstractSierraDatabaseJob;
 import com.surelogic.sierra.client.eclipse.model.FindingMutationUtility;
-import com.surelogic.sierra.client.eclipse.views.selection.FindingsSelectionView;
 import com.surelogic.sierra.jdbc.finding.ArtifactDetail;
 import com.surelogic.sierra.jdbc.finding.AuditDetail;
 import com.surelogic.sierra.jdbc.finding.FindingDetail;
@@ -227,7 +226,7 @@ public class FindingDetailsMediator extends AbstractSierraViewMediator implement
     return new Listener() {
       @Override
       public void handleEvent(final Event event) {
-        EclipseUIUtility.showView(FindingsSelectionView.ID);
+        EclipseUIUtility.showView(FindingsView.ID);
       }
     };
   }

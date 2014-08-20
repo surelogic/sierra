@@ -6,6 +6,7 @@ import org.eclipse.ui.IPerspectiveFactory;
 
 import com.surelogic.common.core.EclipseUtility;
 import com.surelogic.sierra.client.eclipse.views.FindingDetailsView;
+import com.surelogic.sierra.client.eclipse.views.FindingsView;
 import com.surelogic.sierra.client.eclipse.views.SierraServersView;
 import com.surelogic.sierra.client.eclipse.views.SynchronizeDetailsView;
 import com.surelogic.sierra.client.eclipse.views.SynchronizeView;
@@ -21,17 +22,20 @@ public final class CodeReviewPerspective implements IPerspectiveFactory {
     final String localTeamServerView = "com.surelogic.sierra.eclipse.teamserver.views.TeamServerView";
     final String packageExplorer = "org.eclipse.jdt.ui.PackageExplorer";
     final String editorArea = layout.getEditorArea();
-    final String quickSearchArea = FindingsSelectionView.ID;
+    final String aboveEditorArea = "aboveEditorArea";
 
-    final IFolderLayout aboveEditorArea = layout.createFolder("aboveEditorArea", IPageLayout.TOP, 0.4f, editorArea);
-    aboveEditorArea.addView(quickSearchArea);
-    aboveEditorArea.addView(packageExplorer);
+    final IFolderLayout aboveEditorAreaF = layout.createFolder(aboveEditorArea, IPageLayout.TOP, 0.4f, editorArea);
+    aboveEditorAreaF.addView(FindingsSelectionView.ID);
+    aboveEditorAreaF.addView(packageExplorer);
+
+    final IFolderLayout rightSearchAreaF = layout.createFolder("rightSearchArea", IPageLayout.RIGHT, 0.6f, aboveEditorArea);
+    rightSearchAreaF.addView(FindingsView.ID);
     /*
      * The local team server view only will exist if that optional feature is
      * loaded. So we need to check before we add this to the perspective.
      */
     if (EclipseUtility.isLocalTeamServerInstalled()) {
-      aboveEditorArea.addView(localTeamServerView);
+      aboveEditorAreaF.addView(localTeamServerView);
     }
 
     final IFolderLayout leftOfEditorArea = layout.createFolder("leftOfEditorArea", IPageLayout.LEFT, 0.4f, editorArea);
