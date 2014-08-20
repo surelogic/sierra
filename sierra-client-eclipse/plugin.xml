@@ -12,17 +12,6 @@
 			<keywordReference id="com.surelogic.sierra.client.key6" />
 		</page>
 		<page
-			class="com.surelogic.sierra.client.eclipse.preferences.ToolsPreferencePage"
-			id="com.surelogic.sierra.client.eclipse.preferences.ToolsPreferencePage"
-			name="Tools"
-			category="com.surelogic.sierra.client.eclipse.preferences.SierraPreferencePage">
-			<keywordReference id="com.surelogic.sierra.client.key1" />
-			<keywordReference id="com.surelogic.sierra.client.key2" />
-			<keywordReference id="com.surelogic.sierra.client.key3" />
-			<keywordReference id="com.surelogic.sierra.client.key4" />
-			<keywordReference id="com.surelogic.sierra.client.key6" />
-		</page>
-		<page
 			class="com.surelogic.sierra.client.eclipse.preferences.ScanFilterPreferencePage"
 			id="com.surelogic.sierra.client.eclipse.preferences.ScanFilterPreferencePage"
 			name="Scan Filter"
