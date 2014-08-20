@@ -119,7 +119,7 @@ public final class SelectionPersistence {
 
   private static void outputColumn(PrintWriter pw, StringBuilder b, Column c) {
     b.append("    <").append(COLUMN);
-    Entities.addAttribute(NAME, c.getName(), b);
+    Entities.addAttribute(NAME, c.getTitle(), b);
     if (c.isVisible()) {
       Entities.addAttribute(VISIBLE, "true", b);
     }
@@ -215,34 +215,26 @@ public final class SelectionPersistence {
         }
       } else if (f_useColumnData && name.equals(COLUMN)) {
         final String id = attributes.getValue(NAME);
-        for (Column c : f_workingSelection.getColumns()) {
-          if (c.getName().equals(id)) {
-            final String viz = attributes.getValue(VISIBLE);
-            final String width = attributes.getValue(WIDTH);
-            final String sort = attributes.getValue(SORT);
-            final String index = attributes.getValue(INDEX);
+        final Column c = f_workingSelection.getColumnByTitle(id);
+        if (c != null) {
+          final String viz = attributes.getValue(VISIBLE);
+          c.setVisible(viz != null);
+          final String width = attributes.getValue(WIDTH);
+          if (width != null) {
+            c.setWidth(Integer.parseInt(width));
+          }
+          final String sort = attributes.getValue(SORT);
+          if (sort != null) {
+            c.setSort(ColumnSort.valueOf(sort));
+          }
+          final String index = attributes.getValue(INDEX);
+          if (index != null) {
             final int i = Integer.parseInt(index);
-            if (i >= f_workingSelection.getNumColumns()) {
-              // Bad column data
-              f_useColumnData = false;
-              resetColumns(f_workingSelection.getColumns());
-              return;
+            if (0 < i && i < f_workingSelection.getColumns().size()) {
+              c.setIndex(i);
             }
-            c.configure(viz != null, Integer.parseInt(width), ColumnSort.valueOf(sort), i);
           }
         }
-      }
-    }
-
-    private void resetColumns(Iterable<Column> columns) {
-      int i = 0;
-      for (Column c : columns) {
-        if ("Summary".equals(c.getName())) {
-          c.configure(true, 200, ColumnSort.SORT_UP, i);
-        } else {
-          c.configure(false, 0, ColumnSort.UNSORTED, i);
-        }
-        i++;
       }
     }
 
