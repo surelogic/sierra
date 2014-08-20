@@ -304,19 +304,93 @@ public final class MListOfFindingsColumn extends MColumn implements ISelectionOb
       f_table.addListener(SWT.Selection, f_singleClick);
       f_table.addKeyListener(f_keyListener);
       f_table.setItemCount(0);
+
       createTableColumns();
 
       final Menu menu = new Menu(f_table.getShell(), SWT.POP_UP);
       f_table.setMenu(menu);
-
       setupMenu(menu);
 
-      updateTableContents();
+      updateTableContents(true);
+
       return f_table;
     }
   };
 
-  private void updateTableContents() {
+  private boolean createTableColumns = false;
+
+  private void createTableColumns() {
+    createTableColumns = true;
+    final int[] order = new int[getSelection().getColumns().size()];
+    int i = 0;
+    for (final Column c : getSelection().getColumns()) {
+      final TableColumn tc = new TableColumn(f_table, c.getSwtAlignment());
+      tc.setText(c.getTitle());
+      tc.setData(c);
+      tc.setMoveable(true);
+
+      order[c.getIndex()] = i;
+      i++;
+
+      tc.addListener(SWT.Selection, new Listener() {
+        @Override
+        public void handleEvent(final Event event) {
+          // Toggle sort
+          switch (c.getSort()) {
+          case SORT_DOWN:
+          default:
+            c.setSort(ColumnSort.UNSORTED);
+            break;
+          case SORT_UP:
+            c.setSort(ColumnSort.SORT_DOWN);
+            break;
+          case UNSORTED:
+            c.setSort(ColumnSort.SORT_UP);
+            break;
+          }
+          updateTableContents(true);
+        }
+      });
+      tc.addControlListener(new ControlListener() {
+        @Override
+        public void controlMoved(final ControlEvent e) {
+          if (!createTableColumns && !updateTableColumns) {
+            final int[] currentOrder = f_table.getColumnOrder();
+            boolean changed = false;
+
+            // Update all the columns
+            final TableColumn[] columns = f_table.getColumns();
+            for (int i = 0; i < currentOrder.length; i++) {
+              final TableColumn tc = columns[currentOrder[i]];
+              final Column column = (Column) tc.getData();
+              if (i != column.getIndex()) {
+                changed = true;
+                System.out.println(column.getTitle() + ":" + column.getIndex() + " -> " + i);
+                column.setIndex(i);
+              }
+            }
+            if (changed) {
+              updateTableContents(true);
+            }
+          }
+        }
+
+        @Override
+        public void controlResized(final ControlEvent e) {
+          if (!updateTableColumns) {
+            /*
+             * This indicates a user width preference we should save
+             */
+            c.setUserSetWidth(tc.getWidth());
+          }
+        }
+      });
+    }
+    f_table.setColumnOrder(order);
+    createTableColumns = false;
+  }
+
+  private void updateTableContents(boolean tableStructureMayHaveChanged) {
     if (f_table.isDisposed()) {
       return;
     }
@@ -332,18 +406,18 @@ public final class MListOfFindingsColumn extends MColumn implements ISelectionOb
 
     f_table.removeAll();
 
-    sortModelBasedOnColumns();
+    final boolean hasFindings = f_data.f_rows.size() > 0;
+
+    if (hasFindings)
+      sortModelBasedOnColumns();
 
     for (final FindingData data : f_data.f_rows) {
       final TableItem item = new TableItem(f_table, SWT.NONE);
       initializeTableItem(data, item);
     }
 
-    for (TableColumn column : f_table.getColumns()) {
-      column.pack();
-    }
-
-    updateTableColumns();
+    if (hasFindings || tableStructureMayHaveChanged)
+      updateTableColumns();
 
     f_table.layout();
 
@@ -431,6 +505,9 @@ public final class MListOfFindingsColumn extends MColumn implements ISelectionOb
     }
   }
 
+  /**
+   * Used to avoid listeners reacting to settings during updates of the table.
+   */
   private boolean updateTableColumns = false;
 
   private void updateTableColumns() {
@@ -451,6 +528,59 @@ public final class MListOfFindingsColumn extends MColumn implements ISelectionOb
     updateTableColumns = false;
     f_table.setHeaderVisible(numVisible > 1);
     f_table.pack();
+  }
+
+  /**
+   * To be called after f_rows has been initialized.
+   */
+  private boolean loadColumnAppearance(final TableColumn tc) {
+    final Column column = (Column) tc.getData();
+
+    tc.setAlignment(column.getSwtAlignment());
+    tc.setResizable(column.isVisible());
+    if (column.isVisible()) {
+      final int width;
+      if (column.hasUserSetWidth())
+        width = column.getUserSetWidth();
+      else
+        width = computeValueWidth(column);
+      tc.setWidth(width);
+    } else {
+      // make invisible by using a width of zero
+      tc.setWidth(0);
+    }
+    final Image img;
+    switch (column.getSort()) {
+    case SORT_DOWN:
+      img = SLImages.getImage(CommonImages.IMG_SORT_DOWN);
+      break;
+    case SORT_UP:
+      img = SLImages.getImage(CommonImages.IMG_SORT_UP);
+      break;
+    case UNSORTED:
+    default:
+      img = null;
+      break;
+    }
+    tc.setImage(img);
+    setTableColumnVisible(tc, column.isVisible());
+    return column.isVisible();
+  }
+
+  private void setTableColumnVisible(TableColumn tc, boolean visible) {
+    final Column column = (Column) tc.getData();
+    if (visible) {
+      final int width;
+      if (column.hasUserSetWidth())
+        width = column.getUserSetWidth();
+      else
+        width = computeValueWidth(column);
+      tc.setWidth(width);
+      tc.setResizable(true);
+    } else {
+      tc.setWidth(0);
+      tc.setResizable(false);
+    }
   }
 
   /**
@@ -511,126 +641,6 @@ public final class MListOfFindingsColumn extends MColumn implements ISelectionOb
     return selected;
   }
 
-  private boolean createTableColumns = false;
-
-  private void createTableColumns() {
-    createTableColumns = true;
-    final int[] order = new int[getSelection().getColumns().size()];
-    int i = 0;
-    for (final Column c : getSelection().getColumns()) {
-      final TableColumn tc = new TableColumn(f_table, c.getSwtAlignment());
-      tc.setText(c.getTitle());
-      tc.setData(c);
-      tc.setMoveable(true);
-      tc.addListener(SWT.Selection, new Listener() {
-        @Override
-        public void handleEvent(final Event event) {
-          // Toggle sort
-          switch (c.getSort()) {
-          case SORT_DOWN:
-          default:
-            c.setSort(ColumnSort.UNSORTED);
-            break;
-          case SORT_UP:
-            c.setSort(ColumnSort.SORT_DOWN);
-            break;
-          case UNSORTED:
-            c.setSort(ColumnSort.SORT_UP);
-            break;
-          }
-          updateTableContents();
-        }
-      });
-      tc.addControlListener(new ControlListener() {
-        @Override
-        public void controlMoved(final ControlEvent e) {
-          if (!createTableColumns && !updateTableColumns) {
-            final int[] currentOrder = f_table.getColumnOrder();
-            boolean changed = false;
-
-            // Update all the columns
-            final TableColumn[] columns = f_table.getColumns();
-            for (int i = 0; i < currentOrder.length; i++) {
-              final TableColumn tc = columns[currentOrder[i]];
-              final Column column = (Column) tc.getData();
-              if (i != column.getIndex()) {
-                changed = true;
-                System.out.println(column.getTitle() + ":" + column.getIndex() + " -> " + i);
-                column.setIndex(i);
-              }
-            }
-            if (changed) {
-              updateTableContents();
-            }
-          }
-        }
-
-        @Override
-        public void controlResized(final ControlEvent e) {
-          if (!updateTableColumns) {
-            saveColumnAppearance(c, tc);
-          }
-        }
-      });
-      order[c.getIndex()] = i;
-      i++;
-    }
-    f_table.setColumnOrder(order);
-    createTableColumns = false;
-  }
-
-  /**
-   * To be called after f_rows has been initialized. Sync'd by
-   * updateTableContents()
-   */
-  private boolean loadColumnAppearance(final TableColumn tc) {
-    final Column column = (Column) tc.getData();
-
-    tc.setAlignment(column.getSwtAlignment());
-    tc.setResizable(column.isVisible());
-    if (column.isVisible()) {
-      if (column.getWidth() < 30) {
-        column.setWidth(computeValueWidth(column));
-      }
-      tc.setWidth(column.getWidth());
-    } else {
-      // make invisible by using a width of zero
-      tc.setWidth(0);
-    }
-    final Image img;
-    switch (column.getSort()) {
-    case SORT_DOWN:
-      img = SLImages.getImage(CommonImages.IMG_SORT_DOWN);
-      break;
-    case SORT_UP:
-      img = SLImages.getImage(CommonImages.IMG_SORT_UP);
-      break;
-    case UNSORTED:
-    default:
-      img = null;
-      break;
-    }
-    tc.setImage(img);
-    setTableColumnVisible(tc, column.isVisible());
-    return column.isVisible();
-  }
-
-  static void saveColumnAppearance(final Column column, final TableColumn tc) {
-    column.setWidth(tc.getWidth());
-  }
-
-  private static void setTableColumnVisible(TableColumn tc, boolean visible) {
-    final Column column = (Column) tc.getData();
-    if (visible) {
-      tc.setWidth(column.getWidth());
-      tc.setResizable(true);
-    } else {
-      column.setWidth(tc.getWidth());
-      tc.setWidth(0);
-      tc.setResizable(false);
-    }
-  }
-
   Column getDefaultColumn() {
     return getSelection().getColumnByTitle(Selection.SUMMARY_COLUMN);
   }
@@ -641,8 +651,6 @@ public final class MListOfFindingsColumn extends MColumn implements ISelectionOb
    * Goes through all the rows for a particular column and determines the
    * optional width.
    * 
-   * TODO IS THIS NEEDED? WHY NOT PACK
-   * 
    * @param column
    *          a column.
    * @return the ideal width for the column.
@@ -650,7 +658,7 @@ public final class MListOfFindingsColumn extends MColumn implements ISelectionOb
   private int computeValueWidth(final Column column) {
     final Image imageForGC = new Image(null, 1, 1);
     final GC gc = new GC(imageForGC);
-    int longest = 0;
+    int longest = gc.textExtent(column.getTitle()).x; // consider title
     gc.setFont(f_table.getFont());
     for (final FindingData data : f_data.f_rows) {
       final Point size = gc.textExtent(column.getCellProvider().getLabel((data)));
@@ -664,7 +672,7 @@ public final class MListOfFindingsColumn extends MColumn implements ISelectionOb
     gc.dispose();
     imageForGC.dispose();
 
-    final int PAD = 30;
+    final int PAD = 40;
     if (longest < 25) {
       return PAD;
     }
@@ -831,9 +839,6 @@ public final class MListOfFindingsColumn extends MColumn implements ISelectionOb
     });
   }
 
-  /**
-   * Assumes that the menu show/hide code will acquire/release the rows lock
-   */
   private abstract class SelectionListener implements Listener {
     @Override
     public final void handleEvent(final Event event) {
@@ -868,7 +873,7 @@ public final class MListOfFindingsColumn extends MColumn implements ISelectionOb
           getCascadingList().addColumnAfter(f_iColumn, addAfterColumn, false);
         } else {
           // update the table's contents
-          updateTableContents();
+          updateTableContents(false);
         }
         return Status.OK_STATUS;
       }
@@ -876,12 +881,6 @@ public final class MListOfFindingsColumn extends MColumn implements ISelectionOb
     job.schedule();
   }
 
-  /**
-   * Sync'd by the SelectionListener
-   *
-   * @param itemIndices
-   * @return
-   */
   private List<Long> extractFindingIds(final int[] itemIndices) {
     final List<Long> ids = new ArrayList<Long>(itemIndices.length);
     for (final int ti : itemIndices) {
@@ -918,19 +917,9 @@ public final class MListOfFindingsColumn extends MColumn implements ISelectionOb
   public void columnVisibilityChanged(final Selection selection, final Column c) {
     // Right now, handle the fact that the visible columns changed
     final Table t = f_table;
-    if (t != null) {
-      if (t.isDisposed()) {
-        return;
-      }
-      if (!c.isVisible()) {
-        // No longer visible, so save column width
-        for (final TableColumn tc : t.getColumns()) {
-          if (c == tc.getData()) {
-            saveColumnAppearance((Column) c, tc);
-          }
-        }
-      }
-      updateTableContents();
-    }
+    if (t == null || t.isDisposed())
+      return;
+
+    updateTableContents(true);
   }
 }

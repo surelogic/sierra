@@ -120,10 +120,10 @@ public final class SelectionPersistence {
   private static void outputColumn(PrintWriter pw, StringBuilder b, Column c) {
     b.append("    <").append(COLUMN);
     Entities.addAttribute(NAME, c.getTitle(), b);
-    if (c.isVisible()) {
+    if (c.isVisible())
       Entities.addAttribute(VISIBLE, "true", b);
-    }
-    Entities.addAttribute(WIDTH, c.getWidth(), b);
+    if (c.hasUserSetWidth())
+      Entities.addAttribute(WIDTH, c.getUserSetWidth(), b);
     Entities.addAttribute(SORT, c.getSort().toString(), b);
     Entities.addAttribute(INDEX, c.getIndex(), b);
     b.append(">");
@@ -221,7 +221,7 @@ public final class SelectionPersistence {
           c.setVisible(viz != null);
           final String width = attributes.getValue(WIDTH);
           if (width != null) {
-            c.setWidth(Integer.parseInt(width));
+            c.setUserSetWidth(Integer.parseInt(width));
           }
           final String sort = attributes.getValue(SORT);
           if (sort != null) {

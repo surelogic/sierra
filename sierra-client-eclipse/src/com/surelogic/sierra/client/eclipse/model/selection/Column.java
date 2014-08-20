@@ -71,8 +71,12 @@ public final class Column {
   @InRegion("ColumnState")
   private boolean f_visible = false;
 
+  /**
+   * The user set width for this column in pixels. A value of -1 indicates that
+   * no preference has been set and the width should be calculated on the fly.
+   */
   @InRegion("ColumnState")
-  private int f_width = -1;
+  private int f_userSetWidth = -1;
 
   @Override
   public String toString() {
@@ -131,7 +135,7 @@ public final class Column {
     f_index = toCopy.f_index;
     f_sort = toCopy.f_sort;
     f_visible = toCopy.f_visible;
-    f_width = toCopy.f_width;
+    f_userSetWidth = toCopy.f_userSetWidth;
   }
 
   /*
@@ -203,15 +207,37 @@ public final class Column {
     f_sort = value;
   }
 
-  public synchronized final int getWidth() {
-    return f_width;
+  /**
+   * The value of the width the user has set for this column. A value of -1
+   * indicates that no preference has been set and the width should be
+   * calculated on the fly.
+   * 
+   * @return a width in pixels.
+   */
+  public synchronized final int getUserSetWidth() {
+    return f_userSetWidth;
   }
 
-  public synchronized void setWidth(final int value) {
+  /**
+   * Gets if the user has set a column width.
+   * 
+   * @return {@code true} if the user has set a column width, {@code false}
+   *         otherwise.
+   */
+  public synchronized boolean hasUserSetWidth() {
+    return f_userSetWidth != -1;
+  }
+
+  /**
+   * 
+   * @param value
+   *          a width in pixels or <tt>-1</tt> to clear the width preference.
+   */
+  public synchronized void setUserSetWidth(final int value) {
     if (value < -1) {
       throw new IllegalArgumentException("illegal column width: " + value);
     }
-    f_width = value;
+    f_userSetWidth = value;
   }
 
   /**
