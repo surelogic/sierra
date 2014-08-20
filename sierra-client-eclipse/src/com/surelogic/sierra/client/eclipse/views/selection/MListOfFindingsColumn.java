@@ -7,10 +7,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 
@@ -19,7 +17,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jdt.core.IType;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
@@ -39,14 +36,11 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.progress.UIJob;
 
-import com.surelogic.Immutable;
 import com.surelogic.NonNull;
 import com.surelogic.Nullable;
 import com.surelogic.ThreadConfined;
 import com.surelogic.common.CommonImages;
-import com.surelogic.common.StringComparators;
 import com.surelogic.common.core.EclipseUtility;
-import com.surelogic.common.core.JDTUtility;
 import com.surelogic.common.core.logging.SLEclipseStatusUtility;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.jdbc.QB;
@@ -58,12 +52,12 @@ import com.surelogic.common.ui.JDTUIUtility;
 import com.surelogic.common.ui.SLImages;
 import com.surelogic.common.ui.jobs.SLUIJob;
 import com.surelogic.sierra.client.eclipse.Data;
-import com.surelogic.sierra.client.eclipse.SierraUIUtility;
 import com.surelogic.sierra.client.eclipse.dialogs.ExportFindingSetDialog;
 import com.surelogic.sierra.client.eclipse.jobs.AbstractSierraDatabaseJob;
 import com.surelogic.sierra.client.eclipse.model.FindingMutationUtility;
 import com.surelogic.sierra.client.eclipse.model.selection.Column;
 import com.surelogic.sierra.client.eclipse.model.selection.ColumnSort;
+import com.surelogic.sierra.client.eclipse.model.selection.FindingData;
 import com.surelogic.sierra.client.eclipse.model.selection.ISelectionObserver;
 import com.surelogic.sierra.client.eclipse.model.selection.Selection;
 import com.surelogic.sierra.client.eclipse.preferences.SierraPreferencesUtility;
@@ -72,8 +66,6 @@ import com.surelogic.sierra.client.eclipse.views.FindingDetailsView;
 import com.surelogic.sierra.tool.message.Importance;
 
 public final class MListOfFindingsColumn extends MColumn implements ISelectionObserver {
-
-  static private final String SUMMARY_NAME = "Summary";
 
   @ThreadConfined
   private Table f_table = null;
@@ -199,239 +191,6 @@ public final class MListOfFindingsColumn extends MColumn implements ISelectionOb
   }
 
   /**
-   * A helper class to hold a model of a row of data in this display of the
-   * finding.
-   */
-  @Immutable
-  private static class FindingData {
-    final String f_summary;
-    final Importance f_importance;
-    final long f_findingId;
-    final String f_projectName;
-    final String f_packageName;
-    final String f_typeName;
-    final int f_lineNumber;
-    final String f_findingType;
-    final String f_findingTypeName;
-    final String f_toolName;
-
-    FindingData(String summary, Importance importance, long findingId, String projectName, String packageName, String typeName,
-        int lineNumber, String findingType, String findingTypeName, String toolName) {
-      f_summary = summary;
-      f_importance = importance;
-      f_findingId = findingId;
-      f_projectName = projectName;
-      f_packageName = packageName;
-      f_typeName = typeName;
-      f_lineNumber = lineNumber;
-      f_findingType = findingType;
-      f_findingTypeName = findingTypeName;
-      f_toolName = toolName;
-    }
-
-    @Override
-    public String toString() {
-      return "finding_id=" + f_findingId + " [" + f_importance + "] of type " + f_findingType + " \"" + f_summary + "\" in "
-          + f_projectName + " " + f_packageName + "." + f_typeName + " at line " + f_lineNumber + " from " + f_toolName;
-    }
-
-    @Override
-    public boolean equals(final Object o) {
-      if (o instanceof FindingData) {
-        final FindingData other = (FindingData) o;
-        return f_findingId == other.f_findingId;
-      }
-      return false;
-    }
-
-    @Override
-    public int hashCode() {
-      return (int) f_findingId * 31;
-    }
-  }
-
-  private static abstract class ColumnData extends Column implements Cloneable, Comparator<FindingData> {
-    ColumnData(final String name) {
-      super(name);
-    }
-
-    ColumnData(final String name, final boolean visible, final ColumnSort sort) {
-      this(name);
-      this.visible = visible;
-      width = -1;
-      this.sort = sort;
-    }
-
-    int getAlignment() {
-      return SWT.LEFT;
-    }
-
-    void setSort(final ColumnSort s) {
-      sort = s;
-    }
-
-    void setWidth(final int w) {
-      width = w;
-    }
-
-    void setIndex(final int i) {
-      index = i;
-    }
-
-    String getText(final FindingData data) {
-      return "";
-    }
-
-    Image getImage(final FindingData data) {
-      return null;
-    }
-
-    @Override
-    public int compare(final FindingData o1, final FindingData o2) {
-      return sort == ColumnSort.SORT_DOWN ? -compareInternal(o1, o2) : compareInternal(o1, o2);
-    }
-
-    protected int compareInternal(final FindingData o1, final FindingData o2) {
-      return StringComparators.SORT_ALPHABETICALLY.compare(getText(o1), getText(o2));
-    }
-
-    @Override
-    protected ColumnData clone() {
-      try {
-        return (ColumnData) super.clone();
-      } catch (final CloneNotSupportedException e) {
-        throw new RuntimeException("Couldn't clone " + this);
-      }
-    }
-
-    @Override
-    public String toString() {
-      return getName();
-    }
-  }
-
-  private static final List<ColumnData> f_columnPrototypes = createColumnPrototypes();
-
-  private static List<ColumnData> createColumnPrototypes() {
-    final List<ColumnData> prototypes = new ArrayList<ColumnData>();
-    prototypes.add(new ColumnData(SUMMARY_NAME, true, ColumnSort.SORT_UP) {
-      @Override
-      String getText(final FindingData data) {
-        return data.f_summary;
-      }
-
-      @Override
-      Image getImage(final FindingData data) {
-        return SierraUIUtility.getImageFor(data.f_importance);
-      }
-    });
-    prototypes.add(new ColumnData("Importance") {
-      @Override
-      String getText(final FindingData data) {
-        return data.f_importance.toStringSentenceCase();
-      }
-
-      @Override
-      protected int compareInternal(final FindingData o1, final FindingData o2) {
-        return o1.f_importance.ordinal() - o2.f_importance.ordinal();
-      }
-
-      @Override
-      Image getImage(final FindingData data) {
-        return SierraUIUtility.getImageFor(data.f_importance);
-      }
-    });
-    prototypes.add(new ColumnData("Project") {
-      @Override
-      String getText(final FindingData data) {
-        return data.f_projectName;
-      }
-
-      @Override
-      Image getImage(FindingData data) {
-        return SLImages.getImageForProject(data.f_projectName);
-      }
-    });
-    prototypes.add(new ColumnData("Package") {
-      @Override
-      String getText(final FindingData data) {
-        return data.f_packageName;
-      }
-
-      @Override
-      Image getImage(FindingData data) {
-        return SLImages.getImage(CommonImages.IMG_PACKAGE);
-      }
-    });
-    prototypes.add(new ColumnData("Line#") {
-      @Override
-      String getText(final FindingData data) {
-        return Integer.toString(data.f_lineNumber);
-      }
-
-      @Override
-      int getAlignment() {
-        return SWT.RIGHT;
-      }
-
-      @Override
-      protected int compareInternal(final FindingData o1, final FindingData o2) {
-        return o1.f_lineNumber - o2.f_lineNumber;
-      }
-    });
-    prototypes.add(new ColumnData("Type") {
-      @Override
-      String getText(final FindingData data) {
-        return data.f_typeName;
-      }
-
-      @Override
-      Image getImage(FindingData data) {
-        return SierraUIUtility.getImageForType(data.f_projectName, data.f_packageName, data.f_typeName);
-      }
-    });
-    prototypes.add(new ColumnData("Finding Type") {
-      @Override
-      String getText(final FindingData data) {
-        return data.f_findingTypeName;
-      }
-    });
-    prototypes.add(new ColumnData("Tool") {
-      @Override
-      String getText(final FindingData data) {
-        return data.f_toolName;
-      }
-
-      @Override
-      Image getImage(FindingData data) {
-        return SierraUIUtility.getImageForTool(data.f_toolName);
-      }
-    });
-
-    int i = 0;
-    for (final ColumnData data : prototypes) {
-      data.setIndex(i);
-      i++;
-    }
-    return Collections.unmodifiableList(prototypes);
-  }
-
-  /**
-   * Returns all the column names that can be shown in the table that represents
-   * the list of findings.
-   * 
-   * @return a list of names which is a copy so it can be freely mutated.
-   */
-  static ArrayList<String> getHideableColumnNames() {
-    final ArrayList<String> names = new ArrayList<String>();
-    for (final ColumnData data : f_columnPrototypes) {
-      names.add(data.getName());
-    }
-    names.remove(SUMMARY_NAME); // not hideable
-    return names;
-  }
-
-  /**
    * @return true if updating
    */
   public RowData refreshData() {
@@ -449,9 +208,9 @@ public final class MListOfFindingsColumn extends MColumn implements ISelectionOb
           int rowCount = 0;
           while (rs.next()) {
             if (rowCount < findingsListLimit) {
-              final FindingData data = new FindingData(rs.getString(1), Importance.valueOf(rs.getString(2).toUpperCase()),
-                  rs.getLong(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getInt(7), rs.getString(8), rs.getString(9),
-                  rs.getString(10));
+              final FindingData data = new FindingData(rs.getLong(3), rs.getString(1), Importance.valueOf(rs.getString(2)
+                  .toUpperCase()), rs.getString(4), rs.getString(5), rs.getString(6), rs.getInt(7), rs.getString(8),
+                  rs.getString(9), rs.getString(10));
               rows.add(data);
               rowCount++;
             } else {
@@ -580,9 +339,10 @@ public final class MListOfFindingsColumn extends MColumn implements ISelectionOb
       initializeTableItem(data, item);
     }
 
-    for (TableColumn c : f_table.getColumns()) {
-      c.pack();
+    for (TableColumn column : f_table.getColumns()) {
+      column.pack();
     }
+
     updateTableColumns();
 
     f_table.layout();
@@ -617,6 +377,80 @@ public final class MListOfFindingsColumn extends MColumn implements ISelectionOb
     };
     job.schedule();
 
+  }
+
+  private void sortModelBasedOnColumns() {
+    System.out.println("sortModelBasedOnColumns():");
+    Comparator<FindingData> c = null;
+    // Traverse order backwards to construct proper comparator
+    final int[] order = f_table.getColumnOrder();
+    for (int i = order.length - 1; i >= 0; i--) {
+      final TableColumn tc = f_table.getColumn(order[i]);
+      final Column column = (Column) tc.getData();
+      if (!column.isVisible() || column.getSort() == ColumnSort.UNSORTED) {
+        continue; // Nothing to sort
+      }
+      if (c == null) {
+        c = column.getFindingComparator();
+      } else {
+        final Comparator<FindingData> oldCompare = c;
+        c = new Comparator<FindingData>() {
+          @Override
+          public int compare(final FindingData o1, final FindingData o2) {
+            final int result = column.getFindingComparator().compare(o1, o2);
+            if (result == 0) {
+              return oldCompare.compare(o1, o2);
+            } else
+              return result;
+          }
+
+          @Override
+          public String toString() {
+            return column.toString() + ", " + oldCompare.toString();
+          }
+        };
+      }
+    }
+    if (c == null) {
+      c = getDefaultColumn().getFindingComparator(); // The default sort
+    }
+    System.out.println(" --Sort order = " + c);
+    Collections.sort(f_data.f_rows, c);
+  }
+
+  private void initializeTableItem(final FindingData data, final TableItem item) {
+    item.setData(data);
+
+    // Setup data in all the columns
+    int j = 0;
+    for (final TableColumn tc : f_table.getColumns()) {
+      final Column column = (Column) tc.getData();
+      item.setText(j, column.getCellProvider().getLabel(data));
+      item.setImage(j, column.getCellProvider().getImage(data));
+      j++;
+    }
+  }
+
+  private boolean updateTableColumns = false;
+
+  private void updateTableColumns() {
+    int numVisible = 0;
+    TableColumn lastVisible = null;
+    updateTableColumns = true;
+
+    for (final TableColumn tc : f_table.getColumns()) {
+      if (loadColumnAppearance(tc)) {
+        numVisible++;
+        lastVisible = tc;
+      }
+    }
+    if (numVisible == 1) {
+      final Column column = (Column) lastVisible.getData();
+      lastVisible.setWidth(computeValueWidth(column));
+    }
+    updateTableColumns = false;
+    f_table.setHeaderVisible(numVisible > 1);
+    f_table.pack();
   }
 
   /**
@@ -677,79 +511,31 @@ public final class MListOfFindingsColumn extends MColumn implements ISelectionOb
     return selected;
   }
 
-  /**
-   * Sync'd by updateTableContents()
-   */
-  private void sortModelBasedOnColumns() {
-    Comparator<FindingData> c = null;
-    // Traverse order backwards to construct proper comparator
-    final int[] order = f_table.getColumnOrder();
-    for (int i = order.length - 1; i >= 0; i--) {
-      final TableColumn tc = f_table.getColumn(order[i]);
-      final ColumnData cd = (ColumnData) tc.getData();
-      if (!cd.isVisible() || cd.getSort() == ColumnSort.UNSORTED) {
-        continue; // Nothing to sort
-      }
-      if (c == null) {
-        c = cd;
-      } else {
-        final Comparator<FindingData> oldCompare = c;
-        c = new Comparator<FindingData>() {
-          @Override
-          public int compare(final FindingData o1, final FindingData o2) {
-            final int result = cd.compare(o1, o2);
-            if (result == 0) {
-              return oldCompare.compare(o1, o2);
-            }
-            return result;
-          }
-
-          @Override
-          public String toString() {
-            return cd.toString() + ", " + oldCompare.toString();
-          }
-        };
-      }
-    }
-    if (c == null) {
-      c = getDefaultColumn(); // The default sort
-    }
-    // System.out.println("Sort order = "+c);
-    Collections.sort(f_data.f_rows, c);
-    // Update row indices
-    int i = 0;
-    for (FindingData data : f_data.f_rows) {
-      // TODO data.f_index = i;
-      i++;
-    }
-  }
-
   private boolean createTableColumns = false;
 
   private void createTableColumns() {
     createTableColumns = true;
-    final int[] order = new int[getSelection().getNumColumns()];
+    final int[] order = new int[getSelection().getColumns().size()];
     int i = 0;
     for (final Column c : getSelection().getColumns()) {
-      final ColumnData data = (ColumnData) c;
-      final TableColumn tc = new TableColumn(f_table, data.getAlignment());
-      tc.setText(data.getName());
-      tc.setData(data);
+      final TableColumn tc = new TableColumn(f_table, c.getSwtAlignment());
+      tc.setText(c.getTitle());
+      tc.setData(c);
       tc.setMoveable(true);
       tc.addListener(SWT.Selection, new Listener() {
         @Override
         public void handleEvent(final Event event) {
           // Toggle sort
-          switch (data.getSort()) {
+          switch (c.getSort()) {
           case SORT_DOWN:
           default:
-            data.setSort(ColumnSort.UNSORTED);
+            c.setSort(ColumnSort.UNSORTED);
             break;
           case SORT_UP:
-            data.setSort(ColumnSort.SORT_DOWN);
+            c.setSort(ColumnSort.SORT_DOWN);
             break;
           case UNSORTED:
-            data.setSort(ColumnSort.SORT_UP);
+            c.setSort(ColumnSort.SORT_UP);
             break;
           }
           updateTableContents();
@@ -766,12 +552,11 @@ public final class MListOfFindingsColumn extends MColumn implements ISelectionOb
             final TableColumn[] columns = f_table.getColumns();
             for (int i = 0; i < currentOrder.length; i++) {
               final TableColumn tc = columns[currentOrder[i]];
-              final ColumnData data = (ColumnData) tc.getData();
-              if (i != data.getIndex()) {
+              final Column column = (Column) tc.getData();
+              if (i != column.getIndex()) {
                 changed = true;
-                // System.out.println(data.getIndex() + " -> " +
-                // i);
-                data.setIndex(i);
+                System.out.println(column.getTitle() + ":" + column.getIndex() + " -> " + i);
+                column.setIndex(i);
               }
             }
             if (changed) {
@@ -783,11 +568,11 @@ public final class MListOfFindingsColumn extends MColumn implements ISelectionOb
         @Override
         public void controlResized(final ControlEvent e) {
           if (!updateTableColumns) {
-            saveColumnAppearance(data, tc);
+            saveColumnAppearance(c, tc);
           }
         }
       });
-      order[data.getIndex()] = i;
+      order[c.getIndex()] = i;
       i++;
     }
     f_table.setColumnOrder(order);
@@ -795,25 +580,25 @@ public final class MListOfFindingsColumn extends MColumn implements ISelectionOb
   }
 
   /**
-   * To be called after f_rows has been initialized Sync'd by
+   * To be called after f_rows has been initialized. Sync'd by
    * updateTableContents()
    */
   private boolean loadColumnAppearance(final TableColumn tc) {
-    final ColumnData data = (ColumnData) tc.getData();
+    final Column column = (Column) tc.getData();
 
-    tc.setAlignment(data.getAlignment());
-    // System.out.println("align = "+tc.getAlignment());
-    tc.setResizable(data.isVisible());
-    if (data.isVisible()) {
-      if (data.getWidth() < 0) {
-        data.setWidth(computeValueWidth(data));
+    tc.setAlignment(column.getSwtAlignment());
+    tc.setResizable(column.isVisible());
+    if (column.isVisible()) {
+      if (column.getWidth() < 30) {
+        column.setWidth(computeValueWidth(column));
       }
-      tc.setWidth(data.getWidth());
+      tc.setWidth(column.getWidth());
     } else {
+      // make invisible by using a width of zero
       tc.setWidth(0);
     }
-    Image img;
-    switch (data.getSort()) {
+    final Image img;
+    switch (column.getSort()) {
     case SORT_DOWN:
       img = SLImages.getImage(CommonImages.IMG_SORT_DOWN);
       break;
@@ -826,86 +611,58 @@ public final class MListOfFindingsColumn extends MColumn implements ISelectionOb
       break;
     }
     tc.setImage(img);
-    setColumnVisible(tc, data.isVisible());
-    return data.isVisible();
+    setTableColumnVisible(tc, column.isVisible());
+    return column.isVisible();
   }
 
-  static void saveColumnAppearance(final ColumnData data, final TableColumn tc) {
-    // System.out.println("width = "+tc.getWidth());
-    data.setWidth(tc.getWidth());
+  static void saveColumnAppearance(final Column column, final TableColumn tc) {
+    column.setWidth(tc.getWidth());
   }
 
-  private static void setColumnVisible(TableColumn tc, boolean visible) {
-    ColumnData data = (ColumnData) tc.getData();
+  private static void setTableColumnVisible(TableColumn tc, boolean visible) {
+    final Column column = (Column) tc.getData();
     if (visible) {
-      tc.setWidth(data.getWidth());
+      tc.setWidth(column.getWidth());
       tc.setResizable(true);
     } else {
-      data.setWidth(tc.getWidth());
+      column.setWidth(tc.getWidth());
       tc.setWidth(0);
       tc.setResizable(false);
     }
   }
 
-  private boolean updateTableColumns = false;
-
-  /**
-   * Sync'd by updateTableContents()
-   */
-  private void updateTableColumns() {
-    int numVisible = 0;
-    TableColumn lastVisible = null;
-    updateTableColumns = true;
-
-    for (final TableColumn tc : f_table.getColumns()) {
-      if (loadColumnAppearance(tc)) {
-        numVisible++;
-        lastVisible = tc;
-      }
-    }
-    if (numVisible == 1) {
-      final ColumnData cd = (ColumnData) lastVisible.getData();
-      // lastVisible.setWidth(computeValueWidth(cd));
-    }
-    updateTableColumns = false;
-    f_table.setHeaderVisible(numVisible > 1);
-    f_table.pack();
-  }
-
-  ColumnData getDefaultColumn() {
-    final String name = f_columnPrototypes.get(0).getName();
-    return (ColumnData) getSelection().getColumn(name);
+  Column getDefaultColumn() {
+    return getSelection().getColumnByTitle(Selection.SUMMARY_COLUMN);
   }
 
   private static final Rectangle ZERO = new Rectangle(0, 0, 0, 0);
 
-  private int computeValueWidth(final ColumnData cd) {
+  /**
+   * Goes through all the rows for a particular column and determines the
+   * optional width.
+   * 
+   * TODO IS THIS NEEDED? WHY NOT PACK
+   * 
+   * @param column
+   *          a column.
+   * @return the ideal width for the column.
+   */
+  private int computeValueWidth(final Column column) {
     final Image imageForGC = new Image(null, 1, 1);
     final GC gc = new GC(imageForGC);
     int longest = 0;
-    FindingData longestData = null;
-    int longestIndex = -1;
     gc.setFont(f_table.getFont());
     for (final FindingData data : f_data.f_rows) {
-      final Point size = gc.textExtent(cd.getText(data));
-      final Image img = cd.getImage(data);
+      final Point size = gc.textExtent(column.getCellProvider().getLabel((data)));
+      final Image img = column.getCellProvider().getImage(data);
       final Rectangle rect = img == null ? ZERO : img.getBounds();
       final int width = size.x + rect.width;
       if (width > longest) {
         longest = width;
-        longestData = data;
-        // TODO longestIndex = data.f_index;
       }
     }
     gc.dispose();
     imageForGC.dispose();
-    if (longestData != null) {
-      if (longestIndex >= f_table.getItemCount()) {
-        LOG.warning("Got index outside of table: " + longestIndex + ", " + f_table.getItemCount());
-      } else {
-        initializeTableItem(/* longestIndex, */longestData, f_table.getItem(longestIndex));
-      }
-    }
 
     final int PAD = 30;
     if (longest < 25) {
@@ -913,19 +670,6 @@ public final class MListOfFindingsColumn extends MColumn implements ISelectionOb
     }
     final int result = longest + PAD;
     return result;
-  }
-
-  private void initializeTableItem(final FindingData data, final TableItem item) {
-    item.setData(data);
-
-    // Setup data in all the columns
-    int j = 0;
-    for (final TableColumn tc : f_table.getColumns()) {
-      final ColumnData cd = (ColumnData) tc.getData();
-      item.setText(j, cd.getText(data));
-      item.setImage(j, cd.getImage(data));
-      j++;
-    }
   }
 
   private void setupMenu(final Menu menu) {
@@ -1171,7 +915,7 @@ public final class MListOfFindingsColumn extends MColumn implements ISelectionOb
   }
 
   @Override
-  public void columnsChanged(final Selection selection, final Column c) {
+  public void columnVisibilityChanged(final Selection selection, final Column c) {
     // Right now, handle the fact that the visible columns changed
     final Table t = f_table;
     if (t != null) {
@@ -1182,23 +926,11 @@ public final class MListOfFindingsColumn extends MColumn implements ISelectionOb
         // No longer visible, so save column width
         for (final TableColumn tc : t.getColumns()) {
           if (c == tc.getData()) {
-            saveColumnAppearance((ColumnData) c, tc);
+            saveColumnAppearance((Column) c, tc);
           }
         }
       }
       updateTableContents();
     }
-  }
-
-  public static Map<String, Column> createColumns() {
-    final Map<String, Column> result = new HashMap<String, Column>();
-    for (final ColumnData data : f_columnPrototypes) {
-      final ColumnData c = data.clone();
-      // FIX to remember column ordering
-      // FIX is this needed w/ clone?
-      // c.configure(data.visible, data.width, data.sort, data.index);
-      result.put(data.getName(), c);
-    }
-    return result;
   }
 }
