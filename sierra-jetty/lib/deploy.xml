@@ -67,7 +67,6 @@
 			<sources>
 				<pathelement path="../../common/common/src" />
 				<pathelement path="../sierra-ant/src" />
-				<pathelement path="../sierra-checkstyle/src" />
 				<pathelement path="../sierra-client-eclipse/src" />
 				<pathelement path="../sierra-fb/src" />
 				<pathelement path="../sierra-jdbc/src" />

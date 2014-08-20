@@ -20,9 +20,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.window.Window;
-import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.ui.PlatformUI;
 
 import com.surelogic.common.core.EclipseUtility;
 import com.surelogic.common.jdbc.NullDBQuery;
@@ -31,7 +28,6 @@ import com.surelogic.common.jdbc.TransactionException;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.common.ui.jobs.SLUIJob;
 import com.surelogic.sierra.client.eclipse.preferences.SierraPreferencesUtility;
-import com.surelogic.sierra.client.eclipse.wizards.ArtifactTypeSetupWizard;
 import com.surelogic.sierra.jdbc.settings.Categories;
 import com.surelogic.sierra.jdbc.settings.CategoryDO;
 import com.surelogic.sierra.jdbc.tool.ArtifactTypeDO;
@@ -45,316 +41,318 @@ import com.surelogic.sierra.tool.IToolFinder;
 import com.surelogic.sierra.tool.ToolUtil;
 
 public final class Tools {
-	private static final Logger LOG = SLLogger.getLogger();
-	
-	public static void initializeToolDirectories() {
-		File sierraDataDir = SierraPreferencesUtility.getSierraDataDirectory();
+    private static final Logger LOG = SLLogger.getLogger();
 
-		// Check if tools dir setup yet
-		final String toolsDirSet = System
-				.getProperty(ToolUtil.CUSTOM_TOOLS_PATH_PROP_NAME);
-		if (toolsDirSet == null) {
-			final String origToolsDir = System
-					.getProperty(ToolUtil.TOOLS_PATH_PROP_NAME);
-			// set Sierra tools dir if unavailable
-			if (origToolsDir == null) {
-				System.setProperty(ToolUtil.CUSTOM_TOOLS_PATH_PROP_NAME, "");
-				System.setProperty(ToolUtil.TOOLS_PATH_PROP_NAME,
-						sierraDataDir.getAbsolutePath());
-			} else {
-				System.setProperty(ToolUtil.CUSTOM_TOOLS_PATH_PROP_NAME,
-						origToolsDir);
-			}
-		}
-		for (final IToolFactory f : Tools.findToolFactories()) {
-			EclipseUtility.setBooleanPreference(SierraPreferencesUtility.getToolPreferenceConstant(f), true);
-		}
-	}
+    public static void initializeToolDirectories() {
+        File sierraDataDir = SierraPreferencesUtility.getSierraDataDirectory();
 
-	public static final String TOOL_PLUGIN_ID = "com.surelogic.sierra.tool";
+        // Check if tools dir setup yet
+        final String toolsDirSet = System
+                .getProperty(ToolUtil.CUSTOM_TOOLS_PATH_PROP_NAME);
+        if (toolsDirSet == null) {
+            final String origToolsDir = System
+                    .getProperty(ToolUtil.TOOLS_PATH_PROP_NAME);
+            // set Sierra tools dir if unavailable
+            if (origToolsDir == null) {
+                System.setProperty(ToolUtil.CUSTOM_TOOLS_PATH_PROP_NAME, "");
+                System.setProperty(ToolUtil.TOOLS_PATH_PROP_NAME,
+                        sierraDataDir.getAbsolutePath());
+            } else {
+                System.setProperty(ToolUtil.CUSTOM_TOOLS_PATH_PROP_NAME,
+                        origToolsDir);
+            }
+        }
+    }
 
-	/**
-	 * The Sierra tool module extension point identifier <i>must</i> match the
-	 * plugin manifest.
-	 */
-	public static final String TOOL_EXTENSION_POINT_ID = "sierraTool";
+    public static final String TOOL_PLUGIN_ID = "com.surelogic.sierra.tool";
 
-	static {
-		ToolUtil.addToolFinder(new IToolFinder() {
-			// FIX what about duplicate finders?
-			@Override
-      public List<File> findToolDirectories() {
-				// Look up locations of these plugins
-				final List<File> tools = new ArrayList<File>();
-				for (final String id : getToolPluginIds()) {
-					final String path = EclipseUtility.getDirectoryOf(id);
-					final File dir = new File(path);
+    /**
+     * The Sierra tool module extension point identifier <i>must</i> match the
+     * plugin manifest.
+     */
+    public static final String TOOL_EXTENSION_POINT_ID = "sierraTool";
 
-					// Sanity check for these directories
-					if (dir.exists() && dir.isDirectory()) {
-						tools.add(dir);
-					}
-				}
-				return tools;
-			}
-		});
-	}
+    static {
+        ToolUtil.addToolFinder(new IToolFinder() {
+            // FIX what about duplicate finders?
+            @Override
+            public List<File> findToolDirectories() {
+                // Look up locations of these plugins
+                final List<File> tools = new ArrayList<File>();
+                for (final String id : getToolPluginIds()) {
+                    final String path = EclipseUtility.getDirectoryOf(id);
+                    final File dir = new File(path);
 
-	/**
-	 * Collect plug-ins
-	 */
-	public static Set<String> getToolPluginIds() {
-		final Set<String> ids = new HashSet<String>();
-		/*
-		 * for(String id : defaultTools) { ids.add(id); }
-		 */
-		addProductionToolDirectories(ids);
-		return ids;
-	}
+                    // Sanity check for these directories
+                    if (dir.exists() && dir.isDirectory()) {
+                        tools.add(dir);
+                    }
+                }
+                return tools;
+            }
+        });
+    }
 
-	public static void checkForNewArtifactTypes() {
-		for (final File plugin : ToolUtil.findToolDirs()) {
-			LOG.fine("Found plugin @ " + plugin.getPath());
-		}
-		final List<IToolFactory> factories = ToolUtil.findToolFactories();
-		for (final IToolFactory f : factories) {
-			try {
-				LOG.fine("Found tool: " + f.getName() + " v" + f.getVersion());
-				LOG.fine(f.getHTMLInfo());
-			} catch (final NullPointerException npe) {
-				LOG.fine("Ignored tool: " + f.getClass().getName());
-			}
-		}
+    /**
+     * Collect plug-ins
+     */
+    public static Set<String> getToolPluginIds() {
+        final Set<String> ids = new HashSet<String>();
+        /*
+         * for(String id : defaultTools) { ids.add(id); }
+         */
+        addProductionToolDirectories(ids);
+        return ids;
+    }
 
-		try {
-			// Get known artifact types
-			Data.getInstance().withTransaction(new NullDBQuery() {
+    public static void checkForNewArtifactTypes() {
+        for (final File plugin : ToolUtil.findToolDirs()) {
+            LOG.fine("Found plugin @ " + plugin.getPath());
+        }
+        final List<IToolFactory> factories = ToolUtil.findToolFactories();
+        for (final IToolFactory f : factories) {
+            try {
+                LOG.fine("Found tool: " + f.getName() + " v" + f.getVersion());
+                LOG.fine(f.getHTMLInfo());
+            } catch (final NullPointerException npe) {
+                LOG.fine("Ignored tool: " + f.getClass().getName());
+            }
+        }
 
-				@Override
-				public void doPerform(final Query q) {
-					final FindingTypes ft = new FindingTypes(q);
-					/*
-					 * final Config config = new Config();
-					 * config.putPluginDir(SierraToolConstants.FB_PLUGIN_ID,
-					 * com.surelogic
-					 * .common.eclipse.Activator.getDefault().getDirectoryOf
-					 * (SierraToolConstants.FB_PLUGIN_ID));
-					 */
+        try {
+            // Get known artifact types
+            Data.getInstance().withTransaction(new NullDBQuery() {
 
-					final Set<ArtifactType> knownTypes = new HashSet<ArtifactType>();
-					final Set<ArtifactType> unknownTypes = new HashSet<ArtifactType>();
-					for (final IToolFactory t : factories) {
-						final List<ArtifactTypeDO> temp = ft
-								.getToolArtifactTypes(t.getId(), t.getVersion());
-						for (final ArtifactTypeDO a : temp) {
-							knownTypes.add(ArtifactType.create(t, null, "",
-									a.getMnemonic(), ""));
-						}
-					}
+                @Override
+                public void doPerform(final Query q) {
+                    final FindingTypes ft = new FindingTypes(q);
+                    /*
+                     * final Config config = new Config();
+                     * config.putPluginDir(SierraToolConstants.FB_PLUGIN_ID,
+                     * com.surelogic
+                     * .common.eclipse.Activator.getDefault().getDirectoryOf
+                     * (SierraToolConstants.FB_PLUGIN_ID));
+                     */
 
-					final Map<IToolExtension, List<ArtifactType>> newExtensions = new HashMap<IToolExtension, List<ArtifactType>>();
-					for (final IToolFactory t : factories) {
-						for (final IToolExtension e : t.getExtensions()) {
-							// System.out.println("Ext: "+e.getId());
-							final List<ArtifactType> unknown = new ArrayList<ArtifactType>();
-							for (final ArtifactType a : e.getArtifactTypes()) {
-								if (!knownTypes.contains(a) && !unknownTypes.contains(a)) {
-									unknownTypes.add(a); // To eliminate shared/duplicate types
-									unknown.add(a);
-								}
-							}
-							if (!unknown.isEmpty()) {
-								newExtensions.put(e, unknown);
-							}
-						}
-					}
+                    final Set<ArtifactType> knownTypes = new HashSet<ArtifactType>();
+                    final Set<ArtifactType> unknownTypes = new HashSet<ArtifactType>();
+                    for (final IToolFactory t : factories) {
+                        final List<ArtifactTypeDO> temp = ft
+                                .getToolArtifactTypes(t.getId(), t.getVersion());
+                        for (final ArtifactTypeDO a : temp) {
+                            knownTypes.add(ArtifactType.create(t, null, "",
+                                    a.getMnemonic(), ""));
+                        }
+                    }
 
-					if (newExtensions.isEmpty()) {
-					  SLLogger.getLogger().log(Level.FINE, "No new artifact types");
-					} else {
-						final List<ArtifactType> types = new ArrayList<ArtifactType>();
-						for (final Map.Entry<IToolExtension, List<ArtifactType>> e : newExtensions
-								.entrySet()) {
-							types.addAll(e.getValue());
-						}
-						Collections.sort(types);
+                    final Map<IToolExtension, List<ArtifactType>> newExtensions = new HashMap<IToolExtension, List<ArtifactType>>();
+                    for (final IToolFactory t : factories) {
+                        for (final IToolExtension e : t.getExtensions()) {
+                            // System.out.println("Ext: "+e.getId());
+                            final List<ArtifactType> unknown = new ArrayList<ArtifactType>();
+                            for (final ArtifactType a : e.getArtifactTypes()) {
+                                if (!knownTypes.contains(a)
+                                        && !unknownTypes.contains(a)) {
+                                    unknownTypes.add(a); // To eliminate
+                                                         // shared/duplicate
+                                                         // types
+                                    unknown.add(a);
+                                }
+                            }
+                            if (!unknown.isEmpty()) {
+                                newExtensions.put(e, unknown);
+                            }
+                        }
+                    }
 
-						// Map to finding types
-						final List<FindingTypeDO> findingTypes = ft
-								.listFindingTypes();
-						final Categories categories = new Categories(q);
-						final List<CategoryDO> cats = categories
-								.listCategories();
-						final SLUIJob job = new SLUIJob() {
-							@Override
-							public IStatus runInUIThread(
-									final IProgressMonitor monitor) {
-								final List<ArtifactType> incompleteTypes = new ArrayList<ArtifactType>();
-								for (final ArtifactType t : types) {
-									if (!t.isComplete()) {
-										incompleteTypes.add(t);
-									}
-								}
+                    if (newExtensions.isEmpty()) {
+                        SLLogger.getLogger().log(Level.FINE,
+                                "No new artifact types");
+                    } else {
+                        final List<ArtifactType> types = new ArrayList<ArtifactType>();
+                        for (final Map.Entry<IToolExtension, List<ArtifactType>> e : newExtensions
+                                .entrySet()) {
+                            types.addAll(e.getValue());
+                        }
+                        Collections.sort(types);
 
-								Data.getInstance().withTransaction(
-										new NullDBQuery() {
-											@Override
-											public void doPerform(final Query q) {
-												final FindingTypes ft = new FindingTypes(
-														q);
-												for (final Map.Entry<IToolExtension, List<ArtifactType>> e : newExtensions
-														.entrySet()) {
-													setupDatabase(q, ft,
-															e.getKey(),
-															e.getValue());
-												}
-											}
-										});
-								return Status.OK_STATUS;
-							}
-						};
-						job.schedule();
+                        // Map to finding types
+                        final List<FindingTypeDO> findingTypes = ft
+                                .listFindingTypes();
+                        final Categories categories = new Categories(q);
+                        final List<CategoryDO> cats = categories
+                                .listCategories();
+                        final SLUIJob job = new SLUIJob() {
+                            @Override
+                            public IStatus runInUIThread(
+                                    final IProgressMonitor monitor) {
+                                final List<ArtifactType> incompleteTypes = new ArrayList<ArtifactType>();
+                                for (final ArtifactType t : types) {
+                                    if (!t.isComplete()) {
+                                        incompleteTypes.add(t);
+                                    }
+                                }
 
-					}
+                                Data.getInstance().withTransaction(
+                                        new NullDBQuery() {
+                                            @Override
+                                            public void doPerform(final Query q) {
+                                                final FindingTypes ft = new FindingTypes(
+                                                        q);
+                                                for (final Map.Entry<IToolExtension, List<ArtifactType>> e : newExtensions
+                                                        .entrySet()) {
+                                                    setupDatabase(q, ft,
+                                                            e.getKey(),
+                                                            e.getValue());
+                                                }
+                                            }
+                                        });
+                                return Status.OK_STATUS;
+                            }
+                        };
+                        job.schedule();
 
-				}
-			});
-			// FIX Show dialog
-		} catch (final TransactionException e) {
-			SLLogger.getLogger().log(Level.SEVERE,
-					"Problem handling new artifact types", e);
-		}
-	}
+                    }
 
-	private static void setupDatabase(final Query q, final FindingTypes ft,
-			final IToolExtension te, final List<ArtifactType> unknown) {
-		// System.out.println(te.getId());
-		Collections.sort(unknown);
-		String extPath = "";
-		if (!te.isCore()) {
-			File tef = te.getJar();
-			do {
-				tef = tef.getParentFile();
-			} while (tef != null && tef.getParent() != null
-					&& !tef.getParentFile().equals(
-							ToolUtil.getSierraToolDirectory()));
-			if (tef == null) {
-				throw new IllegalStateException(
-						"The extension"
-								+ te.getId()
-								+ " does not appear to be under the sierra data directory.");
-			}
-			extPath = tef.getPath();
-		}
+                }
+            });
+            // FIX Show dialog
+        } catch (final TransactionException e) {
+            SLLogger.getLogger().log(Level.SEVERE,
+                    "Problem handling new artifact types", e);
+        }
+    }
 
-		final ExtensionDO ext = new ExtensionDO(te.getId(), te.getVersion(),
-				extPath);
-		for (final ArtifactType a : unknown) {
-			// SLLogger.getLogger().warning("Couldn't find "+a.type+" for "+a.tool+", v"+a.toolVersion);
-			/*
-			 * System.out.println("Couldn't find " + a.type + " for " + a.tool +
-			 * ", v" + a.toolVersion);
-			 */
-			if (a.getFindingType() == null) {
-				// Check if there's already a finding type with the same name
-				if (ft.getFindingType(a.type) == null) {
-					// System.out.println(a.type);
+    private static void setupDatabase(final Query q, final FindingTypes ft,
+            final IToolExtension te, final List<ArtifactType> unknown) {
+        // System.out.println(te.getId());
+        Collections.sort(unknown);
+        String extPath = "";
+        if (!te.isCore()) {
+            File tef = te.getJar();
+            do {
+                tef = tef.getParentFile();
+            } while (tef != null
+                    && tef.getParent() != null
+                    && !tef.getParentFile().equals(
+                            ToolUtil.getSierraToolDirectory()));
+            if (tef == null) {
+                throw new IllegalStateException(
+                        "The extension"
+                                + te.getId()
+                                + " does not appear to be under the sierra data directory.");
+            }
+            extPath = tef.getPath();
+        }
 
-					final FindingTypeDO ftDO = new FindingTypeDO();
-					ftDO.setName(a.type);
-					ftDO.setUid(a.type);
-					ftDO.setShortMessage(a.type);
-					ftDO.setInfo(a.type);
-					ext.addFindingType(ftDO);
+        final ExtensionDO ext = new ExtensionDO(te.getId(), te.getVersion(),
+                extPath);
+        for (final ArtifactType a : unknown) {
+            // SLLogger.getLogger().warning("Couldn't find "+a.type+" for "+a.tool+", v"+a.toolVersion);
+            /*
+             * System.out.println("Couldn't find " + a.type + " for " + a.tool +
+             * ", v" + a.toolVersion);
+             */
+            if (a.getFindingType() == null) {
+                // Check if there's already a finding type with the same name
+                if (ft.getFindingType(a.type) == null) {
+                    // System.out.println(a.type);
 
-				} else {
-					// System.out.println("Exists: "+a.type);
-				}
-				a.setFindingType(a.type);
-			}
-			final ArtifactTypeDO aDO = new ArtifactTypeDO(a.tool, a.type,
-					a.type, a.toolVersion);
-			ext.addType(a.getFindingType(), aDO);
-		}
-		ft.registerExtension(ext);
-		/*
-		System.out.println("Registered extension: " + ext.getName() + " "
-				+ ext.getVersion());
-	    */
-		// Find/define finding types
-		final List<FindingTypeDO> ftypes = ft.listFindingTypes();
-		for (final FindingTypeDO f : ftypes) {
-			// Search?
-			f.getName();
-		}
+                    final FindingTypeDO ftDO = new FindingTypeDO();
+                    ftDO.setName(a.type);
+                    ftDO.setUid(a.type);
+                    ftDO.setShortMessage(a.type);
+                    ftDO.setInfo(a.type);
+                    ext.addFindingType(ftDO);
 
-		// Find/create categories -- can be modified later
-		final Categories categories = new Categories(q);
-		final List<CategoryDO> cats = categories.listCategories();
-		for (final CategoryDO cdo : cats) {
-			cdo.getName();
-		}
-	}
+                } else {
+                    // System.out.println("Exists: "+a.type);
+                }
+                a.setFindingType(a.type);
+            }
+            final ArtifactTypeDO aDO = new ArtifactTypeDO(a.tool, a.type,
+                    a.type, a.toolVersion);
+            ext.addType(a.getFindingType(), aDO);
+        }
+        ft.registerExtension(ext);
+        /*
+         * System.out.println("Registered extension: " + ext.getName() + " " +
+         * ext.getVersion());
+         */
+        // Find/define finding types
+        final List<FindingTypeDO> ftypes = ft.listFindingTypes();
+        for (final FindingTypeDO f : ftypes) {
+            // Search?
+            f.getName();
+        }
 
-	// //////////////////////////////////////////////////////////////////////
-	//
-	// TOOL EXTENSION POINT METHODS
-	//
-	// //////////////////////////////////////////////////////////////////////
+        // Find/create categories -- can be modified later
+        final Categories categories = new Categories(q);
+        final List<CategoryDO> cats = categories.listCategories();
+        for (final CategoryDO cdo : cats) {
+            cdo.getName();
+        }
+    }
 
-	/**
-	 * @return all defined tool extension points defined in the plugin
-	 *         manifests.
-	 */
-	private static IExtension[] readToolExtensionPoints() {
-		final IExtensionRegistry pluginRegistry = Platform
-				.getExtensionRegistry();
-		final IExtensionPoint extensionPoint = pluginRegistry
-				.getExtensionPoint(TOOL_PLUGIN_ID, TOOL_EXTENSION_POINT_ID);
-		return extensionPoint.getExtensions();
-	}
+    // //////////////////////////////////////////////////////////////////////
+    //
+    // TOOL EXTENSION POINT METHODS
+    //
+    // //////////////////////////////////////////////////////////////////////
 
-	/**
-	 * Builds an array of all tool extension points that are marked in the XML
-	 * as being production (i.e., production="true").
-	 */
-	private static List<IExtension> findProductionToolExtensionPoints() {
-		final IExtension[] tools = readToolExtensionPoints();
-		final List<IExtension> active = new ArrayList<IExtension>();
-		for (final IExtension tool : tools) {
-			// final String uid = tool.getUniqueIdentifier();
-			boolean add = true;
-			final IConfigurationElement[] configElements = tool
-					.getConfigurationElements();
-			for (int j = 0; j < configElements.length; j++) {
-				final String production = configElements[j]
-						.getAttribute("production");
-				if (production != null && production.equals("false")) {
-					/*
-					 * if (LOG.isLoggable(Level.FINE))
-					 * LOG.fine("analysis module extension point " + uid +
-					 * " is not production and is being excluded");
-					 */
-					// add to list of non-production
-					add = false;
-					break;
-				}
-			}
-			if (add) {
-				active.add(tool);
-			}
-		}
-		return active;
-	}
+    /**
+     * @return all defined tool extension points defined in the plugin
+     *         manifests.
+     */
+    private static IExtension[] readToolExtensionPoints() {
+        final IExtensionRegistry pluginRegistry = Platform
+                .getExtensionRegistry();
+        final IExtensionPoint extensionPoint = pluginRegistry
+                .getExtensionPoint(TOOL_PLUGIN_ID, TOOL_EXTENSION_POINT_ID);
+        return extensionPoint.getExtensions();
+    }
 
-	private static void addProductionToolDirectories(
-			final Collection<String> ids) {
-		for (final IExtension tool : findProductionToolExtensionPoints()) {
-			ids.add(tool.getContributor().getName());
-		}
-	}
+    /**
+     * Builds an array of all tool extension points that are marked in the XML
+     * as being production (i.e., production="true").
+     */
+    private static List<IExtension> findProductionToolExtensionPoints() {
+        final IExtension[] tools = readToolExtensionPoints();
+        final List<IExtension> active = new ArrayList<IExtension>();
+        for (final IExtension tool : tools) {
+            // final String uid = tool.getUniqueIdentifier();
+            boolean add = true;
+            final IConfigurationElement[] configElements = tool
+                    .getConfigurationElements();
+            for (int j = 0; j < configElements.length; j++) {
+                final String production = configElements[j]
+                        .getAttribute("production");
+                if (production != null && production.equals("false")) {
+                    /*
+                     * if (LOG.isLoggable(Level.FINE))
+                     * LOG.fine("analysis module extension point " + uid +
+                     * " is not production and is being excluded");
+                     */
+                    // add to list of non-production
+                    add = false;
+                    break;
+                }
+            }
+            if (add) {
+                active.add(tool);
+            }
+        }
+        return active;
+    }
 
-	public static List<IToolFactory> findToolFactories() {
-		return ToolUtil.findToolFactories();
-	}
+    private static void addProductionToolDirectories(
+            final Collection<String> ids) {
+        for (final IExtension tool : findProductionToolExtensionPoints()) {
+            ids.add(tool.getContributor().getName());
+        }
+    }
+
+    public static List<IToolFactory> findToolFactories() {
+        return ToolUtil.findToolFactories();
+    }
 }
