@@ -593,9 +593,12 @@ public final class MFilterSelectionColumn extends MColumn implements IFilterObse
     if (longest < 25) {
       return 50;
     }
-    // Check if on Vista
-    if (SystemUtils.IS_OS_WINDOWS && "6.0".equals(SystemUtils.OS_VERSION)) {
-      return longest + 35;
+    /*
+     * Check if on Windows (really only Vista and 7 but extra space on NT is
+     * okay)
+     */
+    if (SystemUtils.IS_OS_WINDOWS) {
+      return longest + 35; // extra space to avoid "..."
     }
     return longest + 25;
   }
