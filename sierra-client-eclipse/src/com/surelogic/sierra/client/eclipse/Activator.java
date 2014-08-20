@@ -213,10 +213,10 @@ public final class Activator extends AbstractUIPlugin implements IRunnableWithPr
   }
 
   public File getSelectionSaveFile() {
-    return new File(EclipseUtility.getSierraDataDirectory(), "selections.xml");
+    return new File(SierraPreferencesUtility.getSierraDataDirectory(), "selections.xml");
   }
 
   public File getFindingDetailsViewSaveFile() {
-    return new File(EclipseUtility.getSierraDataDirectory(), "finding-details-view.xml");
+    return new File(SierraPreferencesUtility.getSierraDataDirectory(), "finding-details-view.xml");
   }
 }
