@@ -318,7 +318,8 @@ public class FindingDetailsMediator extends AbstractSierraViewMediator implement
         return;
       }
 
-      JDTUIUtility.tryToOpenInEditor(f_finding.getProjectName(), src.getPackageName(), src.getClassName(), src.getLineOfCode());
+      JDTUIUtility.tryToOpenInEditor(f_finding.getProjectName(), src.getPackageName(), src.getClassName(), src.getLineOfCode(),
+          src.getEndLineOfCode());
     }
   };
 
