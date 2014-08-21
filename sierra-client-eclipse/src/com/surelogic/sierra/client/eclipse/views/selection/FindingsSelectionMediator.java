@@ -300,11 +300,6 @@ public final class FindingsSelectionMediator implements IProjectsObserver, Casca
     selectionChanged(newWorkingSelection);
   }
 
-  @Override
-  public void showingFindings(int count, int ofPossible) {
-    // nothing to do for this view
-  }
-
   /**
    * Updates the trail of filter breadcrumbs for the user to animate around this
    * control.

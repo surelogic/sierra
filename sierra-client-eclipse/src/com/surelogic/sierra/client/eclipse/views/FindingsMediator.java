@@ -207,13 +207,6 @@ public class FindingsMediator extends AbstractSierraViewMediator implements IVie
     selectionChanged(newWorkingSelection);
   }
 
-  @Override
-  public void showingFindings(int count, int ofPossible) {
-    // TODO Auto-generated method stub
-  }
-
-  // ////////////////////////////
-
   @NonNull
   private RowData f_data = new RowData();
 
@@ -284,7 +277,7 @@ public class FindingsMediator extends AbstractSierraViewMediator implements IVie
       return new RowData();
     }
     final String query = getQuery(workingSelection);
-    // System.out.println(query);
+    System.out.println(query);
     try {
       final Connection c = Data.getInstance().readOnlyConnection();
       try {
@@ -471,7 +464,7 @@ public class FindingsMediator extends AbstractSierraViewMediator implements IVie
     if (hasFindings)
       updateTableColumns();
 
-    final boolean showSelection = selectFindingsInTableOrUseNear(pastSelectedIds, 0);
+    selectFindingsInTableOrUseNear(pastSelectedIds, 0);
 
     f_resultsTable.setRedraw(true);
     /*
@@ -484,22 +477,8 @@ public class FindingsMediator extends AbstractSierraViewMediator implements IVie
     }
 
     updateCutoffWarning(f_data);
-    
-    f_panel.layout();
 
-//    if (showSelection) {
-//      final UIJob job = new SLUIJob() {
-//        @Override
-//        public IStatus runInUIThread(final IProgressMonitor monitor) {
-//          f_resultsTable.showSelection();
-//
-//          // avoid scroll bar position being to the right
-//          f_resultsTable.showColumn(f_resultsTable.getColumn(0));
-//          return Status.OK_STATUS;
-//        }
-//      };
-//      job.schedule();
-//    }
+    f_panel.layout();
   }
 
   private void updateCutoffWarning(RowData rowData) {
@@ -523,7 +502,9 @@ public class FindingsMediator extends AbstractSierraViewMediator implements IVie
       warningIcon.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false));
 
       final Link statusLink = new Link(informationPanel, SWT.NONE);
-      statusLink.setText("<a>Showing " + rowData.f_rows.size() + " of " + rowData.f_rowsAvailableInDb + " possible findings</a>");
+      final int available = rowData.f_rowsAvailableInDb;
+      statusLink.setText("<a>Showing " + rowData.f_rows.size() + " of " + (available == 0 ? "all" : "" + available)
+          + " possible findings</a>");
       statusLink.setToolTipText("Click to change the maximum number of findings shown in this view");
       statusLink.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false));
 

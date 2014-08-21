@@ -192,27 +192,4 @@ public final class SelectionManager {
     for (ISelectionManagerObserver o : f_observers)
       o.workingSelectionChanged(newWorkingSelection, oldWorkingSelection);
   }
-
-  /**
-   * Implemented to notify observers that the counts of findings being displayed
-   * has changed. Do not invoke this method while holding a lock due to the
-   * potential for deadlock.
-   * <p>
-   * This method should be invoked when the display of Sierra findings changes.
-   * This method reports how many findings are being displayed and what the
-   * possible number that could be displayed. It is used to warn the user that
-   * not all the findings are being displayed.
-   * <p>
-   * If all the findings are being displayed then <tt>count == ofPossible</tt>.
-   * 
-   * @param count
-   *          the number of findings being displayed to the Sierra user in
-   *          Eclipse.
-   * @param ofPossible
-   *          the number of findings in the database that could be displayed.
-   */
-  public void notifyShowingFindings(int count, int ofPossible) {
-    for (ISelectionManagerObserver o : f_observers)
-      o.showingFindings(count, ofPossible);
-  }
 }
