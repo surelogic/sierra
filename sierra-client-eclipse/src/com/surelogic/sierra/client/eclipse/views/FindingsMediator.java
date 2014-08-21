@@ -484,20 +484,22 @@ public class FindingsMediator extends AbstractSierraViewMediator implements IVie
     }
 
     updateCutoffWarning(f_data);
+    
+    f_panel.layout();
 
-    if (showSelection) {
-      final UIJob job = new SLUIJob() {
-        @Override
-        public IStatus runInUIThread(final IProgressMonitor monitor) {
-          f_resultsTable.showSelection();
-
-          // avoid scroll bar position being to the right
-          f_resultsTable.showColumn(f_resultsTable.getColumn(0));
-          return Status.OK_STATUS;
-        }
-      };
-      job.schedule();
-    }
+//    if (showSelection) {
+//      final UIJob job = new SLUIJob() {
+//        @Override
+//        public IStatus runInUIThread(final IProgressMonitor monitor) {
+//          f_resultsTable.showSelection();
+//
+//          // avoid scroll bar position being to the right
+//          f_resultsTable.showColumn(f_resultsTable.getColumn(0));
+//          return Status.OK_STATUS;
+//        }
+//      };
+//      job.schedule();
+//    }
   }
 
   private void updateCutoffWarning(RowData rowData) {
@@ -600,7 +602,6 @@ public class FindingsMediator extends AbstractSierraViewMediator implements IVie
       loadColumnAppearance(tc);
     }
     updateTableColumns = false;
-    f_resultsTable.pack();
   }
 
   /**
