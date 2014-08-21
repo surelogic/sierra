@@ -15,23 +15,23 @@ import com.surelogic.sierra.client.eclipse.preferences.SierraPreferencesUtility;
 import com.surelogic.sierra.jdbc.settings.ConnectedServer;
 
 public class PublishScanAction extends AbstractWebServiceMenuAction {
-	@Override
-	void runServerAction(final ServerProjectGroupJob family,
-			String projectName, ConnectedServer server, Shell shell) {
-		final File scanFile = NewScan.findScanDocumentFile(projectName);
-		if (scanFile != null) {
-			final ShareScanJob job = new ShareScanJob(family, projectName,
-					server, scanFile, ServerFailureReport.SHOW_DIALOG);
-			job.schedule();
-		} else {
-			final int errNo = 21;
-			final String msg = I18N.err(errNo, projectName, server.getName(),
-					projectName, SierraPreferencesUtility
-							.getSierraDataDirectory().getAbsolutePath(),
-					File.separator, projectName, projectName);
-			final IStatus reason = SLEclipseStatusUtility.createErrorStatus(
-					errNo, msg);
-			ErrorDialogUtility.open(shell, "No Scan Exists", reason);
-		}
-	}
+    @Override
+    void runServerAction(final ServerProjectGroupJob family,
+            String projectName, ConnectedServer server, Shell shell) {
+        final File scanFile = NewScan.findScanDocumentFile(projectName);
+        if (scanFile != null) {
+            final ShareScanJob job = new ShareScanJob(family, projectName,
+                    server, scanFile, ServerFailureReport.SHOW_DIALOG);
+            job.schedule();
+        } else {
+            final int errNo = 21;
+            final String msg = I18N.err(errNo, projectName, server.getName(),
+                    projectName, SierraPreferencesUtility
+                            .getSierraScanDirectory().getAbsolutePath(),
+                    File.separator, projectName, projectName);
+            final IStatus reason = SLEclipseStatusUtility.createErrorStatus(
+                    errNo, msg);
+            ErrorDialogUtility.open(shell, "No Scan Exists", reason);
+        }
+    }
 }

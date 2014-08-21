@@ -6,6 +6,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
+import com.surelogic.common.FileUtility;
 import com.surelogic.common.core.jobs.SLProgressMonitorWrapper;
 import com.surelogic.common.core.logging.SLEclipseStatusUtility;
 import com.surelogic.common.i18n.I18N;
@@ -15,6 +16,7 @@ import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.Tools;
 import com.surelogic.sierra.client.eclipse.model.ConnectedServerManager;
 import com.surelogic.sierra.client.eclipse.model.DatabaseHub;
+import com.surelogic.sierra.client.eclipse.preferences.SierraPreferencesUtility;
 
 public final class DeleteDatabaseJob extends AbstractSierraDatabaseJob {
 
@@ -29,6 +31,8 @@ public final class DeleteDatabaseJob extends AbstractSierraDatabaseJob {
         slMonitor.begin();
         ConnectedServerManager.getInstance().clear();
         // Projects.getInstance().clear();
+        FileUtility.recursiveDelete(SierraPreferencesUtility
+                .getSierraScanDirectory());
         Data.getInstance().destroy();
         try {
             Data.getInstance().bootAndCheckSchema();

@@ -19,46 +19,46 @@ import com.surelogic.sierra.client.eclipse.preferences.SierraPreferencesUtility;
  */
 public final class ImportScanAction implements IWorkbenchWindowActionDelegate {
 
-	@Override
-  public void dispose() {
-		// Nothing to do
-	}
+    @Override
+    public void dispose() {
+        // Nothing to do
+    }
 
-	@Override
-  public void init(IWorkbenchWindow window) {
-		// Nothing to do
-	}
+    @Override
+    public void init(IWorkbenchWindow window) {
+        // Nothing to do
+    }
 
-	private FileDialog fd = null;
+    private FileDialog fd = null;
 
-	@Override
-  public void run(IAction action) {
-		if (fd == null) {
-			fd = new FileDialog(PlatformUI.getWorkbench()
-					.getActiveWorkbenchWindow().getShell(), SWT.OPEN);
-			fd.setText("Import Scan");
-			fd.setFilterPath(SierraPreferencesUtility.getSierraDataDirectory()
-					.getAbsolutePath());
-			fd.setFilterExtensions(new String[] { "*.sierra", "*.sierra.gz",
-					"*.*" });
-			fd.setFilterNames(new String[] { "Scan Documents (*.sierra)",
-					"Compressed Scan Documents (*.sierra.gz)",
-					"All Files (*.*)" });
-		}
-		final String selectedFilename = fd.open();
-		if (selectedFilename != null) {
-			File runDocument = new File(selectedFilename);
-			if (runDocument.canRead()) {
-				final ImportScanDocumentJob job = new ImportScanDocumentJob(
-						runDocument);
-				job.setUser(true);
-				job.schedule();
-			}
-		}
-	}
+    @Override
+    public void run(IAction action) {
+        if (fd == null) {
+            fd = new FileDialog(PlatformUI.getWorkbench()
+                    .getActiveWorkbenchWindow().getShell(), SWT.OPEN);
+            fd.setText("Import Scan");
+            fd.setFilterPath(SierraPreferencesUtility.getSierraScanDirectory()
+                    .getAbsolutePath());
+            fd.setFilterExtensions(new String[] { "*.sierra", "*.sierra.gz",
+                    "*.*" });
+            fd.setFilterNames(new String[] { "Scan Documents (*.sierra)",
+                    "Compressed Scan Documents (*.sierra.gz)",
+                    "All Files (*.*)" });
+        }
+        final String selectedFilename = fd.open();
+        if (selectedFilename != null) {
+            File runDocument = new File(selectedFilename);
+            if (runDocument.canRead()) {
+                final ImportScanDocumentJob job = new ImportScanDocumentJob(
+                        runDocument);
+                job.setUser(true);
+                job.schedule();
+            }
+        }
+    }
 
-	@Override
-  public void selectionChanged(IAction action, ISelection selection) {
-		// Nothing to do
-	}
+    @Override
+    public void selectionChanged(IAction action, ISelection selection) {
+        // Nothing to do
+    }
 }
