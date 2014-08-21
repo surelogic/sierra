@@ -20,16 +20,12 @@ public final class CodeReviewPerspective implements IPerspectiveFactory {
   @Override
   public void createInitialLayout(IPageLayout layout) {
     final String localTeamServerView = "com.surelogic.sierra.eclipse.teamserver.views.TeamServerView";
-    final String packageExplorer = "org.eclipse.jdt.ui.PackageExplorer";
     final String editorArea = layout.getEditorArea();
-    final String aboveEditorArea = "aboveEditorArea";
 
-    final IFolderLayout aboveEditorAreaF = layout.createFolder(aboveEditorArea, IPageLayout.TOP, 0.5f, editorArea);
+    final IFolderLayout aboveEditorAreaF = layout.createFolder("aboveEditorArea", IPageLayout.TOP, 0.4f, editorArea);
     aboveEditorAreaF.addView(FindingsSelectionView.ID);
-    aboveEditorAreaF.addView(packageExplorer);
-
-    final IFolderLayout rightSearchAreaF = layout.createFolder("rightSearchArea", IPageLayout.RIGHT, 0.6f, aboveEditorArea);
-    rightSearchAreaF.addView(FindingsView.ID);
+    aboveEditorAreaF.addView(SierraServersView.ID);
+    aboveEditorAreaF.addView(SynchronizeView.ID);
     /*
      * The local team server view only will exist if that optional feature is
      * loaded. So we need to check before we add this to the perspective.
@@ -38,10 +34,11 @@ public final class CodeReviewPerspective implements IPerspectiveFactory {
       aboveEditorAreaF.addView(localTeamServerView);
     }
 
-    final IFolderLayout leftOfEditorArea = layout.createFolder("leftOfEditorArea", IPageLayout.RIGHT, 0.6f, editorArea);
-    leftOfEditorArea.addView(FindingDetailsView.ID);
-    leftOfEditorArea.addView(SierraServersView.ID);
-    leftOfEditorArea.addView(SynchronizeView.ID);
+    final IFolderLayout leftEditorAreaF = layout.createFolder("leftEditorArea", IPageLayout.LEFT, 0.7f, editorArea);
+    leftEditorAreaF.addView(FindingDetailsView.ID);
+
+    final IFolderLayout leftLeftAreaF = layout.createFolder("leftLeftArea", IPageLayout.LEFT, 0.5f, "leftEditorArea");
+    leftLeftAreaF.addView(FindingsView.ID);
 
     layout.addPlaceholder(SynchronizeDetailsView.ID, IPageLayout.BOTTOM, 0.6f, editorArea);
   }
