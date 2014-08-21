@@ -463,7 +463,7 @@ public class FindingDetailsMediator extends AbstractSierraViewMediator implement
     f_summaryText.addListener(SWT.Modify, tel);
     f_summaryText.addListener(SWT.FocusOut, tel);
 
-    f_artifacts.addListener(SWT.MouseDoubleClick, new Listener() {
+    f_artifacts.addListener(SWT.Selection, new Listener() {
       @Override
       public void handleEvent(final Event arg0) {
         final TableItem[] items = f_artifacts.getSelection();
@@ -739,7 +739,6 @@ public class FindingDetailsMediator extends AbstractSierraViewMediator implement
       clazz.setImage(SierraUIUtility.getImageForType(finding.getProjectName(), finding.getPackageName(), finding.getClassName()));
       clazz.setData(firstArtifact.getPrimarySource());
       showAsLink(clazz);
-      // clazz.addListener(SWT.Selection, f_locationListener);
       tree.showItem(clazz);
     } else {
       final List<SourceDetail> srcs = new ArrayList<SourceDetail>();
@@ -765,14 +764,6 @@ public class FindingDetailsMediator extends AbstractSierraViewMediator implement
         }
       }
       tree.showItem(first);
-      /*
-       * for (ArtifactDetail artifact : finding.getArtifacts()) { TreeItem loc =
-       * createLocation(proj, packages, classes, lines,
-       * artifact.getPrimarySource()); tree.showItem(loc); boolean first = true;
-       * for (SourceDetail src : artifact.getAdditionalSources()) { loc =
-       * createLocation(proj, packages, classes, lines, src); if (first) {
-       * tree.showItem(loc); first = false; } } }
-       */
     }
   }
 
