@@ -24,7 +24,7 @@ public final class CodeReviewPerspective implements IPerspectiveFactory {
     final String editorArea = layout.getEditorArea();
     final String aboveEditorArea = "aboveEditorArea";
 
-    final IFolderLayout aboveEditorAreaF = layout.createFolder(aboveEditorArea, IPageLayout.TOP, 0.4f, editorArea);
+    final IFolderLayout aboveEditorAreaF = layout.createFolder(aboveEditorArea, IPageLayout.TOP, 0.5f, editorArea);
     aboveEditorAreaF.addView(FindingsSelectionView.ID);
     aboveEditorAreaF.addView(packageExplorer);
 
@@ -38,7 +38,7 @@ public final class CodeReviewPerspective implements IPerspectiveFactory {
       aboveEditorAreaF.addView(localTeamServerView);
     }
 
-    final IFolderLayout leftOfEditorArea = layout.createFolder("leftOfEditorArea", IPageLayout.LEFT, 0.4f, editorArea);
+    final IFolderLayout leftOfEditorArea = layout.createFolder("leftOfEditorArea", IPageLayout.RIGHT, 0.6f, editorArea);
     leftOfEditorArea.addView(FindingDetailsView.ID);
     leftOfEditorArea.addView(SierraServersView.ID);
     leftOfEditorArea.addView(SynchronizeView.ID);
