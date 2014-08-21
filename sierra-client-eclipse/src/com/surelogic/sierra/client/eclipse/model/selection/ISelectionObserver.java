@@ -10,15 +10,4 @@ public interface ISelectionObserver {
    *          a findings selection.
    */
   void selectionChanged(Selection selection);
-
-  /**
-   * Indicates a change to the visibility of a column in the list of findings
-   * (the 'Show' results).
-   * 
-   * @param selection
-   *          a findings selection
-   * @param c
-   *          the column that changed its visibility.
-   */
-  void columnVisibilityChanged(Selection selection, Column c);
 }

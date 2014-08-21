@@ -7,22 +7,15 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Image;
 
-import com.surelogic.Nullable;
-import com.surelogic.common.CommonImages;
 import com.surelogic.common.core.logging.SLEclipseStatusUtility;
 import com.surelogic.common.i18n.I18N;
-import com.surelogic.common.ui.SLImages;
-import com.surelogic.sierra.client.eclipse.SierraUIUtility;
 import com.surelogic.sierra.client.eclipse.jobs.AbstractSierraDatabaseJob;
 import com.surelogic.sierra.client.eclipse.model.AbstractDatabaseObserver;
 import com.surelogic.sierra.client.eclipse.model.DatabaseHub;
@@ -67,177 +60,6 @@ public final class Selection extends AbstractDatabaseObserver {
     return f_allFilters;
   }
 
-  public static final String SUMMARY_COLUMN = "Summary";
-  public static final String TOOL_COLUMN = "Tool";
-  public static final String PROJECT_COLUMN = "Project";
-  public static final String PACKAGE_COLUMN = "Package";
-  public static final String TYPE_COLUMN = "Type";
-  public static final String LINE_COLUMN = "Line";
-  public static final String IMPORTANCE_COLUMN = "Importance";
-  public static final String FINDING_TYPE_COLUMN = "Finding Type";
-
-  public static final String[] ALL_COLUMN_TITLES = { SUMMARY_COLUMN, TOOL_COLUMN, PROJECT_COLUMN, PACKAGE_COLUMN, TYPE_COLUMN,
-      LINE_COLUMN, IMPORTANCE_COLUMN, FINDING_TYPE_COLUMN };
-  public static final String[] TOGGLEABLE_COLUMN_TITLES = { TOOL_COLUMN, PROJECT_COLUMN, PACKAGE_COLUMN, TYPE_COLUMN, LINE_COLUMN,
-      IMPORTANCE_COLUMN, FINDING_TYPE_COLUMN };
-
-  /**
-   * Used by the constructor of {@link Selection} to create the columns that are
-   * able to be displayed in the list of findings portion of the quick search
-   * control.
-   * 
-   * @param listOfFindingsColumns
-   *          an empty mutable list to fill.
-   */
-  private static void fillColumns(List<Column> listOfFindingsColumns) {
-
-    /*
-     * Summary
-     */
-    final Column summary = new Column(SUMMARY_COLUMN, new AbstractColumnCellProvider() {
-
-      @Override
-      public String getLabel(FindingData row) {
-        return row.f_summary;
-      }
-
-      @Override
-      public Image getImage(FindingData row) {
-        return SierraUIUtility.getImageFor(row.f_importance);
-      }
-    });
-    summary.setVisible(true);
-    listOfFindingsColumns.add(summary);
-
-    /*
-     * Tool
-     */
-    listOfFindingsColumns.add(new Column(TOOL_COLUMN, new AbstractColumnCellProvider() {
-
-      @Override
-      public String getLabel(FindingData row) {
-        return row.f_toolName;
-      }
-
-      @Override
-      public Image getImage(FindingData row) {
-        return SierraUIUtility.getImageForTool(row.f_toolName);
-      }
-    }));
-
-    /*
-     * Project
-     */
-    listOfFindingsColumns.add(new Column(PROJECT_COLUMN, new AbstractColumnCellProvider() {
-
-      @Override
-      public String getLabel(FindingData row) {
-        return row.f_projectName;
-      }
-
-      @Override
-      public Image getImage(FindingData row) {
-        return SLImages.getImageForProject(row.f_projectName);
-      }
-    }));
-
-    /*
-     * Package
-     */
-    listOfFindingsColumns.add(new Column(PACKAGE_COLUMN, new AbstractColumnCellProvider() {
-
-      @Override
-      public String getLabel(FindingData row) {
-        return row.f_packageName;
-      }
-
-      @Override
-      public Image getImage(FindingData row) {
-        return SLImages.getImage(CommonImages.IMG_PACKAGE);
-      }
-    }));
-
-    /*
-     * Type
-     */
-    listOfFindingsColumns.add(new Column(TYPE_COLUMN, new AbstractColumnCellProvider() {
-
-      @Override
-      public String getLabel(FindingData row) {
-        return row.f_typeName;
-      }
-
-      @Override
-      public Image getImage(FindingData row) {
-        return SierraUIUtility.getImageForType(row.f_projectName, row.f_packageName, row.f_typeName);
-      }
-    }));
-
-    /*
-     * Line
-     */
-    listOfFindingsColumns.add(new Column(LINE_COLUMN, new IColumnCellProvider() {
-
-      @Override
-      public String getLabel(FindingData row) {
-        return Integer.toString(row.f_lineNumber);
-      }
-
-      @Override
-      public Image getImage(FindingData row) {
-        return null;
-      }
-
-      @Override
-      public int compareInternal(Column column, FindingData row1, FindingData row2) {
-        return row1.f_lineNumber - row2.f_lineNumber;
-      }
-    }, SWT.RIGHT));
-
-    /*
-     * Importance
-     */
-    listOfFindingsColumns.add(new Column(IMPORTANCE_COLUMN, new IColumnCellProvider() {
-
-      @Override
-      public String getLabel(FindingData row) {
-        return row.f_importance.toStringSentenceCase();
-      }
-
-      @Override
-      public Image getImage(FindingData row) {
-        return SierraUIUtility.getImageFor(row.f_importance);
-      }
-
-      @Override
-      public int compareInternal(Column column, FindingData row1, FindingData row2) {
-        return row1.f_importance.ordinal() - row1.f_importance.ordinal();
-      }
-    }));
-
-    /*
-     * Finding type
-     */
-    listOfFindingsColumns.add(new Column(FINDING_TYPE_COLUMN, new AbstractColumnCellProvider() {
-
-      @Override
-      public String getLabel(FindingData row) {
-        return row.f_findingType;
-      }
-
-      @Override
-      public Image getImage(FindingData row) {
-        return SLImages.getImage(CommonImages.IMG_INDEX_CARD);
-      }
-    }));
-
-    int i = 0;
-    for (Column column : listOfFindingsColumns) {
-      column.setIndex(i);
-      i++;
-    }
-  }
-
   /*
    * Constructors
    */
@@ -245,22 +67,17 @@ public final class Selection extends AbstractDatabaseObserver {
   Selection(SelectionManager manager) {
     assert manager != null;
     f_manager = manager;
-    fillColumns(f_listOfFindingsColumns);
   }
 
   public Selection(Selection source) {
     synchronized (source) {
       f_manager = source.f_manager;
-      f_showingFindings = source.f_showingFindings;
 
       Filter prev = null;
       for (Filter f : source.f_filters) {
         Filter clone = f.copyNoQuery(this, prev);
         prev = clone;
         f_filters.add(clone);
-      }
-      for (Column toCopy : source.f_listOfFindingsColumns) {
-        f_listOfFindingsColumns.add(new Column(toCopy));
       }
     }
   }
@@ -407,37 +224,6 @@ public final class Selection extends AbstractDatabaseObserver {
   }
 
   /**
-   * Indicates if this selection should show the list of findings selected.
-   */
-  private boolean f_showingFindings = false;
-
-  /**
-   * Indicates if this selection shows the list of findings in the UI.
-   * 
-   * @return <code>true</code> if this selection should show the list of
-   *         findings, <code>false<code> if it should not.
-   */
-  public boolean isShowingFindings() {
-    synchronized (this) {
-      return f_showingFindings;
-    }
-  }
-
-  /**
-   * Sets the status of this selection with regard to showing the list of
-   * findings.
-   * 
-   * @param value
-   *          <code>true</code> if this selection should show the list of
-   *          findings, <code>false<code> if it should not.
-   */
-  public void setShowingFindings(boolean value) {
-    synchronized (this) {
-      f_showingFindings = value;
-    }
-  }
-
-  /**
    * Constructs a filter at the end of this selections chain of filters. Adds an
    * optional observer to that filter. This method does <i>not</i> initiate the
    * query to populate the filter.
@@ -569,15 +355,6 @@ public final class Selection extends AbstractDatabaseObserver {
       o.selectionChanged(this);
   }
 
-  /**
-   * Do not call this method holding a lock on <code>this</code>. Deadlock could
-   * occur as we are invoking an alien method.
-   */
-  private void notifyColumnsChanged(Column c) {
-    for (ISelectionObserver o : f_observers)
-      o.columnVisibilityChanged(this, c);
-  }
-
   @Override
   public void changed() {
     final long now = startingUpdate();
@@ -705,63 +482,6 @@ public final class Selection extends AbstractDatabaseObserver {
         filter.refresh();
       }
     }
-  }
-
-  /*
-   * This code was added to allow the list of findings to display columns in the
-   * UI.
-   */
-
-  private final List<Column> f_listOfFindingsColumns = new CopyOnWriteArrayList<Column>();
-
-  /**
-   * Gets the column in the list of findings display (the 'Show' results) with
-   * the given title.
-   * 
-   * @param title
-   *          a column title (i.e., the name of the column).
-   * @return a column or {@code null} if none can be found for the passed title.
-   */
-  @Nullable
-  public Column getColumnByTitle(String title) {
-    if (title != null)
-      for (Column column : f_listOfFindingsColumns) {
-        if (title.equals(column.getTitle()))
-          return column;
-      }
-    return null;
-  }
-
-  /**
-   * An alias to the columns in the list of findings display (the 'Show'
-   * results). The collection returned is an alias of the collection used in the
-   * implementation of this class, so changes to the list are reflected in the
-   * internal collection, and vice-versa.
-   * 
-   * @return the list of findings columns which should not be mutated in most
-   *         cases, one exception would be {@link SelectionPersistence}.
-   */
-  public List<Column> getColumns() {
-    return f_listOfFindingsColumns;
-  }
-
-  /**
-   * Changes the visibility of the column with the given name.
-   * 
-   * @param name
-   * @param value
-   *          {@code true} for the column to be visible, {@code false} for it to
-   *          be invisible.
-   * @return
-   */
-  public boolean setColumnVisible(String title, boolean value) {
-    Column c = getColumnByTitle(title);
-    if (c == null || c.isVisible() == value) {
-      return false; // Nothing changed
-    }
-    c.setVisible(value);
-    notifyColumnsChanged(c);
-    return true;
   }
 
   @Override

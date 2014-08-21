@@ -4,22 +4,24 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Table;
 
 public class FindingsView extends AbstractSierraView<FindingsMediator> {
 
   public static final String ID = "com.surelogic.sierra.client.eclipse.views.FindingsView";
 
   @Override
-  protected FindingsMediator createMorePartControls(final Composite findingPage) {
+  protected FindingsMediator createMorePartControls(final Composite findingsPage) {
     GridLayout layout = new GridLayout();
-    findingPage.setLayout(layout);
-    GridData layoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
-    findingPage.setLayoutData(layoutData);
+    layout.marginHeight = 0;
+    layout.marginWidth = 0;
+    layout.verticalSpacing = 0;
+    findingsPage.setLayout(layout);
 
-    Composite c = new Composite(findingPage, SWT.NONE);
-    c.setBackground(c.getDisplay().getSystemColor(SWT.COLOR_BLUE));
-    c.setLayoutData(layoutData);
+    final Table resultsTable = new Table(findingsPage, SWT.FULL_SELECTION | SWT.MULTI);
+    resultsTable.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+    resultsTable.setLinesVisible(true);
 
-    return new FindingsMediator(this);
+    return new FindingsMediator(this, findingsPage, resultsTable);
   }
 }

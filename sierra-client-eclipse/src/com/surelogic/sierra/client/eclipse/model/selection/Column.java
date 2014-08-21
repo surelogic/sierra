@@ -66,12 +66,6 @@ public final class Column {
   private ColumnSort f_sort = ColumnSort.UNSORTED;
 
   /**
-   * Flag if the column is visible.
-   */
-  @InRegion("ColumnState")
-  private boolean f_visible = false;
-
-  /**
    * The user set width for this column in pixels. A value of -1 indicates that
    * no preference has been set and the width should be calculated on the fly.
    */
@@ -134,7 +128,6 @@ public final class Column {
     this(toCopy.f_title, toCopy.f_cellProvider, toCopy.f_swtAlignment);
     f_index = toCopy.f_index;
     f_sort = toCopy.f_sort;
-    f_visible = toCopy.f_visible;
     f_userSetWidth = toCopy.f_userSetWidth;
   }
 
@@ -240,25 +233,4 @@ public final class Column {
     f_userSetWidth = value;
   }
 
-  /**
-   * Gets if this column is visible in the user interface.
-   * 
-   * @return {@code true} for this column to be visible, {@code false} if it is
-   *         invisible.
-   */
-  public synchronized final boolean isVisible() {
-    return f_visible;
-  }
-
-  /**
-   * Use {@link Selection#setColumnVisible(String, boolean)}, never call this
-   * method.
-   * 
-   * @param value
-   *          {@code true} for this column to be visible, {@code false} for it
-   *          to be invisible.
-   */
-  synchronized void setVisible(boolean value) {
-    f_visible = value;
-  }
 }

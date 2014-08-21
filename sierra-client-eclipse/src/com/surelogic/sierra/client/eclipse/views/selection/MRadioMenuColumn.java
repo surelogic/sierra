@@ -39,15 +39,9 @@ public final class MRadioMenuColumn extends MColumn implements IRadioMenuObserve
   @Override
   void init() {
     final CascadingList.IColumn m = new CascadingList.IColumn() {
-      final Filter previousFilter = getFilterFromColumn(getPreviousColumn());
-
       @Override
       public Composite createContents(Composite panel) {
         f_menu = new RadioArrowMenu(panel);
-        if (previousFilter != null) {
-          f_menu.addChoice("Show", null);
-          f_menu.addSeparator();
-        }
         for (ISelectionFilterFactory f : getFilterChoicesForThisMenu()) {
           f_menu.addChoice(f, f.getFilterImage());
         }
@@ -131,11 +125,6 @@ public final class MRadioMenuColumn extends MColumn implements IRadioMenuObserve
       final ISelectionFilterFactory filter = (ISelectionFilterFactory) choice;
       getSelection().construct(filter, new DrawFilterAndMenu());
       getSelection().changed();
-    } else if ("Show".equals(choice)) {
-      final MListOfFindingsColumn fsr = new MListOfFindingsColumn(getCascadingList(), getSelection(), this);
-      fsr.setObserver(observer);
-      fsr.init();
-
     }
   }
 

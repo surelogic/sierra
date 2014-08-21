@@ -26,18 +26,11 @@ public final class SelectionPersistence {
   public static final String TOP = "saved-finding-selections";
   public static final String SELECTION = "selection";
   public static final String NAME = "name";
-  public static final String SHOWING = "showing-finding-set";
   public static final String FILTER = "filter";
   public static final String VALUE_FILTER_EXPRESSION = "value-filter-expression";
   public static final String TYPE = "type";
   public static final String POROUS = "porous";
   public static final String VALUE = "value";
-
-  public static final String COLUMN = "column";
-  public static final String VISIBLE = "visible";
-  public static final String WIDTH = "width";
-  public static final String SORT = "sort";
-  public static final String INDEX = "index";
 
   public static void save(final SelectionManager manager, final File saveFile) {
     save(manager, manager.getSavedSelectionNames(), saveFile);
@@ -85,16 +78,11 @@ public final class SelectionPersistence {
   private static void outputSelection(PrintWriter pw, StringBuilder b, String name, Selection s) {
     b.append("  <").append(SELECTION);
     Entities.addAttribute(NAME, name, b);
-    if (s.isShowingFindings())
-      Entities.addAttribute(SHOWING, "Y", b);
     b.append(">");
     outputBuffer(pw, b);
 
     for (Filter f : s.getFilters()) {
       outputFilter(pw, b, f);
-    }
-    for (Column c : s.getColumns()) {
-      outputColumn(pw, b, c);
     }
     end(pw, b, SELECTION);
   }
@@ -115,20 +103,6 @@ public final class SelectionPersistence {
       outputBuffer(pw, b);
     }
     end(pw, b, FILTER);
-  }
-
-  private static void outputColumn(PrintWriter pw, StringBuilder b, Column c) {
-    b.append("    <").append(COLUMN);
-    Entities.addAttribute(NAME, c.getTitle(), b);
-    if (c.isVisible())
-      Entities.addAttribute(VISIBLE, "true", b);
-    if (c.hasUserSetWidth())
-      Entities.addAttribute(WIDTH, c.getUserSetWidth(), b);
-    Entities.addAttribute(SORT, c.getSort().toString(), b);
-    Entities.addAttribute(INDEX, c.getIndex(), b);
-    b.append(">");
-    outputBuffer(pw, b);
-    end(pw, b, COLUMN);
   }
 
   private static void end(PrintWriter pw, final StringBuilder b, String tag) {
@@ -175,15 +149,12 @@ public final class SelectionPersistence {
     private Selection f_workingSelection = null;
     private String f_selectionName = null;
     private Filter f_filter = null;
-    private boolean f_useColumnData = true;
 
     @Override
     public void startElement(String uri, String localName, String name, Attributes attributes) throws SAXException {
       if (name.equals(SELECTION)) {
         f_selectionName = attributes.getValue(NAME);
-        final boolean showing = attributes.getValue(SHOWING) != null;
         f_workingSelection = f_manager.construct();
-        f_workingSelection.setShowingFindings(showing);
       } else if (name.equals(FILTER)) {
         final String type = attributes.getValue(TYPE);
         if (f_workingSelection != null) {
@@ -212,28 +183,6 @@ public final class SelectionPersistence {
           f_filter.setPorousOnLoad(value, true);
         } else {
           SLLogger.getLogger().log(Level.SEVERE, POROUS + " found in XML but filter is null");
-        }
-      } else if (f_useColumnData && name.equals(COLUMN)) {
-        final String id = attributes.getValue(NAME);
-        final Column c = f_workingSelection.getColumnByTitle(id);
-        if (c != null) {
-          final String viz = attributes.getValue(VISIBLE);
-          c.setVisible(viz != null);
-          final String width = attributes.getValue(WIDTH);
-          if (width != null) {
-            c.setUserSetWidth(Integer.parseInt(width));
-          }
-          final String sort = attributes.getValue(SORT);
-          if (sort != null) {
-            c.setSort(ColumnSort.valueOf(sort));
-          }
-          final String index = attributes.getValue(INDEX);
-          if (index != null) {
-            final int i = Integer.parseInt(index);
-            if (0 < i && i < f_workingSelection.getColumns().size()) {
-              c.setIndex(i);
-            }
-          }
         }
       }
     }
