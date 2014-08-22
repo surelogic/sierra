@@ -474,10 +474,7 @@ public class FindingDetailsMediator extends AbstractSierraViewMediator implement
           final String packageName = item.getText(2);
           final String className = item.getText(3);
           final int lineNumber = Integer.valueOf(item.getText(4));
-          if (lineNumber > 0)
-            JDTUIUtility.tryToOpenInEditor(projectName, packageName, className, lineNumber);
-          else
-            SierraUIUtility.tryToOpenInEditor(projectName, packageName, className, f_finding.getFindingId());
+          SierraUIUtility.tryToOpenInEditor(projectName, packageName, className, lineNumber, f_finding.getFindingId());
         }
       }
     });

@@ -369,10 +369,7 @@ public class FindingsMediator extends AbstractSierraViewMediator implements IVie
     /*
      * Attempt to show the result in the editor
      */
-    if (data.f_lineNumber > 0)
-      JDTUIUtility.tryToOpenInEditor(data.f_projectName, data.f_packageName, data.f_typeName, data.f_lineNumber);
-    else
-      SierraUIUtility.tryToOpenInEditor(data.f_projectName, data.f_packageName, data.f_typeName, data.f_findingId);
+    SierraUIUtility.tryToOpenInEditor(data.f_projectName, data.f_packageName, data.f_typeName, data.f_lineNumber, data.f_findingId);
   }
 
   boolean createTableColumns = false;
