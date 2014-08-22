@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -385,7 +386,7 @@ public class FindingsMediator extends AbstractSierraViewMediator implements IVie
       tc.setData(c);
       tc.setMoveable(true);
 
-      order[c.getIndex()] = i;
+      order[i] = c.getIndex();
       i++;
 
       tc.addListener(SWT.Selection, new Listener() {
@@ -412,7 +413,6 @@ public class FindingsMediator extends AbstractSierraViewMediator implements IVie
         public void controlMoved(final ControlEvent e) {
           if (!createTableColumns && !updateTableColumns) {
             final int[] currentOrder = f_resultsTable.getColumnOrder();
-            boolean changed = false;
 
             // Update all the columns
             final TableColumn[] columns = f_resultsTable.getColumns();
@@ -420,13 +420,11 @@ public class FindingsMediator extends AbstractSierraViewMediator implements IVie
               final TableColumn tc = columns[currentOrder[i]];
               final Column column = (Column) tc.getData();
               if (i != column.getIndex()) {
-                changed = true;
-                System.out.println(column.getTitle() + ":" + column.getIndex() + " -> " + i);
+                System.out.println(column.getTitle() + " :c: " + column.getIndex() + " -> " + i);
                 column.setIndex(i);
+              } else {
+                System.out.println(column.getTitle() + " :s: " + column.getIndex() + " -> " + i);
               }
-            }
-            if (changed) {
-              updateTableContents();
             }
           }
         }
@@ -442,6 +440,7 @@ public class FindingsMediator extends AbstractSierraViewMediator implements IVie
         }
       });
     }
+    System.out.println("column order" + Arrays.toString(order));
     f_resultsTable.setColumnOrder(order);
     createTableColumns = false;
   }
@@ -487,12 +486,12 @@ public class FindingsMediator extends AbstractSierraViewMediator implements IVie
       f_resultsTable.setRedraw(true);
     }
 
-    showCountOrCutoffWarning(f_data);
+    showFindingCountOrCutoffWarning(f_data);
 
     f_panel.layout();
   }
 
-  private void showCountOrCutoffWarning(RowData rowData) {
+  private void showFindingCountOrCutoffWarning(RowData rowData) {
     final Image img;
     final String msg;
     final String tooltip;
@@ -514,7 +513,6 @@ public class FindingsMediator extends AbstractSierraViewMediator implements IVie
   }
 
   private void sortModelBasedOnColumns() {
-    System.out.println("sortModelBasedOnColumns():");
     Comparator<FindingData> c = null;
     // Traverse order backwards to construct proper comparator
     final int[] order = f_resultsTable.getColumnOrder();

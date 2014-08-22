@@ -154,10 +154,7 @@ public class ColumnPersistence {
           }
           final String index = attributes.getValue(INDEX);
           if (index != null) {
-            final int i = Integer.parseInt(index);
-            if (0 < i && i < f_populatedColumns.size()) {
-              f_workingColumn.setIndex(i);
-            }
+            f_workingColumn.setIndex(Integer.parseInt(index));
           }
         }
       }
