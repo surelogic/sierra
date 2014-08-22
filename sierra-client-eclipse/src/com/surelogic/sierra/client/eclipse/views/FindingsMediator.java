@@ -1,5 +1,6 @@
 package com.surelogic.sierra.client.eclipse.views;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -60,6 +61,7 @@ import com.surelogic.sierra.client.eclipse.model.IProjectsObserver;
 import com.surelogic.sierra.client.eclipse.model.Projects;
 import com.surelogic.sierra.client.eclipse.model.selection.AbstractColumnCellProvider;
 import com.surelogic.sierra.client.eclipse.model.selection.Column;
+import com.surelogic.sierra.client.eclipse.model.selection.ColumnPersistence;
 import com.surelogic.sierra.client.eclipse.model.selection.ColumnSort;
 import com.surelogic.sierra.client.eclipse.model.selection.FindingData;
 import com.surelogic.sierra.client.eclipse.model.selection.IColumnCellProvider;
@@ -73,16 +75,7 @@ import com.surelogic.sierra.tool.message.Importance;
 public class FindingsMediator extends AbstractSierraViewMediator implements IViewUpdater, IProjectsObserver, ISelectionObserver,
     ISelectionManagerObserver {
 
-  public static final String SUMMARY_COLUMN = "Summary";
-  public static final String TOOL_COLUMN = "Tool";
-  public static final String PROJECT_COLUMN = "Project";
-  public static final String PACKAGE_COLUMN = "Package";
-  public static final String TYPE_COLUMN = "Type";
-  public static final String LINE_COLUMN = "Line";
-  public static final String IMPORTANCE_COLUMN = "Importance";
-  public static final String FINDING_TYPE_COLUMN = "Finding Type";
-
-  private final SelectionManager f_manager = SelectionManager.getInstance();
+  final SelectionManager f_manager = SelectionManager.getInstance();
 
   final FindingsView f_view;
   final Composite f_panel;
@@ -91,7 +84,11 @@ public class FindingsMediator extends AbstractSierraViewMediator implements IVie
   final Label f_warningIcon;
   final Link f_statusLink;
 
-  private final List<Column> f_listOfFindingsColumns;
+  final List<Column> f_listOfFindingsColumns;
+
+  File getColumnPersistenceFile() {
+    return new File(EclipseUtility.getSierraDataDirectory(), "findings-view.xml");
+  }
 
   protected FindingsMediator(FindingsView view, Composite panel, Table resultsTable, Composite informationPanel, Label warningIcon,
       Link statusLink) {
@@ -104,6 +101,7 @@ public class FindingsMediator extends AbstractSierraViewMediator implements IVie
     f_statusLink = statusLink;
     ArrayList<Column> working = new ArrayList<Column>();
     fillColumns(working);
+    ColumnPersistence.load(working, getColumnPersistenceFile());
     f_listOfFindingsColumns = Collections.unmodifiableList(working);
   }
 
@@ -139,6 +137,7 @@ public class FindingsMediator extends AbstractSierraViewMediator implements IVie
     }
     Projects.getInstance().removeObserver(this);
     SelectionManager.getInstance().removeObserver(this);
+    ColumnPersistence.save(f_listOfFindingsColumns, getColumnPersistenceFile());
     super.dispose();
   }
 
@@ -220,9 +219,9 @@ public class FindingsMediator extends AbstractSierraViewMediator implements IVie
   }
 
   @NonNull
-  private RowData f_data = new RowData();
+  RowData f_data = new RowData();
 
-  private void dataToDisplayChanged() {
+  void dataToDisplayChanged() {
     final UIJob job = new SLUIJob() {
       @Override
       public IStatus runInUIThread(final IProgressMonitor monitor) {
@@ -289,7 +288,7 @@ public class FindingsMediator extends AbstractSierraViewMediator implements IVie
       return new RowData();
     }
     final String query = getQuery(workingSelection);
-    System.out.println(query);
+    // System.out.println(query);
     try {
       final Connection c = Data.getInstance().readOnlyConnection();
       try {
@@ -335,7 +334,7 @@ public class FindingsMediator extends AbstractSierraViewMediator implements IVie
    * @throws IllegalArgumentException
    *           if the selection passed is null
    */
-  private String getQuery(@NonNull final Selection selection) {
+  String getQuery(@NonNull final Selection selection) {
     if (selection == null)
       throw new IllegalArgumentException(I18N.err(44, "selection"));
     final StringBuilder b = new StringBuilder();
@@ -362,7 +361,7 @@ public class FindingsMediator extends AbstractSierraViewMediator implements IVie
   /*
    * Only call from the UI thread
    */
-  private void saveAndSelectFindingInOtherViews(@NonNull final FindingData data) {
+  void saveAndSelectFindingInOtherViews(@NonNull final FindingData data) {
     /*
      * Ensure the view is visible but don't change the focus.
      */
@@ -373,9 +372,9 @@ public class FindingsMediator extends AbstractSierraViewMediator implements IVie
     JDTUIUtility.tryToOpenInEditor(data.f_projectName, data.f_packageName, data.f_typeName, data.f_lineNumber);
   }
 
-  private boolean createTableColumns = false;
+  boolean createTableColumns = false;
 
-  private void createTableColumns() {
+  void createTableColumns() {
 
     createTableColumns = true;
     final int[] order = new int[f_listOfFindingsColumns.size()];
@@ -447,7 +446,7 @@ public class FindingsMediator extends AbstractSierraViewMediator implements IVie
     createTableColumns = false;
   }
 
-  private void updateTableContents() {
+  void updateTableContents() {
     if (f_resultsTable.isDisposed()) {
       return;
     }
@@ -569,7 +568,7 @@ public class FindingsMediator extends AbstractSierraViewMediator implements IVie
   /**
    * Used to avoid listeners reacting to settings during updates of the table.
    */
-  private boolean updateTableColumns = false;
+  boolean updateTableColumns = false;
 
   private void updateTableColumns() {
     updateTableColumns = true;
@@ -680,7 +679,7 @@ public class FindingsMediator extends AbstractSierraViewMediator implements IVie
   }
 
   Column getDefaultColumn() {
-    return getColumnByTitle(SUMMARY_COLUMN);
+    return getColumnByTitle(Column.SUMMARY_COLUMN);
   }
 
   private static final Rectangle ZERO = new Rectangle(0, 0, 0, 0);
@@ -815,7 +814,7 @@ public class FindingsMediator extends AbstractSierraViewMediator implements IVie
     });
 
     final Listener changeImportance = new SelectionListener() {
-      private Importance getImportance(final MenuItem item) {
+      Importance getImportance(final MenuItem item) {
         return Importance.valueOf(item.getText().toUpperCase());
       }
 
@@ -855,16 +854,13 @@ public class FindingsMediator extends AbstractSierraViewMediator implements IVie
 
       @Override
       protected void handleFindings(final MenuItem item, final FindingData data, final List<Long> ids) {
-        // Note that these findings should all have the same
-        // type
-        // (based on code in context menu's listener)
+        /*
+         * Note that these findings should all have the same type (based on code
+         * in context menu's listener)
+         */
         if (ids.size() > 1) {
           FindingMutationUtility.asyncFilterFindingTypeFromScans(ids.get(0), data.f_findingType);
         }
-        /*
-         * FindingMutationUtility.asyncFilterFindingTypeFromScans ( ids,
-         * data.f_findingTypeId);
-         */
       }
     });
 
@@ -903,7 +899,7 @@ public class FindingsMediator extends AbstractSierraViewMediator implements IVie
     protected abstract void handleFindings(MenuItem item, FindingData data, List<Long> ids);
   }
 
-  private void refreshDisplay(final @NonNull RowData data) {
+  void refreshDisplay(final @NonNull RowData data) {
     final UIJob job = new SLUIJob() {
       @Override
       public IStatus runInUIThread(final IProgressMonitor monitor) {
@@ -916,7 +912,7 @@ public class FindingsMediator extends AbstractSierraViewMediator implements IVie
     job.schedule();
   }
 
-  private List<Long> extractFindingIds(final int[] itemIndices) {
+  List<Long> extractFindingIds(final int[] itemIndices) {
     final List<Long> ids = new ArrayList<Long>(itemIndices.length);
     for (final int ti : itemIndices) {
       final FindingData fd = f_data.f_rows.get(ti);
@@ -933,12 +929,12 @@ public class FindingsMediator extends AbstractSierraViewMediator implements IVie
    * @param listOfFindingsColumns
    *          an empty mutable list to fill.
    */
-  private static void fillColumns(List<Column> listOfFindingsColumns) {
+  static void fillColumns(List<Column> listOfFindingsColumns) {
 
     /*
      * Summary
      */
-    final Column summary = new Column(SUMMARY_COLUMN, new AbstractColumnCellProvider() {
+    final Column summary = new Column(Column.SUMMARY_COLUMN, new AbstractColumnCellProvider() {
 
       @Override
       public String getLabel(FindingData row) {
@@ -955,7 +951,7 @@ public class FindingsMediator extends AbstractSierraViewMediator implements IVie
     /*
      * Tool
      */
-    listOfFindingsColumns.add(new Column(TOOL_COLUMN, new AbstractColumnCellProvider() {
+    listOfFindingsColumns.add(new Column(Column.TOOL_COLUMN, new AbstractColumnCellProvider() {
 
       @Override
       public String getLabel(FindingData row) {
@@ -971,7 +967,7 @@ public class FindingsMediator extends AbstractSierraViewMediator implements IVie
     /*
      * Project
      */
-    listOfFindingsColumns.add(new Column(PROJECT_COLUMN, new AbstractColumnCellProvider() {
+    listOfFindingsColumns.add(new Column(Column.PROJECT_COLUMN, new AbstractColumnCellProvider() {
 
       @Override
       public String getLabel(FindingData row) {
@@ -987,7 +983,7 @@ public class FindingsMediator extends AbstractSierraViewMediator implements IVie
     /*
      * Package
      */
-    listOfFindingsColumns.add(new Column(PACKAGE_COLUMN, new AbstractColumnCellProvider() {
+    listOfFindingsColumns.add(new Column(Column.PACKAGE_COLUMN, new AbstractColumnCellProvider() {
 
       @Override
       public String getLabel(FindingData row) {
@@ -1003,7 +999,7 @@ public class FindingsMediator extends AbstractSierraViewMediator implements IVie
     /*
      * Type
      */
-    listOfFindingsColumns.add(new Column(TYPE_COLUMN, new AbstractColumnCellProvider() {
+    listOfFindingsColumns.add(new Column(Column.TYPE_COLUMN, new AbstractColumnCellProvider() {
 
       @Override
       public String getLabel(FindingData row) {
@@ -1019,7 +1015,7 @@ public class FindingsMediator extends AbstractSierraViewMediator implements IVie
     /*
      * Line
      */
-    listOfFindingsColumns.add(new Column(LINE_COLUMN, new IColumnCellProvider() {
+    listOfFindingsColumns.add(new Column(Column.LINE_COLUMN, new IColumnCellProvider() {
 
       @Override
       public String getLabel(FindingData row) {
@@ -1040,7 +1036,7 @@ public class FindingsMediator extends AbstractSierraViewMediator implements IVie
     /*
      * Importance
      */
-    listOfFindingsColumns.add(new Column(IMPORTANCE_COLUMN, new IColumnCellProvider() {
+    listOfFindingsColumns.add(new Column(Column.IMPORTANCE_COLUMN, new IColumnCellProvider() {
 
       @Override
       public String getLabel(FindingData row) {
@@ -1061,7 +1057,7 @@ public class FindingsMediator extends AbstractSierraViewMediator implements IVie
     /*
      * Finding type
      */
-    listOfFindingsColumns.add(new Column(FINDING_TYPE_COLUMN, new AbstractColumnCellProvider() {
+    listOfFindingsColumns.add(new Column(Column.FINDING_TYPE_COLUMN, new AbstractColumnCellProvider() {
 
       @Override
       public String getLabel(FindingData row) {
@@ -1074,10 +1070,8 @@ public class FindingsMediator extends AbstractSierraViewMediator implements IVie
       }
     }));
 
-    int i = 0;
     for (Column column : listOfFindingsColumns) {
-      column.setIndex(i);
-      i++;
+      column.reset();
     }
   }
 
