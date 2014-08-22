@@ -150,14 +150,13 @@ public final class Selection extends AbstractDatabaseObserver {
   }
 
   /**
-   * Removes all the passed filter and all subsequent filters from this
-   * selection.
+   * Removes the passed filter and all subsequent filters from this selection.
    * 
    * @param filter
    *          a filter within this selection, may be <code>null</code> in which
    *          case the selection is not modified.
    */
-  public void emptyAfter(Filter filter) {
+  public void emptyFrom(Filter filter) {
     if (filter == null)
       return;
     final List<Filter> disposeList = new ArrayList<Filter>();
@@ -350,7 +349,7 @@ public final class Selection extends AbstractDatabaseObserver {
    * Do not call this method holding a lock on <code>this</code>. Deadlock could
    * occur as we are invoking an alien method.
    */
-  private void notifySelectionChanged() {
+  void notifySelectionChanged() {
     for (ISelectionObserver o : f_observers)
       o.selectionChanged(this);
   }
@@ -412,7 +411,7 @@ public final class Selection extends AbstractDatabaseObserver {
     }
   }
 
-  private void refreshFiltersDatabaseJob(final long now) {
+  void refreshFiltersDatabaseJob(final long now) {
     synchronized (this) {
       for (Filter filter : f_filters) {
         if (continueUpdate(now)) {
@@ -459,7 +458,7 @@ public final class Selection extends AbstractDatabaseObserver {
    * <p>
    * Blocks until all the queries are completed.
    */
-  private void refreshFiltersAfter(Filter changedFilter) {
+  void refreshFiltersAfter(Filter changedFilter) {
     /*
      * Create a work list of all the filters in this selection after the one
      * that just changed.

@@ -30,7 +30,7 @@ import com.surelogic.sierra.client.eclipse.model.selection.Selection;
 
 public final class MRadioMenuColumn extends MColumn implements IRadioMenuObserver {
 
-  private RadioArrowMenu f_menu = null;
+  RadioArrowMenu f_menu = null;
 
   MRadioMenuColumn(CascadingList cascadingList, Selection selection, MColumn previousColumn) {
     super(cascadingList, selection, previousColumn);
@@ -119,7 +119,7 @@ public final class MRadioMenuColumn extends MColumn implements IRadioMenuObserve
       }
     }, column, false);
 
-    getSelection().emptyAfter(getFilterFromColumn(getNextColumn()));
+    getSelection().emptyFrom(getFilterFromColumn(getNextColumn()));
 
     if (choice instanceof ISelectionFilterFactory) {
       final ISelectionFilterFactory filter = (ISelectionFilterFactory) choice;
@@ -157,7 +157,7 @@ public final class MRadioMenuColumn extends MColumn implements IRadioMenuObserve
         }
       }
     } else {
-      getSelection().emptyAfter(getFilterFromColumn(getNextColumn()));
+      getSelection().emptyFrom(getFilterFromColumn(getNextColumn()));
       clearSelection();
       emptyAfter();
       forceFocus();
@@ -219,7 +219,7 @@ public final class MRadioMenuColumn extends MColumn implements IRadioMenuObserve
     }
   }
 
-  private List<ISelectionFilterFactory> getFilterChoicesForThisMenu() {
+  List<ISelectionFilterFactory> getFilterChoicesForThisMenu() {
     List<ISelectionFilterFactory> result = new ArrayList<ISelectionFilterFactory>(Selection.getAllFilters());
     MColumn column = this;
     do {
