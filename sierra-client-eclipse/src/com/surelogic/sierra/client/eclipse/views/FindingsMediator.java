@@ -420,10 +420,7 @@ public class FindingsMediator extends AbstractSierraViewMediator implements IVie
               final TableColumn tc = columns[currentOrder[i]];
               final Column column = (Column) tc.getData();
               if (i != column.getIndex()) {
-                System.out.println(column.getTitle() + " :c: " + column.getIndex() + " -> " + i);
                 column.setIndex(i);
-              } else {
-                System.out.println(column.getTitle() + " :s: " + column.getIndex() + " -> " + i);
               }
             }
           }
@@ -546,7 +543,6 @@ public class FindingsMediator extends AbstractSierraViewMediator implements IVie
     if (c == null) {
       c = getDefaultColumn().getFindingComparator(); // The default sort
     }
-    System.out.println(" --Sort order = " + c);
     Collections.sort(f_data.f_rows, c);
   }
 
