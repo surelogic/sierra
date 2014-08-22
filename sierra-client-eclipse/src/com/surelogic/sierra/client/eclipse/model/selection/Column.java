@@ -2,6 +2,7 @@ package com.surelogic.sierra.client.eclipse.model.selection;
 
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.List;
 
 import org.eclipse.swt.SWT;
 
@@ -281,17 +282,82 @@ public final class Column {
 
   /**
    * Sets if and how the column contributes to the sorting of the table.
+   * <p>
+   * Check that {@link #toggleSort(List)} is not the better method to call from
+   * the user interface.
    * 
    * @param value
    *          if and how the column contributes to the sorting of the table.
    * 
    * @throws IllegalArgumentException
    *           if value is null.
+   * 
+   * @see #toggleSort(List)
    */
   public synchronized void setSort(@NonNull final ColumnSort value) {
     if (value == null)
       throw new IllegalArgumentException(I18N.err(44, "value"));
     f_sort = value;
+  }
+
+  /**
+   * Handles toggling the state of this columns sort value and updates the
+   * sorting on the rest of the columns. For example, if this column is set to
+   * sort ascending, the sort is set t
+   * 
+   * @param allColumns
+   *          all the columns in the table (so the others can be updated).
+   */
+  public void toggleSort(@NonNull final List<Column> allColumns) {
+    ColumnSort local = getSort();
+    boolean clearOthers = false;
+    // Toggle sort
+    switch (local) {
+    case SORT_DOWN:
+      local = ColumnSort.UNSORTED;
+      break;
+    case SORT_UP:
+      local = ColumnSort.SORT_DOWN;
+      clearOthers = true;
+      break;
+    case UNSORTED:
+      local = ColumnSort.SORT_UP;
+      clearOthers = true;
+      break;
+    }
+    setSort(local);
+    // don't hold lock -- could deadlock
+    if (clearOthers) {
+      for (Column c : allColumns) {
+        if (c != this) {
+          c.setSort(ColumnSort.UNSORTED);
+        }
+      }
+    }
+  }
+
+  /**
+   * Gets the correct comparator for sorting based upon the settings for all the
+   * columns passed (should be all for the displayed table).
+   * 
+   * @param allColumns
+   *          the columns.
+   * @return the correct comparator for sorting based upon the settings for all
+   *         the columns passed.
+   */
+  public static Comparator<FindingData> getComparator(@NonNull final List<Column> allColumns) {
+    Column summary = null;
+    for (Column c : allColumns) {
+      if (c.getSort() != ColumnSort.UNSORTED)
+        return c.getFindingComparator();
+      if (c.getTitle().equals(SUMMARY_COLUMN))
+        summary = c;
+    }
+    // fix the summary column to be the sort
+    if (summary == null)
+      throw new IllegalStateException("Summary is not a column in the Findings view");
+    summary.setSort(summary.getDefaultSort());
+    return summary.getFindingComparator();
   }
 
   /**

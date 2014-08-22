@@ -63,7 +63,6 @@ import com.surelogic.sierra.client.eclipse.model.Projects;
 import com.surelogic.sierra.client.eclipse.model.selection.AbstractColumnCellProvider;
 import com.surelogic.sierra.client.eclipse.model.selection.Column;
 import com.surelogic.sierra.client.eclipse.model.selection.ColumnPersistence;
-import com.surelogic.sierra.client.eclipse.model.selection.ColumnSort;
 import com.surelogic.sierra.client.eclipse.model.selection.FindingData;
 import com.surelogic.sierra.client.eclipse.model.selection.IColumnCellProvider;
 import com.surelogic.sierra.client.eclipse.model.selection.ISelectionManagerObserver;
@@ -344,7 +343,7 @@ public class FindingsMediator extends AbstractSierraViewMediator implements IVie
     return b.toString();
   }
 
-  private final Listener f_singleClick = new Listener() {
+  final Listener f_singleClick = new Listener() {
     @Override
     public void handleEvent(final Event event) {
       final TableItem item = (TableItem) event.item;
@@ -370,7 +369,10 @@ public class FindingsMediator extends AbstractSierraViewMediator implements IVie
     /*
      * Attempt to show the result in the editor
      */
-    JDTUIUtility.tryToOpenInEditor(data.f_projectName, data.f_packageName, data.f_typeName, data.f_lineNumber);
+    if (data.f_lineNumber > 0)
+      JDTUIUtility.tryToOpenInEditor(data.f_projectName, data.f_packageName, data.f_typeName, data.f_lineNumber);
+    else
+      SierraUIUtility.tryToOpenInEditor(data.f_projectName, data.f_packageName, data.f_typeName, data.f_findingId);
   }
 
   boolean createTableColumns = false;
@@ -392,19 +394,7 @@ public class FindingsMediator extends AbstractSierraViewMediator implements IVie
       tc.addListener(SWT.Selection, new Listener() {
         @Override
         public void handleEvent(final Event event) {
-          // Toggle sort
-          switch (c.getSort()) {
-          case SORT_DOWN:
-          default:
-            c.setSort(ColumnSort.UNSORTED);
-            break;
-          case SORT_UP:
-            c.setSort(ColumnSort.SORT_DOWN);
-            break;
-          case UNSORTED:
-            c.setSort(ColumnSort.SORT_UP);
-            break;
-          }
+          c.toggleSort(f_listOfFindingsColumns);
           updateTableContents();
         }
       });
@@ -460,8 +450,11 @@ public class FindingsMediator extends AbstractSierraViewMediator implements IVie
 
     final boolean hasFindings = f_data.f_rows.size() > 0;
 
-    if (hasFindings)
-      sortModelBasedOnColumns();
+    if (hasFindings) {
+      // sort findings
+      Comparator<FindingData> c = Column.getComparator(f_listOfFindingsColumns);
+      Collections.sort(f_data.f_rows, c);
+    }
 
     for (final FindingData data : f_data.f_rows) {
       final TableItem item = new TableItem(f_resultsTable, SWT.NONE);
@@ -488,7 +481,7 @@ public class FindingsMediator extends AbstractSierraViewMediator implements IVie
     f_panel.layout();
   }
 
-  private void showFindingCountOrCutoffWarning(RowData rowData) {
+  void showFindingCountOrCutoffWarning(RowData rowData) {
     final Image img;
     final String msg;
     final String tooltip;
@@ -509,44 +502,7 @@ public class FindingsMediator extends AbstractSierraViewMediator implements IVie
     f_informationPanel.pack();
   }
 
-  private void sortModelBasedOnColumns() {
-    Comparator<FindingData> c = null;
-    // Traverse order backwards to construct proper comparator
-    final int[] order = f_resultsTable.getColumnOrder();
-    for (int i = order.length - 1; i >= 0; i--) {
-      final TableColumn tc = f_resultsTable.getColumn(order[i]);
-      final Column column = (Column) tc.getData();
-      if (column.getSort() == ColumnSort.UNSORTED) {
-        continue; // Nothing to sort
-      }
-      if (c == null) {
-        c = column.getFindingComparator();
-      } else {
-        final Comparator<FindingData> oldCompare = c;
-        c = new Comparator<FindingData>() {
-          @Override
-          public int compare(final FindingData o1, final FindingData o2) {
-            final int result = column.getFindingComparator().compare(o1, o2);
-            if (result == 0) {
-              return oldCompare.compare(o1, o2);
-            } else
-              return result;
-          }
-
-          @Override
-          public String toString() {
-            return column.toString() + ", " + oldCompare.toString();
-          }
-        };
-      }
-    }
-    if (c == null) {
-      c = getDefaultColumn().getFindingComparator(); // The default sort
-    }
-    Collections.sort(f_data.f_rows, c);
-  }
-
-  private void initializeTableItem(final FindingData data, final TableItem item) {
+  void initializeTableItem(final FindingData data, final TableItem item) {
     item.setData(data);
 
     // Setup data in all the columns
@@ -564,7 +520,7 @@ public class FindingsMediator extends AbstractSierraViewMediator implements IVie
    */
   boolean updateTableColumns = false;
 
-  private void updateTableColumns() {
+  void updateTableColumns() {
     updateTableColumns = true;
 
     for (final TableColumn tc : f_resultsTable.getColumns()) {
@@ -576,8 +532,11 @@ public class FindingsMediator extends AbstractSierraViewMediator implements IVie
   /**
    * To be called after f_rows has been initialized.
    */
-  private void loadColumnAppearance(final TableColumn tc) {
+  void loadColumnAppearance(final TableColumn tc) {
     final Column column = (Column) tc.getData();
+
+    if (column.getTitle().equals(Column.SUMMARY_COLUMN))
+      System.out.println("Summary sort=" + column.getSort());
 
     tc.setAlignment(column.getSwtAlignment());
     final int width;
@@ -600,10 +559,10 @@ public class FindingsMediator extends AbstractSierraViewMediator implements IVie
       break;
     }
     tc.setImage(img);
-    setTableColumnVisible(tc);
+    setTableColumnWidth(tc);
   }
 
-  private void setTableColumnVisible(TableColumn tc) {
+  void setTableColumnWidth(TableColumn tc) {
     final Column column = (Column) tc.getData();
     final int width;
     if (column.hasUserSetWidth())
@@ -626,7 +585,7 @@ public class FindingsMediator extends AbstractSierraViewMediator implements IVie
    * @return {@code true} if anything could be selected, {@code false} if
    *         nothing was selected.
    */
-  private boolean selectFindingsInTableOrUseNear(Set<Long> findingIdSet, long nearFindingId) {
+  boolean selectFindingsInTableOrUseNear(Set<Long> findingIdSet, long nearFindingId) {
     final List<TableItem> toSelectInTable = new ArrayList<TableItem>();
     @Nullable
     TableItem nearTableItem = null;
@@ -661,7 +620,7 @@ public class FindingsMediator extends AbstractSierraViewMediator implements IVie
       return false;
   }
 
-  private static Set<FindingData> getSelectedItems(Table table) {
+  static Set<FindingData> getSelectedItems(Table table) {
     if (table.getSelectionCount() == 0) {
       return Collections.emptySet();
     }
@@ -670,10 +629,6 @@ public class FindingsMediator extends AbstractSierraViewMediator implements IVie
       selected.add((FindingData) item.getData());
     }
     return selected;
-  }
-
-  Column getDefaultColumn() {
-    return getColumnByTitle(Column.SUMMARY_COLUMN);
   }
 
   private static final Rectangle ZERO = new Rectangle(0, 0, 0, 0);
@@ -686,7 +641,7 @@ public class FindingsMediator extends AbstractSierraViewMediator implements IVie
    *          a column.
    * @return the ideal width for the column.
    */
-  private int computeValueWidth(final Column column) {
+  int computeValueWidth(final Column column) {
     final Image imageForGC = new Image(null, 1, 1);
     final GC gc = new GC(imageForGC);
     int longest = gc.textExtent(column.getTitle()).x; // consider title
@@ -711,7 +666,7 @@ public class FindingsMediator extends AbstractSierraViewMediator implements IVie
     return result;
   }
 
-  private void setupMenu(final Menu menu) {
+  void setupMenu(final Menu menu) {
     final MenuItem set = new MenuItem(menu, SWT.CASCADE);
     set.setText("Set Importance");
     set.setImage(SLImages.getImage(CommonImages.IMG_ASTERISK_DIAMOND_ORANGE));
@@ -1067,23 +1022,5 @@ public class FindingsMediator extends AbstractSierraViewMediator implements IVie
     for (Column column : listOfFindingsColumns) {
       column.reset();
     }
-  }
-
-  /**
-   * Gets the column in the list of findings display (the 'Show' results) with
-   * the given title.
-   * 
-   * @param title
-   *          a column title (i.e., the name of the column).
-   * @return a column or {@code null} if none can be found for the passed title.
-   */
-  @Nullable
-  private Column getColumnByTitle(String title) {
-    if (title != null)
-      for (Column column : f_listOfFindingsColumns) {
-        if (title.equals(column.getTitle()))
-          return column;
-      }
-    return null;
   }
 }
