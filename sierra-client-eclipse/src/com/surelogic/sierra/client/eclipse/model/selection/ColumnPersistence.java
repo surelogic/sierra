@@ -36,7 +36,8 @@ public class ColumnPersistence {
       final StringBuilder b = new StringBuilder();
       outputXMLHeader(pw, b);
       for (Column column : columns) {
-        outputColumn(pw, b, column);
+        if (column.isDirty())
+          outputColumn(pw, b, column);
       }
       outputXMLFooter(pw, b);
       pw.close();
@@ -61,8 +62,10 @@ public class ColumnPersistence {
     Entities.addAttribute(NAME, c.getTitle(), b);
     if (c.hasUserSetWidth())
       Entities.addAttribute(WIDTH, c.getUserSetWidth(), b);
-    Entities.addAttribute(SORT, c.getSort().toString(), b);
-    Entities.addAttribute(INDEX, c.getIndex(), b);
+    if (c.getSort() != c.getDefaultSort())
+      Entities.addAttribute(SORT, c.getSort().toString(), b);
+    if (c.getIndex() != c.getDefaultIndex())
+      Entities.addAttribute(INDEX, c.getIndex(), b);
     b.append(">");
     outputBuffer(pw, b);
     end(pw, b, COLUMN);
@@ -89,6 +92,8 @@ public class ColumnPersistence {
    * Loads in the saved column information from the passed file into the already
    * full list of column information. The passed list is not mutated, but its
    * elements are.
+   * <p>
+   * Does nothing if the file doesn't exist.
    * 
    * @param columns
    *          the populated list of table columns.

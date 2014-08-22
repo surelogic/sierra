@@ -1,5 +1,6 @@
 package com.surelogic.sierra.client.eclipse.model.selection;
 
+import java.util.Arrays;
 import java.util.Comparator;
 
 import org.eclipse.swt.SWT;
@@ -19,6 +20,18 @@ import com.surelogic.common.i18n.I18N;
 @RegionLock("ColumnLock is this protects ColumnState")
 public final class Column {
 
+  public static final String SUMMARY_COLUMN = "Summary";
+  public static final String TOOL_COLUMN = "Tool";
+  public static final String PROJECT_COLUMN = "Project";
+  public static final String PACKAGE_COLUMN = "Package";
+  public static final String TYPE_COLUMN = "Type";
+  public static final String LINE_COLUMN = "Line";
+  public static final String IMPORTANCE_COLUMN = "Importance";
+  public static final String FINDING_TYPE_COLUMN = "Finding Type";
+
+  public static final String[] COLUMNS = { SUMMARY_COLUMN, TOOL_COLUMN, PROJECT_COLUMN, PACKAGE_COLUMN, TYPE_COLUMN, LINE_COLUMN,
+      IMPORTANCE_COLUMN, FINDING_TYPE_COLUMN };
+
   /*
    * immutable state
    */
@@ -34,7 +47,7 @@ public final class Column {
    * and image.
    */
   @NonNull
-  private final IColumnCellProvider f_cellProvider;
+  final IColumnCellProvider f_cellProvider;
 
   /**
    * he comparator for this column using its associated cell provider to be used
@@ -63,7 +76,7 @@ public final class Column {
    */
   @InRegion("ColumnState")
   @NonNull
-  private ColumnSort f_sort = ColumnSort.UNSORTED;
+  ColumnSort f_sort = ColumnSort.UNSORTED;
 
   /**
    * The user set width for this column in pixels. A value of -1 indicates that
@@ -180,24 +193,115 @@ public final class Column {
    * Getters and setters for mutable state (do need lock)
    */
 
+  /**
+   * Resets this column's mutable information to the correct default for table
+   * display.
+   */
+  public synchronized final void reset() {
+    f_index = getDefaultIndex();
+    f_userSetWidth = -1;
+    // by default the first column is sorted the others unsorted
+    f_sort = getDefaultSort();
+  }
+
+  /**
+   * Checks is this column's mutable information has changes to the default
+   * values.
+   * <p>
+   * Used to determine if any user changes need to be persisted across Eclipse
+   * sessions.
+   * 
+   * @return {@code true} if this column's mutable information does not have
+   *         default values, {@code false} otherwise (all default).
+   */
+  public synchronized boolean isDirty() {
+    // column width
+    if (f_userSetWidth != -1)
+      return true;
+
+    // column position
+    if (f_index != getDefaultIndex())
+      return true;
+
+    // sort
+    if (f_sort != getDefaultSort())
+      return true;
+
+    return false;
+  }
+
+  /**
+   * Gets the index of this column in the displayed table. The user may change
+   * the column display order.
+   * 
+   * @return the index of this column in the displayed table.
+   */
   public synchronized final int getIndex() {
     return f_index;
   }
 
+  /**
+   * Sets the index of this column in the displayed table. The user may change
+   * the column display order.
+   * 
+   * @param value
+   *          the index of this column in the displayed table.
+   * 
+   * @throws IllegalArgumentException
+   *           if the value is less than zero (but does not check that all the
+   *           columns are consistent.
+   */
   public synchronized void setIndex(final int value) {
     if (value < 0)
       throw new IllegalArgumentException("illegal index: " + value);
     f_index = value;
   }
 
+  /**
+   * Gets the default index value for this column based upon its title.
+   * 
+   * @return the default index value for this column based upon its title.
+   */
+  public synchronized int getDefaultIndex() {
+    for (int i = 0; i < COLUMNS.length; i++)
+      if (COLUMNS[i].equals(f_title)) {
+        return i;
+      }
+    throw new IllegalStateException("Column title " + f_title + "is unknown, not one of: " + Arrays.toString(COLUMNS));
+  }
+
+  /**
+   * Gets if and how the column contributes to the sorting of the table.
+   * 
+   * @return if and how column contributes to the sorting of the table.
+   */
   public synchronized final ColumnSort getSort() {
     return f_sort;
   }
 
-  public synchronized void setSort(final ColumnSort value) {
+  /**
+   * Sets if and how the column contributes to the sorting of the table.
+   * 
+   * @param value
+   *          if and how the column contributes to the sorting of the table.
+   * 
+   * @throws IllegalArgumentException
+   *           if value is null.
+   */
+  public synchronized void setSort(@NonNull final ColumnSort value) {
     if (value == null)
       throw new IllegalArgumentException(I18N.err(44, "value"));
     f_sort = value;
+  }
+
+  /**
+   * Gets the default sort value for this column based upon its title. The first
+   * column is sorted the others unsorted.
+   * 
+   * @return the default sort value for this column based upon its title.
+   */
+  public synchronized ColumnSort getDefaultSort() {
+    return f_title.equals(SUMMARY_COLUMN) ? ColumnSort.SORT_UP : ColumnSort.UNSORTED;
   }
 
   /**
