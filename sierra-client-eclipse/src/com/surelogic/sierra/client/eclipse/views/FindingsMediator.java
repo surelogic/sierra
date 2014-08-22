@@ -428,7 +428,7 @@ public class FindingsMediator extends AbstractSierraViewMediator implements IVie
 
         @Override
         public void controlResized(final ControlEvent e) {
-          if (!updateTableColumns) {
+          if (!createTableColumns && !updateTableColumns) {
             /*
              * This indicates a user width preference we should save
              */
