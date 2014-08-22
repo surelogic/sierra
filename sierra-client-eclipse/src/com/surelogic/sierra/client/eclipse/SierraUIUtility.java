@@ -1,5 +1,12 @@
 package com.surelogic.sierra.client.eclipse;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.swt.graphics.Image;
 
@@ -8,7 +15,12 @@ import com.surelogic.Nullable;
 import com.surelogic.Utility;
 import com.surelogic.common.CommonImages;
 import com.surelogic.common.core.JDTUtility;
+import com.surelogic.common.core.logging.SLEclipseStatusUtility;
+import com.surelogic.common.i18n.I18N;
+import com.surelogic.common.ui.JDTUIUtility;
 import com.surelogic.common.ui.SLImages;
+import com.surelogic.common.ui.jobs.SLUIJob;
+import com.surelogic.sierra.client.eclipse.jobs.AbstractSierraDatabaseJob;
 import com.surelogic.sierra.tool.message.Importance;
 
 @Utility
@@ -70,5 +82,64 @@ public final class SierraUIUtility {
       return SLImages.getImage(CommonImages.IMG_CLASS);
     else
       return SLImages.getImageFor(jdtType);
+  }
+
+  /**
+   * 
+   * @param projectName
+   * @param packageName
+   * @param typeName
+   * @param findingId
+   */
+  public static void tryToOpenInEditor(final String projectName, final String packageName, final String typeName,
+      final long findingId) {
+    final Job job = new AbstractSierraDatabaseJob("Querying details of finding " + findingId) {
+      @Override
+      protected IStatus run(final IProgressMonitor monitor) {
+        monitor.beginTask("Looking up declaration information on " + findingId, IProgressMonitor.UNKNOWN);
+        try {
+          final Connection c = Data.getInstance().readOnlyConnection();
+          try {
+            boolean isField = false;
+            boolean isMethod = false;
+            String declName = "";
+
+            // TODO QUERY AND FILL IN DATA
+
+            final boolean uiIsField = isField;
+            final boolean uiIsMethod = isMethod;
+            final String uiDeclName = declName;
+            final SLUIJob uiJob = new SLUIJob() {
+
+              @Override
+              public IStatus runInUIThread(IProgressMonitor monitor) {
+                if (uiIsField)
+                  if (JDTUIUtility.tryToOpenInEditorUsingFieldName(projectName, packageName, typeName, uiDeclName))
+                    return Status.OK_STATUS;
+
+                if (uiIsMethod)
+                  if (JDTUIUtility.tryToOpenInEditorUsingMethodName(projectName, packageName, typeName, uiDeclName))
+                    return Status.OK_STATUS;
+
+                // just open the type
+                JDTUIUtility.tryToOpenInEditor(projectName, packageName, typeName);
+
+                return Status.OK_STATUS;
+              }
+            };
+          } finally {
+            c.close();
+          }
+          monitor.done();
+          return Status.OK_STATUS;
+        } catch (final SQLException e) {
+          final int errNo = 57;
+          final String msg = I18N.err(errNo, findingId);
+          return SLEclipseStatusUtility.createErrorStatus(errNo, msg, e);
+        }
+      }
+    };
+    job.schedule();
+
   }
 }
