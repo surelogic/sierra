@@ -85,11 +85,20 @@ public final class SierraUIUtility {
   }
 
   /**
+   * Makes a best effort to lookup a more precise location in the class for a
+   * particular finding identifier. Sierra uses this method to open the Java
+   * editor when a finding id has 0 for the source line of code. If possible a
+   * method or field declaration is opened. If nothing can be found the class is
+   * opened.
    * 
    * @param projectName
+   *          a project name.
    * @param packageName
+   *          a package name.
    * @param typeName
+   *          a type name
    * @param findingId
+   *          a finding identifier (to use for querying)
    */
   public static void tryToOpenInEditor(final String projectName, final String packageName, final String typeName,
       final long findingId) {
@@ -127,6 +136,7 @@ public final class SierraUIUtility {
                 return Status.OK_STATUS;
               }
             };
+            uiJob.schedule();
           } finally {
             c.close();
           }
@@ -140,6 +150,5 @@ public final class SierraUIUtility {
       }
     };
     job.schedule();
-
   }
 }
