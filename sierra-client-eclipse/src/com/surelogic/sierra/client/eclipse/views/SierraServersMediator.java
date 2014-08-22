@@ -1110,9 +1110,9 @@ public final class SierraServersMediator extends AbstractSierraViewMediator impl
       final Map<Object, ServersViewContent> map = prepTranslation();
       final List<ServersViewContent> selected = new ArrayList<ServersViewContent>();
 
-      final Iterator it = selection.iterator();
+      final Iterator<ServersViewContent> it = selection.iterator();
       while (it.hasNext()) {
-        final Object key = createKey((ServersViewContent) it.next());
+        final Object key = createKey(it.next());
         final ServersViewContent translation = map.get(key);
         if (translation != null) {
           selected.add(translation);
@@ -1130,7 +1130,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator impl
         }
 
         @Override
-        public Iterator iterator() {
+        public Iterator<ServersViewContent> iterator() {
           return selected.iterator();
         }
 
@@ -1145,7 +1145,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator impl
         }
 
         @Override
-        public List toList() {
+        public List<ServersViewContent> toList() {
           return selected;
         }
       };

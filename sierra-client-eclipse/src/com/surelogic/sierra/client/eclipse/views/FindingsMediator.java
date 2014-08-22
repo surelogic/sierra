@@ -24,8 +24,6 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
@@ -86,17 +84,24 @@ public class FindingsMediator extends AbstractSierraViewMediator implements IVie
 
   private final SelectionManager f_manager = SelectionManager.getInstance();
 
-  private final FindingsView f_view;
-  private final Composite f_panel;
-  private final Table f_resultsTable;
+  final FindingsView f_view;
+  final Composite f_panel;
+  final Table f_resultsTable;
+  final Composite f_informationPanel;
+  final Label f_warningIcon;
+  final Link f_statusLink;
 
   private final List<Column> f_listOfFindingsColumns;
 
-  protected FindingsMediator(FindingsView view, Composite panel, Table resultsTable) {
+  protected FindingsMediator(FindingsView view, Composite panel, Table resultsTable, Composite informationPanel, Label warningIcon,
+      Link statusLink) {
     super(view);
     f_view = view;
     f_panel = panel;
     f_resultsTable = resultsTable;
+    f_informationPanel = informationPanel;
+    f_warningIcon = warningIcon;
+    f_statusLink = statusLink;
     ArrayList<Column> working = new ArrayList<Column>();
     fillColumns(working);
     f_listOfFindingsColumns = Collections.unmodifiableList(working);
@@ -113,6 +118,13 @@ public class FindingsMediator extends AbstractSierraViewMediator implements IVie
     final Menu menu = new Menu(f_resultsTable.getShell(), SWT.POP_UP);
     f_resultsTable.setMenu(menu);
     setupMenu(menu);
+
+    f_statusLink.addListener(SWT.Selection, new Listener() {
+      @Override
+      public void handleEvent(Event event) {
+        PreferencesUtil.createPreferenceDialogOn(null, PreferencesAction.PREF_ID, PreferencesAction.FILTER, null).open();
+      }
+    });
 
     SelectionManager.getInstance().addObserver(this);
     Projects.getInstance().addObserver(this);
@@ -476,47 +488,30 @@ public class FindingsMediator extends AbstractSierraViewMediator implements IVie
       f_resultsTable.setRedraw(true);
     }
 
-    updateCutoffWarning(f_data);
+    showCountOrCutoffWarning(f_data);
 
     f_panel.layout();
   }
 
-  private void updateCutoffWarning(RowData rowData) {
-    // clear out old display, if any
-    if (f_panel.getChildren().length > 1) {
-      f_panel.getChildren()[1].dispose(); // second should info panel
-    }
+  private void showCountOrCutoffWarning(RowData rowData) {
+    final Image img;
+    final String msg;
+    final String tooltip;
+    final int displayCount = rowData.f_rows.size();
     if (rowData.f_rowsAreCutoff) {
-      final Composite informationPanel = new Composite(f_panel, SWT.NONE);
-      informationPanel.setLayoutData(new GridData(SWT.FILL, SWT.DEFAULT, true, false));
-      GridLayout layout = new GridLayout();
-      layout.marginHeight = 0;
-      layout.marginWidth = 0;
-      layout.numColumns = 2;
-      layout.verticalSpacing = 0;
-      informationPanel.setLayout(layout);
-
-      final Label warningIcon = new Label(informationPanel, SWT.NONE);
-      warningIcon.setText("");
-      warningIcon.setImage(SLImages.getImage(CommonImages.IMG_WARNING));
-      warningIcon.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false));
-
-      final Link statusLink = new Link(informationPanel, SWT.NONE);
+      img = SLImages.getImage(CommonImages.IMG_WARNING);
       final int available = rowData.f_rowsAvailableInDb;
-      statusLink.setText("<a>Showing " + rowData.f_rows.size() + " of " + (available == 0 ? "all" : "" + available)
-          + " possible findings</a>");
-      statusLink.setToolTipText("Click to change the maximum number of findings shown in this view");
-      statusLink.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false));
-
-      statusLink.addListener(SWT.Selection, new Listener() {
-        @Override
-        public void handleEvent(Event event) {
-          PreferencesUtil.createPreferenceDialogOn(null, PreferencesAction.PREF_ID, PreferencesAction.FILTER, null).open();
-        }
-      });
-
-      f_panel.layout();
+      msg = "<a>Showing " + rowData.f_rows.size() + " of " + (available == 0 ? "all" : "" + available) + " possible findings</a>";
+      tooltip = "Click to change the maximum number of findings shown in this view";
+    } else {
+      img = null; // no image
+      msg = displayCount + (displayCount == 0 ? " Finding" : " Findings");
+      tooltip = null; // no tooltip
     }
+    f_warningIcon.setImage(img);
+    f_statusLink.setText(msg);
+    f_statusLink.setToolTipText(tooltip);
+    f_informationPanel.pack();
   }
 
   private void sortModelBasedOnColumns() {
@@ -1070,7 +1065,7 @@ public class FindingsMediator extends AbstractSierraViewMediator implements IVie
 
       @Override
       public String getLabel(FindingData row) {
-        return row.f_findingType;
+        return row.f_findingTypeName;
       }
 
       @Override

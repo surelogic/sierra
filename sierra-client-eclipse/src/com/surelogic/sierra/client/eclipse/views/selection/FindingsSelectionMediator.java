@@ -341,8 +341,12 @@ public final class FindingsSelectionMediator implements IProjectsObserver, Casca
     final Selection workingSelection = f_manager.getWorkingSelection();
     if (workingSelection != null) {
       final int c = workingSelection.getFindingCountPorous();
-      final boolean plural = c != 1;
-      f_porousCountLink.setText(workingSelection.getFindingCountPorous() + " Finding" + (plural ? "s Selected" : " Selected"));
+      if (workingSelection.getFilterCount() == 0) {
+        f_porousCountLink.setText("Filter Off (All Findings Selected)");
+      } else {
+        final boolean plural = c != 1;
+        f_porousCountLink.setText(workingSelection.getFindingCountPorous() + " Finding" + (plural ? "s Selected" : " Selected"));
+      }
     } else
       f_porousCountLink.setText("");
     f_breadcrumbsPanel.layout();

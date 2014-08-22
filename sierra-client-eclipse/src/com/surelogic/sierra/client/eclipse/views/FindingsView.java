@@ -4,6 +4,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Table;
 
 public class FindingsView extends AbstractSierraView<FindingsMediator> {
@@ -22,6 +24,22 @@ public class FindingsView extends AbstractSierraView<FindingsMediator> {
     resultsTable.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
     resultsTable.setLinesVisible(true);
 
-    return new FindingsMediator(this, findingsPage, resultsTable);
+    final Composite informationPanel = new Composite(findingsPage, SWT.NONE);
+    informationPanel.setLayoutData(new GridData(SWT.FILL, SWT.DEFAULT, true, false));
+    layout = new GridLayout();
+    layout.marginHeight = 0;
+    layout.marginWidth = 0;
+    layout.numColumns = 2;
+    layout.verticalSpacing = 0;
+    informationPanel.setLayout(layout);
+
+    final Label warningIcon = new Label(informationPanel, SWT.NONE);
+    warningIcon.setText("");
+    warningIcon.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false));
+
+    final Link statusLink = new Link(informationPanel, SWT.NONE);
+    statusLink.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false));
+
+    return new FindingsMediator(this, findingsPage, resultsTable, informationPanel, warningIcon, statusLink);
   }
 }

@@ -320,7 +320,7 @@ public class FindingDetailsView extends AbstractSierraView<FindingDetailsMediato
     if (moveFocus) {
       view = (FindingDetailsView) EclipseUIUtility.showView(ID);
     } else {
-      view = (FindingDetailsView) EclipseUIUtility.showView(ID, null, IWorkbenchPage.VIEW_VISIBLE);
+      view = (FindingDetailsView) EclipseUIUtility.showView(ID, null, IWorkbenchPage.VIEW_CREATE);
     }
     if (view != null) {
       view.f_mediator.asyncQueryAndShow(findingID);
