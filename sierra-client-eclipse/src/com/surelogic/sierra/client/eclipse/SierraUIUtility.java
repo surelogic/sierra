@@ -24,6 +24,7 @@ import com.surelogic.common.ui.JDTUIUtility;
 import com.surelogic.common.ui.SLImages;
 import com.surelogic.common.ui.jobs.SLUIJob;
 import com.surelogic.sierra.client.eclipse.jobs.AbstractSierraDatabaseJob;
+import com.surelogic.sierra.jdbc.finding.ArtifactDetail;
 import com.surelogic.sierra.tool.message.IdentifierType;
 import com.surelogic.sierra.tool.message.Importance;
 
@@ -206,5 +207,34 @@ public final class SierraUIUtility {
       }
     };
     job.schedule();
+  }
+
+  /**
+   * Makes a best effort to lookup a more precise location in the class for a
+   * particular artifact. Sierra uses this method to open the Java editor when a
+   * finding id has 0 for the source line of code. If possible a method or field
+   * declaration is opened. If nothing can be found the class is opened.
+   *
+   * @param projectName
+   *          a project name.
+   * @param packageName
+   *          a package name.
+   * @param typeName
+   *          a type name
+   * @param lineNumber
+   *          a line number (use artifact detail if 0).
+   * @param artifactDetail
+   *          the details about an artifact.
+   */
+  public static void tryToOpenInEditor(final String projectName, final String packageName, final String typeName,
+      final int lineNumber, final ArtifactDetail artifactDetail) {
+    if (lineNumber > 0)
+      if (JDTUIUtility.tryToOpenInEditor(projectName, packageName, typeName, lineNumber))
+        return;
+
+    // TODO try use the passed artifact detail
+
+    // worst case -- just open the type
+    JDTUIUtility.tryToOpenInEditor(projectName, packageName, typeName);
   }
 }

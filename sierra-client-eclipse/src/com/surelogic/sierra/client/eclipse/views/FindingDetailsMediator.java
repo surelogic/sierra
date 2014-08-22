@@ -70,49 +70,49 @@ import com.surelogic.sierra.tool.message.Importance;
 public class FindingDetailsMediator extends AbstractSierraViewMediator implements IViewUpdater {
 
   public static final String STAMP_COMMENT = "I examined this finding.";
-  private final RGB f_ForegroundColorRGB;
-  private final RGB f_BackgroundColorRGB;
+  final RGB f_ForegroundColorRGB;
+  final RGB f_BackgroundColorRGB;
 
-  private final Composite f_parent;
-  private final Menu f_importanceRadioPopupMenu;
-  private final ToolItem f_summaryIcon;
-  private final Text f_summaryText;
+  final Composite f_parent;
+  final Menu f_importanceRadioPopupMenu;
+  final ToolItem f_summaryIcon;
+  final Text f_summaryText;
 
-  private final TabFolder f_folder;
+  final TabFolder f_folder;
 
-  private final TabItem f_synopsisTab;
-  private final SashForm f_synopsisSash;
-  private final Button f_synopsisAudit;
-  private final Link f_findingSynopsis;
-  private final Tree f_locationTree;
-  private final Browser f_detailsText;
+  final TabItem f_synopsisTab;
+  final SashForm f_synopsisSash;
+  final Button f_synopsisAudit;
+  final Link f_findingSynopsis;
+  final Tree f_locationTree;
+  final Browser f_detailsText;
 
-  private final TabItem f_auditTab;
-  private final Button f_quickAudit;
-  private final Button f_criticalButton;
-  private final Button f_highButton;
-  private final Button f_mediumButton;
-  private final Button f_lowButton;
-  private final Button f_irrelevantButton;
-  private final Text f_commentText;
-  private final Button f_commentButton;
-  private final AuditTrail f_scrollingLabelComposite;
+  final TabItem f_auditTab;
+  final Button f_quickAudit;
+  final Button f_criticalButton;
+  final Button f_highButton;
+  final Button f_mediumButton;
+  final Button f_lowButton;
+  final Button f_irrelevantButton;
+  final Text f_commentText;
+  final Button f_commentButton;
+  final AuditTrail f_scrollingLabelComposite;
 
-  private final TabItem f_artifactTab;
-  private final Table f_artifacts;
+  final TabItem f_artifactTab;
+  final Table f_artifacts;
 
-  private final Action f_viewCut;
-  private final Action f_viewCopy;
-  private final Action f_viewPaste;
-  private final Action f_viewSelectAll;
+  final Action f_viewCut;
+  final Action f_viewCopy;
+  final Action f_viewPaste;
+  final Action f_viewSelectAll;
 
-  private volatile FindingDetail f_finding;
+  volatile FindingDetail f_finding;
 
   /*
    * For view state persistence only.
    */
-  private int f_sashLocationWeight = 50;
-  private int f_sashDescriptionWeight = 50;
+  int f_sashLocationWeight = 50;
+  int f_sashDescriptionWeight = 50;
 
   static private final String AUDIT_TAB = "audit";
   static private final String ARTIFACT_TAB = "artifact";
@@ -121,9 +121,9 @@ public class FindingDetailsMediator extends AbstractSierraViewMediator implement
   /*
    * For view state persistence only.
    */
-  private String f_tabNameShown = SYNOPSIS_TAB;
+  String f_tabNameShown = SYNOPSIS_TAB;
 
-  private void memoTabShown() {
+  void memoTabShown() {
     final int index = f_folder.getSelectionIndex();
     if (index != -1) {
       final TabItem tab = f_folder.getItem(index);
@@ -137,7 +137,7 @@ public class FindingDetailsMediator extends AbstractSierraViewMediator implement
     }
   }
 
-  private void showTab(final String tabName) {
+  void showTab(final String tabName) {
     if (AUDIT_TAB.equals(tabName)) {
       f_folder.setSelection(f_auditTab);
       f_tabNameShown = AUDIT_TAB;
@@ -474,7 +474,12 @@ public class FindingDetailsMediator extends AbstractSierraViewMediator implement
           final String packageName = item.getText(2);
           final String className = item.getText(3);
           final int lineNumber = Integer.valueOf(item.getText(4));
-          SierraUIUtility.tryToOpenInEditor(projectName, packageName, className, lineNumber, f_finding.getFindingId());
+          Object data = item.getData();
+          if (data instanceof ArtifactDetail) {
+            ArtifactDetail artifactDetail = (ArtifactDetail) data;
+            SierraUIUtility.tryToOpenInEditor(projectName, packageName, className, lineNumber, artifactDetail);
+          } else
+            SierraUIUtility.tryToOpenInEditor(projectName, packageName, className, lineNumber, f_finding.getFindingId());
         }
       }
     });
@@ -634,6 +639,7 @@ public class FindingDetailsMediator extends AbstractSierraViewMediator implement
 
     for (final ArtifactDetail artifactDetail : f_finding.getArtifacts()) {
       final TableItem item = new TableItem(f_artifacts, SWT.NONE);
+      item.setData(artifactDetail);
 
       final String tool = artifactDetail.getTool();
       item.setText(0, tool);
