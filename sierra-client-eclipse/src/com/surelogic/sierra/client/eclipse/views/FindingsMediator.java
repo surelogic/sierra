@@ -427,7 +427,6 @@ public class FindingsMediator extends AbstractSierraViewMediator implements IVie
         }
       });
     }
-    System.out.println("column order" + Arrays.toString(order));
     f_resultsTable.setColumnOrder(order);
     createTableColumns = false;
   }
@@ -534,9 +533,6 @@ public class FindingsMediator extends AbstractSierraViewMediator implements IVie
    */
   void loadColumnAppearance(final TableColumn tc) {
     final Column column = (Column) tc.getData();
-
-    if (column.getTitle().equals(Column.SUMMARY_COLUMN))
-      System.out.println("Summary sort=" + column.getSort());
 
     tc.setAlignment(column.getSwtAlignment());
     final int width;
