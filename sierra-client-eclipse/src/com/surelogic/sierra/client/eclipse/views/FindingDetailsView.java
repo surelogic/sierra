@@ -78,8 +78,8 @@ public class FindingDetailsView extends AbstractSierraView<FindingDetailsMediato
     final ToolBar importanceBar = new ToolBar(summaryPane, SWT.HORIZONTAL | SWT.FLAT);
     importanceBar.setLayoutData(new GridData(SWT.DEFAULT, SWT.CENTER, false, false));
     final ToolItem summaryIcon = new ToolItem(importanceBar, SWT.DROP_DOWN);
-    final Text summaryText = new Text(summaryPane, SWT.SINGLE);
-    layoutData = new GridData(SWT.FILL, SWT.CENTER, true, false);
+    final Text summaryText = new Text(summaryPane, SWT.MULTI | SWT.WRAP);
+    layoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
     summaryText.setLayoutData(layoutData);
 
     /*
