@@ -29,8 +29,8 @@ public class ImportSierraScanAction implements IWorkbenchWindowActionDelegate {
         FileUtility.copy(f, new File(scanDirectory, f.getName()));
         // TODO Do the sierra import to the db and update ui
       } else {
-        MessageDialog.openError(shell, I18N.msg("flashlight.dialog.importScan.error.title"),
-            I18N.msg("flashlight.dialog.importScan.error.title", f.getAbsolutePath()));
+        MessageDialog.openError(shell, I18N.msg("sierra.dialog.importScan.error.title"),
+            I18N.msg("sierra.dialog.importScan.error.title", f.getAbsolutePath()));
       }
     }
   }
