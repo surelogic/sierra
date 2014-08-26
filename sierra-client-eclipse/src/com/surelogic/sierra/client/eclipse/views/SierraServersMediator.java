@@ -116,24 +116,24 @@ public final class SierraServersMediator extends AbstractSierraViewMediator impl
    */
   private final Map<String, ProjectDO> projectMap = new HashMap<String, ProjectDO>();
 
-  private final TreeViewer f_statusTree;
-  private final ActionListener f_serverSyncAction;
-  private final ActionListener f_toggleAutoSyncAction;
-  private final ActionListener f_newServerAction;
-  private final ActionListener f_deleteServerAction;
-  private final ActionListener f_openInBrowserAction;
+  final TreeViewer f_statusTree;
+  final ActionListener f_serverSyncAction;
+  final ActionListener f_toggleAutoSyncAction;
+  final ActionListener f_newServerAction;
+  final ActionListener f_deleteServerAction;
+  final ActionListener f_openInBrowserAction;
 
-  private final Listener f_serverConnectAction;
-  private final Listener f_synchConnectedProjectsAction;
-  private final Listener f_sendResultFiltersAction;
-  private final Listener f_getResultFiltersAction;
-  private final Listener f_serverPropertiesAction;
-  private final Listener f_scanProjectAction;
-  private final Listener f_rescanProjectAction;
-  private final Listener f_publishScansAction;
-  private final Listener f_disconnectProjectAction;
+  final Listener f_serverConnectAction;
+  final Listener f_synchConnectedProjectsAction;
+  final Listener f_sendResultFiltersAction;
+  final Listener f_getResultFiltersAction;
+  final Listener f_serverPropertiesAction;
+  final Listener f_scanProjectAction;
+  final Listener f_rescanProjectAction;
+  final Listener f_publishScansAction;
+  final Listener f_disconnectProjectAction;
 
-  private abstract class ActionListener extends Action implements Listener {
+  abstract class ActionListener extends Action implements Listener {
     ActionListener(final String text, final String tooltip) {
       super(text, IAction.AS_PUSH_BUTTON);
       setToolTipText(tooltip);
@@ -231,7 +231,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator impl
     protected abstract void run(ConnectedServer server, List<String> projectNames);
   }
 
-  private final ConnectedServerManager f_manager = ConnectedServerManager.getInstance();
+  final ConnectedServerManager f_manager = ConnectedServerManager.getInstance();
 
   public SierraServersMediator(final SierraServersView view, final TreeViewer statusTree) {
     super(view);
@@ -271,11 +271,13 @@ public final class SierraServersMediator extends AbstractSierraViewMediator impl
       }
     };
     view.addToActionBar(f_serverSyncAction);
-    /*
-     * view.addToActionBar(f_serverSyncAction); view.addToActionBar(new
-     * Separator());
-     */
-    f_newServerAction = new ActionListener(SLImages.getImage(CommonImages.IMG_EDIT_NEW), "New team server location") {
+
+    f_newServerAction = new ActionListener("New...", "New team server location") {
+      @Override
+      public ImageDescriptor getImageDescriptor() {
+        return SLImages.getImageDescriptor(CommonImages.IMG_EDIT_NEW);
+      }
+
       @Override
       public void run() {
         ServerLocationDialog.newServer(f_statusTree.getTree().getShell());
@@ -485,9 +487,6 @@ public final class SierraServersMediator extends AbstractSierraViewMediator impl
   public void init() {
     // Actions in reverse order
     f_view.addToViewMenu(f_serverSyncAction);
-    // f_view.addToViewMenu(f_buglinkSyncAction);
-    // f_view.addToViewMenu(f_serverUpdateAction);
-    // f_view.addToViewMenu(f_toggleAutoSyncAction);
     f_view.addToViewMenu(new Separator());
 
     final ServerStatusSort sort = SierraPreferencesUtility.getServerStatusSort();
@@ -507,6 +506,8 @@ public final class SierraServersMediator extends AbstractSierraViewMediator impl
     sortByProjectAction.setChecked(ServerStatusSort.BY_PROJECT == sort);
     f_view.addToViewMenu(sortByProjectAction);
     f_view.addToViewMenu(sortByServerAction);
+    f_view.addToViewMenu(new Separator());
+    f_view.addToViewMenu(f_newServerAction);
 
     super.init();
     f_manager.addObserver(this);
@@ -621,13 +622,12 @@ public final class SierraServersMediator extends AbstractSierraViewMediator impl
     addNothingSelected_MenuItems(contextMenu);
   }
 
-  private List<ScanFilter> collectScanFilters() {
+  List<ScanFilter> collectScanFilters() {
     final IStructuredSelection si = (IStructuredSelection) f_statusTree.getSelection();
     if (si.size() == 0) {
       return Collections.emptyList();
     }
     final List<ScanFilter> filters = new ArrayList<ScanFilter>();
-    @SuppressWarnings("unchecked")
     final Iterator it = si.iterator();
     while (it.hasNext()) {
       final ServersViewContent item = (ServersViewContent) it.next();
@@ -638,7 +638,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator impl
     return filters;
   }
 
-  private static class SelectedServers {
+  static class SelectedServers {
     final List<ConnectedServer> direct;
     final List<ConnectedServer> indirect;
     final List<ConnectedServer> other;
@@ -671,7 +671,6 @@ public final class SierraServersMediator extends AbstractSierraViewMediator impl
       return new SelectedServers(false);
     }
     final SelectedServers servers = new SelectedServers(true);
-    @SuppressWarnings("unchecked")
     final Iterator it = si.iterator();
     while (it.hasNext()) {
       final ServersViewContent item = (ServersViewContent) it.next();
@@ -741,7 +740,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator impl
     return collector.collectSelectedProjects(si);
   }
 
-  private abstract class ProjectStatusCollector<T> {
+  abstract class ProjectStatusCollector<T> {
     private void add(final List<T> projects, final ProjectStatus s) {
       final T info = getSelectedInfo(s);
       if (projects.contains(info)) {
@@ -757,7 +756,6 @@ public final class SierraServersMediator extends AbstractSierraViewMediator impl
       }
       final List<T> projects = new ArrayList<T>();
 
-      @SuppressWarnings("unchecked")
       final Iterator it = si.iterator();
       while (it.hasNext()) {
         final ServersViewContent item = (ServersViewContent) it.next();
@@ -828,7 +826,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator impl
     abstract T getSelectedInfo(ProjectStatus s);
   }
 
-  private abstract class ProjectsActionListener extends ProjectStatusCollector<IJavaProject> implements Listener {
+  abstract class ProjectsActionListener extends ProjectStatusCollector<IJavaProject> implements Listener {
     @Override
     public final void handleEvent(final Event event) {
       // FIX merge with collectProjects?
@@ -867,7 +865,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator impl
     asyncUpdateContents();
   }
 
-  private static void openInBrowser(final ConnectedServer server) {
+  static void openInBrowser(final ConnectedServer server) {
     if (server == null) {
       return;
     }
@@ -912,7 +910,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator impl
    * private enum UpdateType { ALL, }
    */
 
-  private void asyncUpdateContents() {
+  void asyncUpdateContents() {
     asyncUpdateContentsForUI(new IViewUpdater() {
       @Override
       public void updateContentsForUI() {
@@ -945,7 +943,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator impl
     job.schedule();
   }
 
-  private void updateContents(final long now) throws Exception {
+  void updateContents(final long now) throws Exception {
     final Connection c = Data.getInstance().transactionConnection();
     Exception exc = null;
     try {
@@ -1038,11 +1036,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator impl
   /**
    * @return true if triggered an auto-sync
    */
-  private boolean checkAutoSyncTrigger(final List<ProjectStatus> projects) {
-    // if (!PreferenceConstants.getServerInteractionSetting()
-    // .useAuditThreshold()) {
-    // return false;
-    // }
+  boolean checkAutoSyncTrigger(final List<ProjectStatus> projects) {
     final int auditThreshold = EclipseUtility.getIntPreference(SierraPreferencesUtility.SERVER_INTERACTION_AUDIT_THRESHOLD);
     if (auditThreshold > 0) {
       final ConnectedServerManager manager = ConnectedServerManager.getInstance();
@@ -1654,7 +1648,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator impl
     getResultFilters.addListener(SWT.Selection, f_getResultFiltersAction);
   }
 
-  private class ContentProvider implements ITreeContentProvider {
+  class ContentProvider implements ITreeContentProvider {
     @Override
     public Object[] getChildren(final Object parentElement) {
       if (parentElement instanceof ServersViewContent) {
@@ -1698,7 +1692,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator impl
     }
   }
 
-  private class LabelProvider implements ILabelProvider {
+  class LabelProvider implements ILabelProvider {
     final ILabelDecorator decorator = PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator();
 
     @Override
