@@ -14,10 +14,9 @@ import org.xml.sax.helpers.DefaultHandler;
 import com.surelogic.sierra.setup.AbstractFindingTypeGenerator;
 import com.surelogic.sierra.tool.message.*;
 
-
 /**
- * Common code used by FindBugs apps that help massage the data into
- * the format we want
+ * Common code used by FindBugs apps that help massage the data into the format
+ * we want
  * 
  * @author Edwin.Chan
  */
@@ -31,9 +30,7 @@ public class AbstractFBFindingTypeGenerator extends AbstractFindingTypeGenerator
     SAXParserFactory factory = SAXParserFactory.newInstance();
     try {
       SAXParser parser = factory.newSAXParser();
-      parser.parse(Thread.currentThread().getContextClassLoader()
-          .getResourceAsStream(messages),
-          new FindingTypeHandler());
+      parser.parse(Thread.currentThread().getContextClassLoader().getResourceAsStream(messages), new FindingTypeHandler());
     } catch (ParserConfigurationException e) {
       e.printStackTrace();
     } catch (SAXException e) {
@@ -44,9 +41,7 @@ public class AbstractFBFindingTypeGenerator extends AbstractFindingTypeGenerator
 
     try {
       SAXParser parser = factory.newSAXParser();
-      parser.parse(Thread.currentThread().getContextClassLoader()
-          .getResourceAsStream(findbugs),
-          new CategoryMapper());
+      parser.parse(Thread.currentThread().getContextClassLoader().getResourceAsStream(findbugs), new CategoryMapper());
     } catch (ParserConfigurationException e) {
       e.printStackTrace();
     } catch (SAXException e) {
@@ -55,8 +50,8 @@ public class AbstractFBFindingTypeGenerator extends AbstractFindingTypeGenerator
       e.printStackTrace();
     }
     printFindingTypes();
-  } 
-  
+  }
+
   @Override
   protected String finishPrettyPrint(StringBuffer sb) {
     String s;
@@ -68,37 +63,35 @@ public class AbstractFBFindingTypeGenerator extends AbstractFindingTypeGenerator
     }
     return s;
   }
-  
-  private class FindingTypeHandler extends DefaultHandler {
-    private static final String FINDING_TYPE = "BugPattern";
-    private static final String MESSAGE = "ShortDescription";
-    private static final String INFO = "Details";
-    private static final String NAME = "type";
-    private static final String CATEGORY = "BugCategory";
-    private static final String CATEGORY_NAME = "Description";
-    private static final String CATEGORY_MNEMONIC = "category";
-    private static final String DESCRIPTION = "Details";
-    private Category category;
-    private boolean inCategory;
-    private FindingType type;
-    private final StringBuilder buffer = new StringBuilder();
-    private boolean inType;
-    private boolean isInfo;
-    private boolean isMessage;
-    private boolean isDescription;
-    private boolean isName;
+
+  class FindingTypeHandler extends DefaultHandler {
+    static final String FINDING_TYPE = "BugPattern";
+    static final String MESSAGE = "ShortDescription";
+    static final String INFO = "Details";
+    static final String NAME = "type";
+    static final String CATEGORY = "BugCategory";
+    static final String CATEGORY_NAME = "Description";
+    static final String CATEGORY_MNEMONIC = "category";
+    static final String DESCRIPTION = "Details";
+    Category category;
+    boolean inCategory;
+    FindingType type;
+    final StringBuilder buffer = new StringBuilder();
+    boolean inType;
+    boolean isInfo;
+    boolean isMessage;
+    boolean isDescription;
+    boolean isName;
 
     @Override
-    public void characters(char[] ch, int start, int length)
-        throws SAXException {
+    public void characters(char[] ch, int start, int length) throws SAXException {
       if (isInfo || isMessage || isDescription || isName) {
         buffer.append(ch, start, length);
       }
     }
 
     @Override
-    public void endElement(String uri, String localName, String name)
-        throws SAXException {
+    public void endElement(String uri, String localName, String name) throws SAXException {
       if (inType) {
         if (name.equals(FINDING_TYPE)) {
           types.add(type);
@@ -132,8 +125,7 @@ public class AbstractFBFindingTypeGenerator extends AbstractFindingTypeGenerator
     }
 
     @Override
-    public void startElement(String uri, String localName, String name,
-        Attributes attributes) throws SAXException {
+    public void startElement(String uri, String localName, String name, Attributes attributes) throws SAXException {
       if (name.equals(FINDING_TYPE)) {
         inType = true;
         type = new FindingType();
@@ -173,15 +165,14 @@ public class AbstractFBFindingTypeGenerator extends AbstractFindingTypeGenerator
       }
     }
   }
-  
-  private class CategoryMapper extends DefaultHandler {
+
+  class CategoryMapper extends DefaultHandler {
     private static final String BUG_PATTERN = "BugPattern";
     private static final String FINDING_TYPE = "type";
     private static final String CATEGORY = "category";
 
     @Override
-    public void startElement(String uri, String localName, String name,
-        Attributes attributes) throws SAXException {
+    public void startElement(String uri, String localName, String name, Attributes attributes) throws SAXException {
       if (BUG_PATTERN.equals(name)) {
         String type = null;
         String category = null;

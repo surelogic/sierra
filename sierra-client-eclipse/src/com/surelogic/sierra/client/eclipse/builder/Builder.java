@@ -10,7 +10,6 @@ import com.surelogic.common.core.builder.*;
 
 public class Builder extends AbstractJavaBuilder {
 
-  @SuppressWarnings("unchecked")
   @Override
   protected IProject[] build(int kind, Map args, IProgressMonitor monitor)
       throws CoreException {

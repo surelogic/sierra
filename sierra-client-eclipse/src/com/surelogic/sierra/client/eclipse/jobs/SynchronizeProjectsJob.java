@@ -32,117 +32,107 @@ import com.surelogic.sierra.tool.message.ServerMismatchException;
 import com.surelogic.sierra.tool.message.SierraServiceClientException;
 
 public class SynchronizeProjectsJob extends AbstractServerProjectJob {
-	private final boolean f_force;
-	private final List<String> f_projects;
 
-	/**
-	 * Constructs a job.
-	 * 
-	 * @param family
-	 *            the job family, may be {@code null}.
-	 * @param server
-	 *            the non-null server to contact.
-	 * @param syncType
-	 *            the non-null {@link ServerSyncType}.
-	 * @param force
-	 *            when {@code true} it causes the synchronize to be attempted
-	 *            even if too many failures have occurred in the past.
-	 * @param strategy
-	 *            the method to report problems that the job encounters.
-	 */
-	public SynchronizeProjectsJob(final ServerProjectGroupJob family,
-			final ConnectedServer server, final List<String> projects,
-			final boolean force, final ServerFailureReport strategy) {
-		super(family, "Synchronizing ScanLink data for server '"
-				+ server.getName() + "'", server, null, strategy);
-		f_force = force;
-		f_projects = projects;
-		setRule(KeywordAccessRule.getInstance(JobConstants.ACCESS_KEY));
-	}
+  final boolean f_force;
+  final List<String> f_projects;
 
-	@Override
-	protected IStatus run(final IProgressMonitor monitor) {
-		final int retryThreshold = EclipseUtility
-				.getIntPreference(SierraPreferencesUtility.SERVER_INTERACTION_RETRY_THRESHOLD);
-		final int numProblems = ConnectedServerManager.getInstance()
-				.getStats(getServer()).getProblemCount()
-				+ Projects.getInstance().getProblemCount(f_projectName);
-		if (!f_force && (numProblems > retryThreshold)) {
-			return Status.CANCEL_STATUS;
-		}
-		final SLProgressMonitor slMonitor = new SLProgressMonitorWrapper(
-				monitor, getName());
-		slMonitor.begin(6);
-		try {
-			return synchronize(new SyncTransaction(slMonitor), slMonitor);
-		} catch (final Throwable e) {
-			return createWarningStatus(51, e);
-		}
-	}
+  /**
+   * Constructs a job.
+   * 
+   * @param family
+   *          the job family, may be {@code null}.
+   * @param server
+   *          the non-null server to contact.
+   * @param syncType
+   *          the non-null {@link ServerSyncType}.
+   * @param force
+   *          when {@code true} it causes the synchronize to be attempted even
+   *          if too many failures have occurred in the past.
+   * @param strategy
+   *          the method to report problems that the job encounters.
+   */
+  public SynchronizeProjectsJob(final ServerProjectGroupJob family, final ConnectedServer server, final List<String> projects,
+      final boolean force, final ServerFailureReport strategy) {
+    super(family, "Synchronizing ScanLink data for server '" + server.getName() + "'", server, null, strategy);
+    f_force = force;
+    f_projects = projects;
+    setRule(KeywordAccessRule.getInstance(JobConstants.ACCESS_KEY));
+  }
 
-	private IStatus synchronize(final DBTransaction<IStatus> sync,
-			final SLProgressMonitor slMonitor) {
-		try {
-			return Data.getInstance().withTransaction(sync);
-		} catch (final TransactionException e) {
-			final Throwable cause = e.getCause();
-			TroubleshootConnection troubleshoot = null;
-			if (joinJob == null || joinJob.troubleshoot(getServer())) {
-				if (cause instanceof ServerMismatchException) {
-					troubleshoot = new TroubleshootWrongServer(f_strategy,
-							getServer().getLocation(), f_projectName);
-				} else if (cause instanceof SierraServiceClientException) {
-					troubleshoot = getTroubleshootConnection(f_strategy,
-							(SierraServiceClientException) cause);
-				}
-				if (troubleshoot != null && troubleshoot.retry()) {
-					final ServerLocation fixed = troubleshoot.fix();
-					if (troubleshoot.retry()) {
-						/*
-						 * First update our server information.
-						 */
-						changeAuthorization(fixed.getUser(), fixed.getPass(),
-								fixed.isSavePassword());
-						return synchronize(sync, slMonitor);
-					}
-				}
-			}
-			if (joinJob != null) {
-				joinJob.fail(getServer());
-			}
-			return fail(e);
-		}
-	}
+  @Override
+  protected IStatus run(final IProgressMonitor monitor) {
+    final int retryThreshold = EclipseUtility.getIntPreference(SierraPreferencesUtility.SERVER_INTERACTION_RETRY_THRESHOLD);
+    final int numProblems = ConnectedServerManager.getInstance().getStats(getServer()).getProblemCount()
+        + Projects.getInstance().getProblemCount(f_projectName);
+    if (!f_force && (numProblems > retryThreshold)) {
+      return Status.CANCEL_STATUS;
+    }
+    final SLProgressMonitor slMonitor = new SLProgressMonitorWrapper(monitor, getName());
+    slMonitor.begin(6);
+    try {
+      return synchronize(new SyncTransaction(slMonitor), slMonitor);
+    } catch (final Throwable e) {
+      return createWarningStatus(51, e);
+    }
+  }
 
-	private class SyncTransaction implements DBTransaction<IStatus> {
-		private final SLProgressMonitor slMonitor;
+  private IStatus synchronize(final DBTransaction<IStatus> sync, final SLProgressMonitor slMonitor) {
+    try {
+      return Data.getInstance().withTransaction(sync);
+    } catch (final TransactionException e) {
+      final Throwable cause = e.getCause();
+      TroubleshootConnection troubleshoot = null;
+      if (joinJob == null || joinJob.troubleshoot(getServer())) {
+        if (cause instanceof ServerMismatchException) {
+          troubleshoot = new TroubleshootWrongServer(f_strategy, getServer().getLocation(), f_projectName);
+        } else if (cause instanceof SierraServiceClientException) {
+          troubleshoot = getTroubleshootConnection(f_strategy, (SierraServiceClientException) cause);
+        }
+        if (troubleshoot != null && troubleshoot.retry()) {
+          final ServerLocation fixed = troubleshoot.fix();
+          if (troubleshoot.retry()) {
+            /*
+             * First update our server information.
+             */
+            changeAuthorization(fixed.getUser(), fixed.getPass(), fixed.isSavePassword());
+            return synchronize(sync, slMonitor);
+          }
+        }
+      }
+      if (joinJob != null) {
+        joinJob.fail(getServer());
+      }
+      return fail(e);
+    }
+  }
 
-		SyncTransaction(final SLProgressMonitor slMonitor) {
-			this.slMonitor = slMonitor;
-		}
+  private class SyncTransaction implements DBTransaction<IStatus> {
+    private final SLProgressMonitor slMonitor;
 
-		@Override
+    SyncTransaction(final SLProgressMonitor slMonitor) {
+      this.slMonitor = slMonitor;
+    }
+
+    @Override
     public IStatus perform(final Connection conn) throws Exception {
-			final boolean updated = ClientProjectManager.getInstance(conn)
-					.synchronizeProjects(getServer(), f_projects, slMonitor);
-			ConnectedServerManager.getInstance().getStats(getServer())
-					.markAsConnected();
-			if (slMonitor.isCanceled()) {
-				conn.rollback();
-				return Status.CANCEL_STATUS;
-			} else {
-				if (updated) {
-					DatabaseHub.getInstance().notifyProjectSynchronized();
-				}
-				return Status.OK_STATUS;
-			}
-		}
-	}
+      final boolean updated = ClientProjectManager.getInstance(conn).synchronizeProjects(getServer(), f_projects, slMonitor);
+      ConnectedServerManager.getInstance().getStats(getServer()).markAsConnected();
+      if (slMonitor.isCanceled()) {
+        conn.rollback();
+        return Status.CANCEL_STATUS;
+      } else {
+        if (updated) {
+          DatabaseHub.getInstance().notifyProjectSynchronized();
+        }
+        return Status.OK_STATUS;
+      }
+    }
+  }
 
-	private IStatus fail(final Exception e) {
-		final String msg = I18N.err(51, f_projectName, getServer());
-		SLLogger.getLogger().log(Level.WARNING, msg, e);
-		return Status.CANCEL_STATUS;
-	}
+  private IStatus fail(final Exception e) {
+    final String msg = I18N.err(51, f_projectName, getServer());
+    SLLogger.getLogger().log(Level.WARNING, msg, e);
+    return Status.CANCEL_STATUS;
+  }
 
 }

@@ -161,6 +161,7 @@ public class ScanDataPreferencePage extends PreferencePage implements IWorkbench
             return; // bail
           }
           final Job job = new DeleteDatabaseJob();
+          job.setUser(true);
           job.schedule();
         }
       });
