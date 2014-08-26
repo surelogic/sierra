@@ -18,6 +18,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
@@ -71,7 +73,7 @@ import com.surelogic.sierra.client.eclipse.preferences.SierraPreferencesUtility;
 import com.surelogic.sierra.tool.message.Importance;
 
 public class FindingsMediator extends AbstractSierraViewMediator implements IViewUpdater, IProjectsObserver, ISelectionObserver,
-    ISelectionManagerObserver {
+    ISelectionManagerObserver, IPreferenceChangeListener {
 
   final SelectionManager f_manager = SelectionManager.getInstance();
 
@@ -122,6 +124,7 @@ public class FindingsMediator extends AbstractSierraViewMediator implements IVie
       }
     });
 
+    EclipseUtility.addPreferenceChangeListener(this);
     SelectionManager.getInstance().addObserver(this);
     Projects.getInstance().addObserver(this);
     notify(Projects.getInstance());
@@ -133,6 +136,7 @@ public class FindingsMediator extends AbstractSierraViewMediator implements IVie
     if (workingSelection != null) {
       f_manager.removeObserver(this);
     }
+    EclipseUtility.removePreferenceChangeListener(this);
     Projects.getInstance().removeObserver(this);
     SelectionManager.getInstance().removeObserver(this);
     ColumnPersistence.save(f_listOfFindingsColumns, getColumnPersistenceFile());
@@ -1012,6 +1016,18 @@ public class FindingsMediator extends AbstractSierraViewMediator implements IVie
 
     for (Column column : listOfFindingsColumns) {
       column.reset();
+    }
+  }
+
+  @Override
+  public void preferenceChange(PreferenceChangeEvent event) {
+    if (SierraPreferencesUtility.FINDINGS_LIST_LIMIT.equals(event.getKey())) {
+      /*
+       * The user has changed the preference for findings list cutoff. We don't
+       * care what the new value is here, we simply re-run the query and display
+       * the new results.
+       */
+      dataToDisplayChanged();
     }
   }
 }

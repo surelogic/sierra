@@ -44,7 +44,6 @@ public final class SierraPreferencesUtility {
       EclipseUtility.setDefaultBooleanPreference(SHOW_MARKERS, true);
       EclipseUtility.setDefaultIntPreference(FINDINGS_LIST_LIMIT, 500);
       EclipseUtility.setDefaultIntPreference(TOOL_MEMORY_MB, 1024);
-      EclipseUtility.setDefaultBooleanPreference(WARN_MAXIMUM_FINDINGS_SHOWN, true);
       EclipseUtility.setDefaultBooleanPreference(ALWAYS_ALLOW_USER_TO_SELECT_PROJECTS_TO_SCAN, true);
       EclipseUtility.setDefaultStringPreference(SERVER_STATUS_SORT, ServerStatusSort.BY_SERVER.toString());
       EclipseUtility.setDefaultIntPreference(SERVER_INTERACTION_PERIOD_IN_MINUTES, 5);
@@ -64,7 +63,6 @@ public final class SierraPreferencesUtility {
   public static final String SHOW_MARKERS_AT_OR_ABOVE_IMPORTANCE = PREFIX + "show-markers-at-or-above-importance";
   public static final String FINDINGS_LIST_LIMIT = PREFIX + "findings-list-limit";
   public static final String TOOL_MEMORY_MB = PREFIX + "tool-memory-mb";
-  public static final String WARN_MAXIMUM_FINDINGS_SHOWN = PREFIX + "warn-maximum-findings-shown";
   public static final String ALWAYS_ALLOW_USER_TO_SELECT_PROJECTS_TO_SCAN = PREFIX + "always-allow-user-to-select-projects-to-scan";
   public static final String LAST_TIME_PROJECTS_TO_SCAN = PREFIX + "last-time-projects-to-scan";
   public static final String LAST_TIME_PROJECTS_TO_PUBLISH = PREFIX + "last-time-projects-to-publish";
