@@ -66,7 +66,7 @@ public class SierraPreferencePage extends AbstractCommonPreferencePage {
 		diGroup.setText(I18N.msg("sierra.eclipse.preference.page.group.app"));
 
 		f_findingsListLimit = new IntegerFieldEditor(
-				SierraPreferencesUtility.FINDINGS_LIST_LIMIT,
+				SierraPreferencesUtility.FINDINGS_LIST_CUTOFF,
 				I18N.msg("sierra.eclipse.preference.page.findingsListLimit"),
 				diGroup);
 		f_findingsListLimit.fillIntoGrid(diGroup, 2);

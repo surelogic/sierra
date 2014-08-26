@@ -62,7 +62,7 @@ public final class SierraDataSource extends AdHocManagerAdapter implements IAdHo
   }
 
   public int getMaxRowsPerQuery() {
-    return EclipseUtility.getIntPreference(SierraPreferencesUtility.FINDINGS_LIST_LIMIT);
+    return EclipseUtility.getIntPreference(SierraPreferencesUtility.FINDINGS_LIST_CUTOFF);
   }
 
   public File getQuerySaveFile() {

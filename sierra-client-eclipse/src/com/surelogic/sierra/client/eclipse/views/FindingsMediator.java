@@ -299,7 +299,7 @@ public class FindingsMediator extends AbstractSierraViewMediator implements IVie
           final ResultSet rs = st.executeQuery(query);
           final ArrayList<FindingData> rows = new ArrayList<FindingData>();
           boolean rowsAreCutoff = false;
-          final int findingsListLimit = EclipseUtility.getIntPreference(SierraPreferencesUtility.FINDINGS_LIST_LIMIT);
+          final int findingsListLimit = EclipseUtility.getIntPreference(SierraPreferencesUtility.FINDINGS_LIST_CUTOFF);
           int rowCount = 0;
           while (rs.next()) {
             if (rowCount < findingsListLimit) {
@@ -1021,7 +1021,7 @@ public class FindingsMediator extends AbstractSierraViewMediator implements IVie
 
   @Override
   public void preferenceChange(PreferenceChangeEvent event) {
-    if (SierraPreferencesUtility.FINDINGS_LIST_LIMIT.equals(event.getKey())) {
+    if (SierraPreferencesUtility.FINDINGS_LIST_CUTOFF.equals(event.getKey())) {
       /*
        * The user has changed the preference for findings list cutoff. We don't
        * care what the new value is here, we simply re-run the query and display
