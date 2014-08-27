@@ -2,8 +2,10 @@
 <project name="build-ant-task" default="all">
   <description>Build for SL Ant tasks</description>
 
-  <target name="all" depends="clean,build,zip"/>
+    <property name="sierra-ant.zip" value="../sierra-client-eclipse/lib/sierra-ant.zip" />
   
+  <target name="all" depends="clean,build,zip"/>
+
   <target name="clean-build" depends="clean,build"/>
   
   <target name="clean">
@@ -70,7 +72,7 @@
     <zip destfile="./lib/tools/pmd/com.surelogic.sierra.pmd.jar" basedir="./lib/tools/pmd/bin"/>
     <zip destfile="./lib/tools/reckoner/com.surelogic.sierra.tool.jar" basedir="./lib/tools/reckoner/bin"/>
 
-    <zip destfile="./sierra-ant.zip" basedir=".."
-	 includes="sierra-ant/lib/**/*.jar, sierra-ant/lib/**/*.MF, sierra-ant/README.txt, sierra-ant/examples/**"/>
+    <zip destfile="${sierra-ant.zip}" basedir="."
+	 includes="lib/**/*.jar, lib/**/*.MF, README.txt, examples/**"/>
   </target>
 </project>
