@@ -8,97 +8,98 @@ import org.apache.tools.ant.taskdefs.Javac;
 import org.apache.tools.ant.taskdefs.compilers.CompilerAdapter;
 
 public class SierraScan extends Javac {
-	/**
-	 * The location of sierra-ant
-	 */
-	private String home;
 
-	/**
-	 * The intended location of the resulting scan document
-	 */
-	private String document;
+    /**
+     * The location of sierra-ant
+     */
+    private String home;
 
-	/**
-	 * The name of the project being scanned
-	 */
-	private String project;
+    /**
+     * The intended location of the resulting scan document
+     */
+    private String document;
 
-	public String getHome() {
-		return home;
-	}
+    /**
+     * The name of the project being scanned
+     */
+    private String project;
 
-	public void setHome(String home) {
-		this.home = home;
-	}
+    public String getHome() {
+        return home;
+    }
 
-	public String getProjectName() {
-		return project;
-	}
+    public void setHome(String home) {
+        this.home = home;
+    }
 
-	public void setProjectName(String p) {
-		this.project = p;
-	}
+    public String getProjectName() {
+        return project;
+    }
 
-	public String getDocument() {
-		return document;
-	}
+    public void setProjectName(String p) {
+        project = p;
+    }
 
-	public void setDocument(String doc) {
-		this.document = doc;
-	}
+    public String getDocument() {
+        return document;
+    }
 
-	@Override
-	protected void scanDir(File srcDir, File destDir, String[] files) {
-		File[] newFiles = new File[files.length];
-		int i = 0;
-		for (String name : files) {
-			newFiles[i] = new File(srcDir, name);
-			i++;
-		}
+    public void setDocument(String doc) {
+        document = doc;
+    }
 
-		if (newFiles.length > 0) {
-			File[] newCompileList = new File[compileList.length
-					+ newFiles.length];
-			System.arraycopy(compileList, 0, newCompileList, 0,
-					compileList.length);
-			System.arraycopy(newFiles, 0, newCompileList, compileList.length,
-					newFiles.length);
-			compileList = newCompileList;
-		}
-	}
+    @Override
+    protected void scanDir(File srcDir, File destDir, String[] files) {
+        File[] newFiles = new File[files.length];
+        int i = 0;
+        for (String name : files) {
+            newFiles[i] = new File(srcDir, name);
+            i++;
+        }
 
-	/**
-	 * Modified from Javac.compile()
-	 */
-	@Override
-	protected void compile() {
-		File destDir = this.getDestdir();
+        if (newFiles.length > 0) {
+            File[] newCompileList = new File[compileList.length
+                                             + newFiles.length];
+            System.arraycopy(compileList, 0, newCompileList, 0,
+                    compileList.length);
+            System.arraycopy(newFiles, 0, newCompileList, compileList.length,
+                    newFiles.length);
+            compileList = newCompileList;
+        }
+    }
 
-		if (compileList.length > 0) {
-			log("Scanning " + compileList.length + " source file"
-					+ (compileList.length == 1 ? "" : "s") + " in "
-					+ destDir.getAbsolutePath());
+    /**
+     * Modified from Javac.compile()
+     */
+    @Override
+    protected void compile() {
+        File destDir = getDestdir();
 
-			if (listFiles) {
-				for (int i = 0; i < compileList.length; i++) {
-					String filename = compileList[i].getAbsolutePath();
-					log(filename);
-				}
-			}
+        if (compileList.length > 0) {
+            log("Scanning " + compileList.length + " source file"
+                    + (compileList.length == 1 ? "" : "s") + " in "
+                    + destDir.getAbsolutePath());
 
-			CompilerAdapter adapter = new SierraJavacAdapter(this);
+            if (listFiles) {
+                for (int i = 0; i < compileList.length; i++) {
+                    String filename = compileList[i].getAbsolutePath();
+                    log(filename);
+                }
+            }
 
-			// now we need to populate the compiler adapter
-			adapter.setJavac(this);
+            CompilerAdapter adapter = new SierraJavacAdapter(this);
 
-			// finally, lets execute the compiler!!
-			if (!adapter.execute()) {
-				if (failOnError) {
-					throw new BuildException("Failed", getLocation());
-				} else {
-					log("Failed", Project.MSG_ERR);
-				}
-			}
-		}
-	}
+            // now we need to populate the compiler adapter
+            adapter.setJavac(this);
+
+            // finally, lets execute the compiler!!
+            if (!adapter.execute()) {
+                if (failOnError) {
+                    throw new BuildException("Failed", getLocation());
+                } else {
+                    log("Failed", Project.MSG_ERR);
+                }
+            }
+        }
+    }
 }

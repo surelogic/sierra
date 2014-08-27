@@ -16,6 +16,7 @@ import org.apache.tools.ant.types.Path;
 import org.apache.tools.ant.util.StringUtils;
 
 import com.surelogic.common.jobs.NullSLProgressMonitor;
+import com.surelogic.common.jobs.SLStatus;
 import com.surelogic.common.jobs.remote.AbstractLocalSLJob;
 import com.surelogic.common.jobs.remote.AbstractRemoteSLJob;
 import com.surelogic.sierra.tool.IToolExtension;
@@ -48,7 +49,11 @@ public class SierraJavacAdapter extends DefaultCompilerAdapter {
         }
         try {
             Config config = createConfig();
-            ToolUtil.scan(System.out, config, new NullSLProgressMonitor(), true);
+            SLStatus status = ToolUtil.scan(System.out, config,
+                    new NullSLProgressMonitor(), true);
+            if (status.getException() != null) {
+                throw status.getException();
+            }
         } catch (Throwable t) {
             t.printStackTrace();
             throw new BuildException("Exception while scanning", t);
