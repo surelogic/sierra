@@ -68,7 +68,7 @@ public class ImportSierraScanAction implements IWorkbenchWindowActionDelegate {
                 MessageDialog.openError(
                         shell,
                         I18N.msg("sierra.dialog.importScan.error.title"),
-                        I18N.msg("sierra.dialog.importScan.error.title",
+                        I18N.msg("sierra.dialog.importScan.error.msg",
                                 f.getAbsolutePath()));
             }
         }
