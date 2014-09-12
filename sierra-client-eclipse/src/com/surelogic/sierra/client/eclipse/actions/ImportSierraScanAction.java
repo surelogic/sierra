@@ -14,6 +14,9 @@ import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
@@ -28,6 +31,7 @@ import com.surelogic.common.FileUtility;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.common.ui.EclipseUIUtility;
+import com.surelogic.common.ui.jobs.SLUIJob;
 import com.surelogic.sierra.client.eclipse.jobs.ImportScanDocumentJob;
 import com.surelogic.sierra.client.eclipse.model.DatabaseHub;
 import com.surelogic.sierra.client.eclipse.preferences.SierraPreferencesUtility;
@@ -46,7 +50,7 @@ public class ImportSierraScanAction implements IWorkbenchWindowActionDelegate {
         String fileName = fd.open();
         if (fileName != null) {
             File f = new File(fileName);
-            String projectName = getProjectName(f);
+            final String projectName = getProjectName(f);
             if (projectName != null && f.exists() && !f.isDirectory()) {
                 File to = new File(
                         SierraPreferencesUtility.getSierraScanDirectory(),
@@ -59,6 +63,22 @@ public class ImportSierraScanAction implements IWorkbenchWindowActionDelegate {
                     public void run() {
                         /* Notify that scan was completed */
                         DatabaseHub.getInstance().notifyScanLoaded();
+                        SLUIJob job = new SLUIJob() {
+
+                            @Override
+                            public IStatus runInUIThread(
+                                    IProgressMonitor monitor) {
+                                MessageDialog
+                                        .openInformation(
+                                                EclipseUIUtility.getShell(),
+                                                I18N.msg("sierra.dialog.importScan.success.title"),
+                                                I18N.msg(
+                                                        "sierra.dialog.importScan.success.msg",
+                                                        projectName));
+                                return Status.OK_STATUS;
+                            }
+                        };
+                        job.schedule();
                     }
                 };
                 ImportScanDocumentJob job = new ImportScanDocumentJob(f,
