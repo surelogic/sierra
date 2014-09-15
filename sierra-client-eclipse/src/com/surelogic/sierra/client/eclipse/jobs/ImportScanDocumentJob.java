@@ -7,13 +7,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jface.dialogs.MessageDialog;
 
 import com.surelogic.common.core.jobs.SLProgressMonitorWrapper;
-import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.jobs.SLProgressMonitor;
-import com.surelogic.common.ui.EclipseUIUtility;
-import com.surelogic.common.ui.jobs.SLUIJob;
 import com.surelogic.sierra.client.eclipse.model.BuglinkData;
 
 public final class ImportScanDocumentJob extends AbstractSierraDatabaseJob {
@@ -63,19 +59,6 @@ public final class ImportScanDocumentJob extends AbstractSierraDatabaseJob {
             if (runAfter != null) {
                 runAfter.run();
             }
-            SLUIJob job = new SLUIJob() {
-
-                @Override
-                public IStatus runInUIThread(IProgressMonitor monitor) {
-                    MessageDialog.openInformation(EclipseUIUtility.getShell(),
-                            I18N.msg("sierra.dialog.importScan.success.title"),
-                            I18N.msg("sierra.dialog.importScan.success.msg",
-                                    projectName));
-                    return Status.OK_STATUS;
-                }
-            };
-            job.schedule();
-
             return Status.OK_STATUS;
         }
     }

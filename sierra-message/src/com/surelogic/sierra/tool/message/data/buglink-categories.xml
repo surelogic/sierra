@@ -3,7 +3,7 @@
   <filterSets>
     <uid>d4ed6250-181e-11e4-8c21-0800200c9a66</uid>
     <owner>9a997ac4-ec2b-4d02-869a-423999fecfed</owner>
-    <revision>0</revision>
+    <revision>1</revision>
     <name>Android</name>
     <info>Rules specific to Android applications</info>
         <filter>
@@ -31,10 +31,10 @@
   <filterSets>
         <uid>040502eb-f9d6-4041-9cdd-2206c73f30d0</uid>
         <owner>9a997ac4-ec2b-4d02-869a-423999fecfed</owner>
-        <revision>0</revision>
-        <name>Design Rules</name>
+        <revision>1</revision>
+        <name>Design rules</name>
         <info>
-			The Design Ruleset contains a collection of rules that find
+			The Design ruleset contains a collection of rules that find
 			questionable designs.
 		</info>
         <filter>
@@ -209,8 +209,8 @@
     <filterSets>
         <uid>114e6241-e570-442d-8ba0-b69d32f7a026</uid>
         <owner>9a997ac4-ec2b-4d02-869a-423999fecfed</owner>
-        <revision>0</revision>
-        <name>Security Code Guidelines</name>
+        <revision>1</revision>
+        <name>Security code guidelines</name>
         <info>
 			These rules check the security guidelines from Sun,
 			published at
@@ -232,10 +232,10 @@
     <filterSets>
         <uid>14b0a93f-fa30-4e14-a738-3faa0235cd6e</uid>
         <owner>9a997ac4-ec2b-4d02-869a-423999fecfed</owner>
-        <revision>0</revision>
-        <name>Controversial Rules</name>
+        <revision>1</revision>
+        <name>Controversial rules</name>
         <info>
-			The Controversial Ruleset contains rules that, for whatever
+			The Controversial ruleset contains rules that, for whatever
 			reason, are considered controversial. They are separated out
 			here to allow people to include as they see fit via custom
 			rulesets. This ruleset was initially created in response to
@@ -386,8 +386,8 @@
     <filterSets>
         <uid>15105317-d7f9-418b-8fe3-b17f403e49ce</uid>
         <owner>9a997ac4-ec2b-4d02-869a-423999fecfed</owner>
-        <revision>0</revision>
-        <name>Finalizer Rules</name>
+        <revision>1</revision>
+        <name>Finalizer rules</name>
         <info>
 			These rules deal with different problems that can occur with
 			finalizers.
@@ -400,10 +400,10 @@
     <filterSets>
         <uid>1f55fb3f-fda9-4e21-8618-73388c8b4b20</uid>
         <owner>9a997ac4-ec2b-4d02-869a-423999fecfed</owner>
-        <revision>0</revision>
+        <revision>1</revision>
         <name>Internationalization</name>
         <info>
-			code flaws having to do with internationalization and locale
+			These rules address code flaws having to do with internationalization and locale.
 		</info>
         <filter>
             <type>DM_DEFAULT_ENCODING</type>
@@ -417,8 +417,8 @@
     <filterSets>
         <uid>2b7d423c-ca28-4645-9177-ef72a46c7462</uid>
         <owner>9a997ac4-ec2b-4d02-869a-423999fecfed</owner>
-        <revision>0</revision>
-        <name>Clone Implementation Rules</name>
+        <revision>1</revision>
+        <name>Clone implementation rules</name>
         <info>
 			The Clone Implementation ruleset contains a collection of
 			rules that find questionable usages of the clone() method.
@@ -431,8 +431,8 @@
     <filterSets>
         <uid>31160bb7-36a4-489e-a421-6280988841a6</uid>
         <owner>9a997ac4-ec2b-4d02-869a-423999fecfed</owner>
-        <revision>0</revision>
-        <name>String and StringBuffer Rules</name>
+        <revision>1</revision>
+        <name>String and StringBuffer rules</name>
         <info>
 			These rules deal with different problems that can occur with
 			manipulation of the class String or StringBuffer.
@@ -493,8 +493,8 @@
     <filterSets>
         <uid>3d4882a0-c9ea-4462-b995-508c55890182</uid>
         <owner>9a997ac4-ec2b-4d02-869a-423999fecfed</owner>
-        <revision>0</revision>
-        <name>Optimization Rules</name>
+        <revision>1</revision>
+        <name>Optimization rules</name>
         <info>
 			These rules deal with different optimizations that generally
 			apply to performance best practices.
@@ -547,7 +547,7 @@
     <filterSets>
         <uid>5e842b61-6cd3-4617-a02c-c3f1b159b3dd</uid>
         <owner>9a997ac4-ec2b-4d02-869a-423999fecfed</owner>
-        <revision>0</revision>
+        <revision>1</revision>
         <name>Bad practice</name>
         <info>
 			Violations of recommended and essential coding practice.
@@ -873,10 +873,10 @@
     <filterSets>
         <uid>61dbaf7c-a355-4c70-8773-5a674d918f48</uid>
         <owner>9a997ac4-ec2b-4d02-869a-423999fecfed</owner>
-        <revision>0</revision>
-        <name>Java Logging Rules</name>
+        <revision>1</revision>
+        <name>Java logging rules</name>
         <info>
-			The Java Logging ruleset contains a collection of rules that
+			The Java logging ruleset contains a collection of rules that
 			find questionable usages of the logger.
 		</info>
         <filter>
@@ -903,10 +903,10 @@
     <filterSets>
         <uid>6e58ba42-e673-47c2-aff0-1b4c2e33a1e5</uid>
         <owner>9a997ac4-ec2b-4d02-869a-423999fecfed</owner>
-        <revision>0</revision>
-        <name>Code Size Rules</name>
+        <revision>1</revision>
+        <name>Code size rules</name>
         <info>
-			The Code Size Ruleset contains a collection of rules that
+			The Code size ruleset contains a collection of rules that
 			find code size related problems.
 		</info>
         <filter>
@@ -957,8 +957,8 @@
     <filterSets>
         <uid>6fb556f3-5b98-450d-acf0-ee761155a7da</uid>
         <owner>9a997ac4-ec2b-4d02-869a-423999fecfed</owner>
-        <revision>0</revision>
-        <name>Import Statement Rules</name>
+        <revision>1</revision>
+        <name>Import statement rules</name>
         <info>
 			These rules deal with different problems that can occur with
 			a class' import statements.
@@ -987,10 +987,10 @@
     <filterSets>
         <uid>70199f05-dc5a-4b91-a9fc-ba0d17c9b707</uid>
         <owner>9a997ac4-ec2b-4d02-869a-423999fecfed</owner>
-        <revision>0</revision>
-        <name>Basic Rules</name>
+        <revision>1</revision>
+        <name>Basic rules</name>
         <info>
-			The Basic Ruleset contains a collection of good practices
+			The Basic ruleset contains a collection of good practices
 			which everyone should follow.
 		</info>
         <filter>
@@ -1121,7 +1121,7 @@
     <filterSets>
         <uid>8e461557-1ca9-41c5-a01a-7569fabe612d</uid>
         <owner>9a997ac4-ec2b-4d02-869a-423999fecfed</owner>
-        <revision>0</revision>
+        <revision>1</revision>
         <name>J2EE Rules</name>
         <info>These are rules for J2EE</info>
         <filter>
@@ -1160,8 +1160,8 @@
     <filterSets>
         <uid>90d074fb-b020-48f8-ae62-b3b64205b8f6</uid>
         <owner>9a997ac4-ec2b-4d02-869a-423999fecfed</owner>
-        <revision>0</revision>
-        <name>Migration Rules</name>
+        <revision>1</revision>
+        <name>Migration rules</name>
         <info>
 			Contains rules about migrating from one JDK version to
 			another. Don't use these rules directly, rather, use a
@@ -1196,7 +1196,7 @@
     <filterSets>
         <uid>9881c032-6681-49e3-87cd-a704f42a477f</uid>
         <owner>9a997ac4-ec2b-4d02-869a-423999fecfed</owner>
-        <revision>0</revision>
+        <revision>1</revision>
         <name>Correctness</name>
         <info>
 			Probable bug - an apparent coding mistake resulting in code
@@ -1811,10 +1811,10 @@
     <filterSets>
         <uid>af53a1fd-bd99-4afd-a0d0-8a46b250ab13</uid>
         <owner>9a997ac4-ec2b-4d02-869a-423999fecfed</owner>
-        <revision>0</revision>
-        <name>Jakarta Commons Logging Rules</name>
+        <revision>1</revision>
+        <name>Jakarta Commons logging rules</name>
         <info>
-			The Jakarta Commons Logging ruleset contains a collection of
+			The Jakarta Commons logging ruleset contains a collection of
 			rules that find questionable usages of that framework.
 		</info>
         <filter>
@@ -1833,10 +1833,10 @@
     <filterSets>
         <uid>b52a2ac5-751e-4d1a-a93a-872fa6b82103</uid>
         <owner>9a997ac4-ec2b-4d02-869a-423999fecfed</owner>
-        <revision>0</revision>
-        <name>Braces Rules</name>
+        <revision>1</revision>
+        <name>Braces rules</name>
         <info>
-			The Braces Ruleset contains a collection of braces rules.
+			The Braces ruleset contains a collection of braces rules.
 		</info>
         <filter>
             <type>WhileLoopsMustUseBraces</type>
@@ -1854,10 +1854,10 @@
     <filterSets>
         <uid>b9e4cf3d-36d7-4a55-82d8-0879f29c332d</uid>
         <owner>9a997ac4-ec2b-4d02-869a-423999fecfed</owner>
-        <revision>0</revision>
-        <name>Unused Code Rules</name>
+        <revision>1</revision>
+        <name>Unused code rules</name>
         <info>
-			The Unused Code Ruleset contains a collection of rules that
+			The Unused code ruleset contains a collection of rules that
 			find unused code.
 		</info>
         <filter>
@@ -1880,8 +1880,8 @@
     <filterSets>
         <uid>c05606f3-091e-4743-a954-08171c1f5ec5</uid>
         <owner>9a997ac4-ec2b-4d02-869a-423999fecfed</owner>
-        <revision>0</revision>
-        <name>Coupling Rules</name>
+        <revision>1</revision>
+        <name>Coupling rules</name>
         <info>
 			These are rules which find instances of high or
 			inappropriate coupling between objects and packages.
@@ -1910,10 +1910,10 @@
     <filterSets>
         <uid>c27440b2-e83b-4882-8e98-e920fc9a3f43</uid>
         <owner>9a997ac4-ec2b-4d02-869a-423999fecfed</owner>
-        <revision>0</revision>
-        <name>Naming Rules</name>
+        <revision>1</revision>
+        <name>Naming rules</name>
         <info>
-			The Naming Ruleset contains a collection of rules about
+			The Naming ruleset contains a collection of rules about
 			names - too long, too short, and so forth.
 		</info>
         <filter>
@@ -1976,8 +1976,8 @@
     <filterSets>
         <uid>d2816915-3d13-489e-b9a4-8cc9ccf85abc</uid>
         <owner>9a997ac4-ec2b-4d02-869a-423999fecfed</owner>
-        <revision>0</revision>
-        <name>JUnit Rules</name>
+        <revision>1</revision>
+        <name>JUnit rules</name>
         <info>
 			These rules deal with different problems that can occur with
 			JUnit tests.
@@ -2022,8 +2022,8 @@
     <filterSets>
         <uid>d50ebfe7-372c-4a23-bd9c-b9f7665797a9</uid>
         <owner>9a997ac4-ec2b-4d02-869a-423999fecfed</owner>
-        <revision>0</revision>
-        <name>Strict Exception Rules</name>
+        <revision>1</revision>
+        <name>Strict exception rules</name>
         <info>
 			These rules provide some strict guidelines about throwing
 			and catching exceptions.
@@ -2076,8 +2076,8 @@
     <filterSets>
         <uid>d880d871-a350-4bb3-8b64-d8e53dbcbe80</uid>
         <owner>9a997ac4-ec2b-4d02-869a-423999fecfed</owner>
-        <revision>0</revision>
-        <name>Code Duplication</name>
+        <revision>1</revision>
+        <name>Code duplication</name>
         <info>
 			This encompasses various degrees of code duplication, from copy-and-paste 
 			to code only differing in variable names or constants
@@ -2090,7 +2090,7 @@
     <filterSets>
         <uid>dad398d8-c679-4ea3-adbe-5406435ac91b</uid>
         <owner>9a997ac4-ec2b-4d02-869a-423999fecfed</owner>
-        <revision>0</revision>
+        <revision>1</revision>
         <name>Dodgy</name>
         <info>
 			Code that is confusing, anomalous, or written in a way that
@@ -2375,10 +2375,10 @@
     <filterSets>
         <uid>dd9c7397-a3d3-4bd9-92fa-213e0f56af38</uid>
         <owner>9a997ac4-ec2b-4d02-869a-423999fecfed</owner>
-        <revision>0</revision>
-        <name>JavaBean Rules</name>
+        <revision>1</revision>
+        <name>JavaBean rules</name>
         <info>
-			The JavaBeans Ruleset catches instances of bean rules not
+			The JavaBeans ruleset catches instances of bean rules not
 			being followed.
 		</info>
         <filter>
@@ -2389,7 +2389,7 @@
     <filterSets>
         <uid>eb029c7f-e181-49db-be7e-332e1ecd005c</uid>
         <owner>9a997ac4-ec2b-4d02-869a-423999fecfed</owner>
-        <revision>0</revision>
+        <revision>1</revision>
         <name>Multithreaded correctness</name>
         <info>
 			Code flaws having to do with threads, locks, and volatiles.
@@ -2561,7 +2561,7 @@
     <filterSets>
         <uid>ef2994d1-1588-41bd-abc1-1c7a1527cc71</uid>
         <owner>9a997ac4-ec2b-4d02-869a-423999fecfed</owner>
-        <revision>0</revision>
+        <revision>1</revision>
         <name>Malicious code vulnerability</name>
         <info>
 			Code that is vulnerable to attacks from untrusted code
@@ -2650,7 +2650,7 @@
     <filterSets>
         <uid>f89d25b2-f3b2-4575-a982-8fe03d910644</uid>
         <owner>9a997ac4-ec2b-4d02-869a-423999fecfed</owner>
-        <revision>0</revision>
+        <revision>1</revision>
         <name>Performance</name>
         <info>
 			Code that is not necessarily incorrect but may be

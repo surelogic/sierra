@@ -1,9 +1,5 @@
 package com.surelogic.ant.sierra;
 
-import static com.surelogic.sierra.tool.SierraToolConstants.PARSED_FILE_SUFFIX;
-import static com.surelogic.sierra.tool.SierraToolConstants.PARSED_ZIP_FILE_SUFFIX;
-import static com.surelogic.sierra.tool.SierraToolConstants.USE_ZIP;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -120,8 +116,7 @@ public class SierraJavacAdapter extends DefaultCompilerAdapter {
         // System.out.println("Using source level "+scan.getSource());
         config.setSourceLevel(scan.getSource());
 
-        File scanDocument = new File(scan.getDocument()
-                + (USE_ZIP ? PARSED_ZIP_FILE_SUFFIX : PARSED_FILE_SUFFIX));
+        File scanDocument = scan.getScanFile();
         config.setScanDocument(scanDocument);
         config.setLogPath(scan.getDocument() + AbstractRemoteSLJob.LOG_SUFFIX);
         return config;
@@ -250,7 +245,7 @@ public class SierraJavacAdapter extends DefaultCompilerAdapter {
             niceSourceList.append(StringUtils.LINE_SEP);
         }
         /*
-         * 
+         *
          * if (attributes.getSourcepath() != null) { addPath(config,
          * Type.SOURCE, attributes.getSourcepath()); } else { addPath(config,
          * Type.SOURCE, attributes.getSrcdir()); } addPath(config, Type.AUX,
