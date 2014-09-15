@@ -994,7 +994,7 @@ public class FindingsMediator extends AbstractSierraViewMediator implements IVie
 
       @Override
       public int compareInternal(Column column, FindingData row1, FindingData row2) {
-        return row1.f_importance.ordinal() - row1.f_importance.ordinal();
+        return row1.f_importance.compareTo(row2.f_importance);
       }
     }));
 
