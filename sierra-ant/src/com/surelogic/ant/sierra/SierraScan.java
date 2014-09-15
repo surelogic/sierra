@@ -28,6 +28,11 @@ public class SierraScan extends Javac {
      */
     private String project;
 
+    public SierraScan() {
+        super();
+        setIncludeantruntime(false);
+    }
+
     public String getHome() {
         return home;
     }
