@@ -30,4 +30,4 @@ Eclipse-LazyStart: true
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .
 Export-Package: com.surelogic.sierra.client.eclipse.preferences
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7

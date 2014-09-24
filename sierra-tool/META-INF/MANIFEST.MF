@@ -15,5 +15,5 @@ Bundle-ClassPath: .,
  lib/commons-cli-1.1.jar
 Bundle-Vendor: SureLogic, Inc.
 Sierra-Tool: com.surelogic.sierra.tool.reckoner.ReckonerFactory
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 
