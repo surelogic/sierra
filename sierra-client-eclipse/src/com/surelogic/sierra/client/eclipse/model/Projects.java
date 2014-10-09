@@ -5,12 +5,16 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 
+import com.surelogic.NonNull;
+import com.surelogic.Nullable;
 import com.surelogic.common.ILifecycle;
 import com.surelogic.common.jdbc.QB;
 import com.surelogic.common.logging.SLLogger;
@@ -25,189 +29,204 @@ import com.surelogic.sierra.client.eclipse.Data;
  * <p>
  * The class allows observers to changes to this list of projects
  */
-public final class Projects extends DatabaseObservable<IProjectsObserver>
-		implements ILifecycle {
+public final class Projects extends DatabaseObservable<IProjectsObserver> implements ILifecycle {
 
-	private static final Projects INSTANCE = new Projects();
+  private static final Projects INSTANCE = new Projects();
 
-	public static Projects getInstance() {
-		return INSTANCE;
-	}
+  public static Projects getInstance() {
+    return INSTANCE;
+  }
 
-	private Projects() {
-		// singleton
-	}
+  private Projects() {
+    // singleton
+  }
 
-	@Override
+  @Override
   public void init() {
-		DatabaseHub.getInstance().addObserver(this);
-		refresh();
-	}
+    DatabaseHub.getInstance().addObserver(this);
+    refresh();
+  }
 
-	@Override
+  @Override
   public void dispose() {
-		DatabaseHub.getInstance().removeObserver(this);
-	}
+    DatabaseHub.getInstance().removeObserver(this);
+  }
 
-	@Override
-	protected void notifyThisObserver(final IProjectsObserver o) {
-		o.notify(this);
-	}
+  @Override
+  protected void notifyThisObserver(final IProjectsObserver o) {
+    o.notify(this);
+  }
 
-	/**
-	 * Protected by a lock on <code>this</code>.
-	 */
-	private final LinkedList<String> f_projectNames = new LinkedList<String>();
+  /**
+   * This map holds all the scanned projects in the database. The key is the
+   * project name. The value is an immutable container of information about the
+   * project
+   */
+  private final ConcurrentHashMap<String, ScannedProject> f_nameToScannedProject = new ConcurrentHashMap<String, ScannedProject>();
 
-	/**
-	 * Counts of consecutive server project failures
-	 */
-	private final Map<String, Integer> projectProblems = new HashMap<String, Integer>();
+  /**
+   * The value counts the number of consecutive server connection failures for
+   * the project used as the map key, if any. This is a sparse map, nothing
+   * defined means no prior server failures.
+   */
+  private final ConcurrentHashMap<String, AtomicInteger> f_nameToConsecutiveConnectFailures = new ConcurrentHashMap<String, AtomicInteger>();
 
-	private <T> int incrProblem(final Map<T, Integer> map, final T key) {
-		Integer count = map.get(key);
-		count = (count == null) ? 1 : count + 1;
-		map.put(key, count);
-		return count;
-	}
+  // TODO NOBODY CALLS THIS????
+  public void markAsConnectedSuccessfully(final String projectName) {
+    f_nameToConsecutiveConnectFailures.remove(projectName);
+  }
 
-	public synchronized void markAsConnected(final String name) {
-		projectProblems.remove(name);
-	}
+  // TODO NOBODY CALLS THIS????
+  public int incrementConsecutiveConnectFailuresFor(final String projectName) {
+    int result = 0;
+    final AtomicInteger count = f_nameToConsecutiveConnectFailures.get(projectName);
+    if (count != null) {
+      result = count.incrementAndGet();
+    } else {
+      result = 1;
+      f_nameToConsecutiveConnectFailures.put(projectName, new AtomicInteger(result));
+    }
+    notifyObservers();
+    return result;
+  }
 
-	public synchronized int encounteredProblem(final String name) {
-		try {
-			return incrProblem(projectProblems, name);
-		} finally {
-			notifyObservers();
-		}
-	}
+  // TODO YET THIS GETS CALLED (probably returning a constant 0)
+  public int getConsecutiveConnectFailuresFor(final String projectName) {
+    final AtomicInteger count = f_nameToConsecutiveConnectFailures.get(projectName);
+    return count == null ? 0 : count.get();
+  }
 
-	public synchronized int getProblemCount(final String name) {
-		final Integer count = projectProblems.get(name);
-		return count == null ? 0 : count;
-	}
+  @Nullable
+  public ScannedProject getScannedProjectFor(final String projectName) {
+    return f_nameToScannedProject.get(projectName);
+  }
 
-	/**
-	 * Gets the set of project names in the database.
-	 * 
-	 * @return the set of project names in the database.
-	 */
-	public synchronized List<String> getProjectNames() {
-		return new ArrayList<String>(f_projectNames);
-	}
+  /**
+   * Gets the set of project names in the database.
+   * 
+   * @return the set of project names in the database.
+   */
+  @NonNull
+  public ArrayList<String> getProjectNames() {
+    return new ArrayList<String>(f_nameToScannedProject.keySet());
+  }
 
-	/**
-	 * Gets the set of project names in the database.
-	 * 
-	 * @return the set of project names in the database.
-	 */
-	public synchronized String[] getProjectNamesArray() {
-		return f_projectNames.toArray(new String[f_projectNames.size()]);
-	}
+  /**
+   * Gets the set of scanned projects in the database.
+   * 
+   * @return the set of scanned projects in the database.
+   */
+  @NonNull
+  public ArrayList<ScannedProject> getScannedProjects() {
+    return new ArrayList<ScannedProject>(f_nameToScannedProject.values());
+  }
 
-	/**
-	 * Returns <code>true</code> if the database contains no projects.
-	 * 
-	 * @return <code>true</code> if the database contains no projects.
-	 */
-	public synchronized boolean isEmpty() {
-		return f_projectNames.isEmpty();
-	}
+  /**
+   * Gets the set of project names in the database.
+   * 
+   * @return the set of project names in the database.
+   */
+  @NonNull
+  public String[] getProjectNamesArray() {
+    final List<String> projectNames = getProjectNames();
+    return projectNames.toArray(new String[projectNames.size()]);
+  }
 
-	/**
-	 * Checks if a project name exists in the database.
-	 * 
-	 * @param projectName
-	 *            a project name.
-	 * @return <code>true</code> if the given project name exists in the
-	 *         database, <code>false</code> otherwise.
-	 */
-	public synchronized boolean contains(final String projectName) {
-		return f_projectNames.contains(projectName);
-	}
+  /**
+   * Returns <code>true</code> if the database contains no projects.
+   * 
+   * @return <code>true</code> if the database contains no projects.
+   */
+  public boolean isEmpty() {
+    return f_nameToScannedProject.isEmpty();
+  }
 
-	/**
-	 * Returns the first project in the database.
-	 * 
-	 * @return the first project in the database.
-	 */
-	public synchronized String getFirst() {
-		return f_projectNames.getFirst();
-	}
+  /**
+   * Checks if a project name exists in the database.
+   * 
+   * @param projectName
+   *          a project name.
+   * @return <code>true</code> if the given project name exists in the database,
+   *         <code>false</code> otherwise.
+   */
+  public boolean contains(final String projectName) {
+    return f_nameToScannedProject.containsKey(projectName);
+  }
 
-	public void refresh() {
-		final List<String> projectNames = new ArrayList<String>();
-		try {
-			final Connection c = Data.getInstance().readOnlyConnection();
-			try {
-				final Statement st = c.createStatement();
-				try {
-					final ResultSet rs = st.executeQuery(QB.get(1));
-					try {
-						while (rs.next()) {
-							projectNames.add(rs.getString(1));
-						}
-					} finally {
-						rs.close();
-					}
-				} catch (final SQLException e) {
-					SLLogger
-							.getLogger()
-							.log(
-									Level.SEVERE,
-									"Unable to read the list of projects in the database",
-									e);
-				} finally {
-					st.close();
-				}
-			} finally {
-				c.close();
-			}
-		} catch (final SQLException e) {
-			SLLogger.getLogger().log(Level.SEVERE,
-					"Unable to read the list of projects in the database", e);
-		}
-		boolean notify = false;
-		synchronized (this) {
-			if (!f_projectNames.equals(projectNames)) {
-				f_projectNames.clear();
-				f_projectNames.addAll(projectNames);
-				notify = true;
-			}
-		}
-		if (notify) {
-			notifyObservers();
-		}
-	}
+  public void refresh() {
+    final Map<String, ScannedProject> nameToScannedProject = new HashMap<String, ScannedProject>();
+    try {
+      final Connection c = Data.getInstance().readOnlyConnection();
+      try {
+        final Statement st = c.createStatement();
+        try {
+          final ResultSet rs = st.executeQuery(QB.get(1));
+          try {
+            while (rs.next()) {
+              @NonNull
+              final String name = rs.getString(1);
+              @NonNull
+              final Date whenScanned = new Date(); // TODO - REAL DATA
+              @Nullable
+              final Date whenScannedPreviously = null; // TODO - REAL DATA
+              @Nullable
+              final String exclusionFilter = null; // TODO - REAL DATA
+              final ScannedProject info = new ScannedProject(name, whenScanned, whenScannedPreviously, exclusionFilter);
+              nameToScannedProject.put(name, info);
+            }
+          } finally {
+            rs.close();
+          }
+        } catch (final SQLException e) {
+          SLLogger.getLogger().log(Level.SEVERE, "Unable to read the list of projects in the database", e);
+        } finally {
+          st.close();
+        }
+      } finally {
+        c.close();
+      }
+    } catch (final SQLException e) {
+      SLLogger.getLogger().log(Level.SEVERE, "Unable to read the list of projects in the database", e);
+    }
+    boolean notify = false;
+    /*
+     * There is a very small chance that something could see into this group of
+     * operations.
+     */
+    if (!f_nameToScannedProject.equals(nameToScannedProject)) {
+      f_nameToScannedProject.clear();
+      f_nameToScannedProject.putAll(nameToScannedProject);
+      notify = true;
+    }
+    if (notify) {
+      notifyObservers();
+    }
+  }
 
-	@Override
-	public String toString() {
-		/*
-		 * Show the list of projects that we read from the database.
-		 */
-		synchronized (this) {
-			return "[" + Projects.class.getName() + ": "
-					+ f_projectNames.toString() + "]";
-		}
-	}
+  @Override
+  public String toString() {
+    /*
+     * Show the list of projects that we read from the database.
+     */
+    return "[" + Projects.class.getName() + ": " + getProjectNames() + "]";
+  }
 
-	/*
-	 * Track changes to the database that can mutate the set of projects.
-	 */
+  /*
+   * Track changes to the database that can mutate the set of projects.
+   */
 
-	@Override
-	public void projectDeleted() {
-		refresh();
-	}
+  @Override
+  public void projectDeleted() {
+    refresh();
+  }
 
-	@Override
-	public void databaseDeleted() {
-		refresh();
-	}
+  @Override
+  public void databaseDeleted() {
+    refresh();
+  }
 
-	@Override
-	public void scanLoaded() {
-		refresh();
-	}
+  @Override
+  public void scanLoaded() {
+    refresh();
+  }
 }

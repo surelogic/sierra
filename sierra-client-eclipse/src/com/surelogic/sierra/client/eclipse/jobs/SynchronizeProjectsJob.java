@@ -63,7 +63,7 @@ public class SynchronizeProjectsJob extends AbstractServerProjectJob {
   protected IStatus run(final IProgressMonitor monitor) {
     final int retryThreshold = EclipseUtility.getIntPreference(SierraPreferencesUtility.SERVER_INTERACTION_RETRY_THRESHOLD);
     final int numProblems = ConnectedServerManager.getInstance().getStats(getServer()).getProblemCount()
-        + Projects.getInstance().getProblemCount(f_projectName);
+        + Projects.getInstance().getConsecutiveConnectFailuresFor(f_projectName);
     if (!f_force && (numProblems > retryThreshold)) {
       return Status.CANCEL_STATUS;
     }

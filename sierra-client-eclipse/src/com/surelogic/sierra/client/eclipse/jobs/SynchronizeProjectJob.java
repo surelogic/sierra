@@ -65,7 +65,7 @@ public class SynchronizeProjectJob extends AbstractServerProjectJob {
 				.getIntPreference(SierraPreferencesUtility.SERVER_INTERACTION_RETRY_THRESHOLD);
 		final int numProblems = ConnectedServerManager.getInstance()
 				.getStats(getServer()).getProblemCount()
-				+ Projects.getInstance().getProblemCount(f_projectName);
+				+ Projects.getInstance().getConsecutiveConnectFailuresFor(f_projectName);
 		if (!f_force && (numProblems > retryThreshold)) {
 			return Status.CANCEL_STATUS;
 		}

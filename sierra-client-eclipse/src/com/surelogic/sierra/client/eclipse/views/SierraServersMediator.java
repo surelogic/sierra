@@ -976,7 +976,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator impl
           final ConnectedServer server = f_manager.getServer(name);
           final int numServerProblems = server == null ? -1 : ConnectedServerManager.getInstance().getStats(server)
               .getProblemCount();
-          final int numProjectProblems = Projects.getInstance().getProblemCount(name);
+          final int numProjectProblems = Projects.getInstance().getConsecutiveConnectFailuresFor(name);
 
           // FIX Check for a full scan (later than what's on the
           // server?)
