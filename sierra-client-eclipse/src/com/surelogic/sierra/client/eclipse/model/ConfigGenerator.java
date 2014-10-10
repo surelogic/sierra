@@ -8,9 +8,6 @@ import static com.surelogic.common.tool.SureLogicToolsPropertiesUtility.SCAN_SOU
 import static com.surelogic.common.tool.SureLogicToolsPropertiesUtility.combine;
 import static com.surelogic.common.tool.SureLogicToolsPropertiesUtility.combineListProperties;
 import static com.surelogic.common.tool.SureLogicToolsPropertiesUtility.combineLists;
-import static com.surelogic.common.tool.SureLogicToolsPropertiesUtility.getBytecodePackagePatterns;
-import static com.surelogic.common.tool.SureLogicToolsPropertiesUtility.getBytecodeSourceFolders;
-import static com.surelogic.common.tool.SureLogicToolsPropertiesUtility.getExcludedSourceFolders;
 import static com.surelogic.common.tool.SureLogicToolsPropertiesUtility.getFilterFor;
 import static com.surelogic.sierra.tool.SierraToolConstants.PARSED_FILE_SUFFIX;
 import static com.surelogic.sierra.tool.SierraToolConstants.PARSED_ZIP_FILE_SUFFIX;
@@ -298,6 +295,10 @@ public final class ConfigGenerator {
                 config.setExcludedPackages(combineListProperties(
                         props.getProperty(SCAN_EXCLUDE_SOURCE_PACKAGE),
                         props.getProperty(SCAN_SOURCE_PACKAGE_AS_BYTECODE)));
+                config.setExternalFilter(SureLogicToolsPropertiesUtility
+                        .toStringConciseExcludedFoldersAndPackages(
+                                excludedSourceFolders, excludedPackagePatterns));
+
             }
             final SureLogicToolsFilter filter = combine(excludeFilter,
                     bytecodeFilter);
@@ -631,11 +632,13 @@ public final class ConfigGenerator {
                 .readFileOrNull(new File(p.getProject().getLocation().toFile(),
                         PROPS_FILE));
         final String[] excludedFolders = makeAbsolute(p.getElementName(),
-                getExcludedSourceFolders(props));
-        final String[] excludedPackages = convertPkgsToSierraStyle(getExcludedSourceFolders(props));
+                SureLogicToolsPropertiesUtility.getExcludedSourceFolders(props));
+        final String[] excludedPackages = convertPkgsToSierraStyle(SureLogicToolsPropertiesUtility
+                .getExcludedPackagePatterns(props));
         final String[] bytecodeFolders = makeAbsolute(p.getElementName(),
-                getBytecodeSourceFolders(props));
-        final String[] bytecodePackages = convertPkgsToSierraStyle(getBytecodePackagePatterns(props));
+                SureLogicToolsPropertiesUtility.getBytecodeSourceFolders(props));
+        final String[] bytecodePackages = convertPkgsToSierraStyle(SureLogicToolsPropertiesUtility
+                .getBytecodePackagePatterns(props));
         final String[] combinedPackages = combineLists(excludedPackages,
                 bytecodePackages);
         if (props != null) {
@@ -645,6 +648,9 @@ public final class ConfigGenerator {
             cfg.setExcludedPackages(combineListProperties(
                     props.getProperty(SCAN_EXCLUDE_SOURCE_PACKAGE),
                     props.getProperty(SCAN_SOURCE_PACKAGE_AS_BYTECODE)));
+            cfg.setExternalFilter(SureLogicToolsPropertiesUtility
+                    .toStringConciseExcludedFoldersAndPackages(excludedFolders,
+                            excludedPackages));
         }
 
         final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();

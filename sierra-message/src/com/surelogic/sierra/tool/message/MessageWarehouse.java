@@ -41,9 +41,9 @@ import com.surelogic.sierra.tool.targets.ToolTarget;
 
 /**
  * General utility class for working with the sps message layer.
- * 
+ *
  * @author nathan
- * 
+ *
  */
 public final class MessageWarehouse {
     public static final String TOOL_STREAM_SUFFIX = ".tool.xml";
@@ -79,7 +79,7 @@ public final class MessageWarehouse {
 
     /**
      * Write a {@link ToolOutput} object to the specified file destination.
-     * 
+     *
      * @param to
      * @param dest
      *            a path name
@@ -101,7 +101,7 @@ public final class MessageWarehouse {
 
     /**
      * Write a {@link ClassMetric} object to the specified output
-     * 
+     *
      * @param metric
      * @param out
      */
@@ -117,7 +117,7 @@ public final class MessageWarehouse {
 
     /**
      * Write a {@link ClassMetric} object to the specified output
-     * 
+     *
      * @param metric
      * @param out
      */
@@ -132,7 +132,7 @@ public final class MessageWarehouse {
 
     /**
      * Write a {@link Error} object to the specified output..
-     * 
+     *
      * @param error
      * @param out
      */
@@ -147,7 +147,7 @@ public final class MessageWarehouse {
 
     /**
      * Write a {@link Artifact} object to the specified output..
-     * 
+     *
      * @param a
      * @param out
      */
@@ -162,7 +162,7 @@ public final class MessageWarehouse {
 
     /**
      * Write a {@link Artifact} object to the specified output..
-     * 
+     *
      * @param a
      * @param out
      */
@@ -214,7 +214,7 @@ public final class MessageWarehouse {
 
     /**
      * Write a message object to the output stream
-     * 
+     *
      * @param o
      * @param out
      * @throws JAXBException
@@ -226,7 +226,7 @@ public final class MessageWarehouse {
 
     /**
      * Write a message object to the output stream
-     * 
+     *
      * @param o
      * @param out
      * @throws JAXBException
@@ -238,7 +238,7 @@ public final class MessageWarehouse {
 
     /**
      * Read a message object from the input stream.
-     * 
+     *
      * @param in
      * @return
      * @throws JAXBException
@@ -249,7 +249,7 @@ public final class MessageWarehouse {
 
     /**
      * Read a message object from the reader.
-     * 
+     *
      * @param in
      * @return
      * @throws JAXBException
@@ -260,7 +260,7 @@ public final class MessageWarehouse {
 
     /**
      * Return the {@link ToolOutput} object located at src.
-     * 
+     *
      * @param src
      *            a path name
      * @return a {@link ToolOutput} object, or null if none can be parsed at
@@ -296,7 +296,7 @@ public final class MessageWarehouse {
 
     /**
      * Return the {@link Scan} object located at src.
-     * 
+     *
      * @param src
      *            a path name
      * @return a {@link Scan} object, or null if none can be parsed at src.
@@ -368,7 +368,7 @@ public final class MessageWarehouse {
         final XMLStreamReader xmlr;
 
         XMLStream(final File runDocument) throws XMLStreamException,
-                IOException {
+        IOException {
             name = runDocument.getName();
             stream = new FileInputStream(runDocument);
 
@@ -487,7 +487,7 @@ public final class MessageWarehouse {
 
     private Config parseScanMetadata(final XMLStream xs,
             final ScanGenerator generator, final SLProgressMonitor monitor)
-            throws XMLStreamException {
+                    throws XMLStreamException {
         final XMLStreamReader xmlr = xs.xmlr;
         try {
             // move to the root element and check its name.
@@ -496,7 +496,7 @@ public final class MessageWarehouse {
             xmlr.nextTag(); // move to uid element
             xmlr.require(START_ELEMENT, null, "uid");
             generator
-                    .uid(unmarshaller.unmarshal(xmlr, String.class).getValue());
+            .uid(unmarshaller.unmarshal(xmlr, String.class).getValue());
             xmlr.nextTag(); // move to toolOutput element.
             xmlr.nextTag(); // move to artifacts (or config, if no
             // artifacts, errors, or classMetrics)
@@ -566,7 +566,7 @@ public final class MessageWarehouse {
                             readClassMetric(
                                     unmarshaller.unmarshal(xmlr,
                                             ClassMetric.class).getValue(),
-                                    mBuilder);
+                                            mBuilder);
 
                             if (++counter == COUNT) {
                                 if (cancelled(monitor)) {
@@ -599,7 +599,7 @@ public final class MessageWarehouse {
                             && xmlr.getLocalName().equals("artifact")) {
                         readArtifact(
                                 unmarshaller.unmarshal(xmlr, Artifact.class)
-                                        .getValue(), aBuilder);
+                                .getValue(), aBuilder);
 
                         if (xmlr.getEventType() == CHARACTERS) {
                             xmlr.next(); // skip the whitespace between
@@ -725,6 +725,7 @@ public final class MessageWarehouse {
         builder.javaVersion(config.getJavaVersion());
         builder.project(config.getProject());
         builder.timeseries(config.getTimeseries());
+        builder.externalFilter(config.getExternalFilter());
         for (final ToolExtension te : config.getExtensions()) {
             builder.extension(te.getId(), te.getVersion());
         }
@@ -734,8 +735,8 @@ public final class MessageWarehouse {
     private static void readArtifact(final Artifact artifact,
             final ArtifactBuilder builder) {
         builder.severity(artifact.getSeverity())
-                .priority(artifact.getPriority())
-                .message(artifact.getMessage());
+        .priority(artifact.getPriority())
+        .message(artifact.getMessage());
         builder.findingType(artifact.getArtifactType().getTool(), artifact
                 .getArtifactType().getVersion(), artifact.getArtifactType()
                 .getMnemonic());
@@ -757,7 +758,7 @@ public final class MessageWarehouse {
     private static void readClassMetric(final ClassMetric metric,
             final MetricBuilder builder) {
         builder.compilation(metric.getName()).packageName(metric.getPackage())
-                .linesOfCode(metric.getLoc()).build();
+        .linesOfCode(metric.getLoc()).build();
     }
 
     private static void readError(final Error e, final ErrorBuilder builder) {
@@ -767,19 +768,19 @@ public final class MessageWarehouse {
     private static void readPrimarySource(final ArtifactBuilder aBuilder,
             final SourceLocation s) {
         aBuilder.primarySourceLocation().compilation(s.getCompilation())
-                .className(s.getClassName()).packageName(s.getPackageName())
-                .endLine(s.getEndLineOfCode()).lineOfCode(s.getLineOfCode())
-                .type(s.getIdentifierType()).identifier(s.getIdentifier())
-                .hash(s.getHash()).build();
+        .className(s.getClassName()).packageName(s.getPackageName())
+        .endLine(s.getEndLineOfCode()).lineOfCode(s.getLineOfCode())
+        .type(s.getIdentifierType()).identifier(s.getIdentifier())
+        .hash(s.getHash()).build();
     }
 
     private static void readSource(final ArtifactBuilder aBuilder,
             final SourceLocation s) {
         aBuilder.sourceLocation().compilation(s.getCompilation())
-                .className(s.getClassName()).packageName(s.getPackageName())
-                .endLine(s.getEndLineOfCode()).lineOfCode(s.getLineOfCode())
-                .type(s.getIdentifierType()).identifier(s.getIdentifier())
-                .hash(s.getHash()).build();
+        .className(s.getClassName()).packageName(s.getPackageName())
+        .endLine(s.getEndLineOfCode()).lineOfCode(s.getLineOfCode())
+        .type(s.getIdentifierType()).identifier(s.getIdentifier())
+        .hash(s.getHash()).build();
     }
 
     private static boolean cancelled(final SLProgressMonitor monitor) {

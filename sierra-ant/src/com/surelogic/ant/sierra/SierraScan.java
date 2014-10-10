@@ -28,6 +28,8 @@ public class SierraScan extends Javac {
      */
     private String project;
 
+    private File properties;
+
     public SierraScan() {
         super();
         setIncludeantruntime(false);
@@ -73,13 +75,21 @@ public class SierraScan extends Javac {
 
         if (newFiles.length > 0) {
             File[] newCompileList = new File[compileList.length
-                    + newFiles.length];
+                                             + newFiles.length];
             System.arraycopy(compileList, 0, newCompileList, 0,
                     compileList.length);
             System.arraycopy(newFiles, 0, newCompileList, compileList.length,
                     newFiles.length);
             compileList = newCompileList;
         }
+    }
+
+    public File getProperties() {
+        return properties;
+    }
+
+    public void setProperties(File properties) {
+        this.properties = properties;
     }
 
     @Override

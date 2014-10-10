@@ -1,8 +1,19 @@
 package com.surelogic.ant.sierra;
 
+import static com.surelogic.common.tool.SureLogicToolsPropertiesUtility.SCAN_EXCLUDE_SOURCE_FOLDER;
+import static com.surelogic.common.tool.SureLogicToolsPropertiesUtility.SCAN_EXCLUDE_SOURCE_PACKAGE;
+import static com.surelogic.common.tool.SureLogicToolsPropertiesUtility.SCAN_SOURCE_FOLDER_AS_BYTECODE;
+import static com.surelogic.common.tool.SureLogicToolsPropertiesUtility.SCAN_SOURCE_PACKAGE_AS_BYTECODE;
+import static com.surelogic.common.tool.SureLogicToolsPropertiesUtility.combineListProperties;
+import static com.surelogic.common.tool.SureLogicToolsPropertiesUtility.combineLists;
+import static com.surelogic.common.tool.SureLogicToolsPropertiesUtility.getBytecodePackagePatterns;
+import static com.surelogic.common.tool.SureLogicToolsPropertiesUtility.getBytecodeSourceFolders;
+import static com.surelogic.common.tool.SureLogicToolsPropertiesUtility.getExcludedSourceFolders;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.util.Properties;
 import java.util.StringTokenizer;
 
 import org.apache.tools.ant.BuildException;
@@ -11,10 +22,12 @@ import org.apache.tools.ant.taskdefs.compilers.DefaultCompilerAdapter;
 import org.apache.tools.ant.types.Path;
 import org.apache.tools.ant.util.StringUtils;
 
+import com.surelogic.common.SLUtility;
 import com.surelogic.common.jobs.NullSLProgressMonitor;
 import com.surelogic.common.jobs.SLStatus;
 import com.surelogic.common.jobs.remote.AbstractLocalSLJob;
 import com.surelogic.common.jobs.remote.AbstractRemoteSLJob;
+import com.surelogic.common.tool.SureLogicToolsPropertiesUtility;
 import com.surelogic.sierra.tool.IToolExtension;
 import com.surelogic.sierra.tool.IToolFactory;
 import com.surelogic.sierra.tool.SierraToolConstants;
@@ -172,6 +185,53 @@ public class SierraJavacAdapter extends DefaultCompilerAdapter {
         }
     }
 
+    private static String[] makeAbsolute(String project, String[] excludedPaths) {
+        String[] rv = new String[excludedPaths.length];
+        for (int i = 0; i < rv.length; i++) {
+            rv[i] = '/' + project + '/' + excludedPaths[i];
+        }
+        return rv;
+    }
+
+    private static String[] convertPkgsToSierraStyle(String[] pkgs) {
+        if (pkgs == null || pkgs.length == 0) {
+            return SLUtility.EMPTY_STRING_ARRAY;
+        }
+        final String[] paths = new String[pkgs.length];
+        int i = 0;
+        for (String p : pkgs) {
+            paths[i] = p.replace('.', '/').replaceAll("\\*", "**");
+            i++;
+        }
+        return paths;
+    }
+
+    protected Config loadProperties(Config cfg) {
+        String root = scan.getSrcdir().toString();
+        final Properties props = SureLogicToolsPropertiesUtility
+                .readFileOrNull(scan.getProperties());
+        final String[] excludedFolders = makeAbsolute(root,
+                getExcludedSourceFolders(props));
+        final String[] bytecodeFolders = makeAbsolute(root,
+                getBytecodeSourceFolders(props));
+        final String[] excludedPackages = convertPkgsToSierraStyle(getExcludedSourceFolders(props));
+        final String[] bytecodePackages = convertPkgsToSierraStyle(getBytecodePackagePatterns(props));
+        final String[] combinedPackages = combineLists(excludedPackages,
+                bytecodePackages);
+        if (props != null) {
+            cfg.setExcludedSourceFolders(combineListProperties(
+                    props.getProperty(SCAN_EXCLUDE_SOURCE_FOLDER),
+                    props.getProperty(SCAN_SOURCE_FOLDER_AS_BYTECODE)));
+            cfg.setExcludedPackages(combineListProperties(
+                    props.getProperty(SCAN_EXCLUDE_SOURCE_PACKAGE),
+                    props.getProperty(SCAN_SOURCE_PACKAGE_AS_BYTECODE)));
+            cfg.setExternalFilter(SureLogicToolsPropertiesUtility
+                    .toStringConciseExcludedFoldersAndPackages(excludedFolders,
+                            excludedPackages));
+        }
+        return cfg;
+    }
+
     /**
      * Originally based on
      * DefaultCompilerAdapter.setupJavacCommandlineSwitches()
@@ -245,7 +305,7 @@ public class SierraJavacAdapter extends DefaultCompilerAdapter {
             niceSourceList.append(StringUtils.LINE_SEP);
         }
         /*
-         *
+         * 
          * if (attributes.getSourcepath() != null) { addPath(config,
          * Type.SOURCE, attributes.getSourcepath()); } else { addPath(config,
          * Type.SOURCE, attributes.getSrcdir()); } addPath(config, Type.AUX,
