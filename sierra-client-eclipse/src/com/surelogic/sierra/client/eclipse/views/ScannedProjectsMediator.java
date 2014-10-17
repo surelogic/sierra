@@ -15,6 +15,8 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.progress.UIJob;
 
+import com.surelogic.common.SLUtility;
+import com.surelogic.common.ui.SLImages;
 import com.surelogic.common.ui.TableUtility;
 import com.surelogic.common.ui.jobs.SLUIJob;
 import com.surelogic.sierra.client.eclipse.actions.NewScanAction;
@@ -29,7 +31,7 @@ public class ScannedProjectsMediator extends AbstractSierraViewMediator implemen
 
   final ScannedProjectsView f_view;
   final Table f_table;
-  final String[] f_columnTitles = { "Scanned Project" };
+  final String[] f_columnTitles = { "Time", "Project", "Exclusion Specification (surelogic-tools.properties)" };
 
   public ScannedProjectsMediator(ScannedProjectsView view, Table table) {
     super(view);
@@ -136,7 +138,15 @@ public class ScannedProjectsMediator extends AbstractSierraViewMediator implemen
 
     for (final ScannedProject data : scannedProjects) {
       final TableItem item = new TableItem(f_table, SWT.NONE);
-      initializeTableItem(data, item);
+
+      item.setData(data);
+      int ci = 0;
+      item.setText(ci, SLUtility.toStringDayHMS(data.getWhenScanned()));
+      ci++;
+      item.setText(ci, data.getName());
+      item.setImage(ci, SLImages.getImageForProject(data.getName()));
+      ci++;
+      item.setText(ci, data.getExclusionFilterOrEmptyString());
     }
 
     if (hasFindings)
@@ -151,10 +161,5 @@ public class ScannedProjectsMediator extends AbstractSierraViewMediator implemen
     if (SystemUtils.IS_OS_WINDOWS_XP) {
       f_table.setRedraw(true);
     }
-  }
-
-  void initializeTableItem(final ScannedProject data, final TableItem item) {
-    item.setData(data);
-    item.setText(data.getName());
   }
 }
