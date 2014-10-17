@@ -8,11 +8,13 @@ import static com.surelogic.common.tool.SureLogicToolsPropertiesUtility.combineL
 import static com.surelogic.common.tool.SureLogicToolsPropertiesUtility.combineLists;
 import static com.surelogic.common.tool.SureLogicToolsPropertiesUtility.getBytecodePackagePatterns;
 import static com.surelogic.common.tool.SureLogicToolsPropertiesUtility.getBytecodeSourceFolders;
+import static com.surelogic.common.tool.SureLogicToolsPropertiesUtility.getExcludedPackagePatterns;
 import static com.surelogic.common.tool.SureLogicToolsPropertiesUtility.getExcludedSourceFolders;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.util.Arrays;
 import java.util.Properties;
 import java.util.StringTokenizer;
 
@@ -35,12 +37,14 @@ import com.surelogic.sierra.tool.ToolUtil;
 import com.surelogic.sierra.tool.message.Config;
 import com.surelogic.sierra.tool.message.ToolExtension;
 import com.surelogic.sierra.tool.targets.FileTarget;
+import com.surelogic.sierra.tool.targets.FilteredDirectoryTarget;
 import com.surelogic.sierra.tool.targets.FullDirectoryTarget;
 import com.surelogic.sierra.tool.targets.IToolTarget.Type;
 import com.surelogic.sierra.tool.targets.JarTarget;
 
 public class SierraJavacAdapter extends DefaultCompilerAdapter {
     Path sourcepath = null;
+    String[] excludedPackages = null;
     final SierraScan scan;
 
     public SierraJavacAdapter(SierraScan sierraScan) {
@@ -81,6 +85,7 @@ public class SierraJavacAdapter extends DefaultCompilerAdapter {
     private Config createConfig() throws IOException {
         Config config = new Config();
         config.setProject(scan.getProjectName());
+        excludedPackages = loadProperties(config);
         setupConfig(config, false);
         logAndAddFilesToCompile(config);
 
@@ -177,7 +182,13 @@ public class SierraJavacAdapter extends DefaultCompilerAdapter {
             if (f.exists()) {
                 // System.out.println(type+": "+elt);
                 if (f.isDirectory()) {
-                    config.addTarget(new FullDirectoryTarget(type, f.toURI()));
+                    if (excludedPackages != null) {
+                        config.addTarget(new FilteredDirectoryTarget(type, f
+                                .toURI(), null, excludedPackages));
+                    } else {
+                        config.addTarget(new FullDirectoryTarget(type, f
+                                .toURI()));
+                    }
                 } else {
                     config.addTarget(new JarTarget(type, f.toURI()));
                 }
@@ -185,10 +196,11 @@ public class SierraJavacAdapter extends DefaultCompilerAdapter {
         }
     }
 
-    private static String[] makeAbsolute(String project, String[] excludedPaths) {
+    private static String[] makeAbsolute(String[] excludedPaths) {
         String[] rv = new String[excludedPaths.length];
         for (int i = 0; i < rv.length; i++) {
-            rv[i] = '/' + project + '/' + excludedPaths[i];
+            File f = new File(excludedPaths[i]);
+            rv[i] = f.getAbsolutePath();
         }
         return rv;
     }
@@ -206,19 +218,23 @@ public class SierraJavacAdapter extends DefaultCompilerAdapter {
         return paths;
     }
 
-    protected Config loadProperties(Config cfg) {
+    protected String[] loadProperties(Config cfg) {
         String root = scan.getSrcdir().toString();
         final Properties props = SureLogicToolsPropertiesUtility
                 .readFileOrNull(scan.getProperties());
-        final String[] excludedFolders = makeAbsolute(root,
-                getExcludedSourceFolders(props));
-        final String[] bytecodeFolders = makeAbsolute(root,
-                getBytecodeSourceFolders(props));
-        final String[] excludedPackages = convertPkgsToSierraStyle(getExcludedSourceFolders(props));
+        final String[] excludedFolders = makeAbsolute(getExcludedSourceFolders(props));
+        scan.log("Excluded Folders: " + Arrays.toString(excludedFolders));
+        final String[] bytecodeFolders = makeAbsolute(getBytecodeSourceFolders(props));
+        scan.log("Bytecode Folders: " + Arrays.toString(bytecodeFolders));
+        final String[] excludedPackages = convertPkgsToSierraStyle(getExcludedPackagePatterns(props));
+        scan.log("Excluded Packages: " + Arrays.toString(excludedPackages));
         final String[] bytecodePackages = convertPkgsToSierraStyle(getBytecodePackagePatterns(props));
+        scan.log("Bytecode Packages: " + Arrays.toString(bytecodePackages));
         final String[] combinedPackages = combineLists(excludedPackages,
                 bytecodePackages);
         if (props != null) {
+            scan.log(String.format("Loading properties file at %s.",
+                    scan.getProperties()));
             cfg.setExcludedSourceFolders(combineListProperties(
                     props.getProperty(SCAN_EXCLUDE_SOURCE_FOLDER),
                     props.getProperty(SCAN_SOURCE_FOLDER_AS_BYTECODE)));
@@ -228,8 +244,10 @@ public class SierraJavacAdapter extends DefaultCompilerAdapter {
             cfg.setExternalFilter(SureLogicToolsPropertiesUtility
                     .toStringConciseExcludedFoldersAndPackages(excludedFolders,
                             excludedPackages));
+        } else {
+            scan.log("No properties file loaded.");
         }
-        return cfg;
+        return combinedPackages;
     }
 
     /**
@@ -257,7 +275,14 @@ public class SierraJavacAdapter extends DefaultCompilerAdapter {
          */
 
         if (destDir != null) {
-            cmd.addTarget(new FullDirectoryTarget(Type.BINARY, destDir.toURI()));
+            if (excludedPackages == null) {
+                cmd.addTarget(new FullDirectoryTarget(Type.BINARY, destDir
+                        .toURI()));
+            } else {
+                cmd.addTarget(new FilteredDirectoryTarget(Type.BINARY, destDir
+                        .toURI(), null, excludedPackages));
+            }
+
         }
 
         addPath(cmd, Type.AUX, classpath);
@@ -305,7 +330,7 @@ public class SierraJavacAdapter extends DefaultCompilerAdapter {
             niceSourceList.append(StringUtils.LINE_SEP);
         }
         /*
-         * 
+         *
          * if (attributes.getSourcepath() != null) { addPath(config,
          * Type.SOURCE, attributes.getSourcepath()); } else { addPath(config,
          * Type.SOURCE, attributes.getSrcdir()); } addPath(config, Type.AUX,
