@@ -107,7 +107,7 @@ public final class Projects extends DatabaseObservable<IProjectsObserver>
 
     /**
      * Gets the set of project names in the database.
-     * 
+     *
      * @return the set of project names in the database.
      */
     @NonNull
@@ -117,7 +117,7 @@ public final class Projects extends DatabaseObservable<IProjectsObserver>
 
     /**
      * Gets the set of scanned projects in the database.
-     * 
+     *
      * @return the set of scanned projects in the database.
      */
     @NonNull
@@ -127,7 +127,7 @@ public final class Projects extends DatabaseObservable<IProjectsObserver>
 
     /**
      * Gets the set of project names in the database.
-     * 
+     *
      * @return the set of project names in the database.
      */
     @NonNull
@@ -138,7 +138,7 @@ public final class Projects extends DatabaseObservable<IProjectsObserver>
 
     /**
      * Returns <code>true</code> if the database contains no projects.
-     * 
+     *
      * @return <code>true</code> if the database contains no projects.
      */
     public boolean isEmpty() {
@@ -147,7 +147,7 @@ public final class Projects extends DatabaseObservable<IProjectsObserver>
 
     /**
      * Checks if a project name exists in the database.
-     * 
+     *
      * @param projectName
      *            a project name.
      * @return <code>true</code> if the given project name exists in the
@@ -170,9 +170,10 @@ public final class Projects extends DatabaseObservable<IProjectsObserver>
                             @NonNull
                             final String name = rs.getString(1);
                             @NonNull
-                            final Date whenScanned = rs.getDate(2);
+                            final Date whenScanned = rs.getTimestamp(2);
                             @Nullable
-                            final Date whenScannedPreviously = rs.getDate(3);
+                            final Date whenScannedPreviously = rs
+                                    .getTimestamp(3);
                             @Nullable
                             final String exclusionFilter = rs.getString(4);
                             final ScannedProject info = new ScannedProject(
