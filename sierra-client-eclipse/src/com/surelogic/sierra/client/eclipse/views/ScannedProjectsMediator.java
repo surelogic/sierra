@@ -9,7 +9,12 @@ import org.apache.commons.lang3.SystemUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
@@ -21,9 +26,11 @@ import org.eclipse.ui.progress.UIJob;
 
 import com.surelogic.common.CommonImages;
 import com.surelogic.common.SLUtility;
+import com.surelogic.common.core.JDTUtility;
 import com.surelogic.common.ui.SLImages;
 import com.surelogic.common.ui.TableUtility;
 import com.surelogic.common.ui.jobs.SLUIJob;
+import com.surelogic.sierra.client.eclipse.actions.NewScan;
 import com.surelogic.sierra.client.eclipse.actions.NewScanAction;
 import com.surelogic.sierra.client.eclipse.jobs.DeleteProjectDataJob;
 import com.surelogic.sierra.client.eclipse.model.IProjectsObserver;
@@ -53,31 +60,87 @@ public class ScannedProjectsMediator extends AbstractSierraViewMediator implemen
     createTableColumns();
     f_table.setHeaderVisible(true);
 
-    final Menu menu = new Menu(f_table.getShell(), SWT.POP_UP);
-    f_table.setMenu(menu);
-
-    final MenuItem deleteProject = new MenuItem(menu, SWT.PUSH);
-    deleteProject.setText("Delete Scan");
-    deleteProject.setImage(SLImages.getImage(CommonImages.IMG_RED_X));
-
-    menu.addListener(SWT.Show, new Listener() {
+    final Action deleteProjectScansAction = new Action() {
       @Override
-      public void handleEvent(final Event event) {
-        final boolean projectsSelected = !getSelectedScannedProjects().isEmpty();
-
-        deleteProject.setEnabled(projectsSelected);
-      }
-    });
-
-    deleteProject.addListener(SWT.Selection, new Listener() {
-      public void handleEvent(Event event) {
-        List<String> projectNames = new ArrayList<String>();
+      public void run() {
+        final List<String> projectNames = new ArrayList<String>();
         for (ScannedProject sp : getSelectedScannedProjects()) {
           projectNames.add(sp.getName());
         }
         if (!projectNames.isEmpty()) {
           DeleteProjectDataJob.utility(projectNames, f_table.getShell(), false);
         }
+      }
+    };
+    deleteProjectScansAction.setText("Delete");
+    deleteProjectScansAction.setToolTipText("Delete selected scans");
+    deleteProjectScansAction.setImageDescriptor(SLImages.getImageDescriptor(CommonImages.IMG_RED_X));
+
+    final Action reScanProjectsAction = new Action() {
+      @Override
+      public void run() {
+        final List<IJavaProject> javaProjects = new ArrayList<IJavaProject>();
+        for (ScannedProject sp : getSelectedScannedProjects()) {
+          IJavaProject project = JDTUtility.getJavaProject(sp.getName());
+          if (project != null)
+            javaProjects.add(project);
+        }
+
+        if (!javaProjects.isEmpty())
+          (new NewScan()).scan(javaProjects);
+      }
+    };
+    reScanProjectsAction.setText("Re-Scan");
+    reScanProjectsAction.setToolTipText("Re-scan the selected project");
+    reScanProjectsAction.setImageDescriptor(SLImages.getImageDescriptor(CommonImages.IMG_SIERRA_RE_SCAN));
+
+    f_table.addSelectionListener(new SelectionListener() {
+      public void widgetSelected(SelectionEvent e) {
+        final boolean atLeastOneProjectSelected = !getSelectedScannedProjects().isEmpty();
+
+        deleteProjectScansAction.setEnabled(atLeastOneProjectSelected);
+        reScanProjectsAction.setEnabled(atLeastOneProjectSelected);
+      }
+
+      public void widgetDefaultSelected(SelectionEvent e) {
+        // nothing to do
+      }
+    });
+
+    f_view.addToViewMenu(new Separator());
+    f_view.addToViewMenu(deleteProjectScansAction);
+    f_view.addToViewMenu(reScanProjectsAction);
+
+    f_view.addToActionBar(reScanProjectsAction);
+    f_view.addToActionBar(deleteProjectScansAction);
+
+    final Menu menu = new Menu(f_table.getShell(), SWT.POP_UP);
+    f_table.setMenu(menu);
+
+    // A bit of a hack because we can't just stick the action in the menu
+    final MenuItem reScanProjectMenuItem = new MenuItem(menu, SWT.PUSH);
+    reScanProjectMenuItem.setText(reScanProjectsAction.getText());
+    reScanProjectMenuItem.setImage(SLImages.getImage(CommonImages.IMG_SIERRA_RE_SCAN));
+    reScanProjectMenuItem.addListener(SWT.Selection, new Listener() {
+      public void handleEvent(Event event) {
+        reScanProjectsAction.run();
+      }
+    });
+
+    // A bit of a hack because we can't just stick the action in the menu
+    final MenuItem deleteProjectMenuItem = new MenuItem(menu, SWT.PUSH);
+    deleteProjectMenuItem.setText(deleteProjectScansAction.getText());
+    deleteProjectMenuItem.setImage(SLImages.getImage(CommonImages.IMG_RED_X));
+    deleteProjectMenuItem.addListener(SWT.Selection, new Listener() {
+      public void handleEvent(Event event) {
+        deleteProjectScansAction.run();
+      }
+    });
+
+    menu.addListener(SWT.Show, new Listener() {
+      @Override
+      public void handleEvent(final Event event) {
+        deleteProjectMenuItem.setEnabled(deleteProjectScansAction.isEnabled());
       }
     });
 
