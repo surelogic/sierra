@@ -11,11 +11,14 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.progress.UIJob;
 
+import com.surelogic.common.CommonImages;
 import com.surelogic.common.SLUtility;
 import com.surelogic.common.ui.SLImages;
 import com.surelogic.common.ui.TableUtility;
@@ -48,8 +51,38 @@ public class ScannedProjectsMediator extends AbstractSierraViewMediator implemen
     createTableColumns();
     f_table.setHeaderVisible(true);
 
+    final Menu menu = new Menu(f_table.getShell(), SWT.POP_UP);
+    f_table.setMenu(menu);
+
+    final MenuItem deleteProject = new MenuItem(menu, SWT.PUSH);
+    deleteProject.setText("Delete Scan");
+    deleteProject.setImage(SLImages.getImage(CommonImages.IMG_RED_X));
+
+    menu.addListener(SWT.Show, new Listener() {
+      @Override
+      public void handleEvent(final Event event) {
+        final boolean projectsSelected = !getSelectedScannedProjects().isEmpty();
+
+        deleteProject.setEnabled(projectsSelected);
+      }
+    });
+
     Projects.getInstance().addObserver(this);
     notify(Projects.getInstance());
+  }
+
+  public ArrayList<ScannedProject> getSelectedScannedProjects() {
+    ArrayList<ScannedProject> result = new ArrayList<ScannedProject>();
+    final TableItem[] selectedItems = f_table.getSelection();
+    if (selectedItems != null) {
+      for (TableItem item : selectedItems) {
+        Object data = item.getData();
+        if (data instanceof ScannedProject) {
+          result.add((ScannedProject) data);
+        }
+      }
+    }
+    return result;
   }
 
   @Override
@@ -60,6 +93,8 @@ public class ScannedProjectsMediator extends AbstractSierraViewMediator implemen
 
   @Override
   public void notify(final Projects p) {
+    System.out.println("notify(" + Projects.getInstance() + ")");
+
     /*
      * We are checking if there is anything in the database at all. If not we
      * show a helpful message, if so we display the scanned project information.
@@ -70,16 +105,11 @@ public class ScannedProjectsMediator extends AbstractSierraViewMediator implemen
     final UIJob job = new SLUIJob() {
       @Override
       public IStatus runInUIThread(IProgressMonitor monitor) {
-        if (!f_view.matchesStatus(dataShouldShow)) {
-          /*
-           * Only gets run when the page actually has changed.
-           */
-          f_view.hasData(dataShouldShow);
+        f_view.hasData(dataShouldShow);
 
-          if (dataShouldShow) {
-            updateTableContents(p.getScannedProjects());
-          }
-        }
+        if (dataShouldShow)
+          updateTableContents(p.getScannedProjects());
+
         return Status.OK_STATUS;
       }
     };
