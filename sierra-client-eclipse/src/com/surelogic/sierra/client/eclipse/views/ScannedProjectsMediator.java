@@ -3,6 +3,7 @@ package com.surelogic.sierra.client.eclipse.views;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.lang3.SystemUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -24,6 +25,7 @@ import com.surelogic.common.ui.SLImages;
 import com.surelogic.common.ui.TableUtility;
 import com.surelogic.common.ui.jobs.SLUIJob;
 import com.surelogic.sierra.client.eclipse.actions.NewScanAction;
+import com.surelogic.sierra.client.eclipse.jobs.DeleteProjectDataJob;
 import com.surelogic.sierra.client.eclipse.model.IProjectsObserver;
 import com.surelogic.sierra.client.eclipse.model.Projects;
 import com.surelogic.sierra.client.eclipse.model.ScannedProject;
@@ -67,6 +69,18 @@ public class ScannedProjectsMediator extends AbstractSierraViewMediator implemen
       }
     });
 
+    deleteProject.addListener(SWT.Selection, new Listener() {
+      public void handleEvent(Event event) {
+        List<String> projectNames = new ArrayList<String>();
+        for (ScannedProject sp : getSelectedScannedProjects()) {
+          projectNames.add(sp.getName());
+        }
+        if (!projectNames.isEmpty()) {
+          DeleteProjectDataJob.utility(projectNames, f_table.getShell(), false);
+        }
+      }
+    });
+
     Projects.getInstance().addObserver(this);
     notify(Projects.getInstance());
   }
@@ -93,8 +107,6 @@ public class ScannedProjectsMediator extends AbstractSierraViewMediator implemen
 
   @Override
   public void notify(final Projects p) {
-    System.out.println("notify(" + Projects.getInstance() + ")");
-
     /*
      * We are checking if there is anything in the database at all. If not we
      * show a helpful message, if so we display the scanned project information.
