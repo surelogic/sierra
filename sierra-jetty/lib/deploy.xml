@@ -3,13 +3,6 @@
 	<!-- NOTE: This script is included from .. so its paths are WRONG if it is run directly -->
 
 	<description>Sierra server and portal Jetty with embedded Derby deployment</description>
-
-	<taskdef uri="antlib:com.surelogic.flashlight.ant" resource="com/surelogic/flashlight/ant/antlib.xml">
-		<classpath>
-			<pathelement path="../../flashlight/flashlight-ant/flashlight-ant.jar" />
-		</classpath>
-	</taskdef>
-
 	
 	<target name="deploy-site" depends="deploy-team-server, deploy-root" />
 
