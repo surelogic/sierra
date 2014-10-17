@@ -5,11 +5,6 @@ import java.io.InputStream;
 import java.net.URL;
 
 public final class LibResources {
-    /**
-     * The name of the current version Sierra Ant tasks. This is used for the
-     * directory created by the tool.
-     */
-    public static final String ANT_TASK_VERSION = "sierra-ant-5.5.1";
 
     /**
      * The name of the archive that contains the Sierra Ant tasks.

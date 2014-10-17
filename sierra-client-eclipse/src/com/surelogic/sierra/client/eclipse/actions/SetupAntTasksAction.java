@@ -15,52 +15,50 @@ import com.surelogic.common.FileUtility;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.common.ui.EclipseUIUtility;
+import com.surelogic.sierra.client.eclipse.Activator;
 import com.surelogic.sierra.client.eclipse.LibResources;
 
 public class SetupAntTasksAction implements IWorkbenchWindowActionDelegate {
 
+    private static final String ANT_FOLDER = "sierra-ant";
+    private static final String ANT_ZIP_FORMAT = "sierra-ant-%s.zip";
+
     @Override
     public void run(IAction action) {
+        String target = String.format(ANT_ZIP_FORMAT, Activator.getVersion());
         DirectoryDialog dialog = new DirectoryDialog(
                 EclipseUIUtility.getShell());
         dialog.setText(I18N.msg("sierra.eclipse.dialog.promises.saveAs.title"));
         dialog.setMessage(I18N.msg("sierra.eclipse.dialog.promises.saveAs.msg",
-                LibResources.ANT_TASK_VERSION));
+                target, ANT_FOLDER));
         final String result = dialog.open();
         if (result != null) {
-            final File dir = new File(result, LibResources.ANT_TASK_VERSION);
+            final File file = new File(result, target);
             try {
-                if (dir.exists()) {
+                if (file.exists()) {
                     MessageDialog
                             .openInformation(
                                     EclipseUIUtility.getShell(),
                                     I18N.msg("sierra.eclipse.dialog.promises.saveAs.exists.title"),
                                     I18N.msg(
                                             "sierra.eclipse.dialog.promises.saveAs.exists.msg",
-                                            dir.getPath()));
+                                            file.getPath()));
                     return;
                 }
-                dir.mkdirs();
-                final File tmp = File.createTempFile("ser", "zip");
-                try {
-                    FileUtility.copy(LibResources.ANT_TASK_ZIP,
-                            LibResources.getAntTaskZip(), tmp);
-                    FileUtility.unzipFile(tmp, dir);
-                } finally {
-                    tmp.delete();
-                }
+                FileUtility.copy(LibResources.ANT_TASK_ZIP,
+                        LibResources.getAntTaskZip(), file);
                 MessageDialog
                 .openInformation(
                         EclipseUIUtility.getShell(),
                         I18N.msg("sierra.eclipse.dialog.promises.saveAs.confirm.title"),
                         I18N.msg(
                                         "sierra.eclipse.dialog.promises.saveAs.confirm.msg",
-                                        dir.getPath()));
+                                        file.getPath()));
             } catch (IOException e) {
                 SLLogger.getLogger().log(
                         Level.SEVERE,
                         I18N.err(225, LibResources.ANT_TASK_ZIP,
-                                dir.getAbsolutePath()), e);
+                                file.getAbsolutePath()), e);
             }
         }
     }

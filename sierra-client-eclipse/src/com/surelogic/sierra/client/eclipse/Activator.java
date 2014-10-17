@@ -41,7 +41,7 @@ import com.surelogic.sierra.client.eclipse.views.adhoc.SierraDataSource;
  * The activator class controls the plug-in life cycle
  */
 public final class Activator extends AbstractUIPlugin implements
-        IRunnableWithProgress {
+IRunnableWithProgress {
 
     // The plug-in ID
     public static final String PLUGIN_ID = "com.surelogic.sierra.client.eclipse";
@@ -67,6 +67,10 @@ public final class Activator extends AbstractUIPlugin implements
                     Activator.class.getName()));
         }
         f_plugin = this;
+    }
+
+    public static String getVersion() {
+        return EclipseUtility.getMajorMinorDotVersion(getDefault());
     }
 
     @Override
@@ -126,7 +130,7 @@ public final class Activator extends AbstractUIPlugin implements
             final MarkersHandler handler = MarkersHandler.getInstance();
             handler.addMarkerListener();
             EclipseUIUtility.getPreferences()
-                    .addPropertyChangeListener(handler);
+            .addPropertyChangeListener(handler);
             monitor.worked(1);
 
             new AbstractSierraDatabaseJob("Initializing model") {
@@ -163,7 +167,7 @@ public final class Activator extends AbstractUIPlugin implements
             /*
              * The database schema version is too new, we need to delete it to
              * run with this version of the code.
-             * 
+             *
              * This could occur if the user reverted to a previously installed
              * version of Sierra. (RFR requirement 3.1.15)
              */
@@ -219,7 +223,7 @@ public final class Activator extends AbstractUIPlugin implements
 
     /**
      * Returns the shared instance.
-     * 
+     *
      * @return the shared instance.
      */
     public static Activator getDefault() {
