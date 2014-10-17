@@ -2,6 +2,7 @@ package com.surelogic.sierra.client.eclipse.views;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 
 import org.apache.commons.lang3.SystemUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -31,7 +32,8 @@ public class ScannedProjectsMediator extends AbstractSierraViewMediator implemen
 
   final ScannedProjectsView f_view;
   final Table f_table;
-  final String[] f_columnTitles = { "Time", "Project", "Exclusion Specification (surelogic-tools.properties)" };
+  final String[] f_columnTitles = { "Project", "Scan Time", "Prior Scan Time",
+      "Exclusion Specification (surelogic-tools.properties)" };
 
   public ScannedProjectsMediator(ScannedProjectsView view, Table table) {
     super(view);
@@ -141,10 +143,13 @@ public class ScannedProjectsMediator extends AbstractSierraViewMediator implemen
 
       item.setData(data);
       int ci = 0;
-      item.setText(ci, SLUtility.toStringDayHMS(data.getWhenScanned()));
-      ci++;
       item.setText(ci, data.getName());
       item.setImage(ci, SLImages.getImageForProject(data.getName()));
+      ci++;
+      item.setText(ci, SLUtility.toStringDayHMS(data.getWhenScanned()));
+      ci++;
+      Date priorScanTime = data.getWhenScannedPreviouslyOrNull();
+      item.setText(ci, priorScanTime == null ? "" : SLUtility.toStringDayHMS(priorScanTime));
       ci++;
       item.setText(ci, data.getExclusionFilterOrEmptyString());
     }
