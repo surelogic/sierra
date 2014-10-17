@@ -304,10 +304,10 @@
 		</view>
 
 		<view category="com.surelogic.sierra.client.eclipse"
-			class="com.surelogic.sierra.client.eclipse.jsure.JSureFindingDetailsView"
-			id="com.surelogic.sierra.client.eclipse.jsure.JSureFindingDetailsView"
-			icon="platform:/plugin/com.surelogic.common/lib/images/plus.gif"
-			name="JSure Finding Details">
+			class="com.surelogic.sierra.client.eclipse.views.ScannedProjectsView"
+			id="com.surelogic.sierra.client.eclipse.views.ScannedProjectsView"
+			icon="platform:/plugin/com.surelogic.common/lib/images/sierra_logo.gif"
+			name="Scanned Projects">
 		</view>
 
 		<view category="com.surelogic.sierra.client.eclipse"

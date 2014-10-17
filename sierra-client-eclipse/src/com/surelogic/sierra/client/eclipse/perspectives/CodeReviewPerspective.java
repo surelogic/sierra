@@ -7,6 +7,7 @@ import org.eclipse.ui.IPerspectiveFactory;
 import com.surelogic.common.core.EclipseUtility;
 import com.surelogic.sierra.client.eclipse.views.FindingDetailsView;
 import com.surelogic.sierra.client.eclipse.views.FindingsView;
+import com.surelogic.sierra.client.eclipse.views.ScannedProjectsView;
 import com.surelogic.sierra.client.eclipse.views.SierraServersView;
 import com.surelogic.sierra.client.eclipse.views.SynchronizeDetailsView;
 import com.surelogic.sierra.client.eclipse.views.SynchronizeView;
@@ -33,6 +34,10 @@ public final class CodeReviewPerspective implements IPerspectiveFactory {
     if (EclipseUtility.isLocalTeamServerInstalled()) {
       aboveEditorAreaF.addView(localTeamServerView);
     }
+
+    final IFolderLayout leftOfFindingsSelectorF = layout.createFolder("leftOfFindingsSelector", IPageLayout.LEFT, 0.2f,
+        "aboveEditorArea");
+    leftOfFindingsSelectorF.addView(ScannedProjectsView.ID);
 
     final IFolderLayout leftEditorAreaF = layout.createFolder("leftEditorArea", IPageLayout.LEFT, 0.7f, editorArea);
     leftEditorAreaF.addView(FindingDetailsView.ID);

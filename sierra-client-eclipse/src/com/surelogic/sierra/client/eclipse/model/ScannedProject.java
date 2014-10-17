@@ -10,7 +10,7 @@ import com.surelogic.common.i18n.I18N;
 
 @Immutable
 @ValueObject
-public final class ScannedProject {
+public final class ScannedProject implements Comparable<ScannedProject> {
 
   @NonNull
   private final String f_name;
@@ -99,5 +99,10 @@ public final class ScannedProject {
     } else if (!f_whenScannedPreviously.equals(other.f_whenScannedPreviously))
       return false;
     return true;
+  }
+
+  @Override
+  public int compareTo(ScannedProject other) {
+    return f_name.compareTo(other.f_name);
   }
 }
