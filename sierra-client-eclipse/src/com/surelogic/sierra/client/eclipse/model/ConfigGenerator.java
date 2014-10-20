@@ -76,15 +76,15 @@ import com.surelogic.sierra.tool.targets.ToolTarget;
  */
 public final class ConfigGenerator {
     private static final String[] PLUGINS = {
-            SierraToolConstants.MESSAGE_PLUGIN_ID,
-            AbstractLocalSLJob.COMMON_PLUGIN_ID,
-            SierraToolConstants.TOOL_PLUGIN_ID,
-            /*
-             * SierraToolConstants.PMD_PLUGIN_ID,
-             * SierraToolConstants.FB_PLUGIN_ID,
-             */
-            SierraToolConstants.JUNIT4_PLUGIN_ID,
-            SierraToolConstants.JUNIT_PLUGIN_ID };
+        SierraToolConstants.MESSAGE_PLUGIN_ID,
+        AbstractLocalSLJob.COMMON_PLUGIN_ID,
+        SierraToolConstants.TOOL_PLUGIN_ID,
+        /*
+         * SierraToolConstants.PMD_PLUGIN_ID,
+         * SierraToolConstants.FB_PLUGIN_ID,
+         */
+        SierraToolConstants.JUNIT4_PLUGIN_ID,
+        SierraToolConstants.JUNIT_PLUGIN_ID };
 
     private static final ConfigGenerator INSTANCE = new ConfigGenerator();
     /** The location to store tool results */
@@ -210,7 +210,7 @@ public final class ConfigGenerator {
                     }
                     /*
                      * String qualifiedName = types[0].getFullyQualifiedName();
-                     * 
+                     *
                      * int lastPeriod = qualifiedName.lastIndexOf('.'); if
                      * (lastPeriod != -1) { packageName =
                      * qualifiedName.substring(0, lastPeriod); }
@@ -357,7 +357,7 @@ public final class ConfigGenerator {
                             throw new IllegalStateException(
                                     "Unable to find binaries for project "
                                             + t.getJavaProject()
-                                                    .getElementName());
+                                            .getElementName());
                         }
 
                     }
@@ -499,8 +499,8 @@ public final class ConfigGenerator {
                     BalloonUtility.showMessage(
                             "Unable to run " + f.getName() + " on "
                                     + javaProject.getElementName(),
-                            explanation + ".  Sierra will scan without "
-                                    + f.getName());
+                                    explanation + ".  Sierra will scan without "
+                                            + f.getName());
                 }
             } else {
                 for (final IToolExtension t : f.getExtensions()) {
@@ -626,7 +626,6 @@ public final class ConfigGenerator {
             return;
         }
         handled.add(p);
-
         final Config cfg = copier.config;
         final Properties props = SureLogicToolsPropertiesUtility
                 .readFileOrNull(new File(p.getProject().getLocation().toFile(),
@@ -641,7 +640,7 @@ public final class ConfigGenerator {
                 .getBytecodePackagePatterns(props));
         final String[] combinedPackages = combineLists(excludedPackages,
                 bytecodePackages);
-        if (props != null) {
+        if (toBeAnalyzed && props != null) {
             cfg.setExcludedSourceFolders(combineListProperties(
                     props.getProperty(SCAN_EXCLUDE_SOURCE_FOLDER),
                     props.getProperty(SCAN_SOURCE_FOLDER_AS_BYTECODE)));
@@ -652,7 +651,6 @@ public final class ConfigGenerator {
                     .toStringConciseExcludedFoldersAndPackages(excludedFolders,
                             excludedPackages));
         }
-
         final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
         for (IClasspathEntry cpe : p.getResolvedClasspath(true)) {
             handleClasspathEntry(copier, handled, toBeAnalyzed, root,
@@ -712,7 +710,7 @@ public final class ConfigGenerator {
             Set<IJavaProject> handled, final boolean toBeAnalyzed,
             final IWorkspaceRoot root, String[] excludedPaths,
             String[] excludedPkgs, IClasspathEntry cpe)
-            throws JavaModelException {
+                    throws JavaModelException {
         switch (cpe.getEntryKind()) {
         case IClasspathEntry.CPE_SOURCE:
             if (toBeAnalyzed) {
@@ -864,10 +862,10 @@ public final class ConfigGenerator {
             String pkg = cf.first();
             String dest = pkg == null || pkg.length() == 0 ? cf.second()
                     .getName() : pkg + '/' + cf.second().getName();
-            URI mappedTarget = copy(dest, cf.second());
-            if (mappedTarget != null) {
-                config.addTarget(new FileTarget(Type.BINARY, mappedTarget, null));
-            }
+                    URI mappedTarget = copy(dest, cf.second());
+                    if (mappedTarget != null) {
+                        config.addTarget(new FileTarget(Type.BINARY, mappedTarget, null));
+                    }
         }
 
         void addFileTarget(Type type, IFile target, IResource root) {
@@ -969,7 +967,7 @@ public final class ConfigGenerator {
                 } else {
                     updatedPath = relativePath.length() > 0 ? relativePath
                             + '/' + res.getName() : res.getName();
-                    updatedDest = new File(dest, res.getName());
+                            updatedDest = new File(dest, res.getName());
                 }
                 final IContainer c = (IContainer) res;
                 boolean copied = false;
