@@ -23,16 +23,6 @@
 			<keywordReference id="com.surelogic.sierra.client.key6" />
 		</page>
 		<page
-			class="com.surelogic.sierra.client.eclipse.preferences.ScanDataPreferencePage"
-			id="com.surelogic.sierra.client.eclipse.preferences.ScanDataPreferencePage"
-			name="Scan Data"
-			category="com.surelogic.sierra.client.eclipse.preferences.SierraPreferencePage">
-			<keywordReference id="com.surelogic.sierra.client.key1" />
-			<keywordReference id="com.surelogic.sierra.client.key2" />
-			<keywordReference id="com.surelogic.sierra.client.key5" />
-			<keywordReference id="com.surelogic.sierra.client.key6" />
-		</page>
-		<page
 			class="com.surelogic.sierra.client.eclipse.preferences.ServerInteractionPreferencePage"
 			id="com.surelogic.sierra.client.eclipse.preferences.ServerInteractionPreferencePage"
 			name="Server Interaction"
@@ -47,7 +37,6 @@
 		<keyword label="Scan" id="com.surelogic.sierra.client.key2" />
 		<keyword label="FindBugs" id="com.surelogic.sierra.client.key3" />
 		<keyword label="PMD" id="com.surelogic.sierra.client.key4" />
-		<keyword label="Data" id="com.surelogic.sierra.client.key5" />
 		<keyword label="Analysis" id="com.surelogic.sierra.client.key6" />
 		<keyword label="Server" id="com.surelogic.sierra.client.key7" />
 	</extension>

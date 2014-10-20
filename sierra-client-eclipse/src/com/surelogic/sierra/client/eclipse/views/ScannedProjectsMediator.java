@@ -9,9 +9,11 @@ import org.apache.commons.lang3.SystemUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -32,6 +34,7 @@ import com.surelogic.common.ui.TableUtility;
 import com.surelogic.common.ui.jobs.SLUIJob;
 import com.surelogic.sierra.client.eclipse.actions.NewScan;
 import com.surelogic.sierra.client.eclipse.actions.NewScanAction;
+import com.surelogic.sierra.client.eclipse.jobs.DeleteDatabaseJob;
 import com.surelogic.sierra.client.eclipse.jobs.DeleteProjectDataJob;
 import com.surelogic.sierra.client.eclipse.model.IProjectsObserver;
 import com.surelogic.sierra.client.eclipse.model.Projects;
@@ -76,6 +79,23 @@ public class ScannedProjectsMediator extends AbstractSierraViewMediator implemen
     deleteProjectScansAction.setToolTipText("Delete selected scans");
     deleteProjectScansAction.setImageDescriptor(SLImages.getImageDescriptor(CommonImages.IMG_RED_X));
 
+    final Action deleteDatabaseAction = new Action() {
+      public void run() {
+        final StringBuilder b = new StringBuilder();
+        b.append("Are you sure you want to delete all the ");
+        b.append("Sierra scans in your Eclipse workspace?\n\n");
+        b.append("This action will not ");
+        b.append("change or delete data on any Sierra server.");
+        if (!MessageDialog.openConfirm(f_table.getShell(), "Confirm Delete All Scans", b.toString())) {
+          return; // bail
+        }
+        final Job job = new DeleteDatabaseJob();
+        job.setUser(true);
+        job.schedule();
+      }
+    };
+    deleteDatabaseAction.setText("Delete All Scans");
+
     final Action reScanProjectsAction = new Action() {
       @Override
       public void run() {
@@ -107,6 +127,8 @@ public class ScannedProjectsMediator extends AbstractSierraViewMediator implemen
       }
     });
 
+    f_view.addToViewMenu(new Separator());
+    f_view.addToViewMenu(deleteDatabaseAction);
     f_view.addToViewMenu(new Separator());
     f_view.addToViewMenu(deleteProjectScansAction);
     f_view.addToViewMenu(reScanProjectsAction);
