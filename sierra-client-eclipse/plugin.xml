@@ -307,7 +307,8 @@
 		</view>
 
 		<view category="com.surelogic.sierra.client.eclipse"
-			class="com.surelogic.sierra.client.eclipse.views.SynchronizeView" id="com.surelogic.sierra.client.eclipse.views.SynchronizeView"
+			class="com.surelogic.sierra.client.eclipse.views.SynchronizeView"
+			id="com.surelogic.sierra.client.eclipse.views.SynchronizeView"
 			icon="platform:/plugin/com.surelogic.common/lib/images/sierra_sync.gif"
 			name="Synchronize History">
 		</view>
@@ -336,25 +337,28 @@
 			<perspectiveShortcut id="org.eclipse.jdt.ui.JavaPerspective">
 			</perspectiveShortcut>
 			<viewShortcut
+				id="com.surelogic.sierra.client.eclipse.views.ScannedProjectsView">
+			</viewShortcut>
+			<viewShortcut
 				id="com.surelogic.sierra.client.eclipse.views.selection.FindingsSelectionView">
+			</viewShortcut>
+			<viewShortcut
+				id="com.surelogic.sierra.client.eclipse.views.FindingsView">
+			</viewShortcut>
+			<viewShortcut
+				id="com.surelogic.sierra.client.eclipse.views.FindingDetailsView">
 			</viewShortcut>
 			<viewShortcut
 				id="com.surelogic.sierra.client.eclipse.views.SierraServersView">
 			</viewShortcut>
 			<viewShortcut
-				id="com.surelogic.sierra.client.eclipse.views.FindingDetailsView">
+				id="com.surelogic.sierra.client.eclipse.views.SynchronizeView">
 			</viewShortcut>
 		</perspectiveExtension>
 	</extension>
 
 	<extension point="org.eclipse.ui.perspectiveExtensions">
 		<perspectiveExtension targetID="org.eclipse.jdt.ui.JavaPerspective">
-			<viewShortcut
-				id="com.surelogic.sierra.client.eclipse.views.selection.FindingsSelectionView">
-			</viewShortcut>
-			<viewShortcut
-				id="com.surelogic.sierra.client.eclipse.views.FindingDetailsView">
-			</viewShortcut>
 			<perspectiveShortcut
 				id="com.surelogic.sierra.client.eclipse.perspectives.CodeReviewPerspective">
 			</perspectiveShortcut>
