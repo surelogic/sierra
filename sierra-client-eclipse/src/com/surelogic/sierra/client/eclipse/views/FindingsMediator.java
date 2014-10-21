@@ -54,7 +54,6 @@ import com.surelogic.common.ui.jobs.SLUIJob;
 import com.surelogic.sierra.client.eclipse.Data;
 import com.surelogic.sierra.client.eclipse.SierraUIUtility;
 import com.surelogic.sierra.client.eclipse.actions.NewScanAction;
-import com.surelogic.sierra.client.eclipse.actions.PreferencesAction;
 import com.surelogic.sierra.client.eclipse.dialogs.ExportFindingSetDialog;
 import com.surelogic.sierra.client.eclipse.jobs.AbstractSierraDatabaseJob;
 import com.surelogic.sierra.client.eclipse.model.FindingMutationUtility;
@@ -120,7 +119,8 @@ public class FindingsMediator extends AbstractSierraViewMediator implements IVie
     f_statusLink.addListener(SWT.Selection, new Listener() {
       @Override
       public void handleEvent(Event event) {
-        PreferencesUtil.createPreferenceDialogOn(null, PreferencesAction.PREF_ID, PreferencesAction.FILTER, null).open();
+        PreferencesUtil.createPreferenceDialogOn(null, "com.surelogic.sierra.client.eclipse.preferences.SierraPreferencePage",
+            null, null).open();
       }
     });
 
