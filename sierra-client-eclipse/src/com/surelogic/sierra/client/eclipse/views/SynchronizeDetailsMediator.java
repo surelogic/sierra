@@ -32,170 +32,162 @@ import com.surelogic.sierra.jdbc.finding.SynchOverview;
 
 public class SynchronizeDetailsMediator extends AbstractSierraViewMediator {
 
-	private final Composite f_panel;
-	private final Label f_eventInfo;
-	private final LinkTrail f_detailsComposite;
+  private final Composite f_panel;
+  private final Label f_eventInfo;
+  private final LinkTrail f_detailsComposite;
 
-	protected SynchronizeDetailsMediator(IViewCallback cb, Composite panel,
-			Label eventInfo, LinkTrail detailsComposite) {
-		super(cb);
-		f_panel = panel;
-		f_eventInfo = eventInfo;
-		f_detailsComposite = detailsComposite;
-	}
+  protected SynchronizeDetailsMediator(IViewCallback cb, Composite panel, Label eventInfo, LinkTrail detailsComposite) {
+    super(cb);
+    f_panel = panel;
+    f_eventInfo = eventInfo;
+    f_detailsComposite = detailsComposite;
+  }
 
-	@Override
+  @Override
   public String getHelpId() {
-		return "com.surelogic.sierra.client.eclipse.view-synchronize-history-details";
-	}
+    return "com.surelogic.sierra.client.eclipse.view-synchronize-history-details";
+  }
 
-	@Override
+  @Override
   public String getNoDataI18N() {
-		return "sierra.eclipse.noDataSynchronizeDetails";
-	}
+    return "sierra.eclipse.noDataSynchronizeDetails";
+  }
 
-	@Override
-	public Listener getNoDataListener() {
-		return new Listener() {
-			@Override
+  @Override
+  public Listener getNoDataListener() {
+    return new Listener() {
+      @Override
       public void handleEvent(Event event) {
-				EclipseUIUtility.showView(SynchronizeView.ID);
-			}
-		};
-	}
+        EclipseUIUtility.showView(SynchronizeView.ID);
+      }
+    };
+  }
 
-	@Override
+  @Override
   public void setFocus() {
-		f_detailsComposite.setFocus();
-	}
+    f_detailsComposite.setFocus();
+  }
 
-	@Override
-	public void init() {
-		super.init();
-		f_view.setStatus(IViewCallback.Status.NO_DATA);
-	}
+  @Override
+  public void init() {
+    super.init();
+    f_view.setStatus(IViewCallback.Status.NO_DATA);
+  }
 
-	private void updateEventTableContents(final SynchOverview so)
-			throws Exception {
-		Data.getInstance().withReadOnly(new NullDBTransaction() {
-			@Override
-			public void doPerform(Connection conn) throws Exception {
-				SynchDetail sd = SynchDetail.getSyncDetail(conn, so);
-				final List<AuditDetail> auditList = sd.getAudits();
-				asyncUpdateContentsForUI(new IViewUpdater() {
-					@Override
+  void updateEventTableContents(final SynchOverview so) throws Exception {
+    Data.getInstance().withReadOnly(new NullDBTransaction() {
+      @Override
+      public void doPerform(Connection conn) throws Exception {
+        SynchDetail sd = SynchDetail.getSyncDetail(conn, so);
+        final List<AuditDetail> auditList = sd.getAudits();
+        asyncUpdateContentsForUI(new IViewUpdater() {
+          @Override
           public void updateContentsForUI() {
-						updateEventTableContents(so, auditList);
-					}
-				});
-			}
-		});
-	}
+            updateEventTableContents(so, auditList);
+          }
+        });
+      }
+    });
+  }
 
-	private final Listener f_linkListener = new Listener() {
-		@Override
+  private final Listener f_linkListener = new Listener() {
+    @Override
     public void handleEvent(Event event) {
-			final String name = event.text;
-			final long findingId = Long.parseLong(name);
-			focusOnFindingId(findingId);
-		}
-	};
+      final String name = event.text;
+      final long findingId = Long.parseLong(name);
+      focusOnFindingId(findingId);
+    }
+  };
 
-	private void updateEventTableContents(final SynchOverview syncOverview,
-			final List<AuditDetail> auditList) {
-		f_detailsComposite.removeAll();
-		if (syncOverview == null) {
-			// clearing the view.
-			f_view.hasData(false);
-			return;
-		}
+  void updateEventTableContents(final SynchOverview syncOverview, final List<AuditDetail> auditList) {
+    f_detailsComposite.removeAll();
+    if (syncOverview == null) {
+      // clearing the view.
+      f_view.hasData(false);
+      return;
+    }
 
-		final SimpleDateFormat dateFormat = new SimpleDateFormat(
-				"yyyy/MM/dd 'at' HH:mm:ss");
-		final String projectName = syncOverview.getProject();
-		final int numCommitted = syncOverview.getNumCommitted();
-		final int numReceived = syncOverview.getNumReceived();
-		StringBuilder b = new StringBuilder();
-		b.append(projectName).append(" had ");
-		b.append(numCommitted);
-		b.append(numCommitted == 1 ? " audit" : " audits");
-		b.append(" sent and ");
-		b.append(numReceived);
-		b.append(numReceived == 1 ? " audit" : " audits");
-		b.append(" received on ");
-		b.append(dateFormat.format(syncOverview.getTime()));
-		f_eventInfo.setText(b.toString());
+    final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd 'at' HH:mm:ss");
+    final String projectName = syncOverview.getProject();
+    final int numCommitted = syncOverview.getNumCommitted();
+    final int numReceived = syncOverview.getNumReceived();
+    StringBuilder b = new StringBuilder();
+    b.append(projectName).append(" had ");
+    b.append(numCommitted);
+    b.append(numCommitted == 1 ? " audit" : " audits");
+    b.append(" sent and ");
+    b.append(numReceived);
+    b.append(numReceived == 1 ? " audit" : " audits");
+    b.append(" received on ");
+    b.append(dateFormat.format(syncOverview.getTime()));
+    f_eventInfo.setText(b.toString());
 
-		Map<String, List<Long>> userToAudits = new HashMap<String, List<Long>>();
-		for (AuditDetail ad : auditList) {
-			final String userName = ad.getUser();
-			if (userName == null)
-				continue;
-			List<Long> audits = userToAudits.get(userName);
-			if (audits == null) {
-				audits = new ArrayList<Long>();
-				userToAudits.put(userName, audits);
-			}
-			audits.add(ad.getFindingId());
-		}
-		for (Map.Entry<String, List<Long>> entry : userToAudits.entrySet()) {
-			b = new StringBuilder();
-			List<Long> userAuditList = entry.getValue();
-			Set<Long> userAuditSet = new HashSet<Long>(userAuditList);
-			b.append(userAuditList.size());
-			b.append(" audit");
-			if (userAuditList.size() > 1)
-				b.append("s");
-			b.append(" made on ");
-			b.append(userAuditSet.size());
-			b.append(" finding");
-			if (userAuditSet.size() > 1)
-				b.append("s");
-			for (Long l : userAuditSet) {
-				b.append(" <a href=\"").append(l).append("\">");
-				b.append(l).append("</a>");
-			}
-			f_detailsComposite.addEntry(entry.getKey(), b.toString(),
-					f_linkListener);
-		}
-		f_view.hasData(true);
-		f_panel.layout();
-	}
+    Map<String, List<Long>> userToAudits = new HashMap<String, List<Long>>();
+    for (AuditDetail ad : auditList) {
+      final String userName = ad.getUser();
+      if (userName == null)
+        continue;
+      List<Long> audits = userToAudits.get(userName);
+      if (audits == null) {
+        audits = new ArrayList<Long>();
+        userToAudits.put(userName, audits);
+      }
+      audits.add(ad.getFindingId());
+    }
+    for (Map.Entry<String, List<Long>> entry : userToAudits.entrySet()) {
+      b = new StringBuilder();
+      List<Long> userAuditList = entry.getValue();
+      Set<Long> userAuditSet = new HashSet<Long>(userAuditList);
+      b.append(userAuditList.size());
+      b.append(" audit");
+      if (userAuditList.size() > 1)
+        b.append("s");
+      b.append(" made on ");
+      b.append(userAuditSet.size());
+      b.append(" finding");
+      if (userAuditSet.size() > 1)
+        b.append("s");
+      for (Long l : userAuditSet) {
+        b.append(" <a href=\"").append(l).append("\">");
+        b.append(l).append("</a>");
+      }
+      f_detailsComposite.addEntry(entry.getKey(), b.toString(), f_linkListener);
+    }
+    f_view.hasData(true);
+    f_panel.layout();
+  }
 
-	private void focusOnFindingId(long findingId) {
-		FindingDetailsView.findingSelected(findingId, false);
-	}
+  void focusOnFindingId(long findingId) {
+    FindingDetailsView.findingSelected(findingId, false);
+  }
 
-	public void asyncQueryAndShow(final SynchOverview syncOverview) {
-		if (syncOverview == null) {
-			final Job job = new SLUIJob() {
-				@Override
-				public IStatus runInUIThread(IProgressMonitor monitor) {
-					updateEventTableContents(syncOverview,
-							new ArrayList<AuditDetail>());
-					return Status.OK_STATUS;
-				}
-			};
-			job.schedule();
-		} else {
-			final Job job = new AbstractSierraDatabaseJob(
-					"Updating reading events from server synchronize") {
-				@Override
-				protected IStatus run(IProgressMonitor monitor) {
-					monitor.beginTask("Updating list", IProgressMonitor.UNKNOWN);
-					try {
-						updateEventTableContents(syncOverview);
-					} catch (Exception e) {
-						final int errNo = 59;
-						final String msg = I18N.err(errNo);
-						return SLEclipseStatusUtility.createErrorStatus(errNo,
-								msg, e);
-					}
-					monitor.done();
-					return Status.OK_STATUS;
-				}
-			};
-			job.schedule();
-		}
-	}
+  public void asyncQueryAndShow(final SynchOverview syncOverview) {
+    if (syncOverview == null) {
+      final Job job = new SLUIJob() {
+        @Override
+        public IStatus runInUIThread(IProgressMonitor monitor) {
+          updateEventTableContents(syncOverview, new ArrayList<AuditDetail>());
+          return Status.OK_STATUS;
+        }
+      };
+      job.schedule();
+    } else {
+      final Job job = new AbstractSierraDatabaseJob("Updating reading events from server synchronize") {
+        @Override
+        protected IStatus run(IProgressMonitor monitor) {
+          monitor.beginTask("Updating list", IProgressMonitor.UNKNOWN);
+          try {
+            updateEventTableContents(syncOverview);
+          } catch (Exception e) {
+            final int errNo = 59;
+            final String msg = I18N.err(errNo);
+            return SLEclipseStatusUtility.createErrorStatus(errNo, msg, e);
+          }
+          monitor.done();
+          return Status.OK_STATUS;
+        }
+      };
+      job.schedule();
+    }
+  }
 }

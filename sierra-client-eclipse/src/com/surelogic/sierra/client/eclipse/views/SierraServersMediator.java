@@ -46,6 +46,7 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.browser.IWebBrowser;
 import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
+import org.eclipse.ui.dialogs.PreferencesUtil;
 
 import com.surelogic.common.CommonImages;
 import com.surelogic.common.core.EclipseUtility;
@@ -486,6 +487,15 @@ public final class SierraServersMediator extends AbstractSierraViewMediator impl
   @Override
   public void init() {
     // Actions in reverse order
+    final Action preferencesAction = new Action("Preferences...") {
+      @Override
+      public void run() {
+        PreferencesUtil.createPreferenceDialogOn(null,
+            "com.surelogic.sierra.client.eclipse.preferences.ServerInteractionPreferencePage", null, null).open();
+      }
+    };
+    f_view.addToViewMenu(preferencesAction);
+    f_view.addToViewMenu(new Separator());
     f_view.addToViewMenu(f_serverSyncAction);
     f_view.addToViewMenu(new Separator());
 
