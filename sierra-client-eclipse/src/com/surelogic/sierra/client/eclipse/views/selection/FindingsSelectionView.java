@@ -90,16 +90,6 @@ public final class FindingsSelectionView extends AbstractSierraView<FindingsSele
     /*
      * Allow direct access to the import and export wizards from the view.
      */
-    final Action importAction = new Action("Import Searches...") {
-      @Override
-      public void run() {
-        final FindingSearchImportWizard wizard = new FindingSearchImportWizard();
-        wizard.init(PlatformUI.getWorkbench(), null);
-        final WizardDialog dialog = new WizardDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), wizard);
-        dialog.open();
-      }
-    };
-    addToViewMenu(importAction);
     final Action exportAction = new Action("Export Searches...") {
       @Override
       public void run() {
@@ -109,7 +99,19 @@ public final class FindingsSelectionView extends AbstractSierraView<FindingsSele
         dialog.open();
       }
     };
+    exportAction.setImageDescriptor(SLImages.getImageDescriptor(CommonImages.IMG_EXPORT));
     addToViewMenu(exportAction);
+    final Action importAction = new Action("Import Searches...") {
+      @Override
+      public void run() {
+        final FindingSearchImportWizard wizard = new FindingSearchImportWizard();
+        wizard.init(PlatformUI.getWorkbench(), null);
+        final WizardDialog dialog = new WizardDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), wizard);
+        dialog.open();
+      }
+    };
+    importAction.setImageDescriptor(SLImages.getImageDescriptor(CommonImages.IMG_IMPORT));
+    addToViewMenu(importAction);
 
     return new FindingsSelectionMediator(this, findingsPage, cascadingList, clearSelectionItem, breadcrumbsPanel, breadcrumbsLink,
         porousCountLink, openSearchItem, saveSearchAsItem, deleteSearchItem, savedSelections);
