@@ -250,6 +250,7 @@ public class SierraJavacAdapter extends DefaultCompilerAdapter {
             }
             return combinedPackages;
         }
+
         return new String[] {};
     }
 
@@ -333,7 +334,7 @@ public class SierraJavacAdapter extends DefaultCompilerAdapter {
             niceSourceList.append(StringUtils.LINE_SEP);
         }
         /*
-         * 
+         *
          * if (attributes.getSourcepath() != null) { addPath(config,
          * Type.SOURCE, attributes.getSourcepath()); } else { addPath(config,
          * Type.SOURCE, attributes.getSrcdir()); } addPath(config, Type.AUX,
