@@ -75,7 +75,7 @@ public class SierraScan extends Javac {
 
         if (newFiles.length > 0) {
             File[] newCompileList = new File[compileList.length
-                                             + newFiles.length];
+                    + newFiles.length];
             System.arraycopy(compileList, 0, newCompileList, 0,
                     compileList.length);
             System.arraycopy(newFiles, 0, newCompileList, compileList.length,

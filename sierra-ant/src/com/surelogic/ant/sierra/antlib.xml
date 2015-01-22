@@ -10,5 +10,9 @@
 	<taskdef
 		name="sierra-publish"
 		classname="com.surelogic.ant.sierra.SierraPublish"
-		onerror="ignore" />		
+		onerror="ignore" />
+	<taskdef
+        name="run-sierra"
+        classname="com.surelogic.ant.sierra.RunSierra"
+        onerror="ignore" />     		
 </antlib>

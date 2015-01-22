@@ -62,11 +62,16 @@
     <copy todir="./lib/jaxb">
       <fileset dir="./jaxb"/>
     </copy>
-    
-    <jar destfile="./lib/sierra-ant.jar" basedir="../sierra-ant/bin" />
+
+    <jar destfile="./lib/sierra-ant.jar">
+      <fileset dir="../sierra-ant/bin"/>
+      <zipfileset src="./lib/sierra-message.jar" />
+      <zipfileset src="./lib/sierra-tool.jar" />
+      <zipfileset src="./lib/common.jar" />
+    </jar>
     
   </target>
-  
+
   <target name="zip">
     <zip destfile="./lib/tools/findbugs/com.surelogic.sierra.fb.jar" basedir="./lib/tools/findbugs/bin"/>
     <zip destfile="./lib/tools/pmd/com.surelogic.sierra.pmd.jar" basedir="./lib/tools/pmd/bin"/>
