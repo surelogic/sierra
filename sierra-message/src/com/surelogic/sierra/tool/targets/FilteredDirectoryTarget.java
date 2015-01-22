@@ -136,10 +136,11 @@ public class FilteredDirectoryTarget extends DirectoryTarget {
     if (includePatterns != null) {
       for(IPattern p : includePatterns) {
         if (p.matches(relativePath)) {
-          break include; // now check exclusions
+          return false;
+          //break include; // now check exclusions
         }
       }      
-      return true; // Not included
+      //WRONG return true; // Not included
     }
     if (excludePatterns != null) {
       for(IPattern p : excludePatterns) {
