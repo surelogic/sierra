@@ -86,7 +86,7 @@
 				helpContextId="menu-open-code-review-perspective">
 			</action>
 			<action
-				class="com.surelogic.sierra.client.eclipse.actions.SetupAntTasksAction"
+				class="com.surelogic.sierra.client.eclipse.actions.SaveAntTasksAction"
 				id="com.surelogic.sierra.client.eclipse.actions.SetupAntTasksAction"
 				icon="platform:/plugin/com.surelogic.common/lib/images/jar_saveas.gif"
 				label="Save Ant Task As..."
@@ -98,7 +98,7 @@
 				class="com.surelogic.sierra.client.eclipse.actions.ImportSierraScanAction"
 				id="com.surelogic.sierra.client.eclipse.actions.ImportSierraScanAction"
 				icon="platform:/plugin/com.surelogic.common/lib/images/sierra_load_scan.gif"
-				label="Import Ant Scan..."
+				label="Import Ant/Maven Scan..."
 				menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/client"
 				helpContextId="menu-import-scan">
 			</action>
