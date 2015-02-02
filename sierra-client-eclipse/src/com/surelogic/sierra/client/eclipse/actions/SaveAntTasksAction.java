@@ -30,7 +30,7 @@ public class SaveAntTasksAction implements IWorkbenchWindowActionDelegate {
     dialog.setText(I18N.msg("sierra.eclipse.dialog.ant.saveAs.title"));
     dialog.setMessage(I18N.msg("sierra.eclipse.dialog.ant.saveAs.msg", target));
     final String result = dialog.open();
-    boolean copySuccessful = true;
+    boolean copySuccessful = false;
     Exception ioException = null;
     if (result != null) {
       final File file = new File(result, target);
@@ -41,12 +41,13 @@ public class SaveAntTasksAction implements IWorkbenchWindowActionDelegate {
           return;
         }
         copySuccessful = FileUtility.copy(LibResources.ANT_TASK_ZIP, LibResources.getAntTaskZip(), file);
-        MessageDialog.openInformation(EclipseUIUtility.getShell(), I18N.msg("sierra.eclipse.dialog.ant.saveAs.confirm.title"),
-            I18N.msg("sierra.eclipse.dialog.ant.saveAs.confirm.msg", file.getPath()));
       } catch (IOException e) {
         ioException = e;
       }
-      if (!copySuccessful) {
+      if (copySuccessful) {
+        MessageDialog.openInformation(EclipseUIUtility.getShell(), I18N.msg("sierra.eclipse.dialog.ant.saveAs.confirm.title"),
+            I18N.msg("sierra.eclipse.dialog.ant.saveAs.confirm.msg", file.getPath()));
+      } else {
         final int err = 225;
         final String msg = I18N.err(225, LibResources.ANT_TASK_ZIP, file.getAbsolutePath());
         final IStatus reason = SLEclipseStatusUtility.createErrorStatus(err, msg, ioException);
