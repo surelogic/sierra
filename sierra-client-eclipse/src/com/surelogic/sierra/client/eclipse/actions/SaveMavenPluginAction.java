@@ -19,33 +19,33 @@ import com.surelogic.common.ui.dialogs.ErrorDialogUtility;
 import com.surelogic.sierra.client.eclipse.Activator;
 import com.surelogic.sierra.client.eclipse.LibResources;
 
-public class SaveAntTasksAction implements IWorkbenchWindowActionDelegate {
+public class SaveMavenPluginAction implements IWorkbenchWindowActionDelegate {
 
-  private static final String ANT_ZIP_FORMAT = "sierra-ant-%s.zip";
+  private static final String MAVEN_ZIP_FORMAT = "sierra-maven-%s.zip";
 
   @Override
   public void run(IAction action) {
-    String target = String.format(ANT_ZIP_FORMAT, Activator.getVersion());
+    String target = String.format(MAVEN_ZIP_FORMAT, Activator.getVersion());
     DirectoryDialog dialog = new DirectoryDialog(EclipseUIUtility.getShell());
-    dialog.setText(I18N.msg("sierra.eclipse.dialog.ant.saveAs.title"));
-    dialog.setMessage(I18N.msg("sierra.eclipse.dialog.ant.saveAs.msg", target));
+    dialog.setText(I18N.msg("sierra.eclipse.dialog.maven.saveAs.title"));
+    dialog.setMessage(I18N.msg("sierra.eclipse.dialog.maven.saveAs.msg", target));
     final String result = dialog.open();
     if (result != null) {
       final File file = new File(result, target);
       try {
         if (file.exists()) {
-          MessageDialog.openInformation(EclipseUIUtility.getShell(), I18N.msg("sierra.eclipse.dialog.ant.saveAs.failed.title"),
-              I18N.msg("sierra.eclipse.dialog.ant.saveAs.exists.msg", file.getPath()));
+          MessageDialog.openInformation(EclipseUIUtility.getShell(), I18N.msg("sierra.eclipse.dialog.maven.saveAs.failed.title"),
+              I18N.msg("sierra.eclipse.dialog.maven.saveAs.exists.msg", file.getPath()));
           return;
         }
-        FileUtility.copy(LibResources.ANT_TASK_ZIP, LibResources.getAntTaskZip(), file);
-        MessageDialog.openInformation(EclipseUIUtility.getShell(), I18N.msg("sierra.eclipse.dialog.ant.saveAs.confirm.title"),
-            I18N.msg("sierra.eclipse.dialog.ant.saveAs.confirm.msg", file.getPath()));
+        FileUtility.copy(LibResources.MAVEN_PLUGIN_ZIP, LibResources.getAntTaskZip(), file);
+        MessageDialog.openInformation(EclipseUIUtility.getShell(), I18N.msg("sierra.eclipse.dialog.maven.saveAs.confirm.title"),
+            I18N.msg("sierra.eclipse.dialog.maven.saveAs.confirm.msg", file.getPath()));
       } catch (IOException e) {
         final int err = 225;
-        final String msg = I18N.err(225, LibResources.ANT_TASK_ZIP, file.getAbsolutePath());
+        final String msg = I18N.err(225, LibResources.MAVEN_PLUGIN_ZIP, file.getAbsolutePath());
         IStatus reason = SLEclipseStatusUtility.createErrorStatus(err, msg, e);
-        ErrorDialogUtility.open(EclipseUIUtility.getShell(), I18N.msg("sierra.eclipse.dialog.ant.saveAs.failed.title"), reason,
+        ErrorDialogUtility.open(EclipseUIUtility.getShell(), I18N.msg("sierra.eclipse.dialog.maven.saveAs.failed.title"), reason,
             true);
       }
     }
