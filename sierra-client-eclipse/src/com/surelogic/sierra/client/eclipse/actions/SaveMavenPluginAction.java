@@ -30,6 +30,8 @@ public class SaveMavenPluginAction implements IWorkbenchWindowActionDelegate {
     dialog.setText(I18N.msg("sierra.eclipse.dialog.maven.saveAs.title"));
     dialog.setMessage(I18N.msg("sierra.eclipse.dialog.maven.saveAs.msg", target));
     final String result = dialog.open();
+    boolean copySuccessful = true;
+    Exception ioException = null;
     if (result != null) {
       final File file = new File(result, target);
       try {
@@ -38,13 +40,16 @@ public class SaveMavenPluginAction implements IWorkbenchWindowActionDelegate {
               I18N.msg("sierra.eclipse.dialog.maven.saveAs.exists.msg", file.getPath()));
           return;
         }
-        FileUtility.copy(LibResources.MAVEN_PLUGIN_ZIP, LibResources.getAntTaskZip(), file);
+        copySuccessful = FileUtility.copy(LibResources.MAVEN_PLUGIN_ZIP, LibResources.getAntTaskZip(), file);
         MessageDialog.openInformation(EclipseUIUtility.getShell(), I18N.msg("sierra.eclipse.dialog.maven.saveAs.confirm.title"),
             I18N.msg("sierra.eclipse.dialog.maven.saveAs.confirm.msg", file.getPath()));
       } catch (IOException e) {
+        ioException = e;
+      }
+      if (!copySuccessful) {
         final int err = 225;
         final String msg = I18N.err(225, LibResources.MAVEN_PLUGIN_ZIP, file.getAbsolutePath());
-        IStatus reason = SLEclipseStatusUtility.createErrorStatus(err, msg, e);
+        final IStatus reason = SLEclipseStatusUtility.createErrorStatus(err, msg, ioException);
         ErrorDialogUtility.open(EclipseUIUtility.getShell(), I18N.msg("sierra.eclipse.dialog.maven.saveAs.failed.title"), reason,
             true);
       }
