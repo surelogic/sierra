@@ -2,7 +2,7 @@
 <project name="build-ant-task" default="all">
   <description>Build for SL Ant tasks</description>
 
-    <property name="sierra-ant.zip" value="../sierra-client-eclipse/lib/sierra-ant.zip" />
+  <property name="sierra-ant.zip" value="../sierra-client-eclipse/lib/sierra-ant.zip" />
   
   <target name="all" depends="clean,build,zip"/>
 

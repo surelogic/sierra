@@ -37,8 +37,8 @@ import com.surelogic.sierra.tool.targets.IToolTarget.Type;
 import com.surelogic.sierra.tool.targets.JarTarget;
 
 public class RunSierra extends Task {
-    private static final String LIB_PATH = "sierra/lib";
-    private static final String TOOLS_PATH = "sierra/lib/tools";
+    private static final String LIB_PATH = "lib";
+    private static final String TOOLS_PATH = "lib/tools";
     private String name;
     private Path sources;
     private Path classes;

@@ -2,7 +2,5 @@
 <project default="deploy-site" name="deploy-to-jetty-java-6">
 	<property name="gwt.module" value="com.surelogic.sierra.gwt.SierraPortal"/>
 	
-	<target name="deploy-to-jetty-flashlight" depends="deploy-site-flashlight" />
-	
 	<import file="lib/deploy.xml" />
 </project>

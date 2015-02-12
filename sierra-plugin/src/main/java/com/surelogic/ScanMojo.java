@@ -16,18 +16,19 @@ import org.apache.maven.project.DefaultDependencyResolutionRequest;
 import org.apache.maven.project.DependencyResolutionResult;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.ProjectDependenciesResolver;
-import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.types.Path;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.RepositorySystemSession;
 import org.eclipse.aether.artifact.Artifact;
+import org.eclipse.aether.artifact.DefaultArtifact;
 import org.eclipse.aether.graph.Dependency;
 import org.eclipse.aether.repository.RemoteRepository;
 import org.eclipse.aether.resolution.ArtifactRequest;
 import org.eclipse.aether.resolution.ArtifactResult;
 
 import com.surelogic.ant.sierra.RunSierra;
+import com.surelogic.common.FileUtility;
 
 /**
  * Goal which touches a timestamp file.
@@ -35,8 +36,11 @@ import com.surelogic.ant.sierra.RunSierra;
  *
  */
 @Mojo(name = "scan")
-@Execute(phase = LifecyclePhase.PACKAGE)
+@Execute(phase = LifecyclePhase.COMPILE)
 public class ScanMojo extends AbstractMojo {
+
+    @Parameter(defaultValue = "${project.remotePluginRepositories}", readonly = true)
+    private List<RemoteRepository> pluginRepos;
 
     /**
      * The project's remote repositories to use for the resolution of plugins
@@ -65,9 +69,10 @@ public class ScanMojo extends AbstractMojo {
      */
     @Component
     private RepositorySystem repoSystem;
-    /**
-     * Location of the file.
-     */
+
+    @Parameter(property = "properties", required = false)
+    private File properties;
+
     @Parameter(defaultValue = "${project.build.directory}", property = "outputDir", required = false)
     private File outputDirectory;
     @Parameter(defaultValue = "${project.build.outputDirectory}", property = "binDir", required = false)
@@ -80,19 +85,12 @@ public class ScanMojo extends AbstractMojo {
     @Parameter(defaultValue = "${project.build.testSourceDirectory}", property = "testSrcDir", required = false)
     private File testSourceDirectory;
 
-    @Parameter(defaultValue = "${project.build.resources}", property = "resources", required = false)
-    private File resources;
-    @Parameter(defaultValue = "${project.build.testResources}", property = "testResources", required = false)
-    private File testResources;
-    @Parameter(defaultValue = "${project.artifactId}", property = "project")
+    @Parameter(defaultValue = "${project.artifactId}", property = "project", required = false)
     private String projectName;
-    @Parameter(property = "sourceLevel")
+    @Parameter(property = "sourceLevel", required = false)
     private String sourceLevel;
 
-    @Component
-    MavenProject project;
-
-    @Parameter(property = "toolHome", required = true)
+    @Parameter(property = "toolHome", required = false)
     private File toolHome;
     @Parameter(property = "memoryMaximumSize", required = false)
     private String maxMem;
@@ -101,30 +99,61 @@ public class ScanMojo extends AbstractMojo {
     @Parameter(property = "verbose", required = false)
     private boolean verbose;
 
+    @Parameter(defaultValue = "${plugin.version}", readonly = true)
+    private String version;
+
+    @Component
+    MavenProject project;
+
     private final SimpleDateFormat dateFormat = new SimpleDateFormat(
             ".yyyy.MM.dd-'at'-HH.mm.ss.SSS");
 
     @Override
     public void execute() throws MojoExecutionException {
-        String sourceLevel = calculateSourceLevel();
-        RunSierra rs = new RunSierra();
-        rs.setOutputDir(outputDirectory);
-        rs.setToolHome(toolHome);
-        Path bin = rs.createClasses();
-        bin.createPathElement().setLocation(binDirectory);
-        bin.createPathElement().setLocation(testBinDirectory);
-        Path src = rs.createSources();
-        src.createPathElement().setLocation(sourceDirectory);
-        src.createPathElement().setLocation(testSourceDirectory);
-        rs.setName(projectName);
-        rs.setSourceLevel(sourceLevel);
-        rs.setMemoryInitialSize(initMem);
-        rs.setMemoryMaximumSize(maxMem);
-        rs.setVerbose(verbose);
-        DefaultDependencyResolutionRequest depRequest = new DefaultDependencyResolutionRequest(
-                mavenProject, repoSession);
-        DependencyResolutionResult depResult;
+        File toDelete = null;
         try {
+            String sourceLevel = calculateSourceLevel();
+            RunSierra rs = new RunSierra();
+            rs.setProperties(properties);
+            rs.setOutputDir(outputDirectory);
+            if (toolHome == null || !toolHome.exists()) {
+                File tmp = File.createTempFile("surelogic", "tools");
+                tmp.delete();
+                tmp.mkdir();
+                ArtifactRequest runtimeRequest = new ArtifactRequest();
+                runtimeRequest.setArtifact(new DefaultArtifact(
+                        "com.surelogic:sierra-ant-archive:zip:" + version));
+                runtimeRequest.setRepositories(pluginRepos);
+                ArtifactResult runtimeResult = repoSystem.resolveArtifact(
+                        repoSession, runtimeRequest);
+                File archive = runtimeResult.getArtifact().getFile();
+                FileUtility.unzipFile(archive, tmp);
+                if (toolHome != null) {
+                    File from = new File(tmp, "sierra-ant");
+                    if (!from.renameTo(toolHome)) {
+                        FileUtility.recursiveCopy(from, toolHome);
+                    }
+                    FileUtility.recursiveDelete(tmp);
+                } else {
+                    toolHome = new File(tmp, "sierra-ant");
+                    toDelete = tmp;
+                }
+            }
+            rs.setToolHome(toolHome);
+            Path bin = rs.createClasses();
+            bin.createPathElement().setLocation(binDirectory);
+            bin.createPathElement().setLocation(testBinDirectory);
+            Path src = rs.createSources();
+            src.createPathElement().setLocation(sourceDirectory);
+            src.createPathElement().setLocation(testSourceDirectory);
+            rs.setName(projectName);
+            rs.setSourceLevel(sourceLevel);
+            rs.setMemoryInitialSize(initMem);
+            rs.setMemoryMaximumSize(maxMem);
+            rs.setVerbose(verbose);
+            DefaultDependencyResolutionRequest depRequest = new DefaultDependencyResolutionRequest(
+                    mavenProject, repoSession);
+            DependencyResolutionResult depResult;
             depResult = resolver.resolve(depRequest);
 
             Path cp = rs.createClasspath();
@@ -146,9 +175,16 @@ public class ScanMojo extends AbstractMojo {
             }
 
             rs.execute();
+
+            if (toDelete != null) {
+                FileUtility.recursiveDelete(toDelete);
+            }
+
         } catch (Exception e) {
-            throw new BuildException(e);
+            throw new MojoExecutionException(
+                    "Problem encountered while running task", e);
         }
+
     }
 
     private String calculateSourceLevel() {
@@ -161,9 +197,11 @@ public class ScanMojo extends AbstractMojo {
             if ("org.apache.maven.plugins:maven-compiler-plugin".equals(p
                     .getKey())) {
                 Xpp3Dom dom = (Xpp3Dom) p.getConfiguration();
-                Xpp3Dom child = dom.getChild("source");
-                if (child != null) {
-                    level = child.getValue();
+                if (dom != null) {
+                    Xpp3Dom child = dom.getChild("source");
+                    if (child != null) {
+                        level = child.getValue();
+                    }
                 }
             }
         }
