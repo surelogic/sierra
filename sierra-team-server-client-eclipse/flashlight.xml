@@ -11,7 +11,7 @@
 		<classpath>
 			<pathelement path="${flashlight-ant}/flashlight-ant.jar" />
 			<pathelement path="${flashlight-ant}/flashlight-rewriter.jar" />
-			<pathelement path="${flashlight-ant}/derby.jar" />
+			<pathelement path="${flashlight-ant}/derby-10.11.1.1.jar" />
 			<pathelement path="${flashlight-ant}/asm-3.2.jar" />
 			<pathelement path="${flashlight-ant}/asm-commons-3.2.jar" />
 		</classpath>
