@@ -70,9 +70,6 @@ public class ScanMojo extends AbstractMojo {
     @Component
     private RepositorySystem repoSystem;
 
-    @Parameter(property = "properties", required = false)
-    private File properties;
-
     @Parameter(defaultValue = "${project.build.directory}", property = "outputDir", required = false)
     private File outputDirectory;
     @Parameter(defaultValue = "${project.build.outputDirectory}", property = "binDir", required = false)
@@ -87,9 +84,14 @@ public class ScanMojo extends AbstractMojo {
 
     @Parameter(defaultValue = "${project.artifactId}", property = "project", required = false)
     private String projectName;
+
+    @Parameter(defaultValue = "${plugin.version}", readonly = true)
+    private String version;
+
     @Parameter(property = "sourceLevel", required = false)
     private String sourceLevel;
-
+    @Parameter(property = "properties", required = false)
+    private File properties;
     @Parameter(property = "toolHome", required = false)
     private File toolHome;
     @Parameter(property = "memoryMaximumSize", required = false)
@@ -98,9 +100,6 @@ public class ScanMojo extends AbstractMojo {
     private String initMem;
     @Parameter(property = "verbose", required = false)
     private boolean verbose;
-
-    @Parameter(defaultValue = "${plugin.version}", readonly = true)
-    private String version;
 
     @Component
     MavenProject project;
