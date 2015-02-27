@@ -24,11 +24,11 @@
 
     <target name="install-tools">
         <delete dir="${local-repo}/com" />
-        <exec executable="${maven.executable}">
+        <exec executable="${maven.executable}" failonerror="true">
             <arg value="dependency:purge-local-repository" />
             <arg value="-DmanualInclude=com.surelogic:sierra-ant,com.surelogic:sierra-ant-archive,com.surelogic:sierra-plugin" />
         </exec>
-        <exec executable="${maven.executable}">
+        <exec executable="${maven.executable}" failonerror="true">
             <arg value="deploy:deploy-file" />
             <arg value="-Durl=file://${local-repo}" />
             <arg value="-Dfile=../sierra-ant/lib/sierra-ant.jar" />
@@ -37,7 +37,7 @@
             <arg value="-Dpackaging=jar" />
             <arg value="-Dversion=${release-version}" />
         </exec>
-        <exec executable="${maven.executable}">
+        <exec executable="${maven.executable}" failonerror="true">
             <arg value="deploy:deploy-file" />
             <arg value="-Durl=file://${local-repo}" />
             <arg value="-Dfile=../sierra-client-eclipse/lib/sierra-ant.zip" />
@@ -46,7 +46,7 @@
             <arg value="-Dpackaging=zip" />
             <arg value="-Dversion=${release-version}" />
         </exec>
-        <exec executable="${maven.executable}">
+        <exec executable="${maven.executable}" failonerror="true">
             <arg value="clean" />
             <arg value="deploy" />
             <arg value="eclipse:eclipse" />
