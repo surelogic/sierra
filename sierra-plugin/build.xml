@@ -17,14 +17,13 @@
     
 
     <property name="local-repo" value="libs" />
-    <property name="mvn" value="/home/nathan/java/apache-maven-3.2.5/bin/mvn" />
     <target name="install-tools">
         <delete dir="${local-repo}/com" />
-        <exec executable="${mvn}">
+        <exec executable="mvn">
             <arg value="dependency:purge-local-repository" />
             <arg value="-DmanualInclude=com.surelogic:sierra-ant,com.surelogic:sierra-ant-archive,com.surelogic:sierra-plugin" />
         </exec>
-        <exec executable="${mvn}">
+        <exec executable="mvn">
             <arg value="deploy:deploy-file" />
             <arg value="-Durl=file://${local-repo}" />
             <arg value="-Dfile=../sierra-ant/lib/sierra-ant.jar" />
@@ -33,7 +32,7 @@
             <arg value="-Dpackaging=jar" />
             <arg value="-Dversion=${release-version}" />
         </exec>
-        <exec executable="${mvn}">
+        <exec executable="mvn">
             <arg value="deploy:deploy-file" />
             <arg value="-Durl=file://${local-repo}" />
             <arg value="-Dfile=../sierra-client-eclipse/lib/sierra-ant.zip" />
@@ -42,7 +41,7 @@
             <arg value="-Dpackaging=zip" />
             <arg value="-Dversion=${release-version}" />
         </exec>
-        <exec executable="${mvn}">
+        <exec executable="mvn">
             <arg value="clean" />
             <arg value="deploy" />
             <arg value="eclipse:eclipse" />
