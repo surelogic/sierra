@@ -6,7 +6,8 @@ Bundle-Version: 5.6.0.qualifier
 Require-Bundle: com.surelogic.common,
  com.surelogic.sierra.message,
  org.eclipse.jdt.core,
- org.eclipse.core.runtime
+ org.eclipse.core.runtime,
+ com.surelogic.common.core
 Export-Package: com.surelogic.sierra.tool,
  com.surelogic.sierra.tool.analyzer,
  com.surelogic.sierra.tool.reckoner

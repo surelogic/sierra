@@ -135,6 +135,7 @@ public class ToolUtil {
 						try { 
 							f.init(home, dir);
 						} catch(Throwable e) {
+							LOG.log(Level.WARNING, "Deactivating "+f.getName()+" due to exception during init", e);
 							f.deactivate(e);
 						}
 						factories.add(f);
@@ -244,6 +245,7 @@ public class ToolUtil {
 	static {
 		Set<String> temp = new HashSet<String>(4);
 		temp.add(AbstractLocalSLJob.COMMON_PLUGIN_ID);
+		temp.add(SierraToolConstants.COMMON_CORE_PLUGIN_ID);
 		temp.add(SierraToolConstants.TOOL_PLUGIN_ID);
 		temp.add(SierraToolConstants.MESSAGE_PLUGIN_ID);
 		temp.add(SierraToolConstants.JDT_CORE_PLUGIN_ID);

@@ -11,6 +11,7 @@ public final class SierraToolConstants {
 	 */
 	public static final String JUNIT_PLUGIN_ID = "org.junit";
 	public static final String JUNIT4_PLUGIN_ID = "org.junit4";
+	public static final String COMMON_CORE_PLUGIN_ID = "com.surelogic.common.core";
 	public static final String MESSAGE_PLUGIN_ID = "com.surelogic.sierra.message";
 	public static final String TOOL_PLUGIN_ID = "com.surelogic.sierra.tool";
 	public static final String PMD_PLUGIN_ID = "com.surelogic.sierra.pmd";
