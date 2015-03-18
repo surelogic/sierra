@@ -1,9 +1,11 @@
 package com.surelogic.sierra.tool;
 
-import java.io.File;
+import java.io.*;
 import java.util.Set;
 
-public abstract class AbstractToolExtension implements IToolExtension {
+public abstract class AbstractToolExtension implements IToolExtension, Serializable {
+	private static final long serialVersionUID = -5170464341831533943L;
+	
 	private final String tool;
 	private final String id; 
 	private final String version;

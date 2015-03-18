@@ -1,5 +1,6 @@
 package com.surelogic.sierra.tool;
 
+import java.io.Serializable;
 import java.util.jar.*;
 
 /**
@@ -7,7 +8,9 @@ import java.util.jar.*;
  * 
  * @author edwin
  */
-public class ArtifactType implements Comparable<ArtifactType> {
+public class ArtifactType implements Comparable<ArtifactType>, Serializable {
+	private static final long serialVersionUID = 3705154196337992228L;
+	
 	public final String tool;
 	public final String toolVersion;
 	public final String plugin;
@@ -29,6 +32,11 @@ public class ArtifactType implements Comparable<ArtifactType> {
 	
 	public static ArtifactType create(IToolFactory factory, Manifest manifest,
 			                          String plugin, String type, String category) {
+		return create(factory.getId(), factory.getVersion(), manifest, plugin, type, category);
+	}
+	
+	public static ArtifactType create(String toolId, String toolVersion, Manifest manifest,
+            String plugin, String type, String category) {
 		final Attributes findingTypeMap, categoryMap, scanFilterBlacklist;
 		if (manifest != null) {
 			findingTypeMap = manifest.getAttributes(ToolUtil.FINDING_TYPE_MAPPING_KEY);
@@ -51,7 +59,7 @@ public class ArtifactType implements Comparable<ArtifactType> {
 		if (scanFilterBlacklist != null) {
 			includeInScan = scanFilterBlacklist.getValue(type) != null;
 		}
-		ArtifactType t = new ArtifactType(factory.getId(), factory.getVersion(), 
+		ArtifactType t = new ArtifactType(toolId, toolVersion, 
 				                          plugin, type, category, includeInScan);
 		if (findingTypeMap != null) {
 			String findingType = findingTypeMap.getValue(type);
