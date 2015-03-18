@@ -225,7 +225,9 @@ final class LocalTool extends AbstractLocalSLJob<Config> implements IToolInstanc
         util.addPluginToPath(SierraToolConstants.TOOL_PLUGIN_ID, true);
         util.addPluginToPath(SierraToolConstants.MESSAGE_PLUGIN_ID);
 
-        // FIX which tool needs this?
+        /*
+         *  Previously used by PMD 5 -- no longer in v.5.2.3        
+         *
         if (util.addPluginJarsToPath(SierraToolConstants.JUNIT4_PLUGIN_ID, true, "junit.jar",
                 "junit-4.1.jar")) {
             // Called just to mark it as "used";
@@ -233,6 +235,7 @@ final class LocalTool extends AbstractLocalSLJob<Config> implements IToolInstanc
         } else {
             util.addPluginJarsToPath(SierraToolConstants.JUNIT_PLUGIN_ID, "junit.jar");
         }
+        */
         addToolPluginJars(util.debug, util.getPath());
 
         for (File jar : util.getPath()) {
