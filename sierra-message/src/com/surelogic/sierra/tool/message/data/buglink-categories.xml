@@ -558,6 +558,18 @@
 			practices.
 		</info>
         <filter>
+            <type>CO_COMPARETO_INCORRECT_FLOATING</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>ME_MUTABLE_ENUM_FIELD</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>ME_ENUM_FIELD_SETTER</type>
+            <filtered>false</filtered>
+        </filter>		
+        <filter>
             <type>PZ_DONT_REUSE_ENTRY_OBJECTS_IN_ITERATORS</type>
             <filtered>false</filtered>
         </filter>
@@ -910,6 +922,14 @@
 			find code size related problems.
 		</info>
         <filter>
+            <type>StdCyclomaticComplexity</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>ModifiedCyclomaticComplexity</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
             <type>TooManyFields</type>
             <filtered>false</filtered>
         </filter>
@@ -1203,6 +1223,34 @@
 			that was probably not what the developer intended. We strive
 			for a low false positive rate.
 		</info>
+        <filter>
+            <type>CAA_COVARIANT_ARRAY_ELEMENT_STORE</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>DM_INVALID_MIN_MAX</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>RANGE_ARRAY_INDEX</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>RANGE_ARRAY_OFFSET</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>RANGE_ARRAY_LENGTH</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>RANGE_STRING_INDEX</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>BSHIFT_WRONG_ADD_PRIORITY</type>
+            <filtered>false</filtered>
+        </filter>		
         <filter>
             <type>DMI_DOH</type>
             <filtered>false</filtered>
@@ -2100,6 +2148,42 @@
 			accepted.
 		</info>
         <filter>
+            <type>CAA_COVARIANT_ARRAY_FIELD</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>CAA_COVARIANT_ARRAY_RETURN</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>CAA_COVARIANT_ARRAY_LOCAL</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>UC_USELESS_VOID_METHOD</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>UC_USELESS_CONDITION</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>UC_USELESS_CONDITION_TYPE</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>UC_USELESS_OBJECT</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>UC_USELESS_OBJECT_STACK</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>RV_RETURN_VALUE_IGNORED_NO_SIDE_EFFECT</type>
+            <filtered>false</filtered>
+        </filter>		
+        <filter>
             <type>CommentRequired</type>
             <filtered>false</filtered>
         </filter>
@@ -2395,6 +2479,10 @@
 			Code flaws having to do with threads, locks, and volatiles.
 		</info>
         <filter>
+            <type>DC_PARTIALLY_CONSTRUCTED</type>
+            <filtered>false</filtered>
+        </filter>		
+        <filter>
             <type>JML_JSR166_CALLING_WAIT_RATHER_THAN_AWAIT</type>
             <filtered>false</filtered>
         </filter>
@@ -2566,6 +2654,14 @@
         <info>
 			Code that is vulnerable to attacks from untrusted code
 		</info>
+        <filter>
+            <type>MS_MUTABLE_COLLECTION</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>MS_MUTABLE_COLLECTION_PKGPROTECT</type>
+            <filtered>false</filtered>
+        </filter>		
 		<filter>
             <type>MS_SHOULD_BE_REFACTORED_TO_BE_FINAL</type>
             <filtered>false</filtered>
@@ -2656,6 +2752,26 @@
 			Code that is not necessarily incorrect but may be
 			inefficient.
 		</info>
+        <filter>
+            <type>DM_BOXED_PRIMITIVE_FOR_COMPARE</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>IIL_ELEMENTS_GET_LENGTH_IN_LOOP</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>IIL_PREPARE_STATEMENT_IN_LOOP</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>IIL_PATTERN_COMPILE_IN_LOOP</type>
+            <filtered>false</filtered>
+        </filter>
+        <filter>
+            <type>IIL_PATTERN_COMPILE_IN_LOOP_INDIRECT</type>
+            <filtered>false</filtered>
+        </filter>		
         <filter>
             <type>BX_UNBOXING_IMMEDIATELY_REBOXED</type>
             <filtered>false</filtered>
