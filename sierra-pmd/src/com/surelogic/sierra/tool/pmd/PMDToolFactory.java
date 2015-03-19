@@ -1,36 +1,25 @@
 package com.surelogic.sierra.tool.pmd;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
-import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.jar.Manifest;
 import java.util.logging.Level;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import net.sourceforge.pmd.Rule;
-import net.sourceforge.pmd.RuleSet;
-import net.sourceforge.pmd.RuleSetFactory;
-import net.sourceforge.pmd.RuleSetNotFoundException;
-import net.sourceforge.pmd.lang.Language;
-
+import com.surelogic.common.FileUtility.TempFileFilter;
+import com.surelogic.common.core.jobs.EclipseLocalConfig;
+import com.surelogic.common.jobs.NullSLProgressMonitor;
+import com.surelogic.common.jobs.remote.RemoteSLJobConstants;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.common.xml.Entities;
-import com.surelogic.sierra.tool.AbstractToolExtension;
 import com.surelogic.sierra.tool.AbstractToolFactory;
-import com.surelogic.sierra.tool.ArtifactType;
 import com.surelogic.sierra.tool.IToolExtension;
 import com.surelogic.sierra.tool.IToolInstance;
 import com.surelogic.sierra.tool.ToolUtil;
@@ -38,8 +27,8 @@ import com.surelogic.sierra.tool.analyzer.ILazyArtifactGenerator;
 import com.surelogic.sierra.tool.message.*;
 
 public class PMDToolFactory extends AbstractToolFactory {
-	private static final String PMD_LIB = "pmd-lib";
-	static final String rulesets = "all.xml"; // location of the XML rule file
+	static final String PMD_LIB = "pmd-lib";
+	static final String RULESETS = "all.xml"; // location of the XML rule file
 
 	static final Iterable<RulePair> ERROR = new Iterable<RulePair>() {
 		@Override
@@ -57,24 +46,6 @@ public class PMDToolFactory extends AbstractToolFactory {
 			name = id;
 			stream = is;
 			this.props = props;
-		}
-	}
-
-	static class RuleSetInfo {
-		final File location;
-		final RuleSet ruleset;
-		final boolean isCore;
-		final Manifest props;
-
-		RuleSetInfo(File jar, final RuleSet rs, final boolean core, final Manifest props) {
-			location = jar;
-			ruleset = rs;
-			isCore = core;
-			this.props = props;
-		}
-
-		RuleSetInfo(final RuleSet rs) {
-			this(null, rs, true, null);
 		}
 	}
 
@@ -102,152 +73,100 @@ public class PMDToolFactory extends AbstractToolFactory {
 		return jars;
 	}
 
+	private static final List<IToolExtension> extensions = new ArrayList<IToolExtension>();
+	private static final List<String> rulesetFilenames = new ArrayList<String>();
+	
 	@Override
   public Collection<IToolExtension> getExtensions() {
+		synchronized (PMDToolFactory.class) {
+			return new ArrayList<IToolExtension>(extensions);
+		}
+		/*
 		try {
 			return extractArtifactTypes(getRuleSets());
 		} catch (final RuleSetNotFoundException e) {
 			LOG.log(Level.SEVERE, "Couldn't find rulesets", e);
 		}
 		return Collections.emptySet();
+		*/
 	}
 
-	private static boolean containsRuleSet(final List<RuleSetInfo> sets,
-			final RuleSet set) {
-		for (final RuleSetInfo info : sets) {
-			if (info.ruleset.getFileName().equals(set.getFileName())) {
-				return true;
-			}
-		}
-		return false;
-	}
+//	private static boolean containsRuleSet(final List<RuleSetInfo> sets,
+//			final RuleSet set) {
+//		for (final RuleSetInfo info : sets) {
+//			if (info.ruleset.getFileName().equals(set.getFileName())) {
+//				return true;
+//			}
+//		}
+//		return false;
+//	}
 
-	Collection<IToolExtension> extractArtifactTypes(
-			final List<RuleSetInfo> rulesets) {
-		final List<IToolExtension> extensions = new ArrayList<IToolExtension>();
-		for (final RuleSetInfo info : rulesets) {
-			final Set<ArtifactType> types = new HashSet<ArtifactType>();
-			for (final Rule r : info.ruleset.getRules()) {
-				final ArtifactType t = ArtifactType.create(this, info.props,
-						info.ruleset.getFileName(), r.getName(), r
-								.getRuleSetName());
-				types.add(t);
-			}			
-			final boolean isCore = info.isCore;
-			extensions.add(new AbstractToolExtension(getId(), info.ruleset.getName(), getVersion(),					
-        					                         info.location, types) {
-				@Override
-				public boolean isCore() {
-					return isCore;
-				}
-			});
-		}
-		return extensions;
-	}
+//	static List<RuleSetInfo> getRuleSets() {
+//		final List<File> plugins = findPluginJars(false);
+//		final ClassLoader cl = ToolUtil.computeClassLoader(
+//				AbstractPMDTool.class.getClassLoader(), plugins);
+//		final RuleSetFactory ruleSetFactory = new RuleSetFactory();
+//		final List<RuleSetInfo> rulesets = new ArrayList<RuleSetInfo>();
+//		for (final RuleSet s : getDefaultRuleSets()) {
+//			rulesets.add(new RuleSetInfo(s));
+//		}
+//
+//		// Add in plugin rulesets
+//		for (final File jar : findPluginJars(false)) {
+//			try {
+//				for (final RulePair pair : findRuleSetsInJar(jar)) {
+//					if (pair != null) {		
+//						final RuleSet set = ruleSetFactory.createRuleSet(
+//								pair.stream, cl);
+//						if (!containsRuleSet(rulesets, set)) {
+//							if (set.getFileName() == null) {
+//								set.setFileName(pair.name);
+//							}
+//							rulesets
+//									.add(new RuleSetInfo(jar, set, false, pair.props));
+//						}
+//					}
+//				}
+//			} catch (final IOException e) {
+//				LOG.log(Level.WARNING, "Problem while processing "
+//						+ jar.getAbsolutePath(), e);
+//			}
+//		}
+//		// RuleSet ruleset = ruleSetFactory.createSingleRuleSet(rulesets);
+//		return rulesets;
+//	}
 
-	static List<RuleSet> getDefaultRuleSets() throws RuleSetNotFoundException {
-		final List<RuleSet> sets = new ArrayList<RuleSet>();
+//	static List<RuleSetInfo> getSelectedRuleSets(String tool, Config c) {
+//		Set<String> selected = new HashSet<String>();
+//		for(ToolExtension e : c.getExtensions()) {
+//			if (tool.equals(e.getTool())) {
+//				selected.add(e.getId());
+//			}
+//		}
+//		// Remove unselected RuleSetInfos
+//		List<RuleSetInfo> rules = getRuleSets();
+//		Iterator<RuleSetInfo> it = rules.iterator();
+//		while (it.hasNext()) {
+//			RuleSetInfo r = it.next();
+//			if (!r.isCore && !selected.contains(r.ruleset.getName())) {
+//				it.remove();
+//			}
+//		}
+//		return rules;
+//	}
 
-		// only the default rules
-		final RuleSetFactory ruleSetFactory = new RuleSetFactory();
-		final Iterator<RuleSet> it = ruleSetFactory.getRegisteredRuleSets();
-		while (it.hasNext()) {
-			final RuleSet ruleset = it.next();			
-			final Language lang = null;/*ruleset.getLanguage();
-			if ("Android Rules".equals(ruleset.getName())) {
-				continue;
-			}
-			*/
-			if (!hasJavaRules(ruleset)) {
-				continue;
-			}
-
-			if (lang == null || Language.JAVA.equals(lang)) {
-				// System.out.println("Found "+ruleset.getName()+" in "+ruleset.getFileName());
-				sets.add(ruleset);
-			}
-
-		}
-		return sets;
-	}
-
-	private static boolean hasJavaRules(RuleSet ruleset) {
-		for(Rule r : ruleset.getRules()) {
-			if (Language.JAVA.equals(r.getLanguage())) {
-				return true;
-			}
- 		}
-		return false;
-	}
-
-	static List<RuleSetInfo> getRuleSets() throws RuleSetNotFoundException {
-		final List<File> plugins = findPluginJars(false);
-		final ClassLoader cl = ToolUtil.computeClassLoader(
-				AbstractPMDTool.class.getClassLoader(), plugins);
-		final RuleSetFactory ruleSetFactory = new RuleSetFactory();
-		final List<RuleSetInfo> rulesets = new ArrayList<RuleSetInfo>();
-		for (final RuleSet s : getDefaultRuleSets()) {
-			rulesets.add(new RuleSetInfo(s));
-		}
-
-		// Add in plugin rulesets
-		for (final File jar : findPluginJars(false)) {
-			try {
-				for (final RulePair pair : findRuleSetsInJar(jar)) {
-					if (pair != null) {		
-						throw new UnsupportedOperationException();
-						/*
-						final RuleSet set = ruleSetFactory.createRuleSet(
-								pair.stream, cl);
-						if (!containsRuleSet(rulesets, set)) {
-							if (set.getFileName() == null) {
-								set.setFileName(pair.name);
-							}
-							rulesets
-									.add(new RuleSetInfo(jar, set, false, pair.props));
-						}
-						*/
-					}
-				}
-			} catch (final IOException e) {
-				LOG.log(Level.WARNING, "Problem while processing "
-						+ jar.getAbsolutePath(), e);
-			}
-		}
-		// RuleSet ruleset = ruleSetFactory.createSingleRuleSet(rulesets);
-		return rulesets;
-	}
-
-	static List<RuleSetInfo> getSelectedRuleSets(String tool, Config c) throws RuleSetNotFoundException {
-		Set<String> selected = new HashSet<String>();
-		for(ToolExtension e : c.getExtensions()) {
-			if (tool.equals(e.getTool())) {
-				selected.add(e.getId());
-			}
-		}
-		// Remove unselected RuleSetInfos
-		List<RuleSetInfo> rules = getRuleSets();
-		Iterator<RuleSetInfo> it = rules.iterator();
-		while (it.hasNext()) {
-			RuleSetInfo r = it.next();
-			if (!r.isCore && !selected.contains(r.ruleset.getName())) {
-				it.remove();
-			}
-		}
-		return rules;
-	}
-	
 	/**
 	 * @return the directory containing all.xml file
 	 */
-	static File createAllXml() {
-		return createRulesXml(rulesets);
+	File createAllXml() {
+		initToolExtensions(getVersion());
+		return createRulesXml(RULESETS);
 	}
 	
 	/**
 	 * @return the directory containing the xml file
 	 */
-	static File createRulesXml(final String filename) {
+	static synchronized File createRulesXml(final String filename) {
 		final File lib = new File(ToolUtil.getSierraToolDirectory(), PMD_LIB);
 		if (!lib.exists()) {
 			lib.mkdirs();
@@ -262,18 +181,16 @@ public class PMDToolFactory extends AbstractToolFactory {
 				allXml.delete();
 			}
 			final PrintWriter pw = new PrintWriter(allXml);
-			generateRulesXML(pw, getRuleSets());
+			generateRulesXML(pw, rulesetFilenames);
 			pw.close();
 			return lib;
-		} catch (final RuleSetNotFoundException e) {
-			LOG.log(Level.SEVERE, "Problem getting rulesets", e);
 		} catch (final FileNotFoundException e) {
-			LOG.log(Level.SEVERE, "Couldn't create " + rulesets, e);
+			LOG.log(Level.SEVERE, "Couldn't create " + filename, e);
 		}
 		return null;
 	}
 
-	static void generateRulesXML(final PrintWriter pw, List<RuleSetInfo> rulesets) {
+	static void generateRulesXML(final PrintWriter pw, List<String> ruleSetFileNames) {
 		pw.println("<?xml version=\"1.0\"?>");
 		final StringBuilder b = new StringBuilder();
 		Entities.start("ruleset", b);
@@ -293,13 +210,9 @@ public class PMDToolFactory extends AbstractToolFactory {
 		b.setLength(0);
 
 		Entities.createTag("description", "Custom Sierra RuleSet", b);
-		for (final RuleSetInfo info : rulesets) {
-			final RuleSet rs = info.ruleset;
+		for (final String fileName : ruleSetFileNames) {
 			Entities.start("rule", b);
-			if (rs.getFileName() == null) {
-				System.out.println(rs.getName());
-			}
-			Entities.addAttribute("ref", rs.getFileName(), b);
+			Entities.addAttribute("ref", fileName, b);
 			b.append("/>\n");
 			pw.append(b);
 			b.setLength(0);
@@ -324,10 +237,12 @@ public class PMDToolFactory extends AbstractToolFactory {
 		 */
 		final ZipEntry ze = zf.getEntry("rulesets/rulesets.properties");
 		if (ze == null) {
+			zf.close();
 			return null;
 		}
 		final InputStream is = zf.getInputStream(ze);
 		if (is == null) {
+			zf.close();
 			return ERROR;
 		}
 		final Properties props = new Properties();
@@ -335,6 +250,7 @@ public class PMDToolFactory extends AbstractToolFactory {
 		is.close();
 		final String names = props.getProperty("rulesets.filenames");
 		if (names == null) {
+			zf.close();
 			return ERROR;
 		}
 		final StringTokenizer st = new StringTokenizer(names, ",");
@@ -356,6 +272,8 @@ public class PMDToolFactory extends AbstractToolFactory {
 				}
 			}
 		}
+		zf.close();
+		
 		final Manifest findingTypeProps = ft_props;
 		return new Iterable<RulePair>() {
 			@Override
@@ -444,5 +362,87 @@ public class PMDToolFactory extends AbstractToolFactory {
 			}
 		}
 		return valid;
+	}
+	
+	public static final TempFileFilter filter = new TempFileFilter("pmd", ".rulesets");
+	
+	@Override
+	public void init(File toolHome, File pluginDir) {
+		super.init(toolHome, pluginDir);		
+		initToolExtensions(getVersion());
+	}
+	
+	private static synchronized void initToolExtensions(String version) {
+		List<IToolExtension> exts = null;
+		List<String> names = null;
+		try {
+			if (System.getProperty(RemoteSLJobConstants.RUNNING_REMOTELY) != null) {
+				// Initialize directly
+				exts = RemotePMDRuleSetQueryJob.getToolExtensions(version);
+				names = RemotePMDRuleSetQueryJob.getRuleSetFileNames();
+			} else {				
+				File resultsDir = filter.createTempFolder();
+				EclipseLocalConfig cfg = new EclipseLocalConfig(1024, resultsDir);
+				new LocalPMDRuleSetQueryJob("Querying PMD about its rulesets", 100, cfg, version).run(new NullSLProgressMonitor());
+				exts = readToolExtensions(resultsDir);	
+				names = readRuleSetFilenames(resultsDir);
+			}
+		} catch (IOException e) {
+			LOG.log(Level.SEVERE, "Unable to query PMD about its rulesets", e);
+		}
+		if (exts != null) {
+			extensions.clear();
+			extensions.addAll(exts);
+		}
+		if (names != null) {
+			rulesetFilenames.clear();
+			rulesetFilenames.addAll(names);
+		}
+	}
+	
+	private static synchronized List<IToolExtension> readToolExtensions(File resultsDir) {
+		File results = new File(resultsDir, RemotePMDRuleSetQueryJob.TOOL_EXTENSIONS);
+		List<IToolExtension> exts = null;
+		if (results.isFile()) {
+			try {
+				ObjectInputStream in = new ObjectInputStream(new FileInputStream(results));
+				exts = new ArrayList<IToolExtension>();
+				while (in.available() > 0) {
+					exts.add((IToolExtension) in.readObject());
+				}				
+				in.close();
+			} catch (IOException e) {
+				LOG.log(Level.SEVERE, "Unable to read resulting tool extensions", e);
+				exts = null;
+			} catch (ClassNotFoundException e) {
+				LOG.log(Level.SEVERE, "Unable to read resulting tool extensions, due to missing class", e);
+				exts = null;
+			}
+		} else {
+			LOG.severe("Unable to find "+results);
+		}
+		return exts;
+	}
+	
+	private static synchronized List<String> readRuleSetFilenames(File resultsDir) {
+		File results = new File(resultsDir, RemotePMDRuleSetQueryJob.RULESET_LOCATIONS);
+		List<String> names = null;
+		if (results.isFile()) {
+			try {
+				BufferedReader in = new BufferedReader(new FileReader(results));
+				String line = null;
+				names = new ArrayList<String>();
+				while ((line = in.readLine()) != null) {
+					names.add(line);
+				}				
+				in.close();
+			} catch (IOException e) {
+				LOG.log(Level.SEVERE, "Unable to read resulting filenames", e);
+				names = null;
+			}
+		} else {
+			LOG.severe("Unable to find "+results);
+		}
+		return names;
 	}
 }

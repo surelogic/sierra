@@ -19,7 +19,9 @@ import net.sourceforge.pmd.RuleContext;
 import net.sourceforge.pmd.RuleSetFactory;
 import net.sourceforge.pmd.RuleViolation;
 import net.sourceforge.pmd.RulesetsFactoryUtils;
+import net.sourceforge.pmd.lang.Language;
 import net.sourceforge.pmd.lang.LanguageVersion;
+import net.sourceforge.pmd.lang.java.JavaLanguageModule;
 import net.sourceforge.pmd.renderers.AbstractRenderer;
 import net.sourceforge.pmd.renderers.Renderer;
 import net.sourceforge.pmd.util.datasource.DataSource;
@@ -57,9 +59,11 @@ public class AbstractPMDTool extends AbstractToolInstance {
         config.setSourceEncoding(encoding);
 
         final String sourceLevel = getOption(SOURCE_LEVEL);
-        final LanguageVersion sourceType;
+        final Language java = new JavaLanguageModule();
+        LanguageVersion sourceType = java.getVersion(sourceLevel);
+        /*
         if ("1.4".equals(sourceLevel)) {
-            sourceType = LanguageVersion.JAVA_14;
+            sourceType = java.getVersion(sourceLevel);
         } else if ("1.5".equals(sourceLevel)) {
             sourceType = LanguageVersion.JAVA_15;
         } else if ("1.3".equals(sourceLevel)) {
@@ -72,6 +76,10 @@ public class AbstractPMDTool extends AbstractToolInstance {
             sourceType = LanguageVersion.JAVA_18;
         } else {
             sourceType = LanguageVersion.JAVA_16;
+        }
+        */
+        if (sourceType == null) {
+        	sourceType = java.getDefaultVersion();
         }
         config.setDefaultLanguageVersion(sourceType);
 

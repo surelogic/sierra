@@ -83,7 +83,7 @@ public final class ConfigGenerator {
          * SierraToolConstants.PMD_PLUGIN_ID,
          * SierraToolConstants.FB_PLUGIN_ID,
          */
-        SierraToolConstants.JUNIT4_PLUGIN_ID,
+        //SierraToolConstants.JUNIT4_PLUGIN_ID,
         SierraToolConstants.JUNIT_PLUGIN_ID };
 
     private static final ConfigGenerator INSTANCE = new ConfigGenerator();
@@ -118,6 +118,8 @@ public final class ConfigGenerator {
         for (String id : PLUGINS) {
             getDirectoryOfPlugin(id);
         }
+        getDirectoryOfPlugin(SierraToolConstants.JUNIT4_PLUGIN_ID, false);
+        
         for (String id : Tools.getToolPluginIds()) {
             getDirectoryOfPlugin(id);
         }
@@ -125,11 +127,17 @@ public final class ConfigGenerator {
         getDirectoryOfAllPlugins(SierraToolConstants.JDT_CORE_PLUGIN_ID);
     }
 
-    private void getDirectoryOfPlugin(String id) {
+    private void getDirectoryOfPlugin(String id) { 
+    	getDirectoryOfPlugin(id, true);
+    }
+    
+    private void getDirectoryOfPlugin(String id, boolean warnIfAbsent) {
         try {
             pluginDirs.put(id, EclipseUtility.getDirectoryOf(id));
         } catch (IllegalStateException e) {
-            System.out.println("Couldn't find plugin: " + id);
+        	if (warnIfAbsent) {
+        		System.out.println("Couldn't find plugin: " + id);
+        	}
         }
     }
 

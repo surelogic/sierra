@@ -37,8 +37,7 @@ public final class CPD5_0Tool extends AbstractToolInstance {
 		String encodingString = System.getProperty("file.encoding");
 		int minimumTokens = 100;
 
-		LanguageFactory f = new LanguageFactory();
-		Language language = f.createLanguage(languageString);
+		Language language = LanguageFactory.createLanguage(languageString);
 		final CPDConfiguration config = new CPDConfiguration(); //minimumTokens, language, encodingString);					
 		config.setMinimumTileSize(minimumTokens);
 		config.setLanguage(language);

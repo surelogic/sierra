@@ -473,6 +473,7 @@ public final class MessageWarehouse {
                     }
                 }
             }
+            zip.close();
         } catch (final FileNotFoundException e) {
             throw new IllegalArgumentException("File with name "
                     + runDocument.getName() + " does not exist.", e);
