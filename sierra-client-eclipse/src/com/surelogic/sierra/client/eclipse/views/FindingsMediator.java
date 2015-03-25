@@ -126,9 +126,9 @@ public class FindingsMediator extends AbstractSierraViewMediator implements IVie
 
     EclipseUtility.addPreferenceChangeListener(this);
     SelectionManager.getInstance().addObserver(this);
-    Selection current = SelectionManager.getInstance().getWorkingSelection();
+    final Selection current = SelectionManager.getInstance().getWorkingSelection();
     if (current != null) {
-    	current.addObserver(this);
+      current.addObserver(this);
     }
     Projects.getInstance().addObserver(this);
     notify(Projects.getInstance());
