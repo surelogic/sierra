@@ -14,8 +14,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import sun.misc.BASE64Decoder;
-
+import com.surelogic.common.base64.Base64;
 import com.surelogic.sierra.jdbc.user.ServerUserManager;
 import com.surelogic.sierra.jdbc.user.User;
 
@@ -60,13 +59,7 @@ public class BasicSecurityFilter implements Filter {
 				if (basic.equalsIgnoreCase("Basic")) {
 					final String credentials = st.nextToken();
 
-					// This example uses sun.misc.* classes.
-					// You will need to provide your own
-					// if you are not comfortable with that.
-
-					final BASE64Decoder decoder = new BASE64Decoder();
-					final String userPass = new String(decoder
-							.decodeBuffer(credentials));
+					final String userPass = new String(Base64.decode(credentials));
 
 					// The decoded string is in the form
 					// "userID:password".
