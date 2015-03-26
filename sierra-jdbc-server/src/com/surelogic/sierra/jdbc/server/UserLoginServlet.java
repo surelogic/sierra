@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import com.surelogic.common.base64.Base64;
+import com.surelogic.common.SLUtility;
 import com.surelogic.sierra.jdbc.user.ServerUserManager;
 import com.surelogic.sierra.jdbc.user.User;
 
@@ -30,39 +30,29 @@ import com.surelogic.sierra.jdbc.user.User;
  */
 public class UserLoginServlet extends HttpServlet {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 3047892708417176135L;
+  private static final long serialVersionUID = 3047892708417176135L;
 
-	@Override
-	protected void service(final HttpServletRequest request,
-			final HttpServletResponse response) throws ServletException,
-			IOException {
-		final HttpSession session = request.getSession();
-		final String userName = request.getParameter(SecurityHelper.AUTH_NAME);
-		final String password64 = request
-				.getParameter(SecurityHelper.AUTH_PASS);
-		final String password = new String(Base64.decode(password64), "UTF-8");
-		String context = request.getParameter(SecurityHelper.AUTH_REDIRECT);
-		if (context == null) {
-			context = "/";
-		}
-		if (userName != null && password != null) {
-			final User u = ConnectionFactory.getInstance().withReadOnly(
-					new ServerTransaction<User>() {
+  @Override
+  protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
+    final HttpSession session = request.getSession();
+    final String userName = request.getParameter(SecurityHelper.AUTH_NAME);
+    final String password64 = request.getParameter(SecurityHelper.AUTH_PASS);
+    final String password = SLUtility.decodeBase64(password64);
+    String context = request.getParameter(SecurityHelper.AUTH_REDIRECT);
+    if (context == null) {
+      context = "/";
+    }
+    if (userName != null && password != null) {
+      final User u = ConnectionFactory.getInstance().withReadOnly(new ServerTransaction<User>() {
 
-						public User perform(final Connection conn,
-								final Server server) throws Exception {
-							return ServerUserManager.getInstance(conn).login(
-									userName, password);
-						}
-					});
-			if (u != null) {
-				session.setAttribute(SecurityHelper.USER, u);
-			}
-			SecurityHelper.writeRedirect(response.getOutputStream(), context);
-		}
-	}
-
+        public User perform(final Connection conn, final Server server) throws Exception {
+          return ServerUserManager.getInstance(conn).login(userName, password);
+        }
+      });
+      if (u != null) {
+        session.setAttribute(SecurityHelper.USER, u);
+      }
+      SecurityHelper.writeRedirect(response.getOutputStream(), context);
+    }
+  }
 }
