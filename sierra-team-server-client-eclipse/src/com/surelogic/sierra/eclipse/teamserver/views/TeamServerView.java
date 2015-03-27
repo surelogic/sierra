@@ -27,7 +27,7 @@ import com.surelogic.common.ui.SLImages;
 
 public class TeamServerView extends ViewPart {
 
-  private TeamServerMediator f_mediator = null;
+  TeamServerMediator f_mediator = null;
 
   @Override
   public void createPartControl(Composite parent) {
