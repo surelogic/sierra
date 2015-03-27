@@ -1,11 +1,2 @@
-/common.jar
-/derby-10.11.1.1.jar
-/derbyclient.jar
-/jsr173_1.0_api.jar
-/jaxb-xjc.jar
-/jaxb-impl.jar
-/jaxb-api.jar
-/jaxb1-impl.jar
-/activation.jar
-/sjsxp.jar
+/derby*.jar
 /mail.jar
