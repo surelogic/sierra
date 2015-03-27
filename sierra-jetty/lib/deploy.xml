@@ -1,22 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="server-deployment" xmlns:flashlight="antlib:com.surelogic.flashlight.ant">
   <!-- NOTE: This script is included from .. so its paths are WRONG if it 
-    is run directly -->
+    is run directly from within the lib directory -->
 
   <description>Sierra server and portal Jetty with embedded Derby
     deployment</description>
 
+  <!-- The path to the Jetty installation (usually the jetty project) -->
+  <property name="jetty.dir" value="../jetty" />
+
   <property name="gwt.module" value="com.surelogic.sierra.gwt.SierraPortal" />
 
-  <target name="deploy-site" depends="deploy-team-server, deploy-root" />
-
-  <target name="deploy-team-server">
-    <!-- Update undeploy-app with any changes made to the deployment -->
-    <copy todir="../jetty/etc">
+  <target name="deploy-site">
+    <echo>Deploying Sierra Team Server to ${jetty.dir}</echo>
+    <!-- Be sure to update undeploy-site with any changes made to the deployment -->
+    <copy todir="${jetty.dir}/etc">
       <fileset file="./etc/sierra-embedded-derby.xml" />
       <fileset file="./etc/keystore" />
     </copy>
-    <copy todir="../jetty/lib/ext">
+    <copy todir="${jetty.dir}/lib/ext">
       <fileset file="./lib/mail.jar" />
       <fileset dir="../../common/common/lib/runtime">
         <include name="derby*.jar" />
@@ -66,17 +68,14 @@
       <arg value="../sierra-portal/www" />
       <arg value="${gwt.module}" />
     </java>
-    <war destfile="../jetty/webapps/sl.war" webxml="../sierra-portal/web.xml">
+    <war destfile="${jetty.dir}/webapps/sl.war" webxml="../sierra-portal/web.xml">
       <fileset
         dir="../sierra-portal/www/com.surelogic.sierra.gwt.SierraPortal" />
       <classes dir="../sierra-portal/bin" />
       <classes dir="../sierra-services/bin" />
       <lib dir="../sierra-portal/lib/web-dependencies" />
     </war>
-  </target>
-
-  <target name="deploy-root">
-    <war destfile="../jetty/webapps/root.war" webxml="./webroot/web.xml">
+    <war destfile="${jetty.dir}/webapps/root.war" webxml="./webroot/web.xml">
       <fileset dir="./webroot">
         <exclude name="web.xml" />
       </fileset>
@@ -85,25 +84,25 @@
 
   <target name="undeploy-site">
     <delete quiet="true">
-      <fileset dir="../jetty/etc/">
+      <fileset dir="${jetty.dir}/etc/">
         <include name="sierra-embedded-derby.xml" />
         <include name="./etc/keystore" />
       </fileset>
     </delete>
     <delete quiet="true">
-      <fileset dir="../jetty/lib/ext/">
+      <fileset dir="${jetty.dir}/lib/ext/">
         <include name="mail.jar" />
         <include name="derby*.jar" />
       </fileset>
     </delete>
     <delete quiet="true">
-      <fileset dir="../sierra-portal/lib/web-dependencies">
-        <include name="*.jar" />
+      <fileset dir="${jetty.dir}/webapps">
+        <include name="*.war" />
       </fileset>
     </delete>
     <delete quiet="true">
-      <fileset dir="../jetty/webapps">
-        <include name="*.war" />
+      <fileset dir="../sierra-portal/lib/web-dependencies">
+        <include name="*.jar" />
       </fileset>
     </delete>
   </target>
