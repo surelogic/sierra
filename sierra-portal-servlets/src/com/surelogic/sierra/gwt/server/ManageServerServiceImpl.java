@@ -114,7 +114,7 @@ public class ManageServerServiceImpl extends SierraServiceServlet implements
 		}
 	}
 
-	private ServerInfo readServerInfo(final Server server) throws SQLException {
+	ServerInfo readServerInfo(final Server server) throws SQLException {
 		final ServerInfo info = new ServerInfo();
 		InetAddress a;
 		try {

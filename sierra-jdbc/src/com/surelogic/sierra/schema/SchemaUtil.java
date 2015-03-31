@@ -188,13 +188,13 @@ public class SchemaUtil {
 		}
 	}
 
-	private static class CatEntry {
+	static class CatEntry {
 		String ft;
 		String cat;
 		String tool;
 	}
 
-	private static class CatEntryHandler implements RowHandler<CatEntry> {
+	static class CatEntryHandler implements RowHandler<CatEntry> {
 		@Override
     public CatEntry handle(final Row r) {
 			final CatEntry ce = new CatEntry();
@@ -205,5 +205,4 @@ public class SchemaUtil {
 		}
 
 	}
-
 }

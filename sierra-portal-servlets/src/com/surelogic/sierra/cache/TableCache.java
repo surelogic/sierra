@@ -45,13 +45,13 @@ public class TableCache implements Sweepable {
 
 	private static final String TABLE_CACHE_FILE_PREFIX = "table-";
 
-	private File getTableFileFor(final Ticket ticket) {
+	File getTableFileFor(final Ticket ticket) {
 		return new File(ServerFiles.getSierraTeamServerCacheDirectory(),
 				TABLE_CACHE_FILE_PREFIX + ticket.getUUID().toString()
 						+ ".table");
 	}
 
-	private File getRevFileFor(final Ticket ticket) {
+	File getRevFileFor(final Ticket ticket) {
 		return new File(ServerFiles.getSierraTeamServerCacheDirectory(),
 				TABLE_CACHE_FILE_PREFIX + ticket.getUUID().toString() + ".rev");
 	}
@@ -69,7 +69,7 @@ public class TableCache implements Sweepable {
 		}
 	}
 
-	private static void writeTable(final ReportTable table, final File file)
+	static void writeTable(final ReportTable table, final File file)
 			throws IOException {
 		final ObjectOutputStream out = new ObjectOutputStream(
 				new FileOutputStream(file));
@@ -80,7 +80,7 @@ public class TableCache implements Sweepable {
 		}
 	}
 
-	private void checkAndUpdateCache(final Ticket ticket)
+	void checkAndUpdateCache(final Ticket ticket)
 			throws ServletException {
 		boolean createOrUpdateCacheFiles = true;
 		final File file = getRevFileFor(ticket);
@@ -98,7 +98,7 @@ public class TableCache implements Sweepable {
 					try {
 						final long rev = Long.valueOf(reader.readLine());
 						final long lastRevision = ConnectionFactory
-								.getInstance().withReadUncommitted(
+								.INSTANCE.withReadUncommitted(
 										new RevisionQuery());
 						createOrUpdateCacheFiles = lastRevision > rev;
 					} catch (final NumberFormatException e) {
@@ -126,7 +126,7 @@ public class TableCache implements Sweepable {
 		}
 		final IDatabaseTable generator = getGenerator(type);
 
-		ConnectionFactory.getInstance().withReadOnly(
+		ConnectionFactory.INSTANCE.withReadOnly(
 				new ServerTransaction<Void>() {
 					public Void perform(final Connection conn,
 							final Server server) throws SQLException {
@@ -161,7 +161,7 @@ public class TableCache implements Sweepable {
 				});
 	}
 
-	private static class RevisionQuery implements ServerQuery<Long> {
+	static class RevisionQuery implements ServerQuery<Long> {
 		public Long perform(final Query q, final Server s) {
 			return q.statement("Revision.maxRevision",
 					new ResultHandler<Long>() {

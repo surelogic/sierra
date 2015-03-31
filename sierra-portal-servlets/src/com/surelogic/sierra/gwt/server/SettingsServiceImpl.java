@@ -74,7 +74,7 @@ public final class SettingsServiceImpl extends SierraServiceServlet implements
     private static final long serialVersionUID = 6781260512153199775L;
 
     public List<String> searchProjects(final String query, final int limit) {
-        return ConnectionFactory.getInstance().withUserReadOnly(
+        return ConnectionFactory.INSTANCE.withUserReadOnly(
                 new UserQuery<List<String>>() {
                     public List<String> perform(final Query q, final Server s,
                             final User u) {
@@ -100,7 +100,7 @@ public final class SettingsServiceImpl extends SierraServiceServlet implements
     }
 
     public List<Project> getProjects() {
-        return ConnectionFactory.getInstance().withUserTransaction(
+        return ConnectionFactory.INSTANCE.withUserTransaction(
                 new UserQuery<List<Project>>() {
                     public List<Project> perform(final Query q, final Server s,
                             final User u) {
@@ -125,7 +125,7 @@ public final class SettingsServiceImpl extends SierraServiceServlet implements
     }
 
     public List<Category> getCategories() {
-        return ConnectionFactory.getInstance().withUserReadOnly(
+        return ConnectionFactory.INSTANCE.withUserReadOnly(
                 new UserQuery<List<Category>>() {
 
                     public List<Category> perform(final Query q,
@@ -221,7 +221,7 @@ public final class SettingsServiceImpl extends SierraServiceServlet implements
                 });
     }
 
-    private static Category getOrCreateSet(final String uid,
+    static Category getOrCreateSet(final String uid,
             final Map<String, Category> sets) {
         Category set = sets.get(uid);
         if (set == null) {
@@ -234,7 +234,7 @@ public final class SettingsServiceImpl extends SierraServiceServlet implements
 
     public Result<String> createCategory(final String name,
             final List<String> entries, final List<String> parents) {
-        return ConnectionFactory.getInstance().withUserTransaction(
+        return ConnectionFactory.INSTANCE.withUserTransaction(
                 new UserQuery<Result<String>>() {
                     public Result<String> perform(final Query q,
                             final Server s, final User u) {
@@ -260,7 +260,7 @@ public final class SettingsServiceImpl extends SierraServiceServlet implements
 
     // TODO do this w/o passing back and forth the whole graph
     public Status updateCategory(final Category c) {
-        return ConnectionFactory.getInstance().withUserTransaction(
+        return ConnectionFactory.INSTANCE.withUserTransaction(
                 new UserQuery<Status>() {
                     public Status perform(final Query q, final Server s,
                             final User u) {
@@ -304,7 +304,7 @@ public final class SettingsServiceImpl extends SierraServiceServlet implements
 
     public Result<String> duplicateCategory(final String newName,
             final Category source) {
-        return ConnectionFactory.getInstance().withUserTransaction(
+        return ConnectionFactory.INSTANCE.withUserTransaction(
                 new UserQuery<Result<String>>() {
                     public Result<String> perform(final Query q,
                             final Server s, final User u) {
@@ -332,7 +332,7 @@ public final class SettingsServiceImpl extends SierraServiceServlet implements
     }
 
     public Status deleteCategory(final String uuid) {
-        return ConnectionFactory.getInstance().withUserTransaction(
+        return ConnectionFactory.INSTANCE.withUserTransaction(
                 new UserQuery<Status>() {
                     public Status perform(final Query q, final Server s,
                             final User u) {
@@ -358,7 +358,7 @@ public final class SettingsServiceImpl extends SierraServiceServlet implements
     }
 
     public List<FindingType> getFindingTypes() {
-        return ConnectionFactory.getInstance().withUserTransaction(
+        return ConnectionFactory.INSTANCE.withUserTransaction(
                 new UserQuery<List<FindingType>>() {
                     public List<FindingType> perform(final Query q,
                             final Server s, final User u) {
@@ -375,7 +375,7 @@ public final class SettingsServiceImpl extends SierraServiceServlet implements
     }
 
     public Result<FindingType> getFindingType(final String uuid) {
-        return ConnectionFactory.getInstance().withUserTransaction(
+        return ConnectionFactory.INSTANCE.withUserTransaction(
                 new UserQuery<Result<FindingType>>() {
                     public Result<FindingType> perform(final Query q,
                             final Server s, final User u) {
@@ -392,7 +392,7 @@ public final class SettingsServiceImpl extends SierraServiceServlet implements
                 });
     }
 
-    private FindingType getType(final FindingTypeDO type, final Query q) {
+    FindingType getType(final FindingTypeDO type, final Query q) {
         final FindingType info = new FindingType();
         info.setInfo(type.getInfo());
         info.setName(type.getName());
@@ -436,7 +436,7 @@ public final class SettingsServiceImpl extends SierraServiceServlet implements
     }
 
     public List<ScanFilter> getScanFilters() {
-        return ConnectionFactory.getInstance().withReadOnly(
+        return ConnectionFactory.INSTANCE.withReadOnly(
                 new ServerQuery<List<ScanFilter>>() {
 
                     public List<ScanFilter> perform(final Query q,
@@ -466,7 +466,7 @@ public final class SettingsServiceImpl extends SierraServiceServlet implements
     }
 
     public ScanFilter createScanFilter(final String name) {
-        return ConnectionFactory.getInstance().withUserTransaction(
+        return ConnectionFactory.INSTANCE.withUserTransaction(
                 new UserQuery<ScanFilter>() {
                     public ScanFilter perform(final Query q, final Server s,
                             final User u) {
@@ -502,7 +502,7 @@ public final class SettingsServiceImpl extends SierraServiceServlet implements
             t.setFindingType(e.getUuid());
             types.add(t);
         }
-        return ConnectionFactory.getInstance().withUserTransaction(
+        return ConnectionFactory.INSTANCE.withUserTransaction(
                 new UserQuery<Status>() {
                     public Status perform(final Query q, final Server s,
                             final User u) {
@@ -527,11 +527,11 @@ public final class SettingsServiceImpl extends SierraServiceServlet implements
     }
 
     public Status deleteScanFilter(final String uuid) {
-        return ConnectionFactory.getInstance().withUserTransaction(
+        return ConnectionFactory.INSTANCE.withUserTransaction(
                 new UserQuery<Status>() {
                     public Status perform(final Query q, final Server s,
                             final User u) {
-                        return ConnectionFactory.getInstance()
+                        return ConnectionFactory.INSTANCE
                                 .withUserTransaction(new UserQuery<Status>() {
                                     public Status perform(final Query q,
                                             final Server s, final User u) {
@@ -568,7 +568,7 @@ public final class SettingsServiceImpl extends SierraServiceServlet implements
     }
 
     public Status setDefaultScanFilter(final ScanFilter f) {
-        return ConnectionFactory.getInstance().withUserTransaction(
+        return ConnectionFactory.INSTANCE.withUserTransaction(
                 new UserQuery<Status>() {
                     public Status perform(final Query q, final Server s,
                             final User u) {
@@ -584,7 +584,7 @@ public final class SettingsServiceImpl extends SierraServiceServlet implements
     public List<PortalServerLocation> listServerLocations() {
         final List<PortalServerLocation> servers = new ArrayList<PortalServerLocation>();
         for (final ConnectedServer cs : ConnectionFactory
-                .getInstance()
+                .INSTANCE
                 .withReadOnly(ServerLocations.fetchQuery(Collections.EMPTY_MAP))
                 .keySet()) {
             final ServerLocation l = cs.getLocation();
@@ -599,7 +599,7 @@ public final class SettingsServiceImpl extends SierraServiceServlet implements
     }
 
     public Status deleteServerLocation(final String uuid) {
-        return ConnectionFactory.getInstance().withTransaction(
+        return ConnectionFactory.INSTANCE.withTransaction(
                 new DBQuery<Status>() {
 
                     public Status perform(final Query q) {
@@ -630,7 +630,7 @@ public final class SettingsServiceImpl extends SierraServiceServlet implements
         if (loc.getUuid() == null) {
             // This is a new server location
             try {
-                cs = ConnectionFactory.getInstance().withTransaction(
+                cs = ConnectionFactory.INSTANCE.withTransaction(
                         SettingQueries.checkAndSaveServerLocation(l, true));
             } catch (final TransactionException e) {
                 return Status.failure(e.getCause().getMessage());
@@ -638,7 +638,7 @@ public final class SettingsServiceImpl extends SierraServiceServlet implements
         } else {
             cs = new ConnectedServer(loc.getUuid(), loc.getName(),
                     loc.isTeamServer(), l);
-            ConnectionFactory.getInstance().withTransaction(
+            ConnectionFactory.INSTANCE.withTransaction(
                     SettingQueries.updateServerLocation(cs, true));
         }
         return Status.success(cs.getName() + " saved.");
@@ -646,7 +646,7 @@ public final class SettingsServiceImpl extends SierraServiceServlet implements
 
     public Status saveProjectFilter(final String project,
             final String scanFilter) {
-        return ConnectionFactory.getInstance().withUserTransaction(
+        return ConnectionFactory.INSTANCE.withUserTransaction(
                 new UserQuery<Status>() {
                     public Status perform(final Query query,
                             final Server server, final User user) {
@@ -660,7 +660,7 @@ public final class SettingsServiceImpl extends SierraServiceServlet implements
     }
 
     public List<ReportSettings> listReportSettings() {
-        return ConnectionFactory.getInstance().withUserReadOnly(
+        return ConnectionFactory.INSTANCE.withUserReadOnly(
                 ReportSettingQueries.listUserQueries());
     }
 
@@ -668,20 +668,20 @@ public final class SettingsServiceImpl extends SierraServiceServlet implements
         if (settings.getUuid() == null) {
             settings.setUuid(UUID.randomUUID().toString());
         }
-        ConnectionFactory.getInstance().withUserTransaction(
+        ConnectionFactory.INSTANCE.withUserTransaction(
                 ReportSettingQueries.save(settings));
         return Status.success("Settings saved.");
     }
 
     public Status deleteReportSettings(final String uuid) {
-        ConnectionFactory.getInstance().withUserTransaction(
+        ConnectionFactory.INSTANCE.withUserTransaction(
                 ReportSettingQueries.delete(uuid));
         return Status.success("Settings deleted");
     }
 
     public DashboardSettings getDashboardSettings() {
 
-        DashboardSettings settings = ConnectionFactory.getInstance()
+        DashboardSettings settings = ConnectionFactory.INSTANCE
                 .withUserReadOnly(DashboardQueries.getDashboard());
         if (settings == null) {
             settings = new DashboardSettings();
@@ -714,13 +714,13 @@ public final class SettingsServiceImpl extends SierraServiceServlet implements
     }
 
     public Status saveDashboardSettings(final DashboardSettings settings) {
-        ConnectionFactory.getInstance().withUserTransaction(
+        ConnectionFactory.INSTANCE.withUserTransaction(
                 DashboardQueries.updateDashboard(settings));
         return Status.success();
     }
 
     public List<Extension> listExtensions() {
-        return ConnectionFactory.getInstance().withReadOnly(
+        return ConnectionFactory.INSTANCE.withReadOnly(
                 new DBQuery<List<Extension>>() {
                     public List<Extension> perform(final Query q) {
                         final List<Extension> exts = new ArrayList<Extension>();

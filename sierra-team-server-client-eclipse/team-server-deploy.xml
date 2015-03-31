@@ -6,11 +6,13 @@
 	<target name="clean-deploy" depends="undeploy,deploy" />
 	
 	<target name="redeploy" depends="deploy" />
+  
+  <property name="team.server.build" location="../sierra-jetty/build" />
 	
 	<target name="deploy">		
 		<mkdir dir="${jetty.dir}" />
 		<copy todir="${jetty.dir}">
-			<fileset dir="${jetty.plugin}">
+			<fileset dir="${team.server.build}">
 				<include name="**" />
 			</fileset>
 		</copy>

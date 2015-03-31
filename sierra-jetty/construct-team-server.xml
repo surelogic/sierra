@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project default="construct-team-server" name="construct-team-server">
+
+  <!-- Our Jetty setup is in '/source' -->
+  <property name="source" location="${basedir}/source" />
+  <property name="source.jetty.base" location="${source}/jetty.base" />
+  <property name="source.root.war" location="${source}/root.war" />
+
+  <!-- Production team server goes into '/build' -->
+  <property name="build" location="${basedir}/build" />
+  <property name="jetty.home" location="${build}/jetty.home" />
+  <property name="jetty.base" location="${build}/jetty.base" />
+  <property name="webapps" location="${jetty.base}/webapps" />
+
+  <property name="gwt.module" value="com.surelogic.sierra.gwt.SierraPortal" />
+
+  <target name="construct-team-server" depends="build-team-server">
+    <echo>Setting up target directory: ${build}</echo>
+    <delete quiet="true" dir="${build}" />
+    <mkdir dir="${build}" />
+    <unzip dest="${build}">
+      <fileset dir="${source}">
+        <include name="jetty*.zip" />
+      </fileset>
+    </unzip>
+    <path id="jetty-release-path">
+      <dirset dir="${build}">
+        <include name="jetty*" />
+      </dirset>
+    </path>
+    <property name="jetty-release-dir" refid="jetty-release-path" />
+    <move file="${jetty-release-dir}" tofile="${jetty.home}" />
+    <echo>Jetty distribution in ${jetty.home}</echo>
+
+    <copy todir="${jetty.base}">
+      <fileset dir="${source.jetty.base}" />
+    </copy>
+    <copy todir="${jetty.base}/lib/ext">
+      <fileset dir="../../common/common/lib/runtime">
+        <include name="derby*.jar" />
+      </fileset>
+    </copy>
+    <mkdir dir="${webapps}" />
+    <war destfile="${webapps}/sl.war" webxml="../sierra-portal/web.xml">
+      <fileset
+        dir="../sierra-portal/www/com.surelogic.sierra.gwt.SierraPortal" />
+      <classes dir="../sierra-portal/bin" />
+      <classes dir="../sierra-services/bin" />
+      <lib dir="../sierra-portal/lib/web-dependencies" />
+    </war>
+    <war destfile="${webapps}/root.war" webxml="${source.root.war}/web.xml">
+      <fileset dir="${source.root.war}">
+        <exclude name="web.xml" />
+      </fileset>
+    </war>
+    <echo>Sierra team server in ${jetty.base}</echo>
+
+  </target>
+
+  <target name="build-team-server">
+    <delete quiet="true">
+      <fileset dir="../sierra-portal/lib/web-dependencies">
+        <include name="*.jar" />
+      </fileset>
+    </delete>
+    <copy todir="../sierra-portal/lib/web-dependencies">
+      <fileset dir="../../common/common/lib/runtime">
+        <include name="*.jar" />
+        <exclude name="derby*.jar" />
+      </fileset>
+      <fileset dir="../sierra-portal-servlets/lib">
+        <include name="*.jar" />
+      </fileset>
+      <fileset dir="../sierra-message/srpc">
+        <include name="*.jar" />
+      </fileset>
+      <fileset dir="../sierra-portal/lib/gwt">
+        <include name="gwt-servlet.jar" />
+      </fileset>
+    </copy>
+    <jar destfile="../sierra-portal/lib/web-dependencies/common.jar"
+      basedir="../../common/common/bin" />
+    <jar destfile="../sierra-portal/lib/web-dependencies/sierra-jdbc.jar"
+      basedir="../sierra-jdbc/bin" />
+    <jar destfile="../sierra-portal/lib/web-dependencies/sierra-jdbc-server.jar"
+      basedir="../sierra-jdbc-server/bin" />
+    <jar destfile="../sierra-portal/lib/web-dependencies/sierra-message.jar"
+      basedir="../sierra-message/bin" />
+    <jar
+      destfile="../sierra-portal/lib/web-dependencies/sierra-portal-servlets.jar"
+      basedir="../sierra-portal-servlets/bin" />
+
+    <path id="gwt.class.path">
+      <pathelement path="${java.class.path}/" />
+      <pathelement location="../sierra-portal/src" />
+      <fileset dir="../sierra-portal/lib/gwt">
+        <include name="gwt-user.jar" />
+        <include name="gwt-dev.jar" />
+        <include name="validation*.jar" />
+      </fileset>
+    </path>
+    <delete dir="../sierra-portal/www" />
+    <java classpathref="gwt.class.path" classname="com.google.gwt.dev.Compiler"
+      fork="true" maxmemory="512m">
+      <arg value="-localWorkers" />
+      <arg value="2" />
+      <arg value="-war" />
+      <arg value="../sierra-portal/www" />
+      <arg value="${gwt.module}" />
+    </java>
+    <echo>Sierra team server built</echo>
+  </target>
+
+</project>

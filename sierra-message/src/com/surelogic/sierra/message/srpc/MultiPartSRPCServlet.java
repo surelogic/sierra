@@ -19,9 +19,6 @@ public abstract class MultiPartSRPCServlet extends HttpServlet {
 
 	private MultiPartEncoding codec;
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 5771077152119139820L;
 
 	@Override

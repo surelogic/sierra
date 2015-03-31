@@ -27,7 +27,7 @@ public class ServerInfoServiceImpl extends MultiPartSRPCServlet implements
 		 */
 		final ServerInfoReply reply = new ServerInfoReply();
 		reply.setServices(this.reply.getServices());
-		reply.setServers(ConnectionFactory.getInstance().withReadOnly(
+		reply.setServers(ConnectionFactory.INSTANCE.withReadOnly(
 				new ServerTransaction<List<ServerIdentity>>() {
 					public List<ServerIdentity> perform(final Connection conn,
 							final Server s) throws SQLException {
@@ -58,7 +58,7 @@ public class ServerInfoServiceImpl extends MultiPartSRPCServlet implements
 			}
 			// XXX for now buglink is always on
 			services.add(Services.BUGLINK);
-			reply.setUid(ConnectionFactory.getInstance().withReadOnly(
+			reply.setUid(ConnectionFactory.INSTANCE.withReadOnly(
 					new ServerTransaction<String>() {
 
 						public String perform(final Connection conn,

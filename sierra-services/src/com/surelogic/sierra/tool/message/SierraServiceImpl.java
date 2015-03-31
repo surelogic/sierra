@@ -56,7 +56,7 @@ public class SierraServiceImpl extends SecureServiceServlet implements
 		if (qList != null) {
 			timeseries.addAll(qList);
 		}
-		ConnectionFactory.getInstance().withUserTransaction(
+		ConnectionFactory.INSTANCE.withUserTransaction(
 				new UserTransaction<Void>() {
 
 					public Void perform(final Connection conn,
@@ -81,7 +81,7 @@ public class SierraServiceImpl extends SecureServiceServlet implements
 							MessageWarehouse.readScan(scan, generator);
 							SettingQueries.recordScanFilter(filter, uid)
 									.perform(new ConnectionQuery(conn));
-							ConnectionFactory.getInstance()
+							ConnectionFactory.INSTANCE
 									.delayUserTransaction(
 											new UserTransaction<Void>() {
 
@@ -130,7 +130,7 @@ public class SierraServiceImpl extends SecureServiceServlet implements
 				});
 	}
 
-	private void handleScanException(final Connection conn, final String uid) {
+	void handleScanException(final Connection conn, final String uid) {
 		try {
 			conn.rollback();
 			ScanManager.getInstance(conn).deleteScan(uid,
@@ -145,7 +145,7 @@ public class SierraServiceImpl extends SecureServiceServlet implements
 	}
 
 	public Timeseries getTimeseries(final TimeseriesRequest request) {
-		return ConnectionFactory.getInstance().withUserReadOnly(
+		return ConnectionFactory.INSTANCE.withUserReadOnly(
 				new UserTransaction<Timeseries>() {
 
 					public Timeseries perform(final Connection conn,
@@ -223,7 +223,7 @@ public class SierraServiceImpl extends SecureServiceServlet implements
 
 			}
 		};
-		final String localUid = ConnectionFactory.getInstance().withReadOnly(
+		final String localUid = ConnectionFactory.INSTANCE.withReadOnly(
 				new ServerTransaction<String>() {
 					public String perform(final Connection conn,
 							final Server server) throws Exception {
@@ -235,7 +235,7 @@ public class SierraServiceImpl extends SecureServiceServlet implements
 			throw new ServerMismatchException(serverUid
 					+ " does not match the server's uid: " + localUid);
 		}
-		return ConnectionFactory.getInstance().withUserTransaction(
+		return ConnectionFactory.INSTANCE.withUserTransaction(
 				new UserTransaction<SyncProjectResponse>() {
 
 					public SyncProjectResponse perform(final Connection conn,

@@ -252,10 +252,11 @@ public final class TeamServer {
     }
   }
 
-  private static final String JETTY_DIR = "jetty" + File.separator;
-  private static final String START_JAR = JETTY_DIR + "start.jar";
-  private static final String JETTY_CONFIG = JETTY_DIR + "etc" + File.separator + "sierra-embedded-derby.xml";
-  private static final String JETTY_PORT = "jetty.port";
+  private static final String JETTY_HOME = "jetty" + File.separator + "jetty.home" + File.separator;
+  private static final String JETTY_BASE = "jetty" + File.separator + "jetty.base" + File.separator;
+  private static final String START_JAR = JETTY_HOME + "start.jar";
+  private static final String JETTY_CONFIG = JETTY_BASE + "etc" + File.separator + "jetty-sierra.xml";
+  private static final String JETTY_PORT = "jetty.port=";
   private static final String JETTY_STOP_PORT = "STOP.PORT";
   private static final String JETTY_STOP_KEY = "STOP.KEY";
   private static final String JETTY_STOP_ARG = "--stop";
@@ -281,6 +282,9 @@ public final class TeamServer {
     loggingLevel.setKey(SLLogger.SL_LOGGING_PROPERTY);
     loggingLevel.setValue(LocalTeamServerPreferencesUtility.getServerLoggingLevel().toString());
     command.addSysproperty(loggingLevel);
+    
+    final Argument jettyPort = command.createArgument();
+    jettyPort.setValue(JETTY_PORT + f_port.get());
 
     final String jettyConfig = launder(f_pluginDir + JETTY_CONFIG);
     final Argument jettyConfigFile = command.createArgument();
@@ -318,10 +322,10 @@ public final class TeamServer {
     final String startJar = launder(f_pluginDir + START_JAR);
     command.setJar(startJar);
 
-    final Environment.Variable port = new Environment.Variable();
-    port.setKey(JETTY_PORT);
-    port.setValue(Integer.toString(f_port.get()));
-    command.addSysproperty(port);
+//    final Environment.Variable port = new Environment.Variable();
+//    port.setKey(JETTY_PORT);
+//    port.setValue(Integer.toString(f_port.get()));
+//    command.addSysproperty(port);
 
     final Environment.Variable stopPort = new Environment.Variable();
     stopPort.setKey(JETTY_STOP_PORT);
@@ -419,7 +423,7 @@ public final class TeamServer {
     final ProcessBuilder b = new ProcessBuilder(command.getCommandline());
     b.redirectErrorStream(true);
 
-    final File workingDirectory = launderToFile(f_pluginDir + JETTY_DIR);
+    final File workingDirectory = launderToFile(f_pluginDir + JETTY_BASE);
     b.directory(workingDirectory);
     final String commandLine = command.toString();
     log.log(Level.INFO,

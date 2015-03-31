@@ -38,7 +38,7 @@ public class BugLinkServiceImpl extends SecureServiceServlet implements
 
 	public CreateCategoryResponse createCategory(
 			final CreateCategoryRequest request) {
-		return ConnectionFactory.getInstance().withTransaction(
+		return ConnectionFactory.INSTANCE.withTransaction(
 				new ServerQuery<CreateCategoryResponse>() {
 					public CreateCategoryResponse perform(final Query q,
 							final Server s) {
@@ -66,7 +66,7 @@ public class BugLinkServiceImpl extends SecureServiceServlet implements
 	}
 
 	public ListCategoryResponse listCategories(final ListCategoryRequest request) {
-		return ConnectionFactory.getInstance().withReadOnly(
+		return ConnectionFactory.INSTANCE.withReadOnly(
 				new ServerQuery<ListCategoryResponse>() {
 
 					public ListCategoryResponse perform(final Query q,
@@ -125,7 +125,7 @@ public class BugLinkServiceImpl extends SecureServiceServlet implements
 
 	public UpdateCategoryResponse updateCategory(
 			final UpdateCategoryRequest request) throws RevisionException {
-		return ConnectionFactory.getInstance().withTransaction(
+		return ConnectionFactory.INSTANCE.withTransaction(
 				new ServerQuery<UpdateCategoryResponse>() {
 					public UpdateCategoryResponse perform(final Query q,
 							final Server s) {
@@ -141,7 +141,7 @@ public class BugLinkServiceImpl extends SecureServiceServlet implements
 
 	public CreateScanFilterResponse createScanFilter(
 			final CreateScanFilterRequest request) {
-		return ConnectionFactory.getInstance().withTransaction(
+		return ConnectionFactory.INSTANCE.withTransaction(
 				new ServerQuery<CreateScanFilterResponse>() {
 					public CreateScanFilterResponse perform(final Query q,
 							final Server s) {
@@ -175,7 +175,7 @@ public class BugLinkServiceImpl extends SecureServiceServlet implements
 
 	public ListScanFilterResponse listScanFilters(
 			final ListScanFilterRequest request) {
-		return ConnectionFactory.getInstance().withReadOnly(
+		return ConnectionFactory.INSTANCE.withReadOnly(
 				new ServerQuery<ListScanFilterResponse>() {
 					public ListScanFilterResponse perform(final Query q,
 							final Server s) {
@@ -233,7 +233,7 @@ public class BugLinkServiceImpl extends SecureServiceServlet implements
 
 	public UpdateScanFilterResponse updateScanFilter(
 			final UpdateScanFilterRequest request) throws RevisionException {
-		return ConnectionFactory.getInstance().withTransaction(
+		return ConnectionFactory.INSTANCE.withTransaction(
 				new ServerQuery<UpdateScanFilterResponse>() {
 					public UpdateScanFilterResponse perform(final Query q,
 							final Server s) {
@@ -251,7 +251,7 @@ public class BugLinkServiceImpl extends SecureServiceServlet implements
 
 	public ListExtensionResponse listExtensions(
 			final ListExtensionRequest request) {
-		return ConnectionFactory.getInstance().withReadOnly(
+		return ConnectionFactory.INSTANCE.withReadOnly(
 				new DBQuery<ListExtensionResponse>() {
 					public ListExtensionResponse perform(final Query q) {
 						final ListExtensionResponse r = new ListExtensionResponse();
@@ -266,7 +266,7 @@ public class BugLinkServiceImpl extends SecureServiceServlet implements
 
 	public ListExtensionResponse listInstalledExtensions(
 			final ListExtensionRequest request) {
-		return ConnectionFactory.getInstance().withReadOnly(
+		return ConnectionFactory.INSTANCE.withReadOnly(
 				new DBQuery<ListExtensionResponse>() {
 					public ListExtensionResponse perform(final Query q) {
 						final ListExtensionResponse r = new ListExtensionResponse();
@@ -286,7 +286,7 @@ public class BugLinkServiceImpl extends SecureServiceServlet implements
 	public RegisterExtensionResponse registerExtension(
 			final RegisterExtensionRequest request) {
 		final ExtensionDO eDO = FindingTypes.convertDO(request.getExtension());
-		return ConnectionFactory.getInstance().withTransaction(
+		return ConnectionFactory.INSTANCE.withTransaction(
 				new DBQuery<RegisterExtensionResponse>() {
 					public RegisterExtensionResponse perform(final Query q) {
 						new FindingTypes(q).registerExtension(eDO);
@@ -297,7 +297,7 @@ public class BugLinkServiceImpl extends SecureServiceServlet implements
 
 	public UploadExtensionResponse uploadExtension(
 			final UploadExtensionRequest request, final File file) {
-		return ConnectionFactory.getInstance().withTransaction(
+		return ConnectionFactory.INSTANCE.withTransaction(
 				new DBQuery<UploadExtensionResponse>() {
 					public UploadExtensionResponse perform(final Query q) {
 						final FindingTypes ft = new FindingTypes(q);
@@ -316,7 +316,7 @@ public class BugLinkServiceImpl extends SecureServiceServlet implements
 	}
 
 	public File downloadExtension(final DownloadExtensionRequest request) {
-		return ConnectionFactory.getInstance().withReadOnly(
+		return ConnectionFactory.INSTANCE.withReadOnly(
 				new DBQuery<File>() {
 					public File perform(final Query q) {
 						final ExtensionDO ex = new FindingTypes(q)
@@ -331,7 +331,7 @@ public class BugLinkServiceImpl extends SecureServiceServlet implements
 
 	public GetExtensionsResponse getExtensions(
 			final GetExtensionsRequest request) {
-		return ConnectionFactory.getInstance().withReadOnly(
+		return ConnectionFactory.INSTANCE.withReadOnly(
 				new DBQuery<GetExtensionsResponse>() {
 					public GetExtensionsResponse perform(final Query q) {
 						final GetExtensionsResponse response = new GetExtensionsResponse();
@@ -353,7 +353,7 @@ public class BugLinkServiceImpl extends SecureServiceServlet implements
 		final EnsureExtensionResponse response = new EnsureExtensionResponse();
 		response.getUnknownExtensions().addAll(request.getExtensions());
 		response.getUnknownExtensions().removeAll(
-				ConnectionFactory.getInstance().withReadOnly(
+				ConnectionFactory.INSTANCE.withReadOnly(
 						SettingQueries.localExtensions()));
 		return response;
 	}

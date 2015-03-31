@@ -38,11 +38,6 @@
 			com.surelogic.sierra.server.lifecycle.BootUpServletContextListener
 		</listener-class>
 	</listener>
-	<listener>
-		<listener-class>
-			com.surelogic.sierra.server.lifecycle.BugLinkServletContextListener
-		</listener-class>
-	</listener>
 	
 	<!--  GWT browser to server communication -->
 

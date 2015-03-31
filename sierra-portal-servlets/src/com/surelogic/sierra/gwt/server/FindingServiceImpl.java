@@ -49,7 +49,7 @@ public class FindingServiceImpl extends SierraServiceServlet implements
 		if (key == null || "".equals(key)) {
 			return null;
 		}
-		return ConnectionFactory.getInstance().withUserReadOnly(
+		return ConnectionFactory.INSTANCE.withUserReadOnly(
 				new UserQuery<FindingOverview>() {
 
 					public FindingOverview perform(final Query query,
@@ -140,7 +140,7 @@ public class FindingServiceImpl extends SierraServiceServlet implements
 	}
 
 	public List<Scan> getScans(final String project) {
-		return ConnectionFactory.getInstance().withUserReadOnly(
+		return ConnectionFactory.INSTANCE.withUserReadOnly(
 				new UserQuery<List<Scan>>() {
 					public List<Scan> perform(final Query query,
 							final Server server, final User user) {
@@ -164,13 +164,13 @@ public class FindingServiceImpl extends SierraServiceServlet implements
 	}
 
 	public ScanDetail getScanDetail(final String uuid) {
-		return ConnectionFactory.getInstance().withUserReadOnly(
+		return ConnectionFactory.INSTANCE.withUserReadOnly(
 				new ScanDetailQuery(uuid));
 	}
 
 	public Result<FindingOverview> changeImportance(final long findingId,
 			final ImportanceView view) {
-		ConnectionFactory.getInstance().withUserTransaction(
+		ConnectionFactory.INSTANCE.withUserTransaction(
 				new NullUserTransaction() {
 					@Override
 					public void doPerform(final Connection conn,
@@ -186,7 +186,7 @@ public class FindingServiceImpl extends SierraServiceServlet implements
 
 	public Result<FindingOverview> comment(final long findingId,
 			final String comment) {
-		ConnectionFactory.getInstance().withUserTransaction(
+		ConnectionFactory.INSTANCE.withUserTransaction(
 				new NullUserTransaction() {
 					@Override
 					public void doPerform(final Connection conn,
@@ -201,7 +201,7 @@ public class FindingServiceImpl extends SierraServiceServlet implements
 	}
 
 	public ScanDetail getLatestScanDetail(final String project) {
-		return ConnectionFactory.getInstance().withUserReadOnly(
+		return ConnectionFactory.INSTANCE.withUserReadOnly(
 				new UserQuery<ScanDetail>() {
 
 					public ScanDetail perform(final Query query,
@@ -219,7 +219,7 @@ public class FindingServiceImpl extends SierraServiceServlet implements
 
 	private static class ScanDetailQuery implements UserQuery<ScanDetail> {
 
-		private final String uuid;
+		final String uuid;
 
 		ScanDetailQuery(final String uuid) {
 			this.uuid = uuid;

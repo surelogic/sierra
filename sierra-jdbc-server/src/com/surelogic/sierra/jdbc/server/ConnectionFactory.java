@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -15,6 +16,10 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 
+import org.apache.derby.impl.jdbc.EmbedConnection;
+
+import com.surelogic.Nullable;
+import com.surelogic.common.ILifecycle;
 import com.surelogic.common.jdbc.DBConnection;
 import com.surelogic.common.jdbc.DBQuery;
 import com.surelogic.common.jdbc.DBTransaction;
@@ -23,12 +28,38 @@ import com.surelogic.common.jdbc.TransactionException;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.jdbc.user.User;
 
-public enum ConnectionFactory implements DBConnection {
+public enum ConnectionFactory implements DBConnection, ILifecycle {
   INSTANCE;
   private static final Logger log = SLLogger.getLoggerFor(ConnectionFactory.class);
 
-  public static ConnectionFactory getInstance() {
-    return INSTANCE;
+  public void init() {
+    service = Executors.newSingleThreadExecutor();
+    scheduledService = Executors.newScheduledThreadPool(2);
+  }
+
+  public void dispose() {
+    final ExecutorService olds = service;
+    final ScheduledExecutorService oldss = scheduledService;
+    service = null;
+    scheduledService = null;
+    olds.shutdown();
+    oldss.shutdown();
+  }
+
+  @Nullable
+  volatile ExecutorService service;
+  @Nullable
+  volatile ScheduledExecutorService scheduledService;
+
+  /**
+   * Returns the server's timer service.
+   * 
+   * @return an executor if {@link #init()} has been called, {@code null} if
+   *         not.
+   */
+  @Nullable
+  public ScheduledExecutorService lookupTimerService() {
+    return scheduledService;
   }
 
   /**
@@ -141,7 +172,7 @@ public enum ConnectionFactory implements DBConnection {
    * @return
    */
   public <T> Future<T> delayTransaction(final ServerQuery<T> t) {
-    return lookupExecutor().submit(new Callable<T>() {
+    return service.submit(new Callable<T>() {
 
       public T call() throws Exception {
         return with(new ServerConnection(lookupConnection(), false), t);
@@ -157,7 +188,7 @@ public enum ConnectionFactory implements DBConnection {
    * @return
    */
   public <T> Future<T> delayTransaction(final ServerTransaction<T> t) {
-    return lookupExecutor().submit(new Callable<T>() {
+    return service.submit(new Callable<T>() {
 
       public T call() throws Exception {
         return with(new ServerConnection(lookupConnection(), false), t);
@@ -173,7 +204,7 @@ public enum ConnectionFactory implements DBConnection {
    * @return
    */
   public <T> Future<T> delayReadOnly(final ServerQuery<T> t) {
-    return lookupExecutor().submit(new Callable<T>() {
+    return service.submit(new Callable<T>() {
 
       public T call() throws Exception {
         return with(new ServerConnection(lookupConnection(), true), t);
@@ -189,7 +220,7 @@ public enum ConnectionFactory implements DBConnection {
    * @return
    */
   public <T> Future<T> delayReadOnly(final ServerTransaction<T> t) {
-    return lookupExecutor().submit(new Callable<T>() {
+    return service.submit(new Callable<T>() {
 
       public T call() throws Exception {
         return with(new ServerConnection(lookupConnection(), true), t);
@@ -206,7 +237,7 @@ public enum ConnectionFactory implements DBConnection {
    */
   public <T> Future<T> delayUserTransaction(final UserQuery<T> t) {
     final User user = lookupUser();
-    return lookupExecutor().submit(new Callable<T>() {
+    return service.submit(new Callable<T>() {
 
       public T call() throws Exception {
         return withUser(new UserConnection(lookupConnection(), user, false), t);
@@ -223,7 +254,7 @@ public enum ConnectionFactory implements DBConnection {
    */
   public <T> Future<T> delayUserTransaction(final UserTransaction<T> t) {
     final User user = lookupUser();
-    return lookupExecutor().submit(new Callable<T>() {
+    return service.submit(new Callable<T>() {
 
       public T call() throws Exception {
         return withUser(new UserConnection(lookupConnection(), user, false), t);
@@ -240,7 +271,7 @@ public enum ConnectionFactory implements DBConnection {
    */
   public <T> Future<T> delayUserReadOnly(final UserQuery<T> t) {
     final User user = lookupUser();
-    return lookupExecutor().submit(new Callable<T>() {
+    return service.submit(new Callable<T>() {
 
       public T call() throws Exception {
         return withUser(new UserConnection(lookupConnection(), user, true), t);
@@ -257,7 +288,7 @@ public enum ConnectionFactory implements DBConnection {
    */
   public <T> Future<T> delayUserReadOnly(final UserTransaction<T> t) {
     final User user = lookupUser();
-    return lookupExecutor().submit(new Callable<T>() {
+    return service.submit(new Callable<T>() {
 
       public T call() throws Exception {
         return withUser(new UserConnection(lookupConnection(), user, true), t);
@@ -644,42 +675,26 @@ public enum ConnectionFactory implements DBConnection {
     }
   }
 
-  /*
-   * Look up the transaction handler.
-   */
-  ExecutorService lookupExecutor() {
-    try {
-      final InitialContext context = new InitialContext();
-      try {
-        return (ExecutorService) ((Context) context.lookup("java:comp/env")).lookup("SierraTransactionHandler");
-      } finally {
-        context.close();
-      }
-    } catch (final NamingException e) {
-      throw new IllegalStateException(e);
-    }
-  }
-
-  /**
-   * Returns the server's timer service.
-   * 
-   * @return
-   */
-  public ScheduledExecutorService lookupTimerService() {
-    try {
-      final InitialContext context = new InitialContext();
-      try {
-        return (ScheduledExecutorService) ((Context) context.lookup("java:comp/env")).lookup("SierraTimerService");
-      } finally {
-        context.close();
-      }
-    } catch (final NamingException e) {
-      throw new IllegalStateException(e);
-    }
-  }
-
   public Connection getConnection() throws SQLException {
     return lookupConnection();
+  }
+
+  public String getDBName() {
+    String result = null;
+    try {
+      Connection c = lookupConnection();
+      if (c != null) {
+        if (c instanceof EmbedConnection) {
+          EmbedConnection ec = (EmbedConnection) c;
+          result = ec.getDBName();
+        } else
+          result = "unknown the connection is not a EmbedConnection object";
+      } else
+        result = "unknown the connection is null";
+    } catch (SQLException ignore) {
+      result = "unknown the connection lookup failed with SQLException: " + ignore.getMessage();
+    }
+    return result;
   }
 
   public Connection readOnlyConnection() throws SQLException {
@@ -711,5 +726,4 @@ public enum ConnectionFactory implements DBConnection {
   public void loggedBootAndCheckSchema() {
     throw new UnsupportedOperationException();
   }
-
 }

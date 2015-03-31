@@ -74,22 +74,22 @@ public final class ChartCache implements Sweepable {
 
 	private static final String CHART_CACHE_FILE_PREFIX = "chart-";
 
-	private File getPngFileFor(final Ticket ticket) {
+	File getPngFileFor(final Ticket ticket) {
 		return new File(ServerFiles.getSierraTeamServerCacheDirectory(),
 				CHART_CACHE_FILE_PREFIX + ticket.getUUID().toString() + ".png");
 	}
 
-	private File getMapFileFor(final Ticket ticket) {
+	File getMapFileFor(final Ticket ticket) {
 		return new File(ServerFiles.getSierraTeamServerCacheDirectory(),
 				CHART_CACHE_FILE_PREFIX + ticket.getUUID().toString() + ".map");
 	}
 
-	private File getRevFileFor(final Ticket ticket) {
+	File getRevFileFor(final Ticket ticket) {
 		return new File(ServerFiles.getSierraTeamServerCacheDirectory(),
 				CHART_CACHE_FILE_PREFIX + ticket.getUUID().toString() + ".rev");
 	}
 
-	private void checkAndUpdateCache(final Ticket ticket)
+	void checkAndUpdateCache(final Ticket ticket)
 			throws ServletException {
 		boolean createOrUpdateCacheFiles = true;
 		final File file = getRevFileFor(ticket);
@@ -107,7 +107,7 @@ public final class ChartCache implements Sweepable {
 					try {
 						final long rev = Long.valueOf(reader.readLine());
 						final long lastRevision = ConnectionFactory
-								.getInstance().withReadUncommitted(
+								.INSTANCE.withReadUncommitted(
 										new RevisionQuery());
 
 						createOrUpdateCacheFiles = lastRevision > rev;
@@ -136,7 +136,7 @@ public final class ChartCache implements Sweepable {
 		}
 		final IDatabasePlot plotter = getPlotter(type);
 
-		ConnectionFactory.getInstance().withReadOnly(
+		ConnectionFactory.INSTANCE.withReadOnly(
 				new ServerTransaction<Void>() {
 					public Void perform(final Connection conn,
 							final Server server) throws SQLException {
@@ -189,7 +189,7 @@ public final class ChartCache implements Sweepable {
 				});
 	}
 
-	private static class RevisionQuery implements ServerQuery<Long> {
+	static class RevisionQuery implements ServerQuery<Long> {
 		public Long perform(final Query q, final Server s) {
 			return q.statement("Revision.maxRevision",
 					new ResultHandler<Long>() {
@@ -252,7 +252,7 @@ public final class ChartCache implements Sweepable {
 	 *            the servlet parameters.
 	 * @return the value of the {@code width} parameter or 400 if it is not set.
 	 */
-	private int getWidthHint(final ReportSettings report) {
+	int getWidthHint(final ReportSettings report) {
 		int widthHint = 400;
 		final String param = report.getSettingValue("width", 0);
 		if (param != null) {
@@ -275,7 +275,7 @@ public final class ChartCache implements Sweepable {
 	 * @return the value of the {@code height} parameter or 400 if it is not
 	 *         set.
 	 */
-	private int getHeightHint(final ReportSettings report) {
+	int getHeightHint(final ReportSettings report) {
 		int heightHint = 400;
 		final String param = report.getSettingValue("height", 0);
 		if (param != null) {
@@ -295,7 +295,7 @@ public final class ChartCache implements Sweepable {
 	 * @param chart
 	 *            the chart to setup tooltip generators on.
 	 */
-	private void setupTooltips(final JFreeChart chart) {
+	void setupTooltips(final JFreeChart chart) {
 		final Plot plot = chart.getPlot();
 		if (plot instanceof CategoryPlot) {
 			final CategoryPlot cplot = (CategoryPlot) plot;

@@ -38,7 +38,7 @@ public class SessionServiceImpl extends SierraServiceServlet implements
 	public Result<UserAccount> login(final String userName,
 			final String password) {
 		if ((userName != null) && (password != null)) {
-			final User u = ConnectionFactory.getInstance().withReadOnly(
+			final User u = ConnectionFactory.INSTANCE.withReadOnly(
 					new ServerTransaction<User>() {
 
 						public User perform(final Connection conn,
@@ -81,7 +81,7 @@ public class SessionServiceImpl extends SierraServiceServlet implements
 	}
 
 	private UserAccount getUserAccount(final User user) {
-		return ConnectionFactory.getInstance().withUserReadOnly(
+		return ConnectionFactory.INSTANCE.withUserReadOnly(
 				new UserTransaction<UserAccount>() {
 
 					public UserAccount perform(final Connection conn,

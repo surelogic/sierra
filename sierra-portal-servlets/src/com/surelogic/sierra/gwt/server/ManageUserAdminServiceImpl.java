@@ -77,7 +77,7 @@ public class ManageUserAdminServiceImpl extends SierraServiceServlet implements
 	}
 
 	public List<UserAccount> getUsers() {
-		return ConnectionFactory.getInstance().withUserReadOnly(
+		return ConnectionFactory.INSTANCE.withUserReadOnly(
 				new UserTransaction<List<UserAccount>>() {
 
 					public List<UserAccount> perform(final Connection conn,
@@ -107,7 +107,7 @@ public class ManageUserAdminServiceImpl extends SierraServiceServlet implements
 
 	public Result<String> changeUserPassword(final String targetUser,
 			final String currentUserPassword, final String newPassword) {
-		return ConnectionFactory.getInstance().withUserTransaction(
+		return ConnectionFactory.INSTANCE.withUserTransaction(
 				new UserTransaction<Result<String>>() {
 
 					public Result<String> perform(final Connection conn,
@@ -191,7 +191,7 @@ public class ManageUserAdminServiceImpl extends SierraServiceServlet implements
 		return Boolean.TRUE.equals(isAdmin);
 	}
 
-	private List<UserAccount> listUsers(final Connection conn,
+	List<UserAccount> listUsers(final Connection conn,
 			final Server server) throws SQLException {
 		final ServerUserManager man = ServerUserManager.getInstance(conn);
 
@@ -204,7 +204,7 @@ public class ManageUserAdminServiceImpl extends SierraServiceServlet implements
 		return userAccounts;
 	}
 
-	private UserAccount convertUser(final ServerUserManager man, final User u,
+	UserAccount convertUser(final ServerUserManager man, final User u,
 			final Server server) throws SQLException {
 		final String userName = u.getName();
 		final boolean isAdmin = man.isUserInGroup(userName, SierraGroup.ADMIN
