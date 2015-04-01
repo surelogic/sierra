@@ -5,8 +5,7 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/sierra-jdbc"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/common"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/sierra-message"/>
-	<classpathentry exported="true" kind="lib" path="lib/mail.jar"/>
-	<classpathentry kind="lib" path="lib/servlet-api.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/sierra-portal"/>
+	<classpathentry kind="lib" path="lib/javax.mail-1.5.2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
