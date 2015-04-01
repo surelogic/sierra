@@ -132,7 +132,7 @@ public class FilteredDirectoryTarget extends DirectoryTarget {
   @Override
   public boolean exclude(String relativePath) {
 	initPatterns();
-   include:
+   //include:
     if (includePatterns != null) {
       for(IPattern p : includePatterns) {
         if (p.matches(relativePath)) {
