@@ -40,7 +40,7 @@
         <include name="derby*.jar" />
       </fileset>
       <fileset dir="../sierra-jdbc-server/lib">
-        <include name="javax-mail-1.5.2.jar" />
+        <include name="*mail*.jar" />
       </fileset>
     </copy>
     <mkdir dir="${webapps}" />
