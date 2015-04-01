@@ -5,7 +5,6 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry exported="true" kind="lib" path="srpc/commons-httpclient-3.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="srpc/commons-logging-1.1.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="srpc/servlet-api.jar"/>
 	<classpathentry kind="lib" path="srpc/commons-fileupload-1.2.1.jar" sourcepath="srpc/commons-fileupload-1.2.1-sources.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
