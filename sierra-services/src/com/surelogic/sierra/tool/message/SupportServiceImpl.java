@@ -66,11 +66,7 @@ public class SupportServiceImpl extends MultiPartSRPCServlet implements
 			pw.close();
 			return f;
 		} catch (final IOException e) {
-			if (pw != null) {
-				e.printStackTrace(pw);
-			} else {
-				e.printStackTrace();
-			}
+			e.printStackTrace();
 		}
 		return null;
 	}
