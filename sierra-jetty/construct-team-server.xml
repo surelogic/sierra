@@ -71,7 +71,7 @@
       <fileset dir="../sierra-portal-servlets/lib">
         <include name="*.jar" />
       </fileset>
-      <fileset dir="../sierra-message/srpc">
+      <fileset dir="../sierra-message/lib">
         <include name="*.jar" />
       </fileset>
       <fileset dir="../sierra-portal/lib/gwt">
