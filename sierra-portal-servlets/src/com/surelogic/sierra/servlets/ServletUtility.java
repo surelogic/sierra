@@ -42,7 +42,6 @@ public final class ServletUtility {
 	 * @throws IllegalArgumentException
 	 *             if request is {@code null}.
 	 */
-	@SuppressWarnings("unchecked")
 	public static Map<String, String> launderRequestParameters(
 			final HttpServletRequest request) {
 		if (request == null) {
