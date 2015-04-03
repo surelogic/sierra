@@ -1,20 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project default="clean-deploy">
-	<import file="./definitions.xml" />
-	<import file="./team-server-undeploy.xml" />
 
-	<target name="clean-deploy" depends="undeploy,deploy" />
-	
-	<target name="redeploy" depends="deploy" />
-  
-  <property name="team.server.build" location="../sierra-jetty/build" />
-	
-	<target name="deploy">		
-		<mkdir dir="${jetty.dir}" />
-		<copy todir="${jetty.dir}">
-			<fileset dir="${team.server.build}">
-				<include name="**" />
-			</fileset>
-		</copy>
-	</target>
+<project default="deploy" name="sierra-team-server-client-eclipse">
+
+  <!-- Note we tacitly assume you have built sierra-web-jetty (we just copy) -->
+
+  <property name="sierra-web-jetty" location="${basedir}/../sierra-web-jetty" />
+  <property name="jetty.dir" location="${basedir}/jetty" />
+
+  <target name="deploy">
+    <delete quiet="true" dir="${jetty.dir}" />
+    <mkdir dir="${jetty.dir}" />
+    <copy todir="${jetty.dir}">
+      <fileset dir="${sierra-web-jetty}/build">
+        <include name="**" />
+      </fileset>
+    </copy>
+  </target>
 </project>
