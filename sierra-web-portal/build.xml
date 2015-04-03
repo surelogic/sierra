@@ -3,11 +3,10 @@
 
   <property name="src" location="${basedir}/src" />
   <property name="lib" location="${basedir}/lib" />
-  <property name="gwt.lib" location="${lib}/gwt-2.7.0" />
+  <property file="${lib}/ant-definitions.properties" />
+  <property name="gwt.lib" location="${lib}/${gwt.dir}" />
   <property name="build" location="${basedir}/build" />
   <property name="gwt-unitCache" location="${basedir}/gwt-unitCache" />
-
-  <property name="gwt.module" value="com.surelogic.sierra.gwt.SierraPortal" />
 
   <target name="build-web-portal">
     <echo>Cleaning up for Sierra web portal build</echo>
@@ -29,7 +28,7 @@
       <arg value="2" />
       <arg value="-war" />
       <arg value="${build}" />
-      <arg value="${gwt.module}" />
+      <arg value="${gwt.module.sierra}" />
     </java>
     <echo>Sierra web portal built</echo>
   </target>

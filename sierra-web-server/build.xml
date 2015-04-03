@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project default="build-web-server" name="sierra-web-server">
+
+  <property name="sierra-web-portal" location="${basedir}/../sierra-web-portal" />
+  <property name="sierra-jdbc" location="${basedir}/../sierra-jdbc" />
+  <property name="sierra-message" location="${basedir}/../sierra-message" />
+  <property name="common" location="${basedir}/../../common/common" />
+
+  <property file="${sierra-web-portal}/lib/ant-definitions.properties" />
+  <property name="gwt.lib" location="${sierra-web-portal}/lib/${gwt.dir}" />
+
+  <property name="lib" location="${basedir}/lib" />
+  <property name="bin" location="${basedir}/bin" />
+
+  <property name="built-gwt-portal"
+    location="${sierra-web-portal}/build/${gwt.module.sierra}" />
+
+  <property name="build" location="${basedir}/build" />
+  <property name="sl.war" location="${build}/sl.war" />
+
+  <property name="gwt.module" value="com.surelogic.sierra.gwt.SierraPortal" />
+
+  <target name="build-web-server">
+    <echo>Cleaning up for Sierra web server build</echo>
+    <delete quiet="true" dir="${build}" />
+    <mkdir dir="${build}" />
+    <echo>WAR build of Sierra web server into ${sl.war}</echo>
+    <war destfile="${sl.war}" webxml="${lib}/web.xml">
+      <fileset dir="${built-gwt-portal}" />
+      <classes dir="${bin}" />
+      <classes dir="${sierra-web-portal}/bin" />
+      <classes dir="${sierra-jdbc}/bin" />
+      <classes dir="${sierra-message}/bin" />
+      <classes dir="${common}/bin" />
+      <lib dir="../../common/common/lib/runtime">
+        <include name="*.jar" />
+        <exclude name="derby*.jar" />
+      </lib>
+      <lib dir="${lib}">
+        <include name="*.jar" />
+      </lib>
+      <lib dir="${sierra-message}/lib">
+        <include name="*.jar" />
+      </lib>
+      <lib dir="${gwt.lib}">
+        <include name="gwt-servlet.jar" />
+      </lib>
+    </war>
+  </target>
+
+</project>
