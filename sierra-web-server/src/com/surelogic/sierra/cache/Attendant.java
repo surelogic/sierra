@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 
 import javax.servlet.http.HttpSession;
 
+import com.surelogic.Singleton;
 import com.surelogic.common.Sweepable;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.logging.SLLogger;
@@ -23,6 +24,7 @@ import com.surelogic.sierra.gwt.client.data.ReportSettings;
  * <i>Implementation note:</i> Any access to the node or session ticket sets
  * requires a lock on {@code this}.
  */
+@Singleton
 public final class Attendant implements Sweepable {
 
 	static private final Logger LOG = SLLogger.getLogger();
@@ -177,5 +179,4 @@ public final class Attendant implements Sweepable {
 	private Attendant() {
 		// singleton
 	}
-
 }
