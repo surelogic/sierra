@@ -100,10 +100,6 @@ public final class TeamServerMediator implements ITeamServerObserver {
 
     @Override
     public void notify(final ServerLog log) {
-      if (!f_teamServer.isRunning() && !f_teamServer.isNotRunning()) {
-        return;
-      }
-
       final UIJob job = new SLUIJob() {
         @Override
         public IStatus runInUIThread(IProgressMonitor monitor) {
