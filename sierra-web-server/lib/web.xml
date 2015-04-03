@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://java.sun.com/xml/ns/javaee 
+	http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+
+  <welcome-file-list>
+    <welcome-file>SierraPortal.html</welcome-file>
+  </welcome-file-list>
+
+  <icon>
+    <small-icon>images/sierra_logo.gif</small-icon>
+  </icon>
+
+  <!-- Set up logging and boot the schema -->
+
+
+  <resource-ref>
+    <description>
+      Resource reference to a factory for java.sql.Connection
+      instances that may be used for talking to a particular
+      database that is configured in the Context
+      configuration for the web application.
+    </description>
+    <res-ref-name>
+      jdbc/Sierra
+    </res-ref-name>
+    <res-type>
+      javax.sql.DataSource
+    </res-type>
+    <res-auth>
+      Container
+    </res-auth>
+  </resource-ref>
+
+  <listener>
+    <listener-class>
+      com.surelogic.sierra.server.lifecycle.BootUpServletContextListener
+    </listener-class>
+  </listener>
+
+  <!-- GWT browser to server communication -->
+
+  <servlet>
+    <servlet-name>Server Login</servlet-name>
+    <servlet-class>
+      com.surelogic.sierra.jdbc.server.UserLoginServlet
+    </servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>Server Login</servlet-name>
+    <url-pattern>/rpc/login</url-pattern>
+  </servlet-mapping>
+
+
+  <servlet>
+    <servlet-name>Session Service</servlet-name>
+    <servlet-class>
+      com.surelogic.sierra.gwt.server.SessionServiceImpl
+    </servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>Session Service</servlet-name>
+    <url-pattern>/rpc/SessionService</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>Manage Server</servlet-name>
+    <servlet-class>
+      com.surelogic.sierra.gwt.server.ManageServerServiceImpl
+    </servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>Manage Server</servlet-name>
+    <url-pattern>/rpc/ManageServerService</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>Manage User</servlet-name>
+    <servlet-class>
+      com.surelogic.sierra.gwt.server.ManageUserAdminServiceImpl
+    </servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>Manage User</servlet-name>
+    <url-pattern>/rpc/ManageUserService</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>Finding Service</servlet-name>
+    <servlet-class>
+      com.surelogic.sierra.gwt.server.FindingServiceImpl
+    </servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>Finding Service</servlet-name>
+    <url-pattern>/rpc/FindingService</url-pattern>
+  </servlet-mapping>
+
+
+  <servlet>
+    <servlet-name>Ticket Service</servlet-name>
+    <servlet-class>
+      com.surelogic.sierra.gwt.server.TicketServiceImpl
+    </servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>Ticket Service</servlet-name>
+    <url-pattern>/rpc/TicketService</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>Settings Service</servlet-name>
+    <servlet-class>
+      com.surelogic.sierra.gwt.server.SettingsServiceImpl
+    </servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>Settings Service</servlet-name>
+    <url-pattern>/rpc/SettingsService</url-pattern>
+  </servlet-mapping>
+  <!-- chart servlets -->
+
+  <servlet>
+    <servlet-name>TicketAttendantServlet</servlet-name>
+    <servlet-class>
+      com.surelogic.sierra.servlets.chart.TicketAttendantServlet
+    </servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>TicketAttendantServlet</servlet-name>
+    <url-pattern>/chart/ticket</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>PNGServlet</servlet-name>
+    <servlet-class>
+      com.surelogic.sierra.servlets.chart.PNGServlet
+    </servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>PNGServlet</servlet-name>
+    <url-pattern>/chart/png</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>MapServlet</servlet-name>
+    <servlet-class>
+      com.surelogic.sierra.servlets.chart.MapServlet
+    </servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>MapServlet</servlet-name>
+    <url-pattern>/chart/map</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>TableServlet</servlet-name>
+    <servlet-class>
+      com.surelogic.sierra.servlets.table.TableServlet
+    </servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>TableServlet</servlet-name>
+    <url-pattern>/table</url-pattern>
+  </servlet-mapping>
+
+  <!-- client service servlets -->
+
+  <filter>
+    <description>
+      Validates that requests from Sierra Clients are correctly
+      authenticated.
+    </description>
+    <filter-name>Security Filter</filter-name>
+    <filter-class>
+      com.surelogic.sierra.jdbc.server.BasicSecurityFilter
+    </filter-class>
+  </filter>
+
+  <filter-mapping>
+    <filter-name>Security Filter</filter-name>
+    <url-pattern>/services/SierraService</url-pattern>
+    <url-pattern>/services/BugLinkService</url-pattern>
+    <url-pattern>/table</url-pattern>
+  </filter-mapping>
+
+  <servlet>
+    <servlet-name>Sierra Service</servlet-name>
+    <servlet-class>
+      com.surelogic.sierra.tool.message.SierraServiceImpl
+    </servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>Sierra Service</servlet-name>
+    <url-pattern>/services/SierraService</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>Server Info Service</servlet-name>
+    <servlet-class>
+      com.surelogic.sierra.tool.message.ServerInfoServiceImpl
+    </servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>Server Info Service</servlet-name>
+    <url-pattern>/services/ServerInfoService</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>BugLink Service</servlet-name>
+    <servlet-class>
+      com.surelogic.sierra.tool.message.BugLinkServiceImpl
+    </servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>BugLink Service</servlet-name>
+    <url-pattern>/services/BugLinkService</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <servlet-name>Support Service</servlet-name>
+    <servlet-class>
+      com.surelogic.sierra.tool.message.SupportServiceImpl
+    </servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>Support Service</servlet-name>
+    <url-pattern>/services/SupportService</url-pattern>
+  </servlet-mapping>
+
+  <!-- Configure the server -->
+  <context-param>
+    <description>
+      Determines whether or not team server capabilities are
+      turned on.
+    </description>
+    <param-name>teamserver</param-name>
+    <param-value>on</param-value>
+  </context-param>
+</web-app>

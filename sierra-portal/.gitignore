@@ -1,5 +1,4 @@
-/tomcat
-/www
-/.gwt-cache
 /bin
+/build
+/.gwt-cache
 /gwt-unitCache

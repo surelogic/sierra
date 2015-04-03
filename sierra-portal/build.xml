@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project default="build-web-portal" name="sierra-web-portal">
+
+  <property name="src" location="${basedir}/src" />
+  <property name="lib" location="${basedir}/lib" />
+  <property name="gwt.lib" location="${lib}/gwt-2.7.0" />
+  <property name="build" location="${basedir}/build" />
+  <property name="gwt-unitCache" location="${basedir}/gwt-unitCache" />
+
+  <property name="gwt.module" value="com.surelogic.sierra.gwt.SierraPortal" />
+
+  <target name="build-web-portal">
+    <echo>Cleaning up for Sierra web portal build</echo>
+    <delete quiet="true" dir="${build}" />
+    <delete quiet="true" dir="${gwt-unitCache}" />
+    <mkdir dir="${build}" />
+    <echo>GWT build of Sierra web portal into ${build}</echo>
+    <path id="gwt.class.path">
+      <pathelement path="${java.class.path}/" />
+      <pathelement location="${src}" />
+      <fileset dir="${gwt.lib}">
+        <include name="*.jar" />
+      </fileset>
+    </path>
+    <delete dir="${build}" />
+    <java classpathref="gwt.class.path" classname="com.google.gwt.dev.Compiler"
+      fork="true" maxmemory="512m">
+      <arg value="-localWorkers" />
+      <arg value="2" />
+      <arg value="-war" />
+      <arg value="${build}" />
+      <arg value="${gwt.module}" />
+    </java>
+    <echo>Sierra web portal built</echo>
+  </target>
+
+</project>

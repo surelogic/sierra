@@ -1,15 +1,17 @@
-<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-   <name>sierra-portal</name>
-   <comment>sierra-portal project</comment>
-   <projects/>
-   <buildSpec>
-       <buildCommand>
-           <name>org.eclipse.jdt.core.javabuilder</name>
-           <arguments/>
-       </buildCommand>
-   </buildSpec>
-   <natures>
-       <nature>org.eclipse.jdt.core.javanature</nature>
-   </natures>
+	<name>sierra-web-portal</name>
+	<comment>sierra-portal project</comment>
+	<projects>
+	</projects>
+	<buildSpec>
+		<buildCommand>
+			<name>org.eclipse.jdt.core.javabuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+	</buildSpec>
+	<natures>
+		<nature>org.eclipse.jdt.core.javanature</nature>
+	</natures>
 </projectDescription>

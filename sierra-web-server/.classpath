@@ -5,5 +5,8 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/sierra-jdbc"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/sierra-message"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/common"/>
+	<classpathentry kind="lib" path="lib/javax.mail-1.5.2.jar"/>
+	<classpathentry kind="lib" path="lib/jcommon-1.0.12.jar"/>
+	<classpathentry kind="lib" path="lib/jfreechart-1.0.9.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
