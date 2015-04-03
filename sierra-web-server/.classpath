@@ -8,5 +8,6 @@
 	<classpathentry kind="lib" path="lib/javax.mail-1.5.2.jar"/>
 	<classpathentry kind="lib" path="lib/jcommon-1.0.12.jar"/>
 	<classpathentry kind="lib" path="lib/jfreechart-1.0.9.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/sierra-web-portal"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
