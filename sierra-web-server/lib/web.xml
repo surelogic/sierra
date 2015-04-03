@@ -35,7 +35,7 @@
 
   <listener>
     <listener-class>
-      com.surelogic.sierra.server.lifecycle.BootUpServletContextListener
+      com.surelogic.sierra.servlets.BootUpServletContextListener
     </listener-class>
   </listener>
 
