@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project default="build-web-server" name="sierra-web-server">
 
+  <!-- Note we tacitly assume you have built sierra-web-portal -->
+
   <property name="sierra-web-portal" location="${basedir}/../sierra-web-portal" />
   <property name="sierra-jdbc" location="${basedir}/../sierra-jdbc" />
   <property name="sierra-message" location="${basedir}/../sierra-message" />
