@@ -3,82 +3,86 @@
   <description>Build for SL Ant tasks</description>
 
   <property name="sierra-ant.zip" value="../sierra-client-eclipse/lib/sierra-ant.zip" />
-  
-  <target name="all" depends="clean,build,zip"/>
 
-  <target name="clean-build" depends="clean,build"/>
-  
+  <target name="all" depends="clean,build,zip" />
+
+  <target name="clean-build" depends="clean,build" />
+
   <target name="clean">
-    <delete dir="./lib"/>
+    <delete dir="./lib" />
   </target>
-  
+
   <target name="build">
-    <mkdir dir="./lib"/>
-    
-    <mkdir dir="./lib/tools/pmd"/>
+    <mkdir dir="./lib" />
+
+    <mkdir dir="./lib/tools/pmd" />
     <copy todir="./lib/tools/pmd">
-      <fileset dir="../sierra-pmd" excludes="src/"/>	      
+      <fileset dir="../sierra-pmd" excludes="src/" />
     </copy>
-    
-    <mkdir dir="./lib/tools/findbugs"/>
+
+    <mkdir dir="./lib/tools/findbugs" />
     <copy todir="./lib/tools/findbugs">
-      <fileset dir="../sierra-fb" excludes="src/"/>	      
+      <fileset dir="../sierra-fb" excludes="src/" />
     </copy>
-    
-    <mkdir dir="./lib/tools/reckoner"/>
+
+    <mkdir dir="./lib/tools/reckoner" />
     <copy todir="./lib/tools/reckoner">
-      <fileset dir="../sierra-tool" excludes="src/"/>	    
+      <fileset dir="../sierra-tool" excludes="src/" />
     </copy>
     <copy todir="./lib/tools/reckoner/reckoner/lib">
       <fileset dir="../sierra-metrics/lib">
-	<include name="*.jar"/>
+        <include name="*.jar" />
       </fileset>
     </copy>
-    
+
     <jar destfile="./lib/common.jar">
-	 <fileset dir="../../common/common/bin" />        
-     <fileset dir="../../common/common/" includes="lib/scan_vm.properties"/>
+      <fileset dir="../../common/common/bin" />
+      <fileset dir="../../common/common/" includes="lib/scan_vm.properties" />
     </jar>
 
-    <mkdir dir="./lib/common"/>
+    <mkdir dir="./lib/common" />
     <copy todir="./lib/common">
-      <fileset dir="../../common/common/" includes="lib/runtime/**.jar"/>
+      <fileset dir="../../common/common/" includes="lib/runtime/**.jar" />
     </copy>
-    
+
     <jar destfile="./lib/sierra-jdbc.jar" basedir="../sierra-jdbc/bin" />
-    
+
     <jar destfile="./lib/sierra-message.jar" basedir="../sierra-message/bin" />
-    <mkdir dir="./lib/message"/>
+    <mkdir dir="./lib/message" />
     <copy todir="./lib/message">
-      <fileset dir="../sierra-message/srpc"/>
+      <fileset dir="../sierra-message/lib" />
     </copy>
-    
+
     <jar destfile="./lib/sierra-tool.jar" basedir="../sierra-tool/bin" />
-    
+
     <copy todir="./lib/junit">
-      <fileset dir="./org.junit4_4.3.1"/>
+      <fileset dir="./org.junit4_4.3.1" />
     </copy>
-    
+
     <copy todir="./lib/jaxb">
-      <fileset dir="./jaxb"/>
+      <fileset dir="./jaxb" />
     </copy>
 
     <jar destfile="./lib/sierra-ant.jar">
-      <fileset dir="../sierra-ant/bin"/>
+      <fileset dir="../sierra-ant/bin" />
       <zipfileset src="./lib/sierra-message.jar" />
       <zipfileset src="./lib/sierra-tool.jar" />
       <zipfileset src="./lib/common.jar" />
     </jar>
-    
+
   </target>
 
   <target name="zip">
-    <zip destfile="./lib/tools/findbugs/com.surelogic.sierra.fb.jar" basedir="./lib/tools/findbugs/bin"/>
-    <zip destfile="./lib/tools/pmd/com.surelogic.sierra.pmd.jar" basedir="./lib/tools/pmd/bin"/>
-    <zip destfile="./lib/tools/reckoner/com.surelogic.sierra.tool.jar" basedir="./lib/tools/reckoner/bin"/>
+    <zip destfile="./lib/tools/findbugs/com.surelogic.sierra.fb.jar"
+      basedir="./lib/tools/findbugs/bin" />
+    <zip destfile="./lib/tools/pmd/com.surelogic.sierra.pmd.jar"
+      basedir="./lib/tools/pmd/bin" />
+    <zip destfile="./lib/tools/reckoner/com.surelogic.sierra.tool.jar"
+      basedir="./lib/tools/reckoner/bin" />
 
-    <zip destfile="${sierra-ant.zip}"> 
-        <zipfileset dir="." prefix="sierra-ant" includes="lib/**/*.jar, lib/**/*.MF, README.txt, examples/**"/>
+    <zip destfile="${sierra-ant.zip}">
+      <zipfileset dir="." prefix="sierra-ant"
+        includes="lib/**/*.jar, lib/**/*.MF, README.txt, examples/**" />
     </zip>
   </target>
 </project>
