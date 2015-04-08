@@ -48,6 +48,8 @@ import com.surelogic.common.FileUtility;
 import com.surelogic.common.Pair;
 import com.surelogic.common.SLUtility;
 import com.surelogic.common.core.EclipseUtility;
+import com.surelogic.common.core.JDTUtility;
+import com.surelogic.common.core.JavaProjectResources;
 import com.surelogic.common.jobs.remote.AbstractLocalSLJob;
 import com.surelogic.common.jobs.remote.AbstractRemoteSLJob;
 import com.surelogic.common.logging.SLLogger;
@@ -296,6 +298,7 @@ public final class ConfigGenerator {
                     excludedSourceFolders, excludedPackagePatterns);
             final SureLogicToolsFilter bytecodeFilter = getFilterFor(
                     bytecodeSourceFolders, bytecodePackagePatterns);
+            final List<String> excludedClasses = new ArrayList<String>();
             if (props != null) {
                 config.setExcludedSourceFolders(combineListProperties(
                         props.getProperty(SCAN_EXCLUDE_SOURCE_FOLDER),
@@ -324,6 +327,9 @@ public final class ConfigGenerator {
                     boolean excludeFilterMatchesCU = filter.matches(path
                             .toFile().getAbsolutePath(), cuPackageName);
                     if (excludeFilterMatchesCU) {
+                    	for (IType t : c.getAllTypes()) {
+                    		excludedClasses.add(t.getFullyQualifiedName());
+                    	}
                         continue; // Excluded
                     }
                     String outputLocation = computeOutputLocation(javaProject,
@@ -648,6 +654,7 @@ public final class ConfigGenerator {
                 .getBytecodePackagePatterns(props));
         final String[] combinedPackages = combineLists(excludedPackages,
                 bytecodePackages);
+    	
         if (toBeAnalyzed && props != null) {
             cfg.setExcludedSourceFolders(combineListProperties(
                     props.getProperty(SCAN_EXCLUDE_SOURCE_FOLDER),
@@ -658,6 +665,13 @@ public final class ConfigGenerator {
             cfg.setExternalFilter(SureLogicToolsPropertiesUtility
                     .toStringConciseExcludedFoldersAndPackages(excludedFolders,
                             excludedPackages));
+            
+        	final SureLogicToolsFilter excludeFilter = 
+    				SureLogicToolsPropertiesUtility.getFilterFor(excludedFolders, excludedPackages);
+    		final SureLogicToolsFilter bytecodeFilter = 
+			SureLogicToolsPropertiesUtility.getFilterFor(bytecodeFolders, bytecodePackages);
+    		final SureLogicToolsFilter combinedFilter = SureLogicToolsPropertiesUtility.combine(excludeFilter, bytecodeFilter);
+            configureExcludedClasses(cfg, p, combinedFilter);
         }
         final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
         for (IClasspathEntry cpe : p.getResolvedClasspath(true)) {
@@ -669,7 +683,16 @@ public final class ConfigGenerator {
                 toBeAnalyzed);
     }
 
-    private static String[] convertPkgsToSierraStyle(String[] pkgs) {
+    private static void configureExcludedClasses(Config cfg, IJavaProject p, SureLogicToolsFilter filter) throws JavaModelException {
+    	final List<String> excluded = new ArrayList<String>();
+    	JavaProjectResources jpr = JDTUtility.collectAllResources(p, null);    	
+    	for(ICompilationUnit cu : JDTUtility.applyToolsFilter(jpr.cus, filter, false)) {
+    		excluded.add(JDTUtility.computeQualifiedName(cu));
+    	}
+		cfg.setExcludedClasses(excluded);
+	}
+
+	private static String[] convertPkgsToSierraStyle(String[] pkgs) {
         if (pkgs == null || pkgs.length == 0) {
             return SLUtility.EMPTY_STRING_ARRAY;
         }
@@ -726,6 +749,7 @@ public final class ConfigGenerator {
                 final String path = cpe.getPath().toPortableString();
                 for (String excluded : excludedPaths) {
                     if (path.equals(excluded)) {
+                    	// TODO what about subpaths?
                         return;
                     }
                 }

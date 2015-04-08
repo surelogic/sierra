@@ -408,8 +408,9 @@ public final class MessageWarehouse {
             }
 
             final XMLStream xs = new XMLStream(runDocument);
+            Config config = null;
             try {
-                parseScanMetadata(xs, generator, monitor);
+            	config = parseScanMetadata(xs, generator, monitor);
 
                 if (cancelled(monitor)) {
                     return null;
@@ -418,7 +419,7 @@ public final class MessageWarehouse {
                 xs.close();
             }
 
-            parseScanDocument(new XMLStream(runDocument), generator.build(),
+            parseScanDocument(config, new XMLStream(runDocument), generator.build(),
                     monitor);
         } catch (final FileNotFoundException e) {
             throw new IllegalArgumentException("File with name "
@@ -468,7 +469,7 @@ public final class MessageWarehouse {
                                     + File.separatorChar + name;
                             final XMLStream xs = new XMLStream(id,
                                     zip.getInputStream(ze));
-                            parseScanDocument(xs, ag, monitor);
+                            parseScanDocument(config, xs, ag, monitor);
                         }
                     }
                 }
@@ -531,7 +532,7 @@ public final class MessageWarehouse {
         }
     }
 
-    private void parseScanDocument(final XMLStream xs,
+    private void parseScanDocument(final Config config, final XMLStream xs,
             final ArtifactGenerator generator, final SLProgressMonitor monitor) {
         try {
             final XMLStreamReader xmlr = xs.xmlr;
@@ -598,7 +599,7 @@ public final class MessageWarehouse {
 
                     while (xmlr.getEventType() == START_ELEMENT
                             && xmlr.getLocalName().equals("artifact")) {
-                        readArtifact(
+                    	final boolean process = readArtifact(config, 
                                 unmarshaller.unmarshal(xmlr, Artifact.class)
                                 .getValue(), aBuilder);
 
@@ -607,6 +608,10 @@ public final class MessageWarehouse {
                             // <artifacts>s.
                         }
 
+                        if (!process) {
+                        	continue;
+                        }
+                        
                         if (++counter == COUNT) {
                             if (cancelled(monitor)) {
                                 generator.rollback();
@@ -681,19 +686,19 @@ public final class MessageWarehouse {
 
         final ArtifactGenerator aGen = generator.build();
         readMetrics(scan.getToolOutput().getMetrics().getClassMetric(), aGen);
-        readArtifacts(scan.getToolOutput().getArtifacts().getArtifact(), aGen);
+        readArtifacts(scan.getConfig(), scan.getToolOutput().getArtifacts().getArtifact(), aGen);
         readErrors(scan.getToolOutput().getErrors().getError(), aGen);
 
         return generator.finished();
     }
 
-    private static void readArtifacts(final Collection<Artifact> artifacts,
+    private static void readArtifacts(final Config c, final Collection<Artifact> artifacts,
             final ArtifactGenerator generator) {
         if (artifacts != null) {
             final ArtifactBuilder aBuilder = generator.artifact();
 
             for (final Artifact a : artifacts) {
-                readArtifact(a, aBuilder);
+                readArtifact(c, a, aBuilder);
             }
         }
     }
@@ -733,8 +738,11 @@ public final class MessageWarehouse {
         // TODO read all config attributes
     }
 
-    private static void readArtifact(final Artifact artifact,
+    private static boolean readArtifact(final Config config, final Artifact artifact,
             final ArtifactBuilder builder) {
+    	if (config.filterLocation(artifact.getPrimarySourceLocation())) {
+    		return false;
+    	}
         builder.severity(artifact.getSeverity())
         .priority(artifact.getPriority())
         .message(artifact.getMessage());
@@ -754,6 +762,7 @@ public final class MessageWarehouse {
         }
 
         builder.build();
+        return true;
     }
 
     private static void readClassMetric(final ClassMetric metric,

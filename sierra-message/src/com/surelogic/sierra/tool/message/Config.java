@@ -3,6 +3,7 @@ package com.surelogic.sierra.tool.message;
 import java.io.File;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -47,6 +48,7 @@ public class Config implements Cloneable, ILocalConfig {
     private String sourceLevel = null;
     private String targetLevel = null;
     private String consolePath = null;
+    private ArrayList<String> excludedClasses = new ArrayList<String>();
     private String excludedPackages = null;
     private String excludedFolders = null;
     private String externalFilter = null;
@@ -593,6 +595,14 @@ public class Config implements Cloneable, ILocalConfig {
         consolePath = path;
     }
 
+    public List<String> getExcludedClasses() {
+    	return excludedClasses;
+    }
+    
+    public void setExcludedClasses(List<String> classes) {
+    	excludedClasses = new ArrayList<String>(classes);
+    }
+    
     public String getExcludedPackages() {
         return excludedPackages;
     }
@@ -650,4 +660,14 @@ public class Config implements Cloneable, ILocalConfig {
             return adaptedMap;
         }
     }
+
+    /**
+     * Uses excludes to figure out if this should be filtered or not
+     */
+	public boolean filterLocation(SourceLocation location) {
+		String qname = location.getPackageName()+'.'+location.getClassName();
+		boolean rv = excludedClasses.contains(qname);
+		System.out.println("Comparing "+qname+" : "+rv);
+		return rv;
+	}
 }
