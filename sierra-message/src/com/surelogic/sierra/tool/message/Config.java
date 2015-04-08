@@ -667,7 +667,7 @@ public class Config implements Cloneable, ILocalConfig {
 	public boolean filterLocation(SourceLocation location) {
 		String qname = location.getPackageName()+'.'+location.getClassName();
 		boolean rv = excludedClasses.contains(qname);
-		System.out.println("Comparing "+qname+" : "+rv);
+		//System.out.println("Comparing "+qname+" : "+rv);
 		return rv;
 	}
 }

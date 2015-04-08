@@ -77,6 +77,8 @@ import com.surelogic.sierra.tool.targets.ToolTarget;
  * scans, it handles both project and compilation unit configs
  */
 public final class ConfigGenerator {
+	private static final boolean useOldFiltering = false;
+	
     private static final String[] PLUGINS = {
         SierraToolConstants.MESSAGE_PLUGIN_ID,
         AbstractLocalSLJob.COMMON_PLUGIN_ID,
@@ -718,7 +720,7 @@ public final class ConfigGenerator {
         final URI out = res.getLocationURI();
         final IToolTarget.Type type = toBeAnalyzed ? IToolTarget.Type.BINARY
                 : IToolTarget.Type.AUX;
-        if (excludedPkgs != null && excludedPkgs.length > 0) {
+        if (useOldFiltering && excludedPkgs != null && excludedPkgs.length > 0) {
             if (copyBeforeScan) {
                 cfg.addFilteredDirTarget(type, outLoc, res, null, excludedPkgs);
                 cfg.addDirTarget(IToolTarget.Type.AUX, outLoc, res);
@@ -745,14 +747,15 @@ public final class ConfigGenerator {
         switch (cpe.getEntryKind()) {
         case IClasspathEntry.CPE_SOURCE:
             if (toBeAnalyzed) {
+            	if (useOldFiltering) {
                 // Check if excluded
                 final String path = cpe.getPath().toPortableString();
                 for (String excluded : excludedPaths) {
                     if (path.equals(excluded)) {
-                    	// TODO what about subpaths?
                         return;
                     }
                 }
+            	}
                 IResource res = root.findMember(cpe.getPath());
                 URI loc = res.getLocationURI();
 
