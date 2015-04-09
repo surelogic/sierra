@@ -419,7 +419,7 @@ public final class ConfigGenerator {
             // Get clean option
             // Get included dirs -project specific
             // Get excluded dirs - project specific
-
+            config.setExcludedClasses(excludedClasses);
         }
         return config;
     }
