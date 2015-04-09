@@ -2,14 +2,7 @@ package com.surelogic.sierra.tool.message;
 
 import java.io.File;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Logger;
 
 import javax.xml.bind.annotation.XmlAccessOrder;
@@ -666,8 +659,17 @@ public class Config implements Cloneable, ILocalConfig {
      */
 	public boolean filterLocation(SourceLocation location) {
 		String qname = location.getPackageName()+'.'+location.getClassName();
+		/*
 		boolean rv = excludedClasses.contains(qname);
 		//System.out.println("Comparing "+qname+" : "+rv);
 		return rv;
+		*/
+		for(String prefix : excludedClasses) {
+			if (qname.startsWith(prefix)) {
+				System.out.println("Filtering out "+qname);
+				return true;
+			}
+		}
+		return false;
 	}
 }
