@@ -29,6 +29,7 @@ import org.eclipse.aether.resolution.ArtifactResult;
 
 import com.surelogic.ant.sierra.RunSierra;
 import com.surelogic.common.FileUtility;
+import com.surelogic.common.jobs.remote.RemoteSLJobConstants;
 
 /**
  * Goal which touches a timestamp file.
@@ -109,6 +110,8 @@ public class ScanMojo extends AbstractMojo {
 
     @Override
     public void execute() throws MojoExecutionException {
+        // Indicate that we are running remotely, outside of eclipse
+        System.setProperty(RemoteSLJobConstants.RUNNING_REMOTELY, "true");
         File toDelete = null;
         try {
             String sourceLevel = calculateSourceLevel();
@@ -167,7 +170,7 @@ public class ScanMojo extends AbstractMojo {
                             repoSession, request);
                     Artifact resultArtifact = result.getArtifact();
                     cp.createPathElement()
-                            .setLocation(resultArtifact.getFile());
+                    .setLocation(resultArtifact.getFile());
                 } else {
                     cp.createPathElement().setLocation(a.getFile());
                 }
