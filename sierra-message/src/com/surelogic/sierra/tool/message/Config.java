@@ -1,5 +1,11 @@
 package com.surelogic.sierra.tool.message;
 
+import static com.surelogic.common.tool.SureLogicToolsPropertiesUtility.SCAN_EXCLUDE_SOURCE_FOLDER;
+import static com.surelogic.common.tool.SureLogicToolsPropertiesUtility.SCAN_EXCLUDE_SOURCE_PACKAGE;
+import static com.surelogic.common.tool.SureLogicToolsPropertiesUtility.SCAN_SOURCE_FOLDER_AS_BYTECODE;
+import static com.surelogic.common.tool.SureLogicToolsPropertiesUtility.SCAN_SOURCE_PACKAGE_AS_BYTECODE;
+import static com.surelogic.common.tool.SureLogicToolsPropertiesUtility.combineListProperties;
+
 import java.io.File;
 import java.net.URI;
 import java.util.*;
@@ -15,6 +21,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import com.surelogic.common.jobs.remote.ILocalConfig;
 import com.surelogic.common.logging.SLLogger;
+import com.surelogic.common.tool.SureLogicToolsPropertiesUtility;
 import com.surelogic.sierra.tool.targets.IToolTarget;
 import com.surelogic.sierra.tool.targets.ToolTarget;
 
@@ -671,5 +678,17 @@ public class Config implements Cloneable, ILocalConfig {
 			}
 		}
 		return false;
+	}
+	
+	public void initFromToolsProps(Properties props, String[] excludedFolders, String[] excludedPackages) {
+        setExcludedSourceFolders(combineListProperties(
+                props.getProperty(SCAN_EXCLUDE_SOURCE_FOLDER),
+                props.getProperty(SCAN_SOURCE_FOLDER_AS_BYTECODE)));
+        setExcludedPackages(combineListProperties(
+                props.getProperty(SCAN_EXCLUDE_SOURCE_PACKAGE),
+                props.getProperty(SCAN_SOURCE_PACKAGE_AS_BYTECODE)));
+        setExternalFilter(SureLogicToolsPropertiesUtility
+                .toStringConciseExcludedFoldersAndPackages(
+                        excludedFolders, excludedPackages));
 	}
 }

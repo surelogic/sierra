@@ -1,10 +1,5 @@
 package com.surelogic.ant.sierra;
 
-import static com.surelogic.common.tool.SureLogicToolsPropertiesUtility.SCAN_EXCLUDE_SOURCE_FOLDER;
-import static com.surelogic.common.tool.SureLogicToolsPropertiesUtility.SCAN_EXCLUDE_SOURCE_PACKAGE;
-import static com.surelogic.common.tool.SureLogicToolsPropertiesUtility.SCAN_SOURCE_FOLDER_AS_BYTECODE;
-import static com.surelogic.common.tool.SureLogicToolsPropertiesUtility.SCAN_SOURCE_PACKAGE_AS_BYTECODE;
-import static com.surelogic.common.tool.SureLogicToolsPropertiesUtility.combineListProperties;
 import static com.surelogic.common.tool.SureLogicToolsPropertiesUtility.combineLists;
 import static com.surelogic.common.tool.SureLogicToolsPropertiesUtility.getBytecodePackagePatterns;
 import static com.surelogic.common.tool.SureLogicToolsPropertiesUtility.getBytecodeSourceFolders;
@@ -174,15 +169,7 @@ public class RunSierra extends Task {
             if (props != null) {
                 log(String.format("Loading properties file at %s.",
                         getProperties()));
-                cfg.setExcludedSourceFolders(combineListProperties(
-                        props.getProperty(SCAN_EXCLUDE_SOURCE_FOLDER),
-                        props.getProperty(SCAN_SOURCE_FOLDER_AS_BYTECODE)));
-                cfg.setExcludedPackages(combineListProperties(
-                        props.getProperty(SCAN_EXCLUDE_SOURCE_PACKAGE),
-                        props.getProperty(SCAN_SOURCE_PACKAGE_AS_BYTECODE)));
-                cfg.setExternalFilter(SureLogicToolsPropertiesUtility
-                        .toStringConciseExcludedFoldersAndPackages(
-                                excludedFolders, excludedPackages));
+                cfg.initFromToolsProps(props, excludedFolders, excludedPackages);
             } else {
                 log("No properties file loaded.");
             }

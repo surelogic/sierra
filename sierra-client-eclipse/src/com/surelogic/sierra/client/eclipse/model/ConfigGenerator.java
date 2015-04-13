@@ -250,7 +250,7 @@ public final class ConfigGenerator {
       final String docPrefix = computeDocumentPrefix(javaProject, true);
       final File scanDocument = new File(completeScanDocumentName(docPrefix));
 
-      final Copier copier = new Copier(new File(docPrefix));
+      final Copier copier = new Copier(javaProject.getElementName(), projectLoc.toFile(), new File(docPrefix));
       config = copier.config;
 
       config.setBaseDirectory(baseDir);
@@ -260,26 +260,8 @@ public final class ConfigGenerator {
       config.setLogPath(completeLogPath(docPrefix));
       setupTools(config, javaProject);
 
-      final Properties props = SureLogicToolsPropertiesUtility.readFileOrNull(new File(projectLoc.toFile(),
-          SureLogicToolsPropertiesUtility.PROPS_FILE));
-      final String[] excludedSourceFolders = SureLogicToolsPropertiesUtility.getExcludedSourceFolders(props);
-      final String[] excludedPackagePatterns = SureLogicToolsPropertiesUtility.getExcludedPackagePatterns(props);
-      final String[] bytecodeSourceFolders = SureLogicToolsPropertiesUtility.getBytecodeSourceFolders(props);
-      final String[] bytecodePackagePatterns = SureLogicToolsPropertiesUtility.getExcludedPackagePatterns(props);
-      final SureLogicToolsFilter excludeFilter = getFilterFor(excludedSourceFolders, excludedPackagePatterns);
-      final SureLogicToolsFilter bytecodeFilter = getFilterFor(bytecodeSourceFolders, bytecodePackagePatterns);
       final List<String> excludedClasses = new ArrayList<String>();
-      if (props != null) {
-        config.setExcludedSourceFolders(combineListProperties(props.getProperty(SCAN_EXCLUDE_SOURCE_FOLDER),
-            props.getProperty(SCAN_SOURCE_FOLDER_AS_BYTECODE)));
-        config.setExcludedPackages(combineListProperties(props.getProperty(SCAN_EXCLUDE_SOURCE_PACKAGE),
-            props.getProperty(SCAN_SOURCE_PACKAGE_AS_BYTECODE)));
-        config.setExternalFilter(SureLogicToolsPropertiesUtility.toStringConciseExcludedFoldersAndPackages(excludedSourceFolders,
-            excludedPackagePatterns));
-
-      }
-      final SureLogicToolsFilter filter = combine(excludeFilter, bytecodeFilter);
-
+      final SureLogicToolsFilter filter = copier.getToolsFilter();
       try {
         String defaultOutputLocation = javaProject.getOutputLocation().makeRelative().toOSString();
 
@@ -388,7 +370,7 @@ public final class ConfigGenerator {
     final String docPrefix = computeDocumentPrefix(project, false);
     final File scanDocument = new File(completeScanDocumentName(docPrefix));
 
-    Copier copier = new Copier(new File(docPrefix));
+    Copier copier = new Copier(project.getElementName(), project.getProject().getLocation().toFile(), new File(docPrefix));
     Config config = copier.config;
     config.setProject(project.getProject().getName());
 
@@ -555,35 +537,16 @@ public final class ConfigGenerator {
     }
     handled.add(p);
     final Config cfg = copier.config;
-    final Properties props = SureLogicToolsPropertiesUtility.readFileOrNull(new File(p.getProject().getLocation().toFile(),
-        PROPS_FILE));
-    final String[] excludedFolders = makeAbsolute(p.getElementName(),
-        SureLogicToolsPropertiesUtility.getExcludedSourceFolders(props));
-    final String[] excludedPackages = convertPkgsToSierraStyle(SureLogicToolsPropertiesUtility.getExcludedPackagePatterns(props));
-    final String[] bytecodeFolders = makeAbsolute(p.getElementName(),
-        SureLogicToolsPropertiesUtility.getBytecodeSourceFolders(props));
-    final String[] bytecodePackages = convertPkgsToSierraStyle(SureLogicToolsPropertiesUtility.getBytecodePackagePatterns(props));
-    final String[] combinedPackages = combineLists(excludedPackages, bytecodePackages);
-
-    if (toBeAnalyzed && props != null) {
-      cfg.setExcludedSourceFolders(combineListProperties(props.getProperty(SCAN_EXCLUDE_SOURCE_FOLDER),
-          props.getProperty(SCAN_SOURCE_FOLDER_AS_BYTECODE)));
-      cfg.setExcludedPackages(combineListProperties(props.getProperty(SCAN_EXCLUDE_SOURCE_PACKAGE),
-          props.getProperty(SCAN_SOURCE_PACKAGE_AS_BYTECODE)));
-      cfg.setExternalFilter(SureLogicToolsPropertiesUtility.toStringConciseExcludedFoldersAndPackages(excludedFolders,
-          excludedPackages));
-
-      final SureLogicToolsFilter excludeFilter = SureLogicToolsPropertiesUtility.getFilterFor(excludedFolders, excludedPackages);
-      final SureLogicToolsFilter bytecodeFilter = SureLogicToolsPropertiesUtility.getFilterFor(bytecodeFolders, bytecodePackages);
-      final SureLogicToolsFilter combinedFilter = SureLogicToolsPropertiesUtility.combine(excludeFilter, bytecodeFilter);
-      configureExcludedClasses(cfg, p, combinedFilter);
+    if (toBeAnalyzed && copier.getToolsFilter() != null) {
+      configureExcludedClasses(cfg, p, copier.getToolsFilter());
     }
     final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+    final String[] packagesAsPaths = convertPkgsToSierraStyle(copier.combinedPackages);
     for (IClasspathEntry cpe : p.getResolvedClasspath(true)) {
-      handleClasspathEntry(copier, handled, toBeAnalyzed, root, combineLists(excludedFolders, bytecodeFolders), combinedPackages,
+      handleClasspathEntry(copier, handled, toBeAnalyzed, root, copier.combinedFolders, packagesAsPaths,
           cpe);
     }
-    handleOutputLocation(copier, p.getOutputLocation(), combinedPackages, toBeAnalyzed);
+    handleOutputLocation(copier, p.getOutputLocation(), packagesAsPaths, toBeAnalyzed);
   }
 
   private static void configureExcludedClasses(Config cfg, IJavaProject p, SureLogicToolsFilter filter) throws JavaModelException {
@@ -595,7 +558,7 @@ public final class ConfigGenerator {
     cfg.setExcludedClasses(excluded);
   }
 
-  private static String[] convertPkgsToSierraStyle(String[] pkgs) {
+  static String[] convertPkgsToSierraStyle(String[] pkgs) {
     if (pkgs == null || pkgs.length == 0) {
       return SLUtility.EMPTY_STRING_ARRAY;
     }
@@ -658,7 +621,7 @@ public final class ConfigGenerator {
         if (excludePatterns != null && excludePatterns.length > 0 || includePatterns != null && includePatterns.length > 0) {
           final String[] inclusions = convertPaths(includePatterns);
           final String[] exclusions;
-          if (excludedPkgs.length > 0) {
+          if (useOldFiltering && excludedPkgs.length > 0) {
             // Fold the exclude pkgs in with the exclude patterns
             Set<String> temp = new HashSet<String>();
             for (String p : convertPaths(excludePatterns)) {
@@ -676,7 +639,7 @@ public final class ConfigGenerator {
           } else {
             copier.config.addTarget(new FilteredDirectoryTarget(IToolTarget.Type.SOURCE, loc, inclusions, exclusions));
           }
-        } else if (excludedPkgs.length > 0) {
+        } else if (useOldFiltering && excludedPkgs.length > 0) {
           if (copyBeforeScan) {
             copier.addFilteredDirTarget(IToolTarget.Type.SOURCE, cpe.getPath(), res, null, excludedPkgs);
           } else {
@@ -711,7 +674,7 @@ public final class ConfigGenerator {
     }
   }
 
-  private static String[] makeAbsolute(String project, String[] excludedPaths) {
+  static String[] makeAbsolute(String project, String[] excludedPaths) {
     String[] rv = new String[excludedPaths.length];
     for (int i = 0; i < rv.length; i++) {
       rv[i] = '/' + project + '/' + excludedPaths[i];
@@ -766,12 +729,37 @@ public final class ConfigGenerator {
   class Copier {
     final File tmpDir;
     final Config config = new Config();
+    final SureLogicToolsFilter filter;
+    final String[] combinedFolders;
+    final String[] combinedPackages;
 
-    Copier(File tmp) {
+    Copier(String projectName, File projectLocation, File tmp) {
       tmpDir = tmp;
+      
+      final Properties props = SureLogicToolsPropertiesUtility.readFileOrNull(new File(projectLocation, PROPS_FILE));
+      if (props != null) {    	  
+          final String[] excludedSourceFolders = makeAbsolute(projectName, SureLogicToolsPropertiesUtility.getExcludedSourceFolders(props));
+          final String[] excludedPackagePatterns = SureLogicToolsPropertiesUtility.getExcludedPackagePatterns(props);
+          final String[] bytecodeSourceFolders = makeAbsolute(projectName, SureLogicToolsPropertiesUtility.getBytecodeSourceFolders(props));
+          final String[] bytecodePackagePatterns = SureLogicToolsPropertiesUtility.getBytecodePackagePatterns(props);
+          final SureLogicToolsFilter excludeFilter = getFilterFor(excludedSourceFolders, excludedPackagePatterns);
+          final SureLogicToolsFilter bytecodeFilter = getFilterFor(bytecodeSourceFolders, bytecodePackagePatterns);
+    	  config.initFromToolsProps(props, excludedSourceFolders, excludedPackagePatterns);
+          filter = combine(excludeFilter, bytecodeFilter);
+    	  combinedFolders = combineLists(excludedSourceFolders, bytecodeSourceFolders);
+    	  combinedPackages = combineLists(excludedPackagePatterns, bytecodePackagePatterns);
+      } else {
+    	  filter = null;
+    	  combinedFolders = SLUtility.EMPTY_STRING_ARRAY;
+    	  combinedPackages = SLUtility.EMPTY_STRING_ARRAY;
+      }
     }
 
-    void addFileTarget(ClassFile cf) {
+    SureLogicToolsFilter getToolsFilter() {
+		return filter;
+	}
+
+	void addFileTarget(ClassFile cf) {
       String pkg = cf.first();
       String dest = pkg == null || pkg.length() == 0 ? cf.second().getName() : pkg + '/' + cf.second().getName();
       URI mappedTarget = copy(dest, cf.second());
