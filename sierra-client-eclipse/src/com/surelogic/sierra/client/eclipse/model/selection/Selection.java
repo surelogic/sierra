@@ -300,7 +300,25 @@ public final class Selection extends AbstractDatabaseObserver {
         synchronized (last) {
           b.append(last.getWhereClause(true));
         }
+      } else {
+        b.append(addWhereClauseWhenNoFilters());
       }
+    }
+    return b.toString();
+  }
+
+  /**
+   * If there are no filters when {@link #getWhereClause()} is invoked then this
+   * method is used to add the "unused" where clause to the query.
+   * 
+   * @return an "unused" where clause.
+   */
+  private String addWhereClauseWhenNoFilters() {
+    boolean first = true;
+    final StringBuilder b = new StringBuilder();
+    final Set<ISelectionFilterFactory> unused = new HashSet<ISelectionFilterFactory>(Selection.getAllFilters());
+    for (ISelectionFilterFactory unusedFilter : unused) {
+      first = unusedFilter.addWhereClauseIfUnusedFilter(unused, b, first, usesJoin());
     }
     return b.toString();
   }

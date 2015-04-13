@@ -709,7 +709,7 @@ public abstract class Filter {
     }
 
     /*
-     * For counts we don't include this, for queries on the whole selection we
+     * For counts we don't include 'this', for queries on the whole selection we
      * do.
      */
     Filter filter;
@@ -717,13 +717,10 @@ public abstract class Filter {
       filter = this;
     } else {
       filter = this.f_previous;
-      first = addMinimalWhereClausePart(b, first, this);
     }
     while (filter != null) {
       // TODO: fragile base class :-)
       unused.remove(filter.getFactory());
-
-      first = addMinimalWhereClausePart(b, first, filter);
 
       if (filter.hasWhereClausePart()) {
         first = addClausePrefix(b, first);
@@ -737,17 +734,7 @@ public abstract class Filter {
       first = unusedFilter.addWhereClauseIfUnusedFilter(unused, b, first, usesJoin());
     }
     String rv = b.toString();
-    // System.out.println(rv);
     return rv;
-  }
-
-  private boolean addMinimalWhereClausePart(final StringBuilder b, boolean first, Filter filter) {
-    final String min = filter.getMinimalWhereClausePart();
-    if (min != null) {
-      first = addClausePrefix(b, first);
-      b.append(min);
-    }
-    return first;
   }
 
   protected static boolean addClausePrefix(final StringBuilder b, boolean first) {
@@ -758,15 +745,6 @@ public abstract class Filter {
       b.append(" and ");
     }
     return first;
-  }
-
-  /**
-   * Computes the minimal where clause for this filter
-   * 
-   * @return null if none
-   */
-  protected String getMinimalWhereClausePart() {
-    return null;
   }
 
   /**
