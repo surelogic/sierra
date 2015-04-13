@@ -824,7 +824,7 @@ public class FindingsMediator extends AbstractSierraViewMediator implements IVie
     });
   }
 
-  private abstract class SelectionListener implements Listener {
+  abstract class SelectionListener implements Listener {
     @Override
     public final void handleEvent(final Event event) {
       if (event.widget instanceof MenuItem) {

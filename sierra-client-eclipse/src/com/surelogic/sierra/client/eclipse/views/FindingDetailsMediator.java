@@ -661,7 +661,7 @@ public class FindingDetailsMediator extends AbstractSierraViewMediator implement
     f_parent.layout(true, true);
   }
 
-  private String getFindingSynopsis() {
+  String getFindingSynopsis() {
     final String importance = f_finding.getImportance().toString().toLowerCase();
 
     final int auditCount = f_finding.getNumberOfAudits();
@@ -718,7 +718,7 @@ public class FindingDetailsMediator extends AbstractSierraViewMediator implement
     return b.toString();
   }
 
-  private void initLocationTree(final Tree tree, final FindingDetail finding) {
+  void initLocationTree(final Tree tree, final FindingDetail finding) {
     tree.removeAll();
 
     // TODO reuse old TreeItems?
@@ -774,12 +774,12 @@ public class FindingDetailsMediator extends AbstractSierraViewMediator implement
     }
   }
 
-  private void showAsLink(final TreeItem item) {
+  void showAsLink(final TreeItem item) {
     final Display d = item.getDisplay();
     item.setForeground(d.getSystemColor(SWT.COLOR_BLUE));
   }
 
-  private TreeItem createLocation(final TreeItem proj, final Map<String, TreeItem> packages, final Map<String, TreeItem> classes,
+  TreeItem createLocation(final TreeItem proj, final Map<String, TreeItem> packages, final Map<String, TreeItem> classes,
       final Map<String, TreeItem> lines, final SourceDetail loc) {
     TreeItem pkg = packages.get(loc.getPackageName());
     TreeItem clazz;
@@ -827,7 +827,7 @@ public class FindingDetailsMediator extends AbstractSierraViewMediator implement
   /**
    * Must be invoked from the SWT thread.
    */
-  private void updateTabTitles() {
+  void updateTabTitles() {
     final int auditCount = f_finding.getNumberOfAudits();
     final int artifactCount = f_finding.getNumberOfArtifacts();
     if (auditCount == 0) {

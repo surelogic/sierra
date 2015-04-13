@@ -36,19 +36,19 @@ import com.surelogic.sierra.client.eclipse.views.IViewMediator;
 public final class FindingsSelectionMediator implements IProjectsObserver, CascadingList.ICascadingListObserver,
     ISelectionManagerObserver, IViewMediator, ISelectionObserver {
 
-  private final IViewCallback f_view;
-  private final Composite f_findingsPage;
-  private final CascadingList f_cascadingList;
-  private final ToolItem f_clearSelectionItem;
-  private final Composite f_breadcrumbsPanel;
-  private final Link f_breadcrumbsLink;
-  private final ToolItem f_openSearchItem;
-  private final ToolItem f_deleteSearchItem;
-  private final ToolItem f_saveSearchesAsItem;
-  private final Link f_savedSelections;
-  private final Link f_porousCountLink;
+  final IViewCallback f_view;
+  final Composite f_findingsPage;
+  final CascadingList f_cascadingList;
+  final ToolItem f_clearSelectionItem;
+  final Composite f_breadcrumbsPanel;
+  final Link f_breadcrumbsLink;
+  final ToolItem f_openSearchItem;
+  final ToolItem f_deleteSearchItem;
+  final ToolItem f_saveSearchesAsItem;
+  final Link f_savedSelections;
+  final Link f_porousCountLink;
 
-  private final SelectionManager f_manager = SelectionManager.getInstance();
+  final SelectionManager f_manager = SelectionManager.getInstance();
 
   private MColumn f_first = null;
 
@@ -229,7 +229,7 @@ public final class FindingsSelectionMediator implements IProjectsObserver, Casca
     f_manager.setWorkingSelection(null);
   }
 
-  private void clearToPersistedViewState() {
+  void clearToPersistedViewState() {
     final Selection persistedViewState = f_manager.getViewState();
     if (persistedViewState != null) {
       /*
@@ -243,7 +243,7 @@ public final class FindingsSelectionMediator implements IProjectsObserver, Casca
     }
   }
 
-  private void clearToNewWorkingSelection() {
+  void clearToNewWorkingSelection() {
     disposeWorkingSelection();
     final Selection workingSelection = f_manager.construct();
     workingSelection.initAndSyncToDatabase();
@@ -253,7 +253,7 @@ public final class FindingsSelectionMediator implements IProjectsObserver, Casca
     f_first.init();
   }
 
-  private void openSelection(@NonNull final Selection newSelection) {
+  void openSelection(@NonNull final Selection newSelection) {
     disposeWorkingSelection();
     f_manager.setWorkingSelection(newSelection);
     newSelection.initAndSyncToDatabase();
@@ -337,7 +337,7 @@ public final class FindingsSelectionMediator implements IProjectsObserver, Casca
    * Updates the porous count displayed to the user for the current working
    * selection.
    */
-  private void updatePorus() {
+  void updatePorus() {
     final Selection workingSelection = f_manager.getWorkingSelection();
     if (workingSelection != null) {
       final int c = workingSelection.getFindingCountPorous();
