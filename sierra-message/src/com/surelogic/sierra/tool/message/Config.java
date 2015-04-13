@@ -666,7 +666,7 @@ public class Config implements Cloneable, ILocalConfig {
 		*/
 		for(String prefix : excludedClasses) {
 			if (qname.startsWith(prefix)) {
-				System.out.println("Filtering out "+qname);
+				//System.out.println("Filtering out "+qname);
 				return true;
 			}
 		}
