@@ -319,7 +319,7 @@ public class ToolUtil {
 	/**
 	 * Remove any whitespace and extra attributes
 	 */
-	private static String trimValue(String value) {
+	static String trimValue(String value) {
 		if (value == null) {
 			return null;
 		}

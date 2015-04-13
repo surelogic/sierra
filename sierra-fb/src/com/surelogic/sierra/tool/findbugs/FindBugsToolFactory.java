@@ -1,18 +1,28 @@
 package com.surelogic.sierra.tool.findbugs;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.*;
-import java.util.jar.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+import java.util.jar.Manifest;
 import java.util.logging.Level;
-import java.util.zip.*;
-
-import org.apache.commons.lang3.SystemUtils;
-import org.eclipse.jdt.core.IJavaProject;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import com.surelogic.common.logging.SLLogger;
-import com.surelogic.sierra.tool.*;
+import com.surelogic.sierra.tool.AbstractToolExtension;
+import com.surelogic.sierra.tool.AbstractToolFactory;
+import com.surelogic.sierra.tool.ArtifactType;
+import com.surelogic.sierra.tool.IToolExtension;
+import com.surelogic.sierra.tool.IToolInstance;
+import com.surelogic.sierra.tool.ToolUtil;
 import com.surelogic.sierra.tool.analyzer.ILazyArtifactGenerator;
 import com.surelogic.sierra.tool.message.Config;
 
@@ -22,20 +32,6 @@ import edu.umd.cs.findbugs.Plugin;
 
 public class FindBugsToolFactory extends AbstractToolFactory {	
 	private static final String CORE = "edu.umd.cs.findbugs.plugins.core";
-	
-//	@Override
-//	public String getVersion() {
-//		return "1.3.7"/*Version.RELEASE_BASE*/;
-//	}
-	
-	@Override
-	public String isRunnableOn(IJavaProject p) {
-		if (SystemUtils.IS_JAVA_1_7 || SystemUtils.IS_JAVA_1_8) {
-			return super.isRunnableOn(p);
-		}
-		return getName()+' '+getVersion()+" requires Java 7 or above to run, but it is being run on Java "+
-		       System.getProperty("java.version");
-	}
 	
 	@Override
 	public void init(File toolHome, File pluginDir) {

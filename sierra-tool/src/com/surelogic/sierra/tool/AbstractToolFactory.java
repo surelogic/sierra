@@ -3,11 +3,10 @@ package com.surelogic.sierra.tool;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import org.eclipse.jdt.core.IJavaProject;
 
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.tool.analyzer.ILazyArtifactGenerator;
@@ -41,10 +40,6 @@ public abstract class AbstractToolFactory implements IToolFactory {
 	
 	protected boolean isActive() {
 		return initError == null;
-	}
-	
-	public String isRunnableOn(IJavaProject p) {
-		return initError != null ? initError.getMessage() : null;
 	}
 	
 	public void init(File toolHome, File pluginDir) {

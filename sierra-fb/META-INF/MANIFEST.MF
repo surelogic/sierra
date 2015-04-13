@@ -58,8 +58,7 @@ Export-Package: edu.umd.cs.findbugs,
 Bundle-Vendor: SureLogic, Inc.
 Require-Bundle: com.surelogic.common,
  com.surelogic.sierra.message,
- com.surelogic.sierra.tool,
- org.eclipse.jdt.core
+ com.surelogic.sierra.tool
 Sierra-Tool: com.surelogic.sierra.tool.findbugs.FindBugsToolFactory
 Sierra-Id: FindBugs
 Sierra-Website: findbugs.sourceforge.net
