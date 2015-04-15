@@ -16,6 +16,7 @@ import java.util.zip.ZipFile;
 import com.surelogic.common.FileUtility.TempFileFilter;
 import com.surelogic.common.core.jobs.EclipseLocalConfig;
 import com.surelogic.common.jobs.NullSLProgressMonitor;
+import com.surelogic.common.jobs.SLStatus;
 import com.surelogic.common.jobs.remote.RemoteSLJobConstants;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.common.xml.Entities;
@@ -383,9 +384,17 @@ public class PMDToolFactory extends AbstractToolFactory {
 			} else {				
 				File resultsDir = filter.createTempFolder();
 				EclipseLocalConfig cfg = new EclipseLocalConfig(1024, resultsDir);
-				new LocalPMDRuleSetQueryJob("Querying PMD about its rulesets", 100, cfg, version).run(new NullSLProgressMonitor());
-				exts = readToolExtensions(resultsDir);	
-				names = readRuleSetFilenames(resultsDir);
+				SLStatus s = new LocalPMDRuleSetQueryJob("Querying PMD about its rulesets", 100, cfg, version).run(new NullSLProgressMonitor());
+				if (s.getCode() == SLStatus.OK) {
+					exts = readToolExtensions(resultsDir);	
+					names = readRuleSetFilenames(resultsDir);					
+				} 
+				else if (s.getException() != null) {
+					LOG.log(Level.SEVERE, "Got exception while querying PMD", s.getException());
+				}
+				else {
+					LOG.log(Level.SEVERE, s.getMessage());
+				}
 			}
 		} catch (IOException e) {
 			LOG.log(Level.SEVERE, "Unable to query PMD about its rulesets", e);
