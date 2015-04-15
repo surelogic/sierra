@@ -528,7 +528,7 @@ object with some libraries and frameworks.</p>
 
 <pre>
 try {
-  URI uri = new URI("http://www.surelogic.com");
+  URI uri = new URI("http://surelogic.com");
   URL url = uri.toURL();
   assert uri.getHost().equals(url.getHost());
 } catch (Exception e) {
