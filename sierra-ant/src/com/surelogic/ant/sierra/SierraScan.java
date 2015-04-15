@@ -11,6 +11,8 @@ import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Javac;
 import org.apache.tools.ant.taskdefs.compilers.CompilerAdapter;
 
+import com.surelogic.common.jobs.remote.RemoteSLJobConstants;
+
 public class SierraScan extends Javac {
 
     /**
@@ -118,6 +120,7 @@ public class SierraScan extends Javac {
                 }
             }
 
+            System.setProperty(RemoteSLJobConstants.RUNNING_REMOTELY, "true");
             CompilerAdapter adapter = new SierraJavacAdapter(this);
 
             // now we need to populate the compiler adapter
