@@ -9,6 +9,20 @@ import com.surelogic.common.i18n.I18N;
 public final class LibResources {
 
   public static final String PATH = "/lib/";
+  
+  /**
+   * The name of the archive that contains the Sierra HTML documentation Zip.
+   * <p>
+   * Within this Zip is all the Sierra on-line documents in separate directories
+   * so that users can examine them in a browser (which is often preferred to
+   * Eclipse on-line help)..
+   */
+  public static final String HTML_DOCS_ZIP = "sierra-html-docs.zip";
+
+  /**
+   * Full path to the Sierra HTML documentation Zip within this Eclipse plugin.
+   */
+  public static final String HTML_DOCS_ZIP_PATHNAME = PATH + HTML_DOCS_ZIP;
 
   /**
    * The name of the archive that contains the Sierra Ant tasks.

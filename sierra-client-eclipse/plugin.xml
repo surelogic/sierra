@@ -86,6 +86,15 @@
 				helpContextId="menu-open-code-review-perspective">
 			</action>
 			<action
+				class="com.surelogic.sierra.client.eclipse.actions.SaveHtmlDocsAction"
+				id="com.surelogic.sierra.client.eclipse.actions.SaveHtmlDocsAction"
+				icon="platform:/plugin/com.surelogic.common/lib/images/file.gif"
+				label="Save Documentation As..."
+				tooltip="Save a copy of the Sierra documentation to the disk"
+				menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/client"
+				helpContextId="menu-save-sierra-html-docs">
+			</action>
+			<action
 				class="com.surelogic.sierra.client.eclipse.actions.SaveMavenPluginAction"
 				id="com.surelogic.sierra.client.eclipse.actions.SaveMavenPluginAction"
 				icon="platform:/plugin/com.surelogic.common/lib/images/jar_saveas.gif"
