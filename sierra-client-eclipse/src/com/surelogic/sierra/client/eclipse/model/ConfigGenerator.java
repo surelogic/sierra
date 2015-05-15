@@ -1,12 +1,6 @@
 package com.surelogic.sierra.client.eclipse.model;
 
-import static com.surelogic.common.tool.SureLogicToolsPropertiesUtility.PROPS_FILE;
-import static com.surelogic.common.tool.SureLogicToolsPropertiesUtility.SCAN_EXCLUDE_SOURCE_FOLDER;
-import static com.surelogic.common.tool.SureLogicToolsPropertiesUtility.SCAN_EXCLUDE_SOURCE_PACKAGE;
-import static com.surelogic.common.tool.SureLogicToolsPropertiesUtility.SCAN_SOURCE_FOLDER_AS_BYTECODE;
-import static com.surelogic.common.tool.SureLogicToolsPropertiesUtility.SCAN_SOURCE_PACKAGE_AS_BYTECODE;
 import static com.surelogic.common.tool.SureLogicToolsPropertiesUtility.combine;
-import static com.surelogic.common.tool.SureLogicToolsPropertiesUtility.combineListProperties;
 import static com.surelogic.common.tool.SureLogicToolsPropertiesUtility.combineLists;
 import static com.surelogic.common.tool.SureLogicToolsPropertiesUtility.getFilterFor;
 import static com.surelogic.sierra.tool.SierraToolConstants.PARSED_FILE_SUFFIX;
@@ -93,7 +87,7 @@ public final class ConfigGenerator {
   /** The plug-in directory that has tools folder */
   private final String tools;
 
-  private final Map<String, String> pluginDirs = new HashMap<String, String>();
+  private final Map<String, String> pluginDirs = new HashMap<>();
 
   /** The number of excluded tools : Default 0 */
   private int f_numberofExcludedTools = 0;
@@ -155,9 +149,9 @@ public final class ConfigGenerator {
    * @return list of {@link ConfigCompilationUnit}
    */
   public List<ConfigCompilationUnit> getCompilationUnitConfigs(Collection<ICompilationUnit> compilationUnits) {
-    final List<ConfigCompilationUnit> configCompilationUnits = new ArrayList<ConfigCompilationUnit>();
+    final List<ConfigCompilationUnit> configCompilationUnits = new ArrayList<>();
 
-    Map<String, List<ICompilationUnit>> projectCompilationUnitMap = new HashMap<String, List<ICompilationUnit>>();
+    Map<String, List<ICompilationUnit>> projectCompilationUnitMap = new HashMap<>();
     for (ICompilationUnit c : compilationUnits) {
 
       String projectNameHolder = c.getJavaProject().getElementName();
@@ -167,7 +161,7 @@ public final class ConfigGenerator {
       if (projectsInMap.contains(projectNameHolder)) {
         compilationUnitsHolder = projectCompilationUnitMap.get(projectNameHolder);
       } else {
-        compilationUnitsHolder = new ArrayList<ICompilationUnit>();
+        compilationUnitsHolder = new ArrayList<>();
 
       }
       compilationUnitsHolder.add(c);
@@ -192,7 +186,7 @@ public final class ConfigGenerator {
   }
 
   private Map<String, List<String>> getPackageCompilationUnitMap(List<ICompilationUnit> compilationUnits) {
-    Map<String, List<String>> packageCompilationUnitMap = new HashMap<String, List<String>>();
+    Map<String, List<String>> packageCompilationUnitMap = new HashMap<>();
 
     for (ICompilationUnit c : compilationUnits) {
       try {
@@ -219,7 +213,7 @@ public final class ConfigGenerator {
         if (packageInMap.contains(packageName)) {
           compilationUnitsHolder = packageCompilationUnitMap.get(packageName);
         } else {
-          compilationUnitsHolder = new ArrayList<String>();
+          compilationUnitsHolder = new ArrayList<>();
 
         }
 
@@ -260,7 +254,7 @@ public final class ConfigGenerator {
       config.setLogPath(completeLogPath(docPrefix));
       setupTools(config, javaProject);
 
-      final List<String> excludedClasses = new ArrayList<String>();
+      final List<String> excludedClasses = new ArrayList<>();
       final SureLogicToolsFilter filter = copier.getToolsFilter();
       try {
         String defaultOutputLocation = javaProject.getOutputLocation().makeRelative().toOSString();
@@ -280,7 +274,7 @@ public final class ConfigGenerator {
           }
           String outputLocation = computeOutputLocation(javaProject, c, defaultOutputLocation);
           IType[] types = c.getAllTypes();
-          Set<ClassFile> classFiles = new HashSet<ClassFile>();
+          Set<ClassFile> classFiles = new HashSet<>();
           for (IType t : types) {
 
             String qualifiedName = t.getFullyQualifiedName();
@@ -303,7 +297,7 @@ public final class ConfigGenerator {
 
             IResource classFolder = ResourcesPlugin.getWorkspace().getRoot().findMember(folder);
             if (classFolder != null) {
-              Set<IFile> files = new HashSet<IFile>();
+              Set<IFile> files = new HashSet<>();
               getClassFiles(classFolder, javaType, files);
               for (IFile f : files) {
                 classFiles.add(new ClassFile(packageName, f));
@@ -543,14 +537,13 @@ public final class ConfigGenerator {
     final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
     final String[] packagesAsPaths = convertPkgsToSierraStyle(copier.combinedPackages);
     for (IClasspathEntry cpe : p.getResolvedClasspath(true)) {
-      handleClasspathEntry(copier, handled, toBeAnalyzed, root, copier.combinedFolders, packagesAsPaths,
-          cpe);
+      handleClasspathEntry(copier, handled, toBeAnalyzed, root, copier.combinedFolders, packagesAsPaths, cpe);
     }
     handleOutputLocation(copier, p.getOutputLocation(), packagesAsPaths, toBeAnalyzed);
   }
 
   private static void configureExcludedClasses(Config cfg, IJavaProject p, SureLogicToolsFilter filter) throws JavaModelException {
-    final List<String> excluded = new ArrayList<String>();
+    final List<String> excluded = new ArrayList<>();
     JavaProjectResources jpr = JDTUtility.collectAllResources(p, null);
     for (ICompilationUnit cu : JDTUtility.applyToolsFilter(jpr.cus, filter, false)) {
       excluded.add(JDTUtility.computeQualifiedName(cu));
@@ -735,31 +728,34 @@ public final class ConfigGenerator {
 
     Copier(String projectName, File projectLocation, File tmp) {
       tmpDir = tmp;
-      
-      final Properties props = SureLogicToolsPropertiesUtility.readFileOrNull(new File(projectLocation, PROPS_FILE));
-      if (props != null) {    	  
-          final String[] excludedSourceFolders = makeAbsolute(projectName, SureLogicToolsPropertiesUtility.getExcludedSourceFolders(props));
-          final String[] excludedPackagePatterns = SureLogicToolsPropertiesUtility.getExcludedPackagePatterns(props);
-          final String[] bytecodeSourceFolders = makeAbsolute(projectName, SureLogicToolsPropertiesUtility.getBytecodeSourceFolders(props));
-          final String[] bytecodePackagePatterns = SureLogicToolsPropertiesUtility.getBytecodePackagePatterns(props);
-          final SureLogicToolsFilter excludeFilter = getFilterFor(excludedSourceFolders, excludedPackagePatterns);
-          final SureLogicToolsFilter bytecodeFilter = getFilterFor(bytecodeSourceFolders, bytecodePackagePatterns);
-    	  config.initFromToolsProps(props, excludedSourceFolders, excludedPackagePatterns);
-          filter = combine(excludeFilter, bytecodeFilter);
-    	  combinedFolders = combineLists(excludedSourceFolders, bytecodeSourceFolders);
-    	  combinedPackages = combineLists(excludedPackagePatterns, bytecodePackagePatterns);
+
+      final Properties props = SureLogicToolsPropertiesUtility.readFileOrNull(new File(projectLocation,
+          SLUtility.SL_TOOLS_PROPS_FILE));
+      if (props != null) {
+        final String[] excludedSourceFolders = makeAbsolute(projectName,
+            SureLogicToolsPropertiesUtility.getExcludedSourceFolders(props));
+        final String[] excludedPackagePatterns = SureLogicToolsPropertiesUtility.getExcludedPackagePatterns(props);
+        final String[] bytecodeSourceFolders = makeAbsolute(projectName,
+            SureLogicToolsPropertiesUtility.getBytecodeSourceFolders(props));
+        final String[] bytecodePackagePatterns = SureLogicToolsPropertiesUtility.getBytecodePackagePatterns(props);
+        final SureLogicToolsFilter excludeFilter = getFilterFor(excludedSourceFolders, excludedPackagePatterns);
+        final SureLogicToolsFilter bytecodeFilter = getFilterFor(bytecodeSourceFolders, bytecodePackagePatterns);
+        config.initFromToolsProps(props, excludedSourceFolders, excludedPackagePatterns);
+        filter = combine(excludeFilter, bytecodeFilter);
+        combinedFolders = combineLists(excludedSourceFolders, bytecodeSourceFolders);
+        combinedPackages = combineLists(excludedPackagePatterns, bytecodePackagePatterns);
       } else {
-    	  filter = null;
-    	  combinedFolders = SLUtility.EMPTY_STRING_ARRAY;
-    	  combinedPackages = SLUtility.EMPTY_STRING_ARRAY;
+        filter = null;
+        combinedFolders = SLUtility.EMPTY_STRING_ARRAY;
+        combinedPackages = SLUtility.EMPTY_STRING_ARRAY;
       }
     }
 
     SureLogicToolsFilter getToolsFilter() {
-		return filter;
-	}
+      return filter;
+    }
 
-	void addFileTarget(ClassFile cf) {
+    void addFileTarget(ClassFile cf) {
       String pkg = cf.first();
       String dest = pkg == null || pkg.length() == 0 ? cf.second().getName() : pkg + '/' + cf.second().getName();
       URI mappedTarget = copy(dest, cf.second());
