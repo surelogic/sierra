@@ -51,6 +51,7 @@
 
 				<groupMarker name="client" />
 				<separator name="server" />
+				<separator name="io" />
 				<separator name="service" />
 				<separator name="license" />
 				<separator name="additions" />
@@ -58,14 +59,9 @@
 			<action
 				class="com.surelogic.sierra.client.eclipse.actions.ManageLicensesAction"
 				id="com.surelogic.sierra.client.eclipse.actions.ManageLicensesAction"
+				icon="platform:/plugin/com.surelogic.common/lib/images/sl.gif"
 				label="Manage SureLogic Licenses" menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/license"
 				helpContextId="menu-manage-licenses">
-			</action>
-			<action
-				class="com.surelogic.sierra.client.eclipse.actions.ImportTutorialProjectsAction"
-				id="com.surelogic.sierra.client.eclipse.actions.ImportTutorialProjectsAction"
-				label="Run Sierra Tutorials" menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/service"
-				helpContextId="menu-run-sierra-tutorials">
 			</action>
 			<action
 				class="com.surelogic.sierra.client.eclipse.actions.SendProblemAction"
@@ -79,61 +75,28 @@
 				helpContextId="menu-send-tip-for-improvement">
 			</action>
 			<action
-				class="com.surelogic.sierra.client.eclipse.actions.ShowCodeReviewPerspectiveAction"
-				id="com.surelogic.sierra.client.eclipse.actions.ShowCodeReviewPerspectiveAction"
-				icon="platform:/plugin/com.surelogic.common/lib/images/sierra_investigate.gif"
-				label="Open Code Review Perspective" menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/client"
-				helpContextId="menu-open-code-review-perspective">
+				class="com.surelogic.sierra.client.eclipse.actions.ImportTutorialProjectsAction"
+				id="com.surelogic.sierra.client.eclipse.actions.ImportTutorialProjectsAction"
+				icon="platform:/plugin/com.surelogic.common/lib/images/import.gif"
+				label="Install Tutorial Projects" menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/io"
+				helpContextId="menu-run-sierra-tutorials">
 			</action>
 			<action
 				class="com.surelogic.sierra.client.eclipse.actions.SaveHtmlDocsAction"
 				id="com.surelogic.sierra.client.eclipse.actions.SaveHtmlDocsAction"
-				icon="platform:/plugin/com.surelogic.common/lib/images/file.gif"
+				icon="platform:/plugin/com.surelogic.common/lib/images/file_saveas.gif"
 				label="Save Documentation As..."
 				tooltip="Save a copy of the Sierra documentation to the disk"
-				menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/client"
+				menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/io"
 				helpContextId="menu-save-sierra-html-docs">
-			</action>
-			<action
-				class="com.surelogic.sierra.client.eclipse.actions.SaveMavenPluginAction"
-				id="com.surelogic.sierra.client.eclipse.actions.SaveMavenPluginAction"
-				icon="platform:/plugin/com.surelogic.common/lib/images/jar_saveas.gif"
-				label="Save Maven Plugin As..."
-				tooltip="Save a copy of the Sierra Maven Plugin to the disk"
-				menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/client"
-				helpContextId="menu-save-sierra-maven">
-			</action>
-			<action
-				class="com.surelogic.sierra.client.eclipse.actions.SaveAntTasksAction"
-				id="com.surelogic.sierra.client.eclipse.actions.SaveAntTasksAction"
-				icon="platform:/plugin/com.surelogic.common/lib/images/jar_saveas.gif"
-				label="Save Ant Task As..."
-				tooltip="Save a copy of the Sierra Ant task library to the disk"
-				menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/client"
-				helpContextId="menu-save-sierra-ant">
 			</action>
 			<action
 				class="com.surelogic.sierra.client.eclipse.actions.ImportSierraScanAction"
 				id="com.surelogic.sierra.client.eclipse.actions.ImportSierraScanAction"
-				icon="platform:/plugin/com.surelogic.common/lib/images/sierra_load_scan.gif"
+				icon="platform:/plugin/com.surelogic.common/lib/images/file_drum.gif"
 				label="Import Ant/Maven Scan..."
-				menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/client"
+				menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/io"
 				helpContextId="menu-import-scan">
-			</action>
-			<action
-				class="com.surelogic.sierra.client.eclipse.actions.ScanChangedProjectsDialogAction"
-				id="com.surelogic.sierra.client.eclipse.actions.ScanChangedProjectsDialogAction"
-				icon="platform:/plugin/com.surelogic.common/lib/images/sierra_scan_delta.gif"
-				label="Re-Scan Changes in Project" menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/client"
-				enablesFor="*" helpContextId="menu-re-scan-changes-in-project">
-			</action>
-			<action
-				class="com.surelogic.sierra.client.eclipse.actions.NewScanAction"
-				id="com.surelogic.sierra.client.eclipse.actions.NewScanAction"
-				icon="platform:/plugin/com.surelogic.common/lib/images/sierra_scan.gif"
-				definitionId="com.surelogic.sierra.NewScanAction"
-				label="Scan Project" menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/client"
-				enablesFor="*" helpContextId="menu-scan-project">
 			</action>
 			<action
 				class="com.surelogic.sierra.client.eclipse.actions.DisconnectDialogAction"
@@ -169,6 +132,28 @@
 				icon="platform:/plugin/com.surelogic.common/lib/images/sierra_server.gif"
 				label="Configure Team Servers" menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/server"
 				helpContextId="menu-configure-team-servers">
+			</action>
+			<action
+				class="com.surelogic.sierra.client.eclipse.actions.ShowCodeReviewPerspectiveAction"
+				id="com.surelogic.sierra.client.eclipse.actions.ShowCodeReviewPerspectiveAction"
+				icon="platform:/plugin/com.surelogic.common/lib/images/sierra_investigate.gif"
+				label="Open Code Review Perspective" menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/client"
+				helpContextId="menu-open-code-review-perspective">
+			</action>
+			<action
+				class="com.surelogic.sierra.client.eclipse.actions.ScanChangedProjectsDialogAction"
+				id="com.surelogic.sierra.client.eclipse.actions.ScanChangedProjectsDialogAction"
+				icon="platform:/plugin/com.surelogic.common/lib/images/sierra_scan_delta.gif"
+				label="Re-Scan Changes" menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/client"
+				enablesFor="*" helpContextId="menu-re-scan-changes-in-project">
+			</action>
+			<action
+				class="com.surelogic.sierra.client.eclipse.actions.NewScanAction"
+				id="com.surelogic.sierra.client.eclipse.actions.NewScanAction"
+				icon="platform:/plugin/com.surelogic.common/lib/images/sierra_scan.gif"
+				definitionId="com.surelogic.sierra.NewScanAction"
+				label="Scan" menubarPath="com.surelogic.sierra.client.eclipse.workbenchMenu/client"
+				enablesFor="*" helpContextId="menu-scan-project">
 			</action>
 		</actionSet>
 	</extension>

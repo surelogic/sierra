@@ -78,7 +78,7 @@ public abstract class AbstractScan<T extends IJavaElement> {
   }
 
   public void scan(final T elt) {
-    List<T> elts = new ArrayList<T>(1);
+    List<T> elts = new ArrayList<>(1);
     elts.add(elt);
     scan(elts);
   }
@@ -88,7 +88,7 @@ public abstract class AbstractScan<T extends IJavaElement> {
       return;
     }
 
-    final List<String> names = new ArrayList<String>(elements.size());
+    final List<String> names = new ArrayList<>(elements.size());
     for (T elt : elements) {
       names.add(elt.getElementName());
     }
@@ -186,7 +186,7 @@ public abstract class AbstractScan<T extends IJavaElement> {
     if (!XUtil.useExperimental) {
       return true;
     }
-    List<Config> configs = new ArrayList<Config>();
+    List<Config> configs = new ArrayList<>();
     for (final ConfigCompilationUnit config : cuConfigs) {
       configs.add(config.getConfig());
     }

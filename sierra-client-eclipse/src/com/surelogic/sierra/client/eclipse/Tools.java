@@ -74,7 +74,7 @@ public final class Tools {
       @Override
       public List<File> findToolDirectories() {
         // Look up locations of these plugins
-        final List<File> tools = new ArrayList<File>();
+        final List<File> tools = new ArrayList<>();
         for (final String id : getToolPluginIds()) {
           final String path = EclipseUtility.getDirectoryOf(id);
           final File dir = new File(path);
@@ -93,7 +93,7 @@ public final class Tools {
    * Collect plug-ins
    */
   public static Set<String> getToolPluginIds() {
-    final Set<String> ids = new HashSet<String>();
+    final Set<String> ids = new HashSet<>();
     /*
      * for(String id : defaultTools) { ids.add(id); }
      */
@@ -122,15 +122,9 @@ public final class Tools {
         @Override
         public void doPerform(final Query q) {
           final FindingTypes ft = new FindingTypes(q);
-          /*
-           * final Config config = new Config();
-           * config.putPluginDir(SierraToolConstants.FB_PLUGIN_ID, com.surelogic
-           * .common.eclipse.Activator.getDefault().getDirectoryOf
-           * (SierraToolConstants.FB_PLUGIN_ID));
-           */
 
-          final Set<ArtifactType> knownTypes = new HashSet<ArtifactType>();
-          final Set<ArtifactType> unknownTypes = new HashSet<ArtifactType>();
+          final Set<ArtifactType> knownTypes = new HashSet<>();
+          final Set<ArtifactType> unknownTypes = new HashSet<>();
           for (final IToolFactory t : factories) {
             final List<ArtifactTypeDO> temp = ft.getToolArtifactTypes(t.getId(), t.getVersion());
             for (final ArtifactTypeDO a : temp) {
@@ -138,11 +132,11 @@ public final class Tools {
             }
           }
 
-          final Map<IToolExtension, List<ArtifactType>> newExtensions = new HashMap<IToolExtension, List<ArtifactType>>();
+          final Map<IToolExtension, List<ArtifactType>> newExtensions = new HashMap<>();
           for (final IToolFactory t : factories) {
             for (final IToolExtension e : t.getExtensions()) {
               // System.out.println("Ext: "+e.getId());
-              final List<ArtifactType> unknown = new ArrayList<ArtifactType>();
+              final List<ArtifactType> unknown = new ArrayList<>();
               for (final ArtifactType a : e.getArtifactTypes()) {
                 if (!knownTypes.contains(a) && !unknownTypes.contains(a)) {
                   unknownTypes.add(a); // To eliminate
@@ -160,7 +154,7 @@ public final class Tools {
           if (newExtensions.isEmpty()) {
             SLLogger.getLogger().log(Level.FINE, "No new artifact types");
           } else {
-            final List<ArtifactType> types = new ArrayList<ArtifactType>();
+            final List<ArtifactType> types = new ArrayList<>();
             for (final Map.Entry<IToolExtension, List<ArtifactType>> e : newExtensions.entrySet()) {
               types.addAll(e.getValue());
             }
@@ -170,7 +164,7 @@ public final class Tools {
             final SLUIJob job = new SLUIJob() {
               @Override
               public IStatus runInUIThread(final IProgressMonitor monitor) {
-                final List<ArtifactType> incompleteTypes = new ArrayList<ArtifactType>();
+                final List<ArtifactType> incompleteTypes = new ArrayList<>();
                 for (final ArtifactType t : types) {
                   if (!t.isComplete()) {
                     incompleteTypes.add(t);
@@ -284,7 +278,7 @@ public final class Tools {
    */
   private static List<IExtension> findProductionToolExtensionPoints() {
     final IExtension[] tools = readToolExtensionPoints();
-    final List<IExtension> active = new ArrayList<IExtension>();
+    final List<IExtension> active = new ArrayList<>();
     for (final IExtension tool : tools) {
       boolean add = true;
       final IConfigurationElement[] configElements = tool.getConfigurationElements();

@@ -15,7 +15,7 @@ public class ScanChangedProjectsDialogAction extends ScanChangedProjectsAction {
 			List<IJavaProject> selectedProjects) {
 		return new JavaProjectSelectionDialog.Configuration(
 				"Select project(s) to re-scan changes within:",
-				"Re-Scan Changes in Project",
+				"Re-Scan Changes",
 				SLImages.getImage(CommonImages.IMG_SIERRA_SCAN_DELTA),
 				selectedProjects,
 				SierraPreferencesUtility.ALWAYS_ALLOW_USER_TO_SELECT_PROJECTS_TO_SCAN,

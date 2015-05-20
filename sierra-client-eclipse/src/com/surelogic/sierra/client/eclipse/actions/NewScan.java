@@ -24,104 +24,88 @@ import com.surelogic.sierra.tool.SierraToolConstants;
 import com.surelogic.sierra.tool.message.Config;
 
 public class NewScan extends AbstractScan<IJavaProject> {
-    public NewScan() {
-        super(false);
+  public NewScan() {
+    super(false);
+  }
+
+  @Override
+  boolean checkIfBuilt(Collection<IJavaProject> elements) {
+    return JDTUtility.projectsUpToDate(elements);
+  }
+
+  /**
+   * Starts a job for each project
+   */
+  @Override
+  boolean startScanJob(Collection<IJavaProject> selectedProjects) {
+    boolean started = false;
+    if (LOG.isLoggable(Level.FINE)) {
+      LOG.fine("Starting new scan jobs");
     }
 
-    @Override
-    boolean checkIfBuilt(Collection<IJavaProject> elements) {
-        return JDTUtility.projectsUpToDate(elements);
+    List<Config> configs = new ArrayList<>();
+    for (final IJavaProject p : selectedProjects) {
+      final Config config = ConfigGenerator.getInstance().getProjectConfig(p);
+      configs.add(config);
+    }
+    boolean continueScan = setupConfigs(configs);
+    if (!continueScan) {
+      return false;
     }
 
-    /**
-     * Starts a job for each project
-     */
-    @Override
-    boolean startScanJob(Collection<IJavaProject> selectedProjects) {
-        boolean started = false;
-        if (LOG.isLoggable(Level.FINE)) {
-            LOG.fine("Starting new scan jobs");
-        }
+    for (final Config config : configs) {
+      if (config.hasNothingToScan()) {
+        BalloonUtility.showMessage("Nothing to scan", "There are no source files to scan in " + config.getProject());
+      } else {
+        started = true;
+      }
+      final Runnable runAfterImport = new Runnable() {
+        @Override
+        public void run() {
+          /* Notify that scan was completed */
+          DatabaseHub.getInstance().notifyScanLoaded();
 
-        List<Config> configs = new ArrayList<Config>();
-        for (final IJavaProject p : selectedProjects) {
-            final Config config = ConfigGenerator.getInstance()
-                    .getProjectConfig(p);
-            configs.add(config);
+          /* Rename the scan document */
+          File scanDocument = config.getScanDocument();
+          File newScanDocument = generateScanDocumentFile(config.getProject(), scanDocument.getName());
+          /*
+           * This approach assures that the scan document generation will not
+           * crash. The tool will simply override the existing scan document no
+           * matter how recent it is.
+           */
+          if (newScanDocument.exists()) {
+            newScanDocument.delete();
+          }
+          scanDocument.renameTo(newScanDocument);
         }
-        boolean continueScan = setupConfigs(configs);
-        if (!continueScan) {
-            return false;
-        }
+      };
+      AbstractSierraDatabaseJob importJob = new ImportScanDocumentJob(config.getScanDocument(), config.getProject(), runAfterImport);
+      importJob.addJobChangeListener(new ScanJobAdapter(config.getProject()));
 
-        for (final Config config : configs) {
-            if (config.hasNothingToScan()) {
-                BalloonUtility.showMessage(
-                        "Nothing to scan",
-                        "There are no source files to scan in "
-                                + config.getProject());
-            } else {
-                started = true;
-            }
-            final Runnable runAfterImport = new Runnable() {
-                @Override
-                public void run() {
-                    /* Notify that scan was completed */
-                    DatabaseHub.getInstance().notifyScanLoaded();
-
-                    /* Rename the scan document */
-                    File scanDocument = config.getScanDocument();
-                    File newScanDocument = generateScanDocumentFile(
-                            config.getProject(), scanDocument.getName());
-                    /*
-                     * This approach assures that the scan document generation
-                     * will not crash. The tool will simply override the
-                     * existing scan document no matter how recent it is.
-                     */
-                    if (newScanDocument.exists()) {
-                        newScanDocument.delete();
-                    }
-                    scanDocument.renameTo(newScanDocument);
-                }
-            };
-            AbstractSierraDatabaseJob importJob = new ImportScanDocumentJob(
-                    config.getScanDocument(), config.getProject(),
-                    runAfterImport);
-            importJob.addJobChangeListener(new ScanJobAdapter(config
-                    .getProject()));
-
-            Job job = new NewScanJob(
-                    "Running Sierra on " + config.getProject(), config,
-                    importJob);
-            job.schedule();
-        }
-        return started;
+      Job job = new NewScanJob("Running Sierra on " + config.getProject(), config, importJob);
+      job.schedule();
     }
+    return started;
+  }
 
-    private static File generateScanDocumentFile(String project, String name) {
-        for (String suffix : SierraToolConstants.PARSED_FILE_SUFFIXES) {
-            if (name.endsWith(suffix)) {
-                return new File(
-                        SierraPreferencesUtility.getSierraScanDirectory(),
-                        project + suffix);
-            }
-        }
-        return new File(SierraPreferencesUtility.getSierraScanDirectory(),
-                project
-                        + (USE_ZIP ? PARSED_ZIP_FILE_SUFFIX
-                                : PARSED_FILE_SUFFIX));
+  static File generateScanDocumentFile(String project, String name) {
+    for (String suffix : SierraToolConstants.PARSED_FILE_SUFFIXES) {
+      if (name.endsWith(suffix)) {
+        return new File(SierraPreferencesUtility.getSierraScanDirectory(), project + suffix);
+      }
     }
+    return new File(SierraPreferencesUtility.getSierraScanDirectory(), project
+        + (USE_ZIP ? PARSED_ZIP_FILE_SUFFIX : PARSED_FILE_SUFFIX));
+  }
 
-    public static File findScanDocumentFile(String projectName) {
-        for (String suffix : SierraToolConstants.PARSED_FILE_SUFFIXES) {
-            String scanFileName = projectName + suffix;
-            File scanFile = new File(
-                    SierraPreferencesUtility.getSierraScanDirectory(),
-                    scanFileName);
-            if (scanFile.exists()) {
-                return scanFile;
-            }
-        }
-        return null;
+  public static File findScanDocumentFile(String projectName) {
+    for (String suffix : SierraToolConstants.PARSED_FILE_SUFFIXES) {
+      String scanFileName = projectName + suffix;
+      File scanFile = new File(SierraPreferencesUtility.getSierraScanDirectory(), scanFileName);
+      if (scanFile.exists()) {
+        return scanFile;
+      }
     }
+    return null;
+  }
 }
