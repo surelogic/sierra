@@ -1,88 +1,240 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="build-ant-task" default="all">
-  <description>Build for SL Ant tasks</description>
+<project name="build-ant-task" default="build-ant-task">
+	<description>Build for SL Ant tasks</description>
 
-  <property name="sierra-ant.zip" value="../sierra-client-eclipse/lib/sierra-ant.zip" />
+	<property name="build" location="${basedir}/build" />
+	<property name="build.bin" location="${build}/bin" />
+	<property name="build.lib" location="${build}/lib" />
 
-  <target name="all" depends="clean,build,zip" />
+	<property name="common" location="${basedir}/../../common/common" />
+	<property name="sierra-fb" location="${basedir}/../sierra-fb" />
+	<property name="sierra-jdbc" location="${basedir}/../sierra-jdbc" />
+	<property name="sierra-message" location="${basedir}/../sierra-message" />
+	<property name="sierra-pmd" location="${basedir}/../sierra-pmd" />
+	<property name="sierra-tool" location="${basedir}/../sierra-tool" />
 
-  <target name="clean-build" depends="clean,build" />
+	<!-- Trying to determine the release version from the common plug-in -->
+	<!-- Hack that reads the "Bundle-Version: 5.2.2.qualifier" line to come 
+    up with "5.2.2" -->
+	<loadfile property="release-version" srcFile="${common}/META-INF/MANIFEST.MF">
+		<filterchain>
+			<linecontains>
+				<contains value="Bundle-Version:" />
+			</linecontains>
+			<striplinebreaks />
+			<deletecharacters chars="Bundle-Version: qualifier" />
+			<tokenfilter>
+				<replaceregex pattern="\.$" replace="" flags="g" />
+			</tokenfilter>
+		</filterchain>
+	</loadfile>
 
-  <target name="clean">
-    <delete dir="./lib" />
-  </target>
+	<target name="build-ant-task">
+		<echo>Cleaning up for Sierra Ant task build</echo>
+		<delete quiet="true" dir="${build}" />
+		<mkdir dir="${build}" />
+		<mkdir dir="${build.bin}" />
+		<mkdir dir="${build.lib}" />
 
-  <target name="build">
-    <mkdir dir="./lib" />
+		<echo>Copy runtime Jars from needed projects</echo>
+		<copy todir="${build.lib}/common/lib/runtime">
+			<fileset dir="${common}/lib/runtime">
+				<include name="*.jar" />
+			</fileset>
+		</copy>
 
-    <mkdir dir="./lib/tools/pmd" />
-    <copy todir="./lib/tools/pmd">
-      <fileset dir="../sierra-pmd" excludes="src/,.project" />
-    </copy>
+		<copy todir="${build.lib}/sierra-message/lib">
+			<fileset dir="${sierra-message}/lib">
+				<include name="*.jar" />
+			</fileset>
+		</copy>
 
-    <mkdir dir="./lib/tools/findbugs" />
-    <copy todir="./lib/tools/findbugs">
-      <fileset dir="../sierra-fb" excludes="src/,.project" />
-    </copy>
+		<copy todir="${build.lib}/tools/findbugs">
+			<fileset dir="../sierra-fb" includes="lib/**,plugin/**,META-INF/**,plugin.xml" />
+		</copy>
 
-    <mkdir dir="./lib/tools/reckoner" />
-    <copy todir="./lib/tools/reckoner">
-      <fileset dir="../sierra-tool" excludes="src/,.project" />
-    </copy>
-    <copy todir="./lib/tools/reckoner/reckoner/lib">
-      <fileset dir="../sierra-metrics/lib">
-        <include name="*.jar" />
-      </fileset>
-    </copy>
+		<copy todir="${build.lib}/tools/pmd">
+			<fileset dir="../sierra-pmd" includes="lib/**,META-INF/**,plugin.xml" />
+		</copy>
 
-    <jar destfile="./lib/common.jar">
-      <fileset dir="../../common/common/bin" />
-      <fileset dir="../../common/common/" includes="lib/scan_vm.properties" />
-    </jar>
+		<echo>Creating non-Java resources that get used by JSure</echo>
+		<copy file="${common}/lib/scan_vm.properties" todir="${build.lib}/common/lib" />
 
-    <mkdir dir="./lib/common" />
-    <copy todir="./lib/common">
-      <fileset dir="../../common/common/" includes="lib/runtime/**.jar" />
-    </copy>
+		<echo>Creating generated source code and compiling 'common' project</echo>
+		<ant antfile="build-src.xml" dir="${common}" inheritAll="false" />
+		<path id="compile.class.path">
+			<fileset dir="${build.lib}">
+				<include name="**/*.jar" />
+			</fileset>
+			<pathelement path="${build.bin}" />
+		</path>
+		<javac srcdir="${common}/src" debug="true" destdir="${build.bin}" classpathref="compile.class.path" source="1.7" target="1.7" includeAntRuntime="false" />
+		<copy todir="${build.bin}">
+			<fileset dir="${common}/src">
+				<exclude name="**/*.java" />
+				<exclude name="**/.gitignore" />
+			</fileset>
+		</copy>
+		<jar destfile="${build.lib}/common/common.jar" basedir="${build.bin}" />
+		<delete quiet="true" dir="${build.bin}" />
+		<mkdir dir="${build.bin}" />
 
-    <jar destfile="./lib/sierra-jdbc.jar" basedir="../sierra-jdbc/bin" />
+		<echo>Creating generated source code and compiling 'sierra-message' project</echo>
+		<javac srcdir="${sierra-message}/src" debug="true" destdir="${build.bin}" classpathref="compile.class.path" source="1.7" target="1.7" includeAntRuntime="false" />
+		<copy todir="${build.bin}">
+			<fileset dir="${sierra-message}/src">
+				<exclude name="**/*.java" />
+				<exclude name="**/.gitignore" />
+			</fileset>
+		</copy>
+		<jar destfile="${build.lib}/sierra-message/sierra-message.jar" basedir="${build.bin}" />
+		<delete quiet="true" dir="${build.bin}" />
+		<mkdir dir="${build.bin}" />
 
-    <jar destfile="./lib/sierra-message.jar" basedir="../sierra-message/bin" />
-    <mkdir dir="./lib/message" />
-    <copy todir="./lib/message">
-      <fileset dir="../sierra-message/lib" />
-    </copy>
+		<echo>Creating generated source code and compiling 'sierra-jdbc' project</echo>
+		<javac srcdir="${sierra-jdbc}/src" debug="true" destdir="${build.bin}" classpathref="compile.class.path" source="1.7" target="1.7" includeAntRuntime="false" />
+		<copy todir="${build.bin}">
+			<fileset dir="${sierra-jdbc}/src">
+				<exclude name="**/*.java" />
+				<exclude name="**/.gitignore" />
+			</fileset>
+		</copy>
+		<jar destfile="${build.lib}/sierra-jdbc/sierra-jdbc.jar" basedir="${build.bin}" />
+		<delete quiet="true" dir="${build.bin}" />
+		<mkdir dir="${build.bin}" />
 
-    <jar destfile="./lib/sierra-tool.jar" basedir="../sierra-tool/bin" />
 
-    <copy todir="./lib/junit">
-      <fileset dir="./org.junit4_4.3.1" />
-    </copy>
+		<echo>Creating generated source code and compiling 'sierra-tool' project</echo>
+		<javac srcdir="${sierra-tool}/src" debug="true" destdir="${build.bin}" classpathref="compile.class.path" source="1.7" target="1.7" includeAntRuntime="false" />
+		<copy todir="${build.bin}">
+			<fileset dir="${sierra-tool}/src">
+				<exclude name="**/*.java" />
+				<exclude name="**/.gitignore" />
+			</fileset>
+		</copy>
+		<jar destfile="${build.lib}/sierra-tool/sierra-tool.jar" basedir="${build.bin}" />
+		<delete quiet="true" dir="${build.bin}" />
+		<mkdir dir="${build.bin}" />
 
-    <copy todir="./lib/jaxb">
-      <fileset dir="./jaxb" />
-    </copy>
+		<echo>Creating generated source code and compiling 'sierra-fb' project</echo>
+		<javac srcdir="${sierra-fb}/src" debug="true" destdir="${build.bin}" classpathref="compile.class.path" source="1.7" target="1.7" includeAntRuntime="false" />
+		<copy todir="${build.bin}">
+			<fileset dir="${sierra-fb}/src">
+				<exclude name="**/*.java" />
+				<exclude name="**/.gitignore" />
+			</fileset>
+		</copy>
+		<jar destfile="${build.lib}/tools/findbugs/sierra-fb.jar" basedir="${build.bin}" />
+		<delete quiet="true" dir="${build.bin}" />
+		<mkdir dir="${build.bin}" />
 
-    <jar destfile="./lib/sierra-ant.jar">
-      <fileset dir="../sierra-ant/bin" />
-      <zipfileset src="./lib/sierra-message.jar" />
-      <zipfileset src="./lib/sierra-tool.jar" />
-      <zipfileset src="./lib/common.jar" />
-    </jar>
+		<echo>Creating generated source code and compiling 'sierra-pmd' project</echo>
+		<javac srcdir="${sierra-pmd}/src" debug="true" destdir="${build.bin}" classpathref="compile.class.path" source="1.7" target="1.7" includeAntRuntime="false" />
+		<copy todir="${build.bin}">
+			<fileset dir="${sierra-pmd}/src">
+				<exclude name="**/*.java" />
+				<exclude name="**/.gitignore" />
+			</fileset>
+		</copy>
+		<jar destfile="${build.lib}/tools/pmd/sierra-pmd.jar" basedir="${build.bin}" />
+		<delete quiet="true" dir="${build.bin}" />
+		<mkdir dir="${build.bin}" />
 
-  </target>
+		<echo>Creating generated source code and compiling 'sierra-ant' project</echo>
+		<javac srcdir="${basedir}/src" debug="true" destdir="${build.bin}" classpathref="compile.class.path" source="1.7" target="1.7" includeAntRuntime="false" />
+		<copy todir="${build.bin}">
+			<fileset dir="${basedir}/src">
+				<exclude name="**/*.java" />
+				<exclude name="**/.gitignore" />
+			</fileset>
+		</copy>
+		<jar destfile="${build.lib}/sierra-ant-${release-version}.jar" basedir="${build.bin}" />
+		<delete quiet="true" dir="${build.bin}" />
 
-  <target name="zip">
-    <zip destfile="./lib/tools/findbugs/com.surelogic.sierra.fb.jar"
-      basedir="./lib/tools/findbugs/bin" />
-    <zip destfile="./lib/tools/pmd/com.surelogic.sierra.pmd.jar"
-      basedir="./lib/tools/pmd/bin" />
-    <zip destfile="./lib/tools/reckoner/com.surelogic.sierra.tool.jar"
-      basedir="./lib/tools/reckoner/bin" />
+		<echo>Creating sierra-ant-${release-version}.jar</echo>
+		<zip destfile="${build}/sierra-ant-${release-version}.zip">
+			<zipfileset dir="${build.lib}" prefix="sierra-ant" />
+			<zipfileset dir="." includes="*.txt" prefix="sierra-ant" />
+		</zip>
+	</target>
 
-    <zip destfile="${sierra-ant.zip}">
-      <zipfileset dir="." prefix="sierra-ant"
-        includes="lib/**/*.jar, lib/**/*.MF, README.txt, examples/**" />
-    </zip>
-  </target>
+	<property name="sierra-ant.zip" value="../sierra-client-eclipse/lib/sierra-ant.zip" />
+
+	<target name="all" depends="clean,build,zip" />
+
+	<target name="clean-build" depends="clean,build" />
+
+	<target name="clean">
+		<delete dir="./lib" />
+	</target>
+
+	<target name="build">
+		<mkdir dir="./lib" />
+
+		<mkdir dir="./lib/tools/pmd" />
+		<copy todir="./lib/tools/pmd">
+			<fileset dir="../sierra-pmd" excludes="src/,.project" />
+		</copy>
+
+		<mkdir dir="./lib/tools/findbugs" />
+		<copy todir="./lib/tools/findbugs">
+			<fileset dir="../sierra-fb" excludes="src/,.project" />
+		</copy>
+
+		<mkdir dir="./lib/tools/reckoner" />
+		<copy todir="./lib/tools/reckoner">
+			<fileset dir="../sierra-tool" excludes="src/,.project" />
+		</copy>
+		<copy todir="./lib/tools/reckoner/reckoner/lib">
+			<fileset dir="../sierra-metrics/lib">
+				<include name="*.jar" />
+			</fileset>
+		</copy>
+
+		<jar destfile="./lib/common.jar">
+			<fileset dir="../../common/common/bin" />
+			<fileset dir="../../common/common/" includes="lib/scan_vm.properties" />
+		</jar>
+
+		<mkdir dir="./lib/common" />
+		<copy todir="./lib/common">
+			<fileset dir="../../common/common/" includes="lib/runtime/**.jar" />
+		</copy>
+
+		<jar destfile="./lib/sierra-jdbc.jar" basedir="../sierra-jdbc/bin" />
+
+		<jar destfile="./lib/sierra-message.jar" basedir="../sierra-message/bin" />
+		<mkdir dir="./lib/message" />
+		<copy todir="./lib/message">
+			<fileset dir="../sierra-message/lib" />
+		</copy>
+
+		<jar destfile="./lib/sierra-tool.jar" basedir="../sierra-tool/bin" />
+
+		<copy todir="./lib/junit">
+			<fileset dir="./org.junit4_4.3.1" />
+		</copy>
+
+		<copy todir="./lib/jaxb">
+			<fileset dir="./jaxb" />
+		</copy>
+
+		<jar destfile="./lib/sierra-ant.jar">
+			<fileset dir="../sierra-ant/bin" />
+			<zipfileset src="./lib/sierra-message.jar" />
+			<zipfileset src="./lib/sierra-tool.jar" />
+			<zipfileset src="./lib/common.jar" />
+		</jar>
+
+	</target>
+
+	<target name="zip">
+		<zip destfile="./lib/tools/findbugs/com.surelogic.sierra.fb.jar" basedir="./lib/tools/findbugs/bin" />
+		<zip destfile="./lib/tools/pmd/com.surelogic.sierra.pmd.jar" basedir="./lib/tools/pmd/bin" />
+		<zip destfile="./lib/tools/reckoner/com.surelogic.sierra.tool.jar" basedir="./lib/tools/reckoner/bin" />
+
+		<zip destfile="${sierra-ant.zip}">
+			<zipfileset dir="." prefix="sierra-ant" includes="lib/**/*.jar, lib/**/*.MF, README.txt, examples/**" />
+		</zip>
+	</target>
 </project>
