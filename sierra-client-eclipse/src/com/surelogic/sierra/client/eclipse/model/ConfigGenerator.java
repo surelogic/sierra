@@ -73,12 +73,7 @@ public final class ConfigGenerator {
   private static final boolean useOldFiltering = false;
 
   private static final String[] PLUGINS = { SierraToolConstants.MESSAGE_PLUGIN_ID, AbstractLocalSLJob.COMMON_PLUGIN_ID,
-      SierraToolConstants.TOOL_PLUGIN_ID,
-      /*
-       * SierraToolConstants.PMD_PLUGIN_ID, SierraToolConstants.FB_PLUGIN_ID,
-       */
-      // SierraToolConstants.JUNIT4_PLUGIN_ID,
-      SierraToolConstants.JUNIT_PLUGIN_ID };
+      SierraToolConstants.TOOL_PLUGIN_ID };
 
   private static final ConfigGenerator INSTANCE = new ConfigGenerator();
   /** The location to store tool results */
@@ -108,13 +103,11 @@ public final class ConfigGenerator {
     for (String id : PLUGINS) {
       getDirectoryOfPlugin(id);
     }
-    getDirectoryOfPlugin(SierraToolConstants.JUNIT4_PLUGIN_ID, false);
+    // getDirectoryOfPlugin(SierraToolConstants.JUNIT4_PLUGIN_ID, false);
 
     for (String id : Tools.getToolPluginIds()) {
       getDirectoryOfPlugin(id);
     }
-    getDirectoryOfAllPlugins(SierraToolConstants.CORE_RUNTIME_PLUGIN_ID);
-    getDirectoryOfAllPlugins(SierraToolConstants.JDT_CORE_PLUGIN_ID);
   }
 
   private void getDirectoryOfPlugin(String id) {
@@ -128,12 +121,6 @@ public final class ConfigGenerator {
       if (warnIfAbsent) {
         System.out.println("Couldn't find plugin: " + id);
       }
-    }
-  }
-
-  private void getDirectoryOfAllPlugins(String rootId) {
-    for (String id : EclipseUtility.getDependencies(rootId)) {
-      getDirectoryOfPlugin(id);
     }
   }
 
@@ -616,7 +603,7 @@ public final class ConfigGenerator {
           final String[] exclusions;
           if (useOldFiltering && excludedPkgs.length > 0) {
             // Fold the exclude pkgs in with the exclude patterns
-            Set<String> temp = new HashSet<String>();
+            Set<String> temp = new HashSet<>();
             for (String p : convertPaths(excludePatterns)) {
               temp.add(p);
             }

@@ -12,7 +12,7 @@ import com.surelogic.sierra.tool.targets.IToolTarget;
 final class MultiTool extends AbstractSLJob implements IToolInstance, Iterable<IToolInstance> {
   public static final IToolFactory factory = new DummyToolFactory("MultiTool", "1.0", "MultiTool", "A container for other tools");
 
-  protected List<IToolInstance> tools = new ArrayList<IToolInstance>();
+  protected List<IToolInstance> tools = new ArrayList<>();
   IToolInstance first = null;
 
   final Config config;

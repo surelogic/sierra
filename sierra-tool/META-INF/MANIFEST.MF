@@ -5,16 +5,10 @@ Bundle-SymbolicName: com.surelogic.sierra.tool;singleton:=true
 Bundle-Version: 5.6.1.qualifier
 Require-Bundle: com.surelogic.common,
  com.surelogic.sierra.message,
- org.eclipse.jdt.core,
- org.eclipse.core.runtime,
  com.surelogic.common.core
 Export-Package: com.surelogic.sierra.tool,
- com.surelogic.sierra.tool.analyzer,
- com.surelogic.sierra.tool.reckoner
-Bundle-ClassPath: .,
- Tools/reckoner/reckoner.jar,
- lib/commons-cli-1.1.jar
+ com.surelogic.sierra.tool.analyzer
+Bundle-ClassPath: .
 Bundle-Vendor: SureLogic, Inc.
-Sierra-Tool: com.surelogic.sierra.tool.reckoner.ReckonerFactory
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 

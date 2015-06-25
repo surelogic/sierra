@@ -99,7 +99,7 @@ final class RemoteTool extends AbstractRemoteSLJob {
 
 	private void addToolFinder(PrintStream out, final Config config) {
 		out.println("Setting up remote tool finder ... "+config.getPluginDirs().size());
-		final List<File> dirs = new ArrayList<File>();
+		final List<File> dirs = new ArrayList<>();
 		for(Map.Entry<String, String> e : config.getPluginDirs().entrySet()) {
 			final File f = new File(e.getValue());
 			out.println("Checking if it's a tool plugin: "+f);

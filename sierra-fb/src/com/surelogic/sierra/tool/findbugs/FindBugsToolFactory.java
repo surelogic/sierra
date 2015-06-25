@@ -30,115 +30,102 @@ import edu.umd.cs.findbugs.BugPattern;
 import edu.umd.cs.findbugs.DetectorFactoryCollection;
 import edu.umd.cs.findbugs.Plugin;
 
-public class FindBugsToolFactory extends AbstractToolFactory {	
-	private static final String CORE = "edu.umd.cs.findbugs.plugins.core";
-	
-	@Override
-	public void init(File toolHome, File pluginDir) {
-		super.init(toolHome, pluginDir);
-		AbstractFindBugsTool.init(toolHome.getAbsolutePath());
-	}
+public class FindBugsToolFactory extends AbstractToolFactory {
+  private static final String CORE = "edu.umd.cs.findbugs.plugins.core";
 
-	static <T> Iterable<T> iterable(final Iterator<T> it) {
-		return new Iterable<T>() {
-			@Override
+  @Override
+  public void init(File toolHome, File pluginDir) {
+    super.init(toolHome, pluginDir);
+    AbstractFindBugsTool.init(toolHome.getAbsolutePath());
+  }
+
+  static <T> Iterable<T> iterable(final Iterator<T> it) {
+    return new Iterable<T>() {
+      @Override
       public Iterator<T> iterator() {
-				return it;
-			}			
-		};
-	}
-	
-//	@Override
-	@Override
+        return it;
+      }
+    };
+  }
+
+  // @Override
+  @Override
   public final Collection<IToolExtension> getExtensions() {
-		if (!isActive()) {
-			return Collections.emptyList();
-		}
-		List<IToolExtension> extensions = new ArrayList<IToolExtension>();
+    if (!isActive()) {
+      return Collections.emptyList();
+    }
+    List<IToolExtension> extensions = new ArrayList<>();
 
-		// Code to get meta-data from FindBugs
-		for(Plugin plugin : iterable(DetectorFactoryCollection.instance().pluginIterator())) {
-			final String pluginId = plugin.getPluginId();			
-			final Manifest manifest = findSierraManifest(plugin);
-			Set<ArtifactType> types = new HashSet<ArtifactType>();
-			
-			for(BugPattern pattern : plugin.getBugPatterns()) {
-				ArtifactType t = ArtifactType.create(this, manifest, pluginId, 
-		                                          pattern.getType(), pattern.getCategory());
-				types.add(t);
-			}
-			/*
-			for(DetectorFactory factory : iterable(plugin.detectorFactoryIterator())) {
-				// Actual detector
-			}
-			*/	
-			File loc = null;
-			try {
-				URL url = plugin.getPluginLoader().getURL();
-				if (url != null) {
-					loc = new File(url.toURI());
-				}
-			} catch (URISyntaxException e) {
-				e.printStackTrace(); // FIX ignored
-				continue;
-			}
-			final boolean isCore = CORE.equals(plugin.getPluginId());
-			extensions.add(new AbstractToolExtension(getId(), plugin.getPluginId(), getVersion(), loc, types) {
-				@Override
+    // Code to get meta-data from FindBugs
+    for (Plugin plugin : iterable(DetectorFactoryCollection.instance().pluginIterator())) {
+      final String pluginId = plugin.getPluginId();
+      final Manifest manifest = findSierraManifest(plugin);
+      Set<ArtifactType> types = new HashSet<>();
+
+      for (BugPattern pattern : plugin.getBugPatterns()) {
+        ArtifactType t = ArtifactType.create(this, manifest, pluginId, pattern.getType(), pattern.getCategory());
+        types.add(t);
+      }
+      File loc = null;
+      try {
+        URL url = plugin.getPluginLoader().getURL();
+        if (url != null) {
+          loc = new File(url.toURI());
+        }
+      } catch (URISyntaxException e) {
+        e.printStackTrace(); // FIX ignored
+        continue;
+      }
+      final boolean isCore = CORE.equals(plugin.getPluginId());
+      extensions.add(new AbstractToolExtension(getId(), plugin.getPluginId(), getVersion(), loc, types) {
+        @Override
         public boolean isCore() {
-					return isCore;
-				};
-			});
-			
-		}
-		return extensions;
-	}
+          return isCore;
+        };
+      });
 
-	private Manifest findSierraManifest(Plugin plugin) {
-		URL url = plugin.getPluginLoader().getURL();
-		if (url == null) {
-			return null; // Core plugin
-		}		
-		try {
-			ZipInputStream zis = new ZipInputStream(url.openStream());
-			ZipEntry ze;
-			while ((ze = zis.getNextEntry()) != null) {
-				if (ToolUtil.SIERRA_MANIFEST.equals(ze.getName())) {
-					break;
-				}
-			}
-			if (ze == null) {
-				return null;
-			}			
-			/*
-			InputStreamReader r = new InputStreamReader(zis);
-			int c;
-			while ((c = r.read()) != -1) {
-				System.out.print((char) c);
-			}			
-			*/
-			Manifest props = new Manifest();
-			props.read(zis);
-			zis.close();
-			return props;
-		} catch(IOException e) {
-			SLLogger.getLogger().log(Level.WARNING, "Couldn't load finding type mapping for "+plugin.getPluginId(), e);
-			return null;		
-		}
-	}
+    }
+    return extensions;
+  }
 
-	/*
-	@Override
-	public List<File> getRequiredJars() {
-		final List<File> jars = new ArrayList<File>();	
-		addAllPluginJarsToPath(debug, jars, SierraToolConstants.FB_PLUGIN_ID, "lib");
-		return jars;
-	}
-	*/
-	
-	@Override
-	protected IToolInstance create(Config config,
-			ILazyArtifactGenerator generator, boolean close) {
-		return new AbstractFindBugsTool(this, config, generator, close);
-	}
+  private Manifest findSierraManifest(Plugin plugin) {
+    URL url = plugin.getPluginLoader().getURL();
+    if (url == null) {
+      return null; // Core plugin
+    }
+    try {
+      ZipInputStream zis = new ZipInputStream(url.openStream());
+      ZipEntry ze;
+      while ((ze = zis.getNextEntry()) != null) {
+        if (ToolUtil.SIERRA_MANIFEST.equals(ze.getName())) {
+          break;
+        }
+      }
+      if (ze == null) {
+        return null;
+      }
+      /*
+       * InputStreamReader r = new InputStreamReader(zis); int c; while ((c =
+       * r.read()) != -1) { System.out.print((char) c); }
+       */
+      Manifest props = new Manifest();
+      props.read(zis);
+      zis.close();
+      return props;
+    } catch (IOException e) {
+      SLLogger.getLogger().log(Level.WARNING, "Couldn't load finding type mapping for " + plugin.getPluginId(), e);
+      return null;
+    }
+  }
+
+  /*
+   * @Override public List<File> getRequiredJars() { final List<File> jars = new
+   * ArrayList<File>(); addAllPluginJarsToPath(debug, jars,
+   * SierraToolConstants.FB_PLUGIN_ID, "lib"); return jars; }
+   */
+
+  @Override
+  protected IToolInstance create(Config config, ILazyArtifactGenerator generator, boolean close) {
+    return new AbstractFindBugsTool(this, config, generator, close);
+  }
 }

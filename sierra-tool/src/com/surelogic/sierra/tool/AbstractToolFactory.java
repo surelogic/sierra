@@ -3,10 +3,9 @@ package com.surelogic.sierra.tool;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.tool.analyzer.ILazyArtifactGenerator;
@@ -24,7 +23,6 @@ import com.surelogic.sierra.tool.targets.ToolTarget;
  * @author edwin
  */
 public abstract class AbstractToolFactory implements IToolFactory {
-    public static final Logger LOG = SLLogger.getLogger("sierra");
 	
 	private File pluginDir;
 	private ToolInfo info;
@@ -135,8 +133,8 @@ public abstract class AbstractToolFactory implements IToolFactory {
 		try {
 			return ToolUtil.getRequiredJars(getPluginDir());
 		} catch (IOException e) {
-			LOG.log(Level.SEVERE, "Couldn't get required jars for "+getName(), e);
-			return new ArrayList<File>();
+			SLLogger.getLogger().log(Level.SEVERE, "Couldn't get required jars for "+getName(), e);
+			return Collections.emptyList();
 		}
 	}
 }
