@@ -20,6 +20,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 import java.util.logging.Level;
@@ -54,7 +55,7 @@ public class ToolUtil {
   /** The logger */
   protected static final Logger LOG = SLLogger.getLogger("sierra");
 
-  private static final List<IToolFinder> finders = new ArrayList<>();
+  private static final List<IToolFinder> finders = new CopyOnWriteArrayList<>();
   static {
     addToolFinder(new IToolFinder() {
       public List<File> findToolDirectories() {
@@ -82,7 +83,7 @@ public class ToolUtil {
   }
 
   public static void addToolFinder(IToolFinder f) {
-    synchronized (finders) {
+    synchronized (ToolUtil.class) { // one at a time
       // First check if already added
       for (IToolFinder finder : finders) {
         if (finder == f || finder.getClass() == f.getClass()) {
