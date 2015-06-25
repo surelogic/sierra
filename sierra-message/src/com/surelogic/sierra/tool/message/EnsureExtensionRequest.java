@@ -10,12 +10,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class EnsureExtensionRequest {
-	protected List<ExtensionName> extensions;
+  protected List<ExtensionName> extensions;
 
-	public List<ExtensionName> getExtensions() {
-		if (extensions == null) {
-			extensions = new ArrayList<ExtensionName>();
-		}
-		return extensions;
-	}
+  public List<ExtensionName> getExtensions() {
+    if (extensions == null) {
+      extensions = new ArrayList<>();
+    }
+    return extensions;
+  }
 }

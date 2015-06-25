@@ -12,8 +12,9 @@ public class FullDirectoryTarget extends DirectoryTarget {
   /**
    * For JAXB
    */
-  public FullDirectoryTarget() {}
-  
+  public FullDirectoryTarget() {
+  }
+
   public FullDirectoryTarget(Type type, URI loc) {
     super(type, loc);
   }

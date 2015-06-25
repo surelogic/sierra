@@ -11,35 +11,35 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType
 public class SyncTrailResponse {
 
-	private String finding;
-	private Merge merge;
-	private List<Audit> audits;
+  private String finding;
+  private Merge merge;
+  private List<Audit> audits;
 
-	public String getFinding() {
-		return finding;
-	}
+  public String getFinding() {
+    return finding;
+  }
 
-	public void setFinding(String finding) {
-		this.finding = finding;
-	}
+  public void setFinding(String finding) {
+    this.finding = finding;
+  }
 
-	public Merge getMerge() {
-		return merge;
-	}
+  public Merge getMerge() {
+    return merge;
+  }
 
-	public void setMerge(Merge merge) {
-		this.merge = merge;
-	}
+  public void setMerge(Merge merge) {
+    this.merge = merge;
+  }
 
-	public List<Audit> getAudits() {
-		if (audits == null) {
-			audits = new ArrayList<Audit>();
-		}
-		return audits;
-	}
+  public List<Audit> getAudits() {
+    if (audits == null) {
+      audits = new ArrayList<>();
+    }
+    return audits;
+  }
 
-	public void setAudits(List<Audit> audits) {
-		this.audits = audits;
-	}
+  public void setAudits(List<Audit> audits) {
+    this.audits = audits;
+  }
 
 }

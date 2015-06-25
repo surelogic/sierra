@@ -30,14 +30,14 @@ public class CreateCategoryRequest {
 
 	public List<FilterEntry> getFilter() {
 		if (filter == null) {
-			filter = new ArrayList<FilterEntry>();
+			filter = new ArrayList<>();
 		}
 		return filter;
 	}
 
 	public List<String> getParent() {
 		if (parent == null) {
-			parent = new ArrayList<String>();
+			parent = new ArrayList<>();
 		}
 		return parent;
 	}

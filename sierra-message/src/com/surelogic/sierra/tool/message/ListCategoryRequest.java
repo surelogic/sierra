@@ -14,12 +14,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ListCategoryRequest {
 
-	protected List<ServerRevision> servers;
+  protected List<ServerRevision> servers;
 
-	public List<ServerRevision> getServerRevisions() {
-		if (servers == null) {
-			servers = new ArrayList<ServerRevision>();
-		}
-		return servers;
-	}
+  public List<ServerRevision> getServerRevisions() {
+    if (servers == null) {
+      servers = new ArrayList<>();
+    }
+    return servers;
+  }
 }

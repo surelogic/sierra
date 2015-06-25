@@ -29,14 +29,14 @@ public class CreateScanFilterRequest {
 
 	public List<TypeFilter> getTypeFilter() {
 		if (typeFilter == null) {
-			typeFilter = new ArrayList<TypeFilter>();
+			typeFilter = new ArrayList<>();
 		}
 		return typeFilter;
 	}
 
 	public List<CategoryFilter> getCategoryFilter() {
 		if (categoryFilter == null) {
-			categoryFilter = new ArrayList<CategoryFilter>();
+			categoryFilter = new ArrayList<>();
 		}
 		return categoryFilter;
 	}

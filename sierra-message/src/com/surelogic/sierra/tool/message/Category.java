@@ -72,7 +72,7 @@ public class Category {
      */
     public List<String> getFindingType() {
         if (findingType == null) {
-            findingType = new ArrayList<String>();
+            findingType = new ArrayList<>();
         }
 
         return this.findingType;

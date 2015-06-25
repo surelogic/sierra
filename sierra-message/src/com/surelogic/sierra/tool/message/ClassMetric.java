@@ -10,34 +10,34 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType
 @XmlRootElement
 public class ClassMetric {
-    private String packageName;
-    private String className;
-    private int loc;
+  private String packageName;
+  private String className;
+  private int loc;
 
-    @XmlAttribute
-    public String getPackage() {
-        return packageName;
-    }
+  @XmlAttribute
+  public String getPackage() {
+    return packageName;
+  }
 
-    public void setPackage(String packageName) {
-        this.packageName = packageName;
-    }
+  public void setPackage(String packageName) {
+    this.packageName = packageName;
+  }
 
-    @XmlAttribute
-    public String getName() {
-        return className;
-    }
+  @XmlAttribute
+  public String getName() {
+    return className;
+  }
 
-    public void setName(String className) {
-        this.className = className;
-    }
+  public void setName(String className) {
+    this.className = className;
+  }
 
-    @XmlAttribute
-    public int getLoc() {
-        return loc;
-    }
+  @XmlAttribute
+  public int getLoc() {
+    return loc;
+  }
 
-    public void setLoc(int loc) {
-        this.loc = loc;
-    }
+  public void setLoc(int loc) {
+    this.loc = loc;
+  }
 }

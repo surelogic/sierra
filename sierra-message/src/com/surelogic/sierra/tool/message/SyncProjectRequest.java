@@ -13,44 +13,44 @@ import javax.xml.bind.annotation.XmlType;
 @XmlRootElement
 public class SyncProjectRequest {
 
-	private String server;
-	private String project;
-	private List<SyncTrailRequest> trails;
-	private long revision;
+  private String server;
+  private String project;
+  private List<SyncTrailRequest> trails;
+  private long revision;
 
-	public String getProject() {
-		return project;
-	}
+  public String getProject() {
+    return project;
+  }
 
-	public void setProject(String project) {
-		this.project = project;
-	}
+  public void setProject(String project) {
+    this.project = project;
+  }
 
-	public String getServer() {
-		return server;
-	}
+  public String getServer() {
+    return server;
+  }
 
-	public void setServer(String server) {
-		this.server = server;
-	}
+  public void setServer(String server) {
+    this.server = server;
+  }
 
-	public List<SyncTrailRequest> getTrails() {
-		if(trails == null) {
-			trails = new ArrayList<SyncTrailRequest>();
-		}
-		return trails;
-	}
+  public List<SyncTrailRequest> getTrails() {
+    if (trails == null) {
+      trails = new ArrayList<>();
+    }
+    return trails;
+  }
 
-	public void setTrails(List<SyncTrailRequest> trails) {
-		this.trails = trails;
-	}
+  public void setTrails(List<SyncTrailRequest> trails) {
+    this.trails = trails;
+  }
 
-	public long getRevision() {
-		return revision;
-	}
+  public long getRevision() {
+    return revision;
+  }
 
-	public void setRevision(long revision) {
-		this.revision = revision;
-	}
+  public void setRevision(long revision) {
+    this.revision = revision;
+  }
 
 }

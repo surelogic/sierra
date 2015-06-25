@@ -4,14 +4,14 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 public class UpdateCategoryResponse {
-	private FilterSet set;
+  private FilterSet set;
 
-	public FilterSet getSet() {
-		return set;
-	}
+  public FilterSet getSet() {
+    return set;
+  }
 
-	public void setSet(FilterSet set) {
-		this.set = set;
-	}
+  public void setSet(FilterSet set) {
+    this.set = set;
+  }
 
 }

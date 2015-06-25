@@ -7,21 +7,21 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class DownloadExtensionRequest {
-	protected ExtensionName extension;
+  protected ExtensionName extension;
 
-	public DownloadExtensionRequest() {
-	}
+  public DownloadExtensionRequest() {
+  }
 
-	public DownloadExtensionRequest(final ExtensionName extension) {
-		this.extension = extension;
-	}
+  public DownloadExtensionRequest(final ExtensionName extension) {
+    this.extension = extension;
+  }
 
-	public ExtensionName getExtension() {
-		return extension;
-	}
+  public ExtensionName getExtension() {
+    return extension;
+  }
 
-	public void setExtension(final ExtensionName extension) {
-		this.extension = extension;
-	}
+  public void setExtension(final ExtensionName extension) {
+    this.extension = extension;
+  }
 
 }

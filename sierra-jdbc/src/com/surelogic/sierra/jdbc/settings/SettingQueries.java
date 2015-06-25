@@ -11,8 +11,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.logging.Level;
 
 import com.surelogic.common.jdbc.DBQuery;
@@ -44,7 +44,6 @@ import com.surelogic.sierra.tool.message.ServerInfoServiceClient;
 import com.surelogic.sierra.tool.message.ServerLocation;
 import com.surelogic.sierra.tool.message.Services;
 import com.surelogic.sierra.tool.message.SierraServiceClientException;
-import com.surelogic.sierra.tool.message.data.JSureInfo;
 
 /**
  * This class represents implementations of the client-side behavior of the bug
@@ -106,7 +105,7 @@ public class SettingQueries {
       final List<ExtensionName> localExtensions) {
     final BugLinkService service = BugLinkServiceClient.create(loc);
     final ListCategoryResponse response = service.listCategories(request);
-    final List<ExtensionName> list = new ArrayList<ExtensionName>();
+    final List<ExtensionName> list = new ArrayList<>();
     list.addAll(response.getDependencies());
     list.removeAll(localExtensions);
     GetExtensionsResponse resp = new GetExtensionsResponse();
@@ -129,7 +128,7 @@ public class SettingQueries {
       final List<ExtensionName> localExtensions) {
     final BugLinkService service = BugLinkServiceClient.create(loc);
     final ListCategoryResponse response = service.listCategories(request);
-    final List<ExtensionName> list = new ArrayList<ExtensionName>();
+    final List<ExtensionName> list = new ArrayList<>();
     list.addAll(response.getDependencies());
     list.removeAll(localExtensions);
     GetExtensionsResponse resp = new GetExtensionsResponse();
@@ -233,7 +232,7 @@ public class SettingQueries {
     req.getExtensions().addAll(response.getDependencies());
     req.getExtensions().removeAll(localExtensions);
     final GetExtensionsResponse resp = req.getExtensions().isEmpty() ? new GetExtensionsResponse() : service.getExtensions(req);
-    final Set<ScanFilter> changed = new HashSet<ScanFilter>();
+    final Set<ScanFilter> changed = new HashSet<>();
     return new DBQuery<ServerScanFilterInfo>() {
       @Override
       public ServerScanFilterInfo perform(final Query q) {
@@ -283,10 +282,10 @@ public class SettingQueries {
     return new DBQuery<Map<NamedServer, List<ScanFilter>>>() {
       @Override
       public Map<NamedServer, List<ScanFilter>> perform(final Query q) {
-        final Map<NamedServer, List<ScanFilter>> m = new HashMap<NamedServer, List<ScanFilter>>();
+        final Map<NamedServer, List<ScanFilter>> m = new HashMap<>();
         final ScanFilters filters = new ScanFilters(q);
         final List<ScanFilterDO> sfs = filters.listScanFilters();
-        final Map<String, ScanFilterDO> dos = new HashMap<String, ScanFilterDO>(sfs.size());
+        final Map<String, ScanFilterDO> dos = new HashMap<>(sfs.size());
         for (final ScanFilterDO sf : sfs) {
           dos.put(sf.getUid(), sf);
         }
@@ -300,7 +299,7 @@ public class SettingQueries {
             final String uuid = r.nextString();
             if (!l.equals(label)) {
               label = l;
-              sfs = new ArrayList<ScanFilter>();
+              sfs = new ArrayList<>();
               m.put(l, sfs);
             }
             sfs.add(ScanFilters.convert(dos.get(uuid), l.getUuid()));
@@ -472,12 +471,12 @@ public class SettingQueries {
     final Categories cats = new Categories(q);
     final FindingTypes types = new FindingTypes(q);
     final Set<CategoryFilterDO> catFilters = sf.getCategories();
-    final List<String> catFilterUids = new ArrayList<String>(catFilters.size());
+    final List<String> catFilterUids = new ArrayList<>(catFilters.size());
     for (final CategoryFilterDO cat : catFilters) {
       catFilterUids.add(cat.getUid());
     }
-    final Map<String, CategoryGraph> catGraphs = new HashMap<String, CategoryGraph>(catFilters.size());
-    final Set<String> typeSet = new HashSet<String>(catFilters.size() * 10);
+    final Map<String, CategoryGraph> catGraphs = new HashMap<>(catFilters.size());
+    final Set<String> typeSet = new HashSet<>(catFilters.size() * 10);
     for (final CategoryGraph graph : cats.getCategoryGraphs(catFilterUids)) {
       catGraphs.put(graph.getUid(), graph);
       typeSet.addAll(graph.getFindingTypes());
@@ -485,7 +484,7 @@ public class SettingQueries {
     for (final TypeFilterDO typeFilter : sf.getFilterTypes()) {
       typeSet.add(typeFilter.getFindingType());
     }
-    final Map<String, FindingTypeDO> typeMap = new HashMap<String, FindingTypeDO>(typeSet.size());
+    final Map<String, FindingTypeDO> typeMap = new HashMap<>(typeSet.size());
     for (final String type : typeSet) {
       typeMap.put(type, types.getFindingType(type));
     }
@@ -495,8 +494,7 @@ public class SettingQueries {
   /**
    * The full location, on the Java classpath, of the default world file.
    */
-  public static final String DEFAULT_FILTER_SET_FILE = JSureInfo.useJSure ? "com/surelogic/sierra/tool/message/data/buglink-default-jsure-scan-filter.txt"
-      : "com/surelogic/sierra/tool/message/data/buglink-default-scan-filter.txt";
+  public static final String DEFAULT_FILTER_SET_FILE = "com/surelogic/sierra/tool/message/data/buglink-default-scan-filter.txt";
 
   /**
    * Gets the default set of finding type UUIDs that have been selected by
@@ -506,7 +504,7 @@ public class SettingQueries {
    */
   public static Set<String> getSureLogicDefaultScanFilters() {
 
-    final Set<String> types = new HashSet<String>();
+    final Set<String> types = new HashSet<>();
     final URL defaultURL = Thread.currentThread().getContextClassLoader().getResource(DEFAULT_FILTER_SET_FILE);
     if (defaultURL == null) {
       SLLogger.getLogger().log(Level.WARNING,
@@ -550,7 +548,7 @@ public class SettingQueries {
       public void doPerform(final Query q) {
         final ServerLocation l = cs.getLocation();
         final Map<ConnectedServer, Collection<String>> servers = ServerLocations.fetchQuery(null).perform(q);
-        final Map<ConnectedServer, Collection<String>> newServers = new HashMap<ConnectedServer, Collection<String>>(servers.size());
+        final Map<ConnectedServer, Collection<String>> newServers = new HashMap<>(servers.size());
         for (final Entry<ConnectedServer, Collection<String>> entry : servers.entrySet()) {
           boolean found = false;
           final ConnectedServer cs1 = entry.getKey();

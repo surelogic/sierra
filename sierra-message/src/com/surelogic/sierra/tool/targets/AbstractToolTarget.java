@@ -16,28 +16,28 @@ public abstract class AbstractToolTarget extends ToolTarget {
   /**
    * For JAXB
    */
-  protected AbstractToolTarget() {    
+  protected AbstractToolTarget() {
   }
-  
+
   protected AbstractToolTarget(Type t, URI loc) {
     this(t, loc, null);
   }
-  
+
   protected AbstractToolTarget(Type t, URI loc, ToolTarget auxSrcLoc) {
     location = loc;
     type = t;
-    if (auxSrcLoc == null || type == Type.AUX) {          
+    if (auxSrcLoc == null || type == Type.AUX) {
       auxSources = auxSrcLoc;
     } else {
-      throw new IllegalArgumentException(type+" can't have an aux source location: "+auxSrcLoc);
+      throw new IllegalArgumentException(type + " can't have an aux source location: " + auxSrcLoc);
     }
   }
-  
+
   @Override
   public final boolean isSource() {
     return type == Type.SOURCE;
   }
-  
+
   @Override
   public final Type getType() {
     return type;
@@ -47,31 +47,31 @@ public abstract class AbstractToolTarget extends ToolTarget {
   public final URI getLocation() {
     return location;
   }
-  
+
   @Override
   public final IToolTarget getAuxSources() {
     return auxSources;
   }
-  
+
   @Override
   public String toString() {
     return location.toASCIIString();
   }
-  
+
   @Override
   public boolean equals(Object o) {
     if (o instanceof IToolTarget) {
       IToolTarget t = (IToolTarget) o;
       return location.equals(t.getLocation());
     }
-    return false; 
+    return false;
   }
-  
+
   @Override
   public int hashCode() {
     return location.hashCode();
   }
-  
+
   /**
    * For JAXB
    */
@@ -82,7 +82,7 @@ public abstract class AbstractToolTarget extends ToolTarget {
   public final void setLocation(URI l) {
     location = l;
   }
-  
+
   public final void getAuxSources(ToolTarget t) {
     auxSources = t;
   }

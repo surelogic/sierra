@@ -11,12 +11,9 @@ import javax.xml.bind.annotation.XmlRootElement;
  * SRPC Services are defined by writing an interface annotated with
  * {@link Service} and defining one or more methods. The parameters and return
  * type of each method should be annotated with {@link XmlRootElement}.
- * 
- * @author nathan
- * 
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface Service {
-	String version() default "_none_";
+  String version() default "_none_";
 }

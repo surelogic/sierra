@@ -7,13 +7,13 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class UpdateScanFilterResponse {
-	protected ScanFilter filter;
+  protected ScanFilter filter;
 
-	public ScanFilter getFilter() {
-		return filter;
-	}
+  public ScanFilter getFilter() {
+    return filter;
+  }
 
-	public void setFilter(ScanFilter filter) {
-		this.filter = filter;
-	}
+  public void setFilter(ScanFilter filter) {
+    this.filter = filter;
+  }
 }

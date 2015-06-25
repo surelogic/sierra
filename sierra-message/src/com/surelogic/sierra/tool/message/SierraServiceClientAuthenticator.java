@@ -3,19 +3,17 @@ package com.surelogic.sierra.tool.message;
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
 
-
 public class SierraServiceClientAuthenticator extends Authenticator {
-    private final String username;
-    private final String password;
+  private final String username;
+  private final String password;
 
-    public SierraServiceClientAuthenticator(String username, String password) {
-        this.username = username;
-        this.password = password;
-    }
+  public SierraServiceClientAuthenticator(String username, String password) {
+    this.username = username;
+    this.password = password;
+  }
 
-    @Override
-    public PasswordAuthentication getPasswordAuthentication() {
-        return new PasswordAuthentication(this.username,
-            ((this.password == null) ? null : this.password.toCharArray()));
-    }
+  @Override
+  public PasswordAuthentication getPasswordAuthentication() {
+    return new PasswordAuthentication(this.username, ((this.password == null) ? null : this.password.toCharArray()));
+  }
 }

@@ -23,8 +23,8 @@ import com.surelogic.sierra.tool.message.*;
 public class AbstractFBFindingTypeGenerator extends AbstractFindingTypeGenerator {
   protected static final String TOOL = "FindBugs";
 
-  protected final Map<String, Category> cMap = new HashMap<String, Category>();
-  protected final Map<String, FindingType> fMap = new HashMap<String, FindingType>();
+  protected final Map<String, Category> cMap = new HashMap<>();
+  protected final Map<String, FindingType> fMap = new HashMap<>();
 
   public void parse(String messages, String findbugs) {
     SAXParserFactory factory = SAXParserFactory.newInstance();

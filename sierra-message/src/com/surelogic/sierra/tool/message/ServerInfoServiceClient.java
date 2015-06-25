@@ -14,8 +14,7 @@ import com.surelogic.sierra.message.srpc.MultiPartSRPCClient;
  */
 public class ServerInfoServiceClient {
 
-	public static ServerInfoService create(final ServerLocation location) {
-		return MultiPartSRPCClient.createClient(location,
-				ServerInfoService.class, true);
-	}
+  public static ServerInfoService create(final ServerLocation location) {
+    return MultiPartSRPCClient.createClient(location, ServerInfoService.class, true);
+  }
 }

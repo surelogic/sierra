@@ -5,14 +5,14 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class CreateCategoryResponse {
 
-	protected FilterSet set;
+  protected FilterSet set;
 
-	public FilterSet getSet() {
-		return set;
-	}
+  public FilterSet getSet() {
+    return set;
+  }
 
-	public void setSet(FilterSet set) {
-		this.set = set;
-	}
+  public void setSet(FilterSet set) {
+    this.set = set;
+  }
 
 }

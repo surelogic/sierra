@@ -6,21 +6,21 @@ import javax.xml.bind.annotation.*;
 @XmlType
 @XmlRootElement
 public class SupportReply {
-	String message;
-	
-	public SupportReply() {
-		this(null);
-	}
-	
-	public SupportReply(String msg) {
-		message = msg;
-	}
+  String message;
 
-	public String getMessage() {
-		return message;
-	}
+  public SupportReply() {
+    this(null);
+  }
 
-	public void setMessage(String msg) {
-		this.message = msg;
-	}
+  public SupportReply(String msg) {
+    message = msg;
+  }
+
+  public String getMessage() {
+    return message;
+  }
+
+  public void setMessage(String msg) {
+    this.message = msg;
+  }
 }

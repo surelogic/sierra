@@ -11,40 +11,40 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ListCategoryResponse {
 
-	protected List<ServerRevision> servers;
+  protected List<ServerRevision> servers;
 
-	protected List<FilterSet> filterSets;
+  protected List<FilterSet> filterSets;
 
-	protected List<String> deletions;
+  protected List<String> deletions;
 
-	protected List<ExtensionName> dependencies;
+  protected List<ExtensionName> dependencies;
 
-	public List<ServerRevision> getServerRevisions() {
-		if (servers == null) {
-			servers = new ArrayList<ServerRevision>();
-		}
-		return servers;
-	}
+  public List<ServerRevision> getServerRevisions() {
+    if (servers == null) {
+      servers = new ArrayList<>();
+    }
+    return servers;
+  }
 
-	public List<FilterSet> getFilterSets() {
-		if (filterSets == null) {
-			filterSets = new ArrayList<FilterSet>();
-		}
-		return filterSets;
-	}
+  public List<FilterSet> getFilterSets() {
+    if (filterSets == null) {
+      filterSets = new ArrayList<>();
+    }
+    return filterSets;
+  }
 
-	public List<String> getDeletions() {
-		if (deletions == null) {
-			deletions = new ArrayList<String>();
-		}
-		return deletions;
-	}
+  public List<String> getDeletions() {
+    if (deletions == null) {
+      deletions = new ArrayList<>();
+    }
+    return deletions;
+  }
 
-	public List<ExtensionName> getDependencies() {
-		if (dependencies == null) {
-			dependencies = new ArrayList<ExtensionName>();
-		}
-		return dependencies;
-	}
+  public List<ExtensionName> getDependencies() {
+    if (dependencies == null) {
+      dependencies = new ArrayList<>();
+    }
+    return dependencies;
+  }
 
 }

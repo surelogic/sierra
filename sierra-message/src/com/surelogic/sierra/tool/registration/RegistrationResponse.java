@@ -6,13 +6,13 @@ import javax.xml.bind.annotation.*;
 @XmlType
 @XmlRootElement
 public class RegistrationResponse {
-	String message;
+  String message;
 
-	public String getMessage() {
-		return message;
-	}
+  public String getMessage() {
+    return message;
+  }
 
-	public void setMessage(String message) {
-		this.message = message;
-	}
+  public void setMessage(String message) {
+    this.message = message;
+  }
 }

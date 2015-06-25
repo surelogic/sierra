@@ -18,8 +18,8 @@ import com.surelogic.sierra.tool.message.MessageWarehouse;
  * @author Edwin.Chan
  */
 public class AbstractFindingTypeGenerator extends DefaultHandler {
-  protected final List<FindingType> types = new ArrayList<FindingType>();
-  protected final List<Category> categories = new ArrayList<Category>();
+  protected final List<FindingType> types = new ArrayList<>();
+  protected final List<Category> categories = new ArrayList<>();
 
   protected void printFindingTypes() {
     FindingTypes ft = new FindingTypes();

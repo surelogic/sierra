@@ -44,7 +44,7 @@ public class MultiPartSRPCClient implements InvocationHandler {
 							AuthScope.ANY_REALM),
 					new UsernamePasswordCredentials(user, location.getPass()));
 		}
-		this.methods = new HashSet<Method>(Arrays.asList(methods));
+		this.methods = new HashSet<>(Arrays.asList(methods));
 		this.codec = codec;
 		this.url = location.createServiceURL(service);
 	}

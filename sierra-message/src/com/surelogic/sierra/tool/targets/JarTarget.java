@@ -12,16 +12,17 @@ public class JarTarget extends AbstractToolTarget {
   /**
    * For JAXB
    */
-  public JarTarget() {}
-  
+  public JarTarget() {
+  }
+
   public JarTarget(Type type, URI loc) {
     super(type, loc);
   }
-  
+
   public JarTarget(URI loc) {
     super(Type.AUX, loc);
   }
-  
+
   @Override
   public final Kind getKind() {
     return Kind.JAR;
@@ -35,5 +36,5 @@ public class JarTarget extends AbstractToolTarget {
   @Override
   public Iterable<URI> getFiles() {
     throw new UnsupportedOperationException();
-  }  
+  }
 }

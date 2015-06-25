@@ -11,24 +11,24 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorOrder(XmlAccessOrder.ALPHABETICAL)
 @XmlType
 public class CategoryFilter {
-	@XmlElement(required = true)
-	protected String uid;
-	protected Importance importance;
+  @XmlElement(required = true)
+  protected String uid;
+  protected Importance importance;
 
-	public String getUid() {
-		return uid;
-	}
+  public String getUid() {
+    return uid;
+  }
 
-	public void setUid(String uid) {
-		this.uid = uid;
-	}
+  public void setUid(String uid) {
+    this.uid = uid;
+  }
 
-	public Importance getImportance() {
-		return importance;
-	}
+  public Importance getImportance() {
+    return importance;
+  }
 
-	public void setImportance(Importance importance) {
-		this.importance = importance;
-	}
+  public void setImportance(Importance importance) {
+    this.importance = importance;
+  }
 
 }

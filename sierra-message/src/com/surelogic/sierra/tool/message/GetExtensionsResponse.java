@@ -10,13 +10,13 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class GetExtensionsResponse {
-	protected List<Extension> extensions;
+  protected List<Extension> extensions;
 
-	public List<Extension> getExtension() {
-		if (extensions == null) {
-			extensions = new ArrayList<Extension>();
-		}
-		return extensions;
-	}
+  public List<Extension> getExtension() {
+    if (extensions == null) {
+      extensions = new ArrayList<>();
+    }
+    return extensions;
+  }
 
 }

@@ -8,17 +8,17 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class SyncRequest {
 
-	private List<SyncProjectRequest> projects;
+  private List<SyncProjectRequest> projects;
 
-	public List<SyncProjectRequest> getProjects() {
-		if (projects == null) {
-			projects = new ArrayList<SyncProjectRequest>();
-		}
-		return projects;
-	}
+  public List<SyncProjectRequest> getProjects() {
+    if (projects == null) {
+      projects = new ArrayList<>();
+    }
+    return projects;
+  }
 
-	public void setProjects(final List<SyncProjectRequest> projects) {
-		this.projects = projects;
-	}
+  public void setProjects(final List<SyncProjectRequest> projects) {
+    this.projects = projects;
+  }
 
 }

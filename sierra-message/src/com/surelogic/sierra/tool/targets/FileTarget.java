@@ -16,21 +16,22 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType
 public final class FileTarget extends AbstractToolTarget {
   URI root;
-  
+
   /**
    * For JAXB
    */
-  public FileTarget() {}
-  
+  public FileTarget() {
+  }
+
   public FileTarget(Type type, URI loc, URI root) {
     super(type, loc);
     this.root = root;
   }
-  
+
   public FileTarget(URI loc, URI root) {
     this(Type.SOURCE, loc, root);
   }
-  
+
   @Override
   public boolean exclude(String relativePath) {
     return false;
@@ -43,34 +44,24 @@ public final class FileTarget extends AbstractToolTarget {
 
   @Override
   public Iterable<URI> getFiles() {
-    List<URI> l = new ArrayList<URI>(1);
+    List<URI> l = new ArrayList<>(1);
     l.add(getLocation());
     return l;
     /*
-    return new Iterator<URI>() {
-      private boolean done;
-      public boolean hasNext() {
-        return !done;
-      }
-
-      public URI next() {
-        if (done) {
-          throw new NoSuchElementException();
-        }
-        done = true;
-        return getLocation();
-      }
-
-      public void remove() {
-        throw new UnsupportedOperationException();
-      }};
-      */
+     * return new Iterator<URI>() { private boolean done; public boolean
+     * hasNext() { return !done; }
+     * 
+     * public URI next() { if (done) { throw new NoSuchElementException(); }
+     * done = true; return getLocation(); }
+     * 
+     * public void remove() { throw new UnsupportedOperationException(); }};
+     */
   }
-  
+
   public URI getRoot() {
     return root;
   }
-  
+
   /**
    * For JAXB
    */

@@ -14,34 +14,34 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorOrder(XmlAccessOrder.ALPHABETICAL)
 class Failure {
 
-	protected String message;
-	protected String trace;
+  protected String message;
+  protected String trace;
 
-	public Failure() {
-		// Do nothing
-	}
+  public Failure() {
+    // Do nothing
+  }
 
-	public Failure(final Exception e) {
-		this.message = e.getMessage();
-		final StringWriter writer = new StringWriter();
-		e.printStackTrace(new PrintWriter(writer));
-		this.trace = writer.toString();
-	}
+  public Failure(final Exception e) {
+    this.message = e.getMessage();
+    final StringWriter writer = new StringWriter();
+    e.printStackTrace(new PrintWriter(writer));
+    this.trace = writer.toString();
+  }
 
-	public String getMessage() {
-		return message;
-	}
+  public String getMessage() {
+    return message;
+  }
 
-	public void setMessage(final String message) {
-		this.message = message;
-	}
+  public void setMessage(final String message) {
+    this.message = message;
+  }
 
-	public String getTrace() {
-		return trace;
-	}
+  public String getTrace() {
+    return trace;
+  }
 
-	public void setTrace(final String trace) {
-		this.trace = trace;
-	}
+  public void setTrace(final String trace) {
+    this.trace = trace;
+  }
 
 }

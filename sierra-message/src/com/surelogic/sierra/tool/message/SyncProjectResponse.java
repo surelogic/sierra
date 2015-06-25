@@ -13,37 +13,37 @@ import javax.xml.bind.annotation.XmlType;
 @XmlRootElement
 public class SyncProjectResponse {
 
-	private List<SyncTrailResponse> trails;
+  private List<SyncTrailResponse> trails;
 
-	private String scanFilter;
+  private String scanFilter;
 
-	private long commitRevision;
+  private long commitRevision;
 
-	public List<SyncTrailResponse> getTrails() {
-		if (trails == null) {
-			trails = new ArrayList<SyncTrailResponse>();
-		}
-		return trails;
-	}
+  public List<SyncTrailResponse> getTrails() {
+    if (trails == null) {
+      trails = new ArrayList<>();
+    }
+    return trails;
+  }
 
-	public void setTrails(final List<SyncTrailResponse> trails) {
-		this.trails = trails;
-	}
+  public void setTrails(final List<SyncTrailResponse> trails) {
+    this.trails = trails;
+  }
 
-	public long getCommitRevision() {
-		return commitRevision;
-	}
+  public long getCommitRevision() {
+    return commitRevision;
+  }
 
-	public void setCommitRevision(final long commitRevision) {
-		this.commitRevision = commitRevision;
-	}
+  public void setCommitRevision(final long commitRevision) {
+    this.commitRevision = commitRevision;
+  }
 
-	public String getScanFilter() {
-		return scanFilter;
-	}
+  public String getScanFilter() {
+    return scanFilter;
+  }
 
-	public void setScanFilter(final String scanFilter) {
-		this.scanFilter = scanFilter;
-	}
+  public void setScanFilter(final String scanFilter) {
+    this.scanFilter = scanFilter;
+  }
 
 }

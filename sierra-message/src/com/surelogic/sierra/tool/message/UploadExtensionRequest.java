@@ -7,14 +7,14 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class UploadExtensionRequest {
-	protected Extension e;
+  protected Extension e;
 
-	public Extension getE() {
-		return e;
-	}
+  public Extension getE() {
+    return e;
+  }
 
-	public void setE(final Extension e) {
-		this.e = e;
-	}
+  public void setE(final Extension e) {
+    this.e = e;
+  }
 
 }
