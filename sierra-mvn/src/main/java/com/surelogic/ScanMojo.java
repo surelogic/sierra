@@ -27,7 +27,7 @@ import org.eclipse.aether.repository.RemoteRepository;
 import org.eclipse.aether.resolution.ArtifactRequest;
 import org.eclipse.aether.resolution.ArtifactResult;
 
-import com.surelogic.ant.sierra.RunSierra;
+import com.surelogic.sierra.ant.RunSierra;
 import com.surelogic.common.FileUtility;
 import com.surelogic.common.jobs.remote.RemoteSLJobConstants;
 
