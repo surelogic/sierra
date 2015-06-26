@@ -125,7 +125,7 @@
 				<exclude name="**/.gitignore" />
 			</fileset>
 		</copy>
-		<jar destfile="${build.lib}/tools/findbugs/sierra-fb.jar" basedir="${build.bin}" />
+		<jar destfile="${build.lib}/tools/findbugs/com.surelogic.sierra.fb.jar" basedir="${build.bin}" />
 		<delete quiet="true" dir="${build.bin}" />
 		<mkdir dir="${build.bin}" />
 
@@ -147,7 +147,7 @@
 				<exclude name="**/.gitignore" />
 			</fileset>
 		</copy>
-		<jar destfile="${build.lib}/tools/pmd/sierra-pmd.jar" basedir="${build.bin}" />
+		<jar destfile="${build.lib}/tools/pmd/com.surelogic.sierra.pmd.jar" basedir="${build.bin}" />
 		<delete quiet="true" dir="${build.bin}" />
 		<mkdir dir="${build.bin}" />
 
@@ -164,7 +164,7 @@
 
 		<echo>Creating sierra-ant-${release-version}.jar</echo>
 		<zip destfile="${build}/sierra-ant-${release-version}.zip">
-			<zipfileset dir="${build}" prefix="sierra-ant" />
+			<zipfileset dir="${build.lib}" prefix="sierra-ant" />
 			<zipfileset dir="." includes="*.txt" prefix="sierra-ant" />
 		</zip>
 	</target>

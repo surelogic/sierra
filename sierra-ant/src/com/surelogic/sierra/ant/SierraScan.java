@@ -125,12 +125,23 @@ public class SierraScan extends Javac {
    * 
    * @return the Sierra ant task directory.
    * @throws BuildException
-   *           if the directory doesn't exist on the disk.
+   *           if the directory doesn't exist on the disk or the structure of
+   *           the existing directory does not look like the Sierra ant task
+   *           directory should.
    */
   public File getSierraAntHomeAsFile() {
     final File result = new File(sierraAntHome);
     if (!result.isDirectory())
-      throw new BuildException("SierraAntHome does not exist: " + result.getAbsolutePath());
+      throw new BuildException("sierraanthome directory does not exist: " + sierraAntHome);
+    /*
+     * Heuristic check that this dir is actually the JSure ant task
+     */
+    boolean structureOkay = (new File(result, "common").isDirectory()) && (new File(result, "sierra-jdbc").isDirectory())
+        && (new File(result, "sierra-message").isDirectory()) && (new File(result, "sierra-tool").isDirectory())
+        && (new File(result, "tools").isDirectory());
+    if (!structureOkay)
+      throw new BuildException("sierraanthome value of " + sierraAntHome
+          + " does not appear correct (it should contain 'common' 'sierra-jdbc' 'sierra-message' 'sierra-tool' and 'tools')");
     return result;
   }
 
@@ -171,7 +182,7 @@ public class SierraScan extends Javac {
       return result;
     else {
       if (pathnameSet)
-        throw new BuildException("SierraAntHome does not exist: " + result.getAbsolutePath());
+        throw new BuildException("surelogic-tools.properties does not exist: " + result.getAbsolutePath());
       else
         return null;
     }
@@ -226,30 +237,12 @@ public class SierraScan extends Javac {
     this.properties = properties;
   }
 
-  @Override
-  public void execute() {
-    log(String.format("Writing scan document to %s.", getScanFile().getAbsolutePath()));
-    super.execute();
-  }
-
   /**
    * Modified from Javac.compile()
    */
   @Override
   protected void compile() {
-    File destDir = getDestdir();
-
     if (compileList.length > 0) {
-      log("Scanning " + compileList.length + " source file" + (compileList.length == 1 ? "" : "s") + " in "
-          + destDir.getAbsolutePath());
-
-      if (listFiles) {
-        for (int i = 0; i < compileList.length; i++) {
-          String filename = compileList[i].getAbsolutePath();
-          log(filename);
-        }
-      }
-
       System.setProperty(RemoteSLJobConstants.RUNNING_REMOTELY, "true");
       CompilerAdapter adapter = new SierraJavacAdapter(this);
 
@@ -264,6 +257,8 @@ public class SierraScan extends Javac {
           log("Failed", Project.MSG_ERR);
         }
       }
+    } else {
+      log("No Java files found to scan in " + projectName + "...Sierra scan skipped");
     }
   }
 }

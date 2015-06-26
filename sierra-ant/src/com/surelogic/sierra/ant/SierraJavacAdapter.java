@@ -47,19 +47,24 @@ public class SierraJavacAdapter extends DefaultCompilerAdapter {
   }
 
   public boolean execute() throws BuildException {
-    if (false) {
-      checkClassPath("sun.boot.class.path");
-      checkClassPath("java.class.path");
-    }
     try {
+      System.out.println("Project to scan w/Sierra = " + scan.getProjectName());
+      if (false) {
+        checkClassPath("sun.boot.class.path");
+        checkClassPath("java.class.path");
+      }
       Config config = createConfig();
-      SLStatus status = ToolUtil.scan(System.out, config, new NullSLProgressMonitor(), true);
+      // if (ToolUtil.getNumTools(config) < 1) {
+      // throw new BuildException("No Sierra tools (e.g., PMD or FindBugs)
+      // found...this is a bug");
+      // }
+      final SLStatus status = ToolUtil.scan(System.out, config, new NullSLProgressMonitor(), true);
       if (status.getException() != null) {
         throw status.getException();
       }
     } catch (Throwable t) {
       t.printStackTrace();
-      throw new BuildException("Exception while scanning", t);
+      throw new BuildException("Exception while scanning " + scan.getProjectName(), t);
     }
     return true;
   }
@@ -88,13 +93,11 @@ public class SierraJavacAdapter extends DefaultCompilerAdapter {
 
     final File sierraAntHome = scan.getSierraAntHomeAsFile();
     System.setProperty(ToolUtil.TOOLS_PATH_PROP_NAME, sierraAntHome.getAbsolutePath());
+    
+    System.out.println("sierra.tools.dir = " + System.getProperty(ToolUtil.TOOLS_PATH_PROP_NAME));
 
-    final File toolsHome = new File(sierraAntHome, "tools");
     for (IToolFactory f : ToolUtil.findToolFactories()) {
       for (final IToolExtension t : f.getExtensions()) {
-        /*
-         * if (t.isCore()) { // Implied by the above continue; }
-         */
         final ToolExtension ext = new ToolExtension();
         ext.setTool(f.getId());
         ext.setId(t.getId());
@@ -102,6 +105,7 @@ public class SierraJavacAdapter extends DefaultCompilerAdapter {
         config.addExtension(ext);
       }
     }
+    final File toolsHome = new File(sierraAntHome, "tools");
     config.putPluginDir(AbstractLocalSLJob.COMMON_PLUGIN_ID, new File(sierraAntHome, "common.jar").getAbsolutePath());
     config.putPluginDir(SierraToolConstants.MESSAGE_PLUGIN_ID, new File(sierraAntHome, "sierra-message.jar").getAbsolutePath());
     config.putPluginDir(SierraToolConstants.PMD_PLUGIN_ID, new File(toolsHome, "pmd").getAbsolutePath());
