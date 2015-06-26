@@ -114,7 +114,6 @@ public class SierraJavacAdapter extends DefaultCompilerAdapter {
     config.putPluginDir(SierraToolConstants.FB_PLUGIN_ID, new File(toolsHome, "findbugs").getAbsolutePath());
     config.putPluginDir(SierraToolConstants.TOOL_PLUGIN_ID,
         new File(new File(sierraAntHome, "sierra-tool"), "sierra-tool.jar").getAbsolutePath());
-    // System.out.println("Using source level "+scan.getSource());
     config.setSourceLevel(scan.getSource());
 
     File scanDocument = scan.getScanFile();

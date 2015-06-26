@@ -35,7 +35,7 @@ import com.surelogic.sierra.tool.targets.FullDirectoryTarget;
 import com.surelogic.sierra.tool.targets.IToolTarget;
 import com.surelogic.sierra.tool.targets.JarTarget;
 
-final class LocalTool extends AbstractLocalSLJob<Config> implements IToolInstance {
+final class LocalTool extends AbstractLocalSLJob<Config>implements IToolInstance {
   private static final JAXBContext ctx = createContext();
 
   private static final Marshaller marshaller = createMarshaller(ctx);
@@ -45,8 +45,8 @@ final class LocalTool extends AbstractLocalSLJob<Config> implements IToolInstanc
 
   private static JAXBContext createContext() {
     try {
-      return JAXBContext.newInstance(Config.class, FileTarget.class, JarTarget.class, FullDirectoryTarget.class,
-          KeyValuePair.class, FilteredDirectoryTarget.class);
+      return JAXBContext.newInstance(Config.class, FileTarget.class, JarTarget.class, FullDirectoryTarget.class, KeyValuePair.class,
+          FilteredDirectoryTarget.class);
     } catch (JAXBException e) {
       LOG.log(Level.SEVERE, "Couldn't create JAXB context", e);
       return null;
@@ -200,12 +200,12 @@ final class LocalTool extends AbstractLocalSLJob<Config> implements IToolInstanc
 
   @Override
   protected void setupClassPath(final ConfigHelper util, final CommandlineJava cmdj, final Project proj, final Path path) {
-    util.addPluginToPath(COMMON_PLUGIN_ID, true);
+    util.addPluginToPath(COMMON_PLUGIN_ID);
     util.addPluginJarsToPath(COMMON_PLUGIN_ID, "lib/runtime/commons-lang3-3.3.2.jar");
 
     // sierra-tool needs special handling since it is unpacked, due to
     // Reckoner (and other tools)
-    util.addPluginToPath(SierraToolConstants.TOOL_PLUGIN_ID, true);
+    util.addPluginToPath(SierraToolConstants.TOOL_PLUGIN_ID);
     util.addPluginToPath(SierraToolConstants.MESSAGE_PLUGIN_ID);
 
     /*
@@ -223,8 +223,8 @@ final class LocalTool extends AbstractLocalSLJob<Config> implements IToolInstanc
       addToPath(proj, path, jar, true);
     }
     /*
-     * if (false) { for(String elt : path.list()) {
-     * System.out.println("Path: "+elt); } }
+     * if (false) { for(String elt : path.list()) { System.out.println("Path: "
+     * +elt); } }
      */
   }
 
