@@ -93,8 +93,6 @@ public class SierraJavacAdapter extends DefaultCompilerAdapter {
 
     final File sierraAntHome = scan.getSierraAntHomeAsFile();
     System.setProperty(ToolUtil.TOOLS_PATH_PROP_NAME, sierraAntHome.getAbsolutePath());
-    
-    System.out.println("sierra.tools.dir = " + System.getProperty(ToolUtil.TOOLS_PATH_PROP_NAME));
 
     for (IToolFactory f : ToolUtil.findToolFactories()) {
       for (final IToolExtension t : f.getExtensions()) {
@@ -106,11 +104,14 @@ public class SierraJavacAdapter extends DefaultCompilerAdapter {
       }
     }
     final File toolsHome = new File(sierraAntHome, "tools");
-    config.putPluginDir(AbstractLocalSLJob.COMMON_PLUGIN_ID, new File(sierraAntHome, "common.jar").getAbsolutePath());
-    config.putPluginDir(SierraToolConstants.MESSAGE_PLUGIN_ID, new File(sierraAntHome, "sierra-message.jar").getAbsolutePath());
+    config.putPluginDir(AbstractLocalSLJob.COMMON_PLUGIN_ID,
+        new File(new File(sierraAntHome, "common"), "common.jar").getAbsolutePath());
+    config.putPluginDir(SierraToolConstants.MESSAGE_PLUGIN_ID,
+        new File(new File(sierraAntHome, "sierra-message"), "sierra-message.jar").getAbsolutePath());
     config.putPluginDir(SierraToolConstants.PMD_PLUGIN_ID, new File(toolsHome, "pmd").getAbsolutePath());
     config.putPluginDir(SierraToolConstants.FB_PLUGIN_ID, new File(toolsHome, "findbugs").getAbsolutePath());
-    config.putPluginDir(SierraToolConstants.TOOL_PLUGIN_ID, new File(sierraAntHome, "sierra-tool.jar").getAbsolutePath());
+    config.putPluginDir(SierraToolConstants.TOOL_PLUGIN_ID,
+        new File(new File(sierraAntHome, "sierra-tool"), "sierra-tool.jar").getAbsolutePath());
     // System.out.println("Using source level "+scan.getSource());
     config.setSourceLevel(scan.getSource());
 

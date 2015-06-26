@@ -35,7 +35,7 @@ public class SierraPublish extends Task {
 
   private String contextPath = "/sl/";
 
-  private final List<String> timeseries = new ArrayList<String>();
+  private final List<String> timeseries = new ArrayList<>();
 
   private String document;
 
