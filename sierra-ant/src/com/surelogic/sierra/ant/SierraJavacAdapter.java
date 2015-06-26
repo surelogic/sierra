@@ -1,4 +1,4 @@
-package com.surelogic.ant.sierra;
+package com.surelogic.sierra.ant;
 
 import static com.surelogic.common.tool.SureLogicToolsPropertiesUtility.combineLists;
 import static com.surelogic.common.tool.SureLogicToolsPropertiesUtility.getBytecodePackagePatterns;
@@ -86,16 +86,10 @@ public class SierraJavacAdapter extends DefaultCompilerAdapter {
     config.setJavaVendor(System.getProperty("java.vendor"));
     config.setJavaVersion(System.getProperty("java.version"));
 
-    if (scan.getHome() == null) {
-      throw new BuildException("No value for home");
-    }
-    // C:/work/workspace/sierra-ant
-    final String libHome = scan.getHome() + "/lib/";
-    if (!new File(libHome).exists()) {
-      throw new BuildException("No lib subdirectory under " + libHome);
-    }
-    System.setProperty(ToolUtil.TOOLS_PATH_PROP_NAME, libHome);
-    final String toolsDir = libHome + "tools/";
+    final File sierraAntHome = scan.getSierraAntHomeAsFile();
+    System.setProperty(ToolUtil.TOOLS_PATH_PROP_NAME, sierraAntHome.getAbsolutePath());
+
+    final File toolsHome = new File(sierraAntHome, "tools");
     for (IToolFactory f : ToolUtil.findToolFactories()) {
       for (final IToolExtension t : f.getExtensions()) {
         /*
@@ -108,12 +102,11 @@ public class SierraJavacAdapter extends DefaultCompilerAdapter {
         config.addExtension(ext);
       }
     }
-    config.setToolsDirectory(new File(toolsDir + "reckoner"));
-    config.putPluginDir(AbstractLocalSLJob.COMMON_PLUGIN_ID, libHome + "common.jar");
-    config.putPluginDir(SierraToolConstants.MESSAGE_PLUGIN_ID, libHome + "sierra-message.jar");
-    config.putPluginDir(SierraToolConstants.PMD_PLUGIN_ID, toolsDir + "pmd");
-    config.putPluginDir(SierraToolConstants.FB_PLUGIN_ID, toolsDir + "findbugs");
-    config.putPluginDir(SierraToolConstants.TOOL_PLUGIN_ID, libHome + "sierra-tool.jar");
+    config.putPluginDir(AbstractLocalSLJob.COMMON_PLUGIN_ID, new File(sierraAntHome, "common.jar").getAbsolutePath());
+    config.putPluginDir(SierraToolConstants.MESSAGE_PLUGIN_ID, new File(sierraAntHome, "sierra-message.jar").getAbsolutePath());
+    config.putPluginDir(SierraToolConstants.PMD_PLUGIN_ID, new File(toolsHome, "pmd").getAbsolutePath());
+    config.putPluginDir(SierraToolConstants.FB_PLUGIN_ID, new File(toolsHome, "findbugs").getAbsolutePath());
+    config.putPluginDir(SierraToolConstants.TOOL_PLUGIN_ID, new File(sierraAntHome, "sierra-tool.jar").getAbsolutePath());
     // System.out.println("Using source level "+scan.getSource());
     config.setSourceLevel(scan.getSource());
 

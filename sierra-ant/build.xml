@@ -7,6 +7,7 @@
 	<property name="build.lib" location="${build}/lib" />
 
 	<property name="common" location="${basedir}/../../common/common" />
+	<property name="bad" location="${basedir}/../../common/common-core-eclipse" />
 	<property name="sierra-fb" location="${basedir}/../sierra-fb" />
 	<property name="sierra-jdbc" location="${basedir}/../sierra-jdbc" />
 	<property name="sierra-message" location="${basedir}/../sierra-message" />
@@ -129,7 +130,17 @@
 		<mkdir dir="${build.bin}" />
 
 		<echo>Creating generated source code and compiling 'sierra-pmd' project</echo>
-		<javac srcdir="${sierra-pmd}/src" debug="true" destdir="${build.bin}" classpathref="compile.class.path" source="1.7" target="1.7" includeAntRuntime="false" />
+		<path id="bad.class.path">
+			<fileset dir="${build.lib}">
+				<include name="**/*.jar" />
+			</fileset>
+			<fileset dir="${bad}">
+				<include name="**/*.jar" />
+			</fileset>
+			<pathelement path="${build.bin}" />
+			<pathelement path="${bad}/bin" />
+		</path>
+		<javac srcdir="${sierra-pmd}/src" debug="true" destdir="${build.bin}" classpathref="bad.class.path" source="1.7" target="1.7" includeAntRuntime="false" />
 		<copy todir="${build.bin}">
 			<fileset dir="${sierra-pmd}/src">
 				<exclude name="**/*.java" />
@@ -153,7 +164,7 @@
 
 		<echo>Creating sierra-ant-${release-version}.jar</echo>
 		<zip destfile="${build}/sierra-ant-${release-version}.zip">
-			<zipfileset dir="${build.lib}" prefix="sierra-ant" />
+			<zipfileset dir="${build}" prefix="sierra-ant" />
 			<zipfileset dir="." includes="*.txt" prefix="sierra-ant" />
 		</zip>
 	</target>

@@ -1,4 +1,4 @@
-package com.surelogic.ant.sierra;
+package com.surelogic.sierra.ant;
 
 import java.io.File;
 import java.util.ArrayList;

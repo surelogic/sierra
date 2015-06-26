@@ -1,4 +1,4 @@
-package com.surelogic.ant.sierra;
+package com.surelogic.sierra.ant;
 
 import static com.surelogic.common.tool.SureLogicToolsPropertiesUtility.combineLists;
 import static com.surelogic.common.tool.SureLogicToolsPropertiesUtility.getBytecodePackagePatterns;
