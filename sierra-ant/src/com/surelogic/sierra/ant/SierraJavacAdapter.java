@@ -54,10 +54,12 @@ public class SierraJavacAdapter extends DefaultCompilerAdapter {
         checkClassPath("java.class.path");
       }
       Config config = createConfig();
-      // if (ToolUtil.getNumTools(config) < 1) {
-      // throw new BuildException("No Sierra tools (e.g., PMD or FindBugs)
-      // found...this is a bug");
-      // }
+
+      // check if any tools were found (for less cryptic output)
+      if (ToolUtil.getNumTools(config) < 1) {
+        throw new BuildException("No Sierra tools found (e.g., PMD or FindBugs)...this is a bug");
+      }
+
       final SLStatus status = ToolUtil.scan(System.out, config, new NullSLProgressMonitor(), true);
       if (status.getException() != null) {
         throw status.getException();
