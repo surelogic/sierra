@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.jobs.remote.ILocalConfig;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.common.tool.SureLogicToolsPropertiesUtility;
@@ -49,7 +50,6 @@ public class Config implements Cloneable, ILocalConfig {
   private String javaVendor = null;
   private Date runDateTime = null;
   private File baseDirectory = null;
-  private File toolsDirectory = null;
   private String testCode = null;
   private String complianceLevel = null;
   private String sourceLevel = null;
@@ -177,14 +177,6 @@ public class Config implements Cloneable, ILocalConfig {
     this.baseDirectory = baseDirectory;
   }
 
-  public File getToolsDirectory() {
-    return toolsDirectory;
-  }
-
-  public void setToolsDirectory(File toolsDirectory) {
-    this.toolsDirectory = toolsDirectory;
-  }
-
   @XmlElement
   public List<KeyValuePair> getPluginDirectories() {
     List<KeyValuePair> pairs = new ArrayList<>();
@@ -229,18 +221,16 @@ public class Config implements Cloneable, ILocalConfig {
     pluginDirs.put(id, location);
   }
 
-  public String getPluginDir(String id) {
-    return getPluginDir(id, true);
-  }
+  public File getPluginDirectory(String pluginId) {
+    final String pathStr = pluginDirs.get(pluginId);
+    if (pathStr == null)
+      throw new IllegalArgumentException(I18N.err(345, pluginId));
 
-  @Override
-  public String getPluginDir(String id, boolean required) {
-    String loc = pluginDirs.get(id);
-    if (required && loc == null) {
-      LOG.warning("No location for " + id);
-      return null;
-    }
-    return loc;
+    final File result = new File(pathStr);
+    if (result.exists())
+      return result;
+    else
+      throw new IllegalArgumentException(I18N.err(346, pluginId));
   }
 
   @Override
@@ -269,7 +259,6 @@ public class Config implements Cloneable, ILocalConfig {
     result = prime * result + (timeseries == null ? 0 : timeseries.hashCode());
     result = prime * result + (runDateTime == null ? 0 : runDateTime.hashCode());
     result = prime * result + (scanDocument == null ? 0 : scanDocument.hashCode());
-    result = prime * result + (toolsDirectory == null ? 0 : toolsDirectory.hashCode());
     return result;
   }
 
@@ -366,14 +355,6 @@ public class Config implements Cloneable, ILocalConfig {
         return false;
       }
     } else if (!scanDocument.equals(other.scanDocument)) {
-      return false;
-    }
-
-    if (toolsDirectory == null) {
-      if (other.toolsDirectory != null) {
-        return false;
-      }
-    } else if (!toolsDirectory.equals(other.toolsDirectory)) {
       return false;
     }
     return true;
@@ -660,8 +641,8 @@ public class Config implements Cloneable, ILocalConfig {
   public boolean filterLocation(SourceLocation location) {
     String qname = location.getPackageName() + '.' + location.getClassName();
     /*
-     * boolean rv = excludedClasses.contains(qname);
-     * //System.out.println("Comparing "+qname+" : "+rv); return rv;
+     * boolean rv = excludedClasses.contains(qname); //System.out.println(
+     * "Comparing "+qname+" : "+rv); return rv;
      */
     for (String prefix : excludedClasses) {
       if (qname.startsWith(prefix)) {
@@ -673,10 +654,10 @@ public class Config implements Cloneable, ILocalConfig {
   }
 
   public void initFromToolsProps(Properties props, String[] excludedFolders, String[] excludedPackages) {
-    setExcludedSourceFolders(combineListProperties(props.getProperty(SCAN_EXCLUDE_SOURCE_FOLDER),
-        props.getProperty(SCAN_SOURCE_FOLDER_AS_BYTECODE)));
-    setExcludedPackages(combineListProperties(props.getProperty(SCAN_EXCLUDE_SOURCE_PACKAGE),
-        props.getProperty(SCAN_SOURCE_PACKAGE_AS_BYTECODE)));
+    setExcludedSourceFolders(
+        combineListProperties(props.getProperty(SCAN_EXCLUDE_SOURCE_FOLDER), props.getProperty(SCAN_SOURCE_FOLDER_AS_BYTECODE)));
+    setExcludedPackages(
+        combineListProperties(props.getProperty(SCAN_EXCLUDE_SOURCE_PACKAGE), props.getProperty(SCAN_SOURCE_PACKAGE_AS_BYTECODE)));
     setExternalFilter(SureLogicToolsPropertiesUtility.toStringConciseExcludedFoldersAndPackages(excludedFolders, excludedPackages));
   }
 }

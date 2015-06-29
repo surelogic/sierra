@@ -79,10 +79,7 @@ public final class ConfigGenerator {
   /** The location to store tool results */
   private final File f_resultRoot = new File(SierraToolConstants.SIERRA_RESULTS_PATH);
 
-  /** The plug-in directory that has tools folder */
-  private final String tools;
-
-  private final Map<String, String> pluginDirs = new HashMap<>();
+  private final Map<String, File> pluginDirs = new HashMap<>();
 
   /** The number of excluded tools : Default 0 */
   private int f_numberofExcludedTools = 0;
@@ -93,34 +90,12 @@ public final class ConfigGenerator {
   }
 
   private ConfigGenerator() {
-    // singleton
-    tools = EclipseUtility.getDirectoryOf(SierraToolConstants.TOOL_PLUGIN_ID) + SierraToolConstants.TOOLS_FOLDER;
-    /*
-     * String jdt =
-     * Activator.getDefault().getDirectoryOf("org.eclipse.jdt.core");
-     * System.out.println(jdt);
-     */
     for (String id : PLUGINS) {
-      getDirectoryOfPlugin(id);
+      pluginDirs.put(id, EclipseUtility.getInstallationDirectoryOf(id));
     }
-    // getDirectoryOfPlugin(SierraToolConstants.JUNIT4_PLUGIN_ID, false);
 
     for (String id : Tools.getToolPluginIds()) {
-      getDirectoryOfPlugin(id);
-    }
-  }
-
-  private void getDirectoryOfPlugin(String id) {
-    getDirectoryOfPlugin(id, true);
-  }
-
-  private void getDirectoryOfPlugin(String id, boolean warnIfAbsent) {
-    try {
-      pluginDirs.put(id, EclipseUtility.getDirectoryOf(id));
-    } catch (IllegalStateException e) {
-      if (warnIfAbsent) {
-        System.out.println("Couldn't find plugin: " + id);
-      }
+      pluginDirs.put(id, EclipseUtility.getInstallationDirectoryOf(id));
     }
   }
 
@@ -390,9 +365,9 @@ public final class ConfigGenerator {
     config.setJavaVendor(System.getProperty("java.vendor"));
     config.setJavaVersion(System.getProperty("java.version"));
     config.setMemorySize(EclipseUtility.getIntPreference(SierraPreferencesUtility.TOOL_MEMORY_MB));
-    config.setToolsDirectory(new File(tools));
-    for (Map.Entry<String, String> e : pluginDirs.entrySet()) {
-      config.putPluginDir(e.getKey(), e.getValue());
+    for (Map.Entry<String, File> e : pluginDirs.entrySet()) {
+      //System.out.println(" FILE PATH : " + e.getValue().getAbsolutePath());
+      config.putPluginDir(e.getKey(), e.getValue().getAbsolutePath());
     }
     config.setComplianceLevel(javaProject.getOption(JavaCore.COMPILER_COMPLIANCE, true));
     config.setSourceLevel(javaProject.getOption(JavaCore.COMPILER_SOURCE, true));
@@ -511,8 +486,8 @@ public final class ConfigGenerator {
     setupToolForProject(cfg, new HashSet<IJavaProject>(), p, toBeAnalyzed);
   }
 
-  private static void setupToolForProject(final Copier copier, Set<IJavaProject> handled, IJavaProject p, final boolean toBeAnalyzed)
-      throws JavaModelException {
+  private static void setupToolForProject(final Copier copier, Set<IJavaProject> handled, IJavaProject p,
+      final boolean toBeAnalyzed) throws JavaModelException {
     if (handled.contains(p)) {
       return;
     }
@@ -716,8 +691,8 @@ public final class ConfigGenerator {
     Copier(String projectName, File projectLocation, File tmp) {
       tmpDir = tmp;
 
-      final Properties props = SureLogicToolsPropertiesUtility.readFileOrNull(new File(projectLocation,
-          SLUtility.SL_TOOLS_PROPS_FILE));
+      final Properties props = SureLogicToolsPropertiesUtility
+          .readFileOrNull(new File(projectLocation, SLUtility.SL_TOOLS_PROPS_FILE));
       if (props != null) {
         final String[] excludedSourceFolders = makeAbsolute(projectName,
             SureLogicToolsPropertiesUtility.getExcludedSourceFolders(props));

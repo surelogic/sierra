@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.PrintWriter;
 import java.net.URI;
 import java.util.Collection;
 import java.util.Collections;
@@ -111,37 +110,6 @@ final class LocalTool extends AbstractLocalSLJob<Config>implements IToolInstance
   @Override
   public void setOption(final String key, final String option) {
     println("Currently ignoring, since already in config: " + key);
-  }
-
-  @SuppressWarnings("unused")
-  private void setupCustomClassLoader(final boolean debug, final CommandlineJava cmdj) {
-    // String tools = getPluginDir(debug,
-    // SierraToolConstants.TOOL_PLUGIN_ID);
-    File commonLoading = new File(config.getToolsDirectory(), "common-loading.jar");
-    cmdj.createVmArgument().setValue("-Xbootclasspath/a:" + commonLoading.getAbsolutePath());
-    cmdj.createVmArgument().setValue("-Djava.system.class.loader=com.surelogic.common.loading.CustomClassLoader");
-
-    try {
-      if (TestCode.BAD_AUX_PATH.equals(testCode)) {
-        throw new IOException("Testing error with aux path");
-      }
-      File auxPathFile = File.createTempFile("auxPath", ".txt");
-      PrintWriter pw = new PrintWriter(auxPathFile);
-      cmdj.createVmArgument().setValue("-D" + SierraToolConstants.AUX_PATH_PROPERTY + "=" + auxPathFile.getAbsolutePath());
-
-      // FIX to support PMD's type resolution
-      for (IToolTarget t : config.getTargets()) {
-        if (t.getType() == IToolTarget.Type.AUX) {
-          // path.add(new Path(proj, new
-          // File(t.getLocation()).getAbsolutePath()));
-          pw.println(t.getLocation().toURL());
-        }
-      }
-      pw.close();
-      auxPathFile.deleteOnExit();
-    } catch (IOException e) {
-      throw new ToolException(getName(), SierraToolConstants.ERROR_CREATING_AUX_PATH, e);
-    }
   }
 
   private File setupConfigFile(final CommandlineJava cmdj) {

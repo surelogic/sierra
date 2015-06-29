@@ -76,11 +76,10 @@ public final class Tools {
         // Look up locations of these plugins
         final List<File> tools = new ArrayList<>();
         for (final String id : getToolPluginIds()) {
-          final String path = EclipseUtility.getDirectoryOf(id);
-          final File dir = new File(path);
+          final File dir = EclipseUtility.getInstallationDirectoryOf(id);
 
           // Sanity check for these directories
-          if (dir.exists() && dir.isDirectory()) {
+          if (dir.isDirectory()) {
             tools.add(dir);
           }
         }
@@ -212,7 +211,8 @@ public final class Tools {
 
     final ExtensionDO ext = new ExtensionDO(te.getId(), te.getVersion(), extPath);
     for (final ArtifactType a : unknown) {
-      // SLLogger.getLogger().warning("Couldn't find "+a.type+" for "+a.tool+", v"+a.toolVersion);
+      // SLLogger.getLogger().warning("Couldn't find "+a.type+" for "+a.tool+",
+      // v"+a.toolVersion);
       /*
        * System.out.println("Couldn't find " + a.type + " for " + a.tool + ", v"
        * + a.toolVersion);

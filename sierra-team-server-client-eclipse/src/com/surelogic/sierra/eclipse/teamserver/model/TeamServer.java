@@ -74,7 +74,7 @@ public final class TeamServer {
   public TeamServer(final int port, final ScheduledExecutorService executor) {
     f_port = new AtomicInteger(port);
     f_executor = executor;
-    f_pluginDir = EclipseUtility.getDirectoryOf(Activator.getDefault().getPlugInId());
+    f_pluginDir = EclipseUtility.getInstallationDirectoryOf(Activator.getDefault().getPlugInId()).getAbsolutePath();
   }
 
   /**
@@ -224,7 +224,7 @@ public final class TeamServer {
     // nothing to do
   }
 
-  private final CopyOnWriteArraySet<ITeamServerObserver> f_observers = new CopyOnWriteArraySet<ITeamServerObserver>();
+  private final CopyOnWriteArraySet<ITeamServerObserver> f_observers = new CopyOnWriteArraySet<>();
 
   public void addObserver(final ITeamServerObserver observer) {
     f_observers.add(observer);
@@ -282,7 +282,7 @@ public final class TeamServer {
     loggingLevel.setKey(SLLogger.SL_LOGGING_PROPERTY);
     loggingLevel.setValue(LocalTeamServerPreferencesUtility.getServerLoggingLevel().toString());
     command.addSysproperty(loggingLevel);
-    
+
     final Argument jettyPort = command.createArgument();
     jettyPort.setValue(JETTY_PORT + f_port.get());
 
@@ -322,10 +322,10 @@ public final class TeamServer {
     final String startJar = launder(f_pluginDir + START_JAR);
     command.setJar(startJar);
 
-//    final Environment.Variable port = new Environment.Variable();
-//    port.setKey(JETTY_PORT);
-//    port.setValue(Integer.toString(f_port.get()));
-//    command.addSysproperty(port);
+    // final Environment.Variable port = new Environment.Variable();
+    // port.setKey(JETTY_PORT);
+    // port.setValue(Integer.toString(f_port.get()));
+    // command.addSysproperty(port);
 
     final Environment.Variable stopPort = new Environment.Variable();
     stopPort.setKey(JETTY_STOP_PORT);
@@ -340,7 +340,7 @@ public final class TeamServer {
     return command;
   }
 
-  private final AtomicReference<Process> f_process = new AtomicReference<Process>(null);
+  private final AtomicReference<Process> f_process = new AtomicReference<>(null);
 
   void doneWithProcess() {
     f_process.set(null);
@@ -426,8 +426,8 @@ public final class TeamServer {
     final File workingDirectory = launderToFile(f_pluginDir + JETTY_BASE);
     b.directory(workingDirectory);
     final String commandLine = command.toString();
-    log.log(Level.INFO,
-        "Local team server command '" + commandLine + "' with a working directory of '" + workingDirectory.getAbsolutePath() + "'.");
+    log.log(Level.INFO, "Local team server command '" + commandLine + "' with a working directory of '"
+        + workingDirectory.getAbsolutePath() + "'.");
     try {
       final Process p = b.start();
       if (storeProcess) {
