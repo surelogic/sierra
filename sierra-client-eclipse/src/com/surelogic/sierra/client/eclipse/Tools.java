@@ -38,6 +38,7 @@ import com.surelogic.sierra.tool.ArtifactType;
 import com.surelogic.sierra.tool.IToolExtension;
 import com.surelogic.sierra.tool.IToolFactory;
 import com.surelogic.sierra.tool.IToolFinder;
+import com.surelogic.sierra.tool.SierraToolConstants;
 import com.surelogic.sierra.tool.ToolUtil;
 
 public final class Tools {
@@ -59,8 +60,6 @@ public final class Tools {
       }
     }
   }
-
-  public static final String TOOL_PLUGIN_ID = "com.surelogic.sierra.tool";
 
   /**
    * The Sierra tool module extension point identifier <i>must</i> match the
@@ -268,7 +267,8 @@ public final class Tools {
    */
   private static IExtension[] readToolExtensionPoints() {
     final IExtensionRegistry pluginRegistry = Platform.getExtensionRegistry();
-    final IExtensionPoint extensionPoint = pluginRegistry.getExtensionPoint(TOOL_PLUGIN_ID, TOOL_EXTENSION_POINT_ID);
+    final IExtensionPoint extensionPoint = pluginRegistry.getExtensionPoint(SierraToolConstants.TOOL_PLUGIN_ID,
+        TOOL_EXTENSION_POINT_ID);
     return extensionPoint.getExtensions();
   }
 

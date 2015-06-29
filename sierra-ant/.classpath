@@ -5,7 +5,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/sierra-tool"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/sierra-message"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/common"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/sierra-jdbc"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/sierra-fb"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/sierra-pmd"/>
 	<classpathentry kind="output" path="bin"/>

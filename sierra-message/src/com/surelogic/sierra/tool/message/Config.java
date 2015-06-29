@@ -189,14 +189,12 @@ public class Config implements Cloneable, ILocalConfig {
     return pairs;
   }
 
-  public void setPluginDirectories(List<KeyValuePair> pairs) {
-    if (pairs.isEmpty()) {
+  public void setPluginDirs(Map<String, String> dirs) {
+    if (dirs.isEmpty()) {
       return;
     }
     pluginDirs.clear();
-    for (KeyValuePair p : pairs) {
-      pluginDirs.put(p.getKey(), p.getValue());
-    }
+    pluginDirs.putAll(dirs);
   }
 
   @XmlJavaTypeAdapter(Config.MapAdapter.class)

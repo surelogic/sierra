@@ -11,7 +11,6 @@
 	<!-- 'bad' is a bad depenedency that should be removed (used by sierra-pmd)  -->
 	<property name="bad" location="${basedir}/../../common/common-core-eclipse" />
 	<property name="sierra-fb" location="${basedir}/../sierra-fb" />
-	<property name="sierra-jdbc" location="${basedir}/../sierra-jdbc" />
 	<property name="sierra-message" location="${basedir}/../sierra-message" />
 	<property name="sierra-pmd" location="${basedir}/../sierra-pmd" />
 	<property name="sierra-tool" location="${basedir}/../sierra-tool" />
@@ -34,7 +33,6 @@
 	<!-- destination identifiers -->
 	<property name="common.id" value="com.surelogic.common" />
 	<property name="sierra-fb.id" value="com.surelogic.sierra.fb" />
-	<property name="sierra-jdbc.id" value="com.surelogic.sierra.jdbc" />
 	<property name="sierra-message.id" value="com.surelogic.sierra.message" />
 	<property name="sierra-pmd.id" value="com.surelogic.sierra.pmd" />
 	<property name="sierra-tool.id" value="com.surelogic.sierra.tool" />
@@ -100,19 +98,6 @@
 		<jar destfile="${build.lib}/${sierra-message.id}/bin.jar" basedir="${build.bin}" />
 		<delete quiet="true" dir="${build.bin}" />
 		<mkdir dir="${build.bin}" />
-
-		<echo>Creating generated source code and compiling 'sierra-jdbc' project</echo>
-		<javac srcdir="${sierra-jdbc}/src" debug="true" destdir="${build.bin}" classpathref="compile.class.path" source="1.7" target="1.7" includeAntRuntime="false" />
-		<copy todir="${build.bin}">
-			<fileset dir="${sierra-jdbc}/src">
-				<exclude name="**/*.java" />
-				<exclude name="**/.gitignore" />
-			</fileset>
-		</copy>
-		<jar destfile="${build.lib}/${sierra-jdbc.id}/bin.jar" basedir="${build.bin}" />
-		<delete quiet="true" dir="${build.bin}" />
-		<mkdir dir="${build.bin}" />
-
 
 		<echo>Creating generated source code and compiling 'sierra-tool' project</echo>
 		<javac srcdir="${sierra-tool}/src" debug="true" destdir="${build.bin}" classpathref="compile.class.path" source="1.7" target="1.7" includeAntRuntime="false" />
