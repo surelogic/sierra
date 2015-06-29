@@ -38,6 +38,7 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 
+import com.surelogic.Singleton;
 import com.surelogic.common.FileUtility;
 import com.surelogic.common.Pair;
 import com.surelogic.common.SLUtility;
@@ -66,20 +67,28 @@ import com.surelogic.sierra.tool.targets.JarTarget;
 import com.surelogic.sierra.tool.targets.ToolTarget;
 
 /**
- * Utility class for getting configuration objects that are required to run
+ * Singleton class for getting configuration objects that are required to run
  * scans, it handles both project and compilation unit configs
  */
+@Singleton
 public final class ConfigGenerator {
+  private static final ConfigGenerator INSTANCE = new ConfigGenerator();
+
+  private ConfigGenerator() {
+    // Singleton
+  }
+
+  public static ConfigGenerator getInstance() {
+    return INSTANCE;
+  }
+
   private static final boolean useOldFiltering = false;
 
   private static final String[] PLUGINS = { SierraToolConstants.MESSAGE_PLUGIN_ID, AbstractLocalSLJob.COMMON_PLUGIN_ID,
       SierraToolConstants.TOOL_PLUGIN_ID };
 
-  private static final ConfigGenerator INSTANCE = new ConfigGenerator();
   /** The location to store tool results */
   private final File f_resultRoot = new File(SierraToolConstants.SIERRA_RESULTS_PATH);
-
-  private final Map<String, File> pluginDirs = new HashMap<>();
 
   /** The number of excluded tools : Default 0 */
   private int f_numberofExcludedTools = 0;
@@ -87,20 +96,6 @@ public final class ConfigGenerator {
   /** The default folder from the preference page */
   private static String getSierraPath() {
     return SierraPreferencesUtility.getSierraScanDirectory().getAbsolutePath();
-  }
-
-  private ConfigGenerator() {
-    for (String id : PLUGINS) {
-      pluginDirs.put(id, EclipseUtility.getInstallationDirectoryOf(id));
-    }
-
-    for (String id : Tools.getToolPluginIds()) {
-      pluginDirs.put(id, EclipseUtility.getInstallationDirectoryOf(id));
-    }
-  }
-
-  public static ConfigGenerator getInstance() {
-    return INSTANCE;
   }
 
   /**
@@ -365,9 +360,11 @@ public final class ConfigGenerator {
     config.setJavaVendor(System.getProperty("java.vendor"));
     config.setJavaVersion(System.getProperty("java.version"));
     config.setMemorySize(EclipseUtility.getIntPreference(SierraPreferencesUtility.TOOL_MEMORY_MB));
-    for (Map.Entry<String, File> e : pluginDirs.entrySet()) {
-      //System.out.println(" FILE PATH : " + e.getValue().getAbsolutePath());
-      config.putPluginDir(e.getKey(), e.getValue().getAbsolutePath());
+    for (String id : PLUGINS) {
+      config.putPluginDir(id, EclipseUtility.getInstallationDirectoryOf(id).getAbsolutePath());
+    }
+    for (String id : Tools.getToolPluginIds()) {
+      config.putPluginDir(id, EclipseUtility.getInstallationDirectoryOf(id).getAbsolutePath());
     }
     config.setComplianceLevel(javaProject.getOption(JavaCore.COMPILER_COMPLIANCE, true));
     config.setSourceLevel(javaProject.getOption(JavaCore.COMPILER_SOURCE, true));
