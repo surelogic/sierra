@@ -1,9 +1,5 @@
 package com.surelogic.sierra.ant;
 
-import static com.surelogic.sierra.tool.SierraToolConstants.PARSED_FILE_SUFFIX;
-import static com.surelogic.sierra.tool.SierraToolConstants.PARSED_ZIP_FILE_SUFFIX;
-import static com.surelogic.sierra.tool.SierraToolConstants.USE_ZIP;
-
 import java.io.File;
 
 import org.apache.tools.ant.BuildException;
@@ -186,30 +182,6 @@ public class SierraScan extends Javac {
     }
   }
 
-  /**
-   * The intended location of the resulting scan document
-   */
-  private String document;
-
-  private File properties;
-
-  public SierraScan() {
-    super();
-    setIncludeantruntime(false);
-  }
-
-  public String getDocument() {
-    return document;
-  }
-
-  public File getScanFile() {
-    return new File(getDocument() + (USE_ZIP ? PARSED_ZIP_FILE_SUFFIX : PARSED_FILE_SUFFIX));
-  }
-
-  public void setDocument(String doc) {
-    document = doc;
-  }
-
   @Override
   protected void scanDir(File srcDir, File destDir, String[] files) {
     File[] newFiles = new File[files.length];
@@ -225,14 +197,6 @@ public class SierraScan extends Javac {
       System.arraycopy(newFiles, 0, newCompileList, compileList.length, newFiles.length);
       compileList = newCompileList;
     }
-  }
-
-  public File getProperties() {
-    return properties;
-  }
-
-  public void setProperties(File properties) {
-    this.properties = properties;
   }
 
   /**

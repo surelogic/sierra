@@ -2,14 +2,11 @@ package com.surelogic.sierra.ant;
 
 import static com.surelogic.common.tool.SureLogicToolsPropertiesUtility.combineLists;
 import static com.surelogic.common.tool.SureLogicToolsPropertiesUtility.getBytecodePackagePatterns;
-import static com.surelogic.common.tool.SureLogicToolsPropertiesUtility.getBytecodeSourceFolders;
 import static com.surelogic.common.tool.SureLogicToolsPropertiesUtility.getExcludedPackagePatterns;
 import static com.surelogic.common.tool.SureLogicToolsPropertiesUtility.getExcludedSourceFolders;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URI;
-import java.util.Arrays;
 import java.util.Properties;
 import java.util.StringTokenizer;
 
@@ -20,6 +17,7 @@ import org.apache.tools.ant.types.Path;
 import org.apache.tools.ant.util.StringUtils;
 
 import com.surelogic.common.FileUtility;
+import com.surelogic.common.FileUtility.TempFileFilter;
 import com.surelogic.common.SLUtility;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.jobs.NullSLProgressMonitor;
@@ -51,19 +49,87 @@ public class SierraJavacAdapter extends DefaultCompilerAdapter {
   public boolean execute() throws BuildException {
     try {
       System.out.println("Project to scan w/Sierra = " + scan.getProjectName());
+
+      // temp output location for scan
+      final TempFileFilter scanDirFileFilter = new TempFileFilter("sierraAnt", ".scandir");
+      final File tempDir = scanDirFileFilter.createTempFolder();
+
       // checkClassPath("sun.boot.class.path");
       // checkClassPath("java.class.path");
-      Config config = createConfig();
+
+      /*
+       * Setup config to run the scan
+       */
+      final Config config = new Config();
+      config.setProject(scan.getProjectName());
+      excludedPackages = loadProperties(config);
+      setupConfig(config, false);
+      logAndAddFilesToCompile(config);
+
+      if (verbose) {
+        System.out.println("verbose = " + verbose);
+      }
+      config.setVerbose(verbose);
+      setMemorySize(config);
+      config.setJavaVendor(System.getProperty("java.vendor"));
+      config.setJavaVersion(System.getProperty("java.version"));
+
+      final File sierraAntHome = scan.getSierraAntHomeAsFile();
+      System.setProperty(ToolUtil.TOOLS_PATH_PROP_NAME, sierraAntHome.getAbsolutePath());
+
+      for (IToolFactory f : ToolUtil.findToolFactories()) {
+        for (final IToolExtension t : f.getExtensions()) {
+          final ToolExtension ext = new ToolExtension();
+          ext.setTool(f.getId());
+          ext.setId(t.getId());
+          ext.setVersion(t.getVersion());
+          config.addExtension(ext);
+        }
+      }
+      addPluginToConfig(sierraAntHome, AbstractLocalSLJob.COMMON_PLUGIN_ID, false, config);
+      addPluginToConfig(sierraAntHome, SierraToolConstants.MESSAGE_PLUGIN_ID, false, config);
+      addPluginToConfig(sierraAntHome, SierraToolConstants.PMD_PLUGIN_ID, true, config);
+      addPluginToConfig(sierraAntHome, SierraToolConstants.FB_PLUGIN_ID, true, config);
+      addPluginToConfig(sierraAntHome, SierraToolConstants.TOOL_PLUGIN_ID, false, config);
+
+      config.setSourceLevel(scan.getSource());
+
+      final String scanDocumentName = config.getProject() + SierraToolConstants.PARSED_FILE_SUFFIX;
+      final String logFileName = config.getProject() + "." + ToolUtil.getTimeStamp() + AbstractRemoteSLJob.LOG_SUFFIX;
+      final String finalZipName = config.getProject() + "." + ToolUtil.getTimeStamp() + SierraToolConstants.SIERRA_SCAN_TASK_SUFFIX;
+
+      File scanDocument = new File(tempDir, scanDocumentName);
+      config.setScanDocument(scanDocument);
+      config.setLogPath(new File(tempDir, logFileName).getAbsolutePath());
 
       // check if any tools were found (for less cryptic output)
-      if (ToolUtil.getNumTools(config) < 1) {
+      if (ToolUtil.getNumTools(config) < 1)
         throw new BuildException("No Sierra tools found (e.g., PMD or FindBugs)...this is a bug");
-      }
+
+      // surelogic-tools.properties file
+      final File surelogicToolsProperties = scan.getSurelogicToolsPropertiesAsFile();
+      if (surelogicToolsProperties != null)
+        System.out.println("Using properties         = " + surelogicToolsProperties.getAbsolutePath());
+
+      final String scanOutputDirMsg;
+      if (scan.getSierraScanDir() == null)
+        scanOutputDirMsg = ".";
+      else
+        scanOutputDirMsg = scan.getSierraScanDirAsFile().getAbsolutePath();
+      System.out.println("Scan output directory    = " + scanOutputDirMsg);
 
       final SLStatus status = ToolUtil.scan(System.out, config, new NullSLProgressMonitor(), true);
       if (status.getException() != null) {
         throw status.getException();
       }
+
+      final File zipFile = new File(scan.getSierraScanDirAsFile(), finalZipName);
+
+      FileUtility.zipDir(tempDir, zipFile);
+      if (!FileUtility.recursiveDelete(tempDir)) {
+        System.out.println("Error unable to delete temp dir " + tempDir.getAbsolutePath());
+      }
+
     } catch (Throwable t) {
       t.printStackTrace();
       throw new BuildException("Exception while scanning " + scan.getProjectName(), t);
@@ -77,47 +143,6 @@ public class SierraJavacAdapter extends DefaultCompilerAdapter {
     while (st.hasMoreTokens()) {
       System.out.println(key + ": " + st.nextToken());
     }
-  }
-
-  private Config createConfig() throws IOException {
-    Config config = new Config();
-    config.setProject(scan.getProjectName());
-    excludedPackages = loadProperties(config);
-    setupConfig(config, false);
-    logAndAddFilesToCompile(config);
-
-    if (verbose) {
-      System.out.println("verbose = " + verbose);
-    }
-    config.setVerbose(verbose);
-    setMemorySize(config);
-    config.setJavaVendor(System.getProperty("java.vendor"));
-    config.setJavaVersion(System.getProperty("java.version"));
-
-    final File sierraAntHome = scan.getSierraAntHomeAsFile();
-    System.setProperty(ToolUtil.TOOLS_PATH_PROP_NAME, sierraAntHome.getAbsolutePath());
-
-    for (IToolFactory f : ToolUtil.findToolFactories()) {
-      for (final IToolExtension t : f.getExtensions()) {
-        final ToolExtension ext = new ToolExtension();
-        ext.setTool(f.getId());
-        ext.setId(t.getId());
-        ext.setVersion(t.getVersion());
-        config.addExtension(ext);
-      }
-    }
-    addPluginToConfig(sierraAntHome, AbstractLocalSLJob.COMMON_PLUGIN_ID, false, config);
-    addPluginToConfig(sierraAntHome, SierraToolConstants.MESSAGE_PLUGIN_ID, false, config);
-    addPluginToConfig(sierraAntHome, SierraToolConstants.PMD_PLUGIN_ID, true, config);
-    addPluginToConfig(sierraAntHome, SierraToolConstants.FB_PLUGIN_ID, true, config);
-    addPluginToConfig(sierraAntHome, SierraToolConstants.TOOL_PLUGIN_ID, false, config);
-
-    config.setSourceLevel(scan.getSource());
-
-    File scanDocument = scan.getScanFile();
-    config.setScanDocument(scanDocument);
-    config.setLogPath(scan.getDocument() + AbstractRemoteSLJob.LOG_SUFFIX);
-    return config;
   }
 
   /**
@@ -241,23 +266,15 @@ public class SierraJavacAdapter extends DefaultCompilerAdapter {
   }
 
   protected String[] loadProperties(Config cfg) {
-    File propFile = scan.getProperties();
+    final File propFile = scan.getSurelogicToolsPropertiesAsFile();
     if (propFile != null) {
-      final Properties props = SureLogicToolsPropertiesUtility.readFileOrNull(scan.getProperties());
+      final Properties props = SureLogicToolsPropertiesUtility.readFileOrNull(propFile);
       final String[] excludedFolders = makeAbsolute(getExcludedSourceFolders(props));
-      scan.log("Excluded Folders: " + Arrays.toString(excludedFolders));
-      final String[] bytecodeFolders = makeAbsolute(getBytecodeSourceFolders(props));
-      scan.log("Bytecode Folders: " + Arrays.toString(bytecodeFolders));
       final String[] excludedPackages = convertPkgsToSierraStyle(getExcludedPackagePatterns(props));
-      scan.log("Excluded Packages: " + Arrays.toString(excludedPackages));
       final String[] bytecodePackages = convertPkgsToSierraStyle(getBytecodePackagePatterns(props));
-      scan.log("Bytecode Packages: " + Arrays.toString(bytecodePackages));
       final String[] combinedPackages = combineLists(excludedPackages, bytecodePackages);
       if (props != null) {
-        scan.log(String.format("Loading properties file at %s.", scan.getProperties()));
         cfg.initFromToolsProps(props, excludedFolders, excludedPackages);
-      } else {
-        scan.log("No properties file loaded.");
       }
       return combinedPackages;
     }

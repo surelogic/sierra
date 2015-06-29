@@ -36,6 +36,9 @@ public final class SierraToolConstants {
 
   /** The default extension for zipped run document */
   public static final String PARSED_ZIP_FILE_SUFFIX = ".sierra.zip";
+  
+  /** Used for Ant and Maven scans */
+  public static final String SIERRA_SCAN_TASK_SUFFIX = ".sierra-scan.zip";
 
   public static final List<String> PARSED_FILE_SUFFIXES;
   static {

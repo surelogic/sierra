@@ -342,7 +342,6 @@ public class ToolUtil {
   public static boolean isToolPlugin(File f) {
     if (f.isDirectory()) {
       try {
-        System.out.println(" - isToolPlugin(" + f.getAbsolutePath() + ")");
         Attributes attrs = readManifest(f);
         List<IToolFactory> factories = instantiateToolFactories(f, attrs);
         if (!factories.isEmpty()) {
