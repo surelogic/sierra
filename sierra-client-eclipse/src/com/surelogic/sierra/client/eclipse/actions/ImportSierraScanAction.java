@@ -1,18 +1,7 @@
 package com.surelogic.sierra.client.eclipse.actions;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.logging.Level;
-import java.util.zip.GZIPInputStream;
-
-import javax.xml.stream.FactoryConfigurationError;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamConstants;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -33,114 +22,103 @@ import com.surelogic.common.ui.jobs.SLUIJob;
 import com.surelogic.sierra.client.eclipse.jobs.ImportScanDocumentJob;
 import com.surelogic.sierra.client.eclipse.model.DatabaseHub;
 import com.surelogic.sierra.client.eclipse.preferences.SierraPreferencesUtility;
+import com.surelogic.sierra.tool.SierraToolConstants;
 
+/**
+ * This imports an Ant/Maven scan.
+ * <p>
+ * It uses the filename to determine the project which could create problems in
+ * the future.
+ */
 public class ImportSierraScanAction implements IWorkbenchWindowActionDelegate {
 
-    @Override
-    public void run(IAction action) {
-        final FileDialog fd = new FileDialog(EclipseUIUtility.getShell(),
-                SWT.OPEN);
-        fd.setText("Import Ant/Maven Scan");
-        fd.setFilterExtensions(new String[] { "*.sierra.gz", "*.sierra", "*.*" });
-        fd.setFilterNames(new String[] {
-                "Compressed Scan Documents (*.sierra.gz)",
-                "Scan Documents (*.sierra)", "All Files (*.*)" });
-        String fileName = fd.open();
-        if (fileName != null) {
-            File f = new File(fileName);
-            final String projectName = getProjectName(f);
-            if (projectName != null && f.exists() && !f.isDirectory()) {
-                File to = new File(
-                        SierraPreferencesUtility.getSierraScanDirectory(),
-                        f.getName());
-                if (!f.equals(to)) {
-                    FileUtility.copy(f, to);
-                }
-                final Runnable runAfterImport = new Runnable() {
-                    @Override
-                    public void run() {
-                        /* Notify that scan was completed */
-                        DatabaseHub.getInstance().notifyScanLoaded();
-                        SLUIJob job = new SLUIJob() {
-
-                            @Override
-                            public IStatus runInUIThread(
-                                    IProgressMonitor monitor) {
-                                MessageDialog
-                                .openInformation(
-                                        EclipseUIUtility.getShell(),
-                                        I18N.msg("sierra.dialog.importScan.success.title"),
-                                        I18N.msg(
-                                                "sierra.dialog.importScan.success.msg",
-                                                projectName));
-                                return Status.OK_STATUS;
-                            }
-                        };
-                        job.schedule();
-                    }
-                };
-                ImportScanDocumentJob job = new ImportScanDocumentJob(f,
-                        projectName, runAfterImport);
-                job.schedule();
-            } else {
-                MessageDialog.openError(
-                        EclipseUIUtility.getShell(),
-                        I18N.msg("sierra.dialog.importScan.error.title"),
-                        I18N.msg("sierra.dialog.importScan.error.msg",
-                                f.getAbsolutePath()));
-            }
+  @Override
+  public void run(IAction action) {
+    final FileDialog fd = new FileDialog(EclipseUIUtility.getShell(), SWT.OPEN);
+    fd.setText("Import Ant/Maven Scan");
+    fd.setFilterExtensions(new String[] { "*" + SierraToolConstants.SIERRA_SCAN_TASK_SUFFIX, "*.*" });
+    fd.setFilterNames(new String[] { "Compressed Sierra Scan Documents (*" + SierraToolConstants.SIERRA_SCAN_TASK_SUFFIX + ")",
+        "All Files (*.*)" });
+    final String name = fd.open();
+    if (name != null) {
+      SLUIJob showErrorDialog = new SLUIJob() {
+        @Override
+        public IStatus runInUIThread(IProgressMonitor monitor) {
+          MessageDialog.openInformation(EclipseUIUtility.getShell(), I18N.msg("sierra.dialog.importscan.error.title"),
+              I18N.msg("sierra.dialog.importscan.error.msg", name));
+          return Status.OK_STATUS;
         }
-    }
+      };
 
-    private String getProjectName(File f) {
-        StringBuilder projectName = new StringBuilder();
-        try {
-            InputStream in = new FileInputStream(f);
-            if (f.getName().endsWith(FileUtility.GZIP_SUFFIX)) {
-                in = new GZIPInputStream(in);
-            }
-            XMLStreamReader reader = XMLInputFactory.newInstance()
-                    .createXMLStreamReader(in);
-            while (reader.getEventType() != XMLStreamConstants.START_ELEMENT
-                    || !reader.getLocalName().equals("project")) {
-                reader.next();
-            }
-            reader.next();
-            while (reader.getEventType() == XMLStreamConstants.CHARACTERS) {
-                projectName.append(reader.getText());
-                reader.next();
-            }
-        } catch (FileNotFoundException e) {
-            // Do nothing
-        } catch (XMLStreamException e) {
-            SLLogger.getLoggerFor(ImportSierraScanAction.class).log(
-                    Level.WARNING, "Error reading scan document", e);
-        } catch (FactoryConfigurationError e) {
-            SLLogger.getLoggerFor(ImportSierraScanAction.class).log(
-                    Level.WARNING, "Error reading scan document", e);
-        } catch (IOException e) {
-            SLLogger.getLoggerFor(ImportSierraScanAction.class).log(
-                    Level.WARNING, "Error reading scan document", e);
-        }
-        if (projectName.length() == 0) {
-            return null;
-        } else {
-            return projectName.toString();
-        }
-    }
+      final File zipFile = new File(name);
+      // determine name of new scan directory from zip file name
+      final String simpleName = zipFile.getName();
+      if (!simpleName.toLowerCase().endsWith(".zip")) {
+        showErrorDialog.schedule();
+        return;
+      }
+      // get prefix to clear out old scan
+      String namePrefix = zipFile.getName();
+      int takeOff = SierraToolConstants.SIERRA_SCAN_TASK_SUFFIX.length() + 27 /* timestamp */;
+      if (namePrefix.length() <= takeOff) {
+        SLLogger.getLogger().log(Level.SEVERE, I18N.err(348, namePrefix), new Exception());
+        showErrorDialog.schedule();
+        return;
+      }
+      namePrefix = namePrefix.substring(0, namePrefix.length() - takeOff);
+      final File targetDir = SierraPreferencesUtility.getSierraScanDirectory();
+      // clear out old scan
+      FileUtility.deleteFilesWithPrefix(targetDir, namePrefix);
+      // unzip new one
+      try {
+        FileUtility.unzipFile(zipFile, targetDir);
+      } catch (Exception e) {
+        SLLogger.getLogger().log(Level.SEVERE, I18N.err(347, zipFile.getAbsolutePath(), targetDir.getAbsolutePath()), e);
+        showErrorDialog.schedule();
+        return;
+      }
 
-    @Override
-    public void selectionChanged(IAction action, ISelection selection) {
-        // Nothing to do
-    }
+      final String projectName = namePrefix;
+      File scan = new File(SierraPreferencesUtility.getSierraScanDirectory(), projectName + SierraToolConstants.PARSED_FILE_SUFFIX);
+      if (scan.isFile()) {
+        final Runnable runAfterImport = new Runnable() {
+          @Override
+          public void run() {
+            /* Notify that scan was completed */
+            DatabaseHub.getInstance().notifyScanLoaded();
+            SLUIJob job = new SLUIJob() {
 
-    @Override
-    public void dispose() {
-        // Nothing to do
+              @Override
+              public IStatus runInUIThread(IProgressMonitor monitor) {
+                MessageDialog.openInformation(EclipseUIUtility.getShell(), I18N.msg("sierra.dialog.importScan.success.title"),
+                    I18N.msg("sierra.dialog.importScan.success.msg", projectName));
+                return Status.OK_STATUS;
+              }
+            };
+            job.schedule();
+          }
+        };
+        ImportScanDocumentJob job = new ImportScanDocumentJob(scan, projectName, runAfterImport);
+        job.schedule();
+      } else {
+        SLLogger.getLogger().log(Level.SEVERE, I18N.err(349, scan.getAbsolutePath()), new Exception());
+        showErrorDialog.schedule();
+      }
     }
+  }
 
-    @Override
-    public void init(IWorkbenchWindow window) {
-        // Nothing to do
-    }
+  @Override
+  public void selectionChanged(IAction action, ISelection selection) {
+    // Nothing to do
+  }
+
+  @Override
+  public void dispose() {
+    // Nothing to do
+  }
+
+  @Override
+  public void init(IWorkbenchWindow window) {
+    // Nothing to do
+  }
 }
