@@ -134,14 +134,12 @@ public class SierraScan extends Javac {
     if (!result.isDirectory())
       throw new BuildException("sierraanthome directory does not exist: " + sierraAntHome);
     /*
-     * Heuristic check that this dir is actually the JSure ant task
+     * Heuristic check that this dir is actually the Sierra ant task
      */
-    boolean structureOkay = (new File(result, "common").isDirectory()) && (new File(result, "sierra-jdbc").isDirectory())
-        && (new File(result, "sierra-message").isDirectory()) && (new File(result, "sierra-tool").isDirectory())
-        && (new File(result, "tools").isDirectory());
+    boolean structureOkay = (new File(result, "lib").isDirectory()) && (new File(result, "sierra-ant-version.txt").isFile());
     if (!structureOkay)
       throw new BuildException("sierraanthome value of " + sierraAntHome
-          + " does not appear correct (it should contain 'common' 'sierra-jdbc' 'sierra-message' 'sierra-tool' and 'tools')");
+          + " does not appear correct (it should contain 'lib' directory and a 'sierra-ant-version.txt' file)");
     return result;
   }
 

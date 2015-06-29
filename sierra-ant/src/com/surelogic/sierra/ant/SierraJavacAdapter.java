@@ -19,7 +19,9 @@ import org.apache.tools.ant.taskdefs.compilers.DefaultCompilerAdapter;
 import org.apache.tools.ant.types.Path;
 import org.apache.tools.ant.util.StringUtils;
 
+import com.surelogic.common.FileUtility;
 import com.surelogic.common.SLUtility;
+import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.jobs.NullSLProgressMonitor;
 import com.surelogic.common.jobs.SLStatus;
 import com.surelogic.common.jobs.remote.AbstractLocalSLJob;
@@ -49,10 +51,8 @@ public class SierraJavacAdapter extends DefaultCompilerAdapter {
   public boolean execute() throws BuildException {
     try {
       System.out.println("Project to scan w/Sierra = " + scan.getProjectName());
-      if (false) {
-        checkClassPath("sun.boot.class.path");
-        checkClassPath("java.class.path");
-      }
+      // checkClassPath("sun.boot.class.path");
+      // checkClassPath("java.class.path");
       Config config = createConfig();
 
       // check if any tools were found (for less cryptic output)
@@ -71,6 +71,7 @@ public class SierraJavacAdapter extends DefaultCompilerAdapter {
     return true;
   }
 
+  @SuppressWarnings("unused")
   private void checkClassPath(String key) {
     StringTokenizer st = new StringTokenizer(System.getProperty(key), File.pathSeparator);
     while (st.hasMoreTokens()) {
@@ -105,21 +106,62 @@ public class SierraJavacAdapter extends DefaultCompilerAdapter {
         config.addExtension(ext);
       }
     }
-    final File toolsHome = new File(sierraAntHome, "tools");
-    config.putPluginDir(AbstractLocalSLJob.COMMON_PLUGIN_ID,
-        new File(new File(sierraAntHome, "common"), "common.jar").getAbsolutePath());
-    config.putPluginDir(SierraToolConstants.MESSAGE_PLUGIN_ID,
-        new File(new File(sierraAntHome, "sierra-message"), "sierra-message.jar").getAbsolutePath());
-    config.putPluginDir(SierraToolConstants.PMD_PLUGIN_ID, new File(toolsHome, "pmd").getAbsolutePath());
-    config.putPluginDir(SierraToolConstants.FB_PLUGIN_ID, new File(toolsHome, "findbugs").getAbsolutePath());
-    config.putPluginDir(SierraToolConstants.TOOL_PLUGIN_ID,
-        new File(new File(sierraAntHome, "sierra-tool"), "sierra-tool.jar").getAbsolutePath());
+    addPluginToConfig(sierraAntHome, AbstractLocalSLJob.COMMON_PLUGIN_ID, false, config);
+    addPluginToConfig(sierraAntHome, SierraToolConstants.MESSAGE_PLUGIN_ID, false, config);
+    addPluginToConfig(sierraAntHome, SierraToolConstants.PMD_PLUGIN_ID, true, config);
+    addPluginToConfig(sierraAntHome, SierraToolConstants.FB_PLUGIN_ID, true, config);
+    addPluginToConfig(sierraAntHome, SierraToolConstants.TOOL_PLUGIN_ID, false, config);
+
     config.setSourceLevel(scan.getSource());
 
     File scanDocument = scan.getScanFile();
     config.setScanDocument(scanDocument);
     config.setLogPath(scan.getDocument() + AbstractRemoteSLJob.LOG_SUFFIX);
     return config;
+  }
+
+  /**
+   * Helper method to add a plugin (tool or normal) to the passed config.
+   * 
+   * @param sierraAntHome
+   *          location of the Sierra Ant task code
+   * @param id
+   *          a plugin identifier.
+   * @param isTool
+   *          {@code true} if the plugin is an analysis tool, {@code false}
+   *          otherwise
+   * @param config
+   *          the mutable configuration to add the information to
+   */
+  private void addPluginToConfig(File sierraAntHome, String id, boolean isTool, Config config) {
+    config.putPluginDir(id, getAntPluginDirectory(sierraAntHome, id, isTool).getAbsolutePath());
+  }
+
+  /**
+   * Helper to determine the directory of a fake Eclipse plugin in the Ant
+   * directory structure. By convention we use the identifier as the directory
+   * name.
+   * 
+   * @param sierraAntHome
+   *          location of the Sierra Ant task code
+   * @param pluginId
+   *          a plugin identifier.
+   * @param isTool
+   *          {@code true} if the plugin is an analysis tool, {@code false}
+   *          otherwise
+   * @return a directory.
+   * 
+   * @throws IllegalArgumentException
+   *           if no path can be found for the passed pluginId
+   */
+  File getAntPluginDirectory(File sierraAntHome, final String pluginId, boolean isTool) {
+    final String subdir = isTool ? FileUtility.TOOLS_PATH_FRAGMENT : "lib";
+    final File result = new File(new File(sierraAntHome, subdir), pluginId);
+    if (result.exists())
+      return result;
+    else {
+      throw new IllegalArgumentException(I18N.err(340, pluginId, result.getAbsolutePath()));
+    }
   }
 
   private void setMemorySize(Config config) {

@@ -189,8 +189,6 @@ public class Config implements Cloneable, ILocalConfig {
     return pairs;
   }
 
-  // This is here for Java 7
-  // These shouldn't both be necessary
   public void setPluginDirectories(List<KeyValuePair> pairs) {
     if (pairs.isEmpty()) {
       return;
@@ -205,16 +203,6 @@ public class Config implements Cloneable, ILocalConfig {
   @XmlElement(name = "pluginDirs")
   public Map<String, String> getPluginDirs() {
     return pluginDirs;
-  }
-
-  // This is here for Java 6
-  // These shouldn't both be necessary
-  public void setPluginDirs(Map<String, String> dirs) {
-    if (dirs.isEmpty()) {
-      return;
-    }
-    pluginDirs.clear();
-    pluginDirs.putAll(dirs);
   }
 
   public void putPluginDir(String id, String location) {

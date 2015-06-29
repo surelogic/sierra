@@ -56,6 +56,7 @@ public class ToolUtil {
   protected static final Logger LOG = SLLogger.getLogger("sierra");
 
   private static final List<IToolFinder> finders = new CopyOnWriteArrayList<>();
+
   static {
     addToolFinder(new IToolFinder() {
       public List<File> findToolDirectories() {
@@ -102,12 +103,12 @@ public class ToolUtil {
     Set<File> dirs = new HashSet<>();
     for (IToolFinder f : finders) {
       if (out != null) {
-        out.println("Using finder: " + f.toString());
+        out.println(" - (findToolDirs) using finder: " + f.toString());
       }
       for (File dir : f.findToolDirectories()) {
         if (!dirs.contains(dir)) {
           if (out != null) {
-            out.println("\tFound tool dir: " + dir);
+            out.println(" - (findToolDirs) found tool dir: " + dir);
           }
           dirs.add(dir);
         }
@@ -125,17 +126,20 @@ public class ToolUtil {
   }
 
   public static List<IToolFactory> findToolFactories(PrintStream out, boolean all) {
-    if (out != null) {
-      out.println("Finding tool factories ...");
-    }
     final File home = getSierraToolDirectory();
+    if (out != null) {
+      out.println("Finding tool factories in " + home.getAbsolutePath());
+    }
     List<IToolFactory> factories = new ArrayList<>();
     for (File dir : findToolDirs(out)) {
+      if (out != null) {
+        out.println(" - considering " + dir.getAbsolutePath());
+      }
       try {
         Attributes manifest = readManifest(dir);
         for (IToolFactory f : instantiateToolFactories(dir, manifest)) {
           if (out != null) {
-            out.println("Considering factory " + f);
+            out.println(" - considering factory " + f);
           }
           if (all || f.isProduction()) {
             try {
@@ -146,7 +150,7 @@ public class ToolUtil {
             }
             factories.add(f);
             if (out != null) {
-              out.println("Added factory " + f.getName());
+              out.println(" - added factory " + f.getName());
             }
           }
         }
@@ -237,6 +241,7 @@ public class ToolUtil {
   public static final String PLUGIN_NAME = "Bundle-Name";
 
   private static final Set<String> EXPECTED_DEPS;
+
   static {
     Set<String> temp = new HashSet<>(4);
     temp.add(AbstractLocalSLJob.COMMON_PLUGIN_ID);
@@ -306,10 +311,6 @@ public class ToolUtil {
     return rv;
   }
 
-  private static int countItems(String items) {
-    return getItems(items, new IdentityItemProcessor()).size();
-  }
-
   /**
    * Remove any whitespace and extra attributes
    */
@@ -341,6 +342,7 @@ public class ToolUtil {
   public static boolean isToolPlugin(File f) {
     if (f.isDirectory()) {
       try {
+        System.out.println(" - isToolPlugin(" + f.getAbsolutePath() + ")");
         Attributes attrs = readManifest(f);
         List<IToolFactory> factories = instantiateToolFactories(f, attrs);
         if (!factories.isEmpty()) {
@@ -351,11 +353,6 @@ public class ToolUtil {
       }
     }
     return false;
-  }
-
-  @SuppressWarnings("unused")
-  private static int numToolFactories(Attributes attrs) {
-    return countItems(attrs.getValue(TOOL_FACTORIES));
   }
 
   private static List<IToolFactory> instantiateToolFactories(File pluginDir, Attributes attrs) {
@@ -502,8 +499,8 @@ public class ToolUtil {
             // local binary
             return pluginBin;
           }
-          // look for a plugin jar
-          File pluginJar = new File(pluginDir, pluginId + ".jar");
+          // look for a plugin jar (for Ant)
+          File pluginJar = new File(pluginDir, "bin.jar");
           if (pluginJar.exists() && pluginJar.isFile()) {
             return pluginJar;
           }
