@@ -78,6 +78,8 @@ public class FindBugsToolFactory extends AbstractToolFactory {
       }
       final boolean isCore = CORE.equals(plugin.getPluginId());
       extensions.add(new AbstractToolExtension(getId(), plugin.getPluginId(), getVersion(), loc, types) {
+        private static final long serialVersionUID = 7819226437367633410L;
+
         @Override
         public boolean isCore() {
           return isCore;

@@ -5,6 +5,7 @@ import java.net.URI;
 import java.util.*;
 import java.util.logging.Level;
 
+import com.surelogic.Nullable;
 import com.surelogic.common.*;
 import com.surelogic.common.jobs.*;
 import com.surelogic.common.logging.SLLogger;
@@ -172,6 +173,7 @@ public class AbstractFindBugsTool extends AbstractToolInstance {
     final SLProgressMonitor monitor;
     final ProjectStats stats = new ProjectStats();
     final Set<String> ignoreSet = new HashSet<>();
+
     {
       ignoreSet.add("java.lang.Class");
       ignoreSet.add("<clinit>()V");
@@ -332,7 +334,7 @@ public class AbstractFindBugsTool extends AbstractToolInstance {
       sourceLocation.compilation(getCompUnitName(line.getSourceFile()));
       sourceLocation.className(line.getSimpleClassName());
 
-      final String path = computeSourceFilePath(line.getPackageName(), line.getSourceFile());
+      final String path = computeSourceFilePath(line.getClassName());
       if (path == null) {
         // No identifiable source location
         final String clazz = line.getClassName();
@@ -340,7 +342,7 @@ public class AbstractFindBugsTool extends AbstractToolInstance {
           return null; // Ignore these
         }
         if (handleWarning(line.getClassName())) {
-          logWarning("Couldn't find source file for " + line.getClassName());
+          logWarning("Couldn't find source file for " + line.getClassName() + "(using " + line.getClassName());
         }
         return null;
       }
@@ -428,14 +430,26 @@ public class AbstractFindBugsTool extends AbstractToolInstance {
       monitor.subTask("Scanning " + desc.getDottedClassName());
     }
 
-    private String computeSourceFilePath(String pkg, String srcFile) {
-      String pkgPath = pkg.replace('.', '/');
+    @Nullable
+    private String computeSourceFilePath(final String className) {
+      /*
+       * Build a pathname com.foo.Go$5 to com/foo/Go.java
+       * 
+       * This seems to work better than the old approach of using the package
+       * and the file name provided by FindBugs.
+       */
+      String pkgPath = className.replace('.', '/');
+      int nested = pkgPath.indexOf('$');
+      if (nested != -1) {
+        pkgPath = pkgPath.substring(0, nested);
+      }
+      pkgPath = pkgPath + ".java";
 
       for (IToolTarget t : tool.getSrcTargets()) {
         final File root = new File(t.getLocation());
         switch (t.getKind()) {
         case DIRECTORY:
-          File candidate = new File(root, pkgPath + '/' + srcFile);
+          File candidate = new File(root, pkgPath);
           if (candidate.exists() && candidate.isFile()) {
             return candidate.getAbsolutePath();
           }
@@ -444,7 +458,7 @@ public class AbstractFindBugsTool extends AbstractToolInstance {
         case FILE:
           FileTarget ft = (FileTarget) t;
           if (ft.getRoot() != null) {
-            File candidate2 = new File(new File(ft.getRoot()), pkgPath + '/' + srcFile);
+            File candidate2 = new File(new File(ft.getRoot()), pkgPath);
             if (candidate2.exists() && candidate2.isFile()) {
               String path2 = candidate2.getAbsolutePath();
               if (path2.equals(root.getAbsolutePath())) {
@@ -459,15 +473,6 @@ public class AbstractFindBugsTool extends AbstractToolInstance {
           System.out.println("Ignoring target " + t.getLocation());
         }
       }
-      /*
-       * if (SystemUtils.IS_OS_WINDOWS) { String vendor =
-       * SystemUtils.JAVA_VENDOR; if (vendor.startsWith("Sun")) { // Try finding
-       * it in the JDK source String javaHome = System.getProperty("java.home");
-       * File home = new File(javaHome); File srcZip = new File(home,
-       * "src.zip"); if (!srcZip.exists()) { srcZip = new
-       * File(home.getParentFile(), "src.zip"); if (!srcZip.exists()) { return
-       * null; } } } }
-       */
       return null;
     }
 

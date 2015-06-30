@@ -11,6 +11,21 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 
+import com.surelogic.common.HashGenerator;
+import com.surelogic.common.jobs.SLProgressMonitor;
+import com.surelogic.common.logging.SLLogger;
+import com.surelogic.sierra.tool.AbstractToolInstance;
+import com.surelogic.sierra.tool.analyzer.ILazyArtifactGenerator;
+import com.surelogic.sierra.tool.message.ArtifactGenerator;
+import com.surelogic.sierra.tool.message.ArtifactGenerator.ArtifactBuilder;
+import com.surelogic.sierra.tool.message.ArtifactGenerator.ErrorBuilder;
+import com.surelogic.sierra.tool.message.ArtifactGenerator.SourceLocationBuilder;
+import com.surelogic.sierra.tool.message.Config;
+import com.surelogic.sierra.tool.message.IdentifierType;
+import com.surelogic.sierra.tool.message.Priority;
+import com.surelogic.sierra.tool.message.Severity;
+import com.surelogic.sierra.tool.targets.IToolTarget;
+
 import net.sourceforge.pmd.PMD;
 import net.sourceforge.pmd.PMDConfiguration;
 import net.sourceforge.pmd.Report;
@@ -26,21 +41,6 @@ import net.sourceforge.pmd.renderers.AbstractRenderer;
 import net.sourceforge.pmd.renderers.Renderer;
 import net.sourceforge.pmd.util.datasource.DataSource;
 import net.sourceforge.pmd.util.datasource.FileDataSource;
-
-import com.surelogic.common.HashGenerator;
-import com.surelogic.common.jobs.SLProgressMonitor;
-import com.surelogic.common.logging.SLLogger;
-import com.surelogic.sierra.tool.AbstractToolInstance;
-import com.surelogic.sierra.tool.analyzer.ILazyArtifactGenerator;
-import com.surelogic.sierra.tool.message.ArtifactGenerator;
-import com.surelogic.sierra.tool.message.ArtifactGenerator.ArtifactBuilder;
-import com.surelogic.sierra.tool.message.ArtifactGenerator.ErrorBuilder;
-import com.surelogic.sierra.tool.message.ArtifactGenerator.SourceLocationBuilder;
-import com.surelogic.sierra.tool.message.Config;
-import com.surelogic.sierra.tool.message.IdentifierType;
-import com.surelogic.sierra.tool.message.Priority;
-import com.surelogic.sierra.tool.message.Severity;
-import com.surelogic.sierra.tool.targets.IToolTarget;
 
 public class AbstractPMDTool extends AbstractToolInstance {
   public AbstractPMDTool(PMDToolFactory f, Config config, ILazyArtifactGenerator generator, boolean close) {
@@ -91,10 +91,6 @@ public class AbstractPMDTool extends AbstractToolInstance {
       }
       pw.close();
     }
-    /*
-     * final ClassLoader cl = PMD.
-     * .createClasspathClassLoader(auxPathFile.toURI().toURL() .toString());
-     */
     config.prependClasspath(auxPathFile.toURI().toURL().toString());
 
     final List<DataSource> files = new ArrayList<>();
@@ -225,13 +221,12 @@ public class AbstractPMDTool extends AbstractToolInstance {
       Iterator<ProcessingError> errors = report.errors();
       while (errors.hasNext()) {
         ProcessingError error = errors.next();
-        SLLogger.getLogger().warning(error.getFile() + ": " + error.getMsg());
+        SLLogger.getLogger().warning(error.getFile() + ": (PMD) " + error.getMsg());
         ErrorBuilder eb = generator.error();
         eb.message(error.getMsg());
         eb.tool(getName() + " v." + getVersion());
         eb.build();
       }
-      // System.out.println("Done with report");
     }
 
     @Override

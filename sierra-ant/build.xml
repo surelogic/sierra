@@ -158,6 +158,7 @@
 
 		<echo>Creating TXT files for the release</echo>
 		<echo file="${build}/sierra-ant-version.txt">${release-version}</echo>
+		<copy file="./README.txt" tofile="${build}/README.txt" />
 
 		<echo>Creating sierra-ant-${release-version}.jar</echo>
 		<zip destfile="${build}/sierra-ant-${release-version}.zip">
