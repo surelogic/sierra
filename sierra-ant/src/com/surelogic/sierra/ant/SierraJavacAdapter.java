@@ -118,6 +118,9 @@ public class SierraJavacAdapter extends DefaultCompilerAdapter {
         scanOutputDirMsg = scan.getSierraScanDirAsFile().getAbsolutePath();
       System.out.println("Scan output directory    = " + scanOutputDirMsg);
 
+      System.out
+          .println("Scan " + finalZipName + " examining " + compileList.length + " Java file" + (compileList.length == 1 ? "" : "s"));
+
       final SLStatus status = ToolUtil.scan(System.out, config, new NullSLProgressMonitor(), true);
       if (status.getException() != null) {
         throw status.getException();
