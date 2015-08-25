@@ -27,7 +27,7 @@ public class LocalPMDRuleSetQueryJob extends AbstractLocalSLJob<EclipseLocalConf
   @Override
   protected void setupClassPath(ConfigHelper util, CommandlineJava cmdj, Project proj, Path path) {
     util.addPluginToPath(COMMON_PLUGIN_ID);
-    util.addPluginJarsToPath(COMMON_PLUGIN_ID, "lib/runtime/commons-lang3-3.3.2.jar");
+    util.addPluginJarsToPath(COMMON_PLUGIN_ID, "lib/runtime/commons-lang3-3.4.jar");
     util.addPluginAndJarsToPath(SierraToolConstants.PMD_PLUGIN_ID, "lib");
     // TODO anything else?
 
