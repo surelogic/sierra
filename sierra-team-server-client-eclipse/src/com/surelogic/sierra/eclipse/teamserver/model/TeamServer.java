@@ -286,7 +286,7 @@ public final class TeamServer {
     final Argument jettyPort = command.createArgument();
     jettyPort.setValue(JETTY_PORT + f_port.get());
 
-    final String jettyConfig = launder(f_pluginDir + JETTY_CONFIG);
+    final String jettyConfig = launder(f_pluginDir + File.separator +JETTY_CONFIG);
     final Argument jettyConfigFile = command.createArgument();
     jettyConfigFile.setValue(jettyConfig);
 
@@ -319,7 +319,7 @@ public final class TeamServer {
   private CommandlineJava getJettyTemplate() {
     final CommandlineJava command = new CommandlineJava();
 
-    final String startJar = launder(f_pluginDir + START_JAR);
+    final String startJar = launder(f_pluginDir + File.separator + START_JAR);
     command.setJar(startJar);
 
     // final Environment.Variable port = new Environment.Variable();
@@ -423,7 +423,7 @@ public final class TeamServer {
     final ProcessBuilder b = new ProcessBuilder(command.getCommandline());
     b.redirectErrorStream(true);
 
-    final File workingDirectory = launderToFile(f_pluginDir + JETTY_BASE);
+    final File workingDirectory = launderToFile(f_pluginDir + File.separator + JETTY_BASE);
     b.directory(workingDirectory);
     final String commandLine = command.toString();
     log.log(Level.INFO, "Local team server command '" + commandLine + "' with a working directory of '"
