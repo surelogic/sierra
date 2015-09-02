@@ -65,10 +65,6 @@ public final class Activator extends AbstractUIPlugin implements IRunnableWithPr
     f_plugin = this;
   }
 
-  public static String getVersion() {
-    return EclipseUtility.getMajorMinorDotVersion(getDefault());
-  }
-
   @Override
   public void start(final BundleContext context) throws Exception {
     super.start(context);
