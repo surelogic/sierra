@@ -58,6 +58,9 @@ public class AbstractFindingTypeXMLParser extends DefaultHandler {
     public void endElement(String uri, String localName, String qName)
             throws SAXException {
         if (FINDING.equals(localName)) {
+        	if (name == null) {
+        		return;
+        	}
             infoMap.put(name, newInfo(name));
             name = null;
         } else if (activeTag != null && activeTag.equals(localName)) {
