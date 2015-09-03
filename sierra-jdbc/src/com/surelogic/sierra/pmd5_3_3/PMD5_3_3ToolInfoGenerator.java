@@ -40,9 +40,11 @@ public final class PMD5_3_3ToolInfoGenerator extends PMD2_0_0ToolInfoGenerator {
                     cl.getResourceAsStream("com/surelogic/sierra/pmd5_3_3/"
                             + fileName), handler,
                     "Could not parse a PMD ruleset");
+            /*
             if (success) {
             	System.out.println("Parsed: "+fileName);
             }
+            */
         }
     }
 
