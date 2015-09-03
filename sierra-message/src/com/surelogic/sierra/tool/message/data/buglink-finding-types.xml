@@ -13220,5 +13220,21 @@ decision point.
     </info>
     <name>The {0} ''{1}'' has a Modified Cyclomatic Complexity of {2}.</name>
   </findingType>  
+  <!-- - PMD 5.3.3 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->    
+  
+    <findingType>
+    <id>UncommentedEmptyMethodBody</id>
+    <artifact tool="PMD"	mnemonic="UncommentedEmptyMethodBody"/>
+    <shortMessage>Document empty method body</shortMessage>
+    <info>
+      <![CDATA[
+Uncommented Empty Method Body finds instances where a method body does not contain
+statements, but there is no comment. By explicitly commenting empty method bodies
+it is easier to distinguish between intentional (commented) and unintentional
+empty methods.
+      ]]>
+    </info>
+    <name>Document empty method body</name>
+  </findingType>
   <!-- - END - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->  
 </findingTypes>

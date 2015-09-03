@@ -38,6 +38,10 @@
 			questionable designs.
 		</info>
         <filter>
+            <type>UncommentedEmptyMethodBody</type>
+            <filtered>false</filtered>
+        </filter>		
+        <filter>
             <type>UseUtilityClass</type>
             <filtered>false</filtered>
         </filter>

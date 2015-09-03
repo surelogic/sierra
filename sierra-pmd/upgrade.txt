@@ -3,6 +3,7 @@ To upgrade this plugin
 1. Download the source zip for the new version
 2. Update all the relevant jars in /lib
 3. Create a new schema and appropriate ToolInfoGenerators for PMD/CPD in sierra-jdbc,
-   copying all of the rulesets (from /src/main/resources)
-4. Run PMDFindingTypeCreator to help create XML
-5. Edit buglink-finding-types.xml and buglink-categories.xml in sierra-message
+   copying all of the rulesets (from /pmd-java/src/main/resources/rulesets/java)
+4. Switch to the Sierra perspective to find out what's missing
+5. Copy the resulting text to missingFindingTypes.txt, and run PMDFindingTypeCreator to help create XML
+6. Edit buglink-finding-types.xml and buglink-categories.xml in sierra-message/com.surelogic.sierra.tool.message.data

@@ -7,7 +7,7 @@ import java.sql.Statement;
 
 import com.surelogic.common.jdbc.SchemaAction;
 
-public class Server_0008 implements SchemaAction {
+public class Server_0009 implements SchemaAction {
 
     @Override
     public void run(Connection c) throws SQLException {

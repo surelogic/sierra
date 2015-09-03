@@ -14,8 +14,9 @@ public class PMD2_0_0ToolInfoGenerator extends AbstractPMDToolInfoGenerator {
     public static final String PMD_URI = "http://pmd.sourceforge.net/ruleset/2.0.0";
 
     private static final String RULE = "rule";
-    private static final String IGNORE = "deprecated";
-
+    //private static final String IGNORE = "deprecated";
+    private static final String IGNORE = "n/a"; // deprecated doesn't mean that we can ignore it
+    
     boolean ignore;
 
     @Override

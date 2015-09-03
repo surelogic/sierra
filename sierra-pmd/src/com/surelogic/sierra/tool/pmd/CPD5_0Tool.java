@@ -79,13 +79,13 @@ public final class CPD5_0Tool extends AbstractToolInstance {
 	protected void createArtifact(SourceRoots roots,
 			ArtifactGenerator generator, Match m) {
 		ArtifactBuilder artifact = generator.artifact();
-		TokenEntry firstMark = m.getFirstMark();
+		Mark firstMark = m.getFirstMark();
 		setSourceLocation(artifact.primarySourceLocation(),
-				createSrcInfo(roots, firstMark, m.getLineCount()));
-		for (TokenEntry mark : m.getMarkSet()) {
-			if (mark.getIndex() != firstMark.getIndex()) {
+				createSrcInfo(roots, firstMark.getToken(), m.getLineCount()));
+		for (Mark mark : m.getMarkSet()) {
+			if (mark.getToken().getIndex() != firstMark.getToken().getIndex()) {
 				setSourceLocation(artifact.sourceLocation(),
-						createSrcInfo(roots, mark, m.getLineCount()));
+						createSrcInfo(roots, mark.getToken(), m.getLineCount()));
 			}
 		}
 

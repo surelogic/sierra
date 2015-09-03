@@ -2,10 +2,8 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Sierra PMD Integration
 Bundle-SymbolicName: com.surelogic.sierra.pmd;singleton:=true
-Bundle-Version: 5.2.3.qualifier
+Bundle-Version: 5.3.3.qualifier
 Bundle-ClassPath: .,
- lib/pmd-core-5.2.3.jar,
- lib/pmd-java-5.2.3.jar,
  lib/saxon-9.1.0.8-dom.jar,
  lib/saxon-9.1.0.8.jar,
  lib/javacc-5.0.jar,
@@ -16,7 +14,9 @@ Bundle-ClassPath: .,
  lib/rhino-1.7R4.jar,
  lib/xercesImpl-2.11.0.jar,
  lib/xml-apis-1.4.01.jar,
- lib/commons-io-2.4.jar
+ lib/commons-io-2.4.jar,
+ lib/pmd-core-5.3.3.jar,
+ lib/pmd-java-5.3.3.jar
 Export-Package: net.sourceforge.pmd,
  net.sourceforge.pmd.ant,
  net.sourceforge.pmd.cpd,

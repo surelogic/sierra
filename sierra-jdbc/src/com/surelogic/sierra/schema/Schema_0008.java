@@ -15,9 +15,9 @@ public class Schema_0008 implements SchemaAction {
         CPD5_2_3ToolInfoGenerator.generateTool(conn);
         PMD5_2_3ToolInfoGenerator.generateTool(conn);
         FindBugs3_0_1ToolInfoGenerator.generateTool(conn);
-        SchemaUtil.updateFindingTypes(conn);
-        SchemaUtil.setupLocalScanFilter(conn);
-        SchemaUtil.setupCategories(conn);
+        //SchemaUtil.updateFindingTypes(conn);
+        //SchemaUtil.setupLocalScanFilter(conn);
+        //SchemaUtil.setupCategories(conn);
         // SchemaUtil.generateBuglinkCategories(conn);
     }
 }
