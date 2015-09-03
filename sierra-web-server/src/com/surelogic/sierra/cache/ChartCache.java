@@ -26,7 +26,6 @@ import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.Plot;
 import org.jfree.chart.renderer.category.CategoryItemRenderer;
 
-import com.surelogic.common.Sweepable;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.jdbc.ConnectionQuery;
 import com.surelogic.common.jdbc.Query;
@@ -206,7 +205,7 @@ public final class ChartCache implements Sweepable {
 	/**
 	 * All access to this map is protected by a lock on the object.
 	 */
-	private final Map<String, IDatabasePlot> f_typeToPlotter = new HashMap<String, IDatabasePlot>();
+	private final Map<String, IDatabasePlot> f_typeToPlotter = new HashMap<>();
 
 	private IDatabasePlot getPlotter(final String type) throws ServletException {
 		assert type != null;

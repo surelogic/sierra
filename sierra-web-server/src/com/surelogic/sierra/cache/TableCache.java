@@ -17,7 +17,6 @@ import java.util.logging.Level;
 
 import javax.servlet.ServletException;
 
-import com.surelogic.common.Sweepable;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.jdbc.ConnectionQuery;
 import com.surelogic.common.jdbc.Query;
@@ -178,7 +177,7 @@ public class TableCache implements Sweepable {
 	/**
 	 * All access to this map is protected by a lock on the object.
 	 */
-	private final Map<String, IDatabaseTable> f_typeToGenerator = new HashMap<String, IDatabaseTable>();
+	private final Map<String, IDatabaseTable> f_typeToGenerator = new HashMap<>();
 
 	private IDatabaseTable getGenerator(final String type)
 			throws ServletException {

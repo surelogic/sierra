@@ -9,7 +9,6 @@ import java.util.logging.Logger;
 import javax.servlet.http.HttpSession;
 
 import com.surelogic.Singleton;
-import com.surelogic.common.Sweepable;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.gwt.client.data.ReportSettings;
@@ -38,7 +37,7 @@ public final class Attendant implements Sweepable {
 	 * <p>
 	 * TODO: This class grows forever, this is bad and needs to be fixed.
 	 */
-	public final Set<Ticket> f_nodeTickets = new HashSet<Ticket>();
+	public final Set<Ticket> f_nodeTickets = new HashSet<>();
 
 	public void periodicSweep() {
 		synchronized (this) {
@@ -156,7 +155,7 @@ public final class Attendant implements Sweepable {
 
 		Set<Ticket> result = (Set<Ticket>) session.getAttribute(TICKET_ID);
 		if (result == null) {
-			result = new HashSet<Ticket>();
+			result = new HashSet<>();
 			session.setAttribute(TICKET_ID, result);
 		}
 		return result;
