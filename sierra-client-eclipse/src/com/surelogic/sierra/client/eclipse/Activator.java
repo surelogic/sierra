@@ -18,7 +18,6 @@ import com.surelogic.common.core.EclipseUtility;
 import com.surelogic.common.core.logging.SLEclipseStatusUtility;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.jdbc.FutureDatabaseException;
-import com.surelogic.common.license.SLLicenseProduct;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.common.serviceability.scan.SierraScanCrashReport;
 import com.surelogic.common.ui.DialogTouchNotificationUI;
@@ -75,7 +74,7 @@ public final class Activator extends AbstractUIPlugin implements IRunnableWithPr
   // Used for startup
   @Override
   public void run(final IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-    monitor.beginTask("Initializing the Sierra tool", 11);
+    monitor.beginTask("Initializing the Sierra tool", 10);
 
     /*
      * "Touch" common-core-eclipse so the logging gets Eclipse-ified.
@@ -141,9 +140,6 @@ public final class Activator extends AbstractUIPlugin implements IRunnableWithPr
           return Status.OK_STATUS;
         }
       }.schedule();
-
-      EclipseUtility.getProductReleaseDateJob(SLLicenseProduct.SIERRA, this).schedule();
-      monitor.worked(1);
 
       new CleanScanDirectory().schedule();
       monitor.worked(1);
