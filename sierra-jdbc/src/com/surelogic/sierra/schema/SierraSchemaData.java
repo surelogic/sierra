@@ -4,28 +4,24 @@ import java.io.InputStream;
 import java.net.URL;
 
 import com.surelogic.common.jdbc.AbstractSchemaData;
-import com.surelogic.common.license.SLLicenseProduct;
 
 public class SierraSchemaData extends AbstractSchemaData {
-	public SierraSchemaData() {
-		super("com.surelogic.sierra.schema",
-			  Thread.currentThread().getContextClassLoader(),
-			  SLLicenseProduct.SIERRA);
-	}
+  public SierraSchemaData() {
+    super("com.surelogic.sierra.schema", Thread.currentThread().getContextClassLoader());
+  }
 
-	@Override
-  protected Object newInstance(String qname) 
-	throws InstantiationException, IllegalAccessException, ClassNotFoundException {
-		return loader.loadClass(qname).newInstance();
-	}
+  @Override
+  protected Object newInstance(String qname) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
+    return loader.loadClass(qname).newInstance();
+  }
 
-	@Override
+  @Override
   public URL getSchemaResource(final String name) {
-		return loader.getResource(getSchemaResourcePath(name));
-	}
-	
-	@Override
+    return loader.getResource(getSchemaResourcePath(name));
+  }
+
+  @Override
   protected InputStream getResourceAsStream(String path) {
-		return loader.getResourceAsStream(path);
-	}
+    return loader.getResourceAsStream(path);
+  }
 }
