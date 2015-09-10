@@ -33,11 +33,11 @@ public class ImportTutorialProjectsAction implements
                         Thread.currentThread()
                                 .getContextClassLoader()
                                 .getResource(
-                                        "/lib/SierraTutorial_SmallWorld.zip"),
+                                        "/lib/SierraTutorial_SmallWorld.zip")/*,                        
                         Thread.currentThread()
                                 .getContextClassLoader()
                                 .getResource(
-                                        "/lib/SierraTutorial_SmallWorldMaven.zip"));
+                                        "/lib/SierraTutorial_SmallWorldMaven.zip")*/);
     }
 
     @Override
