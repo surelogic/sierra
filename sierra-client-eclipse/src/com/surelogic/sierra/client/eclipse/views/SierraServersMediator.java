@@ -115,7 +115,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator impl
    * Protected by itself This should only be accessed in a database job
    * (possibly from multiple threads)
    */
-  private final Map<String, ProjectDO> projectMap = new HashMap<String, ProjectDO>();
+  private final Map<String, ProjectDO> projectMap = new HashMap<>();
 
   final TreeViewer f_statusTree;
   final ActionListener f_serverSyncAction;
@@ -460,7 +460,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator impl
     f_disconnectProjectAction = new ProjectsActionListener() {
       @Override
       protected void run(final List<IJavaProject> projects) {
-        final List<String> projectNames = new ArrayList<String>();
+        final List<String> projectNames = new ArrayList<>();
         for (final IJavaProject p : projects) {
           projectNames.add(p.getElementName());
         }
@@ -637,8 +637,8 @@ public final class SierraServersMediator extends AbstractSierraViewMediator impl
     if (si.size() == 0) {
       return Collections.emptyList();
     }
-    final List<ScanFilter> filters = new ArrayList<ScanFilter>();
-    final Iterator it = si.iterator();
+    final List<ScanFilter> filters = new ArrayList<>();
+    final Iterator<?> it = si.iterator();
     while (it.hasNext()) {
       final ServersViewContent item = (ServersViewContent) it.next();
       if (item.getData() instanceof ScanFilter) {
@@ -655,9 +655,9 @@ public final class SierraServersMediator extends AbstractSierraViewMediator impl
 
     SelectedServers(final boolean allocate) {
       if (allocate) {
-        direct = new ArrayList<ConnectedServer>();
-        indirect = new ArrayList<ConnectedServer>();
-        other = new ArrayList<ConnectedServer>();
+        direct = new ArrayList<>();
+        indirect = new ArrayList<>();
+        other = new ArrayList<>();
       } else {
         direct = indirect = other = Collections.emptyList();
       }
@@ -681,7 +681,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator impl
       return new SelectedServers(false);
     }
     final SelectedServers servers = new SelectedServers(true);
-    final Iterator it = si.iterator();
+    final Iterator<?> it = si.iterator();
     while (it.hasNext()) {
       final ServersViewContent item = (ServersViewContent) it.next();
       if (item.getData() instanceof ConnectedServer) {
@@ -764,9 +764,9 @@ public final class SierraServersMediator extends AbstractSierraViewMediator impl
       if (si.size() == 0) {
         return Collections.emptyList();
       }
-      final List<T> projects = new ArrayList<T>();
+      final List<T> projects = new ArrayList<>();
 
-      final Iterator it = si.iterator();
+      final Iterator<?> it = si.iterator();
       while (it.hasNext()) {
         final ServersViewContent item = (ServersViewContent) it.next();
         if (item.getData() instanceof ProjectStatus) {
@@ -961,7 +961,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator impl
       final ClientFindingManager cfm = cpm.getFindingManager();
       final Query q = new ConnectionQuery(c);
       final Scans sm = new Scans(q);
-      final List<ProjectStatus> projects = new ArrayList<ProjectStatus>();
+      final List<ProjectStatus> projects = new ArrayList<>();
       final Map<NamedServer, List<ScanFilter>> filters;
       synchronized (projectMap) {
         for (final IJavaProject jp : JDTUtility.getJavaProjects()) {
@@ -1076,7 +1076,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator impl
     }
 
     private Map<Object, ServersViewContent> prepTranslation() {
-      final Map<Object, ServersViewContent> map = new HashMap<Object, ServersViewContent>();
+      final Map<Object, ServersViewContent> map = new HashMap<>();
       for (final ServersViewContent c : content) {
         processContent(map, c);
       }
@@ -1106,13 +1106,12 @@ public final class SierraServersMediator extends AbstractSierraViewMediator impl
       }
     }
 
-    @SuppressWarnings("unchecked")
     ISelection translateSelection(final IStructuredSelection selection) {
       if (selection.isEmpty()) {
         return selection;
       }
       final Map<Object, ServersViewContent> map = prepTranslation();
-      final List<ServersViewContent> selected = new ArrayList<ServersViewContent>();
+      final List<ServersViewContent> selected = new ArrayList<>();
 
       final Iterator<ServersViewContent> it = selection.iterator();
       while (it.hasNext()) {
@@ -1248,7 +1247,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator impl
   }
 
   private ServersViewContent[] createServerItems() {
-    final List<ServersViewContent> content = new ArrayList<ServersViewContent>();
+    final List<ServersViewContent> content = new ArrayList<>();
     for (final ConnectedServer server : f_manager.getServers()) {
       final ServersViewContent serverNode = createServerItem(server);
       content.add(serverNode);
@@ -1275,7 +1274,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator impl
         continue;
       }
       final ServersViewContent serverRoot = new ServersViewContent(null, SLImages.getImage(CommonImages.IMG_SIERRA_SERVER_GRAY));
-      final List<ServersViewContent> children = new ArrayList<ServersViewContent>();
+      final List<ServersViewContent> children = new ArrayList<>();
       for (final ScanFilter f : e.getValue()) {
         final String name = f.getName();
         final ServersViewContent filter = createLabel(serverRoot, children, name, ChangeStatus.NONE);
@@ -1288,7 +1287,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator impl
   }
 
   private ServersViewContent createServerItem(final ConnectedServer server) {
-    final List<ServersViewContent> serverContent = new ArrayList<ServersViewContent>();
+    final List<ServersViewContent> serverContent = new ArrayList<>();
 
     final ServersViewContent serverNode = new ServersViewContent(null, SLImages.getImage(CommonImages.IMG_SIERRA_SERVER));
     serverNode.setData(server);
@@ -1320,7 +1319,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator impl
     root.setText(SCAN_FILTERS);
 
     final ServersViewContent filterRoot = root;
-    final List<ServersViewContent> children = new ArrayList<ServersViewContent>();
+    final List<ServersViewContent> children = new ArrayList<>();
     for (final ScanFilter f : filters) {
       ServersViewContent filter;
       if (showFiltersOnServer) {
@@ -1341,7 +1340,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator impl
       if (server == null) {
         if (parent == null) {
           parent = new ServersViewContent(null, SLImages.getImage(CommonImages.IMG_CONSOLE));
-          children = new ArrayList<ServersViewContent>();
+          children = new ArrayList<>();
         }
         final ServersViewContent project = new ServersViewContent(parent, SLImages.getImage(CommonImages.IMG_PROJECT));
         children.add(project);
@@ -1360,7 +1359,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator impl
     final ServersViewContent filterRoot = new ServersViewContent(null, SLImages.getImage(CommonImages.IMG_FILTER));
     content.add(filterRoot);
 
-    final List<ServersViewContent> children = new ArrayList<ServersViewContent>();
+    final List<ServersViewContent> children = new ArrayList<>();
     for (final Map.Entry<NamedServer, List<ScanFilter>> e : localFilters.entrySet()) {
       final NamedServer server = e.getKey();
       for (final ScanFilter f : e.getValue()) {
@@ -1374,7 +1373,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator impl
   }
 
   private void createProjectItems(final ServersViewContent parent, final ConnectedServer server) {
-    final List<ServersViewContent> content = new ArrayList<ServersViewContent>();
+    final List<ServersViewContent> content = new ArrayList<>();
 
     for (final String projectName : f_manager.getProjectsConnectedTo(server)) {
       ProjectStatus s = null;
@@ -1458,7 +1457,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator impl
   }
 
   private void initProjectItem(final ServersViewContent root, final ConnectedServer server, final ProjectStatus ps) {
-    final List<ServersViewContent> contents = new ArrayList<ServersViewContent>();
+    final List<ServersViewContent> contents = new ArrayList<>();
     final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd 'at' HH:mm:ss");
 
     if ((ps.scanDoc != null) && ps.scanDoc.exists()) {
@@ -1494,7 +1493,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator impl
       final ServersViewContent audits = new ServersViewContent(root, SLImages.getImage(CommonImages.IMG_SIERRA_STAMP));
       contents.add(audits);
 
-      final List<ServersViewContent> auditContents = new ArrayList<ServersViewContent>();
+      final List<ServersViewContent> auditContents = new ArrayList<>();
       createAuditItems(audits, auditContents, ps.numLocalAudits);
       audits.setChildren(auditContents.toArray(emptyChildren));
       audits.setChangeStatus(ChangeStatus.LOCAL);

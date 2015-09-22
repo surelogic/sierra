@@ -19,7 +19,7 @@ class ProjectStatus {
 	
 	final int numLocalAudits;
 
-	final Map<String,Integer> userCount = new HashMap<String,Integer>();
+	final Map<String,Integer> userCount = new HashMap<>();
 	
 	final int numProjectProblems;
 	final int numServerProblems;

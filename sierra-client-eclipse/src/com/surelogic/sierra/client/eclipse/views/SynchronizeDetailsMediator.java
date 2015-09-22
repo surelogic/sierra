@@ -122,14 +122,14 @@ public class SynchronizeDetailsMediator extends AbstractSierraViewMediator {
     b.append(dateFormat.format(syncOverview.getTime()));
     f_eventInfo.setText(b.toString());
 
-    Map<String, List<Long>> userToAudits = new HashMap<String, List<Long>>();
+    Map<String, List<Long>> userToAudits = new HashMap<>();
     for (AuditDetail ad : auditList) {
       final String userName = ad.getUser();
       if (userName == null)
         continue;
       List<Long> audits = userToAudits.get(userName);
       if (audits == null) {
-        audits = new ArrayList<Long>();
+        audits = new ArrayList<>();
         userToAudits.put(userName, audits);
       }
       audits.add(ad.getFindingId());
@@ -137,7 +137,7 @@ public class SynchronizeDetailsMediator extends AbstractSierraViewMediator {
     for (Map.Entry<String, List<Long>> entry : userToAudits.entrySet()) {
       b = new StringBuilder();
       List<Long> userAuditList = entry.getValue();
-      Set<Long> userAuditSet = new HashSet<Long>(userAuditList);
+      Set<Long> userAuditSet = new HashSet<>(userAuditList);
       b.append(userAuditList.size());
       b.append(" audit");
       if (userAuditList.size() > 1)

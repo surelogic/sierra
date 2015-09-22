@@ -32,7 +32,7 @@ import com.surelogic.sierra.jdbc.settings.ConnectedServer;
 
 public final class SynchronizeMediator extends AbstractSierraViewMediator {
 
-	private final Table f_syncTable;
+	final Table f_syncTable;
 
 	public SynchronizeMediator(final IViewCallback cb, final Table syncTable) {
 		super(cb);
@@ -52,7 +52,8 @@ public final class SynchronizeMediator extends AbstractSierraViewMediator {
 	@Override
 	public Listener getNoDataListener() {
 		return new Listener() {
-			@Override
+      @Override
+      @SuppressWarnings("deprecation")
       public void handleEvent(final Event event) {
 				new SynchronizeProjectDialogAction().run();
 			}
@@ -125,7 +126,7 @@ public final class SynchronizeMediator extends AbstractSierraViewMediator {
 		job.schedule();
 	}
 
-	private void updateContents() throws Exception {
+	void updateContents() throws Exception {
 		Data.getInstance().withReadOnly(new NullDBTransaction() {
 			@Override
 			public void doPerform(final Connection conn) throws Exception {
@@ -144,7 +145,7 @@ public final class SynchronizeMediator extends AbstractSierraViewMediator {
 	/**
 	 * Must be called from the SWT thread.
 	 */
-	private void updateSyncTableContents(final List<SynchOverview> synchList) {
+	void updateSyncTableContents(final List<SynchOverview> synchList) {
 		final SimpleDateFormat dateFormat = new SimpleDateFormat(
 				"yyyy/MM/dd 'at' HH:mm:ss");
 		f_syncTable.removeAll();

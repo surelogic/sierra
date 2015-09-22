@@ -66,7 +66,7 @@ public class ScannedProjectsMediator extends AbstractSierraViewMediator implemen
     final Action deleteProjectScansAction = new Action() {
       @Override
       public void run() {
-        final List<String> projectNames = new ArrayList<String>();
+        final List<String> projectNames = new ArrayList<>();
         for (ScannedProject sp : getSelectedScannedProjects()) {
           projectNames.add(sp.getName());
         }
@@ -99,7 +99,7 @@ public class ScannedProjectsMediator extends AbstractSierraViewMediator implemen
     final Action reScanProjectsAction = new Action() {
       @Override
       public void run() {
-        final List<IJavaProject> javaProjects = new ArrayList<IJavaProject>();
+        final List<IJavaProject> javaProjects = new ArrayList<>();
         for (ScannedProject sp : getSelectedScannedProjects()) {
           IJavaProject project = JDTUtility.getJavaProject(sp.getName());
           if (project != null)
@@ -171,7 +171,7 @@ public class ScannedProjectsMediator extends AbstractSierraViewMediator implemen
   }
 
   public ArrayList<ScannedProject> getSelectedScannedProjects() {
-    ArrayList<ScannedProject> result = new ArrayList<ScannedProject>();
+    ArrayList<ScannedProject> result = new ArrayList<>();
     final TableItem[] selectedItems = f_table.getSelection();
     if (selectedItems != null) {
       for (TableItem item : selectedItems) {
@@ -222,6 +222,7 @@ public class ScannedProjectsMediator extends AbstractSierraViewMediator implemen
   public Listener getNoDataListener() {
     return new Listener() {
       @Override
+      @SuppressWarnings("deprecation")
       public void handleEvent(final Event event) {
         new NewScanAction().run();
       }

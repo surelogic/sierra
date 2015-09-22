@@ -23,7 +23,7 @@ import com.surelogic.sierra.jdbc.settings.ConnectedServer;
 public class SierraServersAutoSync {
   private static final AtomicLong lastServerUpdateTime = new AtomicLong(System.currentTimeMillis());
 
-  static final AtomicReference<ServerProjectGroupJob> lastSyncGroup = new AtomicReference<ServerProjectGroupJob>();
+  static final AtomicReference<ServerProjectGroupJob> lastSyncGroup = new AtomicReference<>();
 
   private static AutoJob f_doServerAutoSync = null;
 

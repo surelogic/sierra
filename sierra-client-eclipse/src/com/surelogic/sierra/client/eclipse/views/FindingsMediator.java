@@ -71,8 +71,8 @@ import com.surelogic.sierra.client.eclipse.model.selection.SelectionManager;
 import com.surelogic.sierra.client.eclipse.preferences.SierraPreferencesUtility;
 import com.surelogic.sierra.tool.message.Importance;
 
-public class FindingsMediator extends AbstractSierraViewMediator implements IViewUpdater, IProjectsObserver, ISelectionObserver,
-    ISelectionManagerObserver, IPreferenceChangeListener {
+public class FindingsMediator extends AbstractSierraViewMediator
+    implements IViewUpdater, IProjectsObserver, ISelectionObserver, ISelectionManagerObserver, IPreferenceChangeListener {
 
   final SelectionManager f_manager = SelectionManager.getInstance();
 
@@ -98,7 +98,7 @@ public class FindingsMediator extends AbstractSierraViewMediator implements IVie
     f_informationPanel = informationPanel;
     f_warningIcon = warningIcon;
     f_statusLink = statusLink;
-    ArrayList<Column> working = new ArrayList<Column>();
+    ArrayList<Column> working = new ArrayList<>();
     fillColumns(working);
     ColumnPersistence.load(working, getColumnPersistenceFile());
     f_listOfFindingsColumns = Collections.unmodifiableList(working);
@@ -119,8 +119,9 @@ public class FindingsMediator extends AbstractSierraViewMediator implements IVie
     f_statusLink.addListener(SWT.Selection, new Listener() {
       @Override
       public void handleEvent(Event event) {
-        PreferencesUtil.createPreferenceDialogOn(null, "com.surelogic.sierra.client.eclipse.preferences.SierraPreferencePage",
-            null, null).open();
+        PreferencesUtil
+            .createPreferenceDialogOn(null, "com.surelogic.sierra.client.eclipse.preferences.SierraPreferencePage", null, null)
+            .open();
       }
     });
 
@@ -184,6 +185,7 @@ public class FindingsMediator extends AbstractSierraViewMediator implements IVie
   public Listener getNoDataListener() {
     return new Listener() {
       @Override
+      @SuppressWarnings("deprecation")
       public void handleEvent(final Event event) {
         new NewScanAction().run();
       }
@@ -301,15 +303,15 @@ public class FindingsMediator extends AbstractSierraViewMediator implements IVie
         final Statement st = c.createStatement();
         try {
           final ResultSet rs = st.executeQuery(query);
-          final ArrayList<FindingData> rows = new ArrayList<FindingData>();
+          final ArrayList<FindingData> rows = new ArrayList<>();
           boolean rowsAreCutoff = false;
           final int findingsListLimit = EclipseUtility.getIntPreference(SierraPreferencesUtility.FINDINGS_LIST_CUTOFF);
           int rowCount = 0;
           while (rs.next()) {
             if (rowCount < findingsListLimit) {
-              final FindingData data = new FindingData(rs.getLong(3), rs.getString(1), Importance.valueOf(rs.getString(2)
-                  .toUpperCase()), rs.getString(4), rs.getString(5), rs.getString(6), rs.getInt(7), rs.getString(8),
-                  rs.getString(9), rs.getString(10));
+              final FindingData data = new FindingData(rs.getLong(3), rs.getString(1),
+                  Importance.valueOf(rs.getString(2).toUpperCase()), rs.getString(4), rs.getString(5), rs.getString(6),
+                  rs.getInt(7), rs.getString(8), rs.getString(9), rs.getString(10));
               rows.add(data);
               rowCount++;
             } else {
@@ -443,7 +445,7 @@ public class FindingsMediator extends AbstractSierraViewMediator implements IVie
 
     // save the selected finding ids
     final Set<FindingData> pastSelected = getSelectedItems(f_resultsTable);
-    final Set<Long> pastSelectedIds = new HashSet<Long>(pastSelected.size());
+    final Set<Long> pastSelectedIds = new HashSet<>(pastSelected.size());
     for (final FindingData data : pastSelected) {
       pastSelectedIds.add(data.f_findingId);
     }
@@ -495,7 +497,7 @@ public class FindingsMediator extends AbstractSierraViewMediator implements IVie
       tooltip = "Click to change the maximum number of findings shown in this view";
     } else {
       img = null; // no image
-      msg = displayCount + (displayCount == 0 ? " Finding" : " Findings");
+      msg = displayCount + (displayCount < 2 ? " Finding" : " Findings");
       tooltip = null; // no tooltip
     }
     f_warningIcon.setImage(img);
@@ -585,7 +587,7 @@ public class FindingsMediator extends AbstractSierraViewMediator implements IVie
    *         nothing was selected.
    */
   boolean selectFindingsInTableOrUseNear(Set<Long> findingIdSet, long nearFindingId) {
-    final List<TableItem> toSelectInTable = new ArrayList<TableItem>();
+    final List<TableItem> toSelectInTable = new ArrayList<>();
     @Nullable
     TableItem nearTableItem = null;
 
@@ -623,7 +625,7 @@ public class FindingsMediator extends AbstractSierraViewMediator implements IVie
     if (table.getSelectionCount() == 0) {
       return Collections.emptySet();
     }
-    final Set<FindingData> selected = new HashSet<FindingData>();
+    final Set<FindingData> selected = new HashSet<>();
     for (TableItem item : table.getSelection()) {
       selected.add((FindingData) item.getData());
     }
@@ -861,7 +863,7 @@ public class FindingsMediator extends AbstractSierraViewMediator implements IVie
   }
 
   List<Long> extractFindingIds(final int[] itemIndices) {
-    final List<Long> ids = new ArrayList<Long>(itemIndices.length);
+    final List<Long> ids = new ArrayList<>(itemIndices.length);
     for (final int ti : itemIndices) {
       final FindingData fd = f_data.f_rows.get(ti);
       if (fd != null) {

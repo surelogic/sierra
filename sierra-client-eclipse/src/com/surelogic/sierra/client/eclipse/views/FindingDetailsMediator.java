@@ -748,7 +748,7 @@ public class FindingDetailsMediator extends AbstractSierraViewMediator implement
       showAsLink(clazz);
       tree.showItem(clazz);
     } else {
-      final List<SourceDetail> srcs = new ArrayList<SourceDetail>();
+      final List<SourceDetail> srcs = new ArrayList<>();
       for (final ArtifactDetail artifact : finding.getArtifacts()) {
         srcs.add(artifact.getPrimarySource());
         for (final SourceDetail src : artifact.getAdditionalSources()) {
@@ -759,9 +759,9 @@ public class FindingDetailsMediator extends AbstractSierraViewMediator implement
 
       // Deal with multiple artifacts, and multiple locations
       // TODO eliminate these if the sources are ordered?
-      final Map<String, TreeItem> packages = new HashMap<String, TreeItem>();
-      final Map<String, TreeItem> classes = new HashMap<String, TreeItem>();
-      final Map<String, TreeItem> lines = new HashMap<String, TreeItem>();
+      final Map<String, TreeItem> packages = new HashMap<>();
+      final Map<String, TreeItem> classes = new HashMap<>();
+      final Map<String, TreeItem> lines = new HashMap<>();
       TreeItem first = null;
       for (final SourceDetail src : srcs) {
         final TreeItem loc = createLocation(proj, packages, classes, lines, src);

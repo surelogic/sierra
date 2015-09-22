@@ -82,6 +82,7 @@ public final class FindingsSelectionMediator implements IProjectsObserver, Casca
   public Listener getNoDataListener() {
     return new Listener() {
       @Override
+      @SuppressWarnings("deprecation")
       public void handleEvent(Event event) {
         new NewScanAction().run();
       }
