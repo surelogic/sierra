@@ -282,6 +282,8 @@ public final class TeamServerMediator implements ITeamServerObserver {
   }
 
   void adjustControlState() {
+    if (f_trafficLight.isDisposed())
+      return;
     f_trafficLight.redraw();
     if (f_teamServer.isRunning()) {
       f_command.setText("Stop Server");
@@ -425,12 +427,9 @@ public final class TeamServerMediator implements ITeamServerObserver {
     final String name = "Sierra Server";
 
     try {
-      final IWebBrowser browser = PlatformUI
-          .getWorkbench()
-          .getBrowserSupport()
-          .createBrowser(
-              IWorkbenchBrowserSupport.LOCATION_BAR | IWorkbenchBrowserSupport.NAVIGATION_BAR | IWorkbenchBrowserSupport.STATUS,
-              name, name, name);
+      final IWebBrowser browser = PlatformUI.getWorkbench().getBrowserSupport().createBrowser(
+          IWorkbenchBrowserSupport.LOCATION_BAR | IWorkbenchBrowserSupport.NAVIGATION_BAR | IWorkbenchBrowserSupport.STATUS, name,
+          name, name);
       browser.openURL(url);
     } catch (Exception e) {
       SLLogger.getLogger().log(Level.SEVERE, I18N.err(26), e);
