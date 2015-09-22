@@ -244,8 +244,6 @@ public final class SierraServersMediator extends AbstractSierraViewMediator impl
         final Menu contextMenu = new Menu(statusTree.getTree().getShell(), SWT.POP_UP);
         setupContextMenu(contextMenu);
         statusTree.getTree().setMenu(contextMenu);
-
-        // System.out.println("Empty Selection: "+statusTree.getSelection().isEmpty());
       }
     });
 
@@ -379,8 +377,8 @@ public final class SierraServersMediator extends AbstractSierraViewMediator impl
         if (projects.isEmpty()) {
           super.handleEventWithoutServer();
         } else {
-          final ServerSelectionDialog dialog = new ServerSelectionDialog(f_statusTree.getTree().getShell(), projects.get(0)
-              .getElementName());
+          final ServerSelectionDialog dialog = new ServerSelectionDialog(f_statusTree.getTree().getShell(),
+              projects.get(0).getElementName());
           dialog.setUseForAllUnconnectedProjects(true);
           if (dialog.open() == Window.CANCEL) {
             return;
@@ -674,8 +672,8 @@ public final class SierraServersMediator extends AbstractSierraViewMediator impl
     final IStructuredSelection si = (IStructuredSelection) f_statusTree.getSelection();
     /*
      * String lastMethod = new Throwable().getStackTrace()[1].getMethodName();
-     * System.out.println("collectServers() from "
-     * +lastMethod+"(): "+si.size());
+     * System.out.println("collectServers() from " +lastMethod+"(): "
+     * +si.size());
      */
     if (si.size() == 0) {
       return new SelectedServers(false);
@@ -836,7 +834,7 @@ public final class SierraServersMediator extends AbstractSierraViewMediator impl
     abstract T getSelectedInfo(ProjectStatus s);
   }
 
-  abstract class ProjectsActionListener extends ProjectStatusCollector<IJavaProject> implements Listener {
+  abstract class ProjectsActionListener extends ProjectStatusCollector<IJavaProject>implements Listener {
     @Override
     public final void handleEvent(final Event event) {
       // FIX merge with collectProjects?
@@ -882,12 +880,9 @@ public final class SierraServersMediator extends AbstractSierraViewMediator impl
     final String name = "Sierra Server '" + server.getName() + "'";
 
     try {
-      final IWebBrowser browser = PlatformUI
-          .getWorkbench()
-          .getBrowserSupport()
-          .createBrowser(
-              IWorkbenchBrowserSupport.LOCATION_BAR | IWorkbenchBrowserSupport.NAVIGATION_BAR | IWorkbenchBrowserSupport.STATUS,
-              server.getName(), name, name);
+      final IWebBrowser browser = PlatformUI.getWorkbench().getBrowserSupport().createBrowser(
+          IWorkbenchBrowserSupport.LOCATION_BAR | IWorkbenchBrowserSupport.NAVIGATION_BAR | IWorkbenchBrowserSupport.STATUS,
+          server.getName(), name, name);
       final URL url = server.getLocation().createHomeURL();
       browser.openURL(url);
     } catch (final Exception e) {
@@ -984,8 +979,8 @@ public final class SierraServersMediator extends AbstractSierraViewMediator impl
 
           // Check for server problems
           final ConnectedServer server = f_manager.getServer(name);
-          final int numServerProblems = server == null ? -1 : ConnectedServerManager.getInstance().getStats(server)
-              .getProblemCount();
+          final int numServerProblems = server == null ? -1
+              : ConnectedServerManager.getInstance().getStats(server).getProblemCount();
           final int numProjectProblems = Projects.getInstance().getConsecutiveConnectFailuresFor(name);
 
           // FIX Check for a full scan (later than what's on the
@@ -1024,6 +1019,8 @@ public final class SierraServersMediator extends AbstractSierraViewMediator impl
   }
 
   public void updateContentsInUI(final List<ProjectStatus> projects, final Map<NamedServer, List<ScanFilter>> filters) {
+    if (f_statusTree.getControl().isDisposed())
+      return;
     // No need to synchronize since only updated/viewed in UI thread?
     this.projects = projects;
     this.localFilters = filters;
@@ -1442,7 +1439,8 @@ public final class SierraServersMediator extends AbstractSierraViewMediator impl
     return c;
   }
 
-  private ServersViewContent createLabel(final ServersViewContent parent, final List<ServersViewContent> children, final String text) {
+  private ServersViewContent createLabel(final ServersViewContent parent, final List<ServersViewContent> children,
+      final String text) {
     final ServersViewContent c = new ServersViewContent(parent, null);
     c.setText(text);
     children.add(c);
@@ -1502,8 +1500,8 @@ public final class SierraServersMediator extends AbstractSierraViewMediator impl
     if (ps.numServerProblems > 0) {
       final ServersViewContent problems = new ServersViewContent(root, SLImages.getImage(CommonImages.IMG_WARNING));
       contents.add(problems);
-      problems.setText(ps.numServerProblems + " consecutive failure" + s(ps.numServerProblems) + " connecting to "
-          + server.getName());
+      problems
+          .setText(ps.numServerProblems + " consecutive failure" + s(ps.numServerProblems) + " connecting to " + server.getName());
       problems.setServerStatus(ServerStatus.WARNING);
     }
     if (server != null && ps.numProjectProblems > 0) {
