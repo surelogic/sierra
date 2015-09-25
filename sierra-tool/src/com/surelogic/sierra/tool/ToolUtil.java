@@ -27,11 +27,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.surelogic.common.FileUtility;
+import com.surelogic.common.SLUtility;
 import com.surelogic.common.XUtil;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.jobs.SLProgressMonitor;
 import com.surelogic.common.jobs.SLStatus;
-import com.surelogic.common.jobs.remote.AbstractLocalSLJob;
 import com.surelogic.common.jobs.remote.AbstractRemoteSLJob;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.sierra.tool.analyzer.LazyZipDirArtifactGenerator;
@@ -244,7 +244,7 @@ public class ToolUtil {
 
   static {
     Set<String> temp = new HashSet<>(4);
-    temp.add(AbstractLocalSLJob.COMMON_PLUGIN_ID);
+    temp.add(SLUtility.COMMON_PLUGIN_ID);
     temp.add(SierraToolConstants.COMMON_CORE_PLUGIN_ID);
     temp.add(SierraToolConstants.TOOL_PLUGIN_ID);
     temp.add(SierraToolConstants.MESSAGE_PLUGIN_ID);

@@ -45,7 +45,6 @@ import com.surelogic.common.SLUtility;
 import com.surelogic.common.core.EclipseUtility;
 import com.surelogic.common.core.JDTUtility;
 import com.surelogic.common.core.JavaProjectResources;
-import com.surelogic.common.jobs.remote.AbstractLocalSLJob;
 import com.surelogic.common.jobs.remote.AbstractRemoteSLJob;
 import com.surelogic.common.logging.SLLogger;
 import com.surelogic.common.tool.SureLogicToolsFilter;
@@ -84,7 +83,7 @@ public final class ConfigGenerator {
 
   private static final boolean useOldFiltering = false;
 
-  private static final String[] PLUGINS = { SierraToolConstants.MESSAGE_PLUGIN_ID, AbstractLocalSLJob.COMMON_PLUGIN_ID,
+  private static final String[] PLUGINS = { SierraToolConstants.MESSAGE_PLUGIN_ID, SLUtility.COMMON_PLUGIN_ID,
       SierraToolConstants.TOOL_PLUGIN_ID };
 
   /** The location to store tool results */

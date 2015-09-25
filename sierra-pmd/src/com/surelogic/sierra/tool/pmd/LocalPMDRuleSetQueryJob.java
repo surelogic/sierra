@@ -6,8 +6,11 @@ import org.apache.tools.ant.Project;
 import org.apache.tools.ant.types.CommandlineJava;
 import org.apache.tools.ant.types.Path;
 
+import com.surelogic.common.SLUtility;
 import com.surelogic.common.core.jobs.EclipseLocalConfig;
-import com.surelogic.common.jobs.remote.*;
+import com.surelogic.common.jobs.remote.AbstractLocalSLJob;
+import com.surelogic.common.jobs.remote.AbstractRemoteSLJob;
+import com.surelogic.common.jobs.remote.ConfigHelper;
 import com.surelogic.sierra.tool.SierraToolConstants;
 
 public class LocalPMDRuleSetQueryJob extends AbstractLocalSLJob<EclipseLocalConfig> {
@@ -26,8 +29,8 @@ public class LocalPMDRuleSetQueryJob extends AbstractLocalSLJob<EclipseLocalConf
 
   @Override
   protected void setupClassPath(ConfigHelper util, CommandlineJava cmdj, Project proj, Path path) {
-    util.addPluginToPath(COMMON_PLUGIN_ID);
-    util.addPluginJarsToPath(COMMON_PLUGIN_ID, "lib/runtime/commons-lang3-3.4.jar");
+    util.addPluginToPath(SLUtility.COMMON_PLUGIN_ID);
+    util.addPluginJarsToPath(SLUtility.COMMON_PLUGIN_ID, "lib/runtime/commons-lang3-3.4.jar");
     util.addPluginAndJarsToPath(SierraToolConstants.PMD_PLUGIN_ID, "lib");
     // TODO anything else?
 

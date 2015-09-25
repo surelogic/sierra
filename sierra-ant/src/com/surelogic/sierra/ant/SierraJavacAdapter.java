@@ -22,7 +22,6 @@ import com.surelogic.common.SLUtility;
 import com.surelogic.common.i18n.I18N;
 import com.surelogic.common.jobs.NullSLProgressMonitor;
 import com.surelogic.common.jobs.SLStatus;
-import com.surelogic.common.jobs.remote.AbstractLocalSLJob;
 import com.surelogic.common.jobs.remote.AbstractRemoteSLJob;
 import com.surelogic.common.tool.SureLogicToolsPropertiesUtility;
 import com.surelogic.sierra.tool.IToolExtension;
@@ -86,7 +85,7 @@ public class SierraJavacAdapter extends DefaultCompilerAdapter {
           config.addExtension(ext);
         }
       }
-      addPluginToConfig(sierraAntHome, AbstractLocalSLJob.COMMON_PLUGIN_ID, false, config);
+      addPluginToConfig(sierraAntHome, SLUtility.COMMON_PLUGIN_ID, false, config);
       addPluginToConfig(sierraAntHome, SierraToolConstants.MESSAGE_PLUGIN_ID, false, config);
       addPluginToConfig(sierraAntHome, SierraToolConstants.PMD_PLUGIN_ID, true, config);
       addPluginToConfig(sierraAntHome, SierraToolConstants.FB_PLUGIN_ID, true, config);
