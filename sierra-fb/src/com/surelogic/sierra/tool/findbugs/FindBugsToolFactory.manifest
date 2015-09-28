@@ -1,0 +1,4 @@
+Sierra-Id: FindBugs
+Bundle-Version: 3.0.1
+Sierra-Website: findbugs.sourceforge.net
+Sierra-Description: A program which uses static analysis to look for bugs in Java code from the University of Maryland.
