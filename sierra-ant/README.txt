@@ -46,7 +46,7 @@ o "surelogictoolspropertiesfile" (optional) This sets the location of a
 
 -- Example --
 
-For the SierraTutorial_SmallWorld project create a build.xml at the
+For the SierraTutorial_SmallWorld project create a sierra-scan.xml at the
 project root:
 
 <?xml version="1.0" encoding="UTF-8"?>
@@ -88,7 +88,6 @@ project root:
     </sierra-scan>
   </target>
 </project>
-
 
 Note we include a javac compile to illustrate how this is similar (and different)
 from a sierra-scan and also because FindBugs wants the generated .class files to
