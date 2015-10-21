@@ -35,7 +35,7 @@ public class ImportSierraScanAction implements IWorkbenchWindowActionDelegate {
   @Override
   public void run(IAction action) {
     final FileDialog fd = new FileDialog(EclipseUIUtility.getShell(), SWT.OPEN);
-    fd.setText("Import Ant/Maven Scan");
+    fd.setText("Import Sierra Ant/Maven Scan");
     fd.setFilterExtensions(new String[] { "*" + SierraToolConstants.SIERRA_SCAN_TASK_SUFFIX, "*.*" });
     fd.setFilterNames(new String[] { "Compressed Sierra Scan Documents (*" + SierraToolConstants.SIERRA_SCAN_TASK_SUFFIX + ")",
         "All Files (*.*)" });
