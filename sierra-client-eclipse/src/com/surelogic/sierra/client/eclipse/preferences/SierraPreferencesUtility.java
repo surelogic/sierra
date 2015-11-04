@@ -43,7 +43,7 @@ public final class SierraPreferencesUtility {
       EclipseUtility.setDefaultBooleanPreference(ALWAYS_SAVE_RESOURCES, false);
       EclipseUtility.setDefaultBooleanPreference(SHOW_MARKERS, true);
       EclipseUtility.setDefaultIntPreference(FINDINGS_LIST_CUTOFF, 500);
-      EclipseUtility.setDefaultIntPreference(TOOL_MEMORY_MB, 1024);
+      EclipseUtility.setDefaultIntPreference(TOOL_MEMORY_MB, 2048);
       EclipseUtility.setDefaultBooleanPreference(ALWAYS_ALLOW_USER_TO_SELECT_PROJECTS_TO_SCAN, true);
       EclipseUtility.setDefaultStringPreference(SERVER_STATUS_SORT, ServerStatusSort.BY_SERVER.toString());
       EclipseUtility.setDefaultIntPreference(SERVER_INTERACTION_PERIOD_IN_MINUTES, 5);

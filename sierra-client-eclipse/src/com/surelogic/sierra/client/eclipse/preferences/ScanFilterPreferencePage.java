@@ -105,8 +105,8 @@ public class ScanFilterPreferencePage extends PreferencePage implements IWorkben
   }
 
   private void applyChanges() {
-    final List<String> filterIdExcludes = new ArrayList<String>();
-    final List<String> filterIdIncludes = new ArrayList<String>();
+    final List<String> filterIdExcludes = new ArrayList<>();
+    final List<String> filterIdIncludes = new ArrayList<>();
     for (final TreeItem item : f_findingTypes.getItems()) {
       /*
        * All of these should have the finding type id string as data.
@@ -279,10 +279,10 @@ public class ScanFilterPreferencePage extends PreferencePage implements IWorkben
     return item;
   }
 
-  final List<FindingTypeRow> f_findingTypeList = new ArrayList<FindingTypeRow>();
+  final List<FindingTypeRow> f_findingTypeList = new ArrayList<>();
 
   // List of included finding types
-  final List<String> f_filterList = new ArrayList<String>();
+  final List<String> f_filterList = new ArrayList<>();
 
   /**
    * Must be called from a database job.
@@ -333,7 +333,7 @@ public class ScanFilterPreferencePage extends PreferencePage implements IWorkben
       try {
         final Statement st = c.createStatement();
         try {
-          final List<ArtifactTypeRow> artifactList = new ArrayList<ArtifactTypeRow>();
+          final List<ArtifactTypeRow> artifactList = new ArrayList<>();
           final ResultSet ars = st.executeQuery(QB.get(3, findingTypeUUID));
           try {
             while (ars.next()) {
